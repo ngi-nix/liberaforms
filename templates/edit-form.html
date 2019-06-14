@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="margin: 0 0 1em 0; background-color:red;color:white">
+    <span style="font-size:2em;padding:0.5em">
+        {% if formIsNew %}
+            New form
+        {% else %}
+            Edit form
+        {% endif %}
+    </span>
+</div>
+
+
+<div class="container">
+
+    <h3>Build the form here</h3>
+    <div id="fb-editor"></div>
+
+    <hr/>
+    <h3>Additional info here</h3>
+    
+    <form id="result" action="/control/edit" method="post" style="padding-bottom:0.5em;">
+        <input type="hidden" id="structure" name="structure" />
+        <label>Form URL</label><br />
+        Your from will have this address
+            {{ request.url_root }}
+            <input id="slug" name="slug" value="{{ slug }}" size="42"required />
+            <span id="slug_not_available" style="display:none" class="bg-danger slug-alert"> Not available! </span>
+            <span id="slug_changed" style="display:none" class="bg-success slug-alert"> Our suggestion </span>
+        <br />
+    <p></p>
+    {% if formIsNew %}
+    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/control/list'">
+    {% else %}
+    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/control/admin/{{ slug }}'">
+    {% endif %}
+    <input class="btn-info btn" type="submit" value="Preview" />
+    </form>
+
+</div>
+
+
+<script>
+jQuery(function($) {
+    const fbEditor = document.getElementById("fb-editor");
+    
+    var options = {
+        showActionButtons: false,
+        disableFields: ['autocomplete','hidden', 'button', 'file'],
+        disabledAttrs: [
+            'className',
+            'name',
+            'toggle',
+            'access',
+            'description'
+        ],
+        controlOrder: [
+            'header',
+            'paragraph'
+        ],
+        formData: {{ formStructure | safe }}
+    };
+    const formBuilder = $(fbEditor).formBuilder(options);
+
+    document.getElementById('result').addEventListener('submit', function(evt){
+        evt.preventDefault();
+        //var formStructure = formBuilder.actions.getData('json', true);
+        //console.log(formStructure);
+        if ( {{ formIsNew }} == true){
+            $.ajax({
+                url : "/control/check-slug-availability/"+$('#slug').val(),
+                type: "POST",
+                data : $('#slug').val(),
+                dataType: "json",
+                success: function(data, textStatus, jqXHR)
+                {
+                    if (data.available == true) {
+                        if (data.slug == $('#slug').val()) {
+                            alert("submit!!");
+                            //$('#structure').val(formBuilder.actions.getData('json', true));
+                            //$('#result').submit();
+                        }else{
+                            $('#slug').val(data.slug);
+                            $('#slug_changed').show();
+                        }
+                    } else {
+                        $('#slug').val(data.slug);
+                        $('#slug_not_available').show()
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+             
+                }
+            });
+        }else{
+            $('#structure').val(formBuilder.actions.getData('json', true));
+            $('#result').submit();
+        }
+    });
+    document.getElementById('slug').addEventListener('click', function(evt){
+        $('.slug-alert').hide(); 
+    });
+});
+</script>
+
+  
+{% endblock %}

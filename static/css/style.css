@@ -1,0 +1,15 @@
+.info {
+    color: white;
+    background-color:#00C957;
+    padding: 0.25em 0.5em 0.25em 0.5em;
+}
+.warning {
+    color: white;
+    background-color:#FF8000;
+    padding: 0.25em 0.5em 0.25em 0.5em;
+}
+.error {
+    color: white;
+    background-color:red;
+    padding: 0.25em 0.5em 0.25em 0.5em;
+}

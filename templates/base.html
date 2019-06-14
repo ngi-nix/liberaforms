@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GNGforms</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/static/node_modules/jquery/dist/jquery.min.js"></script>
+  <script src="/static/node_modules/jquery-ui-sortable/jquery-ui.min.js"></script>
+  <script src="/static/node_modules/formBuilder/dist/form-builder.min.js"></script>
+  <script src="/static/node_modules/formBuilder/dist/form-render.min.js"></script>
+  <link rel="stylesheet" href="/static/node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages and request.path != '/login' %}
+                {% for category, message in messages %}
+                  <div class="{{ category }}">{{ message | safe }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+{% block content %}{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+<div style="margin: 0 0 1em 0; background-color:red;color:white">
+    <span style="font-size:2em;padding:0.5em">Form data</span>
+</div>
+
+<div class="container">
+    <p>
+    <input class="btn-primary btn" type="button" value="Admin" onClick="location.href='/control/admin/{{ slug }}'">
+    <input class="btn-primary btn" type="button" value="Download CSV" onClick="location.href='/control/csv/{{ slug }}'">
+    </p>
+    Total entries: {{ entries|length }}
+
+    <table id="formEntries" class="table table-striped table-condensed">
+
+    <thead>
+        <tr>
+        <th>#</th>
+        {% for fieldName in fieldNames %}
+            <th>{{ fieldName }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+
+    {% for entry in entries %}
+        <tr>
+        <td style="border-right: 1px solid #ccc;">{{ loop.index }}</td>
+        {% for fieldName in fieldNames %}
+
+            <td class="{{ fieldName }}" style="border-right: 1px solid #ccc;">{{ entry[fieldName] }}</td>
+
+        {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#formEntries').DataTable();
+} );
+
+</script>
+  
+{% endblock %}

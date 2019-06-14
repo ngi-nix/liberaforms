@@ -1,0 +1,25 @@
+{% extends "vanilla-base.html" %}
+{% block content %}
+
+
+<div class="container">
+    <form method="POST">
+    <div id="fb-render"></div>
+    <input class="btn-success btn" type="submit" value="Send">
+    </form>
+</div>
+
+
+<script>
+    jQuery(function($) {
+        var fbRender = document.getElementById('fb-render');
+        var formData = {{ formStructure | safe }};
+        var formRenderOpts = {
+            formData,
+            dataType: 'json'
+        };
+        $(fbRender).formRender(formRenderOpts);
+    });
+</script>
+  
+{% endblock %}

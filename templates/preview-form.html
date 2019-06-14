@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="margin: 0 0 1em 0; background-color:red;color:white">
+    <span style="font-size:2em;padding:0.5em">Preview form</span>
+</div>
+
+<div class="container">
+    <div class="row">
+    <b>Form URL</b> <input value="{{ formURL }}" size="50" disabled >
+    <br />
+    <div id="fb-render"></div>
+        
+    <form action="/control/save/{{ slug }}" method="post">    
+        <input class="btn-primary btn" type="button" value="Edit" onClick="location.href='/control/edit/{{ slug }}'">
+        <input class="btn-success btn" type="submit" value="Save">
+    </form>
+    </div>
+</div>
+
+
+<script>
+    jQuery(function($) {
+        var fbRender = document.getElementById('fb-render');
+        var formData = {{ formStructure | safe }};
+        var formRenderOpts = {
+            formData,
+            dataType: 'json'
+        };
+        $(fbRender).formRender(formRenderOpts);
+    });
+</script>
+  
+{% endblock %}
