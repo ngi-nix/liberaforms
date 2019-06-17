@@ -12,6 +12,7 @@ import pprint
 def index():
     pp = pprint.PrettyPrinter()
     
+    """
     print(mongo)    # flask_pymongo
     testDB = mongo.db 
     print(mongo.db) # Database
@@ -22,13 +23,13 @@ def index():
     
     for form in forms.find():
         pp.pprint(form)
-
+    """
     return render_template('index.html')
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 def view_form(slug):
-    queriedForm = mongo.db.forms.find_one({"slug": slug})
+    queriedForm = getForm(slug)
     if not queriedForm:
         flash("Form not found", 'error')
         return redirect(url_for('list_forms'))
@@ -42,7 +43,8 @@ def view_form(slug):
             value = formData[key]
             data[key]=', '.join(value)
         
-        mongo.db.forms.update({ "_id": queriedForm["_id"] }, {"$push": {"entries": data }})
+        saveEntry(queriedForm, data)
+        #mongo.db.forms.update({ "_id": queriedForm["_id"] }, {"$push": {"entries": data }})
         
         #return render_template('thankyou.html', thankyouNote=queriedForm['thankyouNote'])
         return render_template('thankyou.html', thankyouNote="Thankyou !!")
@@ -65,30 +67,15 @@ def list_all_forms():
 @app.route('/control/view-data/<string:slug>', methods=['GET'])
 def form_summary(slug):
     pp = pprint.PrettyPrinter()
-    quieriedForm = getForm(slug)
-    if not quieriedForm:
+    queriedForm = getForm(slug)
+    if not queriedForm:
         flash("No form found", 'error')
         return redirect(url_for('list_forms'))
-        
-    entries=quieriedForm['entries']
-    """
-    We could get field names form quieriedForm but the form
-    Author may have modified fields during the campaign. So,
-    We build a list of fields taken from the entries.
-    """
-    fieldNames = []
-    for entry in entries:
-        fieldNames = set(fieldNames).union(set(list(entry.keys())))
-    fieldNames = list(fieldNames)
-    # Move reserved 'created' field to fieldNames[0]
-    fieldNames.insert(0, fieldNames.pop(fieldNames.index("created")))
-    print(fieldNames)
-    
-    pp.pprint(fieldNames)
-    
+
+    print(queriedForm['fieldIndex'])
     return render_template('form-data-summary.html',    slug=slug,
-                                                        fieldNames=fieldNames,
-                                                        entries=entries)
+                                                        fieldIndex=queriedForm['fieldIndex'],
+                                                        entries=queriedForm['entries'])
 
 @app.route('/control/csv/<string:slug>', methods=['GET'])
 def csv_form(slug):
@@ -121,73 +108,83 @@ def csv_form(slug):
 
 @app.route('/control/new', methods=['GET'])
 def new_form():
-    session['formSlug'] = ""
-    session['formStructure'] = json.dumps([])
-    
+    clearSessionFormData()
     return render_template('edit-form.html',    formStructure=session['formStructure'],
                                                 formSlug=session['formSlug'],
-                                                formIsNew="true")
+                                                isFormNew=True)
 
 
 @app.route('/control/edit', methods=['GET', 'POST'])
 @app.route('/control/edit/<string:slug>', methods=['GET', 'POST'])
-def edit_form(slug=None):            
+def edit_form(slug=None):
+    pp = pprint.PrettyPrinter(indent=4)
+    ensureSessionFormKeys() 
     if request.method == 'POST':
+        if not slug:
+            if 'slug' in request.form:
+                session['formSlug'] = request.form['slug']
+            else:
+                flash("Something went wrong. No slug!", 'error')
+                return redirect(url_for('list_forms'))
+                
         formStructureDict = json.loads(request.form['structure'])
-        
-        pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(formStructureDict)
-        
-        """
-        Ensure all fields have a label. We need labels for mongo documents.
-        """
-        uniqueLabels = []
-        uniqueNames = []
+        fieldCount=0
+        for formElement in formStructureDict:
+            
+            """
+            We need a label for displaying Entry data (eg. csv download).
+            Ensure the 'label' attribute is not empty
+            """
+            if 'label' in formElement and (formElement['label'] == "" or formElement['label'] == "<br>"):
+                formElement['label'] = "Label for field/element"
+            
+            # elements with a 'name' attribute are included in 'entries' in the database
+            if 'name' in formElement:
+                #pp.pprint(formFieldIndex)
+                # Have we already included this field in the index?
+                field = getFieldByNameInIndex(session['formFieldIndex'], formElement['name'])
+                if field:
+                    """
+                    We want to order the fields for displaying Entry data (eg. csv download).
+                    """    
+                    fieldPosition = session['formFieldIndex'].index(field)
+                    if field['label'] != formElement['label'] or fieldPosition != fieldCount:                      
+                        # user changed 'label' attribute or the position of the field.
+                        updatedField={'name': formElement['name'], 'label': formElement['label']}
+                        session['formFieldIndex'].remove(field)
+                        session['formFieldIndex'].insert(fieldCount, updatedField)
+                else:
+                    newField={'name': formElement['name'], 'label': formElement['label']}
+                    session['formFieldIndex'].insert(fieldCount, newField)
 
-        labelCnt = 0
-        for formField in formStructureDict:
-            if 'label' in formField:
-                if formField['label'] in app.config['RESERVED_FORM_ELEMENT_NAMES'] or formField['label'] in uniqueLabels or formField['label'] == "" or formField['label'] == "<br>":
-                    while "Field name %s" % labelCnt in uniqueLabels:
-                        labelCnt += 1
-                    formField['label'] = "Field name %s" % labelCnt
-                uniqueLabels.append(formField['label'])
-                
-                #create fieldName based on fieldLabel
-                name = formField['label'].replace(" ", "-")
-                name = name.replace("<br>", "") # formBuilder appends "<br>" to the label.
-                name = name.replace("\"", "") # remove problematic chars
-                name = name.replace("'", "") 
-                if name in uniqueNames:
-                    cnt=0
-                    while "%s-%s" % (name, cnt) in uniqueNames:
-                        cnt += 1
-                    name = "%s-%s" % (name, cnt)
-                    uniqueNames.append(name)
-                formField['name'] = name
-                
-        #pp.pprint(formStructureDict)
-        session['formStructure'] = json.dumps(formStructureDict)
-        session['formSlug'] = request.form['slug']
+                fieldCount += 1
         
+        # remove all 'user removed' fields from index
+        pp.pprint(formStructureDict)
+        pp.pprint(session['formFieldIndex'])
+        for field in session['formFieldIndex']:
+            print(field)
+            if not getFieldByNameInIndex(formStructureDict, field['name']):
+                session['formFieldIndex'].remove(field)
+
+        #pp.pprint(session['formFieldIndex'])
+        
+        session['formStructure'] = json.dumps(formStructureDict)
         return redirect(url_for('preview_form'))
 
     # GET
-    ensureSessionFormKeys()
-    formIsNew = True
+    isFormNew = True
     if slug:
         queriedForm = getForm(slug)
-        if queriedForm and not session['formStructure']:
+        if queriedForm:
+            isFormNew = False
             session['formSlug'] = queriedForm['slug']
-            session['formStructure'] = queriedForm['structure']
-            formIsNew = False
-        #else:
-        #    session['formSlug'] = slug
+            if not session['formStructure']:
+                session['formStructure'] = queriedForm['structure']
 
     return render_template('edit-form.html', formStructure=session['formStructure'],
                                              slug=session['formSlug'],
-                                             formIsNew=formIsNew)
-
+                                             isFormNew=isFormNew)
 
 
 @app.route('/control/preview', methods=['GET'])
@@ -195,7 +192,10 @@ def preview_form():
 
     if not ('formSlug' in session and 'formStructure' in session):
         return redirect(url_for('list_forms'))
-      
+    
+    #pp = pprint.PrettyPrinter()
+    #pp.pprint(session['formStructure'])
+    
     formURL = "%s%s" % ( request.url_root, session['formSlug'])
     return render_template('preview-form.html', formStructure=session['formStructure'], \
                                                 formURL=formURL, \
@@ -207,24 +207,35 @@ def save_form(slug):
         if slug != session['formSlug']:
             flash("Something went wrong", 'error')
         
-        slug = sanitizeSlug(slug)        
+        slug = sanitizeSlug(slug)
+        session['formFieldIndex'].insert(0, {'label':'created', 'name':'created'})
         if getForm(slug):
             # slug should be unique so Let's update this form
-            updateForm(slug, {"structure": session['formStructure']})
+            updateForm(slug, { 
+                                "structure": session['formStructure'],
+                                "fieldIndex": session['formFieldIndex']
+                            })
+
+            #pp = pprint.PrettyPrinter(indent=4)
+            #pp.pprint(newFormData)
+            
             flash("Updated OK", 'info')
         else:
             newFormData={
                         "created": datetime.date.today().strftime("%Y/%m/%d"),
                         "author": "tuttle",
+                        "postalCode": "08014",
                         "urlRoot": request.url_root,
                         "slug": slug,
                         "structure": session['formStructure'],
+                        "fieldIndex": session['formFieldIndex'],
                         "entries": [],
                         "afterSubmitNote": "Thankyou!!"
                     }
             insertForm(newFormData)
-            emptySessionFormData()
+            clearSessionFormData()
             flash("Saved OK", 'info')
+
         return redirect(url_for('admin_form', slug=slug))
 
 
@@ -232,27 +243,18 @@ def save_form(slug):
 def admin_form(slug):
     queriedForm = getForm(slug)
     if queriedForm:
-        session['formSlug'] = queriedForm['slug']
-        session['formStructure'] = queriedForm['structure']
+        populateSessionFormData(queriedForm)
     else:
-        session['formSlug'] = ""
-        session['formStructure'] = json.dumps([])
+        clearSessionFormData()
         flash("Form not found", 'warning')
         return redirect(url_for('list_forms'))
-    
-    total_entries = len(queriedForm["entries"])
-    if total_entries:
-        last_entry = queriedForm["entries"][-1] 
-        last_entry_date = last_entry["created"]
-    else:
-        last_entry_date = ""
-    
+       
     formURL = "%s%s" % ( request.url_root, session['formSlug'])
     return render_template('admin-form.html',   formStructure=session['formStructure'], \
-                                                slug=session['formSlug'], \
+                                                slug=slug, \
                                                 created=queriedForm['created'],
-                                                total_entries=total_entries,
-                                                last_entry_date=last_entry_date,
+                                                total_entries=getTotalEntries(queriedForm),
+                                                last_entry_date=getLastEntryData(queriedForm),
                                                 formURL=formURL)
         
     

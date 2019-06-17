@@ -20,8 +20,8 @@
     <thead>
         <tr>
         <th>#</th>
-        {% for fieldName in fieldNames %}
-            <th>{{ fieldName }}</th>
+        {% for field in fieldIndex %}
+            <th>{{ field['label'] }}</th>
         {% endfor %}
         </tr>
     </thead>
@@ -29,9 +29,9 @@
     {% for entry in entries %}
         <tr>
         <td style="border-right: 1px solid #ccc;">{{ loop.index }}</td>
-        {% for fieldName in fieldNames %}
+        {% for field in fieldIndex  %}
 
-            <td class="{{ fieldName }}" style="border-right: 1px solid #ccc;">{{ entry[fieldName] }}</td>
+            <td class="{{ fieldName }}" style="border-right: 1px solid #ccc;">{{ entry[field['name']] }}</td>
 
         {% endfor %}
         </tr>

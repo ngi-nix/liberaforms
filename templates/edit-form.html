@@ -3,7 +3,7 @@
 
 <div style="margin: 0 0 1em 0; background-color:red;color:white">
     <span style="font-size:2em;padding:0.5em">
-        {% if formIsNew %}
+        {% if isFormNew %}
             New form
         {% else %}
             Edit form
@@ -20,17 +20,18 @@
     <hr/>
     <h3>Additional info here</h3>
     
-    <form id="result" action="/control/edit" method="post" style="padding-bottom:0.5em;">
+    <form id="result" action="/control/edit{% if slug %}/{{ slug }}{% endif %}" method="post" style="padding-bottom:0.5em;">
         <input type="hidden" id="structure" name="structure" />
         <label>Form URL</label><br />
-        Your from will have this address
+            Your from will have this address
+            <br />
             {{ request.url_root }}
-            <input id="slug" name="slug" value="{{ slug }}" size="42"required />
+            <input id="slug" name="slug" value="{{ slug }}" size="42" {% if isFormNew %}required{% else %}disabled{% endif %} />
             <span id="slug_not_available" style="display:none" class="bg-danger slug-alert"> Not available! </span>
             <span id="slug_changed" style="display:none" class="bg-success slug-alert"> Our suggestion </span>
         <br />
     <p></p>
-    {% if formIsNew %}
+    {% if isFormNew %}
     <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/control/list'">
     {% else %}
     <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/control/admin/{{ slug }}'">
@@ -67,7 +68,7 @@ jQuery(function($) {
         evt.preventDefault();
         //var formStructure = formBuilder.actions.getData('json', true);
         //console.log(formStructure);
-        if ( {{ formIsNew }} == true){
+        if ( "{{ isFormNew }}" == "True" ){
             $.ajax({
                 url : "/control/check-slug-availability/"+$('#slug').val(),
                 type: "POST",
@@ -77,9 +78,8 @@ jQuery(function($) {
                 {
                     if (data.available == true) {
                         if (data.slug == $('#slug').val()) {
-                            alert("submit!!");
-                            //$('#structure').val(formBuilder.actions.getData('json', true));
-                            //$('#result').submit();
+                            $('#structure').val(formBuilder.actions.getData('json', true));
+                            $('#result').submit();
                         }else{
                             $('#slug').val(data.slug);
                             $('#slug_changed').show();
@@ -102,6 +102,11 @@ jQuery(function($) {
     document.getElementById('slug').addEventListener('click', function(evt){
         $('.slug-alert').hide(); 
     });
+    /*
+    if ( "{{ isFormNew }}" == "False" ){
+        $("#slug").prop('disabled', true);
+    }
+    */
 });
 </script>
 
