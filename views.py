@@ -39,6 +39,7 @@ def view_form(slug):
         formData = dict(request.form)
         data = {}
         data["created"] = datetime.date.today().strftime("%Y/%m/%d")
+        
         for key in formData:
             value = formData[key]
             data[key]=', '.join(value)
@@ -66,13 +67,13 @@ def list_all_forms():
 
 @app.route('/control/view-data/<string:slug>', methods=['GET'])
 def form_summary(slug):
-    pp = pprint.PrettyPrinter()
+    #pp = pprint.PrettyPrinter()
     queriedForm = getForm(slug)
     if not queriedForm:
         flash("No form found", 'error')
         return redirect(url_for('list_forms'))
 
-    print(queriedForm['fieldIndex'])
+    #print(queriedForm['fieldIndex'])
     return render_template('form-data-summary.html',    slug=slug,
                                                         fieldIndex=queriedForm['fieldIndex'],
                                                         entries=queriedForm['entries'])
@@ -101,7 +102,7 @@ def csv_form(slug):
         #    print(field)
 
     
-    pp.pprint(fieldNames)
+    #pp.pprint(fieldNames)
     
     return render_template('csv.html', fieldNames=fieldNames, entries=entries)
 
@@ -117,7 +118,7 @@ def new_form():
 @app.route('/control/edit', methods=['GET', 'POST'])
 @app.route('/control/edit/<string:slug>', methods=['GET', 'POST'])
 def edit_form(slug=None):
-    pp = pprint.PrettyPrinter(indent=4)
+    #pp = pprint.PrettyPrinter(indent=4)
     ensureSessionFormKeys() 
     if request.method == 'POST':
         if not slug:
@@ -126,21 +127,23 @@ def edit_form(slug=None):
             else:
                 flash("Something went wrong. No slug!", 'error')
                 return redirect(url_for('list_forms'))
-                
+        
+        queriedForm=getForm(session['formSlug'])
+        queriedFieldIndex=[]
+        if queriedForm:
+            queriedFieldIndex=queriedForm['fieldIndex']        
+        
+        
         formStructureDict = json.loads(request.form['structure'])
         fieldCount=0
         for formElement in formStructureDict:
             
-            """
-            We need a label for displaying Entry data (eg. csv download).
-            Ensure the 'label' attribute is not empty
-            """
-            if 'label' in formElement and (formElement['label'] == "" or formElement['label'] == "<br>"):
-                formElement['label'] = "Label for field/element"
-            
             # elements with a 'name' attribute are included in 'entries' in the database
             if 'name' in formElement:
-                #pp.pprint(formFieldIndex)
+                # We need a label for displaying 'entry' data (eg. csv download).
+                if 'label' in formElement and (formElement['label'] == "" or formElement['label'] == "<br>"):
+                    formElement['label'] = "Label for field/element"
+
                 # Have we already included this field in the index?
                 field = getFieldByNameInIndex(session['formFieldIndex'], formElement['name'])
                 if field:
@@ -157,17 +160,31 @@ def edit_form(slug=None):
                     newField={'name': formElement['name'], 'label': formElement['label']}
                     session['formFieldIndex'].insert(fieldCount, newField)
 
+                if field in queriedFieldIndex:
+                    queriedFieldIndex.remove(field)
                 fieldCount += 1
         
-        # remove all 'user removed' fields from index
-        pp.pprint(formStructureDict)
-        pp.pprint(session['formFieldIndex'])
-        for field in session['formFieldIndex']:
-            print(field)
-            if not getFieldByNameInIndex(formStructureDict, field['name']):
-                session['formFieldIndex'].remove(field)
-
-        #pp.pprint(session['formFieldIndex'])
+        # pp.pprint(queriedFieldIndex)
+        
+        # these fields are no longer present in formStructureDict. (removed by user).
+        orphanedFieldNames = [d['name'] for d in queriedFieldIndex if 'name' in d]
+        # if there are no 'entries', we will delete them from session['formFieldIndex']
+        entries=[]
+        if queriedForm:
+            entries=queriedForm['entries']
+            #pp.pprint(entries)
+        
+        if not entries:
+            # remove all 'user removed' fields from index
+            for field in session['formFieldIndex']:
+                #print('field name: %s' % field['name'])
+                if not getFieldByNameInIndex(formStructureDict, field['name']):
+                    # need to check if an 'entry' has already been saved with this field.
+                    if field['name'] in orphanedFieldNames:
+                        if field['name'] in app.config['RESERVED_FORM_ELEMENT_NAMES']:
+                            # don't remove special field we have incluede (eg 'created')
+                            continue
+                        session['formFieldIndex'].remove(field)
         
         session['formStructure'] = json.dumps(formStructureDict)
         return redirect(url_for('preview_form'))
@@ -208,7 +225,14 @@ def save_form(slug):
             flash("Something went wrong", 'error')
         
         slug = sanitizeSlug(slug)
-        session['formFieldIndex'].insert(0, {'label':'created', 'name':'created'})
+        if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
+            session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
+        else:
+            # move 'created' field to beginning of the list
+            field = getFieldByNameInIndex(session['formFieldIndex'], 'created')
+            session['formFieldIndex'].remove(field)
+            session['formFieldIndex'].insert(0, field)
+                                
         if getForm(slug):
             # slug should be unique so Let's update this form
             updateForm(slug, { 
@@ -254,7 +278,7 @@ def admin_form(slug):
                                                 slug=slug, \
                                                 created=queriedForm['created'],
                                                 total_entries=getTotalEntries(queriedForm),
-                                                last_entry_date=getLastEntryData(queriedForm),
+                                                last_entry_date=getLastEntryDate(queriedForm),
                                                 formURL=formURL)
         
     

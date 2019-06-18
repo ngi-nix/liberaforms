@@ -20,7 +20,7 @@ def getRandomString(length=10):
 
 
 def getFieldByNameInIndex(index, name):
-    print(name)
+    #print(name)
     l = list(filter(lambda field: field['name'] == name, index))
     if l:
         return l[0]

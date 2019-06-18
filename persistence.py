@@ -26,9 +26,8 @@ def findForms():
 def getTotalEntries(form):
     return len(form["entries"])
 
-def getLastEntryData(form):
-    total_entries = len(form["entries"])
-    if total_entries:
+def getLastEntryDate(form):
+    if getTotalEntries(form):
         last_entry = form["entries"][-1] 
         last_entry_date = last_entry["created"]
     else:
