@@ -1,9 +1,11 @@
 from flask import request, Response, render_template, redirect, url_for, session, flash
 import json, re, datetime
 from formbuilder import app, mongo
-from .persistence import *
+from .forms import *
 from .session import *
 from .utils import *
+from .users import *
+from .email import *
 
 import pprint
 
@@ -12,28 +14,16 @@ import pprint
 def index():
     pp = pprint.PrettyPrinter()
     
-    """
-    print(mongo)    # flask_pymongo
-    testDB = mongo.db 
-    print(mongo.db) # Database
-    print(mongo.db.list_collection_names()) # Database
-    print(mongo.db.forms) #collection
     
-    forms = mongo.db.forms
-    
-    for form in forms.find():
-        pp.pprint(form)
-    """
     return render_template('index.html')
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 def view_form(slug):
-    queriedForm = getForm(slug)
+    queriedForm = Form(slug=slug)
     if not queriedForm:
         flash("Form not found", 'error')
-        return redirect(url_for('list_forms'))
-    queriedForm = dict(queriedForm)
+        return redirect(url_for('index'))
        
     if request.method == 'POST':      
         formData = dict(request.form)
@@ -44,49 +34,43 @@ def view_form(slug):
             value = formData[key]
             data[key]=', '.join(value)
         
-        saveEntry(queriedForm, data)
-        #mongo.db.forms.update({ "_id": queriedForm["_id"] }, {"$push": {"entries": data }})
+        queriedForm.saveEntry(data)
         
         #return render_template('thankyou.html', thankyouNote=queriedForm['thankyouNote'])
         return render_template('thankyou.html', thankyouNote="Thankyou !!")
         
-    return render_template('view-form.html', formStructure=queriedForm['structure'])     
+    return render_template('view-form.html', formStructure=queriedForm.structure)     
             
 
-@app.route('/control', methods=['GET'])
-@app.route('/control/list', methods=['GET'])
-def list_forms():
-    forms = sorted(findForms(), key=lambda k: k['created'], reverse=True)
-    return render_template('list-forms.html', forms=forms, admin=True) 
+@app.route('/forms', methods=['GET'])
+@app.route('/forms/list', methods=['GET'])
+def my_forms():
+    forms = sorted(Form().findAll(author="tuttle"), key=lambda k: k['created'], reverse=True)
+    return render_template('my-forms.html', forms=forms) 
 
 
-@app.route('/list', methods=['GET'])
-def list_all_forms():
-    return render_template('list-forms.html', forms=findForms()) 
-
-
-@app.route('/control/view-data/<string:slug>', methods=['GET'])
+@app.route('/forms/view-data/<string:slug>', methods=['GET'])
 def form_summary(slug):
     #pp = pprint.PrettyPrinter()
-    queriedForm = getForm(slug)
+    queriedForm = Form(slug=slug)
     if not queriedForm:
         flash("No form found", 'error')
-        return redirect(url_for('list_forms'))
+        return redirect(url_for('my_forms'))
 
     #print(queriedForm['fieldIndex'])
     return render_template('form-data-summary.html',    slug=slug,
-                                                        fieldIndex=queriedForm['fieldIndex'],
-                                                        entries=queriedForm['entries'])
+                                                        fieldIndex=queriedForm.fieldIndex,
+                                                        entries=queriedForm.entries)
 
-@app.route('/control/csv/<string:slug>', methods=['GET'])
+@app.route('/forms/csv/<string:slug>', methods=['GET'])
 def csv_form(slug):
     pp = pprint.PrettyPrinter()
-    quieriedForm = getForm(slug)
+    quieriedForm = Form(slug=slug)
     if not quieriedForm:
         flash("No form found", 'error')
-        return redirect(url_for('list_forms'))
+        return redirect(url_for('my_forms'))
         
-    entries=quieriedForm['entries']
+    entries=quieriedForm.entries
     """
     We could get field names form quieriedForm but the form
     Author may have modified fields during the campaign. So,
@@ -107,7 +91,7 @@ def csv_form(slug):
     return render_template('csv.html', fieldNames=fieldNames, entries=entries)
 
 
-@app.route('/control/new', methods=['GET'])
+@app.route('/forms/new', methods=['GET'])
 def new_form():
     clearSessionFormData()
     return render_template('edit-form.html',    formStructure=session['formStructure'],
@@ -115,8 +99,8 @@ def new_form():
                                                 isFormNew=True)
 
 
-@app.route('/control/edit', methods=['GET', 'POST'])
-@app.route('/control/edit/<string:slug>', methods=['GET', 'POST'])
+@app.route('/forms/edit', methods=['GET', 'POST'])
+@app.route('/forms/edit/<string:slug>', methods=['GET', 'POST'])
 def edit_form(slug=None):
     #pp = pprint.PrettyPrinter(indent=4)
     ensureSessionFormKeys() 
@@ -126,12 +110,12 @@ def edit_form(slug=None):
                 session['formSlug'] = request.form['slug']
             else:
                 flash("Something went wrong. No slug!", 'error')
-                return redirect(url_for('list_forms'))
+                return redirect(url_for('my_forms'))
         
-        queriedForm=getForm(session['formSlug'])
+        queriedForm=Form(slug=session['formSlug'])
         queriedFieldIndex=[]
         if queriedForm:
-            queriedFieldIndex=queriedForm['fieldIndex']        
+            queriedFieldIndex=queriedForm.fieldIndex   
         
         
         formStructureDict = json.loads(request.form['structure'])
@@ -171,13 +155,14 @@ def edit_form(slug=None):
         # if there are no 'entries', we will delete them from session['formFieldIndex']
         entries=[]
         if queriedForm:
-            entries=queriedForm['entries']
+            entries=queriedForm.entries
             #pp.pprint(entries)
         
         if not entries:
             # remove all 'user removed' fields from index
             for field in session['formFieldIndex']:
-                #print('field name: %s' % field['name'])
+                print('field name: %s' % field['name'])
+                
                 if not getFieldByNameInIndex(formStructureDict, field['name']):
                     # need to check if an 'entry' has already been saved with this field.
                     if field['name'] in orphanedFieldNames:
@@ -192,23 +177,23 @@ def edit_form(slug=None):
     # GET
     isFormNew = True
     if slug:
-        queriedForm = getForm(slug)
+        queriedForm = Form(slug=slug)
         if queriedForm:
             isFormNew = False
-            session['formSlug'] = queriedForm['slug']
+            session['formSlug'] = queriedForm.slug
             if not session['formStructure']:
-                session['formStructure'] = queriedForm['structure']
+                session['formStructure'] = queriedForm.structure
 
     return render_template('edit-form.html', formStructure=session['formStructure'],
                                              slug=session['formSlug'],
                                              isFormNew=isFormNew)
 
 
-@app.route('/control/preview', methods=['GET'])
+@app.route('/forms/preview', methods=['GET'])
 def preview_form():
 
     if not ('formSlug' in session and 'formStructure' in session):
-        return redirect(url_for('list_forms'))
+        return redirect(url_for('my_forms'))
     
     #pp = pprint.PrettyPrinter()
     #pp.pprint(session['formStructure'])
@@ -219,7 +204,7 @@ def preview_form():
                                                 slug=session['formSlug'])
 
 
-@app.route('/control/save/<string:slug>', methods=['POST'])
+@app.route('/forms/save/<string:slug>', methods=['POST'])
 def save_form(slug):
         if slug != session['formSlug']:
             flash("Something went wrong", 'error')
@@ -232,13 +217,14 @@ def save_form(slug):
             field = getFieldByNameInIndex(session['formFieldIndex'], 'created')
             session['formFieldIndex'].remove(field)
             session['formFieldIndex'].insert(0, field)
-                                
-        if getForm(slug):
+        
+        queriedForm=Form(slug=slug)
+        if queriedForm:
             # slug should be unique so Let's update this form
-            updateForm(slug, { 
+            queriedForm.update({ 
                                 "structure": session['formStructure'],
                                 "fieldIndex": session['formFieldIndex']
-                            })
+                                })
 
             #pp = pprint.PrettyPrinter(indent=4)
             #pp.pprint(newFormData)
@@ -249,6 +235,7 @@ def save_form(slug):
                         "created": datetime.date.today().strftime("%Y/%m/%d"),
                         "author": "tuttle",
                         "postalCode": "08014",
+                        "enabled": False,
                         "urlRoot": request.url_root,
                         "slug": slug,
                         "structure": session['formStructure'],
@@ -256,40 +243,132 @@ def save_form(slug):
                         "entries": [],
                         "afterSubmitNote": "Thankyou!!"
                     }
-            insertForm(newFormData)
+            Form().insert(newFormData)
             clearSessionFormData()
             flash("Saved OK", 'info')
 
-        return redirect(url_for('admin_form', slug=slug))
+        return redirect(url_for('author_form', slug=slug))
 
 
-@app.route('/control/admin/<string:slug>', methods=['GET'])
-def admin_form(slug):
-    queriedForm = getForm(slug)
-    if queriedForm:
-        populateSessionFormData(queriedForm)
-    else:
-        clearSessionFormData()
-        flash("Form not found", 'warning')
-        return redirect(url_for('list_forms'))
-       
-    formURL = "%s%s" % ( request.url_root, session['formSlug'])
-    return render_template('admin-form.html',   formStructure=session['formStructure'], \
-                                                slug=slug, \
-                                                created=queriedForm['created'],
-                                                total_entries=getTotalEntries(queriedForm),
-                                                last_entry_date=getLastEntryDate(queriedForm),
-                                                formURL=formURL)
-        
-    
-
-@app.route('/control/check-slug-availability/<string:slug>', methods=['POST'])
+@app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
 def is_slug_available(slug): 
     slug = sanitizeSlug(slug)
     available = True
-    if getForm(slug):
+    if Form(slug=slug):
         available = False
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
+
+
+@app.route('/forms/<string:slug>', methods=['GET'])
+def author_form(slug):
+    queriedForm = Form(slug=slug)
+    if queriedForm:
+        populateSessionFormData(queriedForm.data)
+    else:
+        clearSessionFormData()
+        flash("Form not found", 'warning')
+        return redirect(url_for('my_forms'))
+       
+    formURL = "%s%s" % ( request.url_root, session['formSlug'])
+    return render_template('author-form.html',   formStructure=session['formStructure'], \
+                                                form=queriedForm.data,
+                                                slug=slug, \
+                                                created=queriedForm.data['created'],
+                                                total_entries=getTotalEntries(queriedForm.data),
+                                                last_entry_date=getLastEntryDate(queriedForm.data),
+                                                formURL=formURL)
+        
+
+@app.route('/user/<string:username>', methods=['GET', 'POST'])
+def user_settings(username): 
+    return render_template('user-settings.html', username=username)
+
+
+@app.route('/user/new', methods=['GET', 'POST'])
+def new_user(): 
+    if request.method == 'POST':
+        if not isNewUserRequestValid(request.form):
+            return render_template('new-user.html')
+        newUser = {
+            "username": request.form['username'],
+            "email": request.form['email'],
+            "password": hashPassword(request.form['password1']),
+            "enabled": False,
+            "validatedEmail": False,
+            "created": datetime.date.today().strftime("%Y/%m/%d"),
+            "token": {}
+        }
+        user = createUser(newUser)
+        if not user:
+            flash("An error", 'info')
+            return render_template('new-user.html')
+            
+        user.setToken()
+        sendNewUserEmail(user.data)
+
+        return render_template('new-user.html', created=True)
+
+    return render_template('new-user.html')
+
+
+@app.route('/user/validate-email/<string:token>', methods=['GET'])
+def validate_email(token):
+    user = User(token=token)
+    if not user:
+        return redirect(url_for('index'))
+    if user.hasTokenExpired():
+        user.deleteToken()
+        flash("Your petition has expired", 'info')
+        return redirect(url_for('index'))
+    
+    user.setValidatedEmail(True)
+    user.setEnabled(True)
+    user.deleteToken()
+    flash("Your email is valid.", 'info')
+    return redirect(url_for('my_forms'))
+    
+
+@app.route('/admin', methods=['GET'])
+@app.route('/admin/users', methods=['GET'])
+def list_users():
+    return render_template('list-users.html', users=User().findAll()) 
+
+
+@app.route('/admin/user/<string:username>', methods=['GET'])
+def admin_user(username):
+    user = User(username=username)
+    if not user:
+        flash("username not in database", 'info')
+        return redirect(url_for('list_users'))
+
+    return render_template('admin-user.html',   user=user.data,
+                                                formCount=user.authoredFormsCount(),
+                                                forms=Form().findAll(author=username)
+                                                ) 
+
+
+@app.route('/admin/user/toggle-enabled/<string:username>', methods=['POST'])
+def toggle_user(username): 
+    user=User(username=username)
+    if not user:
+        return JsonResponse(json.dumps())
+
+    return JsonResponse(json.dumps({'enabled':user.toggleEnabled()}))
+
+
+@app.route('/admin/forms', methods=['GET'])
+def list_all_forms():
+    return render_template('list-forms.html', forms=findForms()) 
+
+
+@app.route('/admin/form/toggle-enabled/<string:slug>', methods=['POST'])
+def toggle_form(slug): 
+    form=Form(slug=slug)
+    if not form:
+        return JsonResponse(json.dumps())
+
+    return JsonResponse(json.dumps({'enabled':form.toggleEnabled()}))
+
 
 
 """

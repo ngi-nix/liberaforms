@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+{% if not created %}
+<div class="container">
+    <form method="POST">
+        <label>Username</label><br />
+            <input type="text" name="username" required ><br />
+
+        <label>email</label><br />
+            <input type="text" name="email" required ><br />
+
+        <br />
+        Use a passphrase, with spaces, eg: No holidays this year
+        <br />
+        <label>Password</label><br />
+            <input type="text" name="password1" required ><br />
+
+        <label>Password again</label><br />
+            <input type="text" name="password2" required ><br />
+
+    <input class="btn-success btn" type="submit" value="Submit">
+    </form>
+</div>
+{% else %}
+
+<h1>User created OK!</h1>
+<h2>We sent you an email</h2>
+
+{% endif %}
+
+
+<script>
+    jQuery(function($) {
+
+    });
+</script>
+  
+{% endblock %}

@@ -14,6 +14,16 @@
 
 <body>
 
+<!-- menu -->
+
+<a href="/admin/forms">Admin - List forms</a>
+<a href="/admin/users">Admin - List Users</a>
+
+<a href="/forms">My forms</a>
+<a href="/user/tuttle">User prefs.</a>
+<a href="/user/logout">Logout</a>
+
+
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages and request.path != '/login' %}
                 {% for category, message in messages %}

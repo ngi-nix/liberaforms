@@ -6,40 +6,39 @@
 
 
 <div style="margin: 0 0 1em 0; background-color:red;color:white">
-    <span style="font-size:2em;padding:0.5em">All forms</span>
+    <span style="font-size:2em;padding:0.5em">List of users</span>
 </div>
 
 <div class="container">
 
-<table id="forms" class="table table-striped table-condensed">
-    <thead>
+
+<table id="users" class="table table-striped table-condensed">
+<thead>
     <tr>
-        <th>name</th>
+        <th>username</th>
         <th>created</th>
-        <th>entries</th>
-        <th>Public</th>
+        <th>email</th>
+        <th>enabled</th>
         <th></th>
     </tr>
 </thead>
-{% for form in forms %}
+{% for user in users %}
 <tr>
-   <td>{{form.slug}}</td>
-   <td>{{form.created}}</td>
-   <td>{{form.entries|length}}</td>
-   <td>{{form.enabled}}</td>
-   <td>
-   <a href="/forms/{{form.slug}}">admin</a>
-   </td>
+   <td>{{user.username}}</td>
+   <td>{{user.created}}</td>
+   <td>{{user.email}}</td>
+   <td>{{user.enabled}}</td>
+   
+   <td><a href="/admin/user/{{user.username}}">admin</a></td>
 </tr>
 {% endfor %}
 </table>
 
 </div>
 
-
 <script>
 $(document).ready(function() {
-    $('#forms').DataTable();
+    $('#users').DataTable();
 } );
 
 </script>

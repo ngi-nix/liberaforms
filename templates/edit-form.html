@@ -20,7 +20,7 @@
     <hr/>
     <h3>Additional info here</h3>
     
-    <form id="result" action="/control/edit{% if slug %}/{{ slug }}{% endif %}" method="post" style="padding-bottom:0.5em;">
+    <form id="result" action="/forms/edit{% if slug %}/{{ slug }}{% endif %}" method="post" style="padding-bottom:0.5em;">
         <input type="hidden" id="structure" name="structure" />
         <label>Form URL</label><br />
             Your from will have this address
@@ -32,9 +32,9 @@
         <br />
     <p></p>
     {% if isFormNew %}
-    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/control/list'">
+    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms/list'">
     {% else %}
-    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/control/admin/{{ slug }}'">
+    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms/admin/{{ slug }}'">
     {% endif %}
     <input class="btn-info btn" type="submit" value="Preview" />
     </form>
@@ -70,7 +70,7 @@ jQuery(function($) {
         //console.log(formStructure);
         if ( "{{ isFormNew }}" == "True" ){
             $.ajax({
-                url : "/control/check-slug-availability/"+$('#slug').val(),
+                url : "/forms/check-slug-availability/"+$('#slug').val(),
                 type: "POST",
                 data : $('#slug').val(),
                 dataType: "json",

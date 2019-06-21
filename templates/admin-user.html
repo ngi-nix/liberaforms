@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css">
+
+
+<div style="margin: 0 0 1em 0; background-color:red;color:white">
+    <span style="font-size:2em;padding:0.5em">Admin user</span>
+</div>
+
+<div class="container">
+
+    <div class="row col-md-4">
+        
+        <table class="table table-striped table-condensed">
+            <tr>
+               <td>username</td>
+               <td>{{ user.username }}</td>
+            </tr>
+            <tr>
+               <td>Created</td>
+               <td>{{ user.created }}</td>
+            </tr>
+            <tr>
+               <td>email</td>
+               <td>{{ user.email }}</td>
+            </tr>
+            <tr>
+               <td>Validated email</td>
+               <td> {% if user.validatedEmail %}
+                    <span style="color:green">Yes</span>
+                    {% else %}
+                    <span style="color:red">No</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td>Enabled</td>
+               <td>
+                   <div id="toggle_enabled" class="btn-group btn-toggle">
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if user.enabled %}active btn-success{% endif %}">Enabled</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not user.enabled %}active btn-danger{% endif %}">Disabled</button>
+                   </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+    <div class="row col-md-8">
+
+        <table id="forms" class="table table-striped table-condensed">
+        <thead>
+            <tr>
+            <th>Name</th>
+            <th>Created</th>
+            <th>Entries</th>
+            <th></th>
+
+            </tr>
+        </thead>
+        
+        {% for form in forms %}
+        <tr>
+           <td>{{form.slug}}</td>
+           <td>{{form.created}}</td>
+           <td>{{form.entries|length}}</td>
+           <td><a href="/{{form.slug}}">view</a></td>
+           {% if admin %}
+           <td><a href="/forms/admin/{{form.slug}}">admin</a></td>
+           {% endif %}
+        </tr>
+        {% endfor %}
+        </table>
+
+    </div>
+</div>
+
+
+<script>
+$(document).ready(function() {
+    $('#forms').DataTable();
+});
+document.getElementById('toggle_enabled').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/user/toggle-enabled/{{ user['username'] }}",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.enabled == true) {
+                $('#enabled_true').addClass('active  btn-success');
+                $('#enabled_false').removeClass('active btn-danger');
+            }
+            else if (data.enabled == false) {
+                $('#enabled_true').removeClass('active btn-success');
+                $('#enabled_false').addClass('active btn-danger');
+            }
+        }
+    });
+});
+</script>
+  
+{% endblock %}
