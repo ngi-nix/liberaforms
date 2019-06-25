@@ -1,21 +1,34 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div style="margin: 0 0 1em 0; background-color:red;color:white">
-    <span style="font-size:2em;padding:0.5em">Admin form</span>
-</div>
-
 <div class="container">
-    <div class="row col-md-6">     
+    <div class="row col-md-6">
+        <div style="font-size:1.5em; margin-bottom:0.5em;">
+        The form
+        </div>   
         <div id="fb-render"></div>
         <input class="btn-success btn" type="submit" value="Send" disabled />
     </div>
-    <div class="row col-md-6">
-        
+    <div class="row col-md-1"></div> 
+    <div class="row col-md-5">
+        <div style="font-size:1.5em; margin-bottom:0.5em;">
+        Form details
+        </div>  
         <table class="table table-striped table-condensed">
             <tr>
-               <td>URL</td>
-               <td>{{ formURL }}</td>
+               <td>Author</td>
+               {% if g.current_user.admin %}
+                    <td>
+                    <a href="/admin/users/{{ form.author }}">{{ form.author }}</a>
+                    {% if userEnabled %}
+                        <span style="color:green">(user enabled)</span>
+                    {% else %}
+                        <span style="color:red">(user disabled)</span>
+                    {% endif %}
+                    </td>
+               {% else %}
+                    <td>{{ form.author }}</td>
+                {% endif %}
             </tr>
             <tr>
                <td>Created</td>
@@ -30,22 +43,41 @@
                <td>{{ last_entry_date }}</td>
             </tr>
             <tr>
+               <td>URL</td>
+               <td>
+                   {% if form.enabled and userEnabled %}
+                   <a id="formLink" href="{{ formURL }}">{{ formURL }}</a>
+                   <span id="formURL" style="display:none">{{ formURL }}</span>
+                   {% else %}
+                   <a id="formLink" href="{{ formURL }}" style="display:none">{{ formURL }}</a>
+                   <span id="formURL">{{ formURL }}</span>
+                   {% endif %}
+                </td>
+            </tr>
+            <tr>
                <td>Is public</td>
+               {% if form.author == g.current_user.username %}
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
                     <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}active btn-success{% endif %}">True</button>
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.enabled %}active btn-danger{% endif %}">False</button>
                    </div>
                </td>
+               {% else %}
+               <td>
+                    {{ form.enabled }}
+               </td>               
+               {% endif %}
             </tr>
 
         </table>
-        
+        {% if form.author == g.current_user.username %}
         <form action="/forms/delete/{{ slug }}" method="post">
             <input class="btn-success btn" type="button" value="View form data" onClick="location.href='/forms/view-data/{{ slug }}'">
             <input class="btn-primary btn" type="button" value="Edit form" onClick="location.href='/forms/edit/{{ slug }}'">
             <input class="btn-warning btn" type="submit" value="Delete form and data">
         </form>
+        {% endif %}
     </div>
 </div>
 
@@ -63,7 +95,7 @@
     });
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/form/toggle-enabled/{{ slug }}",
+        url : "/admin/forms/toggle-enabled/{{ slug }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)
@@ -71,10 +103,14 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
             if (data.enabled == true) {
                 $('#enabled_true').addClass('active  btn-success');
                 $('#enabled_false').removeClass('active btn-danger');
+                $('#formURL').hide();
+                $('#formLink').show();
             }
             else if (data.enabled == false) {
                 $('#enabled_true').removeClass('active btn-success');
                 $('#enabled_false').addClass('active btn-danger');
+                $('#formURL').show();
+                $('#formLink').hide();
             }
         }
     });

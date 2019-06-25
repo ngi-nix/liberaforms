@@ -16,13 +16,22 @@
 
 <!-- menu -->
 
-<a href="/admin/forms">Admin - List forms</a>
-<a href="/admin/users">Admin - List Users</a>
+{% if 'username' in session and session['username'] %}
 
-<a href="/forms">My forms</a>
-<a href="/user/tuttle">User prefs.</a>
-<a href="/user/logout">Logout</a>
+<div class="container" style="font-size:1.3em">
+    <div class="row col-md-12">
+        <a href="/">Start</a> | 
 
+        {% if g.current_user.admin %}
+        <a href="/admin/forms">List forms</a> | 
+        <a href="/admin/users">List users</a> | 
+        {% endif %}
+
+        <a href="/forms">My forms</a> | 
+        <a href="/user/{{ session['username'] }}">Settings</a> | 
+        <a href="/site/logout">Logout</a>
+    </div>
+</div>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages and request.path != '/login' %}
@@ -32,6 +41,10 @@
             {% endif %}
         {% endwith %}
 
+<p></p>
+{% endif %}
+
+<div style="margin-top:2em"></div>
 {% block content %}{% endblock %}
 
 </body>

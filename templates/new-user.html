@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 {% if not created %}
 <div class="container">
+    <div class="row col-md-5"></div>
+    <div class="row col-md-4">
+
     <form method="POST">
         <label>Username</label><br />
             <input type="text" name="username" required ><br />
@@ -12,16 +14,23 @@
             <input type="text" name="email" required ><br />
 
         <br />
-        Use a passphrase, with spaces, eg: No holidays this year
-        <br />
+
         <label>Password</label><br />
+            Use a passphrase, with spaces.<br />
+            eg: No holidays this year
+            <br />
             <input type="text" name="password1" required ><br />
 
         <label>Password again</label><br />
             <input type="text" name="password2" required ><br />
 
+    <p></p>
     <input class="btn-success btn" type="submit" value="Submit">
     </form>
+    
+    </div>
+    <div class="row col-md-3"></div>
+    
 </div>
 {% else %}
 

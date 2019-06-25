@@ -25,6 +25,10 @@ class Form(object):
         return self.form
 
     @property
+    def author(self):
+        return self.form['author']
+
+    @property
     def slug(self):
         return self.form['slug']
 
@@ -48,6 +52,9 @@ class Form(object):
     def entries(self):
         return self.form['entries']
 
+    @property
+    def created(self):
+        return self.form['created']
 
     def findAll(*args, **kwargs):
         if kwargs:
@@ -69,31 +76,21 @@ class Form(object):
     def update(self, data):
         mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
     
-
     def saveEntry(self, entry):
         mongo.db.forms.update({ "_id": self.form["_id"] }, {"$push": {"entries": entry }})
 
+    @property
+    def totalEntries(self):
+        return len(self.entries)
 
+    @property
+    def enabled(self):
+        return self.form['enabled']
 
-def getForm(slug):
-    queriedForm = mongo.db.forms.find_one({"slug": slug})
-    if queriedForm:
-        return dict(queriedForm)
-    return None
-
-
-
-def findForms(*args, **kwargs):
-    if kwargs:
-        return mongo.db.forms.find(kwargs)
-    return mongo.db.forms.find()
-
-def getTotalEntries(form):
-    return len(form["entries"])
-
-def getLastEntryDate(form):
-    if getTotalEntries(form):
-        last_entry = form["entries"][-1] 
-        last_entry_date = last_entry["created"]
-    else:
-        last_entry_date = ""
+    @property
+    def lastEntryDate(self):
+        if self.entries:
+            last_entry = self.entries[-1] 
+            last_entry_date = last_entry["created"]
+        else:
+            last_entry_date = ""

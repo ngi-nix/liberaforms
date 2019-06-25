@@ -10,8 +10,8 @@
 
 <div class="container">
     <p>
-    <input class="btn-primary btn" type="button" value="Admin" onClick="location.href='/forms/{{ slug }}'">
-    <input class="btn-primary btn" type="button" value="Download CSV" onClick="location.href='/control/csv/{{ slug }}'">
+    <input class="btn-primary btn" type="button" value="Return to form" onClick="location.href='/forms/view/{{ slug }}'">
+    <input class="btn-primary btn" type="button" value="Download CSV" onClick="location.href='/forms/csv/{{ slug }}'">
     </p>
     Total entries: {{ entries|length }}
 

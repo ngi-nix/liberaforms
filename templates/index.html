@@ -2,48 +2,52 @@
 {% block content %}
 
 <div class="container">
+    <div class="row col-md-1"></div>
 
-<div class="row col-md-8">
-<p>Hello world!</p>
-    <p>
-    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-    It has survived not only five centuries, but also the leap into electronic typesetting,
-    emaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-    sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-    like Aldus PageMaker including versions of Lorem Ipsum.
-    </p>
+    <div class="row col-md-6">
+    <p>Hello world!</p>
+        <p>
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+        It has survived not only five centuries, but also the leap into electronic typesetting,
+        emaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
+        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+        like Aldus PageMaker including versions of Lorem Ipsum.
+        </p>
+    </div>
+    <div class="row col-md-1"></div>
+    <div class="row col-md-2">
+
+    <form action="/site/login" method="POST">
+        <p>
+        <label>Username or email</label><br />
+        <input name="username" value="" />
+        </p>
+        <p>
+        <label>Password</label><br />
+        <input name="password" value="" />
+        </p>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="{{ category }}">{{ message | safe }}</div>
+            {% endfor %}
+        {% endwith %}
+        <input class="btn-success btn" type="submit" value="Login" />
+    </form>
+    <br />
+    <a href="/site/recover-password">Forgot your password?</a>
+    <br />
+    <a href="/user/new">Register new user</a>
+    </div>
+
+<div class="row col-md-2">
 </div>
 
-
-<div class="row col-md-4">
-
-<form>
-    <p>
-    <label>Username</label><br />
-    <input name="username" value="" />
-    </p>
-    <p>
-    <label>Password</label><br />
-    <input name="password" value="" />
-    </p>
-    <input type="submit" value="Enter" />
-</form>
-<br />
-<a href="/user/reset-password">Forgot your password?</a>
-<br />
-<a href="/user/new">Register new user</a>
+<div class="container" style="margin-top:2em">
+    <div class="row col-md-12 text-right">
+    AGPLv3 <a href="https://gitlab.com/lleialtec/gngforms">Source code</a>
+    </div>
 </div>
 
-
-
-
-
-
-</div>
-
-
-  
-  
 {% endblock %}

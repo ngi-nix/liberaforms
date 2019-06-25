@@ -5,19 +5,26 @@
 <link rel="stylesheet" type="text/css" href="/static/node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
 
-<div style="margin: 0 0 1em 0; background-color:red;color:white">
-    <span style="font-size:2em;padding:0.5em">Admin user</span>
-</div>
-
 <div class="container">
 
     <div class="row col-md-4">
-        
+        <div style="font-size:1.5em; margin-bottom:0.5em;">
+        User details
+        </div>
         <table class="table table-striped table-condensed">
             <tr>
                <td>username</td>
                <td>{{ user.username }}</td>
             </tr>
+            <tr>
+               <td>Is Admin</td>
+               <td>
+                   <div id="toggle_admin" class="btn-group btn-toggle">
+                    <button id="admin_true" class="btn btn-xs btn-default {% if user.admin %}active btn-success{% endif %}">True</button>
+                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.admin %}active btn-danger{% endif %}">False</button>
+                   </div>
+                </td>
+            </tr>            
             <tr>
                <td>Created</td>
                <td>{{ user.created }}</td>
@@ -36,27 +43,31 @@
                 </td>
             </tr>
             <tr>
-               <td>Enabled</td>
+               <td>Can publish/login?</td>
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if user.enabled %}active btn-success{% endif %}">Enabled</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not user.enabled %}active btn-danger{% endif %}">Disabled</button>
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if user.enabled %}active btn-success{% endif %}">True</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not user.enabled %}active btn-danger{% endif %}">False</button>
                    </div>
                 </td>
             </tr>
         </table>
 
     </div>
-    <div class="row col-md-8">
-
-        <table id="forms" class="table table-striped table-condensed">
+    <div class="row col-md-1"></div>
+    <div class="row col-md-7">
+        <div style="font-size:1.5em; margin-bottom:0.5em;">
+        User's forms
+        </div>
+        
+    <table id="forms" class="table table-striped table-condensed">
         <thead>
             <tr>
-            <th>Name</th>
-            <th>Created</th>
-            <th>Entries</th>
-            <th></th>
-
+                <th>Name</th>
+                <th>Created</th>
+                <th>Public</th>
+                <th>Entries</th>
+                <th>Admin</th>
             </tr>
         </thead>
         
@@ -64,15 +75,12 @@
         <tr>
            <td>{{form.slug}}</td>
            <td>{{form.created}}</td>
+           <td>{{form.enabled}}</td>
            <td>{{form.entries|length}}</td>
-           <td><a href="/{{form.slug}}">view</a></td>
-           {% if admin %}
-           <td><a href="/forms/admin/{{form.slug}}">admin</a></td>
-           {% endif %}
+           <td><a href="/forms/view/{{form.slug}}"><i class="glyphicon glyphicon-eye-open"></i></a></td>
         </tr>
         {% endfor %}
-        </table>
-
+    </table>
     </div>
 </div>
 
@@ -83,7 +91,7 @@ $(document).ready(function() {
 });
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/user/toggle-enabled/{{ user['username'] }}",
+        url : "/admin/users/toggle-enabled/{{ user['username'] }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)
@@ -95,6 +103,24 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
             else if (data.enabled == false) {
                 $('#enabled_true').removeClass('active btn-success');
                 $('#enabled_false').addClass('active btn-danger');
+            }
+        }
+    });
+});
+document.getElementById('toggle_admin').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/users/toggle-admin/{{ user['username'] }}",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.admin == true) {
+                $('#admin_true').addClass('active  btn-success');
+                $('#admin_false').removeClass('active btn-danger');
+            }
+            else if (data.admin == false) {
+                $('#admin_true').removeClass('active btn-success');
+                $('#admin_false').addClass('active btn-danger');
             }
         }
     });

@@ -5,14 +5,10 @@
 <link rel="stylesheet" type="text/css" href="/static/node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
 
-<div style="margin: 0 0 1em 0; background-color:red;color:white">
-    <span style="font-size:2em;padding:0.5em">My forms</span>
-</div>
-
 <div class="container">
-<p>
+<div class="text-right">
 <input class="btn-primary btn" type="button" value="New form" onClick="location.href='/forms/new'">
-</p>
+</div>
 
 <table id="forms" class="table table-striped table-condensed">
     <thead>
@@ -31,7 +27,7 @@
    <td>{{form.entries|length}}</td>
    <td>{{form.enabled}}</td>
    <td>
-   <a href="/forms/{{form.slug}}">admin</a>
+   <a href="/forms/view/{{form.slug}}">View</a>
    </td>
 </tr>
 {% endfor %}
