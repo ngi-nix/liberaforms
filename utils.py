@@ -75,6 +75,19 @@ def isValidEmail(email):
     return True
 
 
-def generateCSV(data):
-    out = csv.writer(open("myfile.csv","w"), delimiter=',',quoting=csv.QUOTE_ALL)
-    out.writerow(data)
+def writeCSV(form):
+    fieldnames=[]
+    fieldheaders={}
+    for field in form.fieldIndex:
+        fieldnames.append(field['name'])
+        fieldheaders[field['name']]=field['label']
+      
+    csv_name='/tmp/%s.csv' % form.slug
+    
+    with open(csv_name, mode='w') as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+        writer.writerow(fieldheaders)
+        for entry in form.data['entries']:
+            writer.writerow(entry)
+
+    return csv_name

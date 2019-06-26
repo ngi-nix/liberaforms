@@ -151,6 +151,22 @@ class User(object):
     def setValidatedEmail(self, value):
         self.user['validatedEmail'] = value
         mongo.db.users.save(self.user)
+        
+
+    def canViewForm(self, form):
+        if self.username == form.author:
+            return True
+        if self.admin:
+            return True
+        return False
+    
+    
+    def canEditForm(self, form):
+        if self.username == form.author:
+            return True
+        return False
+        
+
 
 
 
@@ -195,10 +211,12 @@ class Form(object):
     def fieldIndex(self):
         return self.form['fieldIndex']
 
+    """
     @fieldIndex.setter
     def fieldIndex(self, value):
         self.form['fieldIndex'] = value
-
+    """
+    
     @property
     def entries(self):
         return self.form['entries']
@@ -243,9 +261,11 @@ class Form(object):
     def totalEntries(self):
         return len(self.entries)
 
+
     @property
     def enabled(self):
         return self.form['enabled']
+
 
     @property
     def lastEntryDate(self):
@@ -254,10 +274,36 @@ class Form(object):
             last_entry_date = last_entry["created"]
         else:
             last_entry_date = ""
+
             
-    def isAuthor(self, username):
-        if self.author != username:
-            if not (g.current_user and g.current_user.admin):
-                flash("You are not the author of this form", 'warning')
+    def isAuthor(self, user):
+        if self.author != user.username:
             return False
         return True
+
+
+    def isAvailable(self):
+        if not self.enabled:
+            return False
+        if not User(username=self.author).enabled:
+            return False
+        return True
+
+
+
+class Site(object):
+    site = None
+
+    def __new__(cls, *args, **kwargs):
+        instance = super(Site, cls).__new__(cls)
+        if kwargs:
+            site = mongo.db.forms.find_one(kwargs)
+            if site:
+                instance.site=dict(site)
+            else:
+                return None
+        return instance
+
+    
+    def __init__(self, *args, **kwargs):
+        pass

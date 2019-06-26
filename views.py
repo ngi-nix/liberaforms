@@ -1,4 +1,4 @@
-from flask import request, g, Response, render_template, redirect, url_for, session, flash
+from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file
 import json, re, datetime
 from formbuilder import app, mongo
 from functools import wraps
@@ -15,18 +15,14 @@ import pprint
 def before_request():
     g.current_user=None
     if 'username' in session:
-        user=User(username=session['username'])
-        g.current_user = user
+        g.current_user=User(username=session['username'])
 
 
 # login required decorator
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        #print kwargs
-        print("session[username] %s" % session['username'])
-        if 'username' in session and session['username']:
-            print('user is logged in.')
+        if g.current_user:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('index'))
@@ -37,7 +33,6 @@ def admin_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if g.current_user and g.current_user.admin:
-        #if 'admin' in session and session['admin']:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('index'))
@@ -47,7 +42,7 @@ def admin_required(f):
 def anon_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'username' in session and session['username']:
+        if g.current_user:
             return redirect(url_for('index'))
         else:
             return f(*args, **kwargs)
@@ -65,13 +60,12 @@ def index():
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 def view_form(slug):
     queriedForm = Form(slug=slug)
-    if not queriedForm:
+    if not (queriedForm and queriedForm.isAvailable()):
+        flash("Form is not available", 'warning')
+        if g.current_user:
+            return redirect(url_for('my_forms'))
         return redirect(url_for('index'))
-    if not queriedForm.enabled:
-        return redirect(url_for('index'))
-    if not User(username=queriedForm.author).enabled:
-        return redirect(url_for('index'))
-       
+    
     if request.method == 'POST':      
         formData = dict(request.form)
         data = {}
@@ -105,7 +99,8 @@ def form_summary(slug):
         flash("No form found", 'error')
         return redirect(url_for('my_forms'))
         
-    if not queriedForm.isAuthor(g.current_user.username):
+    if not queriedForm.isAuthor(g.current_user):
+        flash("You are not the form author and cannot view this data", 'warning')
         return redirect(url_for('my_forms'))
 
     #print(queriedForm['fieldIndex'])
@@ -118,25 +113,17 @@ def form_summary(slug):
 @login_required
 def csv_form(slug):
     pp = pprint.PrettyPrinter()
-    quieriedForm = Form(slug=slug)
-    if not quieriedForm:
+    queriedForm = Form(slug=slug)
+    if not queriedForm:
         flash("No form found", 'error')
         return redirect(url_for('my_forms'))
         
-    entries=quieriedForm.entries
-    """
-    We could get field names form quieriedForm but the form
-    Author may have modified fields during the campaign. So,
-    We build a list of fields taken from the entries.
-    """
+    if not queriedForm.isAuthor(g.current_user):
+        flash("No permissions", 'warning')
+        return redirect(url_for('my_forms'))
     
-    fieldNames = []
-    for entry in entries:
-        fieldNames = set(fieldNames).union(set(list(entry.keys())))
-    
-    
-    
-    return render_template('csv.html', fieldNames=fieldNames, entries=entries)
+    csv_file = writeCSV(queriedForm)
+    return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
 
@@ -167,7 +154,7 @@ def edit_form(slug=None):
         queriedForm=Form(slug=session['formSlug'])
         queriedFieldIndex=[]
         if queriedForm:
-            if not queriedForm.isAuthor(g.current_user.username):
+            if not g.current_user.canEditForm(queriedForm):
                 return redirect(url_for('my_forms'))
             queriedFieldIndex=queriedForm.fieldIndex   
         
@@ -233,7 +220,7 @@ def edit_form(slug=None):
         queriedForm = Form(slug=slug)
         if queriedForm:
             isFormNew = False
-            if not queriedForm.isAuthor(g.current_user.username):
+            if not g.current_user.canEditForm(queriedForm):
                 return redirect(url_for('my_forms'))
             session['formSlug'] = queriedForm.slug
             if not session['formStructure']:
@@ -279,7 +266,7 @@ def save_form(slug):
         
         queriedForm=Form(slug=slug)
         if queriedForm:
-            if not queriedForm.isAuthor(g.current_user.username):
+            if not g.current_user.canEditForm(queriedForm):
                 return redirect(url_for('my_forms'))
             
             queriedForm.update({ 
@@ -293,7 +280,7 @@ def save_form(slug):
             flash("Updated OK", 'info')
         else:
             newFormData={
-                        "created": datetime.date.today().strftime("%Y/%m/%d"),
+                        "created": datetime.date.today().strftime("%Y-%m-%d"),
                         "author": session['username'],
                         "postalCode": "08014",
                         "enabled": False,
@@ -333,7 +320,7 @@ def inspect_form(slug):
         flash("Form not found", 'warning')
         return redirect(url_for('my_forms'))        
     
-    if not (queriedForm.isAuthor(g.current_user.username) or g.current_user.admin):
+    if not g.current_user.canViewForm(queriedForm):
         return redirect(url_for('my_forms'))
     
     populateSessionFormData(queriedForm.data)
@@ -358,8 +345,15 @@ def inspect_form(slug):
 
 @app.route('/user/<string:username>', methods=['GET', 'POST'])
 @login_required
-def user_settings(username): 
+def user_settings(username):
+    user=User(username=username)
+    if not user:
+        return redirect(url_for('my_forms'))
+    if not (user.username == g.current_user.username or g.current_user.admin):
+        return redirect(url_for('my_forms'))
+        
     return render_template('user-settings.html', username=username)
+    
 
 
 
@@ -380,12 +374,12 @@ def new_user():
             "enabled": isEnabled,
             "admin": isAdmin,
             "validatedEmail": False,
-            "created": datetime.date.today().strftime("%Y/%m/%d"),
+            "created": datetime.date.today().strftime("%Y-%m-%d"),
             "token": {}
         }
         user = createUser(newUser)
         if not user:
-            flash("An error", 'info')
+            flash("An error creating the new user", 'error')
             return render_template('new-user.html')
             
         user.setToken()
@@ -452,11 +446,10 @@ def reset_password():
             if not isValidPassword(request.form['password1'], request.form['password2']):
                 return render_template('reset-password.html')
         
-            user=User(username=session['username'])
+            user=g.current_user
             if user:
                 user.setPassword(encryptPassword(request.form['password1']))
                 user.save()
-                g.current_user=user
                 return redirect(url_for('my_forms'))
     
     return render_template('reset-password.html')
@@ -466,7 +459,6 @@ def reset_password():
 @login_required
 def logout():
     session['username']=None
-    session['admin'] = False
     return redirect(url_for('index'))
 
 
@@ -496,14 +488,10 @@ def validate_email(token):
 @admin_required
 def list_users():
     users = User().findAll()
-        #return render_template('list-forms.html', forms=Form().findAll()) 
-
     userFormCount={}
     for user in users:
         userFormCount[user['username']]=User(username=user['username']).totalForms()
     return render_template('list-users.html', users=User().findAll(), userFormCount=userFormCount) 
-    #print(users)
-    return render_template('list-users.html', users=users)
 
 
 
@@ -559,7 +547,7 @@ def toggle_form(slug):
     form=Form(slug=slug)
     if not form:
         return JsonResponse(json.dumps())
-    if not (form.isAuthor(g.current_user.username) or g.current_user.admin):
+    if not g.current_user.canEditForm(form):
         # don't toggle
         return JsonResponse(json.dumps({'enabled':form.enabled}))
         
