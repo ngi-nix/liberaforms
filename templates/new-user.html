@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+
 {% if not created %}
 <div class="container">
     <div class="row col-md-5"></div>
@@ -8,12 +9,12 @@
 
     <form method="POST">
         <label>Username</label><br />
-            <input type="text" name="username" required ><br />
+            <input type="text" name="username" placeholder="Letters and numbers. No accents." required >
+            <br />
 
         <label>email</label><br />
             <input type="text" name="email" required ><br />
-
-        <br />
+            <br />
 
         <label>Password</label><br />
             Use a passphrase, with spaces.<br />
@@ -26,6 +27,7 @@
 
     <p></p>
     <input class="btn-success btn" type="submit" value="Submit">
+    <input class="btn-primary btn" type="button" value="Cancel" onclick="window.location.href='/';">
     </form>
     
     </div>

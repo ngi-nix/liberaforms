@@ -3,8 +3,8 @@ from flask import flash
 from formbuilder import app
 from unidecode import unidecode
 import re, string, random
+import csv
 from passlib.hash import pbkdf2_sha256
-#from passlib.context import CryptContext
 from password_strength import PasswordPolicy
 from validate_email import validate_email
 
@@ -28,13 +28,15 @@ passwd_context = CryptContext(
 def sanitizeSlug(slug):
     if slug in app.config['RESERVED_SLUGS']:
         return None
-    slug = unidecode(slug)
     slug = slug.lower()
-    slug = slug.replace(" ", "-")
-    return re.sub('[^A-Za-z0-9\-]', '', slug)
-    
-    p = re.compile(r"(\b[-']\b)|[\W_]")
-    return p.sub(lambda m: (m.group(1) if m.group(1) else " "), slug)
+    slug = slug.replace(" ", "-") 
+    return sanitizeString(slug)
+
+
+def sanitizeString(string):
+    string = unidecode(string)
+    string = string.replace(" ", "") 
+    return re.sub('[^A-Za-z0-9\-]', '', string)
 
 
 def encryptPassword(password):
@@ -54,25 +56,25 @@ def getFieldByNameInIndex(index, name):
         if 'name' in field and field['name'] == name:
             return field
     return None
-    """
-    l = list(filter(lambda field: field['name'] == name, index))
-    if l:
-        return l[0]
-    return None
-    """
+
 
 def isValidPassword(password1, password2):
     if password1 != password2:
-        flash("Passwords do not match", 'info')
+        flash("Passwords do not match", 'warning')
         return False
     if policy.test(password1):
-        flash("Your password is weak", 'info')
+        flash("Your password is weak", 'warning')
         return False
     return True
 
 
 def isValidEmail(email):
     if not validate_email(email):
-        flash("email address is not valid", 'info')
+        flash("Email address is not valid", 'warning')
         return False
     return True
+
+
+def generateCSV(data):
+    out = csv.writer(open("myfile.csv","w"), delimiter=',',quoting=csv.QUOTE_ALL)
+    out.writerow(data)

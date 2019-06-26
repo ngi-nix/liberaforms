@@ -3,29 +3,22 @@
 
 <div class="container">
     <div class="row col-md-6">
-        <div style="font-size:1.5em; margin-bottom:0.5em;">
-        The form
-        </div>   
+        <div style="font-size:1.5em;">The form</div> 
+        <hr />
+          
         <div id="fb-render"></div>
         <input class="btn-success btn" type="submit" value="Send" disabled />
     </div>
     <div class="row col-md-1"></div> 
     <div class="row col-md-5">
-        <div style="font-size:1.5em; margin-bottom:0.5em;">
-        Form details
-        </div>  
+        <div style="font-size:1.5em">Form details</div>
+        <hr />
+        
         <table class="table table-striped table-condensed">
             <tr>
                <td>Author</td>
                {% if g.current_user.admin %}
-                    <td>
-                    <a href="/admin/users/{{ form.author }}">{{ form.author }}</a>
-                    {% if userEnabled %}
-                        <span style="color:green">(user enabled)</span>
-                    {% else %}
-                        <span style="color:red">(user disabled)</span>
-                    {% endif %}
-                    </td>
+                    <td><a href="/admin/users/{{ form.author }}">{{ form.author }}</a></td>
                {% else %}
                     <td>{{ form.author }}</td>
                 {% endif %}
@@ -65,7 +58,12 @@
                </td>
                {% else %}
                <td>
-                    {{ form.enabled }}
+                    {% if not userEnabled and form.enabled %}
+                        <span style="text-decoration: line-through">{{ form.enabled }}</span>
+                        <span style="color:red">(user disabled)</span>
+                    {% else %}
+                        {{ form.enabled }}
+                    {% endif %}
                </td>               
                {% endif %}
             </tr>
@@ -95,7 +93,7 @@
     });
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/forms/toggle-enabled/{{ slug }}",
+        url : "/forms/toggle-enabled/{{ slug }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)

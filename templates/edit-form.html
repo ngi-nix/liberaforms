@@ -22,9 +22,9 @@
         <br />
     <p></p>
     {% if isFormNew %}
-    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms/list'">
+    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms'">
     {% else %}
-    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms/admin/{{ slug }}'">
+    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms/view/{{ slug }}'">
     {% endif %}
     <input class="btn-info btn" type="submit" value="Preview" />
     </form>

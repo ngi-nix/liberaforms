@@ -28,11 +28,6 @@
         <label>Password</label><br />
         <input name="password" value="" />
         </p>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <div class="{{ category }}">{{ message | safe }}</div>
-            {% endfor %}
-        {% endwith %}
         <input class="btn-success btn" type="submit" value="Login" />
     </form>
     <br />

@@ -1,5 +1,5 @@
 from formbuilder import app, mongo
-from flask import flash
+from flask import flash, g
 import string, random, datetime
 from .utils import *
 
@@ -16,10 +16,13 @@ def createUser(newUser):
 
 def isNewUserRequestValid(form):   
     if not ('username' in form and 'email' in form and 'password1' in form and 'password2' in form):
-        flash("All fields are required", 'info')
+        flash("All fields are required", 'warning')
+        return False
+    if form['username'] != sanitizeString(form['username']):
+        flash("Username not valid", 'warning')
         return False
     if User(username=form['username']):
-        flash("username not available", 'info')
+        flash("Username not available", 'warning')
         return False
     if not User().isEmailAvailable(form['email']):
         return False
@@ -56,10 +59,10 @@ class User(object):
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
-            flash("email address is not valid", 'info')
+            flash("email address is not valid", 'error')
             return False
         if User(email=email):
-            flash("email address not available", 'info')
+            flash("email address not available", 'error')
             return False
         return True
 
@@ -251,3 +254,10 @@ class Form(object):
             last_entry_date = last_entry["created"]
         else:
             last_entry_date = ""
+            
+    def isAuthor(self, username):
+        if self.author != username:
+            if not (g.current_user and g.current_user.admin):
+                flash("You are not the author of this form", 'warning')
+            return False
+        return True

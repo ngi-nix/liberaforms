@@ -92,8 +92,8 @@ def view_form(slug):
 @app.route('/forms', methods=['GET'])
 @login_required
 def my_forms():
-    forms = sorted(Form().findAll(author=session['username']), key=lambda k: k['created'], reverse=True)
-    return render_template('my-forms.html', forms=forms, username=session['username']) 
+    forms = sorted(Form().findAll(author=g.current_user.username), key=lambda k: k['created'], reverse=True)
+    return render_template('my-forms.html', forms=forms, username=g.current_user.username) 
 
 
 @app.route('/forms/view-data/<string:slug>', methods=['GET'])
@@ -103,6 +103,9 @@ def form_summary(slug):
     queriedForm = Form(slug=slug)
     if not queriedForm:
         flash("No form found", 'error')
+        return redirect(url_for('my_forms'))
+        
+    if not queriedForm.isAuthor(g.current_user.username):
         return redirect(url_for('my_forms'))
 
     #print(queriedForm['fieldIndex'])
@@ -164,8 +167,9 @@ def edit_form(slug=None):
         queriedForm=Form(slug=session['formSlug'])
         queriedFieldIndex=[]
         if queriedForm:
+            if not queriedForm.isAuthor(g.current_user.username):
+                return redirect(url_for('my_forms'))
             queriedFieldIndex=queriedForm.fieldIndex   
-        
         
         formStructureDict = json.loads(request.form['structure'])
         fieldCount=0
@@ -229,6 +233,8 @@ def edit_form(slug=None):
         queriedForm = Form(slug=slug)
         if queriedForm:
             isFormNew = False
+            if not queriedForm.isAuthor(g.current_user.username):
+                return redirect(url_for('my_forms'))
             session['formSlug'] = queriedForm.slug
             if not session['formStructure']:
                 session['formStructure'] = queriedForm.structure
@@ -273,6 +279,9 @@ def save_form(slug):
         
         queriedForm=Form(slug=slug)
         if queriedForm:
+            if not queriedForm.isAuthor(g.current_user.username):
+                return redirect(url_for('my_forms'))
+            
             queriedForm.update({ 
                                 "structure": session['formStructure'],
                                 "fieldIndex": session['formFieldIndex']
@@ -324,12 +333,14 @@ def inspect_form(slug):
         flash("Form not found", 'warning')
         return redirect(url_for('my_forms'))        
     
+    if not (queriedForm.isAuthor(g.current_user.username) or g.current_user.admin):
+        return redirect(url_for('my_forms'))
     
     populateSessionFormData(queriedForm.data)
 
     user=User(username=queriedForm.author)
-    userEnabled=None
     # there should be a user with this username in the database. But just in case..
+    userEnabled=None
     if user:
         userEnabled=user.enabled
     
@@ -412,6 +423,7 @@ def recover_password(token=None):
                 print('/site/recover-password/%s' % user.token)
 
             flash("We may have sent you an email", 'info')
+            return redirect(url_for('index'))
         return render_template('recover-password.html')
 
     if token:
@@ -541,15 +553,17 @@ def list_all_forms():
     return render_template('list-forms.html', forms=Form().findAll()) 
 
 
-@app.route('/admin/forms/toggle-enabled/<string:slug>', methods=['POST'])
-@admin_required
-def toggle_form(slug): 
+@app.route('/forms/toggle-enabled/<string:slug>', methods=['POST'])
+@login_required
+def toggle_form(slug):
     form=Form(slug=slug)
     if not form:
         return JsonResponse(json.dumps())
-
+    if not (form.isAuthor(g.current_user.username) or g.current_user.admin):
+        # don't toggle
+        return JsonResponse(json.dumps({'enabled':form.enabled}))
+        
     return JsonResponse(json.dumps({'enabled':form.toggleEnabled()}))
-
 
 
 """

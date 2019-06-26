@@ -14,17 +14,25 @@
 
 <body>
 
-<!-- menu -->
 
-{% if 'username' in session and session['username'] %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages and request.path != '/login' %}
+        {% for category, message in messages %}
+            <div class="{{ category }}" style="text-align:center; font-weight: bold;">{{ message | safe }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<!-- menu -->
+{% if g.current_user %}
 
 <div class="container" style="font-size:1.3em">
     <div class="row col-md-12">
         <a href="/">Start</a> | 
 
         {% if g.current_user.admin %}
-        <a href="/admin/forms">List forms</a> | 
-        <a href="/admin/users">List users</a> | 
+        <a href="/admin/forms">All forms</a> | 
+        <a href="/admin/users">All users</a> | 
         {% endif %}
 
         <a href="/forms">My forms</a> | 
@@ -33,15 +41,6 @@
     </div>
 </div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages and request.path != '/login' %}
-                {% for category, message in messages %}
-                  <div class="{{ category }}">{{ message | safe }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-<p></p>
 {% endif %}
 
 <div style="margin-top:2em"></div>
