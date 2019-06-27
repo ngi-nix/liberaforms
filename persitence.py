@@ -41,6 +41,9 @@ class User(object):
             if 'token' in kwargs:
                 user = mongo.db.users.find_one({"token.token": kwargs['token']})
             else:
+                if g.current_user and not g.current_user.isRootUser():
+                    # rootUser can find any user. else only find users registered with this hostname.
+                    kwargs['hostname']=g.hostname
                 user = mongo.db.users.find_one(kwargs)
             if user:
                 instance.user=dict(user)
@@ -53,9 +56,13 @@ class User(object):
         pass
 
 
-    def findAll(cls):
-        return mongo.db.users.find()
-
+    def findAll(cls, *args, **kwargs):
+        if not g.current_user.isRootUser():
+            kwargs['hostname']=g.hostname
+        if kwargs:
+            return mongo.db.users.find(kwargs)
+        return mongo.db.users.find()      
+    
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
@@ -78,6 +85,10 @@ class User(object):
     def enabled(self):
         return self.user['enabled']
         
+    @property
+    def hostname(self):
+        return self.user['hostname']
+
     
     def totalForms(self):
         print("username: %s" % self.username)
@@ -88,6 +99,12 @@ class User(object):
     def save(self):
         mongo.db.users.save(self.user)
 
+
+    def isRootUser(self):
+        if self.user['email'] in app.config['ROOT_ADMINS']:
+            return True
+        return False
+    
 
     @property
     def token(self):
@@ -153,10 +170,26 @@ class User(object):
         mongo.db.users.save(self.user)
         
 
+    def canViewUser(self, user):
+        #if self.username == user.username:
+        #    return True
+        if self.admin and self.hostname == user.hostname:
+            return True
+        if self.isRootUser():
+            return True
+        return False
+
+
+    def canEditUser(self, user):
+        return self.canViewUser(user)
+
+
     def canViewForm(self, form):
         if self.username == form.author:
             return True
-        if self.admin:
+        if self.admin and self.hostname == form.hostname:
+            return True
+        if self.isRootUser():
             return True
         return False
     
@@ -169,13 +202,16 @@ class User(object):
 
 
 
-
 class Form(object):
     form = None
 
     def __new__(cls, *args, **kwargs):
         instance = super(Form, cls).__new__(cls)
+
         if kwargs:
+            if g.current_user and not g.current_user.isRootUser():
+                # rootUser can find any form. else only find forms created at this hostname.
+                kwargs['hostname']=g.hostname
             form = mongo.db.forms.find_one(kwargs)
             if form:
                 instance.form=dict(form)
@@ -183,7 +219,7 @@ class Form(object):
                 return None
         return instance
 
-    
+
     def __init__(self, *args, **kwargs):
         pass
 
@@ -225,7 +261,10 @@ class Form(object):
     def created(self):
         return self.form['created']
 
-    def findAll(*args, **kwargs):
+
+    def findAll(cls, *args, **kwargs):
+        if not g.current_user.isRootUser():
+            kwargs['hostname']=g.hostname
         if kwargs:
             return mongo.db.forms.find(kwargs)
         return mongo.db.forms.find()
@@ -239,14 +278,14 @@ class Form(object):
         mongo.db.forms.save(self.form)
         return self.form['enabled']
 
-
+    """
     def canRead(self, username):
         if self.author == username:
             return True
         user=User(username=username)
         if user and user.username == self.author:
             return True
-        
+    """
 
     def insert(self, formData):
         mongo.db.forms.insert_one(formData)
@@ -266,6 +305,10 @@ class Form(object):
     def enabled(self):
         return self.form['enabled']
 
+    @property
+    def hostname(self):
+        return self.form['hostname']
+        
 
     @property
     def lastEntryDate(self):
@@ -290,6 +333,8 @@ class Form(object):
         return True
 
 
+
+        
 
 class Site(object):
     site = None

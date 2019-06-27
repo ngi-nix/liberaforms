@@ -17,7 +17,13 @@
             <tr>
                <td>username</td>
                <td>{{ user.username }}</td>
-            </tr>
+            </tr>        
+            {% if g.current_user.isRootUser() %}
+                <tr>
+                   <td>hostname</td>
+                   <td>{{ user.hostname }}</td>
+                </tr>
+            {% endif %}
             <tr>
                <td>Is Admin</td>
                <td>

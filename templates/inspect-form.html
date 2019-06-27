@@ -27,6 +27,12 @@
                <td>Created</td>
                <td>{{ created }}</td>
             </tr>
+            {% if g.current_user.isRootUser() %}
+                <tr>
+                   <td>hostname</td>
+                   <td>{{ form.hostname }}</td>
+                </tr>
+            {% endif %}
             <tr>
                <td>Num of entries</td>
                <td>{{ total_entries }}</td>

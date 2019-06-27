@@ -10,6 +10,11 @@
 <thead>
     <tr>
         <th>username</th>
+        
+        {% if g.current_user.isRootUser() %}
+            <th>hostname</th>
+        {% endif %}
+        
         <th>created</th>
         <th>email</th>
         <th>forms</th>
@@ -20,10 +25,15 @@
 </thead>
 {% for u in users %}
 <tr>
-   <td>{{u.username}}</td></td>
+   <td>{{u.username}}</td>
+   
+   {% if g.current_user.isRootUser() %}
+    <td>{{u.hostname}}</td>
+   {% endif %}
+   
    <td>{{u.created}}</td>
    <td>{{u.email}}</td>
-   <td>{{ userFormCount[u.username] }}</td>
+   <td>{{userFormCount[u.username]}}</td>
    <td>{{u.enabled}}</td>
    <td>{{u.admin}}</td>
    <td><a href="/admin/users/{{u.username}}">View</a></td>

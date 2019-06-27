@@ -2,6 +2,7 @@ from flask import request, g, Response, render_template, redirect, url_for, sess
 import json, re, datetime
 from formbuilder import app, mongo
 from functools import wraps
+from urllib.parse import urlparse
 from .persitence import *
 from .session import *
 from .utils import *
@@ -16,6 +17,7 @@ def before_request():
     g.current_user=None
     if 'username' in session:
         g.current_user=User(username=session['username'])
+    g.hostname = urlparse(request.host_url).hostname
 
 
 # login required decorator
@@ -255,15 +257,15 @@ def save_form(slug):
         if slug != session['formSlug']:
             flash("Something went wrong", 'error')
         
-        slug = sanitizeSlug(slug)
         if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
             session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
         else:
-            # move 'created' field to beginning of the list
+            # move 'created' field to beginning of the Index
             field = getFieldByNameInIndex(session['formFieldIndex'], 'created')
             session['formFieldIndex'].remove(field)
             session['formFieldIndex'].insert(0, field)
         
+        slug = sanitizeSlug(slug)
         queriedForm=Form(slug=slug)
         if queriedForm:
             if not g.current_user.canEditForm(queriedForm):
@@ -277,14 +279,14 @@ def save_form(slug):
             #pp = pprint.PrettyPrinter(indent=4)
             #pp.pprint(newFormData)
             
-            flash("Updated OK", 'info')
+            flash("Updated form OK", 'info')
         else:
             newFormData={
                         "created": datetime.date.today().strftime("%Y-%m-%d"),
                         "author": session['username'],
                         "postalCode": "08014",
                         "enabled": False,
-                        "urlRoot": request.url_root,
+                        "hostname": urlparse(request.host_url).hostname,
                         "slug": slug,
                         "notification": [],
                         "structure": session['formStructure'],
@@ -294,7 +296,7 @@ def save_form(slug):
                     }
             Form().insert(newFormData)
             clearSessionFormData()
-            flash("Saved OK", 'info')
+            flash("Form saved OK", 'info')
 
         return redirect(url_for('inspect_form', slug=slug))
 
@@ -364,13 +366,14 @@ def new_user():
             return render_template('new-user.html')
         isAdmin=False
         isEnabled=False
-        if request.form['email'] in app.config['DEFAULT_ADMINS']:
+        if request.form['email'] in app.config['ROOT_ADMINS']:
             isAdmin=True
             isEnabled=True
         newUser = {
             "username": request.form['username'],
             "email": request.form['email'],
             "password": encryptPassword(request.form['password1']),
+            "hostname": urlparse(request.host_url).hostname,
             "enabled": isEnabled,
             "admin": isAdmin,
             "validatedEmail": False,
@@ -396,9 +399,10 @@ def login():
         user=User(username=request.form['username'])
 
         if user and user.enabled and verifyPassword(request.form['password'], user.data['password']):
-            session['username']=user.username
-            g.current_user=user
-            return redirect(url_for('my_forms'))
+            if user.isRootUser() or user.hostname == g.hostname:
+                session['username']=user.username
+                g.current_user=user
+                return redirect(url_for('my_forms'))
     
     flash("Bad credentials", 'error')
     return redirect(url_for('index'))
@@ -498,9 +502,9 @@ def list_users():
 @app.route('/admin/users/<string:username>', methods=['GET'])
 @admin_required
 def inspect_user(username):
-    user = User(username=username)
+    user=User(username=username)
     if not user:
-        flash("username not in database", 'info')
+        flash("Username not found", 'info')
         return redirect(url_for('list_users'))
 
     return render_template('inspect-user.html', user=user.data,
@@ -515,8 +519,9 @@ def toggle_user(username):
     user=User(username=username)
     if not user:
         return JsonResponse(json.dumps())
-
-    return JsonResponse(json.dumps({'enabled':user.toggleEnabled()}))
+    if g.current_user.canEditUser(user):
+        return JsonResponse(json.dumps({'enabled':user.toggleEnabled()}))
+    return JsonResponse(json.dumps({'enabled':user.enabled}))
 
 
 @app.route('/admin/users/toggle-admin/<string:username>', methods=['POST'])
@@ -526,11 +531,13 @@ def toggle_admin(username):
     if not user:
         return JsonResponse(json.dumps())
     
-    # current_user cannot remove their own admin permission
     if user.username == g.current_user.username:
+        # current_user cannot remove their own admin permission
         isAdmin=True
-    else:
+    elif g.current_user.canEditUser(user):
         isAdmin=user.toggleAdmin()
+    else:
+        isAdmin=user.admin
     return JsonResponse(json.dumps({'admin':isAdmin}))
 
 

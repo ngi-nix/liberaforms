@@ -11,6 +11,11 @@
     <thead>
     <tr>
         <th>name</th>
+        
+        {% if g.current_user.isRootUser() %}
+            <th>hostname</th>
+        {% endif %}
+       
         <th>created</th>
         <th>author</th>
         <th>entries</th>
@@ -21,6 +26,11 @@
 {% for form in forms %}
 <tr>
    <td>{{form.slug}}</td>
+   
+   {% if g.current_user.isRootUser() %}
+        <td>{{form.hostname}}</td>
+   {% endif %}
+   
    <td>{{form.created}}</td>
    <td><a href="/admin/users/{{form.author}}">{{form.author}}</a></td>
    <td>{{form.entries|length}}</td>
