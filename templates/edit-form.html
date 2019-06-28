@@ -18,7 +18,7 @@
             {{ request.url_root }}
             <input id="slug" name="slug" value="{{ slug }}" size="42" {% if isFormNew %}required{% else %}disabled{% endif %} />
             <span id="slug_not_available" style="display:none" class="bg-danger slug-alert"> Not available! </span>
-            <span id="slug_changed" style="display:none" class="bg-success slug-alert"> Our suggestion </span>
+            <input id="slug_changed" style="display:none" class="btn-success btn slug-alert" type="submit" value="Use this URL" />
         <br />
     <p></p>
     {% if isFormNew %}
