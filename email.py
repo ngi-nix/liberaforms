@@ -5,6 +5,6 @@ import string, random
 import pprint
 
 
-def sendNewUserEmail(user):
-    print(user['email'])
-    print("%suser/validate-email/%s" % (request.url_root, user['token']['token']))
+def smtpSendConfirmEmail(user):
+    print(user.email)
+    print("%suser/validate-email/%s" % (request.url_root, user.token['token']))

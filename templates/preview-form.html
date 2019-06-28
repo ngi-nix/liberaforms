@@ -2,16 +2,22 @@
 {% block content %}
 
 <div class="container">
-    <div class="row">
-    <b>Form URL</b> <input value="{{ formURL }}" size="50" disabled >
-    <br />
-    <div id="fb-render"></div>
-        
-    <form action="/forms/save/{{ slug }}" method="post">    
-        <input class="btn-primary btn" type="button" value="Edit" onClick="location.href='/forms/edit/{{ slug }}'">
-        <input class="btn-success btn" type="submit" value="Save">
-    </form>
+    <div class="row col-md-3"></div>
+    <div class="row col-md-6">
+        <div style="font-size:1.5em">
+            Preview
+        </div>
+        <div style="font-size:1.25em">
+            {{ formURL }}
+        </div>
+        <hr />
+        <div id="fb-render"></div>
+        <form action="/forms/save/{{ slug }}" method="post">    
+            <input class="btn-primary btn" type="button" value="Edit" onClick="location.href='/forms/edit/{{ slug }}'">
+            <input class="btn-success btn" type="submit" value="Save">
+        </form>
     </div>
+    <div class="row col-md-3"></div>
 </div>
 
 

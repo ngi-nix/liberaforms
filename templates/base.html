@@ -18,7 +18,7 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages and request.path != '/login' %}
         {% for category, message in messages %}
-            <div class="{{ category }}" style="text-align:center; font-weight: bold;">{{ message | safe }}</div>
+            <div class="{{ category }}" style="text-align:center;">{{ message | safe }}</div>
         {% endfor %}
     {% endif %}
 {% endwith %}
@@ -26,7 +26,7 @@
 <!-- menu -->
 {% if g.current_user %}
 
-<div class="container" style="font-size:1.3em">
+<div class="container" style="font-size:1.3em;">
     <div class="row col-md-12">
         <a href="/">Start</a> | 
 

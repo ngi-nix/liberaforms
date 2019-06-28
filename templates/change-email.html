@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-5"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size: 1.2em">Change email address</div>
+    We will send you an email to your new address.
+    <p></p>
+    <form method="POST">
+        <label>New email address</label>
+        <br />
+        <input type="text" name="email" required ><br />
+        <p></p>
+        <input class="btn-success btn" type="submit" value="Submit">
+    </form>
+
+</div>
+
+<div class="row col-md-3"></div>    
+</div>
+
+
+<script>
+    jQuery(function($) {
+
+    });
+</script>
+  
+{% endblock %}

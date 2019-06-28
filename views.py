@@ -63,15 +63,15 @@ def index():
 def view_form(slug):
     queriedForm = Form(slug=slug)
     if not (queriedForm and queriedForm.isAvailable()):
-        flash("Form is not available", 'warning')
+        flash("Form is not available. 404", 'warning')
         if g.current_user:
             return redirect(url_for('my_forms'))
         return redirect(url_for('index'))
-    
+       
     if request.method == 'POST':      
         formData = dict(request.form)
         data = {}
-        data["created"] = datetime.date.today().strftime("%Y/%m/%d")
+        data["created"] = datetime.date.today().strftime("%Y-%m-%d")
         
         for key in formData:
             value = formData[key]
@@ -114,7 +114,6 @@ def form_summary(slug):
 @app.route('/forms/csv/<string:slug>', methods=['GET'])
 @login_required
 def csv_form(slug):
-    pp = pprint.PrettyPrinter()
     queriedForm = Form(slug=slug)
     if not queriedForm:
         flash("No form found", 'error')
@@ -174,7 +173,7 @@ def edit_form(slug=None):
                 field = getFieldByNameInIndex(session['formFieldIndex'], formElement['name'])
                 if field:
                     """
-                    We want to order the fields for displaying Entry data (eg. csv download).
+                    We want to order the fields for when we displaying Entry data (eg. csv download).
                     """    
                     fieldPosition = session['formFieldIndex'].index(field)
                     if field['label'] != formElement['label'] or fieldPosition != fieldCount:                      
@@ -279,7 +278,7 @@ def save_form(slug):
             #pp = pprint.PrettyPrinter(indent=4)
             #pp.pprint(newFormData)
             
-            flash("Updated form OK", 'info')
+            flash("Updated form OK", 'success')
         else:
             newFormData={
                         "created": datetime.date.today().strftime("%Y-%m-%d"),
@@ -296,7 +295,7 @@ def save_form(slug):
                     }
             Form().insert(newFormData)
             clearSessionFormData()
-            flash("Form saved OK", 'info')
+            flash("Form saved OK", 'success')
 
         return redirect(url_for('inspect_form', slug=slug))
 
@@ -309,6 +308,7 @@ def is_slug_available(slug):
     available = True
     if Form(slug=slug):
         available = False
+    # we return a sanitized slug as a suggestion for the user.
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
 
 
@@ -354,8 +354,22 @@ def user_settings(username):
     if not (user.username == g.current_user.username or g.current_user.admin):
         return redirect(url_for('my_forms'))
         
-    return render_template('user-settings.html', username=username)
-    
+    return render_template('user-settings.html', user=user)
+ 
+
+
+@app.route('/user/change-email', methods=['GET', 'POST'])
+@login_required
+def change_email():
+    if request.method == 'POST':
+        if 'email' in request.form and isValidEmail(request.form['email']):
+            g.current_user.setToken(email=request.form['email'])
+                        
+            smtpSendConfirmEmail(g.current_user)
+            flash("We sent an email to %s" % request.form['email'], 'info')
+            return redirect(url_for('user_settings', username=g.current_user.username))
+            
+    return render_template('change-email.html')
 
 
 
@@ -386,9 +400,11 @@ def new_user():
             return render_template('new-user.html')
             
         user.setToken()
-        sendNewUserEmail(user.data)
+        smtpSendConfirmEmail(user)
         return render_template('new-user.html', created=True)
 
+    session['username']=None
+    g.current_user=None
     return render_template('new-user.html')
 
 
@@ -418,7 +434,7 @@ def recover_password(token=None):
             user = User(email=request.form['email'])
             if user:
                 user.setToken()
-                print('/site/recover-password/%s' % user.token)
+                print('/site/recover-password/%s' % user.token['token'])
 
             flash("We may have sent you an email", 'info')
             return redirect(url_for('index'))
@@ -474,15 +490,18 @@ def validate_email(token):
         return redirect(url_for('index'))
     if user.hasTokenExpired():
         user.deleteToken()
-        flash("Your petition has expired", 'info')
+        flash("Your petition has expired. Try again.", 'info')
         return redirect(url_for('index'))
+    
+    if 'email' in user.token:
+        user.email = user.token['email']
     
     user.setValidatedEmail(True)
     user.setEnabled(True)
     user.deleteToken()
     session['username']=user.username
     g.current_user=user
-    flash("Your email is valid.", 'info')
+    flash("Your email is valid.", 'success')
     return redirect(url_for('my_forms'))
     
 
@@ -504,7 +523,7 @@ def list_users():
 def inspect_user(username):
     user=User(username=username)
     if not user:
-        flash("Username not found", 'info')
+        flash("Username not found", 'warning')
         return redirect(url_for('list_users'))
 
     return render_template('inspect-user.html', user=user.data,
@@ -519,9 +538,13 @@ def toggle_user(username):
     user=User(username=username)
     if not user:
         return JsonResponse(json.dumps())
-    if g.current_user.canEditUser(user):
-        return JsonResponse(json.dumps({'enabled':user.toggleEnabled()}))
-    return JsonResponse(json.dumps({'enabled':user.enabled}))
+
+    if user.username == g.current_user.username:
+        # current_user cannot remove login permission
+        enabled=user.enabled
+    else:
+        enabled=user.toggleEnabled()
+    return JsonResponse(json.dumps({'enabled':enabled}))
 
 
 @app.route('/admin/users/toggle-admin/<string:username>', methods=['POST'])
@@ -534,10 +557,8 @@ def toggle_admin(username):
     if user.username == g.current_user.username:
         # current_user cannot remove their own admin permission
         isAdmin=True
-    elif g.current_user.canEditUser(user):
-        isAdmin=user.toggleAdmin()
     else:
-        isAdmin=user.admin
+        isAdmin=user.toggleAdmin()
     return JsonResponse(json.dumps({'admin':isAdmin}))
 
 
@@ -554,7 +575,7 @@ def toggle_form(slug):
     form=Form(slug=slug)
     if not form:
         return JsonResponse(json.dumps())
-    if not g.current_user.canEditForm(form):
+    if not g.current_user.username == form.author:
         # don't toggle
         return JsonResponse(json.dumps({'enabled':form.enabled}))
         

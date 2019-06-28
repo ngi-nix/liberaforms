@@ -1,6 +1,7 @@
 from formbuilder import app, mongo
-from flask import flash, g
+from flask import flash, request, g
 import string, random, datetime
+from urllib.parse import urlparse
 from .utils import *
 
 
@@ -13,16 +14,20 @@ def createUser(newUser):
     return User(username=newUser['username'])
 
 
-
 def isNewUserRequestValid(form):   
     if not ('username' in form and 'email' in form and 'password1' in form and 'password2' in form):
         flash("All fields are required", 'warning')
         return False
     if form['username'] != sanitizeString(form['username']):
-        flash("Username not valid", 'warning')
+        flash("Username is not valid", 'warning')
         return False
-    if User(username=form['username']):
-        flash("Username not available", 'warning')
+    # we don't use our User() object because 'hostname' is included in the search criteria
+    # we want 'username' to be unique between _all_ users in the database
+    #if mongo.db.users.find_one({'username':form['username']}):
+    user = User(username=form['username'])
+    if user:
+        print(user.user)
+        flash("Username is not available", 'warning')
         return False
     if not User().isEmailAvailable(form['email']):
         return False
@@ -37,41 +42,47 @@ class User(object):
 
     def __new__(cls, *args, **kwargs):
         instance = super(User, cls).__new__(cls)
-        if kwargs:
-            if 'token' in kwargs:
-                user = mongo.db.users.find_one({"token.token": kwargs['token']})
-            else:
-                if g.current_user and not g.current_user.isRootUser():
-                    # rootUser can find any user. else only find users registered with this hostname.
-                    kwargs['hostname']=g.hostname
-                user = mongo.db.users.find_one(kwargs)
-            if user:
-                instance.user=dict(user)
-            else:
-                return None
-        return instance
+        if not kwargs:
+            return instance
+        if 'token' in kwargs:
+            kwargs={"token.token": kwargs['token'], **kwargs}
+            kwargs.pop('token') 
+        if not (g.current_user and g.current_user.isRootUser()):
+            # rootUser can find any user. else only find users registered with this hostname.
+            kwargs['hostname']=urlparse(request.host_url).hostname
 
+        user = mongo.db.users.find_one(kwargs)
+        if user:
+            instance.user=dict(user)
+            return instance
+        else:
+            return None
+        
     
     def __init__(self, *args, **kwargs):
         pass
 
 
+
     def findAll(cls, *args, **kwargs):
         if not g.current_user.isRootUser():
             kwargs['hostname']=g.hostname
-        if kwargs:
-            return mongo.db.users.find(kwargs)
-        return mongo.db.users.find()      
+        return mongo.db.users.find(kwargs)
+      
     
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
-            flash("email address is not valid", 'error')
+            flash("Email address is not valid", 'error')
             return False
+        # we don't use our User() object because 'hostname' is included in the search criteria
+        # we want 'email' to be unique between _all_ users in the database
+        #if mongo.db.users.find_one({'email':email}):
         if User(email=email):
-            flash("email address not available", 'error')
+            flash("Email address is not available", 'error')
             return False
         return True
+
 
     @property
     def data(self):
@@ -84,7 +95,17 @@ class User(object):
     @property
     def enabled(self):
         return self.user['enabled']
+    
+    @property
+    def email(self):
+        if self.user and 'email' in self.user:
+            return self.user['email']
+        return None
         
+    @email.setter
+    def email(self, email):
+        self.user['email'] = email
+    
     @property
     def hostname(self):
         return self.user['hostname']
@@ -101,63 +122,71 @@ class User(object):
 
 
     def isRootUser(self):
-        if self.user['email'] in app.config['ROOT_ADMINS']:
+        if self.email in app.config['ROOT_ADMINS']:
             return True
         return False
     
 
     @property
     def token(self):
-        return self.user['token']['token']
+        return self.user['token']
 
 
     def hasTokenExpired(self):
-        token_age = datetime.datetime.now() - self.user['token']['created']
+        token_age = datetime.datetime.now() - self.token['created']
         if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
             return True
         return False
 
 
-    def setToken(self):
+    def setToken(self, *args, **kwargs):
         token = getRandomString(length=48)
         while mongo.db.users.find_one({"token.token": token}):
+        #while User(token=token):
             print('token found')
             token = getRandomString(length=48)
-        self.user['token']={'token': token, 'created': datetime.datetime.now()}
-        mongo.db.users.save(self.user)
+        self.user['token']={'token': token, 'created': datetime.datetime.now(), **kwargs}
+        self.save()
 
 
     def deleteToken(self):
         self.user['token']={}
-        mongo.db.users.save(self.user)
+        self.save()
 
 
     def setEnabled(self, value):
         self.user['enabled'] = value
-        mongo.db.users.save(self.user)
+        self.save()
 
 
     def setPassword(self, password):
         self.user['password'] = password
-        mongo.db.users.save(self.user)
+        self.save()
 
 
     def toggleEnabled(self):
-        if self.user['enabled']:
+        if self.isRootUser():
+            self.user['enabled']=True
+        elif self.enabled:
             self.user['enabled']=False
         else:
             self.user['enabled']=True
-        mongo.db.users.save(self.user)
+        self.save()
         return self.user['enabled']
 
 
     @property
     def admin(self):
-        return self.data['admin']
+        if self.user and 'admin' in self.user:
+            return self.data['admin']
+        else:
+            return False
 
 
     def toggleAdmin(self):
-        if self.admin:
+        if self.isRootUser():
+            self.user['admin']=True
+        elif self.admin:
             self.user['admin']=False
         else:
             self.user['admin']=True
@@ -167,30 +196,13 @@ class User(object):
 
     def setValidatedEmail(self, value):
         self.user['validatedEmail'] = value
-        mongo.db.users.save(self.user)
+        self.save()
         
 
-    def canViewUser(self, user):
-        #if self.username == user.username:
-        #    return True
-        if self.admin and self.hostname == user.hostname:
-            return True
-        if self.isRootUser():
-            return True
-        return False
-
-
-    def canEditUser(self, user):
-        return self.canViewUser(user)
-
-
     def canViewForm(self, form):
-        if self.username == form.author:
+        if self.username == form.author or self.admin:
             return True
-        if self.admin and self.hostname == form.hostname:
-            return True
-        if self.isRootUser():
-            return True
+        flash("Permission needed to view form", 'warning')
         return False
     
     
@@ -207,17 +219,17 @@ class Form(object):
 
     def __new__(cls, *args, **kwargs):
         instance = super(Form, cls).__new__(cls)
-
-        if kwargs:
-            if g.current_user and not g.current_user.isRootUser():
-                # rootUser can find any form. else only find forms created at this hostname.
-                kwargs['hostname']=g.hostname
-            form = mongo.db.forms.find_one(kwargs)
-            if form:
-                instance.form=dict(form)
-            else:
-                return None
-        return instance
+        if not kwargs:
+            return instance
+        if not (g.current_user and g.current_user.isRootUser()):
+            # rootUser can find any form. else only find forms created at this hostname.
+            kwargs['hostname']=urlparse(request.host_url).hostname
+        form = mongo.db.forms.find_one(kwargs)
+        if form:
+            instance.form=dict(form)
+            return instance
+        else:
+            return None
 
 
     def __init__(self, *args, **kwargs):
@@ -265,9 +277,7 @@ class Form(object):
     def findAll(cls, *args, **kwargs):
         if not g.current_user.isRootUser():
             kwargs['hostname']=g.hostname
-        if kwargs:
-            return mongo.db.forms.find(kwargs)
-        return mongo.db.forms.find()
+        return mongo.db.forms.find(kwargs)
 
 
     def toggleEnabled(self):
@@ -278,14 +288,6 @@ class Form(object):
         mongo.db.forms.save(self.form)
         return self.form['enabled']
 
-    """
-    def canRead(self, username):
-        if self.author == username:
-            return True
-        user=User(username=username)
-        if user and user.username == self.author:
-            return True
-    """
 
     def insert(self, formData):
         mongo.db.forms.insert_one(formData)
@@ -304,6 +306,7 @@ class Form(object):
     @property
     def enabled(self):
         return self.form['enabled']
+
 
     @property
     def hostname(self):

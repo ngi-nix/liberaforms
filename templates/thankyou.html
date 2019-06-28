@@ -1,10 +1,14 @@
-{% extends "vanilla-base.html" %}
+{% extends "base.html" %}
 {% block content %}
 
-{{ thankyouNote }}
 
-<p></p>
-<input class="btn-success btn" type="button" value="List of forms" onClick="location.href='/list'">
 
+<div class="container">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-6">
+        {{ thankyouNote }}
+    </div>
+    <div class="row col-md-3"></div>
+</div>
 
 {% endblock %}
