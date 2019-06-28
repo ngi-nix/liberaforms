@@ -21,12 +21,8 @@ def isNewUserRequestValid(form):
     if form['username'] != sanitizeString(form['username']):
         flash("Username is not valid", 'warning')
         return False
-    # we don't use our User() object because 'hostname' is included in the search criteria
-    # we want 'username' to be unique between _all_ users in the database
-    #if mongo.db.users.find_one({'username':form['username']}):
     user = User(username=form['username'])
     if user:
-        print(user.user)
         flash("Username is not available", 'warning')
         return False
     if not User().isEmailAvailable(form['email']):
@@ -75,9 +71,6 @@ class User(object):
         if not isValidEmail(email):
             flash("Email address is not valid", 'error')
             return False
-        # we don't use our User() object because 'hostname' is included in the search criteria
-        # we want 'email' to be unique between _all_ users in the database
-        #if mongo.db.users.find_one({'email':email}):
         if User(email=email):
             flash("Email address is not available", 'error')
             return False

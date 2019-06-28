@@ -50,6 +50,14 @@ jQuery(function($) {
             'header',
             'paragraph'
         ],
+        i18n: {
+            locale: 'es-ES',
+            location: '{{request.host_url}}static/formBuilder-languages/'
+            //extension: '.ext'
+            //override: {
+            //    'en-US': {...}
+            //}
+        },
         formData: {{ formStructure | safe }}
     };
     const formBuilder = $(fbEditor).formBuilder(options);
