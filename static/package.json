@@ -12,6 +12,7 @@
     "bootstrap": "3.3.7",
     "datatables.net": "^1.10.19",
     "datatables.net-bs": "^1.10.19",
-    "formBuilder": "^3.2.4"
+    "formBuilder": "^3.2.4",
+    "simplemde": "^1.11.2"
   }
 }

@@ -2,15 +2,14 @@
 {% block content %}
 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
 
 <div class="container">
 
     <div class="row col-md-4">
-        <div style="font-size:1.5em">
-        User details
-        </div>
+        <div style="font-size:1.5em">User details</div>
         <hr />
         
         <table class="table table-striped table-condensed">
@@ -51,6 +50,10 @@
                 </td>
             </tr>
             <tr>
+               <td>language</td>
+               <td>{{ user.language }}</td>
+            </tr>
+            <tr>
                <td>Can publish/login?</td>
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
@@ -76,17 +79,15 @@
                 <th>Created</th>
                 <th>Public</th>
                 <th>Entries</th>
-                <th></th>
             </tr>
         </thead>
         
         {% for form in forms %}
         <tr>
-           <td>{{form.slug}}</td>
+           <td><a href="/forms/view/{{form.slug}}">{{form.slug}}</a></td>
            <td>{{form.created}}</td>
            <td>{{form.enabled}}</td>
            <td>{{form.entries|length}}</td>
-           <td><a href="/forms/view/{{form.slug}}">view</a></td>
         </tr>
         {% endfor %}
     </table>

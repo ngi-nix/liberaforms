@@ -71,10 +71,19 @@ def anon_required(f):
 
 @app.route('/', methods=['GET'])
 def index():
-    pp = pprint.PrettyPrinter()
+    #pp = pprint.PrettyPrinter()
     
-    
-    return render_template('index.html')
+    """
+    users= mongo.db.users.find()
+    for user in users:
+        user["language"] = app.config['DEFAULT_LANGUAGE']
+        mongo.db.users.save(user)
+    """
+    isAdmin=False
+    if g.current_user and g.current_user.admin:
+        isAdmin=True
+    return render_template('index.html',    blurb = Site().blurb,
+                                            isAdmin=isAdmin)
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
@@ -247,7 +256,8 @@ def edit_form(slug=None):
 
     return render_template('edit-form.html', formStructure=session['formStructure'],
                                              slug=session['formSlug'],
-                                             isFormNew=isFormNew)
+                                             isFormNew=isFormNew,
+                                             user=g.current_user)
 
 
 
@@ -313,7 +323,7 @@ def save_form(slug):
                     }
             Form().insert(newFormData)
             clearSessionFormData()
-            flash("Form saved OK", 'success')
+            flash("Saved form OK", 'success')
 
         return redirect(url_for('inspect_form', slug=slug))
 
@@ -405,6 +415,7 @@ def new_user():
             "username": request.form['username'],
             "email": request.form['email'],
             "password": encryptPassword(request.form['password1']),
+            "language": app.config['DEFAULT_LANGUAGE'],
             "hostname": urlparse(request.host_url).hostname,
             "enabled": isEnabled,
             "admin": isAdmin,
@@ -488,10 +499,24 @@ def reset_password():
             if user:
                 user.setPassword(encryptPassword(request.form['password1']))
                 user.save()
-                return redirect(url_for('my_forms'))
+                flash("Password changed OK", 'success')
+                return redirect(url_for('user_settings', username=user.username))
     
     return render_template('reset-password.html')
         
+
+@app.route('/site/save-blurb', methods=['POST'])
+@admin_required
+def save_blurb():
+    if request.method == 'POST':
+        print(request.form)
+        if 'editor' in request.form:
+            
+            site=Site().saveBlurb(request.form['editor'])
+            flash("Text saved OK", 'success')
+    return redirect(url_for('index'))
+            
+            
 
 @app.route('/site/logout', methods=['GET', 'POST'])
 @login_required
@@ -509,7 +534,7 @@ def validate_email(token):
     if user.hasTokenExpired():
         user.deleteToken()
         flash("Your petition has expired. Try again.", 'info')
-        return redirect(url_for('index'))
+        return redirect(url_for('user_settings', username=user.username))
     
     if 'email' in user.token:
         user.email = user.token['email']
@@ -520,7 +545,7 @@ def validate_email(token):
     session['username']=user.username
     g.current_user=user
     flash("Your email is valid.", 'success')
-    return redirect(url_for('my_forms'))
+    return redirect(url_for('user_settings', username=user.username))
     
 
 

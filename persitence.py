@@ -19,8 +19,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from formbuilder import app, mongo
 from flask import flash, request, g
-import string, random, datetime
+import os, string, random, datetime
 from urllib.parse import urlparse
+import markdown
 from .utils import *
 
 
@@ -113,7 +114,11 @@ class User(object):
         if self.user and 'email' in self.user:
             return self.user['email']
         return None
-        
+
+    @property
+    def language(self):
+        return self.user['language']
+    
     @email.setter
     def email(self, email):
         self.user['email'] = email
@@ -356,14 +361,42 @@ class Site(object):
 
     def __new__(cls, *args, **kwargs):
         instance = super(Site, cls).__new__(cls)
-        if kwargs:
-            site = mongo.db.forms.find_one(kwargs)
-            if site:
-                instance.site=dict(site)
-            else:
-                return None
-        return instance
+        kwargs['hostname']=urlparse(request.host_url).hostname
+        site = mongo.db.sites.find_one(kwargs)
+        if site:
+            instance.site=dict(site)
+            return instance
+        else:
+            markdownBlurb="##hello"
+            with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
+                defaultMD=defaultBlurb.read()
+            blurb = {
+                'markdown': defaultMD,
+                'html': markdown.markdown(defaultMD)
+            }
+            newSiteData={
+                "hostname": urlparse(request.host_url).hostname,
+                "blurb": blurb,
+                "invitationOnly": False
+            }
+            mongo.db.sites.insert_one(newSiteData)
+            return Site()
 
     
+
     def __init__(self, *args, **kwargs):
         pass
+
+
+    @property
+    def blurb(self):
+        return self.site['blurb']
+
+        
+    def saveBlurb(self, MDtext):
+        blurb = {
+            'markdown': MDtext,
+            'html': markdown.markdown(MDtext)
+        }
+        self.site['blurb'] = blurb
+        mongo.db.sites.save(self.site)

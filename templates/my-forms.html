@@ -2,13 +2,23 @@
 {% block content %}
 
 <script src="/static/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="/static/node_modules/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/node_modules/datatables.net-bs/css/dataTables.bootstrap.min.css">
 
 
 <div class="container">
-<div class="text-right">
-<input class="btn-primary btn" type="button" value="New form" onClick="location.href='/forms/new'">
+    <div class="row col-md-11" style="font-size:1.5em">
+    My forms
+    </div>
+    <div class="row col-md-1">
+    <input class="btn-success btn" type="button" value="New form" onClick="location.href='/forms/new'">
+    </div>
 </div>
+
+
+<div class="container">
+
+<hr />
 
 <table id="forms" class="table table-striped table-condensed">
     <thead>
@@ -17,18 +27,14 @@
         <th>created</th>
         <th>entries</th>
         <th>Public</th>
-        <th></th>
     </tr>
 </thead>
 {% for form in forms %}
 <tr>
-   <td>{{form.slug}}</td>
+   <td><a href="/forms/view/{{form.slug}}">{{form.slug}}</a></td>
    <td>{{form.created}}</td>
    <td>{{form.entries|length}}</td>
    <td>{{form.enabled}}</td>
-   <td>
-   <a href="/forms/view/{{form.slug}}">View</a>
-   </td>
 </tr>
 {% endfor %}
 </table>

@@ -1,32 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container">
-    <div class="row col-md-1"></div>
 
-    <div class="row col-md-6">
-    <p>Hello world!</p>
-        <p>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-        Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-        when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-        It has survived not only five centuries, but also the leap into electronic typesetting,
-        emaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-        sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-        like Aldus PageMaker including versions of Lorem Ipsum.
-        </p>
+
+{% if g.current_user and g.current_user.isRootUser() %}
+<script src="/static/node_modules/simplemde/dist/simplemde.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/node_modules/simplemde/dist/simplemde.min.css">
+{% endif %}
+
+
+<div class="container">
+<div class="row col-md-8">
+
+    <div id="blurb">
+        {{ blurb['html']|safe }}
+        {% if isAdmin %}
+        <p></p>
+        <hr />
+        <input class="btn-success btn" type="button" value="Edit text" onClick="js:showEditor();" />
+        {% endif %}        
     </div>
-    <div class="row col-md-1"></div>
-    <div class="row col-md-2">
+
+    {% if isAdmin %}
+    <form id="editor-form" action="/site/save-blurb" method="post" style="display:none">
+    <textarea id="editor" name="editor">{{ blurb['markdown'] }}</textarea>
+    </form>
+    {% endif %}
+
+</div>
+<div class="row col-md-1"></div>
+<div class="row col-md-3">
 
     <form action="/site/login" method="POST">
         <p>
         <label>Username or email</label><br />
-        <input name="username" value="" />
+        <input name="username" class="form-control" value="" />
         </p>
         <p>
         <label>Password</label><br />
-        <input name="password" value="" />
+        <input name="password" class="form-control" value="" />
         </p>
         <input class="btn-success btn" type="submit" value="Login" />
     </form>
@@ -34,15 +46,64 @@
     <a href="/site/recover-password">Forgot your password?</a>
     <br />
     <a href="/user/new">Register new user</a>
-    </div>
-
+    
+</div>
 <div class="row col-md-2">
 </div>
 
-<div class="container" style="margin-top:2em">
-    <div class="row col-md-12 text-right">
-    AGPLv3 <a href="https://gitlab.com/lleialtec/gngforms">Source code</a>
-    </div>
-</div>
+{% if isAdmin %}
+<script>
+var toolbar = [
+    {
+        name: "custom",
+        className: "fa fa-check-square",
+        title: "Save",
+        action: function customFunction(editor){
+            save(editor);
+        }
+    },
+    {
+        name: "custom",
+        className: "fa fa-window-close",
+        title: "Cancel",
+        action: function customFunction(editor){
+            cancel(editor);
+        }
+    },
+    "|",
+    {
+        name: "bold",
+        action: SimpleMDE.toggleBold,
+        className: "fa fa-bold",
+        title: "Bold",
+    }
+
+];
+var simplemde = new SimpleMDE({ toolbar: toolbar,
+                                autosave: {enabled: false},
+                                autofocus: true,
+                                spellChecker: false,
+                                //initialValue: "",
+                                element: $("#editor")[0]
+                             });
+
+function showEditor(){
+    $('#blurb').hide();
+    $('#editor-form').show();
+    simplemde.value($("#editor").val())
+}
+function save(editor){
+    $('#editor-form').hide();
+    editor.toTextArea();
+    $("#editor-form").submit();
+}
+function cancel(editor){
+    editor = null;
+    $('#editor-form').hide();
+    $('#blurb').show();
+}
+</script>
+{% endif %}
+
 
 {% endblock %}

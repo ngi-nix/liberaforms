@@ -10,22 +10,81 @@
         <p></p>
         <table class="table table-striped table-condensed">
             <tr>
-                <td>Email</td>
+                <td>Email address</td>
                 <td>
-                    {{ g.current_user.email }}
-                    <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/user/change-email'">
-
+                {{ g.current_user.email }}
+                </td>
+                <td>
+                <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/user/change-email'">
                 </td>
             </tr>
             <tr>
                 <td>Password</td>
-                <td>{{ g.current_user.email }}</td>
+                <td>
+                <i class="glyphicon glyphicon-asterisk"></i>
+                <i class="glyphicon glyphicon-asterisk"></i>
+                <i class="glyphicon glyphicon-asterisk"></i>
+                <i class="glyphicon glyphicon-asterisk"></i>
+                <i class="glyphicon glyphicon-asterisk"></i>
+                <i class="glyphicon glyphicon-asterisk"></i>
+                </td>
+                <td>
+                <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/site/reset-password'">
+                </td>
+            </tr>
+            </tr>
+            <tr>
+                <td>Preferred language</td>
+                <td>{{ g.current_user.data['language'] }}</td>
+                <td>
+                <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/user/change-language'">
+                </td>
             </tr>
         </table>
+        
         {% if g.current_user.admin %}
         <p></p>
-        <div style="font-size:1.5em">Site preferences</div>
+        <div style="font-size:1.5em">My admin settings</div>
         <p></p>
+
+        <table class="table table-striped table-condensed">
+            <tr>
+                <td>Notify me when new user has registered</td>
+                <td>
+                    <div id="toggle_enabled" class="btn-group btn-toggle">
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if 1 == 1 %}active btn-success{% endif %}">True</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not 1 == 1 %}active btn-danger{% endif %}">False</button>
+                    </div>
+               </td>
+            </tr>
+            <tr>
+                <td>Notify me when new form has been created</td>
+                <td>
+                    <div id="toggle_enabled" class="btn-group btn-toggle">
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if 1 == 1 %}active btn-success{% endif %}">True</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not 1 == 1 %}active btn-danger{% endif %}">False</button>
+                    </div>
+               </td>
+            </tr>
+        </table>
+
+
+        <p></p>
+        <div style="font-size:1.5em">Site settings</div>
+        <p></p>
+
+
+        <table class="table table-striped table-condensed">
+            <tr>
+                <td>Invitation only</td>
+                <td>
+                    <div id="toggle_enabled" class="btn-group btn-toggle">
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if 1 == 1 %}active btn-success{% endif %}">True</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not 1 == 1 %}active btn-danger{% endif %}">False</button>
+                    </div>
+               </td>
+            </tr>
+        </table>
         
         {% endif %}
 
