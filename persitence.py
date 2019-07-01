@@ -367,7 +367,6 @@ class Site(object):
             instance.site=dict(site)
             return instance
         else:
-            markdownBlurb="##hello"
             with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
                 defaultMD=defaultBlurb.read()
             blurb = {
@@ -394,9 +393,6 @@ class Site(object):
 
         
     def saveBlurb(self, MDtext):
-        blurb = {
-            'markdown': MDtext,
-            'html': markdown.markdown(MDtext)
-        }
-        self.site['blurb'] = blurb
+        MDtext = re.sub(r'<[^>]*?>', '', MDtext)
+        self.site['blurb'] = { 'markdown':MDtext, 'html':markdown.markdown(MDtext) }
         mongo.db.sites.save(self.site)

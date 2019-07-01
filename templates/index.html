@@ -3,7 +3,7 @@
 
 
 
-{% if g.current_user and g.current_user.isRootUser() %}
+{% if isAdmin %}
 <script src="/static/node_modules/simplemde/dist/simplemde.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/node_modules/simplemde/dist/simplemde.min.css">
 {% endif %}
@@ -17,21 +17,25 @@
         {% if isAdmin %}
         <p></p>
         <hr />
-        <input class="btn-success btn" type="button" value="Edit text" onClick="js:showEditor();" />
+        <input id="show-editor" class="btn-success btn" type="button" value="Edit text" />
         {% endif %}        
     </div>
 
     {% if isAdmin %}
-    <form id="editor-form" action="/site/save-blurb" method="post" style="display:none">
-    <textarea id="editor" name="editor">{{ blurb['markdown'] }}</textarea>
-    </form>
+    <div id="editor" style="display:none">
+        <input id="save-edit" class="btn-success btn" type="button" value="Save" />
+        <input id="cancel-edit" class="btn-primary btn" type="button" value="Cancel" />
+        <p></p>
+        <form id="editor-form" action="/site/save-blurb" method="post">
+        <textarea id="sm-editor" name="editor">{{ blurb['markdown'] }}</textarea>
+        </form>
+    </div>
     {% endif %}
 
 </div>
 <div class="row col-md-1"></div>
 <div class="row col-md-3">
-
-    <form action="/site/login" method="POST">
+    <form action="/site/login" method="POST" style="margin-top:1.5em">
         <p>
         <label>Username or email</label><br />
         <input name="username" class="form-control" value="" />
@@ -46,62 +50,37 @@
     <a href="/site/recover-password">Forgot your password?</a>
     <br />
     <a href="/user/new">Register new user</a>
-    
 </div>
-<div class="row col-md-2">
 </div>
 
 {% if isAdmin %}
 <script>
-var toolbar = [
-    {
-        name: "custom",
-        className: "fa fa-check-square",
-        title: "Save",
-        action: function customFunction(editor){
-            save(editor);
-        }
-    },
-    {
-        name: "custom",
-        className: "fa fa-window-close",
-        title: "Cancel",
-        action: function customFunction(editor){
-            cancel(editor);
-        }
-    },
-    "|",
-    {
-        name: "bold",
-        action: SimpleMDE.toggleBold,
-        className: "fa fa-bold",
-        title: "Bold",
-    }
+$(document).ready(function() {
 
-];
-var simplemde = new SimpleMDE({ toolbar: toolbar,
+var simplemde = new SimpleMDE({ 
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
                                 //initialValue: "",
-                                element: $("#editor")[0]
+                                element: $("#sm-editor")[0]
                              });
 
-function showEditor(){
-    $('#blurb').hide();
-    $('#editor-form').show();
-    simplemde.value($("#editor").val())
-}
-function save(editor){
-    $('#editor-form').hide();
-    editor.toTextArea();
-    $("#editor-form").submit();
-}
-function cancel(editor){
-    editor = null;
-    $('#editor-form').hide();
-    $('#blurb').show();
-}
+    $("#show-editor").click(function(){
+        $('#blurb').hide();
+        $('#editor').show();
+        $('.flash_message').hide();
+        simplemde.value($("#sm-editor").val())
+    });
+    $("#save-edit").click(function(){
+        $('#editor').hide();
+        simplemde.toTextArea();
+        $("#editor-form").submit();
+    });
+    $("#cancel-edit").click(function(){
+        $('#editor').hide();
+        $('#blurb').show();
+    });
+});
 </script>
 {% endif %}
 

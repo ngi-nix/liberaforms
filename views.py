@@ -79,10 +79,11 @@ def index():
         user["language"] = app.config['DEFAULT_LANGUAGE']
         mongo.db.users.save(user)
     """
+    
     isAdmin=False
     if g.current_user and g.current_user.admin:
         isAdmin=True
-    return render_template('index.html',    blurb = Site().blurb,
+    return render_template('index.html',    blurb=Site().blurb,
                                             isAdmin=isAdmin)
 
 
@@ -509,14 +510,12 @@ def reset_password():
 @admin_required
 def save_blurb():
     if request.method == 'POST':
-        print(request.form)
-        if 'editor' in request.form:
-            
-            site=Site().saveBlurb(request.form['editor'])
+        if 'editor' in request.form:            
+            Site().saveBlurb(request.form['editor'])
             flash("Text saved OK", 'success')
     return redirect(url_for('index'))
             
-            
+
 
 @app.route('/site/logout', methods=['GET', 'POST'])
 @login_required
