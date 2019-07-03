@@ -3,27 +3,26 @@
 
 
 <div class="container">
-       
 <div class="row col-md-4"></div>
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">Change password</div>
+    <div style="font-size:1.5em">Send a new user invitation</div>
     <hr />
-    
+
+    <p></p>
     <form method="POST">
-        <label>Password</label><br />
-        Use a passphrase, with spaces.<br />
-    
+        <label>New user's email</label>
         <br />
-        <input type="text" name="password1" class="form-control" placeholder="eg: No holidays this year" required ><br />
-
-        <label>Password again</label><br />
-        <input type="text" name="password2" class="form-control" required ><br />
-
+        <input type="text" name="email" class="form-control" required >
+        <br />
+        <label>Include message</label>
+        <br />
+        <textarea name="message" class="form-control" ></textarea>
         <p></p>
         <input class="btn-success btn" type="submit" value="Submit">
     </form>
+
 </div>
 
 <div class="row col-md-4"></div>    

@@ -13,7 +13,7 @@
 <div class="row col-md-8">
 
     <div id="blurb">
-        {{ blurb['html']|safe }}
+        {{ site.blurb['html']|safe }}
         {% if isAdmin %}
         <p></p>
         <hr />
@@ -27,7 +27,7 @@
         <input id="cancel-edit" class="btn-primary btn" type="button" value="Cancel" />
         <p></p>
         <form id="editor-form" action="/site/save-blurb" method="post">
-        <textarea id="sm-editor" name="editor">{{ blurb['markdown'] }}</textarea>
+        <textarea id="sm-editor" name="editor">{{ site.blurb['markdown'] }}</textarea>
         </form>
     </div>
     {% endif %}
@@ -48,8 +48,10 @@
     </form>
     <br />
     <a href="/site/recover-password">Forgot your password?</a>
-    <br />
-    <a href="/user/new">Register new user</a>
+    {% if not site.invitationOnly %}
+        <br />
+        <a href="/user/new">Register new user</a>
+    {% endif %}
 </div>
 </div>
 
@@ -61,7 +63,6 @@ var simplemde = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
-                                //initialValue: "",
                                 element: $("#sm-editor")[0]
                              });
 
@@ -70,6 +71,7 @@ var simplemde = new SimpleMDE({
         $('#editor').show();
         $('.flash_message').hide();
         simplemde.value($("#sm-editor").val())
+        window.scrollTo(0,0);
     });
     $("#save-edit").click(function(){
         $('#editor').hide();

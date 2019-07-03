@@ -194,22 +194,58 @@ class User(object):
 
     @property
     def admin(self):
-        if self.user and 'admin' in self.user:
-            return self.data['admin']
-        else:
-            return False
+        return self.user['admin']['isAdmin']
 
+
+    @property
+    def defaultAdminSettings(cls):
+        return {
+            "isAdmin": False,
+            "notifyNewUser": False,
+            "notifyNewForm": False
+        }
+            
 
     def toggleAdmin(self):
         if self.isRootUser():
-            self.user['admin']=True
-        elif self.admin:
-            self.user['admin']=False
+            return self.admin
+        if self.admin:
+            self.user['admin']['isAdmin']=False
+            mongo.db.users.save(self.user)
         else:
-            self.user['admin']=True
-        mongo.db.users.save(self.user)
+            self.user['admin']['isAdmin']=True
+            mongo.db.users.save(self.user)
         return self.admin
-        
+    
+
+    """
+    send this admin an email when a new user registers at the site
+    """
+    def toggleNewUserNotification(self):
+        if not self.user['admin']:
+            return False
+        if self.user['admin']['notifyNewUser']:
+            self.user['admin']['notifyNewUser'] = False
+        else:
+            self.user['admin']['notifyNewUser'] = True
+        mongo.db.users.save(self.user)
+        return self.user['admin']['notifyNewUser']
+
+
+    """
+    send this admin an email when a new form is created
+    """
+    def toggleNewFormNotification(self):
+        if not self.user['admin']:
+            return False
+        if self.user['admin']['notifyNewForm']:
+            self.user['admin']['notifyNewForm'] = False
+        else:
+            self.user['admin']['notifyNewForm'] = True
+        mongo.db.users.save(self.user)
+        return self.user['admin']['notifyNewForm']
+
+
 
     def setValidatedEmail(self, value):
         self.user['validatedEmail'] = value
@@ -293,7 +329,7 @@ class Form(object):
 
     def findAll(cls, *args, **kwargs):
         if not g.current_user.isRootUser():
-            kwargs['hostname']=g.hostname
+            kwargs['hostname']=Site().hostname
         return mongo.db.forms.find(kwargs)
 
 
@@ -373,10 +409,12 @@ class Site(object):
                 'markdown': defaultMD,
                 'html': markdown.markdown(defaultMD)
             }
+            hostname = urlparse(request.host_url).hostname
             newSiteData={
-                "hostname": urlparse(request.host_url).hostname,
+                "hostname": hostname,
                 "blurb": blurb,
-                "invitationOnly": False
+                "invitationOnly": True,
+                "noreplyEmailAddress": "no-reply@%s" % hostname
             }
             mongo.db.sites.insert_one(newSiteData)
             return Site()
@@ -388,11 +426,76 @@ class Site(object):
 
 
     @property
+    def hostname(self):
+        return self.site['hostname']
+
+    @property
     def blurb(self):
         return self.site['blurb']
 
-        
     def saveBlurb(self, MDtext):
         MDtext = re.sub(r'<[^>]*?>', '', MDtext)
         self.site['blurb'] = { 'markdown':MDtext, 'html':markdown.markdown(MDtext) }
         mongo.db.sites.save(self.site)
+
+    @property
+    def noreplyEmailAddress(self):
+        return self.site['noreplyEmailAddress']
+
+
+    @property
+    def invitationOnly(self):
+        return self.site['invitationOnly']
+        
+    def toggleInvitationOnly(self):
+        if self.site["invitationOnly"]:
+            self.site["invitationOnly"]=False
+        else:
+            self.site["invitationOnly"]=True
+        mongo.db.sites.save(self.site)
+        return self.site["invitationOnly"]
+
+
+
+
+class Invite(object):
+    invite = None
+
+    def __new__(cls, *args, **kwargs):
+        instance = super(Invite, cls).__new__(cls)
+        if not kwargs:
+            return instance
+        
+        kwargs['hostname']=Site().hostname
+        invite = mongo.db.invites.find_one(kwargs)
+        if invite:
+            instance.invite=dict(invite)
+            return instance
+        return None
+
+        
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def createInvite(cls, email, message):
+        token = getRandomString(length=48)
+        while mongo.db.invites.find_one({"token": token}):
+            token = getRandomString(length=48)
+        data={
+            "hostname": Site().hostname,
+            "created": datetime.datetime.now().strftime("%Y-%m-%d"),
+            "token": token,
+            "email": email,
+            "message": ""
+        }
+        mongo.db.invites.insert_one(data)
+        return Invite(token=token)
+
+
+    def findAll(cls, *args, **kwargs):
+        kwargs['hostname']=Site().hostname
+        return mongo.db.invites.find(kwargs)
+
+
+    def delete(self):
+        return mongo.db.invites.remove({'_id': self.invite['_id']})

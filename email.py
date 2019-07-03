@@ -18,12 +18,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from formbuilder import app
-from flask import flash, request
-import string, random
+import smtplib
+from .persitence import Site
 
 import pprint
 
 
-def smtpSendConfirmEmail(user):
-    print(user.email)
-    print("%suser/validate-email/%s" % (request.url_root, user.token['token']))
+def smtpSendConfirmEmail(user, subject):
+    link="%suser/validate-email/%s" % (request.url_root, user.token['token'])
+    body="Hello %s\n\nPlease confirm your email\n\n%s" % (user['username'], link)
+
+    try:
+        smtpObj = smtplib.SMTP('localhost')
+        smtpObj.sendmail(Site().noreplyEmailAddress, user.email, body)         
+        return True
+    except SMTPException:
+        return False

@@ -6,15 +6,15 @@
     <div class="row col-md-3"></div>
     <div class="row col-md-6">
         
-        <div style="font-size:1.5em">Hello {{ g.current_user.username }} !!</div>
+        <div style="font-size:1.5em; padding-bottom:0.5em;">Hello {{ g.current_user.username }} !!</div>
         <p></p>
-        <table class="table table-striped table-condensed">
+        <table class="table table-condensed">
             <tr>
                 <td>Email address</td>
                 <td>
                 {{ g.current_user.email }}
                 </td>
-                <td>
+                <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/user/change-email'">
                 </td>
             </tr>
@@ -28,7 +28,7 @@
                 <i class="glyphicon glyphicon-asterisk"></i>
                 <i class="glyphicon glyphicon-asterisk"></i>
                 </td>
-                <td>
+                <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/site/reset-password'">
                 </td>
             </tr>
@@ -36,53 +36,84 @@
             <tr>
                 <td>Preferred language</td>
                 <td>{{ g.current_user.data['language'] }}</td>
-                <td>
+                <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/user/change-language'">
                 </td>
             </tr>
         </table>
         
         {% if g.current_user.admin %}
+
+        <p style="padding-top:0.25em;"></p>
+        <div style="font-size:1.5em; padding-bottom:0.5em; display:inline; float:left;">Invitations</div>
+        <div style="display:inline; float:right;">
+            <input class="btn-success btn btn-sm" type="button" value="Invite a new user" onClick="location.href='/admin/invites/new'">
+        </div>
+        <p style="clear:both;"></p>
+        
+        <table class="table table-condensed">
+        {% for invite in invites %}
+            <tr>
+                <td>{{invite.created}}</td>
+                <td>{{invite.email}}</td>
+                <td class="text-right">
+                <input class="btn-success btn btn-xs btn-danger" type="button" value="Delete" onClick="location.href='/admin/invites/delete/{{invite.email}}'">
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        
+        <hr />
+        
         <p></p>
-        <div style="font-size:1.5em">My admin settings</div>
+        <div style="font-size:1.5em; padding-bottom:0.5em;">My admin settings</div>
         <p></p>
 
-        <table class="table table-striped table-condensed">
+        <table class="table table-condensed">
             <tr>
                 <td>Notify me when new user has registered</td>
-                <td>
-                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if 1 == 1 %}active btn-success{% endif %}">True</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not 1 == 1 %}active btn-danger{% endif %}">False</button>
+                <td class="text-right">
+                    <div id="toggle_notify_newuser" class="btn-group btn-toggle">
+                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewUser'] %}active btn-success{% endif %}">True</button>
+                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewUser'] %}active btn-danger{% endif %}">False</button>
                     </div>
                </td>
             </tr>
             <tr>
                 <td>Notify me when new form has been created</td>
-                <td>
-                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if 1 == 1 %}active btn-success{% endif %}">True</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not 1 == 1 %}active btn-danger{% endif %}">False</button>
+                <td class="text-right">
+                    <div id="toggle_notify_newform" class="btn-group btn-toggle">
+                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewForm'] %}active btn-success{% endif %}">True</button>
+                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewForm'] %}active btn-danger{% endif %}">False</button>
                     </div>
                </td>
             </tr>
         </table>
 
-
         <p></p>
-        <div style="font-size:1.5em">Site settings</div>
+        <div style="font-size:1.5em; padding-bottom:0.5em;">Site settings</div>
         <p></p>
-
 
         <table class="table table-striped table-condensed">
             <tr>
                 <td>Invitation only</td>
-                <td>
-                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if 1 == 1 %}active btn-success{% endif %}">True</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not 1 == 1 %}active btn-danger{% endif %}">False</button>
+                <td></td>
+                <td class="text-right">
+                    <div id="toggle_invitation_only" class="btn-group btn-toggle">
+                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}active btn-success{% endif %}">True</button>
+                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}active btn-danger{% endif %}">False</button>
                     </div>
                </td>
+            </tr>
+            
+            <tr>
+                <td>Email address</td>
+                <td>
+                {{ site.noreplyEmailAddress }}
+                </td>
+                <td class="text-right">
+                <input class="btn-primary btn btn-xs" type="button" value="Change" onClick="location.href='/user/change-email'">
+                </td>
             </tr>
         </table>
         
@@ -93,5 +124,62 @@
     </div>
     <div class="row col-md-3"></div>
 </div>
+
+<script>
+document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-newuser-notification",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notify == true) {
+                $('#notify_newuser_true').addClass('active  btn-success');
+                $('#notify_newuser_false').removeClass('active btn-danger');
+            }
+            else if (data.notify == false) {
+                $('#notify_newuser_true').removeClass('active btn-success');
+                $('#notify_newuser_false').addClass('active btn-danger');
+            }
+        }
+    });
+});
+document.getElementById('toggle_notify_newform').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-newform-notification",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notify == true) {
+                $('#notify_newform_true').addClass('active  btn-success');
+                $('#notify_newform_false').removeClass('active btn-danger');
+            }
+            else if (data.notify == false) {
+                $('#notify_newform_true').removeClass('active btn-success');
+                $('#notify_newform_false').addClass('active btn-danger');
+            }
+        }
+    });
+});
+document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-invitation-only",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.invite == true) {
+                $('#invitation_only_true').addClass('active  btn-success');
+                $('#invitation_only_false').removeClass('active btn-danger');
+            }
+            else if (data.invite == false) {
+                $('#invitation_only_true').removeClass('active btn-success');
+                $('#invitation_only_false').addClass('active btn-danger');
+            }
+        }
+    });
+});
+</script>
 
 {% endblock %}

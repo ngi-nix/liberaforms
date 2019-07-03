@@ -76,15 +76,15 @@ def index():
     """
     users= mongo.db.users.find()
     for user in users:
-        user["language"] = app.config['DEFAULT_LANGUAGE']
+        user["admin"]=User().defaultAdminSettings
+        #user["language"] = app.config['DEFAULT_LANGUAGE']
         mongo.db.users.save(user)
     """
     
     isAdmin=False
     if g.current_user and g.current_user.admin:
         isAdmin=True
-    return render_template('index.html',    blurb=Site().blurb,
-                                            isAdmin=isAdmin)
+    return render_template('index.html',site=Site(), isAdmin=isAdmin)
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
@@ -382,8 +382,13 @@ def user_settings(username):
         return redirect(url_for('my_forms'))
     if not (user.username == g.current_user.username or g.current_user.admin):
         return redirect(url_for('my_forms'))
+    site=None
+    invites=None
+    if user.admin:
+        site=Site()
+        invites=Invite().findAll()
         
-    return render_template('user-settings.html', user=user)
+    return render_template('user-settings.html', user=user, invites=invites, site=site)
  
 
 
@@ -399,18 +404,20 @@ def change_email():
             return redirect(url_for('user_settings', username=g.current_user.username))
             
     return render_template('change-email.html')
-
-
+    
 
 @app.route('/user/new', methods=['GET', 'POST'])
-def new_user(): 
+@app.route('/user/new/<string:token>', methods=['GET', 'POST'])
+def new_user(token=None): 
+    if Site().invitationOnly and not token:
+        return redirect(url_for('index'))
     if request.method == 'POST':
         if not isNewUserRequestValid(request.form):
             return render_template('new-user.html')
         isAdmin=False
         isEnabled=False
         if request.form['email'] in app.config['ROOT_ADMINS']:
-            isAdmin=True
+            isAdmin=User().defaultAdminSettings
             isEnabled=True
         newUser = {
             "username": request.form['username'],
@@ -559,6 +566,57 @@ def list_users():
     return render_template('list-users.html', users=User().findAll(), userFormCount=userFormCount) 
 
 
+@app.route('/admin/toggle-newuser-notification', methods=['POST'])
+@admin_required
+def toggle_newUser_notification(): 
+    return json.dumps({'notify': g.current_user.toggleNewUserNotification()})
+
+
+@app.route('/admin/toggle-newform-notification', methods=['POST'])
+@admin_required
+def toggle_newForm_notification(): 
+    return json.dumps({'notify': g.current_user.toggleNewFormNotification()})
+
+
+@app.route('/admin/toggle-invitation-only', methods=['POST'])
+@admin_required
+def toggle_invitation_only(): 
+    return json.dumps({'invite': Site().toggleInvitationOnly()})
+
+
+@app.route('/admin/invites/new', methods=['GET', 'POST'])
+@admin_required
+def new_invite():
+    if request.method == 'POST':
+        if 'email' in request.form and isValidEmail(request.form['email']):
+            if not 'message' in request.form:
+                message="Create a user at %s" % Site().hostname
+            else:
+                message=request.form['message']
+            invite=Invite().createInvite(request.form['email'], message)
+            
+            # send mail
+            flash("We sent an invitation to %s" % request.form['email'], 'success')
+            return redirect(url_for('user_settings', username=g.current_user.username))
+
+    return render_template('new-invite.html')
+
+
+@app.route('/admin/invites/delete/<string:email>', methods=['GET'])
+@admin_required
+def delete_invite(email):
+    if not isValidEmail(email):
+        flash("Opps! We got a bad email", 'error')
+    else:
+        invite=Invite(email=email)
+        if invite:
+            invite.delete()
+        else:
+            flash("Opps! We can't find that invitation", 'error')
+        
+    return redirect(url_for('user_settings', username=g.current_user.username))
+    
+
 
 @app.route('/admin/users/<string:username>', methods=['GET'])
 @admin_required
@@ -568,7 +626,7 @@ def inspect_user(username):
         flash("Username not found", 'warning')
         return redirect(url_for('list_users'))
 
-    return render_template('inspect-user.html', user=user.data,
+    return render_template('inspect-user.html', user=user,
                                                 formCount=user.totalForms,
                                                 forms=Form().findAll(author=username)
                                                 ) 
@@ -609,6 +667,7 @@ def toggle_admin(username):
 def list_all_forms():
     #print(Form().findAll())
     return render_template('list-forms.html', forms=Form().findAll()) 
+
 
 
 @app.route('/forms/toggle-enabled/<string:slug>', methods=['POST'])
