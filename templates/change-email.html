@@ -7,17 +7,19 @@
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">Change email address</div>
+    <div style="font-size:1.5em">
+        {%trans%}Change email address{%endtrans%}
+    </div>
     <hr />
 
-    We will send you an email to your new address.
+    {%trans%}We will send you an email to your new address{%endtrans%}.
     <p></p>
     <form method="POST">
-        <label>New email address</label>
+        <label>{%trans%}New email address{%endtrans%}</label>
         <br />
         <input type="text" name="email" class="form-control" required ><br />
         <p></p>
-        <input class="btn-success btn" type="submit" value="Submit">
+        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
     </form>
 
 </div>

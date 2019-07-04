@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats la Lleialtat Santsenca”
+“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from formbuilder import app, mongo
+from GNGforms import app, mongo
 from flask import flash, request, g
+from flask_babel import gettext 
 import os, string, random, datetime
 from urllib.parse import urlparse
 import markdown
@@ -36,14 +37,14 @@ def createUser(newUser):
 
 def isNewUserRequestValid(form):   
     if not ('username' in form and 'email' in form and 'password1' in form and 'password2' in form):
-        flash("All fields are required", 'warning')
+        flash(gettext("All fields are required"), 'warning')
         return False
     if form['username'] != sanitizeString(form['username']):
-        flash("Username is not valid", 'warning')
+        flash(gettext("Username is not valid"), 'warning')
         return False
     user = User(username=form['username'])
     if user:
-        flash("Username is not available", 'warning')
+        flash(gettext("Username is not available"), 'warning')
         return False
     if not User().isEmailAvailable(form['email']):
         return False
@@ -89,10 +90,10 @@ class User(object):
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
-            flash("Email address is not valid", 'error')
+            flash(gettext("Email address is not valid"), 'error')
             return False
         if User(email=email):
-            flash("Email address is not available", 'error')
+            flash(gettext("Email address is not available"), 'error')
             return False
         return True
 
@@ -255,7 +256,7 @@ class User(object):
     def canViewForm(self, form):
         if self.username == form.author or self.admin:
             return True
-        flash("Permission needed to view form", 'warning')
+        flash(gettext("Permission needed to view form"), 'warning')
         return False
     
     

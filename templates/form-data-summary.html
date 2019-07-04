@@ -7,10 +7,10 @@
 
 <div class="container">
     <div class="row col-md-11" style="font-size:1.5em">
-    Form data: <a href="/forms/view/{{ slug }}">{{ slug }}</a>
+    <input class="btn-primary btn" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ slug }}'">
     </div>
     <div class="row col-md-1">
-    <input class="btn-success btn" type="button" value="Download CSV" onClick="location.href='/forms/csv/{{ slug }}'">
+    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ slug }}'">
     </div>
 </div>
 

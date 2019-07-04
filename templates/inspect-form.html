@@ -3,20 +3,24 @@
 
 <div class="container">
     <div class="row col-md-6">
-        <div style="font-size:1.5em;">The form</div> 
+        <div style="font-size:1.5em;">
+            {%trans%}The form{%endtrans%}
+        </div> 
         <hr />
           
         <div id="fb-render"></div>
-        <input class="btn-success btn" type="submit" value="Send" disabled />
+        <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
     </div>
     <div class="row col-md-1"></div> 
     <div class="row col-md-5">
-        <div style="font-size:1.5em">Form details</div>
+        <div style="font-size:1.5em">
+            {%trans%}Form details{%endtrans%}
+        </div>
         <hr />
         
         <table class="table table-striped table-condensed">
             <tr>
-               <td>Author</td>
+               <td>{%trans%}Author{%endtrans%}</td>
                {% if g.current_user.admin %}
                     <td><a href="/admin/users/{{ form.author }}">{{ form.author }}</a></td>
                {% else %}
@@ -24,25 +28,25 @@
                 {% endif %}
             </tr>
             <tr>
-               <td>Created</td>
+               <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ created }}</td>
             </tr>
             {% if g.current_user.isRootUser() %}
                 <tr>
-                   <td>hostname</td>
+                   <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ form.hostname }}</td>
                 </tr>
             {% endif %}
             <tr>
-               <td>Num of entries</td>
+               <td>{%trans%}Nº of entries{%endtrans%}</td>
                <td>{{ total_entries }}</td>
             </tr>
             <tr>
-               <td>Last entry</td>
+               <td>{%trans%}Last entry{%endtrans%}</td>
                <td>{{ last_entry_date }}</td>
             </tr>
             <tr>
-               <td>URL</td>
+               <td>{%trans%}URL{%endtrans%}</td>
                <td>
                    {% if form.enabled and userEnabled %}
                    <a id="formLink" href="{{ formURL }}">{{ formURL }}</a>
@@ -54,19 +58,19 @@
                 </td>
             </tr>
             <tr>
-               <td>Is public</td>
+               <td>{%trans%}Is public{%endtrans%}</td>
                {% if form.author == g.current_user.username %}
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}active btn-success{% endif %}">True</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.enabled %}active btn-danger{% endif %}">False</button>
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.enabled %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                </td>
                {% else %}
                <td>
                     {% if not userEnabled and form.enabled %}
                         <span style="text-decoration: line-through">{{ form.enabled }}</span>
-                        <span style="color:red">(user disabled)</span>
+                        <span style="color:red">({%trans%}user disabled{%endtrans%})</span>
                     {% else %}
                         {{ form.enabled }}
                     {% endif %}
@@ -77,9 +81,9 @@
         </table>
         {% if form.author == g.current_user.username %}
         <form action="/forms/delete/{{ slug }}" method="post">
-            <input class="btn-success btn" type="button" value="View form data" onClick="location.href='/forms/view-data/{{ slug }}'">
-            <input class="btn-primary btn" type="button" value="Edit form" onClick="location.href='/forms/edit/{{ slug }}'">
-            <input class="btn-warning btn" type="submit" value="Delete form and data">
+            <input class="btn-success btn" type="button" value="{%trans%}View form data{%endtrans%}" onClick="location.href='/forms/view-data/{{ slug }}'">
+            <input class="btn-primary btn" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
+            <input class="btn-warning btn" type="submit" value="{%trans%}Delete form and data{%endtrans%}">
         </form>
         {% endif %}
     </div>

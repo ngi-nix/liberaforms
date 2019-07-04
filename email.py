@@ -18,7 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from flask import flash, request
-from formbuilder import app
+from flask_babel import gettext
+from GNGforms import app
 import smtplib, socket
 from .persitence import Site
 
@@ -30,7 +31,7 @@ def createSmtpObj():
         smtpObj = smtplib.SMTP(app.config['SMTP_SERVER'])
         return smtpObj
     except socket.error as e:
-        flash("Could not connect to SMTP server", 'error')
+        flash(gettext("Could not connect to SMTP server"), 'error')
         return False        
 
 

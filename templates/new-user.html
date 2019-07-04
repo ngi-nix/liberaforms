@@ -7,28 +7,30 @@
     <div class="row col-md-4"></div>
     <div class="row col-md-4">
     
-    <div style="font-size:1.5em">New user</div>
+    <div style="font-size:1.5em">
+        {%trans%}New user{%endtrans%}
+    </div>
     <hr />
     
     <form method="POST">
-        <label>Username</label><br />
-            <input type="text" name="username" class="form-control" placeholder="Letters and numbers. No accents." required >
+        <label>{%trans%}Username{%endtrans%}</label><br />
+            <input type="text" name="username" class="form-control" placeholder="{%trans%}Letters and numbers. No accents." required >
             <br />
 
-        <label>email</label><br />
+        <label>{%trans%}Email{%endtrans%}</label><br />
             <input type="text" name="email" class="form-control" required ><br />
             <br />
 
-        <label>Password</label><br />
-            Use a passphrase, with spaces.<br />
-            <input type="text" name="password1" class="form-control" placeholder="eg: No holidays this year" required ><br />
+        <label>{%trans%}Password{%endtrans%}</label><br />
+            {%trans%}Use a passphrase, with spaces{%endtrans%}<br />
+            <input type="text" name="password1" class="form-control" placeholder="{%trans%}eg: No holidays this year{%endtrans%}" required ><br />
 
         <label>Password again</label><br />
-            <input type="text" name="password2" class="form-control" placeholder="eg: My dog has fleas" required ><br />
+            <input type="text" name="password2" class="form-control" placeholder="{%trans%}Another eg: My dog has fleas{%endtrans%}" required ><br />
 
     <p></p>
-    <input class="btn-success btn" type="submit" value="Submit">
-    <input class="btn-primary btn" type="button" value="Cancel" onclick="window.location.href='/';">
+    <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
+    <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onclick="window.location.href='/';">
     </form>
     
     </div>

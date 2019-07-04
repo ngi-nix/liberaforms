@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats la Lleialtat Santsenca”
+“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from formbuilder import app, mongo
+from GNGforms import app, mongo
 from flask import flash
-from formbuilder import app
+from flask_babel import gettext
+from GNGforms import app
 from unidecode import unidecode
 import re, string, random
 import csv
@@ -79,17 +80,17 @@ def getFieldByNameInIndex(index, name):
 
 def isValidPassword(password1, password2):
     if password1 != password2:
-        flash("Passwords do not match", 'warning')
+        flash(gettext("Passwords do not match"), 'warning')
         return False
     if policy.test(password1):
-        flash("Your password is weak", 'warning')
+        flash(gettext("Your password is weak"), 'warning')
         return False
     return True
 
 
 def isValidEmail(email):
     if not validate_email(email):
-        flash("Email address is not valid", 'warning')
+        flash(gettext("Email address is not valid"), 'warning')
         return False
     return True
 

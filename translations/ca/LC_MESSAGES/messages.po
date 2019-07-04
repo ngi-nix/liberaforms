@@ -1,0 +1,409 @@
+# Catalan translations for PROJECT.
+# Copyright (C) 2019 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2019-07-04 16:28+0200\n"
+"PO-Revision-Date: 2019-07-04 16:26+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ca\n"
+"Language-Team: ca <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+#: email.py:34
+msgid "Could not connect to SMTP server"
+msgstr ""
+
+#: persitence.py:40
+msgid "All fields are required"
+msgstr ""
+
+#: persitence.py:43
+msgid "Username is not valid"
+msgstr ""
+
+#: persitence.py:47
+msgid "Username is not available"
+msgstr ""
+
+#: persitence.py:93 utils.py:93
+msgid "Email address is not valid"
+msgstr ""
+
+#: persitence.py:96
+msgid "Email address is not available"
+msgstr ""
+
+#: persitence.py:259
+msgid "Permission needed to view form"
+msgstr ""
+
+#: utils.py:83
+msgid "Passwords do not match"
+msgstr ""
+
+#: utils.py:86
+msgid "Your password is weak"
+msgstr ""
+
+#: views.py:109
+msgid "Form is not available. 404"
+msgstr ""
+
+#: views.py:143 views.py:160 views.py:364
+msgid "No form found"
+msgstr ""
+
+#: views.py:147 views.py:164
+msgid "Permission required. You cannot view this data"
+msgstr ""
+
+#: views.py:193 views.py:299
+msgid "Something went wrong. No slug!"
+msgstr ""
+
+#: views.py:323
+msgid "Updated form OK"
+msgstr ""
+
+#: views.py:340
+msgid "Saved form OK"
+msgstr ""
+
+#: views.py:416
+#, python-format
+msgid "We sent an email to %s"
+msgstr ""
+
+#: views.py:428
+msgid "Invitation not found"
+msgstr ""
+
+#: views.py:454
+msgid "Opps! An error ocurred when creating the user"
+msgstr ""
+
+#: views.py:480
+msgid "Bad credentials"
+msgstr ""
+
+#: views.py:496
+msgid "We may have sent you an email"
+msgstr ""
+
+#: views.py:531
+msgid "Password changed OK"
+msgstr ""
+
+#: views.py:543
+msgid "Text saved OK"
+msgstr ""
+
+#: views.py:561
+msgid "SMTP config works!"
+msgstr ""
+
+#: views.py:573
+msgid "Your petition has expired. Try again."
+msgstr ""
+
+#: views.py:584
+msgid "Your email is valid"
+msgstr ""
+
+#: views.py:631
+#, python-format
+msgid "We sent an invitation to %s"
+msgstr ""
+
+#: views.py:641
+msgid "Opps! We got a bad email"
+msgstr ""
+
+#: views.py:647
+msgid "Opps! We can't find that invitation"
+msgstr ""
+
+#: views.py:658
+msgid "Username not found"
+msgstr ""
+
+#: templates/base.html:31
+msgid "Start"
+msgstr ""
+
+#: templates/base.html:34 templates/list-users.html:26
+msgid "Forms"
+msgstr ""
+
+#: templates/base.html:35 templates/list-users.html:11
+msgid "Users"
+msgstr ""
+
+#: templates/base.html:38
+msgid "My forms"
+msgstr ""
+
+#: templates/base.html:39
+msgid "Settings"
+msgstr ""
+
+#: templates/base.html:40
+msgid "Logout"
+msgstr ""
+
+#: templates/base.html:53
+msgid "Source code"
+msgstr ""
+
+#: templates/change-email.html:11
+msgid "Change email address"
+msgstr ""
+
+#: templates/change-email.html:15
+msgid "We will send you an email to your new address"
+msgstr ""
+
+#: templates/change-email.html:18
+msgid "New email address"
+msgstr ""
+
+#: templates/change-email.html:22 templates/reset-password.html:27
+msgid "Submit"
+msgstr ""
+
+#: templates/form-data-summary.html:10
+msgid "Return to form"
+msgstr ""
+
+#: templates/form-data-summary.html:13
+msgid "Download CSV"
+msgstr ""
+
+#: templates/inspect-form.html:7
+msgid "The form"
+msgstr ""
+
+#: templates/inspect-form.html:12 templates/view-form.html:9
+msgid "Send"
+msgstr ""
+
+#: templates/inspect-form.html:17
+msgid "Form details"
+msgstr ""
+
+#: templates/inspect-form.html:23
+msgid "Author"
+msgstr ""
+
+#: templates/inspect-form.html:31 templates/inspect-user.html:38
+#: templates/inspect-user.html:81 templates/list-users.html:24
+msgid "Created"
+msgstr ""
+
+#: templates/inspect-form.html:36 templates/inspect-user.html:24
+#: templates/list-users.html:21
+msgid "Hostname"
+msgstr ""
+
+#: templates/inspect-form.html:41
+msgid "Nº of entries"
+msgstr ""
+
+#: templates/inspect-form.html:45
+msgid "Last entry"
+msgstr ""
+
+#: templates/inspect-form.html:49
+msgid "URL"
+msgstr ""
+
+#: templates/inspect-form.html:61
+msgid "Is public"
+msgstr ""
+
+#: templates/inspect-form.html:65 templates/inspect-user.html:32
+#: templates/inspect-user.html:62 templates/user-settings.html:83
+#: templates/user-settings.html:92 templates/user-settings.html:111
+msgid "True"
+msgstr ""
+
+#: templates/inspect-form.html:66 templates/inspect-user.html:33
+#: templates/inspect-user.html:63 templates/user-settings.html:84
+#: templates/user-settings.html:93 templates/user-settings.html:112
+msgid "False"
+msgstr ""
+
+#: templates/inspect-form.html:73
+msgid "user disabled"
+msgstr ""
+
+#: templates/inspect-form.html:84
+msgid "View form data"
+msgstr ""
+
+#: templates/inspect-form.html:85
+msgid "Edit form"
+msgstr ""
+
+#: templates/inspect-form.html:86
+msgid "Delete form and data"
+msgstr ""
+
+#: templates/inspect-user.html:13
+msgid "User details"
+msgstr ""
+
+#: templates/inspect-user.html:19 templates/list-users.html:18
+msgid "Username"
+msgstr ""
+
+#: templates/inspect-user.html:29
+msgid "Is Admin"
+msgstr ""
+
+#: templates/inspect-user.html:42 templates/list-users.html:25
+msgid "Email"
+msgstr ""
+
+#: templates/inspect-user.html:46
+msgid "Validated email"
+msgstr ""
+
+#: templates/inspect-user.html:48
+msgid "Yes"
+msgstr ""
+
+#: templates/inspect-user.html:50
+msgid "No"
+msgstr ""
+
+#: templates/inspect-user.html:55
+msgid "Language"
+msgstr ""
+
+#: templates/inspect-user.html:59
+msgid "Can publish/login?"
+msgstr ""
+
+#: templates/inspect-user.html:73
+msgid "User's forms"
+msgstr ""
+
+#: templates/inspect-user.html:80
+msgid "Name"
+msgstr ""
+
+#: templates/inspect-user.html:82
+msgid "Public"
+msgstr ""
+
+#: templates/inspect-user.html:83
+msgid "Entries"
+msgstr ""
+
+#: templates/list-users.html:27
+msgid "Can publish"
+msgstr ""
+
+#: templates/list-users.html:28
+msgid "Is admin"
+msgstr ""
+
+#: templates/preview-form.html:8
+msgid "Preview"
+msgstr ""
+
+#: templates/preview-form.html:16
+msgid "Edit"
+msgstr ""
+
+#: templates/preview-form.html:17
+msgid "Save"
+msgstr ""
+
+#: templates/reset-password.html:12
+msgid "Change password"
+msgstr ""
+
+#: templates/reset-password.html:17 templates/user-settings.html:24
+msgid "Password"
+msgstr ""
+
+#: templates/reset-password.html:21
+msgid "eg: No holidays this year"
+msgstr ""
+
+#: templates/reset-password.html:23
+msgid "Password again"
+msgstr ""
+
+#: templates/user-settings.html:10
+msgid "Hello"
+msgstr ""
+
+#: templates/user-settings.html:15 templates/user-settings.html:118
+msgid "Email address"
+msgstr ""
+
+#: templates/user-settings.html:20 templates/user-settings.html:34
+#: templates/user-settings.html:42 templates/user-settings.html:123
+msgid "Change"
+msgstr ""
+
+#: templates/user-settings.html:39
+msgid "Preferred language"
+msgstr ""
+
+#: templates/user-settings.html:51
+msgid "Invitations"
+msgstr ""
+
+#: templates/user-settings.html:54
+msgid "Invite a new user"
+msgstr ""
+
+#: templates/user-settings.html:64
+msgid "Delete"
+msgstr ""
+
+#: templates/user-settings.html:74
+msgid "My admin settings"
+msgstr ""
+
+#: templates/user-settings.html:80
+msgid "Notify me when new user has registered"
+msgstr ""
+
+#: templates/user-settings.html:89
+msgid "Notify me when new form has been created"
+msgstr ""
+
+#: templates/user-settings.html:101
+msgid "Site settings"
+msgstr ""
+
+#: templates/user-settings.html:107
+msgid "Invitation only"
+msgstr ""
+
+#: templates/user-settings.html:131
+msgid "Root user"
+msgstr ""
+
+#: templates/user-settings.html:136
+msgid "Test SMTP config."
+msgstr ""
+
+#: templates/user-settings.html:141
+msgid "Send email"
+msgstr ""
+

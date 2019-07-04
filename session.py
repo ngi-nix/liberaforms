@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats la Lleialtat Santsenca”
+“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from formbuilder import app
+from GNGforms import app
 from flask import session
 import json
 

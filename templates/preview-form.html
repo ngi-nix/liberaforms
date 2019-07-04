@@ -5,7 +5,7 @@
     <div class="row col-md-3"></div>
     <div class="row col-md-6">
         <div style="font-size:1.5em">
-            Preview
+            {%trans%}Preview{%endtrans%}
         </div>
         <div style="font-size:1.25em">
             {{ formURL }}
@@ -13,8 +13,8 @@
         <hr />
         <div id="fb-render"></div>
         <form action="/forms/save/{{ slug }}" method="post">    
-            <input class="btn-primary btn" type="button" value="Edit" onClick="location.href='/forms/edit/{{ slug }}'">
-            <input class="btn-success btn" type="submit" value="Save">
+            <input class="btn-primary btn" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
+            <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
         </form>
     </div>
     <div class="row col-md-3"></div>

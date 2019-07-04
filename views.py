@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file
 import json, re, datetime
-from formbuilder import app, mongo
+from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file
+from GNGforms import app, mongo, babel
 from functools import wraps
 from urllib.parse import urlparse
+from flask_babel import gettext
 from .persitence import *
 from .session import *
 from .utils import *
@@ -37,6 +38,13 @@ def before_request():
         g.current_user=User(username=session['username'])
     g.hostname = urlparse(request.host_url).hostname
 
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('page_not_found.html'), 404
 
 # login required decorator
 def login_required(f):
@@ -47,7 +55,6 @@ def login_required(f):
         else:
             return redirect(url_for('index'))
     return wrap
-
 
 def admin_required(f):
     @wraps(f)
@@ -99,7 +106,7 @@ def index():
 def view_form(slug):
     queriedForm = Form(slug=slug)
     if not (queriedForm and queriedForm.isAvailable()):
-        flash("Form is not available. 404", 'warning')
+        flash(gettext("Form is not available. 404"), 'warning')
         if g.current_user:
             return redirect(url_for('my_forms'))
         return redirect(url_for('index'))
@@ -115,8 +122,8 @@ def view_form(slug):
         
         queriedForm.saveEntry(data)
         
-        #return render_template('thankyou.html', thankyouNote=queriedForm['thankyouNote'])
-        return render_template('thankyou.html', thankyouNote="Thankyou !!")
+        #return render_template('thankyou.html', slug=slug, thankyouNote=queriedForm['thankyouNote'])
+        return render_template('thankyou.html', slug=slug, thankyouNote="Thankyou !!")
         
     return render_template('view-form.html', formStructure=queriedForm.structure)     
             
@@ -133,11 +140,11 @@ def my_forms():
 def form_summary(slug):
     queriedForm = Form(slug=slug)
     if not queriedForm:
-        flash("No form found", 'warning')
+        flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
         
     if not queriedForm.isAuthor(g.current_user):
-        flash("You are not the form author and cannot view this data", 'warning')
+        flash(gettext("Permission required. You cannot view this data"), 'warning')
         return redirect(url_for('my_forms'))
 
     return render_template('form-data-summary.html',    slug=slug,
@@ -150,11 +157,11 @@ def form_summary(slug):
 def csv_form(slug):
     queriedForm = Form(slug=slug)
     if not queriedForm:
-        flash("No form found", 'error')
+        flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
         
     if not queriedForm.isAuthor(g.current_user):
-        flash("No permissions", 'warning')
+        flash(gettext("Permission required. You cannot view this data"), 'warning')
         return redirect(url_for('my_forms'))
     
     csv_file = writeCSV(queriedForm)
@@ -183,7 +190,7 @@ def edit_form(slug=None):
             if 'slug' in request.form:
                 session['formSlug'] = request.form['slug']
             else:
-                flash("Something went wrong. No slug!", 'error')
+                flash(gettext("Something went wrong. No slug!"), 'error')
                 return redirect(url_for('my_forms'))
         
         queriedForm=Form(slug=session['formSlug'])
@@ -289,7 +296,7 @@ def preview_form():
 @login_required
 def save_form(slug):
         if slug != session['formSlug']:
-            flash("Something went wrong", 'error')
+            flash(gettext("Something went wrong. No slug!"), 'error')
         
         if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
             session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
@@ -313,7 +320,7 @@ def save_form(slug):
             #pp = pprint.PrettyPrinter(indent=4)
             #pp.pprint(newFormData)
             
-            flash("Updated form OK", 'success')
+            flash(gettext("Updated form OK"), 'success')
         else:
             newFormData={
                         "created": datetime.date.today().strftime("%Y-%m-%d"),
@@ -330,7 +337,7 @@ def save_form(slug):
                     }
             Form().insert(newFormData)
             clearSessionFormData()
-            flash("Saved form OK", 'success')
+            flash(gettext("Saved form OK"), 'success')
 
         return redirect(url_for('inspect_form', slug=slug))
 
@@ -354,7 +361,7 @@ def inspect_form(slug):
     queriedForm = Form(slug=slug)
     if not queriedForm:
         #clearSessionFormData()
-        flash("Form not found", 'warning')
+        flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))        
     
     if not g.current_user.canViewForm(queriedForm):
@@ -406,7 +413,7 @@ def change_email():
             g.current_user.setToken(email=request.form['email'])
                         
             smtpSendConfirmEmail(g.current_user)
-            flash("We sent an email to %s" % request.form['email'], 'info')
+            flash(gettext("We sent an email to %s") % request.form['email'], 'info')
             return redirect(url_for('user_settings', username=g.current_user.username))
             
     return render_template('change-email.html')
@@ -418,7 +425,7 @@ def new_user(inviteToken=None):
     if Site().invitationOnly and not inviteToken:
         return redirect(url_for('index'))
     if inviteToken and not Invite(token=inviteToken):
-        flash("Invitation not found", 'warning')
+        flash(gettext("Invitation not found"), 'warning')
         return redirect(url_for('index'))
             
     if request.method == 'POST':
@@ -444,7 +451,7 @@ def new_user(inviteToken=None):
         }
         user = createUser(newUser)
         if not user:
-            flash("An error creating the new user", 'error')
+            flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
             
         user.setToken()
@@ -470,7 +477,7 @@ def login():
                 g.current_user=user
                 return redirect(url_for('my_forms'))
     
-    flash("Bad credentials", 'error')
+    flash(gettext("Bad credentials"), 'error')
     return redirect(url_for('index'))
 
 
@@ -486,7 +493,7 @@ def recover_password(token=None):
                 user.setToken()
                 smtpSendRecoverPassword(user)
                 
-            flash("We may have sent you an email", 'info')
+            flash(gettext("We may have sent you an email"), 'info')
             return redirect(url_for('index'))
         return render_template('recover-password.html')
 
@@ -521,7 +528,7 @@ def reset_password():
             if user:
                 user.setPassword(encryptPassword(request.form['password1']))
                 user.save()
-                flash("Password changed OK", 'success')
+                flash(gettext("Password changed OK"), 'success')
                 return redirect(url_for('user_settings', username=user.username))
     
     return render_template('reset-password.html')
@@ -533,7 +540,7 @@ def save_blurb():
     if request.method == 'POST':
         if 'editor' in request.form:            
             Site().saveBlurb(request.form['editor'])
-            flash("Text saved OK", 'success')
+            flash(gettext("Text saved OK"), 'success')
     return redirect(url_for('index'))
             
 
@@ -551,7 +558,7 @@ def logout():
 def test_smtp(email):
     if isValidEmail(email):
         if smtpSendTestEmail(email):
-            flash("SMTP config works!", 'success')
+            flash(gettext("SMTP config works!"), 'success')
     else:
         flash("Email not valid", 'warning')
     return redirect(url_for('user_settings', username=g.current_user.username))
@@ -563,7 +570,7 @@ def validate_email(token):
         return redirect(url_for('index'))
     if user.hasTokenExpired():
         user.deleteToken()
-        flash("Your petition has expired. Try again.", 'info')
+        flash(gettext("Your petition has expired. Try again."), 'info')
         return redirect(url_for('user_settings', username=user.username))
     
     if 'email' in user.token:
@@ -574,7 +581,7 @@ def validate_email(token):
     user.deleteToken()
     session['username']=user.username
     g.current_user=user
-    flash("Your email is valid.", 'success')
+    flash(gettext("Your email is valid"), 'success')
     return redirect(url_for('user_settings', username=user.username))
     
 
@@ -621,7 +628,7 @@ def new_invite():
 
             invite=Invite().createInvite(request.form['email'], message)
             smtpSendInvite(invite)
-            flash("We sent an invitation to %s" % invite.data['email'], 'success')
+            flash(gettext("We sent an invitation to %s") % invite.data['email'], 'success')
             return redirect(url_for('user_settings', username=g.current_user.username))
 
     return render_template('new-invite.html')
@@ -631,13 +638,13 @@ def new_invite():
 @admin_required
 def delete_invite(email):
     if not isValidEmail(email):
-        flash("Opps! We got a bad email", 'error')
+        flash(gettext("Opps! We got a bad email"), 'error')
     else:
         invite=Invite(email=email)
         if invite:
             invite.delete()
         else:
-            flash("Opps! We can't find that invitation", 'error')
+            flash(gettext("Opps! We can't find that invitation"), 'error')
         
     return redirect(url_for('user_settings', username=g.current_user.username))
     
@@ -648,7 +655,7 @@ def delete_invite(email):
 def inspect_user(username):
     user=User(username=username)
     if not user:
-        flash("Username not found", 'warning')
+        flash(gettext("Username not found"), 'warning')
         return redirect(url_for('list_users'))
 
     return render_template('inspect-user.html', user=user,

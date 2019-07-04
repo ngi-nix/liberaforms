@@ -9,56 +9,58 @@
 <div class="container">
 
     <div class="row col-md-4">
-        <div style="font-size:1.5em">User details</div>
+        <div style="font-size:1.5em">
+            {%trans%}User details{%endtrans%}
+        </div>
         <hr />
         
         <table class="table table-striped table-condensed">
             <tr>
-               <td>username</td>
+               <td>{%trans%}Username{%endtrans%}</td>
                <td>{{ user.username }}</td>
             </tr>        
             {% if g.current_user.isRootUser() %}
                 <tr>
-                   <td>hostname</td>
+                   <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ user.hostname }}</td>
                 </tr>
             {% endif %}
             <tr>
-               <td>Is Admin</td>
+               <td>{%trans%}Is Admin{%endtrans%}</td>
                <td>
                    <div id="toggle_admin" class="btn-group btn-toggle">
-                    <button id="admin_true" class="btn btn-xs btn-default {% if user.admin %}active btn-success{% endif %}">True</button>
-                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.admin %}active btn-danger{% endif %}">False</button>
+                    <button id="admin_true" class="btn btn-xs btn-default {% if user.admin %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.admin %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                 </td>
             </tr>            
             <tr>
-               <td>Created</td>
+               <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ user.data.created }}</td>
             </tr>
             <tr>
-               <td>email</td>
+               <td>{%trans%}Email{%endtrans%}</td>
                <td>{{ user.data.email }}</td>
             </tr>
             <tr>
-               <td>Validated email</td>
+               <td>{%trans%}Validated email{%endtrans%}</td>
                <td> {% if user.data.validatedEmail %}
-                    <span style="color:green">Yes</span>
+                    <span style="color:green">{%trans%}Yes{%endtrans%}</span>
                     {% else %}
-                    <span style="color:red">No</span>
+                    <span style="color:red">{%trans%}No{%endtrans%}</span>
                     {% endif %}
                 </td>
             </tr>
             <tr>
-               <td>language</td>
+               <td>{%trans%}Language{%endtrans%}</td>
                <td>{{ user.data.language }}</td>
             </tr>
             <tr>
-               <td>Can publish/login?</td>
+               <td>{%trans%}Can publish/login?{%endtrans%}</td>
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if user.enabled %}active btn-success{% endif %}">True</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not user.enabled %}active btn-danger{% endif %}">False</button>
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if user.enabled %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not user.enabled %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                 </td>
             </tr>
@@ -68,17 +70,17 @@
     <div class="row col-md-1"></div>
     <div class="row col-md-7">
         <div style="font-size:1.5em;">
-        User's forms
+        {%trans%}User's forms{%endtrans%}
         </div>
         <hr />
         
     <table id="forms" class="table table-striped table-condensed">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Created</th>
-                <th>Public</th>
-                <th>Entries</th>
+                <th>{%trans%}Name{%endtrans%}</th>
+                <th>{%trans%}Created{%endtrans%}</th>
+                <th>{%trans%}Public{%endtrans%}</th>
+                <th>{%trans%}Entries{%endtrans%}</th>
             </tr>
         </thead>
         

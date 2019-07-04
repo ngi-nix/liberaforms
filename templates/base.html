@@ -28,16 +28,16 @@
 
 <div class="container" style="font-size:1.3em;">
     <div class="row col-md-12">
-        <a href="/">Start</a> | 
+        <a href="/">{%trans%}Start{%endtrans%}</a> | 
 
         {% if g.current_user.admin %}
-        <a href="/admin/forms">Forms</a> | 
-        <a href="/admin/users">Users</a> | 
+        <a href="/admin/forms">{%trans%}Forms{%endtrans%}</a> | 
+        <a href="/admin/users">{%trans%}Users{%endtrans%}</a> | 
         {% endif %}
 
-        <a href="/forms">My forms</a> | 
-        <a href="/user/{{ session['username'] }}">Settings</a> | 
-        <a href="/site/logout">Logout</a>
+        <a href="/forms">{%trans%}My forms{%endtrans%}</a> | 
+        <a href="/user/{{ session['username'] }}">{%trans%}Settings{%endtrans%}</a> | 
+        <a href="/site/logout">{%trans%}Logout{%endtrans%}</a>
     </div>
 </div>
 
@@ -50,7 +50,7 @@
 <div class="footer">
 <div class="container">
     <div class="row col-md-12 text-right">
-    GNGforms. AGPLv3 <a href="https://gitlab.com/lleialtec/gngforms">Source code</a>
+    GNGforms. AGPLv3 <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
     </div>
 </div>
 </div>

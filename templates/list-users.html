@@ -7,23 +7,25 @@
 
 <div class="container">
 
-    <div style="font-size:1.5em">Users</div>
+    <div style="font-size:1.5em">
+        {%trans%}Users{%endtrans%}
+    </div>
     <hr />
 
 <table id="users" class="table table-striped table-condensed">
 <thead>
     <tr>
-        <th>username</th>
+        <th>{%trans%}Username{%endtrans%}</th>
         
         {% if g.current_user.isRootUser() %}
-            <th>hostname</th>
+            <th>{%trans%}Hostname{%endtrans%}</th>
         {% endif %}
         
-        <th>created</th>
-        <th>email</th>
-        <th>forms</th>
-        <th>Can publish</th>
-        <th>Is admin</th>
+        <th>{%trans%}Created{%endtrans%}</th>
+        <th>{%trans%}Email{%endtrans%}</th>
+        <th>{%trans%}Forms{%endtrans%}</th>
+        <th>{%trans%}Can publish{%endtrans%}</th>
+        <th>{%trans%}Is Admin{%endtrans%}</th>
     </tr>
 </thead>
 {% for u in users %}

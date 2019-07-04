@@ -4,30 +4,30 @@
 
 <div class="container">
 
-    <div style="font-size:1.5em">Build the form here</div>
+    <div style="font-size:1.5em">{%trans%}Build the form here{%endtrans%}</div>
 
     <div id="fb-editor"></div>
 
     <hr/>
-    <h3>Additional info here</h3>
+    <h3>{%trans%}Additional info here{%endtrans%}</h3>
     
     <form id="result" action="/forms/edit{% if slug %}/{{ slug }}{% endif %}" method="post" style="padding-bottom:0.5em;">
         <input type="hidden" id="structure" name="structure" />
-        <label>Form URL</label><br />
-            Your from will have this address
+        <label>{%trans%}Form URL{%endtrans%}</label><br />
+            {%trans%}Your from will have this address{%endtrans%}
             <br />
             {{ request.url_root }}
             <input id="slug" name="slug" value="{{ slug }}" size="42" {% if isFormNew %}required{% else %}disabled{% endif %} />
-            <span id="slug_not_available" style="display:none" class="bg-danger slug-alert"> Not available! </span>
-            <input id="slug_changed" style="display:none" class="btn-success btn slug-alert" type="submit" value="Use this URL" />
+            <span id="slug_not_available" style="display:none" class="bg-danger slug-alert"> {%trans%}Not available!{%endtrans%} </span>
+            <input id="slug_changed" style="display:none" class="btn-success btn slug-alert" type="submit" value="{%trans%}Use this URL{%endtrans%}" />
         <br />
     <p></p>
     {% if isFormNew %}
-    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms'">
+    <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
     {% else %}
-    <input class="btn-warning btn" type="button" value="Cancel" onClick="location.href='/forms/view/{{ slug }}'">
+    <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ slug }}'">
     {% endif %}
-    <input class="btn-info btn" type="submit" value="Preview" />
+    <input class="btn-info btn" type="submit" value="{%trans%}Preview{%endtrans%}" />
     </form>
 
 </div>
@@ -101,11 +101,6 @@ jQuery(function($) {
     document.getElementById('slug').addEventListener('click', function(evt){
         $('.slug-alert').hide(); 
     });
-    /*
-    if ( "{{ isFormNew }}" == "False" ){
-        $("#slug").prop('disabled', true);
-    }
-    */
 });
 </script>
 

@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats la Lleialtat Santsenca”
+“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -19,12 +19,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from flask import Flask
 from flask_pymongo import PyMongo
+from flask_babel import Babel
+
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
+babel = Babel(app)
 
-from formbuilder import views
+from GNGforms import views
 
 if __name__ == '__main__':
         app.run()
