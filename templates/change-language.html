@@ -8,15 +8,19 @@
 <div class="row col-md-4">
 
     <div style="font-size:1.5em">
-        {%trans%}Change email address{%endtrans%}
+        {%trans%}Change language{%endtrans%}
     </div>
     <hr />
 
     <p></p>
     <form method="POST">
-        <label>{%trans%}New email address{%endtrans%}</label>
+        {% for key in config['LANGUAGES'] %}
+        <div style="font-size:1.1em" class="radio radio-info">
+          <input style="margin-left:0;" type="radio" name="language" value="{{ key }}" {% if key == g.current_user.language %}checked{% endif %} >
+          <label style="margin-left:1em;">{{ config['LANGUAGES'][key] }}</label>
+        </div>
+        {% endfor %}
         <br />
-        <input type="text" name="email" class="form-control" required ><br />
         <p></p>
         <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
     </form>

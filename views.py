@@ -36,11 +36,14 @@ def before_request():
     g.current_user=None
     if 'username' in session:
         g.current_user=User(username=session['username'])
-    g.hostname = urlparse(request.host_url).hostname
+
 
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+    if g.current_user:
+        return g.current_user.language
+    else:
+        return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -87,12 +90,12 @@ def anon_required(f):
 @app.route('/', methods=['GET'])
 def index():
     #pp = pprint.PrettyPrinter()
-    
+       
     """
     users= mongo.db.users.find()
     for user in users:
         user["admin"]=User().defaultAdminSettings
-        #user["language"] = app.config['DEFAULT_LANGUAGE']
+        user["language"] = app.config['DEFAULT_LANGUAGE']
         mongo.db.users.save(user)
     """
     
@@ -417,7 +420,22 @@ def change_email():
             return redirect(url_for('user_settings', username=g.current_user.username))
             
     return render_template('change-email.html')
-    
+
+
+@app.route('/user/change-language', methods=['GET', 'POST'])
+@login_required
+def change_language():
+    if request.method == 'POST':
+        print(request.form)
+        if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
+            g.current_user.language=request.form['language']
+            g.current_user.save()
+            
+            flash(gettext("Language updated OK"), 'success')
+            return redirect(url_for('user_settings', username=g.current_user.username))
+            
+    return render_template('change-language.html')
+
 
 @app.route('/user/new', methods=['GET', 'POST'])
 @app.route('/user/new/<string:inviteToken>', methods=['GET', 'POST'])
@@ -434,7 +452,7 @@ def new_user(inviteToken=None):
             
         admin=User().defaultAdminSettings
         isEnabled=False
-        if request.form['email'] in app.config['ROOT_ADMINS']:
+        if request.form['email'] in app.config['ROOT_USERS']:
             admin=admin["isAdmin"]=True
             isEnabled=True
         newUser = {
@@ -472,7 +490,7 @@ def login():
         user=User(username=request.form['username'])
 
         if user and user.enabled and verifyPassword(request.form['password'], user.data['password']):
-            if user.isRootUser() or user.hostname == g.hostname:
+            if user.isRootUser() or user.hostname == Site().hostname:
                 session['username']=user.username
                 g.current_user=user
                 return redirect(url_for('my_forms'))
@@ -543,6 +561,18 @@ def save_blurb():
             flash(gettext("Text saved OK"), 'success')
     return redirect(url_for('index'))
             
+
+@app.route('/site/email/change-noreply', methods=['GET', 'POST'])
+@admin_required
+def change_noreply_email():
+    if request.method == 'POST':
+        if 'email' in request.form and isValidEmail(request.form['email']):
+            Site().noreplyEmailAddress=request.form['email']
+            
+            flash(gettext("Site email address updated OK"), 'success')
+            return redirect(url_for('user_settings', username=g.current_user.username))
+            
+    return render_template('change-email.html')
 
 
 @app.route('/site/logout', methods=['GET', 'POST'])

@@ -48,9 +48,9 @@
     </form>
     <br />
     {% if g.current_user %}
-        <a href="/site/reset-password">%trans%}Forgot your password?{%endtrans%}</a>
+        <a href="/site/reset-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% else %}
-        <a href="/site/recover-password">%trans%}Forgot your password?{%endtrans%}</a>
+        <a href="/site/recover-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% endif %}
     {% if not site.invitationOnly %}
         <br />

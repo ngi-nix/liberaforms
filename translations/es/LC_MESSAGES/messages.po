@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNGforms 1.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-04 16:28+0200\n"
-"PO-Revision-Date: 2019-07-04 16:42+0200\n"
+"POT-Creation-Date: 2019-07-04 19:26+0200\n"
+"PO-Revision-Date: 2019-07-04 19:34+0200\n"
 "Last-Translator: \n"
 "Language: es\n"
 "Language-Team: Lleialtec <chris@tec.lleialtat.cat>\n"
@@ -21,15 +21,15 @@ msgstr ""
 
 #: email.py:34
 msgid "Could not connect to SMTP server"
-msgstr ""
+msgstr "No se puede conectar con el servidor SMTP"
 
 #: persitence.py:40
 msgid "All fields are required"
-msgstr ""
+msgstr "Todos los campos son necesarios"
 
 #: persitence.py:43
 msgid "Username is not valid"
-msgstr ""
+msgstr "El nombre de usuario no es válido"
 
 #: persitence.py:47
 msgid "Username is not available"
@@ -37,7 +37,7 @@ msgstr "No está disponible el nombre de usuario"
 
 #: persitence.py:93 utils.py:93
 msgid "Email address is not valid"
-msgstr ""
+msgstr "El correo-e no es válido"
 
 #: persitence.py:96
 msgid "Email address is not available"
@@ -94,23 +94,23 @@ msgstr ""
 
 #: views.py:480
 msgid "Bad credentials"
-msgstr ""
+msgstr "Las credenciales no son buenas"
 
 #: views.py:496
 msgid "We may have sent you an email"
-msgstr ""
+msgstr "Puede que te hemos enviado un correo-e"
 
 #: views.py:531
 msgid "Password changed OK"
-msgstr ""
+msgstr "Se ha cambiado la contraseña correctamente"
 
 #: views.py:543
 msgid "Text saved OK"
-msgstr ""
+msgstr "Se ha guardado el texto correctamente"
 
 #: views.py:561
 msgid "SMTP config works!"
-msgstr ""
+msgstr "La config. del SMTP funciona!"
 
 #: views.py:573
 msgid "Your petition has expired. Try again."
@@ -118,12 +118,12 @@ msgstr ""
 
 #: views.py:584
 msgid "Your email is valid"
-msgstr ""
+msgstr "Tu correo-e es válido"
 
 #: views.py:631
 #, python-format
 msgid "We sent an invitation to %s"
-msgstr ""
+msgstr "Hemos enviado una invitación a %s"
 
 #: views.py:641
 msgid "Opps! We got a bad email"
@@ -135,13 +135,14 @@ msgstr ""
 
 #: views.py:658
 msgid "Username not found"
-msgstr ""
+msgstr "No se encuentra el nombre de usuario"
 
 #: templates/base.html:31
 msgid "Start"
 msgstr "Inicio"
 
-#: templates/base.html:34 templates/list-users.html:26
+#: templates/base.html:34 templates/list-forms.html:12
+#: templates/list-users.html:26
 msgid "Forms"
 msgstr "Formularios"
 
@@ -149,7 +150,7 @@ msgstr "Formularios"
 msgid "Users"
 msgstr "Usuarios"
 
-#: templates/base.html:38
+#: templates/base.html:38 templates/my-forms.html:11
 msgid "My forms"
 msgstr "Mis formularios"
 
@@ -167,7 +168,7 @@ msgstr "Código fuente"
 
 #: templates/change-email.html:11
 msgid "Change email address"
-msgstr "Cambiar dirección de correo-e"
+msgstr "Cambia la dirección de correo-e"
 
 #: templates/change-email.html:15
 msgid "We will send you an email to your new address"
@@ -177,17 +178,81 @@ msgstr "Te enviaremos un correo a tu dirección nueva"
 msgid "New email address"
 msgstr "Nueva dirección de correo-e"
 
-#: templates/change-email.html:22 templates/reset-password.html:27
+#: templates/change-email.html:22 templates/new-user.html:32
+#: templates/recover-password.html:18 templates/reset-password.html:27
 msgid "Submit"
 msgstr ""
 
-#: templates/form-data-summary.html:10
+#: templates/edit-form.html:7
+msgid "Build the form here"
+msgstr ""
+
+#: templates/edit-form.html:12
+msgid "Additional info here"
+msgstr ""
+
+#: templates/edit-form.html:16
+msgid "Form URL"
+msgstr "El URL del formulario"
+
+#: templates/edit-form.html:17
+msgid "Your from will have this address"
+msgstr ""
+
+#: templates/edit-form.html:21
+msgid "Not available!"
+msgstr "No disponible!"
+
+#: templates/edit-form.html:22
+msgid "Use this URL"
+msgstr "Usa este URL"
+
+#: templates/edit-form.html:26 templates/edit-form.html:28
+#: templates/index.html:27 templates/new-user.html:33
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: templates/edit-form.html:30 templates/preview-form.html:8
+msgid "Preview"
+msgstr "Previsualizar"
+
+#: templates/form-data-summary.html:10 templates/thankyou.html:9
 msgid "Return to form"
 msgstr "Volver al formulario"
 
 #: templates/form-data-summary.html:13
 msgid "Download CSV"
 msgstr "Bajar el CSV"
+
+#: templates/index.html:20
+msgid "Edit text"
+msgstr ""
+
+#: templates/index.html:26 templates/preview-form.html:17
+msgid "Save"
+msgstr "Guardar"
+
+#: templates/index.html:40 templates/inspect-user.html:19
+#: templates/list-users.html:18 templates/new-user.html:16
+msgid "Username"
+msgstr "Nombre de usuario"
+
+#: templates/index.html:44 templates/new-user.html:24
+#: templates/reset-password.html:17 templates/user-settings.html:24
+msgid "Password"
+msgstr "Contraseña"
+
+#: templates/index.html:47
+msgid "Login"
+msgstr ""
+
+#: templates/index.html:51 templates/index.html:53
+msgid "Forgot your password?"
+msgstr ""
+
+#: templates/index.html:57
+msgid "Register a new user"
+msgstr ""
 
 #: templates/inspect-form.html:7
 msgid "The form"
@@ -201,23 +266,24 @@ msgstr "Enviar"
 msgid "Form details"
 msgstr "Detalles del formulario"
 
-#: templates/inspect-form.html:23
+#: templates/inspect-form.html:23 templates/list-forms.html:26
 msgid "Author"
 msgstr "Autor"
 
 #: templates/inspect-form.html:31 templates/inspect-user.html:38
-#: templates/inspect-user.html:81 templates/list-users.html:24
+#: templates/inspect-user.html:81 templates/list-forms.html:25
+#: templates/list-users.html:24 templates/my-forms.html:27
 msgid "Created"
 msgstr "Creado"
 
 #: templates/inspect-form.html:36 templates/inspect-user.html:24
-#: templates/list-users.html:21
+#: templates/list-forms.html:22 templates/list-users.html:21
 msgid "Hostname"
 msgstr "Hostname"
 
 #: templates/inspect-form.html:41
 msgid "Nº of entries"
-msgstr ""
+msgstr "Nº de entradas"
 
 #: templates/inspect-form.html:45
 msgid "Last entry"
@@ -257,23 +323,20 @@ msgstr "Editar formulario"
 
 #: templates/inspect-form.html:86
 msgid "Delete form and data"
-msgstr ""
+msgstr "Borrar el formulario y entradas"
 
 #: templates/inspect-user.html:13
 msgid "User details"
 msgstr "Detalles del usuario"
 
-#: templates/inspect-user.html:19 templates/list-users.html:18
-msgid "Username"
-msgstr "Nombre de usuario"
-
-#: templates/inspect-user.html:29
+#: templates/inspect-user.html:29 templates/list-users.html:28
 msgid "Is Admin"
 msgstr "Es Admin"
 
 #: templates/inspect-user.html:42 templates/list-users.html:25
+#: templates/new-user.html:20
 msgid "Email"
-msgstr "Correo"
+msgstr "Correo-e"
 
 #: templates/inspect-user.html:46
 msgid "Validated email"
@@ -299,15 +362,18 @@ msgstr "¿Puede publicar/logear?"
 msgid "User's forms"
 msgstr "Formularios del usuario"
 
-#: templates/inspect-user.html:80
+#: templates/inspect-user.html:80 templates/list-forms.html:19
+#: templates/my-forms.html:26
 msgid "Name"
 msgstr "Nombre"
 
-#: templates/inspect-user.html:82
+#: templates/inspect-user.html:82 templates/list-forms.html:28
+#: templates/my-forms.html:29
 msgid "Public"
 msgstr "Público"
 
-#: templates/inspect-user.html:83
+#: templates/inspect-user.html:83 templates/list-forms.html:27
+#: templates/my-forms.html:28
 msgid "Entries"
 msgstr "Entradas"
 
@@ -315,33 +381,69 @@ msgstr "Entradas"
 msgid "Can publish"
 msgstr "Puede publicar"
 
-#: templates/list-users.html:28
-msgid "Is admin"
+#: templates/my-forms.html:14
+msgid "New form"
+msgstr "Nuevo formulario"
+
+#: templates/new-invite.html:11
+msgid "Send a new user invitation"
+msgstr "Invita un usuario nuevo"
+
+#: templates/new-invite.html:17
+msgid "New user's email"
+msgstr "El correo-e del usuario nuevo"
+
+#: templates/new-invite.html:21
+msgid "Include message"
+msgstr "Incluir un mensaje"
+
+#: templates/new-invite.html:25 templates/user-settings.html:141
+msgid "Send email"
+msgstr "Enviar correo"
+
+#: templates/new-user.html:11
+msgid "New user"
+msgstr "Usuario nuevo"
+
+#: templates/new-user.html:17
+msgid "Letters and numbers. No accents."
 msgstr ""
 
-#: templates/preview-form.html:8
-msgid "Preview"
-msgstr "Previsualizar"
+#: templates/new-user.html:25
+msgid "Use a passphrase, with spaces"
+msgstr ""
+
+#: templates/new-user.html:26 templates/reset-password.html:21
+msgid "eg: No holidays this year"
+msgstr "ej. No hay vacaciones este año"
+
+#: templates/new-user.html:29
+msgid "Another eg: My dog has fleas"
+msgstr "Otro ej: Me perro tiene pulgas"
+
+#: templates/page_not_found.html:7
+msgid "Opps! 404"
+msgstr ""
+
+#: templates/page_not_found.html:9
+msgid "Start again"
+msgstr ""
 
 #: templates/preview-form.html:16
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/preview-form.html:17
-msgid "Save"
-msgstr "Guardar"
+#: templates/recover-password.html:10
+msgid "Recover password"
+msgstr "Recupera la contraseña"
+
+#: templates/recover-password.html:14
+msgid "Your email"
+msgstr "Tu correo-e"
 
 #: templates/reset-password.html:12
 msgid "Change password"
-msgstr "Cambiar contraseña"
-
-#: templates/reset-password.html:17 templates/user-settings.html:24
-msgid "Password"
-msgstr "Contraseña"
-
-#: templates/reset-password.html:21
-msgid "eg: No holidays this year"
-msgstr "ej. No hay vacaciones este año"
+msgstr "Cambia tu contraseña"
 
 #: templates/reset-password.html:23
 msgid "Password again"
@@ -403,7 +505,3 @@ msgstr "Usuario root"
 #: templates/user-settings.html:136
 msgid "Test SMTP config."
 msgstr "Prueba la config. SMTP"
-
-#: templates/user-settings.html:141
-msgid "Send email"
-msgstr "Enviar correo"

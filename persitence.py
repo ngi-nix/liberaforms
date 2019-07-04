@@ -80,13 +80,11 @@ class User(object):
         pass
 
 
-
     def findAll(cls, *args, **kwargs):
         if not g.current_user.isRootUser():
-            kwargs['hostname']=g.hostname
+            kwargs['hostname']=Site().hostname
         return mongo.db.users.find(kwargs)
       
-    
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
@@ -119,6 +117,10 @@ class User(object):
     @property
     def language(self):
         return self.user['language']
+
+    @language.setter
+    def language(self, language):
+        self.user['language'] = language
     
     @email.setter
     def email(self, email):
@@ -130,7 +132,6 @@ class User(object):
 
     
     def totalForms(self):
-        print("username: %s" % self.username)
         forms = Form().findAll(author=self.username)
         return forms.count()
 
@@ -140,7 +141,7 @@ class User(object):
 
 
     def isRootUser(self):
-        if self.email in app.config['ROOT_ADMINS']:
+        if self.email in app.config['ROOT_USERS']:
             return True
         return False
     
@@ -421,6 +422,9 @@ class Site(object):
             return Site()
 
     
+    def save(self):
+        mongo.db.sites.save(self.site)
+
 
     def __init__(self, *args, **kwargs):
         pass
@@ -429,6 +433,7 @@ class Site(object):
     @property
     def hostname(self):
         return self.site['hostname']
+
 
     @property
     def blurb(self):
@@ -443,6 +448,11 @@ class Site(object):
     def noreplyEmailAddress(self):
         return self.site['noreplyEmailAddress']
 
+
+    @noreplyEmailAddress.setter
+    def noreplyEmailAddress(self, email):
+        self.site["noreplyEmailAddress"] = email
+        mongo.db.sites.save(self.site)
 
     @property
     def invitationOnly(self):

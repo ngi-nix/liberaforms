@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-04 16:28+0200\n"
+"POT-Creation-Date: 2019-07-04 19:26+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -139,7 +139,8 @@ msgstr ""
 msgid "Start"
 msgstr ""
 
-#: templates/base.html:34 templates/list-users.html:26
+#: templates/base.html:34 templates/list-forms.html:12
+#: templates/list-users.html:26
 msgid "Forms"
 msgstr ""
 
@@ -147,7 +148,7 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: templates/base.html:38
+#: templates/base.html:38 templates/my-forms.html:11
 msgid "My forms"
 msgstr ""
 
@@ -175,16 +176,80 @@ msgstr ""
 msgid "New email address"
 msgstr ""
 
-#: templates/change-email.html:22 templates/reset-password.html:27
+#: templates/change-email.html:22 templates/new-user.html:32
+#: templates/recover-password.html:18 templates/reset-password.html:27
 msgid "Submit"
 msgstr ""
 
-#: templates/form-data-summary.html:10
+#: templates/edit-form.html:7
+msgid "Build the form here"
+msgstr ""
+
+#: templates/edit-form.html:12
+msgid "Additional info here"
+msgstr ""
+
+#: templates/edit-form.html:16
+msgid "Form URL"
+msgstr ""
+
+#: templates/edit-form.html:17
+msgid "Your from will have this address"
+msgstr ""
+
+#: templates/edit-form.html:21
+msgid "Not available!"
+msgstr ""
+
+#: templates/edit-form.html:22
+msgid "Use this URL"
+msgstr ""
+
+#: templates/edit-form.html:26 templates/edit-form.html:28
+#: templates/index.html:27 templates/new-user.html:33
+msgid "Cancel"
+msgstr ""
+
+#: templates/edit-form.html:30 templates/preview-form.html:8
+msgid "Preview"
+msgstr ""
+
+#: templates/form-data-summary.html:10 templates/thankyou.html:9
 msgid "Return to form"
 msgstr ""
 
 #: templates/form-data-summary.html:13
 msgid "Download CSV"
+msgstr ""
+
+#: templates/index.html:20
+msgid "Edit text"
+msgstr ""
+
+#: templates/index.html:26 templates/preview-form.html:17
+msgid "Save"
+msgstr ""
+
+#: templates/index.html:40 templates/inspect-user.html:19
+#: templates/list-users.html:18 templates/new-user.html:16
+msgid "Username"
+msgstr ""
+
+#: templates/index.html:44 templates/new-user.html:24
+#: templates/reset-password.html:17 templates/user-settings.html:24
+msgid "Password"
+msgstr ""
+
+#: templates/index.html:47
+msgid "Login"
+msgstr ""
+
+#: templates/index.html:51 templates/index.html:53
+msgid "Forgot your password?"
+msgstr ""
+
+#: templates/index.html:57
+msgid "Register a new user"
 msgstr ""
 
 #: templates/inspect-form.html:7
@@ -199,17 +264,18 @@ msgstr ""
 msgid "Form details"
 msgstr ""
 
-#: templates/inspect-form.html:23
+#: templates/inspect-form.html:23 templates/list-forms.html:26
 msgid "Author"
 msgstr ""
 
 #: templates/inspect-form.html:31 templates/inspect-user.html:38
-#: templates/inspect-user.html:81 templates/list-users.html:24
+#: templates/inspect-user.html:81 templates/list-forms.html:25
+#: templates/list-users.html:24 templates/my-forms.html:27
 msgid "Created"
 msgstr ""
 
 #: templates/inspect-form.html:36 templates/inspect-user.html:24
-#: templates/list-users.html:21
+#: templates/list-forms.html:22 templates/list-users.html:21
 msgid "Hostname"
 msgstr ""
 
@@ -261,15 +327,12 @@ msgstr ""
 msgid "User details"
 msgstr ""
 
-#: templates/inspect-user.html:19 templates/list-users.html:18
-msgid "Username"
-msgstr ""
-
-#: templates/inspect-user.html:29
+#: templates/inspect-user.html:29 templates/list-users.html:28
 msgid "Is Admin"
 msgstr ""
 
 #: templates/inspect-user.html:42 templates/list-users.html:25
+#: templates/new-user.html:20
 msgid "Email"
 msgstr ""
 
@@ -297,15 +360,18 @@ msgstr ""
 msgid "User's forms"
 msgstr ""
 
-#: templates/inspect-user.html:80
+#: templates/inspect-user.html:80 templates/list-forms.html:19
+#: templates/my-forms.html:26
 msgid "Name"
 msgstr ""
 
-#: templates/inspect-user.html:82
+#: templates/inspect-user.html:82 templates/list-forms.html:28
+#: templates/my-forms.html:29
 msgid "Public"
 msgstr ""
 
-#: templates/inspect-user.html:83
+#: templates/inspect-user.html:83 templates/list-forms.html:27
+#: templates/my-forms.html:28
 msgid "Entries"
 msgstr ""
 
@@ -313,32 +379,68 @@ msgstr ""
 msgid "Can publish"
 msgstr ""
 
-#: templates/list-users.html:28
-msgid "Is admin"
+#: templates/my-forms.html:14
+msgid "New form"
 msgstr ""
 
-#: templates/preview-form.html:8
-msgid "Preview"
+#: templates/new-invite.html:11
+msgid "Send a new user invitation"
+msgstr ""
+
+#: templates/new-invite.html:17
+msgid "New user's email"
+msgstr ""
+
+#: templates/new-invite.html:21
+msgid "Include message"
+msgstr ""
+
+#: templates/new-invite.html:25 templates/user-settings.html:141
+msgid "Send email"
+msgstr ""
+
+#: templates/new-user.html:11
+msgid "New user"
+msgstr ""
+
+#: templates/new-user.html:17
+msgid "Letters and numbers. No accents."
+msgstr ""
+
+#: templates/new-user.html:25
+msgid "Use a passphrase, with spaces"
+msgstr ""
+
+#: templates/new-user.html:26 templates/reset-password.html:21
+msgid "eg: No holidays this year"
+msgstr ""
+
+#: templates/new-user.html:29
+msgid "Another eg: My dog has fleas"
+msgstr ""
+
+#: templates/page_not_found.html:7
+msgid "Opps! 404"
+msgstr ""
+
+#: templates/page_not_found.html:9
+msgid "Start again"
 msgstr ""
 
 #: templates/preview-form.html:16
 msgid "Edit"
 msgstr ""
 
-#: templates/preview-form.html:17
-msgid "Save"
+#: templates/recover-password.html:10
+msgid "Recover password"
+msgstr ""
+
+#: templates/recover-password.html:14
+msgid "Your email"
 msgstr ""
 
 #: templates/reset-password.html:12
 msgid "Change password"
-msgstr ""
-
-#: templates/reset-password.html:17 templates/user-settings.html:24
-msgid "Password"
-msgstr ""
-
-#: templates/reset-password.html:21
-msgid "eg: No holidays this year"
 msgstr ""
 
 #: templates/reset-password.html:23
@@ -400,9 +502,5 @@ msgstr ""
 
 #: templates/user-settings.html:136
 msgid "Test SMTP config."
-msgstr ""
-
-#: templates/user-settings.html:141
-msgid "Send email"
 msgstr ""
 

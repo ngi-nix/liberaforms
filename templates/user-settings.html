@@ -37,7 +37,7 @@
             </tr>
             <tr>
                 <td>{%trans%}Preferred language{%endtrans%}</td>
-                <td>{{ g.current_user.data['language'] }}</td>
+                <td>{{ config['LANGUAGES'][g.current_user.data['language']] }}</td>
                 <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/user/change-language'">
                 </td>
@@ -120,7 +120,7 @@
                 {{ site.noreplyEmailAddress }}
                 </td>
                 <td class="text-right">
-                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/user/change-email'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/email/change-noreply'">
                 </td>
             </tr>
         </table>
