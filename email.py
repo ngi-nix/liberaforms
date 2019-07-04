@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats la Lleialtat Santsenca”
+“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -17,20 +17,59 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from flask import flash, request
 from formbuilder import app
-import smtplib
+import smtplib, socket
 from .persitence import Site
 
 import pprint
 
 
-def smtpSendConfirmEmail(user, subject):
-    link="%suser/validate-email/%s" % (request.url_root, user.token['token'])
-    body="Hello %s\n\nPlease confirm your email\n\n%s" % (user['username'], link)
-
+def createSmtpObj():
     try:
-        smtpObj = smtplib.SMTP('localhost')
-        smtpObj.sendmail(Site().noreplyEmailAddress, user.email, body)         
-        return True
-    except SMTPException:
-        return False
+        smtpObj = smtplib.SMTP(app.config['SMTP_SERVER'])
+        return smtpObj
+    except socket.error as e:
+        flash("Could not connect to SMTP server", 'error')
+        return False        
+
+
+def sendMail(email, body):
+    smtpObj = createSmtpObj()
+    if smtpObj:
+        try:
+            smtpObj.sendmail(Site().noreplyEmailAddress, email, body)         
+            return True
+        except:
+            pass
+    return False
+
+
+def smtpSendConfirmEmail(user):
+    link="%suser/validate-email/%s" % (request.url_root, user.token['token'])
+    body="Hello %s\n\nPlease confirm your email\n\n%s" % (user.username, link)
+
+    #print(body)
+    return sendMail(user.email, body)
+
+
+def smtpSendInvite(invite):
+    link="%suser/new/%s" % (request.url_root, invite.data['token'])
+    body="%s\n\n%s" % (invite.data['message'], link)
+      
+    print(body)
+    return sendMail(invite.data['email'], body)
+    
+
+def smtpSendRecoverPassword(user):
+    link="%ssite/recover-password/%s" % (request.url_root, user.token['token'])
+    body="Please use this link to recover your password"
+    body="%s\n\n%s" % (body, link)
+    
+    return sendMail(user.email, body)
+
+
+def smtpSendTestEmail(email):
+    body="Congratulations!"
+    
+    return sendMail(email, body)

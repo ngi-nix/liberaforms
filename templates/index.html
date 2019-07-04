@@ -47,7 +47,11 @@
         <input class="btn-success btn" type="submit" value="Login" />
     </form>
     <br />
-    <a href="/site/recover-password">Forgot your password?</a>
+    {% if g.current_user %}
+        <a href="/site/reset-password">Forgot your password?</a>
+    {% else %}
+        <a href="/site/recover-password">Forgot your password?</a>
+    {% endif %}
     {% if not site.invitationOnly %}
         <br />
         <a href="/user/new">Register new user</a>

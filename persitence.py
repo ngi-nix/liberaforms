@@ -486,10 +486,14 @@ class Invite(object):
             "created": datetime.datetime.now().strftime("%Y-%m-%d"),
             "token": token,
             "email": email,
-            "message": ""
+            "message": message
         }
         mongo.db.invites.insert_one(data)
         return Invite(token=token)
+
+    @property
+    def data(self):
+        return self.invite
 
 
     def findAll(cls, *args, **kwargs):

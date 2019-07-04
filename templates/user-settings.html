@@ -42,7 +42,7 @@
             </tr>
         </table>
         
-        {% if g.current_user.admin %}
+    {% if g.current_user.admin %}
 
         <p style="padding-top:0.25em;"></p>
         <div style="font-size:1.5em; padding-bottom:0.5em; display:inline; float:left;">Invitations</div>
@@ -116,10 +116,27 @@
                 </td>
             </tr>
         </table>
+
+        {% if g.current_user.isRootUser() %}
+        <p></p>
+        <div style="font-size:1.5em; padding-bottom:0.5em;">Root user</div>
+        <p></p>
+        <table class="table">
+        <tr>
+            <td>Test SMTP config.</td>
+            <td>
+            <input id="test-email" type="text" placeholder="person@example.com" class="form-control" required >
+            </td>
+            <td class="text-right">
+            <input id="test-email-button" class="btn-primary btn btn-md" type="button" value="Send email" >
+            </td>
+        </tr>
         
+        
+        </table>
         {% endif %}
 
-
+    {% endif %}
 
     </div>
     <div class="row col-md-3"></div>
@@ -170,7 +187,7 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         success: function(data, textStatus, jqXHR)
         {
             if (data.invite == true) {
-                $('#invitation_only_true').addClass('active  btn-success');
+                $('#invitation_only_true').addClass('active btn-success');
                 $('#invitation_only_false').removeClass('active btn-danger');
             }
             else if (data.invite == false) {
@@ -179,6 +196,12 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
             }
         }
     });
+});
+document.getElementById('test-email-button').addEventListener('click', function(evt){
+    var email = $("#test-email").val();
+    if (email){
+        location.href="/site/test-smtp/"+email
+    }
 });
 </script>
 

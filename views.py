@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats la Lleialtat Santsenca”
+“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -58,6 +58,14 @@ def admin_required(f):
             return redirect(url_for('index'))
     return wrap
 
+def rootuser_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user and g.current_user.isRootUser():
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('index'))
+    return wrap
 
 def anon_required(f):
     @wraps(f)
@@ -123,17 +131,15 @@ def my_forms():
 @app.route('/forms/view-data/<string:slug>', methods=['GET'])
 @login_required
 def form_summary(slug):
-    #pp = pprint.PrettyPrinter()
     queriedForm = Form(slug=slug)
     if not queriedForm:
-        flash("No form found", 'error')
+        flash("No form found", 'warning')
         return redirect(url_for('my_forms'))
         
     if not queriedForm.isAuthor(g.current_user):
         flash("You are not the form author and cannot view this data", 'warning')
         return redirect(url_for('my_forms'))
 
-    #print(queriedForm['fieldIndex'])
     return render_template('form-data-summary.html',    slug=slug,
                                                         fieldIndex=queriedForm.fieldIndex,
                                                         entries=queriedForm.entries)
@@ -407,17 +413,22 @@ def change_email():
     
 
 @app.route('/user/new', methods=['GET', 'POST'])
-@app.route('/user/new/<string:token>', methods=['GET', 'POST'])
-def new_user(token=None): 
-    if Site().invitationOnly and not token:
+@app.route('/user/new/<string:inviteToken>', methods=['GET', 'POST'])
+def new_user(inviteToken=None):
+    if Site().invitationOnly and not inviteToken:
         return redirect(url_for('index'))
+    if inviteToken and not Invite(token=inviteToken):
+        flash("Invitation not found", 'warning')
+        return redirect(url_for('index'))
+            
     if request.method == 'POST':
         if not isNewUserRequestValid(request.form):
             return render_template('new-user.html')
-        isAdmin=False
+            
+        admin=User().defaultAdminSettings
         isEnabled=False
         if request.form['email'] in app.config['ROOT_ADMINS']:
-            isAdmin=User().defaultAdminSettings
+            admin=admin["isAdmin"]=True
             isEnabled=True
         newUser = {
             "username": request.form['username'],
@@ -426,7 +437,7 @@ def new_user(token=None):
             "language": app.config['DEFAULT_LANGUAGE'],
             "hostname": urlparse(request.host_url).hostname,
             "enabled": isEnabled,
-            "admin": isAdmin,
+            "admin": admin,
             "validatedEmail": False,
             "created": datetime.date.today().strftime("%Y-%m-%d"),
             "token": {}
@@ -438,6 +449,8 @@ def new_user(token=None):
             
         user.setToken()
         smtpSendConfirmEmail(user)
+        if inviteToken:
+            Invite(token=inviteToken).delete()
         return render_template('new-user.html', created=True)
 
     session['username']=None
@@ -471,8 +484,8 @@ def recover_password(token=None):
             user = User(email=request.form['email'])
             if user:
                 user.setToken()
-                print('/site/recover-password/%s' % user.token['token'])
-
+                smtpSendRecoverPassword(user)
+                
             flash("We may have sent you an email", 'info')
             return redirect(url_for('index'))
         return render_template('recover-password.html')
@@ -485,7 +498,8 @@ def recover_password(token=None):
             return redirect(url_for('index'))
         if not user.enabled:
             return redirect(url_for('index'))
-            
+
+        # login the user
         session['username']=user.username
         g.current_user=user
 
@@ -532,6 +546,16 @@ def logout():
 
 
 
+@app.route('/site/test-smtp/<string:email>', methods=['GET'])
+@rootuser_required
+def test_smtp(email):
+    if isValidEmail(email):
+        if smtpSendTestEmail(email):
+            flash("SMTP config works!", 'success')
+    else:
+        flash("Email not valid", 'warning')
+    return redirect(url_for('user_settings', username=g.current_user.username))
+
 @app.route('/user/validate-email/<string:token>', methods=['GET'])
 def validate_email(token):
     user = User(token=token)
@@ -561,6 +585,7 @@ def validate_email(token):
 def list_users():
     users = User().findAll()
     userFormCount={}
+    # use lambda here to avoid two findAll() calls?
     for user in users:
         userFormCount[user['username']]=User(username=user['username']).totalForms()
     return render_template('list-users.html', users=User().findAll(), userFormCount=userFormCount) 
@@ -589,14 +614,14 @@ def toggle_invitation_only():
 def new_invite():
     if request.method == 'POST':
         if 'email' in request.form and isValidEmail(request.form['email']):
-            if not 'message' in request.form:
-                message="Create a user at %s" % Site().hostname
+            if not request.form['message']:
+                message="You have been invited to %s." % Site().hostname
             else:
                 message=request.form['message']
+
             invite=Invite().createInvite(request.form['email'], message)
-            
-            # send mail
-            flash("We sent an invitation to %s" % request.form['email'], 'success')
+            smtpSendInvite(invite)
+            flash("We sent an invitation to %s" % invite.data['email'], 'success')
             return redirect(url_for('user_settings', username=g.current_user.username))
 
     return render_template('new-invite.html')
@@ -640,7 +665,7 @@ def toggle_user(username):
         return JsonResponse(json.dumps())
 
     if user.username == g.current_user.username:
-        # current_user cannot remove login permission
+        # current_user cannot remove their own login permission
         enabled=user.enabled
     else:
         enabled=user.toggleEnabled()
