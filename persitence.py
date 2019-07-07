@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from GNGforms import app, mongo
 from flask import flash, request, g
 from flask_babel import gettext 
-import os, string, random, datetime
+import os, string, random
 from urllib.parse import urlparse
 import markdown
 from .utils import *
@@ -61,12 +61,14 @@ class User(object):
         instance = super(User, cls).__new__(cls)
         if not kwargs:
             return instance
+        if 'username' in kwargs and kwargs['username'] and kwargs['username'] != sanitizeString(kwargs['username']):
+            return None
         if 'token' in kwargs:
             kwargs={"token.token": kwargs['token'], **kwargs}
-            kwargs.pop('token') 
+            kwargs.pop('token')
         if not (g.current_user and g.current_user.isRootUser()):
             # rootUser can find any user. else only find users registered with this hostname.
-            kwargs['hostname']=urlparse(request.host_url).hostname
+            kwargs['hostname']=urlparse(request.host_url).hostname            
 
         user = mongo.db.users.find_one(kwargs)
         if user:
@@ -151,20 +153,8 @@ class User(object):
         return self.user['token']
 
 
-    def hasTokenExpired(self):
-        token_age = datetime.datetime.now() - self.token['created']
-        if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
-            return True
-        return False
-
-
-    def setToken(self, *args, **kwargs):
-        token = getRandomString(length=48)
-        while mongo.db.users.find_one({"token.token": token}):
-        #while User(token=token):
-            print('token found')
-            token = getRandomString(length=48)
-        self.user['token']={'token': token, 'created': datetime.datetime.now(), **kwargs}
+    def setToken(self, **kwargs):
+        self.user['token']=createToken(User, **kwargs)
         self.save()
 
 
@@ -267,8 +257,6 @@ class User(object):
         return False
         
 
-
-
 class Form(object):
     form = None
 
@@ -279,6 +267,9 @@ class Form(object):
         if not (g.current_user and g.current_user.isRootUser()):
             # rootUser can find any form. else only find forms created at this hostname.
             kwargs['hostname']=urlparse(request.host_url).hostname
+        if 'slug' in kwargs:
+            kwargs['slug']=sanitizeSlug(kwargs['slug'])
+            
         form = mongo.db.forms.find_one(kwargs)
         if form:
             instance.form=dict(form)
@@ -345,6 +336,8 @@ class Form(object):
 
 
     def insert(self, formData):
+        if formData['slug'] in app.config['RESERVED_SLUGS']:
+            return None # just in case
         mongo.db.forms.insert_one(formData)
 
     def update(self, data):
@@ -352,6 +345,9 @@ class Form(object):
     
     def saveEntry(self, entry):
         mongo.db.forms.update({ "_id": self.form["_id"] }, {"$push": {"entries": entry }})
+
+    def delete(self):
+        return mongo.db.forms.remove({'_id': self.form['_id']})
 
     @property
     def totalEntries(self):
@@ -383,7 +379,7 @@ class Form(object):
         return True
 
 
-    def isAvailable(self):
+    def isPublished(self):
         if not self.enabled:
             return False
         if not User(username=self.author).enabled:
@@ -476,41 +472,53 @@ class Invite(object):
         instance = super(Invite, cls).__new__(cls)
         if not kwargs:
             return instance
-        
         kwargs['hostname']=Site().hostname
+        if 'token' in kwargs:
+            kwargs={"token.token": kwargs['token'], **kwargs}
+            kwargs.pop('token') 
+            
         invite = mongo.db.invites.find_one(kwargs)
         if invite:
             instance.invite=dict(invite)
             return instance
-        return None
-
+        else:
+            return None
         
     def __init__(self, *args, **kwargs):
         pass
 
-    def createInvite(cls, email, message):
-        token = getRandomString(length=48)
-        while mongo.db.invites.find_one({"token": token}):
-            token = getRandomString(length=48)
+    def create(self, email, message):
+        token=createToken(Invite)
         data={
             "hostname": Site().hostname,
-            "created": datetime.datetime.now().strftime("%Y-%m-%d"),
-            "token": token,
             "email": email,
-            "message": message
+            "message": message,
+            "token": token
         }
         mongo.db.invites.insert_one(data)
-        return Invite(token=token)
+        return Invite(token=token['token'])
 
     @property
     def data(self):
         return self.invite
 
+    @property
+    def token(self):
+        if self.invite:
+            return self.invite['token']
+        return None
 
     def findAll(cls, *args, **kwargs):
         kwargs['hostname']=Site().hostname
         return mongo.db.invites.find(kwargs)
 
+    def setToken(self, **kwargs):
+        self.invite['token']=createToken(Invite, **kwargs)
+        self.save()
+        
+    def deleteToken(self):
+        self.user['token']={}
+        self.save()
 
     def delete(self):
         return mongo.db.invites.remove({'_id': self.invite['_id']})

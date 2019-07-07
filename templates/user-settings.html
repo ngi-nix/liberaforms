@@ -58,7 +58,7 @@
         <table class="table table-condensed">
         {% for invite in invites %}
             <tr>
-                <td>{{invite.created}}</td>
+                <td>{{invite.token.created.strftime('%Y-%m-%d') }}</td>
                 <td>{{invite.email}}</td>
                 <td class="text-right">
                 <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite.email}}'">

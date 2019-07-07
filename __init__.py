@@ -27,6 +27,8 @@ app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
 babel = Babel(app)
 
+app.config['RESERVED_SLUGS'] = ['admin', 'user', 'users', 'form', 'forms', 'site']
+
 from GNGforms import views
 
 if __name__ == '__main__':

@@ -52,9 +52,10 @@
     {% else %}
         <a href="/site/recover-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% endif %}
+    
     {% if not site.invitationOnly %}
         <br />
-        <a href="/user/new">{%trans%}Register a new user{%endtrans%}</a>
+        <a href="/user/new">{%trans%}Publish your own form{%endtrans%}</a>
     {% endif %}
 </div>
 </div>
@@ -63,7 +64,7 @@
 <script>
 $(document).ready(function() {
 
-var simplemde = new SimpleMDE({ 
+    var simplemde = new SimpleMDE({ 
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
@@ -89,6 +90,5 @@ var simplemde = new SimpleMDE({
 });
 </script>
 {% endif %}
-
 
 {% endblock %}

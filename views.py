@@ -90,7 +90,11 @@ def anon_required(f):
 @app.route('/', methods=['GET'])
 def index():
     #pp = pprint.PrettyPrinter()
-       
+    
+    #print(Token(User, email="hello").__dict__)
+    
+    #print(createToken(User, email="hello"))
+    
     """
     users= mongo.db.users.find()
     for user in users:
@@ -108,7 +112,7 @@ def index():
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 def view_form(slug):
     queriedForm = Form(slug=slug)
-    if not (queriedForm and queriedForm.isAvailable()):
+    if not (queriedForm and queriedForm.isPublished()):
         flash(gettext("Form is not available. 404"), 'warning')
         if g.current_user:
             return redirect(url_for('my_forms'))
@@ -309,7 +313,6 @@ def save_form(slug):
             session['formFieldIndex'].remove(field)
             session['formFieldIndex'].insert(0, field)
         
-        slug = sanitizeSlug(slug)
         queriedForm=Form(slug=slug)
         if queriedForm:
             if not g.current_user.canEditForm(queriedForm):
@@ -338,24 +341,37 @@ def save_form(slug):
                         "entries": [],
                         "afterSubmitNote": "Thankyou!!"
                     }
-            Form().insert(newFormData)
-            clearSessionFormData()
-            flash(gettext("Saved form OK"), 'success')
+            if Form().insert(newFormData):
+                clearSessionFormData()
+                flash(gettext("Saved form OK"), 'success')
 
         return redirect(url_for('inspect_form', slug=slug))
 
 
+@app.route('/forms/delete/<string:slug>', methods=['POST'])
+@login_required
+def delete_form(slug):
+    queriedForm=Form(slug=slug)
+    if queriedForm:
+        if g.current_user.username == queriedForm.author:
+            entries = queriedForm.totalEntries
+            queriedForm.delete()
+            flash(gettext("Deleted '%s' and %s entries" % (slug, entries)), 'success')
+
+    return redirect(url_for('my_forms'))
+
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
 @login_required
-def is_slug_available(slug): 
-    slug = sanitizeSlug(slug)
+def is_slug_available(slug):
     available = True
+    slug=sanitizeSlug(slug)
     if Form(slug=slug):
+        available = False
+    if slug in app.config['RESERVED_SLUGS']:
         available = False
     # we return a sanitized slug as a suggestion for the user.
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
-
 
 
 @app.route('/forms/view/<string:slug>', methods=['GET'])
@@ -426,7 +442,6 @@ def change_email():
 @login_required
 def change_language():
     if request.method == 'POST':
-        print(request.form)
         if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
             g.current_user.language=request.form['language']
             g.current_user.save()
@@ -442,9 +457,15 @@ def change_language():
 def new_user(inviteToken=None):
     if Site().invitationOnly and not inviteToken:
         return redirect(url_for('index'))
-    if inviteToken and not Invite(token=inviteToken):
-        flash(gettext("Invitation not found"), 'warning')
-        return redirect(url_for('index'))
+    if inviteToken:
+        invite=Invite(token=inviteToken)
+        if not invite:
+            flash(gettext("Invitation not found"), 'warning')
+            return redirect(url_for('index'))
+        if not isValidToken(invite.token):
+            deleteToken()
+            flash(gettext("This invitation has expired"), 'warning')
+            return redirect(url_for('index'))
             
     if request.method == 'POST':
         if not isNewUserRequestValid(request.form):
@@ -452,6 +473,7 @@ def new_user(inviteToken=None):
             
         admin=User().defaultAdminSettings
         isEnabled=False
+        
         if request.form['email'] in app.config['ROOT_USERS']:
             admin=admin["isAdmin"]=True
             isEnabled=True
@@ -471,12 +493,13 @@ def new_user(inviteToken=None):
         if not user:
             flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
-            
+        
         user.setToken()
         smtpSendConfirmEmail(user)
+        
         if inviteToken:
             Invite(token=inviteToken).delete()
-        return render_template('new-user.html', created=True)
+        return render_template('new-user.html', site=Site(), created=True)
 
     session['username']=None
     g.current_user=None
@@ -488,12 +511,11 @@ def new_user(inviteToken=None):
 def login():
     if 'username' in request.form and 'password' in request.form:
         user=User(username=request.form['username'])
-
         if user and user.enabled and verifyPassword(request.form['password'], user.data['password']):
-            if user.isRootUser() or user.hostname == Site().hostname:
-                session['username']=user.username
-                g.current_user=user
-                return redirect(url_for('my_forms'))
+            #if user.isRootUser() or user.hostname == Site().hostname:
+            session['username']=user.username
+            g.current_user=user
+            return redirect(url_for('my_forms'))
     
     flash(gettext("Bad credentials"), 'error')
     return redirect(url_for('index'))
@@ -593,16 +615,22 @@ def test_smtp(email):
         flash("Email not valid", 'warning')
     return redirect(url_for('user_settings', username=g.current_user.username))
 
+
+
+"""
+This may be used to validate a New user's email, or an existing user's Change email request
+"""
 @app.route('/user/validate-email/<string:token>', methods=['GET'])
 def validate_email(token):
     user = User(token=token)
     if not user:
         return redirect(url_for('index'))
-    if user.hasTokenExpired():
+    if not isValidToken(user.token):
         user.deleteToken()
         flash(gettext("Your petition has expired. Try again."), 'info')
-        return redirect(url_for('user_settings', username=user.username))
+        return redirect(url_for('index'))
     
+    # On a Change email request, the new email address is saved in the token.
     if 'email' in user.token:
         user.email = user.token['email']
     
@@ -611,7 +639,7 @@ def validate_email(token):
     user.deleteToken()
     session['username']=user.username
     g.current_user=user
-    flash(gettext("Your email is valid"), 'success')
+    flash(gettext("Your email address is valid"), 'success')
     return redirect(url_for('user_settings', username=user.username))
     
 
@@ -656,8 +684,9 @@ def new_invite():
             else:
                 message=request.form['message']
 
-            invite=Invite().createInvite(request.form['email'], message)
+            invite=Invite().create(request.form['email'], message)
             smtpSendInvite(invite)
+            
             flash(gettext("We sent an invitation to %s") % invite.data['email'], 'success')
             return redirect(url_for('user_settings', username=g.current_user.username))
 

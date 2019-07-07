@@ -53,7 +53,7 @@
             </tr>
             <tr>
                <td>{%trans%}Language{%endtrans%}</td>
-               <td>{{ user.data.language }}</td>
+               <td>{{ config['LANGUAGES'][user.data.language] }}</td>
             </tr>
             <tr>
                <td>{%trans%}Can publish/login?{%endtrans%}</td>

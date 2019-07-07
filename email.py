@@ -55,7 +55,7 @@ def smtpSendConfirmEmail(user):
 
 
 def smtpSendInvite(invite):
-    link="%suser/new/%s" % (request.url_root, invite.data['token'])
+    link="%suser/new/%s" % (request.url_root, invite.data['token']['token'])
     body="%s\n\n%s" % (invite.data['message'], link)
       
     print(body)

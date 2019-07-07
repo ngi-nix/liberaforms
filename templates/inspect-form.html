@@ -81,9 +81,9 @@
         </table>
         {% if form.author == g.current_user.username %}
         <form action="/forms/delete/{{ slug }}" method="post">
-            <input class="btn-success btn" type="button" value="{%trans%}View form data{%endtrans%}" onClick="location.href='/forms/view-data/{{ slug }}'">
-            <input class="btn-primary btn" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
-            <input class="btn-warning btn" type="submit" value="{%trans%}Delete form and data{%endtrans%}">
+            <input class="btn-success btn btn-sm" type="button" value="{%trans%}View form data{%endtrans%}" onClick="location.href='/forms/view-data/{{ slug }}'">
+            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
+            <input class="btn-danger btn btn-sm" type="submit" value="{%trans%}Delete form and data{%endtrans%}">
         </form>
         {% endif %}
     </div>

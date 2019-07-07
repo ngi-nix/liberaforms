@@ -20,10 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from GNGforms import app, mongo
 from flask import flash
 from flask_babel import gettext
-from GNGforms import app
 from unidecode import unidecode
-import re, string, random
-import csv
+import re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
@@ -36,18 +34,9 @@ policy = PasswordPolicy.from_names(
     nonletters=1,  # need min. 2 non-letter characters (digits, specials, anything)
 )
 
-"""
-passwd_context = CryptContext(
-    schemes=["pbkdf2_sha256"],
-    default="pbkdf2_sha256",
-    salt_size=16,
-    pbkdf2_sha256__default_rounds=200000
-)
-"""
+
 
 def sanitizeSlug(slug):
-    if slug in app.config['RESERVED_SLUGS']:
-        return None
     slug = slug.lower()
     slug = slug.replace(" ", "-") 
     return sanitizeString(slug)
@@ -111,3 +100,24 @@ def writeCSV(form):
             writer.writerow(entry)
 
     return csv_name
+
+
+"""
+Create a unique token.
+persistentClass may be a User class, or an Invite class, ..
+"""
+def createToken(persistentClass, **kwargs):
+    tokenString = getRandomString(length=48)
+    while persistentClass(token=tokenString):
+        tokenString = getRandomString(length=48)
+    
+    result={'token': tokenString, 'created': datetime.datetime.now()}
+    return {**result, **kwargs} 
+
+
+def isValidToken(data):
+    token_age = datetime.datetime.now() - data['created']
+    #print("token age: %s" % token_age)
+    if token_age.total_seconds() < app.config['TOKEN_EXPIRATION']:
+        return True
+    return False
