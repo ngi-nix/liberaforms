@@ -28,6 +28,12 @@ mongo = PyMongo(app)
 babel = Babel(app)
 
 app.config['RESERVED_SLUGS'] = ['admin', 'user', 'users', 'form', 'forms', 'site']
+app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
+app.config['LANGUAGES'] = {
+    'en': 'English',
+    'ca': 'Català',
+    'es': 'Castellano'
+}
 
 from GNGforms import views
 
