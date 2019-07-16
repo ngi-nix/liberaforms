@@ -475,7 +475,7 @@ def new_user(inviteToken=None):
         isEnabled=False
         
         if request.form['email'] in app.config['ROOT_USERS']:
-            admin=admin["isAdmin"]=True
+            admin["isAdmin"]=True
             isEnabled=True
         newUser = {
             "username": request.form['username'],
