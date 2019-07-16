@@ -12,6 +12,12 @@ One installation (one instance running on your server), can be used for many dom
 
 One installation, one database, one monitoring and one backup system, means less work for sysadmins.
 
+## Config
+
+SMTP_SERVER expects a running server that accepts connection without credentials. This need to be improved.
+
+ROOT_USERS a list of emails. Users with these emails are automatically made Root Users.
+
 ## Users
 
 Each domain used with GNGforms has an independent user database.
@@ -20,6 +26,13 @@ Each domain used with GNGforms has an independent user database.
 
 * Anonymous users: Can fill our forms
 * Normal registered user: Can create and publish forms. Can download form data
-* Admins: Can enable and disable users. Can see all forms, but not form data.
+* Admins: Can enable and disable users. Can see all forms, but not form data. Admis can also decide if new users can be created by any anonymous user, or if new users must be 'invited' by the administrators. (invite only).
 * Root users: Special users created by the sysadmin. Root users can see all users and forms in the database, regardless of the domain.
+
+## Bootstrapping users
+1. From the index page, choose 'Forgot your password?' link.
+2. Enter an email defined as a root_user in the config
+3. Fill out the new user form.
+
+ 
 
