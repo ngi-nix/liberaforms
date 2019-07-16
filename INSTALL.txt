@@ -1,0 +1,132 @@
+
+
+# Install GNGforms
+
+Create a python3 venv.
+If you have Python3 on your host
+
+apt-get install python3-venv
+python3 -m venv /opt/venv
+
+Or if you have old python2 on your host
+
+apt-get install virtualenv
+virtualenv /opt/venv --python=python3
+
+
+## Install python packages
+
+source /opt/venv/bin/activate
+pip install flask
+pip install flask_script
+pip install flask_pymongo
+pip install Markdown
+pip install unidecode
+pip install flask_babel
+pip install validate_email
+pip install password_strength
+pip install passlib
+pip install gunicorn
+
+
+
+## Clone gngforms and create config.cfg
+
+git clone https://gitlab.com/lleialtec/gngforms.git /opt/GNGforms
+cd /opt/GNGforms
+cp config.example.cfg config.cfg
+
+And edit /opt/gngforms/config.cfg
+
+
+## Install mongodb
+apt-get install mongodb
+
+
+## Configure gunicorn
+Edit /opt/gunicorn_gngforms.py
+We are installing in a lxc container, so we bind to 0.0.0.0
+If your instalation is on the same machine as your nginx proxy, try 127.0.0.1 instead.
+
+command = '/opt/venv/bin/gunicorn'
+pythonpath = '/opt/GNGforms'
+bind = '0.0.0.0:5001'
+workers = 3
+user = 'www-data'
+
+
+## Test gunicorn
+gunicorn -c /opt/gunicorn_gngforms.py GNGforms:app
+
+
+## Install Supervisor
+apt-get install supervisor
+
+Edit /etc/supervisor/conf.d/GNGforms.conf
+
+[program:GNGforms]
+command = /opt/venv/bin/gunicorn -c /opt/gunicorn_gngforms.py almacen:app
+directory = /opt
+user = www-data
+
+
+## Restart supervisor and check if GNGforms is running
+
+systemctl restart supervisor
+supervisorctl status GNGforms
+
+
+## Debug GNGforms
+Maybe GNGforms fails to run. You can use a development server instead of gunicorn
+
+Edit /opt/gngforms_manager.py
+
+```
+from flask_script import Manager, Server
+from GNGforms import app
+
+manager = Manager(app)
+
+# Turn on debugger by default and reloader
+manager.add_command("runserver", Server(
+    use_debugger = True,
+    use_reloader = True,
+    threaded = True,
+    port = "5001",
+    host = '0.0.0.0')
+)
+
+if __name__ == "__main__":
+    manager.run()
+```
+
+Now start the server
+/opt/venv/bin/python3 /opt/gngforms_manager.py runserver
+
+
+
+# Configure nginx proxy
+
+server {
+    listen         80;
+    server_name    my_domain.com;
+    return         301 https://$server_name$request_uri;
+}
+server {
+    listen 443 ssl;    
+    server_name my_domain.com;
+
+    ssl_trusted_certificate   /etc/letsencrypt/live/my_domain.com/fullchain.pem;
+    ssl_certificate           /etc/letsencrypt/live/my_domain.com/fullchain.pem;
+    ssl_certificate_key       /etc/letsencrypt/live/my_domain.com/privkey.pem;
+
+    location / {
+        proxy_pass          http://gngforms:5001;
+        proxy_set_header    Host    $host;
+        proxy_set_header    X-Forwarded-For $remote_addr;
+        proxy_set_header    X-Real-IP   $remote_addr;
+        proxy_pass_header   server;        
+    }
+    access_log /var/log/nginx/gngforms.access.log;
+    error_log /var/log/nginx/gngforms.error.log notice;
+}

@@ -499,6 +499,11 @@ def new_user(inviteToken=None):
         
         if inviteToken:
             Invite(token=inviteToken).delete()
+        if user.isRootUser():
+            #login a new root user
+            session['username']=user.username
+            return redirect(url_for('user_settings', username=user.username))
+            
         return render_template('new-user.html', site=Site(), created=True)
 
     session['username']=None
@@ -535,10 +540,9 @@ def recover_password(token=None):
                 flash(gettext("We may have sent you an email"), 'info')
                 
             if not user and request.form['email'] in app.config['ROOT_USERS']:
-                message="You are a root user at %s." % Site().hostname
+                message="New root user at %s." % Site().hostname
                 invite=Invite().create(request.form['email'], message)
-                smtpSendInvite(invite)
-                flash(gettext("Hello root user. We sent you an email"), 'info')
+                return redirect(url_for('new_user', inviteToken=invite.token['token']))
             
             return redirect(url_for('index'))
         return render_template('recover-password.html')
