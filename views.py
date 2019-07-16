@@ -532,8 +532,14 @@ def recover_password(token=None):
             if user:
                 user.setToken()
                 smtpSendRecoverPassword(user)
+                flash(gettext("We may have sent you an email"), 'info')
                 
-            flash(gettext("We may have sent you an email"), 'info')
+            if not user and request.form['email'] in app.config['ROOT_USERS']:
+                message="You are a root user at %s." % Site().hostname
+                invite=Invite().create(request.form['email'], message)
+                smtpSendInvite(invite)
+                flash(gettext("Hello root user. We sent you an email"), 'info')
+            
             return redirect(url_for('index'))
         return render_template('recover-password.html')
 
