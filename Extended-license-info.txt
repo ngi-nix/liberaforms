@@ -11,6 +11,7 @@ Python Markdown: BSD License
 Python passlib: BSD License
 Python password_strength: BSD License
 Python validate_email: LGPL License
+Python Unidecode: GPLv2+ license
 
 Bootstrap3: MIT license
 Jquery and Jquery-UI: MIT license
