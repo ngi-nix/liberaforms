@@ -264,11 +264,11 @@ class Form(object):
         instance = super(Form, cls).__new__(cls)
         if not kwargs:
             return instance
+        if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
+            return None
         if not (g.current_user and g.current_user.isRootUser()):
             # rootUser can find any form. else only find forms created at this hostname.
             kwargs['hostname']=urlparse(request.host_url).hostname
-        if 'slug' in kwargs:
-            kwargs['slug']=sanitizeSlug(kwargs['slug'])
             
         form = mongo.db.forms.find_one(kwargs)
         if form:
@@ -401,6 +401,7 @@ class Site(object):
             instance.site=dict(site)
             return instance
         else:
+            # create a new site with this hostname
             with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
                 defaultMD=defaultBlurb.read()
             blurb = {

@@ -1,0 +1,19 @@
+========================================
+More license information.
+========================================
+
+Some files bundled with GNGforms do not contain a license
+Their corresponding license is as follows.
+
+Flask: BSD 3-Clause license
+Python Babel and flask_babel: BSD license
+Python Markdown: BSD License
+Python passlib: BSD License
+Python password_strength: BSD License
+Python validate_email: LGPL License
+
+Bootstrap3: MIT license
+Jquery and Jquery-UI: MIT license
+FormBuilder: MIT license
+DataTables: MIT license
+Simplemde: MIT license
