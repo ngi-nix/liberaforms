@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json, re, datetime
-from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file
+import json, re, datetime, os
+from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
 from GNGforms import app, mongo, babel
 from functools import wraps
 from urllib.parse import urlparse
@@ -89,11 +89,6 @@ def anon_required(f):
 
 @app.route('/', methods=['GET'])
 def index():
-    #pp = pprint.PrettyPrinter()
-    
-    #print(Token(User, email="hello").__dict__)
-    
-    #print(createToken(User, email="hello"))
     
     """
     users= mongo.db.users.find()
@@ -170,20 +165,40 @@ def csv_form(slug):
     if not queriedForm.isAuthor(g.current_user):
         flash(gettext("Permission required. You cannot view this data"), 'warning')
         return redirect(url_for('my_forms'))
-    
+
     csv_file = writeCSV(queriedForm)
+    
+    @after_this_request 
+    def remove_file(response): 
+        os.remove(csv_file) 
+        return response
+    
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
+
+
+from .form_templates import formTemplates
+@app.route('/forms/templates', methods=['GET'])
+@login_required
+def list_form_templates():
+   
+      
+    return render_template('form-templates.html', templates=formTemplates)
 
 
 
 @app.route('/forms/new', methods=['GET'])
+@app.route('/forms/new/<string:templateID>', methods=['GET'])
 @login_required
-def new_form():
+def new_form(templateID=None):
     clearSessionFormData()
+    if templateID:
+        template = list(filter(lambda template: template['id'] == templateID, formTemplates))
+        if template:
+            session['formStructure']=template[0]['structure']
+    
     return render_template('edit-form.html',    formStructure=session['formStructure'],
                                                 formSlug=session['formSlug'],
                                                 isFormNew=True)
-
 
 
 @app.route('/forms/edit', methods=['GET', 'POST'])

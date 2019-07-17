@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/formBuilder/form-render.min.js"></script>
+
+<div class="container">
+    <div class="row col-md-12" style="font-size:1.5em">
+        {%trans%}Form templates{%endtrans%}
+        <hr />
+    </div>
+</div>
+
+<div class="container">
+    
+    
+    {% for template in templates %}
+        <div class="row col-md-5">
+            <div id="fb-render-{{loop.index}}"></div>
+            <input class="btn-success btn" type="button" value="{%trans%}Use this template{%endtrans%}" onClick="location.href='/forms/new/{{ template.id }}'">
+
+        </div>
+        <div class="row col-md-2"></div>
+    {% endfor %}
+    
+    
+</div>
+
+
+<script>
+{% for template in templates %}
+    jQuery(function($) {
+        var fbRender = document.getElementById('fb-render-{{loop.index}}');
+        var formData = {{ template.structure | safe }};
+        var formRenderOpts = {
+            formData,
+            dataType: 'json'
+        };
+        $(fbRender).formRender(formRenderOpts);
+    });
+{% endfor %}
+</script>
+
+
+{% endblock %}
