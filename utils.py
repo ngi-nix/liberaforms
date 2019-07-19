@@ -48,6 +48,11 @@ def sanitizeString(string):
     return re.sub('[^A-Za-z0-9\-]', '', string)
 
 
+def stripHTMLTags(text):
+    TAG_RE = re.compile(r'<[^>]+>')
+    return TAG_RE.sub('', text)
+
+
 def encryptPassword(password):
     return pbkdf2_sha256.encrypt(password, rounds=200000, salt_size=16)
 
@@ -65,6 +70,18 @@ def getFieldByNameInIndex(index, name):
         if 'name' in field and field['name'] == name:
             return field
     return None
+
+
+def removeHTMLFromLabels(fieldIndex):
+    """
+    formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
+    The tags (formatted lables) are good when rendering the form but we do not want them included in CSV column headers.
+    This function is called when viewing form entry data.
+    """
+    result=[]
+    for field in fieldIndex:
+        result.append({'label': stripHTMLTags(field['label']), 'name': field['name']})
+    return result
 
 
 def isValidPassword(password1, password2):

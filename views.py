@@ -27,6 +27,7 @@ from .persitence import *
 from .session import *
 from .utils import *
 from .email import *
+from .form_templates import formTemplates
 
 import pprint
 
@@ -120,8 +121,10 @@ def view_form(slug):
         
         for key in formData:
             value = formData[key]
+            key=key.strip('[]')             #formbuilder adds [] to checkbox lists
             data[key]=', '.join(value)      #value is possibly a list
         
+        # print("save entry: %s" % formData)
         queriedForm.saveEntry(data)
         
         #return render_template('thankyou.html', slug=slug, thankyouNote=queriedForm['thankyouNote'])
@@ -150,7 +153,7 @@ def form_summary(slug):
         return redirect(url_for('my_forms'))
 
     return render_template('form-data-summary.html',    slug=slug,
-                                                        fieldIndex=queriedForm.fieldIndex,
+                                                        fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex),
                                                         entries=queriedForm.entries)
 
 
@@ -176,7 +179,7 @@ def csv_form(slug):
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
-from .form_templates import formTemplates
+
 @app.route('/forms/templates', methods=['GET'])
 @login_required
 def list_form_templates():
@@ -205,7 +208,8 @@ def new_form(templateID=None):
 @app.route('/forms/edit/<string:slug>', methods=['GET', 'POST'])
 @login_required
 def edit_form(slug=None):
-    #pp = pprint.PrettyPrinter(indent=4)
+    pp = pprint.PrettyPrinter(indent=4)
+    
     ensureSessionFormKeys()
     if request.method == 'POST':
         if not slug:
@@ -222,21 +226,29 @@ def edit_form(slug=None):
                 return redirect(url_for('my_forms'))
             queriedFieldIndex=queriedForm.fieldIndex   
         
+        #pp.pprint(queriedFieldIndex)
+        
         formStructureDict = json.loads(request.form['structure'])
+        
+        #pp.pprint(formStructureDict)
+        
         fieldCount=0
         for formElement in formStructureDict:
-            
-            # elements with a 'name' attribute are included in 'entries' in the database
+            """
+            We want to keep a list of all elements that have a 'name' attribute
+            We call this list of elements the 'formFieldIndex'
+            They are the elements that will contain the data included in 'entries' in the database
+            """
             if 'name' in formElement:
-                # We need a label for displaying 'entry' data (eg. csv download).
-                if 'label' in formElement and (formElement['label'] == "" or formElement['label'] == "<br>"):
+                # Make sure this element has a label, needed for displaying data column header (eg. csv download).
+                if 'label' in formElement and not stripHTMLTags(formElement['label']):                  
                     formElement['label'] = "Label for field/element"
 
-                # Have we already included this field in the index?
+                # Have we already included this field in the formFieldIndex?
                 field = getFieldByNameInIndex(session['formFieldIndex'], formElement['name'])
                 if field:
                     """
-                    We want to order the fields for when we displaying Entry data (eg. csv download).
+                    We want to maintain the order of the fields when displaying data (eg. csv download).
                     """    
                     fieldPosition = session['formFieldIndex'].index(field)
                     if field['label'] != formElement['label'] or fieldPosition != fieldCount:                      
@@ -245,6 +257,7 @@ def edit_form(slug=None):
                         session['formFieldIndex'].remove(field)
                         session['formFieldIndex'].insert(fieldCount, updatedField)
                 else:
+                    #print("fieldName: %s" % formElement['name'])
                     newField={'name': formElement['name'], 'label': formElement['label']}
                     session['formFieldIndex'].insert(fieldCount, newField)
 
@@ -252,7 +265,7 @@ def edit_form(slug=None):
                     queriedFieldIndex.remove(field)
                 fieldCount += 1
         
-        # pp.pprint(queriedFieldIndex)
+        #pp.pprint(queriedFieldIndex)
         
         # these fields are no longer present in formStructureDict. (removed by user).
         orphanedFieldNames = [d['name'] for d in queriedFieldIndex if 'name' in d]
@@ -339,7 +352,7 @@ def save_form(slug):
                                 })
 
             #pp = pprint.PrettyPrinter(indent=4)
-            #pp.pprint(newFormData)
+            #pp.pprint(session['formFieldIndex'])
             
             flash(gettext("Updated form OK"), 'success')
         else:
@@ -359,6 +372,8 @@ def save_form(slug):
             if Form().insert(newFormData):
                 clearSessionFormData()
                 flash(gettext("Saved form OK"), 'success')
+
+        print(session['formFieldIndex'])
 
         return redirect(url_for('inspect_form', slug=slug))
 
