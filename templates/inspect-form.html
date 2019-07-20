@@ -83,11 +83,11 @@
 
         </table>
         {% if form.author == g.current_user.username %}
-        <form action="/forms/delete/{{ slug }}" method="post">
-            <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/view-data/{{ slug }}'">
-            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
-            <input class="btn-danger btn btn-sm" type="submit" value="{%trans%}Delete form and entries{%endtrans%}">
-        </form>
+
+        <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/view-data/{{ slug }}'">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
+        <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ slug }}'">
+
         {% endif %}
     </div>
 </div>

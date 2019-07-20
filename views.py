@@ -121,8 +121,12 @@ def view_form(slug):
         
         for key in formData:
             value = formData[key]
-            key=key.strip('[]')             #formbuilder adds [] to checkbox lists
-            data[key]=', '.join(value)      #value is possibly a list
+            if isinstance(value, list):
+                # formbuilder returns checkbox group values as a list
+                value=', '.join(value) # convert list to a string
+                key=key.strip('[]') # formbuilder appends '[]' to the name attrib of the field of checkbox groups
+            data[key]=value
+            
         
         # print("save entry: %s" % formData)
         queriedForm.saveEntry(data)
@@ -378,17 +382,23 @@ def save_form(slug):
         return redirect(url_for('inspect_form', slug=slug))
 
 
-@app.route('/forms/delete/<string:slug>', methods=['POST'])
+@app.route('/forms/delete/<string:slug>', methods=['GET', 'POST'])
 @login_required
 def delete_form(slug):
-    queriedForm=Form(slug=slug)
-    if queriedForm:
-        if g.current_user.username == queriedForm.author:
+    queriedForm=Form(slug=slug, author=g.current_user.username)
+    if not queriedForm:
+        flash(gettext("Form not found"), 'warning')
+        return redirect(url_for('my_forms'))
+  
+    if request.method == 'POST':
+        if queriedForm.slug == request.form['slug']:
             entries = queriedForm.totalEntries
             queriedForm.delete()
             flash(gettext("Deleted '%s' and %s entries" % (slug, entries)), 'success')
-
-    return redirect(url_for('my_forms'))
+        else:
+            flash(gettext("Name does not match"), 'warning')
+                   
+    return render_template('delete-form.html', slug=queriedForm.slug)
 
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])

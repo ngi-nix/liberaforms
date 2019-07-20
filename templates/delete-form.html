@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Delete form{%endtrans%}
+    </div>
+    <hr />
+    <span style="font-size:1.15em">{{slug}}</span>
+    <p></p>
+    
+    <form method="POST">
+        <label>{%trans%}Please confirm the form name{%endtrans%}</label>
+        <br />
+        <input type="text" name="slug" class="form-control" required ><br />
+        <p></p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+    </form>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+  
+{% endblock %}
