@@ -121,6 +121,7 @@ def view_form(slug):
         
         for key in formData:
             value = formData[key]
+            print(value)
             if isinstance(value, list):
                 # formbuilder returns checkbox group values as a list
                 value=', '.join(value) # convert list to a string
@@ -128,7 +129,7 @@ def view_form(slug):
             data[key]=value
             
         
-        # print("save entry: %s" % formData)
+        print("save entry: %s" % formData)
         queriedForm.saveEntry(data)
         
         #return render_template('thankyou.html', slug=slug, thankyouNote=queriedForm['thankyouNote'])
@@ -395,6 +396,7 @@ def delete_form(slug):
             entries = queriedForm.totalEntries
             queriedForm.delete()
             flash(gettext("Deleted '%s' and %s entries" % (slug, entries)), 'success')
+            return redirect(url_for('my_forms'))
         else:
             flash(gettext("Name does not match"), 'warning')
                    
