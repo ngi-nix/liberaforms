@@ -11,12 +11,14 @@
         {%trans%}Delete form{%endtrans%}
     </div>
     <hr />
+    {%trans%}You are going to delete a form with {{entry_cnt}} entries{%endtrans%}.
+    <br />
+    {%trans%}Write the name of the form below{%endtrans%}.
+    <p></p>
     <span style="font-size:1.15em">{{slug}}</span>
     <p></p>
     
     <form method="POST">
-        <label>{%trans%}Please confirm the form name{%endtrans%}</label>
-        <br />
         <input type="text" name="slug" class="form-control" required ><br />
         <p></p>
         <input class="btn-success btn" type="submit" value="{%trans%}Delete{%endtrans%}">

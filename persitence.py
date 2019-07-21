@@ -250,11 +250,6 @@ class User(object):
         flash(gettext("Permission needed to view form"), 'warning')
         return False
     
-    
-    def canEditForm(self, form):
-        if self.username == form.author:
-            return True
-        return False
         
 
 class Form(object):

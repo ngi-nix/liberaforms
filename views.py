@@ -114,22 +114,19 @@ def view_form(slug):
             return redirect(url_for('my_forms'))
         return redirect(url_for('index'))
        
-    if request.method == 'POST':      
-        formData = dict(request.form)
+    if request.method == 'POST':  
+        formData=request.form.to_dict(flat=False)
         data = {}
         data["created"] = datetime.date.today().strftime("%Y-%m-%d")
         
         for key in formData:
             value = formData[key]
-            print(value)
-            if isinstance(value, list):
-                # formbuilder returns checkbox group values as a list
-                value=', '.join(value) # convert list to a string
-                key=key.strip('[]') # formbuilder appends '[]' to the name attrib of the field of checkbox groups
+            if isinstance(value, list): # A checkboxes-group contains multiple values 
+                value=', '.join(value) # convert list of values to a string
+                key=key.strip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             data[key]=value
             
-        
-        print("save entry: %s" % formData)
+        #print("save entry: %s" % formData)
         queriedForm.saveEntry(data)
         
         #return render_template('thankyou.html', slug=slug, thankyouNote=queriedForm['thankyouNote'])
@@ -154,7 +151,7 @@ def form_summary(slug):
         return redirect(url_for('my_forms'))
         
     if not queriedForm.isAuthor(g.current_user):
-        flash(gettext("Permission required. You cannot view this data"), 'warning')
+        flash(gettext("Permission required. You cannot view that data"), 'warning')
         return redirect(url_for('my_forms'))
 
     return render_template('form-data-summary.html',    slug=slug,
@@ -227,7 +224,7 @@ def edit_form(slug=None):
         queriedForm=Form(slug=session['formSlug'])
         queriedFieldIndex=[]
         if queriedForm:
-            if not g.current_user.canEditForm(queriedForm):
+            if queriedForm.author != g.current_user.username:
                 return redirect(url_for('my_forms'))
             queriedFieldIndex=queriedForm.fieldIndex   
         
@@ -302,7 +299,7 @@ def edit_form(slug=None):
         queriedForm = Form(slug=slug)
         if queriedForm:
             isFormNew = False
-            if not g.current_user.canEditForm(queriedForm):
+            if queriedForm.author != g.current_user.username:
                 return redirect(url_for('my_forms'))
             session['formSlug'] = queriedForm.slug
             if not session['formStructure']:
@@ -335,52 +332,51 @@ def preview_form():
 @app.route('/forms/save/<string:slug>', methods=['POST'])
 @login_required
 def save_form(slug):
-        if slug != session['formSlug']:
-            flash(gettext("Something went wrong. No slug!"), 'error')
+    if slug != session['formSlug']:
+        flash(gettext("Something went wrong. No slug!"), 'error')
         
-        if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
-            session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
-        else:
-            # move 'created' field to beginning of the Index
-            field = getFieldByNameInIndex(session['formFieldIndex'], 'created')
-            session['formFieldIndex'].remove(field)
-            session['formFieldIndex'].insert(0, field)
+    if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
+        session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
+    else:
+        # move 'created' field to beginning of the Index
+        field = getFieldByNameInIndex(session['formFieldIndex'], 'created')
+        session['formFieldIndex'].remove(field)
+        session['formFieldIndex'].insert(0, field)
         
-        queriedForm=Form(slug=slug)
-        if queriedForm:
-            if not g.current_user.canEditForm(queriedForm):
-                return redirect(url_for('my_forms'))
+    queriedForm=Form(slug=slug)
+    if queriedForm:
+        if queriedForm.author != g.current_user.username:
+            return redirect(url_for('my_forms'))
             
-            queriedForm.update({ 
-                                "structure": session['formStructure'],
-                                "fieldIndex": session['formFieldIndex']
-                                })
+        queriedForm.update({ 
+                            "structure": session['formStructure'],
+                            "fieldIndex": session['formFieldIndex']
+                            })
 
-            #pp = pprint.PrettyPrinter(indent=4)
-            #pp.pprint(session['formFieldIndex'])
+        #pp = pprint.PrettyPrinter(indent=4)
+        #pp.pprint(session['formFieldIndex'])
             
-            flash(gettext("Updated form OK"), 'success')
-        else:
-            newFormData={
-                        "created": datetime.date.today().strftime("%Y-%m-%d"),
-                        "author": session['username'],
-                        "postalCode": "08014",
-                        "enabled": False,
-                        "hostname": urlparse(request.host_url).hostname,
-                        "slug": slug,
-                        "notification": [],
-                        "structure": session['formStructure'],
-                        "fieldIndex": session['formFieldIndex'],
-                        "entries": [],
-                        "afterSubmitNote": "Thankyou!!"
-                    }
-            if Form().insert(newFormData):
-                clearSessionFormData()
-                flash(gettext("Saved form OK"), 'success')
+        flash(gettext("Updated form OK"), 'success')
+    else:
+        newFormData={
+                    "created": datetime.date.today().strftime("%Y-%m-%d"),
+                    "author": session['username'],
+                    "postalCode": "08014",
+                    "enabled": False,
+                    "hostname": urlparse(request.host_url).hostname,
+                    "slug": slug,
+                    "notification": [],
+                    "structure": session['formStructure'],
+                    "fieldIndex": session['formFieldIndex'],
+                    "entries": [],
+                    "afterSubmitNote": "Thankyou!!"
+                }
+        if Form().insert(newFormData):
+            clearSessionFormData()
+            flash(gettext("Saved form OK"), 'success')
 
-        print(session['formFieldIndex'])
-
-        return redirect(url_for('inspect_form', slug=slug))
+    #print(session['formFieldIndex'])
+    return redirect(url_for('inspect_form', slug=slug))
 
 
 @app.route('/forms/delete/<string:slug>', methods=['GET', 'POST'])
@@ -400,7 +396,7 @@ def delete_form(slug):
         else:
             flash(gettext("Name does not match"), 'warning')
                    
-    return render_template('delete-form.html', slug=queriedForm.slug)
+    return render_template('delete-form.html', slug=queriedForm.slug, entry_cnt=len(queriedForm.entries))
 
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])

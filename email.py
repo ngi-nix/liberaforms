@@ -23,8 +23,6 @@ from GNGforms import app
 import smtplib, socket
 from .persitence import Site
 
-import pprint
-
 
 def createSmtpObj():
     try:
@@ -35,11 +33,11 @@ def createSmtpObj():
         return False        
 
 
-def sendMail(email, body):
+def sendMail(email, message):
     smtpObj = createSmtpObj()
     if smtpObj:
         try:
-            smtpObj.sendmail(Site().noreplyEmailAddress, email, body)         
+            smtpObj.sendmail(Site().noreplyEmailAddress, email, message)         
             return True
         except:
             pass
@@ -48,29 +46,32 @@ def sendMail(email, body):
 
 def smtpSendConfirmEmail(user):
     link="%suser/validate-email/%s" % (request.url_root, user.token['token'])
-    body="Hello %s\n\nPlease confirm your email\n\n%s" % (user.username, link)
+    message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
+    message = 'Subject: {}\n\n{}'.format(gettext("GNGform Confirm email"), message)
 
-    #print(body)
-    return sendMail(user.email, body)
+    return sendMail(user.email, message)
 
 
 def smtpSendInvite(invite):
     link="%suser/new/%s" % (request.url_root, invite.data['token']['token'])
-    body="%s\n\n%s" % (invite.data['message'], link)
+    message="%s\n\n%s" % (invite.data['message'], link)   
+    message='Subject: {}\n\n{}'.format(gettext("GNGform invitation"), message)
       
-    print(body)
-    return sendMail(invite.data['email'], body)
+    #print(message)
+    return sendMail(invite.data['email'], message)
     
 
 def smtpSendRecoverPassword(user):
     link="%ssite/recover-password/%s" % (request.url_root, user.token['token'])
-    body="Please use this link to recover your password"
-    body="%s\n\n%s" % (body, link)
+    message=gettext("Please use this link to recover your password")
+    message="%s\n\n%s" % (message, link)
+    message='Subject: {}\n\n{}'.format(gettext("GNGform Recover password"), message)
     
-    return sendMail(user.email, body)
+    return sendMail(user.email, message)
 
 
 def smtpSendTestEmail(email):
-    body="Congratulations!"
+    message=gettext("Congratulations!")
+    message='Subject: {}\n\n{}'.format(gettext("SMTP test"), message)
     
-    return sendMail(email, body)
+    return sendMail(email, message)
