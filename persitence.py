@@ -85,9 +85,9 @@ class User(object):
     def findAll(cls, *args, **kwargs):
         if not g.current_user.isRootUser():
             kwargs['hostname']=Site().hostname
-        print(kwargs)
         return mongo.db.users.find(kwargs)
-      
+
+
     def getNotifyNewFormEmails(cls):
         emails=[]
         criteria={'hostname':Site().hostname, 'enabled':True, 'admin.isAdmin':True, 'admin.notifyNewForm':True}
@@ -101,6 +101,7 @@ class User(object):
                 emails.append(rootUser['email'])
         
         return emails
+
 
     def getNotifyNewUserEmails(cls):
         emails=[]

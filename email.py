@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import flash, request
+from flask import g, flash, request
 from flask_babel import gettext
 from GNGforms import app
 import smtplib, socket
@@ -29,7 +29,8 @@ def createSmtpObj():
         smtpObj = smtplib.SMTP(app.config['SMTP_SERVER'])
         return smtpObj
     except socket.error as e:
-        flash(gettext("Could not connect to SMTP server"), 'error')
+        if g.current_user:
+            flash(gettext("Could not connect to SMTP server"), 'error')
         return False        
 
 
@@ -69,6 +70,15 @@ def smtpSendRecoverPassword(user):
     
     return sendMail(user.email, message)
 
+
+def smtpSendNewFormEntryNotification(email, entry, slug):
+    message=gettext("New form entry in %s at %s\n" % (slug, Site().hostname))
+    for data in entry:
+        message="%s\n%s: %s" % (message, data[0], data[1])
+
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form entry"), message)
+    
+    sendMail(email, message)
 
 def smtpSendNewFormNotification(adminEmails, slug):
     message=gettext("New form '%s' created at %s" % (slug, Site().hostname))

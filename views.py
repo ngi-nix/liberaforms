@@ -115,18 +115,26 @@ def view_form(slug):
        
     if request.method == 'POST':  
         formData=request.form.to_dict(flat=False)
-        data = {}
-        data["created"] = datetime.date.today().strftime("%Y-%m-%d")
+        entry = {}
+        entry["created"] = datetime.date.today().strftime("%Y-%m-%d")
         
         for key in formData:
             value = formData[key]
             if isinstance(value, list): # A checkboxes-group contains multiple values 
                 value=', '.join(value) # convert list of values to a string
                 key=key.strip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
-            data[key]=value
+            entry[key]=value
             
         #print("save entry: %s" % formData)
-        queriedForm.saveEntry(data)
+        queriedForm.saveEntry(entry)
+        
+        if queriedForm.notification['newEntry'] == True:
+            user=User(username=queriedForm.author)
+            data=[]
+            for field in queriedForm.fieldIndex:
+                if field['name'] in entry:
+                    data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
+            smtpSendNewFormEntryNotification(user.email, data, slug)
         
         #return render_template('thankyou.html', slug=slug, thankyouNote=queriedForm['thankyouNote'])
         return render_template('thankyou.html', slug=slug, thankyouNote="Thankyou !!")
@@ -243,9 +251,10 @@ def edit_form(slug=None):
             if 'name' in formElement:
                 # Make sure this element has a label, needed for displaying data column header (eg. csv download).
                 if 'label' in formElement:
-                    formElement['label']=formElement['label'].strip('<br>') # formbuilder adds a trailing 'br' to lables.
-                    if not stripHTMLTags(formElement['label']):                  
-                        formElement['label'] = "Label for field/element"
+                    formElement['label']=formElement['label'].rstrip('<br>') # formbuilder adds a trailing 'br' to lables.
+                    if not stripHTMLTags(formElement['label']): 
+                        # we need a string to save ass a label.                 
+                        formElement['label'] = "Label"
 
                 # Have we already included this field in the formFieldIndex?
                 field = getFieldByNameInIndex(session['formFieldIndex'], formElement['name'])

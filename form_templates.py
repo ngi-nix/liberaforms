@@ -41,21 +41,21 @@ formTemplates = [
                     {"label": "10h - 13h. Neutral networks. A practical presentation of our WIFI installation", "value": "eXO-guifi-net"},
                     {"label": "18h - 20h. GIT for beginners Session 1", "value": "git-session-1"}
                 ],
-                "label": "<div>Tuesday 25th</div>", "type": "checkbox-group", "name": "checkbox-group-1563572627073"
+                "label": "Tuesday 25th", "type": "checkbox-group", "name": "checkbox-group-1563572627073"
             },
             {"values":
                 [
                     {"label": "10h - 13h. Presentation/demo. TPV to manage the cafe", "value": "tpv-cafe"},
                     {"label": "16h - 19h. Social currencies. Local economy", "value": "local-economy"}
                 ],
-                "label": "<div>Wednesday 26th</div>", "type": "checkbox-group", "name": "checkbox-group-1563697624123"
+                "label": "Wednesday 26th", "type": "checkbox-group", "name": "checkbox-group-1563697624123"
             },
             {"values":
                 [
                     {"label": "10h - 13h. Computer Lab management with Free software", "value": "fog-project"},
                     {"label": "18h - 20h. GIT for beginners Session 2", "value": "git-session-2"}
                 ],
-                "label": "<div>Thursday 27th</div>", "type": "checkbox-group", "name": "checkbox-group-1563698001314"
+                "label": "Thursday 27th", "type": "checkbox-group", "name": "checkbox-group-1563698001314"
             },
             {"className": "form-control", "name": "text-1563692878245", "type": "text", "required": "true", "label": "Your name", "subtype": "text"},
             {"className": "form-control", "name": "text-1563692901766", "type": "text", "subtype": "email", "label": "Your email", "required": "true"}
