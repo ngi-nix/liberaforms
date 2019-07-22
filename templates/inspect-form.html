@@ -61,6 +61,19 @@
                 </td>
             </tr>
             <tr>
+               <td>{%trans%}Notification enabled{%endtrans%}</td>
+               {% if form.author == g.current_user.username %}
+               <td>
+                   <div id="toggle_notification" class="btn-group btn-toggle">
+                    <button id="notification_true" class="btn btn-xs btn-default {% if form.notification['newEntry'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.notification['newEntry'] %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                   </div>
+               </td>
+               {% else %}
+                    <td>{{ form.notification['newEntry'] }}</td>               
+               {% endif %}
+            </tr>
+            <tr>
                <td>{%trans%}Is public{%endtrans%}</td>
                {% if form.author == g.current_user.username %}
                <td>
@@ -80,7 +93,6 @@
                </td>               
                {% endif %}
             </tr>
-
         </table>
         {% if form.author == g.current_user.username %}
 
@@ -122,6 +134,24 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
                 $('#enabled_false').addClass('active btn-danger');
                 $('#formURL').show();
                 $('#formLink').hide();
+            }
+        }
+    });
+});
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/forms/toggle-notification/{{ slug }}",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('active  btn-success');
+                $('#notification_false').removeClass('active btn-danger');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('active btn-success');
+                $('#notification_false').addClass('active btn-danger');
             }
         }
     });

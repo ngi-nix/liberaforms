@@ -92,11 +92,10 @@ def anon_required(f):
 def index():
     
     """
-    users= mongo.db.users.find()
-    for user in users:
-        user["admin"]=User().defaultAdminSettings
-        user["language"] = app.config['DEFAULT_LANGUAGE']
-        mongo.db.users.save(user)
+    forms= mongo.db.forms.find()
+    for form in forms:
+        form["notification"]={"newEntry": True}
+        mongo.db.forms.save(form)    
     """
     
     isAdmin=False
@@ -243,8 +242,10 @@ def edit_form(slug=None):
             """
             if 'name' in formElement:
                 # Make sure this element has a label, needed for displaying data column header (eg. csv download).
-                if 'label' in formElement and not stripHTMLTags(formElement['label']):                  
-                    formElement['label'] = "Label for field/element"
+                if 'label' in formElement:
+                    formElement['label']=formElement['label'].strip('<br>') # formbuilder adds a trailing 'br' to lables.
+                    if not stripHTMLTags(formElement['label']):                  
+                        formElement['label'] = "Label for field/element"
 
                 # Have we already included this field in the formFieldIndex?
                 field = getFieldByNameInIndex(session['formFieldIndex'], formElement['name'])
@@ -365,7 +366,7 @@ def save_form(slug):
                     "enabled": False,
                     "hostname": urlparse(request.host_url).hostname,
                     "slug": slug,
-                    "notification": [],
+                    "notification": {"newEntry": True},
                     "structure": session['formStructure'],
                     "fieldIndex": session['formFieldIndex'],
                     "entries": [],
@@ -374,6 +375,10 @@ def save_form(slug):
         if Form().insert(newFormData):
             clearSessionFormData()
             flash(gettext("Saved form OK"), 'success')
+            
+            # notify Admins
+            smtpSendNewFormNotification(User().getNotifyNewFormEmails(), slug)
+
 
     #print(session['formFieldIndex'])
     return redirect(url_for('inspect_form', slug=slug))
@@ -541,6 +546,9 @@ def new_user(inviteToken=None):
             #login a new root user
             session['username']=user.username
             return redirect(url_for('user_settings', username=user.username))
+        else:
+            # notify Admins
+            smtpSendNewUserNotification(User().getNotifyNewUserEmails(), user.username)
             
         return render_template('new-user.html', site=Site(), created=True)
 
@@ -812,14 +820,21 @@ def list_all_forms():
 @app.route('/forms/toggle-enabled/<string:slug>', methods=['POST'])
 @login_required
 def toggle_form(slug):
-    form=Form(slug=slug)
+    form=Form(slug=slug, author=g.current_user.username)
     if not form:
         return JsonResponse(json.dumps())
-    if not g.current_user.username == form.author:
-        # don't toggle
-        return JsonResponse(json.dumps({'enabled':form.enabled}))
         
     return JsonResponse(json.dumps({'enabled':form.toggleEnabled()}))
+
+
+@app.route('/forms/toggle-notification/<string:slug>', methods=['POST'])
+@login_required
+def toggle_form_notification(slug):
+    form=Form(slug=slug, author=g.current_user.username)
+    if not form:
+        return JsonResponse(json.dumps())
+
+    return JsonResponse(json.dumps({'notification':form.toggleNotification()}))
 
 
 """

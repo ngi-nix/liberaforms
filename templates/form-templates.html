@@ -4,25 +4,43 @@
 <script src="/static/formBuilder/form-render.min.js"></script>
 
 <div class="container">
-    <div class="row col-md-12" style="font-size:1.5em">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-6">
+
+    <div style="font-size:1.5em">
         {%trans%}Form templates{%endtrans%}
         <hr />
     </div>
-</div>
 
-<div class="container">
-    
+    <div style="font-size:1.1em">
+    {%trans%}We've put together some forms you can use to get started.{%endtrans%}
+    <br />
+    {%trans%}Choose the template that best suits your needs and edit it to fit.{%endtrans%}
+    </div>
+    <p>&nbsp;</p>
     
     {% for template in templates %}
-        <div class="row col-md-5">
-            <div id="fb-render-{{loop.index}}"></div>
-            <input class="btn-success btn" type="button" value="{%trans%}Use this template{%endtrans%}" onClick="location.href='/forms/new/{{ template.id }}'">
-
-        </div>
-        <div class="row col-md-2"></div>
+        <a style="font-size:1.15em" href="#{{template.id}}">{{template.name}}</a>
+        <br />
+        {{template.description}}
+        <br />
+        <br />
+    {% endfor %}
+    <hr />
+    {% for template in templates %}
+        <a name="{{template.id}}"></a>
+        <div id="fb-render-{{loop.index}}"></div>
+        <br />
+        <input class="btn-success btn" type="button" value="{%trans%}Use this template{%endtrans%}" onClick="location.href='/forms/new/{{ template.id }}'">
+        <p>&nbsp;</p>
+        <hr />
     {% endfor %}
     
     
+
+    
+    </div>
+    <div class="row col-md-3"></div>
 </div>
 
 

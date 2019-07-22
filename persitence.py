@@ -85,8 +85,37 @@ class User(object):
     def findAll(cls, *args, **kwargs):
         if not g.current_user.isRootUser():
             kwargs['hostname']=Site().hostname
+        print(kwargs)
         return mongo.db.users.find(kwargs)
       
+    def getNotifyNewFormEmails(cls):
+        emails=[]
+        criteria={'hostname':Site().hostname, 'enabled':True, 'admin.isAdmin':True, 'admin.notifyNewForm':True}
+        admins=mongo.db.users.find(criteria)
+        for admin in admins:
+            emails.append(admin['email'])
+            
+        rootUsers=mongo.db.users.find({'email': {"$in": app.config['ROOT_USERS']}, 'admin.notifyNewForm':True})
+        for rootUser in rootUsers:
+            if not rootUser['email'] in emails:
+                emails.append(rootUser['email'])
+        
+        return emails
+
+    def getNotifyNewUserEmails(cls):
+        emails=[]
+        criteria={'hostname':Site().hostname, 'enabled':True, 'admin.isAdmin':True, 'admin.notifyNewUser':True}
+        admins=mongo.db.users.find(criteria)
+        for admin in admins:
+            emails.append(admin['email'])
+            
+        rootUsers=mongo.db.users.find({'email': {"$in": app.config['ROOT_USERS']}, 'admin.notifyNewUser':True})
+        for rootUser in rootUsers:
+            if not rootUser['email'] in emails:
+                emails.append(rootUser['email'])
+        
+        return emails
+
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
@@ -330,10 +359,19 @@ class Form(object):
         return self.form['enabled']
 
 
+    def toggleNotification(self):
+        if self.form['notification']['newEntry']:
+            self.form['notification']['newEntry']=False
+        else:
+            self.form['notification']['newEntry']=True
+        mongo.db.forms.save(self.form)
+        return self.form['notification']['newEntry']
+
+
     def insert(self, formData):
         if formData['slug'] in app.config['RESERVED_SLUGS']:
             return None # just in case
-        mongo.db.forms.insert_one(formData)
+        return mongo.db.forms.insert_one(formData)
 
     def update(self, data):
         mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
@@ -353,6 +391,9 @@ class Form(object):
     def enabled(self):
         return self.form['enabled']
 
+    @property
+    def notification(self):
+        return self.form['notification']
 
     @property
     def hostname(self):

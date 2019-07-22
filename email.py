@@ -47,7 +47,7 @@ def sendMail(email, message):
 def smtpSendConfirmEmail(user):
     link="%suser/validate-email/%s" % (request.url_root, user.token['token'])
     message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
-    message = 'Subject: {}\n\n{}'.format(gettext("GNGform Confirm email"), message)
+    message = 'Subject: {}\n\n{}'.format(gettext("GNGforms. Confirm email"), message)
 
     return sendMail(user.email, message)
 
@@ -55,7 +55,7 @@ def smtpSendConfirmEmail(user):
 def smtpSendInvite(invite):
     link="%suser/new/%s" % (request.url_root, invite.data['token']['token'])
     message="%s\n\n%s" % (invite.data['message'], link)   
-    message='Subject: {}\n\n{}'.format(gettext("GNGform invitation"), message)
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % Site().hostname), message)
       
     #print(message)
     return sendMail(invite.data['email'], message)
@@ -65,9 +65,24 @@ def smtpSendRecoverPassword(user):
     link="%ssite/recover-password/%s" % (request.url_root, user.token['token'])
     message=gettext("Please use this link to recover your password")
     message="%s\n\n%s" % (message, link)
-    message='Subject: {}\n\n{}'.format(gettext("GNGform Recover password"), message)
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. Recover password"), message)
     
     return sendMail(user.email, message)
+
+
+def smtpSendNewFormNotification(adminEmails, slug):
+    message=gettext("New form '%s' created at %s" % (slug, Site().hostname))
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form notification"), message)
+    
+    for email in adminEmails:
+        sendMail(email, message)
+
+def smtpSendNewUserNotification(adminEmails, username):
+    message=gettext("New user '%s' created at %s" % (username, Site().hostname))
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New user notification"), message)
+    
+    for email in adminEmails:
+        sendMail(email, message)
 
 
 def smtpSendTestEmail(email):
