@@ -70,7 +70,7 @@ jQuery(function($) {
             //    'en-US': {...}
             //}
         },
-        formData: {{ formStructure | safe }}
+        formData: {{ formStructure | tojson }}
     };
     const formBuilder = $(fbEditor).formBuilder(options);
 

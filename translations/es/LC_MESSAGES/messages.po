@@ -7,21 +7,82 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GNGforms 1.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-04 19:26+0200\n"
+"POT-Creation-Date: 2019-07-22 18:32+0200\n"
 "PO-Revision-Date: 2019-07-04 19:34+0200\n"
 "Last-Translator: \n"
 "Language: es\n"
 "Language-Team: Lleialtec <chris@tec.lleialtat.cat>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 1.8.11\n"
 
-#: email.py:34
+#: email.py:33
 msgid "Could not connect to SMTP server"
 msgstr "No se puede conectar con el servidor SMTP"
+
+#: email.py:50
+#, python-format
+msgid ""
+"Hello %s\n"
+"\n"
+"Please confirm your email\n"
+"\n"
+"%s"
+msgstr ""
+
+#: email.py:51
+msgid "GNGforms. Confirm email"
+msgstr ""
+
+#: email.py:59
+#, python-format
+msgid "GNGforms. Invitation to %s"
+msgstr ""
+
+#: email.py:67
+msgid "Please use this link to recover your password"
+msgstr ""
+
+#: email.py:69
+msgid "GNGforms. Recover password"
+msgstr ""
+
+#: email.py:75
+#, python-format
+msgid "New form entry in %s at %s\n"
+msgstr ""
+
+#: email.py:79
+msgid "GNGforms. New form entry"
+msgstr ""
+
+#: email.py:84
+#, python-format
+msgid "New form '%s' created at %s"
+msgstr ""
+
+#: email.py:85
+msgid "GNGforms. New form notification"
+msgstr ""
+
+#: email.py:91
+#, python-format
+msgid "New user '%s' created at %s"
+msgstr ""
+
+#: email.py:92
+msgid "GNGforms. New user notification"
+msgstr ""
+
+#: email.py:99
+msgid "Congratulations!"
+msgstr ""
+
+#: email.py:100
+msgid "SMTP test"
+msgstr ""
 
 #: persitence.py:40
 msgid "All fields are required"
@@ -35,134 +96,163 @@ msgstr "El nombre de usuario no es válido"
 msgid "Username is not available"
 msgstr "No está disponible el nombre de usuario"
 
-#: persitence.py:93 utils.py:93
+#: persitence.py:123 utils.py:99
 msgid "Email address is not valid"
 msgstr "El correo-e no es válido"
 
-#: persitence.py:96
+#: persitence.py:126
 msgid "Email address is not available"
 msgstr "No está disponible el correo-e"
 
-#: persitence.py:259
+#: persitence.py:280
 msgid "Permission needed to view form"
 msgstr "Faltan permisos para ver el forumlario"
 
-#: utils.py:83
+#: utils.py:89
 msgid "Passwords do not match"
 msgstr "No coinciden las contraseñas"
 
-#: utils.py:86
+#: utils.py:92
 msgid "Your password is weak"
 msgstr "Tu contraseña es débil"
 
-#: views.py:109
+#: views.py:112
 msgid "Form is not available. 404"
 msgstr "No se encuentra el formulario. 404"
 
-#: views.py:143 views.py:160 views.py:364
+#: views.py:158 views.py:175 views.py:434
 msgid "No form found"
 msgstr "No se encuentra el formulario"
 
-#: views.py:147 views.py:164
+#: views.py:162
+msgid "Permission required. You cannot view that data"
+msgstr ""
+
+#: views.py:179
 msgid "Permission required. You cannot view this data"
 msgstr ""
 
-#: views.py:193 views.py:299
+#: views.py:227 views.py:345
 msgid "Something went wrong. No slug!"
 msgstr ""
 
-#: views.py:323
+#: views.py:368
 msgid "Updated form OK"
 msgstr "Se ha actualizado el formulario correctamente"
 
-#: views.py:340
+#: views.py:385
 msgid "Saved form OK"
 msgstr "Se ha guardado el formulario correctamente"
 
-#: views.py:416
+#: views.py:400
+msgid "Form not found"
+msgstr ""
+
+#: views.py:407
+#, python-format
+msgid "Deleted '%s' and %s entries"
+msgstr ""
+
+#: views.py:410
+msgid "Name does not match"
+msgstr ""
+
+#: views.py:486
 #, python-format
 msgid "We sent an email to %s"
 msgstr "Hemos enviado un correo a %s"
 
-#: views.py:428
+#: views.py:500
+msgid "Language updated OK"
+msgstr ""
+
+#: views.py:514
 msgid "Invitation not found"
 msgstr "No se encuentra la invitación"
 
-#: views.py:454
+#: views.py:518
+msgid "This invitation has expired"
+msgstr ""
+
+#: views.py:545
 msgid "Opps! An error ocurred when creating the user"
 msgstr ""
 
-#: views.py:480
+#: views.py:579
 msgid "Bad credentials"
 msgstr "Las credenciales no son buenas"
 
-#: views.py:496
+#: views.py:594
 msgid "We may have sent you an email"
 msgstr "Puede que te hemos enviado un correo-e"
 
-#: views.py:531
+#: views.py:635
 msgid "Password changed OK"
 msgstr "Se ha cambiado la contraseña correctamente"
 
-#: views.py:543
+#: views.py:647
 msgid "Text saved OK"
 msgstr "Se ha guardado el texto correctamente"
 
-#: views.py:561
+#: views.py:658
+msgid "Site email address updated OK"
+msgstr ""
+
+#: views.py:677
 msgid "SMTP config works!"
 msgstr "La config. del SMTP funciona!"
 
-#: views.py:573
+#: views.py:694
 msgid "Your petition has expired. Try again."
 msgstr ""
 
-#: views.py:584
-msgid "Your email is valid"
-msgstr "Tu correo-e es válido"
+#: views.py:706
+msgid "Your email address is valid"
+msgstr ""
 
-#: views.py:631
+#: views.py:754
 #, python-format
 msgid "We sent an invitation to %s"
 msgstr "Hemos enviado una invitación a %s"
 
-#: views.py:641
+#: views.py:764
 msgid "Opps! We got a bad email"
 msgstr ""
 
-#: views.py:647
+#: views.py:770
 msgid "Opps! We can't find that invitation"
 msgstr ""
 
-#: views.py:658
+#: views.py:781
 msgid "Username not found"
 msgstr "No se encuentra el nombre de usuario"
 
-#: templates/base.html:31
+#: templates/base.html:29
 msgid "Start"
 msgstr "Inicio"
 
-#: templates/base.html:34 templates/list-forms.html:12
+#: templates/base.html:32 templates/list-forms.html:11
 #: templates/list-users.html:26
 msgid "Forms"
 msgstr "Formularios"
 
-#: templates/base.html:35 templates/list-users.html:11
+#: templates/base.html:33 templates/list-users.html:11
 msgid "Users"
 msgstr "Usuarios"
 
-#: templates/base.html:38 templates/my-forms.html:11
+#: templates/base.html:36 templates/my-forms.html:10
 msgid "My forms"
 msgstr "Mis formularios"
 
-#: templates/base.html:39
+#: templates/base.html:37
 msgid "Settings"
 msgstr "Preferencias"
 
-#: templates/base.html:40
+#: templates/base.html:38
 msgid "Logout"
 msgstr "Salir"
 
-#: templates/base.html:53
+#: templates/base.html:51
 msgid "Source code"
 msgstr "Código fuente"
 
@@ -170,49 +260,67 @@ msgstr "Código fuente"
 msgid "Change email address"
 msgstr "Cambia la dirección de correo-e"
 
-#: templates/change-email.html:15
-msgid "We will send you an email to your new address"
-msgstr "Te enviaremos un correo a tu dirección nueva"
-
-#: templates/change-email.html:18
+#: templates/change-email.html:17
 msgid "New email address"
 msgstr "Nueva dirección de correo-e"
 
-#: templates/change-email.html:22 templates/new-user.html:32
-#: templates/recover-password.html:18 templates/reset-password.html:27
+#: templates/change-email.html:21 templates/change-language.html:25
+#: templates/new-user.html:32 templates/recover-password.html:18
+#: templates/reset-password.html:27
 msgid "Submit"
 msgstr ""
 
-#: templates/edit-form.html:7
-msgid "Build the form here"
+#: templates/change-language.html:11
+msgid "Change language"
 msgstr ""
 
-#: templates/edit-form.html:12
-msgid "Additional info here"
+#: templates/delete-form.html:11
+msgid "Delete form"
+msgstr ""
+
+#: templates/delete-form.html:14
+#, python-format
+msgid "You are going to delete a form with %(entry_cnt)s entries"
+msgstr ""
+
+#: templates/delete-form.html:16
+msgid "Write the name of the form below"
+msgstr ""
+
+#: templates/delete-form.html:24 templates/user-settings.html:64
+msgid "Delete"
+msgstr "Borrar"
+
+#: templates/edit-form.html:9
+msgid "Build your form here"
 msgstr ""
 
 #: templates/edit-form.html:16
+msgid "Additional info here"
+msgstr ""
+
+#: templates/edit-form.html:20
 msgid "Form URL"
 msgstr "El URL del formulario"
 
-#: templates/edit-form.html:17
+#: templates/edit-form.html:21
 msgid "Your from will have this address"
 msgstr ""
 
-#: templates/edit-form.html:21
-msgid "Not available!"
-msgstr "No disponible!"
+#: templates/edit-form.html:28
+msgid "This URL is not available. Try another!"
+msgstr ""
 
-#: templates/edit-form.html:22
-msgid "Use this URL"
-msgstr "Usa este URL"
+#: templates/edit-form.html:31
+msgid "OK, use this URL"
+msgstr ""
 
-#: templates/edit-form.html:26 templates/edit-form.html:28
+#: templates/edit-form.html:35 templates/edit-form.html:37
 #: templates/index.html:27 templates/new-user.html:33
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: templates/edit-form.html:30 templates/preview-form.html:8
+#: templates/edit-form.html:39 templates/preview-form.html:10
 msgid "Preview"
 msgstr "Previsualizar"
 
@@ -228,11 +336,11 @@ msgstr "Bajar el CSV"
 msgid "Edit text"
 msgstr ""
 
-#: templates/index.html:26 templates/preview-form.html:17
+#: templates/index.html:26 templates/preview-form.html:19
 msgid "Save"
 msgstr "Guardar"
 
-#: templates/index.html:40 templates/inspect-user.html:19
+#: templates/index.html:40 templates/inspect-user.html:18
 #: templates/list-users.html:18 templates/new-user.html:16
 msgid "Username"
 msgstr "Nombre de usuario"
@@ -250,130 +358,136 @@ msgstr ""
 msgid "Forgot your password?"
 msgstr ""
 
-#: templates/index.html:57
-msgid "Register a new user"
+#: templates/index.html:58
+msgid "Publish your own form"
 msgstr ""
 
-#: templates/inspect-form.html:7
+#: templates/inspect-form.html:10
 msgid "The form"
 msgstr "El formulario"
 
-#: templates/inspect-form.html:12 templates/view-form.html:9
+#: templates/inspect-form.html:15 templates/view-form.html:11
 msgid "Send"
 msgstr "Enviar"
 
-#: templates/inspect-form.html:17
+#: templates/inspect-form.html:20
 msgid "Form details"
 msgstr "Detalles del formulario"
 
-#: templates/inspect-form.html:23 templates/list-forms.html:26
+#: templates/inspect-form.html:26 templates/list-forms.html:25
 msgid "Author"
 msgstr "Autor"
 
-#: templates/inspect-form.html:31 templates/inspect-user.html:38
-#: templates/inspect-user.html:81 templates/list-forms.html:25
-#: templates/list-users.html:24 templates/my-forms.html:27
+#: templates/inspect-form.html:34 templates/inspect-user.html:37
+#: templates/inspect-user.html:80 templates/list-forms.html:24
+#: templates/list-users.html:24 templates/my-forms.html:28
 msgid "Created"
 msgstr "Creado"
 
-#: templates/inspect-form.html:36 templates/inspect-user.html:24
-#: templates/list-forms.html:22 templates/list-users.html:21
+#: templates/inspect-form.html:39 templates/inspect-user.html:23
+#: templates/list-forms.html:21 templates/list-users.html:21
 msgid "Hostname"
 msgstr "Hostname"
 
-#: templates/inspect-form.html:41
+#: templates/inspect-form.html:44
 msgid "Nº of entries"
 msgstr "Nº de entradas"
 
-#: templates/inspect-form.html:45
+#: templates/inspect-form.html:48
 msgid "Last entry"
 msgstr "Última entrada"
 
-#: templates/inspect-form.html:49
+#: templates/inspect-form.html:52
 msgid "URL"
 msgstr "URL"
 
-#: templates/inspect-form.html:61
-msgid "Is public"
-msgstr "Es públic"
+#: templates/inspect-form.html:64
+msgid "Notify me"
+msgstr ""
 
-#: templates/inspect-form.html:65 templates/inspect-user.html:32
-#: templates/inspect-user.html:62 templates/user-settings.html:83
-#: templates/user-settings.html:92 templates/user-settings.html:111
+#: templates/inspect-form.html:68 templates/inspect-form.html:81
+#: templates/inspect-user.html:31 templates/inspect-user.html:61
+#: templates/user-settings.html:83 templates/user-settings.html:92
+#: templates/user-settings.html:111
 msgid "True"
 msgstr "Verdad"
 
-#: templates/inspect-form.html:66 templates/inspect-user.html:33
-#: templates/inspect-user.html:63 templates/user-settings.html:84
-#: templates/user-settings.html:93 templates/user-settings.html:112
+#: templates/inspect-form.html:69 templates/inspect-form.html:82
+#: templates/inspect-user.html:32 templates/inspect-user.html:62
+#: templates/user-settings.html:84 templates/user-settings.html:93
+#: templates/user-settings.html:112
 msgid "False"
 msgstr "Falso"
 
-#: templates/inspect-form.html:73
+#: templates/inspect-form.html:77
+msgid "Is public"
+msgstr "Es públic"
+
+#: templates/inspect-form.html:89
 msgid "user disabled"
 msgstr "usuario deshabilitado"
 
-#: templates/inspect-form.html:84
-msgid "View form data"
-msgstr "Ver data del formulario"
+#: templates/inspect-form.html:99
+msgid "View entries"
+msgstr ""
 
-#: templates/inspect-form.html:85
+#: templates/inspect-form.html:100
 msgid "Edit form"
 msgstr "Editar formulario"
 
-#: templates/inspect-form.html:86
-msgid "Delete form and data"
-msgstr "Borrar el formulario y entradas"
+#: templates/inspect-form.html:101
+msgid "Delete form and entries"
+msgstr ""
 
-#: templates/inspect-user.html:13
+#: templates/inspect-user.html:12
 msgid "User details"
 msgstr "Detalles del usuario"
 
-#: templates/inspect-user.html:29 templates/list-users.html:28
+#: templates/inspect-user.html:28 templates/list-users.html:28
 msgid "Is Admin"
 msgstr "Es Admin"
 
-#: templates/inspect-user.html:42 templates/list-users.html:25
+#: templates/inspect-user.html:41 templates/list-users.html:25
 #: templates/new-user.html:20
 msgid "Email"
 msgstr "Correo-e"
 
-#: templates/inspect-user.html:46
+#: templates/inspect-user.html:45
 msgid "Validated email"
 msgstr "Correo-e validado"
 
-#: templates/inspect-user.html:48
+#: templates/inspect-user.html:47
 msgid "Yes"
 msgstr "Sí"
 
-#: templates/inspect-user.html:50
+#: templates/inspect-user.html:49
 msgid "No"
 msgstr "No"
 
-#: templates/inspect-user.html:55
+#: templates/inspect-user.html:54
 msgid "Language"
 msgstr "Idioma"
 
-#: templates/inspect-user.html:59
+#: templates/inspect-user.html:58
 msgid "Can publish/login?"
 msgstr "¿Puede publicar/logear?"
 
-#: templates/inspect-user.html:73
+#: templates/inspect-user.html:72
 msgid "User's forms"
 msgstr "Formularios del usuario"
 
-#: templates/inspect-user.html:80 templates/list-forms.html:19
-#: templates/my-forms.html:26
+#: templates/inspect-user.html:79 templates/list-forms.html:18
+#: templates/my-forms.html:27
 msgid "Name"
 msgstr "Nombre"
 
-#: templates/inspect-user.html:82 templates/list-forms.html:28
-#: templates/my-forms.html:29
+#: templates/inspect-user.html:81 templates/list-forms.html:27
+#: templates/my-forms.html:30
 msgid "Public"
 msgstr "Público"
 
-#: templates/inspect-user.html:83 templates/list-forms.html:27
-#: templates/my-forms.html:28
+#: templates/inspect-user.html:82 templates/list-forms.html:26
+#: templates/my-forms.html:29
 msgid "Entries"
 msgstr "Entradas"
 
@@ -381,9 +495,13 @@ msgstr "Entradas"
 msgid "Can publish"
 msgstr "Puede publicar"
 
-#: templates/my-forms.html:14
+#: templates/my-forms.html:13
 msgid "New form"
 msgstr "Nuevo formulario"
+
+#: templates/my-forms.html:15
+msgid "Choose a template"
+msgstr ""
 
 #: templates/new-invite.html:11
 msgid "Send a new user invitation"
@@ -397,7 +515,7 @@ msgstr "El correo-e del usuario nuevo"
 msgid "Include message"
 msgstr "Incluir un mensaje"
 
-#: templates/new-invite.html:25 templates/user-settings.html:141
+#: templates/new-invite.html:27 templates/user-settings.html:141
 msgid "Send email"
 msgstr "Enviar correo"
 
@@ -421,6 +539,10 @@ msgstr "ej. No hay vacaciones este año"
 msgid "Another eg: My dog has fleas"
 msgstr "Otro ej: Me perro tiene pulgas"
 
+#: templates/new-user.html:45
+msgid "We sent you an email!"
+msgstr ""
+
 #: templates/page_not_found.html:7
 msgid "Opps! 404"
 msgstr ""
@@ -429,7 +551,7 @@ msgstr ""
 msgid "Start again"
 msgstr ""
 
-#: templates/preview-form.html:16
+#: templates/preview-form.html:18
 msgid "Edit"
 msgstr "Editar"
 
@@ -474,10 +596,6 @@ msgstr "Invitaciones"
 msgid "Invite a new user"
 msgstr "Invita a un nuevo usuario"
 
-#: templates/user-settings.html:64
-msgid "Delete"
-msgstr "Borrar"
-
 #: templates/user-settings.html:74
 msgid "My admin settings"
 msgstr "Mis preferencias de admin"
@@ -505,3 +623,28 @@ msgstr "Usuario root"
 #: templates/user-settings.html:136
 msgid "Test SMTP config."
 msgstr "Prueba la config. SMTP"
+
+#~ msgid "Your email is valid"
+#~ msgstr "Tu correo-e es válido"
+
+#~ msgid "We will send you an email to your new address"
+#~ msgstr "Te enviaremos un correo a tu dirección nueva"
+
+#~ msgid "Build the form here"
+#~ msgstr ""
+
+#~ msgid "Not available!"
+#~ msgstr "No disponible!"
+
+#~ msgid "Use this URL"
+#~ msgstr "Usa este URL"
+
+#~ msgid "Register a new user"
+#~ msgstr ""
+
+#~ msgid "View form data"
+#~ msgstr "Ver data del formulario"
+
+#~ msgid "Delete form and data"
+#~ msgstr "Borrar el formulario y entradas"
+

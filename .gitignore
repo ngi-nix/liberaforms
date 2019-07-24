@@ -2,4 +2,4 @@ config.cfg
 notes.txt
 *.pyc
 static/node_modules
-
+__pycache__

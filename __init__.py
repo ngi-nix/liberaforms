@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_babel import Babel
+#from flask_babelplus import Babel, Domain
 
 
 app = Flask(__name__)
@@ -27,8 +28,10 @@ app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
 babel = Babel(app)
 
-app.config['RESERVED_SLUGS'] = ['admin', 'user', 'users', 'form', 'forms', 'site']
+app.config['RESERVED_SLUGS'] = ['admin', 'admins', 'user', 'users', 'form', 'forms', 'site']
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
+
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'
 app.config['LANGUAGES'] = {
     'en': 'English',
     'ca': 'Català',

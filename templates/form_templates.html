@@ -36,19 +36,18 @@
         <hr />
     {% endfor %}
     
-    
-
-    
     </div>
     <div class="row col-md-3"></div>
 </div>
+
+
 
 
 <script>
 {% for template in templates %}
     jQuery(function($) {
         var fbRender = document.getElementById('fb-render-{{loop.index}}');
-        var formData = {{ template.structure | safe }};
+        var formData = {{ template.structure | tojson }};
         var formRenderOpts = {
             formData,
             dataType: 'json'

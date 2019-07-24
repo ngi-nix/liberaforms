@@ -17,17 +17,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json, re, datetime, os
+import json, re, datetime, os, sys
 from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
 from GNGforms import app, mongo, babel
 from functools import wraps
 from urllib.parse import urlparse
-from flask_babel import gettext
+from flask_babel import gettext, refresh
 from .persitence import *
 from .session import *
 from .utils import *
 from .email import *
-from .form_templates import formTemplates
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
+from form_templates import formTemplates
 
 import pprint
 
@@ -192,10 +193,8 @@ def csv_form(slug):
 @app.route('/forms/templates', methods=['GET'])
 @login_required
 def list_form_templates():
-   
-      
-    return render_template('form-templates.html', templates=formTemplates)
 
+    return render_template('form_templates.html', templates=formTemplates)
 
 
 @app.route('/forms/new', methods=['GET'])
@@ -497,7 +496,7 @@ def change_language():
         if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
             g.current_user.language=request.form['language']
             g.current_user.save()
-            
+            refresh()
             flash(gettext("Language updated OK"), 'success')
             return redirect(url_for('user_settings', username=g.current_user.username))
             
