@@ -479,16 +479,15 @@ def user_settings(username):
         return redirect(url_for('my_forms'))
     if not (user.username == g.current_user.username or g.current_user.admin):
         return redirect(url_for('my_forms'))
-    site=None
+    thisSite=Site()
     invites=[]
     if user.admin:
-        site=Site()
         invites=Invite().findAll()
-        if site.data['scheme'] != urlparse(request.host_url).scheme:
+        if thisSite.data['scheme'] != urlparse(request.host_url).scheme:
             # background maintenance.
             # maybe a letsencrypt cert got insalled after the initial installation and http is now https.
-            site.data['scheme'] = urlparse(request.host_url).scheme
-            site.save()
+            thisSite.data['scheme'] = urlparse(request.host_url).scheme
+            thisSite.save()
     
     sites=[]
     if g.isRootUser:
@@ -498,7 +497,7 @@ def user_settings(username):
             totalUsers = User().findAll(hostname=site.hostname).count()
             sites.append({'site':site, 'totalUsers': totalUsers, 'totalForms':totalForms})
             
-    return render_template('user-settings.html', user=user, invites=invites, site=site, sites=sites)
+    return render_template('user-settings.html', user=user, invites=invites, site=thisSite, sites=sites)
  
 
 
@@ -509,7 +508,7 @@ def change_email():
         if 'email' in request.form and isValidEmail(request.form['email']):
             g.current_user.setToken(email=request.form['email'])
                         
-            smtpSendConfirmEmail(g.current_user)
+            smtpSendConfirmEmail(g.current_user, request.form['email'])
             flash(gettext("We sent an email to %s") % request.form['email'], 'info')
             return redirect(url_for('user_settings', username=g.current_user.username))
             

@@ -45,12 +45,15 @@ def sendMail(email, message):
     return False
 
 
-def smtpSendConfirmEmail(user):
+def smtpSendConfirmEmail(user, newEmail=None):
     link="%suser/validate-email/%s" % (Site().host_url, user.token['token'])
     message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
     message = 'Subject: {}\n\n{}'.format(gettext("GNGforms. Confirm email"), message)
 
-    return sendMail(user.email, message)
+    if newEmail:
+        return sendMail(newEmail, message)
+    else:
+        return sendMail(user.email, message)
 
 
 def smtpSendInvite(invite):
