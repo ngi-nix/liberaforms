@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_babel import Babel
-#from flask_babelplus import Babel, Domain
 
 
 app = Flask(__name__)
@@ -37,6 +36,9 @@ app.config['LANGUAGES'] = {
     'ca': 'Català',
     'es': 'Castellano'
 }
+
+import sys, os
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
 from GNGforms import views
 

@@ -49,7 +49,7 @@ We are installing in a lxc container, so we bind to 0.0.0.0
 If your instalation is on the same machine as your nginx proxy, try 127.0.0.1 instead.
 
 command = '/opt/venv/bin/gunicorn'
-pythonpath = '/opt/GNGforms'
+pythonpath = '/opt'
 bind = '0.0.0.0:5001'
 workers = 3
 user = 'www-data'

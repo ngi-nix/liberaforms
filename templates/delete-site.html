@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Delete user{%endtrans%}
+    </div>
+    <hr />
+    <div style="color:red">
+        {%trans%}You are going to delete a Site{%endtrans%}.
+        <br />
+        {%trans%}Write the name of the site below{%endtrans%}.
+    </div>
+    <p></p>
+    <span style="font-size:1.15em">{{site.hostname}}</span>
+    <p></p>
+    
+    <form method="POST">
+        <input type="text" name="hostname" class="form-control" required ><br />
+        <p></p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+    </form>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+  
+{% endblock %}

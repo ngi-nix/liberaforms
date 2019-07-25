@@ -46,7 +46,7 @@ def sendMail(email, message):
 
 
 def smtpSendConfirmEmail(user):
-    link="%suser/validate-email/%s" % (request.url_root, user.token['token'])
+    link="%suser/validate-email/%s" % (Site().host_url, user.token['token'])
     message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
     message = 'Subject: {}\n\n{}'.format(gettext("GNGforms. Confirm email"), message)
 
@@ -54,16 +54,17 @@ def smtpSendConfirmEmail(user):
 
 
 def smtpSendInvite(invite):
-    link="%suser/new/%s" % (request.url_root, invite.data['token']['token'])
+    site=Site(hostname=invite.data['hostname'])
+    link="%suser/new/%s" % (site.host_url, invite.data['token']['token'])
     message="%s\n\n%s" % (invite.data['message'], link)   
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % Site().hostname), message)
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % site.hostname), message)
       
     #print(message)
     return sendMail(invite.data['email'], message)
     
 
 def smtpSendRecoverPassword(user):
-    link="%ssite/recover-password/%s" % (request.url_root, user.token['token'])
+    link="%ssite/recover-password/%s" % (Site().host_url, user.token['token'])
     message=gettext("Please use this link to recover your password")
     message="%s\n\n%s" % (message, link)
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Recover password"), message)

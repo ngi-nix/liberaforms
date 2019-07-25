@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Delete user{%endtrans%}
+    </div>
+    <hr />
+    {%trans%}You are going to delete a user{%endtrans%}.
+    <br />
+    {%trans%}Write the name of the user below{%endtrans%}.
+    <p></p>
+    <span style="font-size:1.15em">{{username}}</span>
+    <p></p>
+    
+    <form method="POST">
+        <input type="text" name="username" class="form-control" required ><br />
+        <p></p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+    </form>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+  
+{% endblock %}

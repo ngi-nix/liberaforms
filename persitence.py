@@ -66,9 +66,9 @@ class User(object):
         if 'token' in kwargs:
             kwargs={"token.token": kwargs['token'], **kwargs}
             kwargs.pop('token')
-        if not (g.current_user and g.current_user.isRootUser()):
+        if not (g.isRootUser):
             # rootUser can find any user. else only find users registered with this hostname.
-            kwargs['hostname']=urlparse(request.host_url).hostname            
+            kwargs['hostname']=Site().hostname            
 
         user = mongo.db.users.find_one(kwargs)
         if user:
@@ -83,7 +83,7 @@ class User(object):
 
 
     def findAll(cls, *args, **kwargs):
-        if not g.current_user.isRootUser():
+        if not g.isRootUser:
             kwargs['hostname']=Site().hostname
         return mongo.db.users.find(kwargs)
 
@@ -172,12 +172,19 @@ class User(object):
         mongo.db.users.save(self.user)
 
 
+    def delete(self):
+        forms = Form().findAll(author=self.username)
+        for form in forms:
+            mongo.db.forms.remove({'_id': form['_id']})
+        return mongo.db.users.remove({'_id': self.user['_id']})
+
+
     def isRootUser(self):
         if self.email in app.config['ROOT_USERS']:
             return True
         return False
     
-
+       
     @property
     def token(self):
         return self.user['token']
@@ -291,7 +298,7 @@ class Form(object):
             return instance
         if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
             return None
-        if not (g.current_user and g.current_user.isRootUser()):
+        if not g.isRootUser:
             # rootUser can find any form. else only find forms created at this hostname.
             kwargs['hostname']=urlparse(request.host_url).hostname
             
@@ -346,7 +353,7 @@ class Form(object):
 
 
     def findAll(cls, *args, **kwargs):
-        if not g.current_user.isRootUser():
+        if not g.isRootUser:
             kwargs['hostname']=Site().hostname
         return mongo.db.forms.find(kwargs)
 
@@ -432,12 +439,24 @@ class Site(object):
 
     def __new__(cls, *args, **kwargs):
         instance = super(Site, cls).__new__(cls)
-        kwargs['hostname']=urlparse(request.host_url).hostname
+        
+        if 'hostname' in kwargs:
+            searchSiteByHostname=True
+        else:
+            kwargs['hostname']=urlparse(request.host_url).hostname
+            searchSiteByHostname=False
+
         site = mongo.db.sites.find_one(kwargs)
         if site:
             instance.site=dict(site)
             return instance
         else:
+            if searchSiteByHostname:
+                return None
+            
+            # this Site is new. Let's create it!
+            hostname=urlparse(request.host_url).hostname
+        
             # create a new site with this hostname
             with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
                 defaultMD=defaultBlurb.read()
@@ -445,9 +464,10 @@ class Site(object):
                 'markdown': defaultMD,
                 'html': markdown.markdown(defaultMD)
             }
-            hostname = urlparse(request.host_url).hostname
+            
             newSiteData={
                 "hostname": hostname,
+                "scheme": urlparse(request.host_url).scheme,
                 "blurb": blurb,
                 "invitationOnly": True,
                 "noreplyEmailAddress": "no-reply@%s" % hostname
@@ -465,9 +485,16 @@ class Site(object):
 
 
     @property
+    def data(self):
+        return self.site
+
+    @property
     def hostname(self):
         return self.site['hostname']
 
+    @property
+    def host_url(self):
+        return "%s://%s/" %(self.site['scheme'], self.site['hostname'])
 
     @property
     def blurb(self):
@@ -481,7 +508,6 @@ class Site(object):
     @property
     def noreplyEmailAddress(self):
         return self.site['noreplyEmailAddress']
-
 
     @noreplyEmailAddress.setter
     def noreplyEmailAddress(self, email):
@@ -500,7 +526,18 @@ class Site(object):
         mongo.db.sites.save(self.site)
         return self.site["invitationOnly"]
 
+    def findAll(cls, *args, **kwargs):
+        return mongo.db.sites.find(kwargs)
 
+    def delete(self):
+        users = User().findAll(hostname=self.site['hostname'])
+        for user in users:
+            mongo.db.users.remove({'_id': user['_id']})
+        invites = Invite().findAll(hostname=self.site['hostname'])
+        for invite in invites:
+            mongo.db.invites.remove({'_id': invite['_id']})
+        
+        return mongo.db.sites.remove({'_id': self.site['_id']})
 
 
 class Invite(object):
@@ -510,7 +547,8 @@ class Invite(object):
         instance = super(Invite, cls).__new__(cls)
         if not kwargs:
             return instance
-        kwargs['hostname']=Site().hostname
+        if not (g.isRootUser or 'hostname' in kwargs):
+            kwargs['hostname']=Site().hostname
         if 'token' in kwargs:
             kwargs={"token.token": kwargs['token'], **kwargs}
             kwargs.pop('token') 
@@ -525,16 +563,17 @@ class Invite(object):
     def __init__(self, *args, **kwargs):
         pass
 
-    def create(self, email, message):
+    def create(self, hostname, email, message, admin):
         token=createToken(Invite)
         data={
-            "hostname": Site().hostname,
+            "hostname": hostname,
             "email": email,
             "message": message,
-            "token": token
+            "token": token,
+            "admin": admin
         }
         mongo.db.invites.insert_one(data)
-        return Invite(token=token['token'])
+        return Invite(hostname=hostname, token=token['token'])
 
     @property
     def data(self):
@@ -547,7 +586,8 @@ class Invite(object):
         return None
 
     def findAll(cls, *args, **kwargs):
-        kwargs['hostname']=Site().hostname
+        if not g.isRootUser:
+            kwargs['hostname']=Site().hostname
         return mongo.db.invites.find(kwargs)
 
     def setToken(self, **kwargs):

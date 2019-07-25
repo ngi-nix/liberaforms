@@ -60,6 +60,10 @@
             <tr>
                 <td>{{invite.token.created.strftime('%Y-%m-%d') }}</td>
                 <td>{{invite.email}}</td>
+                {% if g.isRootUser %}
+                    <td>{{invite.hostname}}</td>
+                    <td>{{invite.admin}}</td>
+                {% endif %}
                 <td class="text-right">
                 <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite.email}}'">
                 </td>
@@ -123,14 +127,46 @@
                 <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/email/change-noreply'">
                 </td>
             </tr>
-        </table>
 
-        {% if g.current_user.isRootUser() %}
+        </table>
+    {% endif %}
+    {% if g.isRootUser %}
         <p></p>
         <div style="font-size:1.5em; padding-bottom:0.5em;">
             {%trans%}Root user{%endtrans%}
         </div>
         <p></p>
+        <table class="table">
+            <thead>
+                <tr>
+                <th>Site</th>
+                <th>Users</th>
+                <th>Forms</th>
+                <th></th>
+                </tr>
+            </thead>
+
+        {% set total_forms = [0] %}
+        {% set total_users = [0] %}        
+        {% for site in sites %}
+            <tr>
+                <td>{{ site.site.host_url }}</td>
+                <td>{{ site.totalUsers }}</td>
+                {% if total_users.append(total_users.pop() + site.totalUsers) %}{% endif %}
+                <td>{{ site.totalForms }}</td>
+                {% if total_forms.append(total_forms.pop() + site.totalForms) %}{% endif %}
+                <td class="text-right">
+                <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/sites/delete/{{site.site.hostname}}'">
+                </td>
+            </tr>
+        {% endfor %}
+            <tr style="font-weight:bold">
+                <td>Total</td>
+                <td>{{ total_users.pop() }}</td>
+                <td>{{ total_forms.pop() }}</td>
+                <td></td>
+            </tr>        
+        </table>
         <table class="table">
         <tr>
             <td>{%trans%}Test SMTP config.{%endtrans%}</td>
@@ -141,11 +177,8 @@
             <input id="test-email-button" class="btn-primary btn btn-md" type="button" value="{%trans%}Send email{%endtrans%}" >
             </td>
         </tr>
-        
-        
         </table>
-        {% endif %}
-
+        
     {% endif %}
 
     </div>

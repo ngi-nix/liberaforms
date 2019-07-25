@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json, re, datetime, os, sys
+import json, re, datetime, os
 from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
 from GNGforms import app, mongo, babel
 from functools import wraps
@@ -27,7 +27,6 @@ from .persitence import *
 from .session import *
 from .utils import *
 from .email import *
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 from form_templates import formTemplates
 
 import pprint
@@ -36,8 +35,15 @@ import pprint
 @app.before_request
 def before_request():
     g.current_user=None
+    g.isRootUser=False
+    g.isAdmin=False
     if 'username' in session:
         g.current_user=User(username=session['username'])
+        if g.current_user and g.current_user.isRootUser():
+            g.isRootUser=True
+            g.isAdmin=True
+        if g.current_user and g.current_user.admin:
+            g.isAdmin=True
 
 
 @babel.localeselector
@@ -73,7 +79,7 @@ def admin_required(f):
 def rootuser_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if g.current_user and g.current_user.isRootUser():
+        if g.isRootUser:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('index'))
@@ -97,6 +103,11 @@ def index():
     for form in forms:
         form["notification"]={"newEntry": True}
         mongo.db.forms.save(form)    
+    """
+    """
+    for site in Site().findAll():    #mongo objects
+        site['scheme']=urlparse(request.host_url).scheme
+        mongo.db.sites.save(site)
     """
     
     isAdmin=False
@@ -445,7 +456,10 @@ def inspect_form(slug):
     if user:
         userEnabled=user.enabled
     
-    formURL = "%s%s" % ( request.url_root, session['formSlug'])
+    formSite=Site(hostname=queriedForm.hostname)
+    print(queriedForm.hostname)
+    formSite.host_url
+    formURL = "%s%s" % ( formSite.host_url, session['formSlug'])
     return render_template('inspect-form.html', formStructure=session['formStructure'],
                                                 form=queriedForm.data,
                                                 slug=slug,
@@ -466,12 +480,25 @@ def user_settings(username):
     if not (user.username == g.current_user.username or g.current_user.admin):
         return redirect(url_for('my_forms'))
     site=None
-    invites=None
+    invites=[]
     if user.admin:
         site=Site()
         invites=Invite().findAll()
-        
-    return render_template('user-settings.html', user=user, invites=invites, site=site)
+        if site.data['scheme'] != urlparse(request.host_url).scheme:
+            # background maintenance.
+            # maybe a letsencrypt cert got insalled after the initial installation and http is now https.
+            site.data['scheme'] = urlparse(request.host_url).scheme
+            site.save()
+    
+    sites=[]
+    if g.isRootUser:
+        for site in Site().findAll():    #mongo objects
+            site=Site(hostname=site['hostname'])
+            totalForms = Form().findAll(hostname=site.hostname).count()
+            totalUsers = User().findAll(hostname=site.hostname).count()
+            sites.append({'site':site, 'totalUsers': totalUsers, 'totalForms':totalForms})
+            
+    return render_template('user-settings.html', user=user, invites=invites, site=site, sites=sites)
  
 
 
@@ -565,20 +592,73 @@ def new_user(inviteToken=None):
     return render_template('new-user.html')
 
 
+@app.route('/admin/users/delete/<string:username>', methods=['GET', 'POST'])
+@rootuser_required
+def delete_user(username):
+    user=User(username=username)
+    if not user:
+        flash(gettext("User not found"), 'warning')
+        return redirect(url_for('my_forms'))
+  
+    if request.method == 'POST' and 'username' in request.form:
+        if user.email in app.config['ROOT_USERS']:
+            flash(gettext("Cannot delete root user"), 'warning')
+            return redirect(url_for('inspect_user', username=user.username))  
+        if user.username == g.current_user.username:
+            flash(gettext("Cannot delete yourself"), 'warning')
+            return redirect(url_for('inspect_user', username=user.username)) 
+        if user.username == request.form['username']:
+            user.delete()
+            flash(gettext("Deleted user '%s'" % (user.username)), 'success')
+            return redirect(url_for('list_users'))
+        else:
+            flash(gettext("Username does not match"), 'warning')
+                   
+    return render_template('delete-user.html', username=user.username)
+
+
+@app.route('/admin/sites/delete/<string:hostname>', methods=['GET', 'POST'])
+@rootuser_required
+def delete_site(hostname):
+    queriedSite=Site(hostname=hostname)
+    if not queriedSite:
+        flash(gettext("Site not found"), 'warning')
+        return redirect(url_for('user_settings', username=g.current_user.username))
+
+    if request.method == 'POST' and 'hostname' in request.form:
+        if queriedSite.hostname == request.form['hostname']:
+            if Site().hostname == queriedSite.hostname:
+                flash(gettext("Cannot delete current site"), 'warning')
+                return redirect(url_for('user_settings', username=g.current_user.username)) 
+            
+            queriedSite.delete()
+            flash(gettext("Deleted %s" % (queriedSite.host_url)), 'success')
+            return redirect(url_for('user_settings', username=g.current_user.username))       
+        else:
+            flash(gettext("Site name does not match"), 'warning')
+        
+    return render_template('delete-site.html', site=queriedSite)
+
+
 
 @app.route('/site/login', methods=['POST'])
+@anon_required
 def login():
     if 'username' in request.form and 'password' in request.form:
         user=User(username=request.form['username'])
         if user and user.enabled and verifyPassword(request.form['password'], user.data['password']):
-            #if user.isRootUser() or user.hostname == Site().hostname:
             session['username']=user.username
-            g.current_user=user
             return redirect(url_for('my_forms'))
     
-    flash(gettext("Bad credentials"), 'error')
+    flash(gettext("Bad credentials"), 'warning')
     return redirect(url_for('index'))
 
+
+@app.route('/site/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    session['username']=None
+    return redirect(url_for('index'))
 
 
 @app.route('/site/recover-password', methods=['GET', 'POST'])
@@ -595,7 +675,7 @@ def recover_password(token=None):
                 
             if not user and request.form['email'] in app.config['ROOT_USERS']:
                 message="New root user at %s." % Site().hostname
-                invite=Invite().create(request.form['email'], message)
+                invite=Invite().create(Site().hostname, request.form['email'], message, True)
                 return redirect(url_for('new_user', inviteToken=invite.token['token']))
             
             return redirect(url_for('index'))
@@ -661,14 +741,6 @@ def change_noreply_email():
     return render_template('change-email.html')
 
 
-@app.route('/site/logout', methods=['GET', 'POST'])
-@login_required
-def logout():
-    session['username']=None
-    return redirect(url_for('index'))
-
-
-
 @app.route('/site/test-smtp/<string:email>', methods=['GET'])
 @rootuser_required
 def test_smtp(email):
@@ -707,7 +779,6 @@ def validate_email(token):
     return redirect(url_for('user_settings', username=user.username))
     
 
-
 @app.route('/admin', methods=['GET'])
 @app.route('/admin/users', methods=['GET'])
 @admin_required
@@ -742,19 +813,35 @@ def toggle_invitation_only():
 @admin_required
 def new_invite():
     if request.method == 'POST':
-        if 'email' in request.form and isValidEmail(request.form['email']):
+        if 'email' in request.form and isValidEmail(request.form['email']):           
+            admin=False
+            hostname=Site().hostname
+            
+            if g.isRootUser:
+                if 'admin' in request.form:
+                    admin=True
+                if 'hostname' in request.form:
+                    hostname=request.form['hostname']
+                
             if not request.form['message']:
-                message="You have been invited to %s." % Site().hostname
+                message="You have been invited to %s." % hostname
             else:
                 message=request.form['message']
-
-            invite=Invite().create(request.form['email'], message)
+                
+            invite=Invite().create(hostname, request.form['email'], message, admin)
+            print(invite.invite)
             smtpSendInvite(invite)
             
             flash(gettext("We sent an invitation to %s") % invite.data['email'], 'success')
             return redirect(url_for('user_settings', username=g.current_user.username))
+            
+    sites=[]
+    if g.isRootUser:
+        # rootUser can choose the site to invite to.
+        for site in Site().findAll():   # iterate the cursor
+            sites.append(site)
 
-    return render_template('new-invite.html')
+    return render_template('new-invite.html', hostname=Site().hostname, sites=sites)
 
 
 @app.route('/admin/invites/delete/<string:email>', methods=['GET'])

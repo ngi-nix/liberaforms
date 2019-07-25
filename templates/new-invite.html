@@ -21,9 +21,27 @@
         <label>{%trans%}Include message{%endtrans%}</label>
         <br />
         <textarea name="message" class="form-control" ></textarea>
-        
         <br />
-        <p></p>
+        {% if g.isRootUser %}
+            <div style="font-size:1.2em">{%trans%}Root user options{%endtrans%}</div>
+            <hr />
+            
+            {% if sites|length > 1 %}
+                <label>{%trans%}Invite to one of these sites{%endtrans%}</label>
+                {% for site in sites %}
+                <div class="radio radio-info">
+                    <input style="margin-left:0;" type="radio" name="hostname" value="{{ site.hostname }}" {% if site.hostname == hostname %}checked{% endif %} >
+                    <label style="margin-left:1em;">{{ site.hostname }}</label>
+                </div>
+                {% endfor %}
+                <br />
+            {% endif %}
+            
+            <label>{%trans%}Make the new user an Admin{%endtrans%}</label>
+            <input style="vertical-align: -2px;" type="checkbox" name="admin" value="True" />
+            
+        {% endif %}
+        <p>&nbsp;</p>
         <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
     </form>
 

@@ -18,7 +18,7 @@
                <td>{%trans%}Username{%endtrans%}</td>
                <td>{{ user.username }}</td>
             </tr>        
-            {% if g.current_user.isRootUser() %}
+            {% if g.isRootUser %}
                 <tr>
                    <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ user.hostname }}</td>
@@ -64,6 +64,9 @@
                 </td>
             </tr>
         </table>
+        {% if g.current_user.isRootUser() and not user.username == g.current_user.username %}
+        <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.data.username}}'">
+        {% endif %}
 
     </div>
     <div class="row col-md-1"></div>
