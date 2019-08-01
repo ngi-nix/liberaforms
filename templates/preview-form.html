@@ -14,6 +14,19 @@
         </div>
         <hr />
         <div id="fb-render"></div>
+        <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
+        
+        <p>&nbsp;</p>
+        <div style="font-size:1.5em">
+            {%trans%}Post submit note{%endtrans%}
+        </div>
+        <hr />
+        <div>
+        {{ afterSubmitTextHTML | safe }}
+        </div>
+        
+        <p>&nbsp;</p>
+        <hr />
         <form action="/forms/save/{{ slug }}" method="post">    
             <input class="btn-primary btn" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
             <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">

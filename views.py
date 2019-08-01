@@ -41,7 +41,6 @@ def before_request():
         g.current_user=User(username=session['username'])
         if g.current_user and g.current_user.isRootUser():
             g.isRootUser=True
-            g.isAdmin=True
         if g.current_user and g.current_user.admin:
             g.isAdmin=True
 
@@ -110,16 +109,13 @@ def index():
         mongo.db.sites.save(site)
     """
     
-    isAdmin=False
-    if g.current_user and g.current_user.admin:
-        isAdmin=True
-    return render_template('index.html',site=Site(), isAdmin=isAdmin)
+    return render_template('index.html',site=Site(), isAdmin=g.isAdmin)
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 def view_form(slug):
     queriedForm = Form(slug=slug)
-    if not (queriedForm and queriedForm.isPublished()):
+    if not (queriedForm and queriedForm.isPublic()):
         flash(gettext("Form is not available. 404"), 'warning')
         if g.current_user:
             return redirect(url_for('my_forms'))
@@ -134,7 +130,7 @@ def view_form(slug):
             value = formData[key]
             if isinstance(value, list): # A checkboxes-group contains multiple values 
                 value=', '.join(value) # convert list of values to a string
-                key=key.strip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
+                key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             entry[key]=value
             
         #print("save entry: %s" % formData)
@@ -147,9 +143,7 @@ def view_form(slug):
                 if field['name'] in entry:
                     data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
             smtpSendNewFormEntryNotification(user.email, data, slug)
-        
-        #return render_template('thankyou.html', slug=slug, thankyouNote=queriedForm['thankyouNote'])
-        return render_template('thankyou.html', slug=slug, thankyouNote="Thankyou !!")
+        return render_template('thankyou.html', form=queriedForm)
         
     return render_template('view-form.html', formStructure=queriedForm.structure)     
             
@@ -218,27 +212,26 @@ def new_form(templateID=None):
         if template:
             session['formStructure']=template[0]['structure']
     
-    return render_template('edit-form.html',    formStructure=session['formStructure'],
-                                                formSlug=session['formSlug'],
-                                                isFormNew=True)
+    session['afterSubmitTextMD'] = "## %s" % gettext("Thank you!!")
+    return render_template('edit-form.html', isFormNew=True)
 
 
 @app.route('/forms/edit', methods=['GET', 'POST'])
 @app.route('/forms/edit/<string:slug>', methods=['GET', 'POST'])
 @login_required
 def edit_form(slug=None):
-    pp = pprint.PrettyPrinter(indent=4)
+    #pp = pprint.PrettyPrinter(indent=4)
     
     ensureSessionFormKeys()
     if request.method == 'POST':
         if not slug:
             if 'slug' in request.form:
-                session['formSlug'] = request.form['slug']
+                session['slug'] = request.form['slug']
             else:
                 flash(gettext("Something went wrong. No slug!"), 'error')
                 return redirect(url_for('my_forms'))
         
-        queriedForm=Form(slug=session['formSlug'])
+        queriedForm=Form(slug=session['slug'])
         queriedFieldIndex=[]
         if queriedForm:
             if queriedForm.author != g.current_user.username:
@@ -306,29 +299,37 @@ def edit_form(slug=None):
                     # need to check if an 'entry' has already been saved with this field.
                     if field['name'] in orphanedFieldNames:
                         if field['name'] in app.config['RESERVED_FORM_ELEMENT_NAMES']:
-                            # don't remove special field we have incluede (eg 'created')
+                            # don't remove special field we have included (eg 'created')
                             continue
                         session['formFieldIndex'].remove(field)
         
         session['formStructure'] = json.dumps(formStructureDict)
+        session['afterSubmitTextMD'] = escapeMarkdown(request.form['afterSubmitTextMD'])
+        
         return redirect(url_for('preview_form'))
 
     # GET
     isFormNew = True
     if slug:
         queriedForm = Form(slug=slug)
+        print(queriedForm)
         if queriedForm:
             isFormNew = False
             if queriedForm.author != g.current_user.username:
+                flash(gettext("You can't edit that form"), 'warning')
                 return redirect(url_for('my_forms'))
-            session['formSlug'] = queriedForm.slug
+            session['slug'] = queriedForm.slug
+            print("--%s--" % session['formStructure'])
             if not session['formStructure']:
                 session['formStructure'] = queriedForm.structure
+                print(queriedForm.structure)
+            else:
+                print('0n')
+            if not session['afterSubmitTextMD']:
+                session['afterSubmitTextMD'] = queriedForm.afterSubmitText['markdown']
 
-    return render_template('edit-form.html', formStructure=session['formStructure'],
-                                             slug=session['formSlug'],
-                                             isFormNew=isFormNew,
-                                             user=g.current_user)
+
+    return render_template('edit-form.html', isFormNew=isFormNew, user=g.current_user)
 
 
 
@@ -342,17 +343,18 @@ def preview_form():
     #pp = pprint.PrettyPrinter()
     #pp.pprint(session['formStructure'])
     
-    formURL = "%s%s" % ( request.url_root, session['formSlug'])
-    return render_template('preview-form.html', formStructure=session['formStructure'], \
-                                                formURL=formURL, \
-                                                slug=session['formSlug'])
+    formURL = "%s%s" % ( Site().host_url, session['slug'])
+    return render_template('preview-form.html', formStructure=session['formStructure'],
+                                                formURL=formURL,
+                                                afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']),
+                                                slug=session['slug'])
 
 
 
 @app.route('/forms/save/<string:slug>', methods=['POST'])
 @login_required
 def save_form(slug):
-    if slug != session['formSlug']:
+    if slug != session['slug']:
         flash(gettext("Something went wrong. No slug!"), 'error')
         
     if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
@@ -364,14 +366,17 @@ def save_form(slug):
         session['formFieldIndex'].insert(0, field)
         
     queriedForm=Form(slug=slug)
+
+    afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
+                        'html':markdown2HTML(session['afterSubmitTextMD'])} 
+    
     if queriedForm:
         if queriedForm.author != g.current_user.username:
             return redirect(url_for('my_forms'))
-            
-        queriedForm.update({ 
-                            "structure": session['formStructure'],
-                            "fieldIndex": session['formFieldIndex']
-                            })
+    
+        queriedForm.update({    "structure": session['formStructure'], 
+                                "fieldIndex": session['formFieldIndex'],
+                                "afterSubmitText": afterSubmitText})
 
         #pp = pprint.PrettyPrinter(indent=4)
         #pp.pprint(session['formFieldIndex'])
@@ -389,7 +394,7 @@ def save_form(slug):
                     "structure": session['formStructure'],
                     "fieldIndex": session['formFieldIndex'],
                     "entries": [],
-                    "afterSubmitNote": "Thankyou!!"
+                    "afterSubmitText": afterSubmitText
                 }
         if Form().insert(newFormData):
             clearSessionFormData()
@@ -448,7 +453,8 @@ def inspect_form(slug):
     if not g.current_user.canViewForm(queriedForm):
         return redirect(url_for('my_forms'))
     
-    populateSessionFormData(queriedForm.data)
+    # We use the 'session' because forms/edit maybe showing a new form without a Form() db object yet.
+    populateSessionFormData(queriedForm)
 
     user=User(username=queriedForm.author)
     # there should be a user with this username in the database. But just in case..
@@ -456,18 +462,7 @@ def inspect_form(slug):
     if user:
         userEnabled=user.enabled
     
-    formSite=Site(hostname=queriedForm.hostname)
-    print(queriedForm.hostname)
-    formSite.host_url
-    formURL = "%s%s" % ( formSite.host_url, session['formSlug'])
-    return render_template('inspect-form.html', formStructure=session['formStructure'],
-                                                form=queriedForm.data,
-                                                slug=slug,
-                                                created=queriedForm.created,
-                                                total_entries=queriedForm.totalEntries,
-                                                last_entry_date=queriedForm.lastEntryDate,
-                                                userEnabled=userEnabled,
-                                                formURL=formURL)
+    return render_template('inspect-form.html', form=queriedForm, userEnabled=userEnabled)
         
 
 

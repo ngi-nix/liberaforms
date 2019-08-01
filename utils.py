@@ -25,6 +25,7 @@ import re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
+import markdown
 
 policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
@@ -117,6 +118,14 @@ def writeCSV(form):
             writer.writerow(entry)
 
     return csv_name
+
+
+def escapeMarkdown(MDtext):
+    return re.sub(r'<[^>]*?>', '', MDtext)
+
+def markdown2HTML(MDtext):
+    MDtext=escapeMarkdown(MDtext)
+    return markdown.markdown(MDtext)
 
 
 """

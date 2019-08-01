@@ -404,9 +404,17 @@ class Form(object):
         return self.form['notification']
 
     @property
+    def afterSubmitText(self):
+        return self.form['afterSubmitText']
+
+    @property
     def hostname(self):
         return self.form['hostname']
-        
+    
+    @property
+    def url(self):
+        formSite=Site(hostname=self.hostname)
+        return "%s%s" % ( formSite.host_url, self.slug)  
 
     @property
     def lastEntryDate(self):
@@ -423,7 +431,7 @@ class Form(object):
         return True
 
 
-    def isPublished(self):
+    def isPublic(self):
         if not self.enabled:
             return False
         if not User(username=self.author).enabled:
@@ -501,8 +509,7 @@ class Site(object):
         return self.site['blurb']
 
     def saveBlurb(self, MDtext):
-        MDtext = re.sub(r'<[^>]*?>', '', MDtext)
-        self.site['blurb'] = { 'markdown':MDtext, 'html':markdown.markdown(MDtext) }
+        self.site['blurb'] = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
         mongo.db.sites.save(self.site)
 
     @property

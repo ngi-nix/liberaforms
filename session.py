@@ -23,18 +23,22 @@ import json
 
 def ensureSessionFormKeys():
     if not 'formSlug' in session:
-        session['formSlug'] = ""
+        session['slug'] = ""
     if not 'formFieldIndex' in session:
         session['formFieldIndex'] = []
     if not 'formStructure' in session:
         session['formStructure'] = json.dumps([])
-
+    if not 'afterSubmitTextMD' in session:
+        session['afterSubmitTextMD'] = ''
+        
 def populateSessionFormData(queriedForm):
-    session['formSlug'] = queriedForm['slug']
-    session['formFieldIndex'] = queriedForm['fieldIndex']
-    session['formStructure'] = queriedForm['structure']
+    session['slug'] = queriedForm.slug
+    session['formFieldIndex'] = queriedForm.fieldIndex
+    session['formStructure'] = queriedForm.structure
+    session['afterSubmitTextMD'] = queriedForm.afterSubmitText['markdown']
 
 def clearSessionFormData():
-    session['formSlug'] = ""
+    session['slug'] = ""
     session['formFieldIndex'] = []
     session['formStructure'] = json.dumps([])
+    session['afterSubmitTextMD'] = ''

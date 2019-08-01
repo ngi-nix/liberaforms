@@ -2,26 +2,34 @@
 {% block content %}
 
 <script src="/static/formBuilder/form-builder.min.js"></script>
+<script src="/static/simplemde/simplemde.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
 
 <div class="container">
-
-    <div style="font-size:1.5em">{%trans%}Build your form here{%endtrans%}</div>
-
-    <hr />
-
-    <div id="fb-editor"></div>
-
-    <hr/>
-    <h3>{%trans%}Additional info here{%endtrans%}</h3>
+    <div class="row col-md-12">
+        <div style="font-size:1.5em">{%trans%}1. Build your form here{%endtrans%}</div>
+        <hr />
+        <div id="fb-editor"></div>
+        <hr />
+    </div>
+    <div class="row col-md-8">
     
-    <form id="result" action="/forms/edit{% if slug %}/{{ slug }}{% endif %}" method="post" style="padding-bottom:0.5em;">
+    <form id="result" action="/forms/edit{% if session['slug'] %}/{{ session['slug'] }}{% endif %}" method="post" style="padding-bottom:0.5em;">
+
+    <h4>{%trans%}2. Say something to the user after the form has been submitted{%endtrans%}</h4>
+    {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
+    <a href="">{%trans%}Learn more{%endtrans%}</a>
+    
+    
+    <textarea id="sm-editor" name="afterSubmitTextMD">{{ session['afterSubmitTextMD'] }}</textarea>
+    
+    <p></p>
+    <h4>{%trans%}3. Your form will have this address{%endtrans%}</h4>
+    
         <input type="hidden" id="structure" name="structure" />
-        <label>{%trans%}Form URL{%endtrans%}</label><br />
-        {%trans%}Your from will have this address{%endtrans%}
-        <br />
         {{ request.url_root }}
-        <input id="slug" name="slug" value="{{ slug }}" size="42" {% if isFormNew %}required{% else %}disabled{% endif %} />
+        <input id="slug" name="slug" value="{{ session['slug'] }}" size="42" {% if isFormNew %}required{% else %}disabled{% endif %} />
         <input id="slug_not_available"  style="display:none"
                                         class="slug-alert btn btn-danger"
                                         type="button"
@@ -34,11 +42,11 @@
     {% if isFormNew %}
     <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
     {% else %}
-    <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ slug }}'">
+    <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ session['slug'] }}'">
     {% endif %}
     <input class="btn-info btn active" type="submit" value="{%trans%}Preview{%endtrans%}" />
     
-
+    </div>
     </form>
 
 </div>
@@ -46,6 +54,13 @@
 
 <script>
 jQuery(function($) {
+    var simplemde = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: false,
+                                spellChecker: false,
+                                element: $("#sm-editor")[0]
+                             });
+
     const fbEditor = document.getElementById("fb-editor");
     
     var options = {
@@ -70,7 +85,7 @@ jQuery(function($) {
             //    'en-US': {...}
             //}
         },
-        formData: {{ formStructure | tojson }}
+        formData: {{ session['formStructure'] | tojson }}
     };
     const formBuilder = $(fbEditor).formBuilder(options);
 
@@ -106,6 +121,7 @@ jQuery(function($) {
             });
         }else{
             $('#structure').val(formBuilder.actions.getData('json', true));
+            simplemde.toTextArea();
             $('#result').submit();
         }
     });
@@ -118,7 +134,6 @@ jQuery(function($) {
         $('.slug-alert').hide(); 
     });
 });
-
 </script>
 
   
