@@ -109,7 +109,8 @@ def writeCSV(form):
         fieldnames.append(field['name'])
         fieldheaders[field['name']]=field['label']
       
-    csv_name='/tmp/%s.csv' % form.slug
+    csv_name='%s/%s.csv' % (app.config['TMP_DIR'], form.slug)
+    print(csv_name)
     
     with open(csv_name, mode='w') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
@@ -121,7 +122,9 @@ def writeCSV(form):
 
 
 def escapeMarkdown(MDtext):
+    #return stripHTMLTags(MDtext)   # which expresion is best?
     return re.sub(r'<[^>]*?>', '', MDtext)
+
 
 def markdown2HTML(MDtext):
     MDtext=escapeMarkdown(MDtext)

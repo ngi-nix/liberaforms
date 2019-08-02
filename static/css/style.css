@@ -9,6 +9,8 @@ body {
 
 * { color: #333333; }
 
+hr { margin-top: 5px }
+
 .footer {
   position: absolute;
   bottom: 0;

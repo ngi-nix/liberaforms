@@ -8,7 +8,7 @@
 <div class="row col-md-4">
 
     <div style="font-size:1.5em">
-        {%trans%}Delete user{%endtrans%}
+        {%trans%}Delete site{%endtrans%}
     </div>
     <hr />
     <div style="color:red">
@@ -23,7 +23,8 @@
     <form method="POST">
         <input type="text" name="hostname" class="form-control" required ><br />
         <p></p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+        <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}'">
     </form>
 
 </div>

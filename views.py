@@ -114,7 +114,7 @@ def index():
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 def view_form(slug):
-    queriedForm = Form(slug=slug)
+    queriedForm = Form(slug=sanitizeSlug(slug))
     if not (queriedForm and queriedForm.isPublic()):
         flash(gettext("Form is not available. 404"), 'warning')
         if g.current_user:
@@ -142,7 +142,7 @@ def view_form(slug):
             for field in queriedForm.fieldIndex:
                 if field['name'] in entry:
                     data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
-            smtpSendNewFormEntryNotification(user.email, data, slug)
+            smtpSendNewFormEntryNotification(user.email, data, queriedForm.slug)
         return render_template('thankyou.html', form=queriedForm)
         
     return render_template('view-form.html', formStructure=queriedForm.structure)     
@@ -157,31 +157,22 @@ def my_forms():
 
 @app.route('/forms/view-data/<string:slug>', methods=['GET'])
 @login_required
-def form_summary(slug):
-    queriedForm = Form(slug=slug)
+def list_entries(slug):
+    queriedForm = Form(slug=sanitizeSlug(slug), author=g.current_user.username)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
-        
-    if not queriedForm.isAuthor(g.current_user):
-        flash(gettext("Permission required. You cannot view that data"), 'warning')
-        return redirect(url_for('my_forms'))
 
-    return render_template('form-data-summary.html',    slug=slug,
-                                                        fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex),
-                                                        entries=queriedForm.entries)
+    return render_template('list-entries.html', form=queriedForm,
+                                                fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex))
 
 
 @app.route('/forms/csv/<string:slug>', methods=['GET'])
 @login_required
 def csv_form(slug):
-    queriedForm = Form(slug=slug)
+    queriedForm = Form(slug=sanitizeSlug(slug), author=g.current_user.username)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
-        return redirect(url_for('my_forms'))
-        
-    if not queriedForm.isAuthor(g.current_user):
-        flash(gettext("Permission required. You cannot view this data"), 'warning')
         return redirect(url_for('my_forms'))
 
     csv_file = writeCSV(queriedForm)
@@ -192,7 +183,6 @@ def csv_form(slug):
         return response
     
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
-
 
 
 @app.route('/forms/templates', methods=['GET'])
@@ -224,15 +214,19 @@ def edit_form(slug=None):
     
     ensureSessionFormKeys()
     if request.method == 'POST':
-        if not slug:
-            if 'slug' in request.form:
-                session['slug'] = request.form['slug']
-            else:
-                flash(gettext("Something went wrong. No slug!"), 'error')
-                return redirect(url_for('my_forms'))
+        if not (slug or 'slug' in request.form):
+            flash(gettext("Something went wrong. No slug!"), 'error')
+            return redirect(url_for('my_forms'))
+        if slug and slug != session['slug']:
+            flash(gettext("Something went wrong. Bad slug!"), 'error')
+            return redirect(url_for('my_forms'))
+            
+        if 'slug' in request.form:
+            session['slug'] = sanitizeSlug(request.form['slug'])
         
         queriedForm=Form(slug=session['slug'])
         queriedFieldIndex=[]
+        
         if queriedForm:
             if queriedForm.author != g.current_user.username:
                 return redirect(url_for('my_forms'))
@@ -311,24 +305,21 @@ def edit_form(slug=None):
     # GET
     isFormNew = True
     if slug:
-        queriedForm = Form(slug=slug)
-        print(queriedForm)
+        queriedForm = Form(slug=sanitizeSlug(slug))
         if queriedForm:
             isFormNew = False
             if queriedForm.author != g.current_user.username:
                 flash(gettext("You can't edit that form"), 'warning')
                 return redirect(url_for('my_forms'))
+            """
             session['slug'] = queriedForm.slug
-            print("--%s--" % session['formStructure'])
             if not session['formStructure']:
                 session['formStructure'] = queriedForm.structure
                 print(queriedForm.structure)
-            else:
-                print('0n')
             if not session['afterSubmitTextMD']:
                 session['afterSubmitTextMD'] = queriedForm.afterSubmitText['markdown']
-
-
+            """
+            
     return render_template('edit-form.html', isFormNew=isFormNew, user=g.current_user)
 
 
@@ -337,25 +328,25 @@ def edit_form(slug=None):
 @login_required
 def preview_form():
 
-    if not ('formSlug' in session and 'formStructure' in session):
+    if not ('slug' in session and 'formStructure' in session):
         return redirect(url_for('my_forms'))
     
     #pp = pprint.PrettyPrinter()
     #pp.pprint(session['formStructure'])
     
     formURL = "%s%s" % ( Site().host_url, session['slug'])
-    return render_template('preview-form.html', formStructure=session['formStructure'],
-                                                formURL=formURL,
+    return render_template('preview-form.html', formURL=formURL,
                                                 afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']),
-                                                slug=session['slug'])
+                                                slug=sanitizeSlug(session['slug']))
 
 
 
 @app.route('/forms/save/<string:slug>', methods=['POST'])
 @login_required
 def save_form(slug):
+    slug=sanitizeSlug(slug)
     if slug != session['slug']:
-        flash(gettext("Something went wrong. No slug!"), 'error')
+        flash(gettext("Something went wrong. Bad slug!"), 'error')
         
     if not getFieldByNameInIndex(session['formFieldIndex'], 'created'):
         session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
@@ -411,7 +402,7 @@ def save_form(slug):
 @app.route('/forms/delete/<string:slug>', methods=['GET', 'POST'])
 @login_required
 def delete_form(slug):
-    queriedForm=Form(slug=slug, author=g.current_user.username)
+    queriedForm=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -423,9 +414,28 @@ def delete_form(slug):
             flash(gettext("Deleted '%s' and %s entries" % (slug, entries)), 'success')
             return redirect(url_for('my_forms'))
         else:
-            flash(gettext("Name does not match"), 'warning')
+            flash(gettext("Form name does not match"), 'warning')
                    
-    return render_template('delete-form.html', slug=queriedForm.slug, entry_cnt=len(queriedForm.entries))
+    return render_template('delete-form.html', form=queriedForm)
+
+
+@app.route('/forms/delete-entries/<string:slug>', methods=['GET', 'POST'])
+@login_required
+def delete_entries(slug):
+    queriedForm=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    if not queriedForm:
+        flash(gettext("Form not found"), 'warning')
+        return redirect(url_for('my_forms'))
+
+    if request.method == 'POST':
+        if queriedForm.totalEntries == int(request.form['totalEntries']):
+            queriedForm.deleteEntries()
+            flash(gettext("Deleted %s entries" % queriedForm.totalEntries), 'success')
+            return redirect(url_for('list_entries', slug=queriedForm.slug))
+        else:
+            flash(gettext("Number of entries does not match"), 'warning')
+                   
+    return render_template('delete-entries.html', form=queriedForm)
 
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
@@ -444,13 +454,14 @@ def is_slug_available(slug):
 @app.route('/forms/view/<string:slug>', methods=['GET'])
 @login_required
 def inspect_form(slug):
-    queriedForm = Form(slug=slug)
+    queriedForm = Form(slug=sanitizeSlug(slug))
     if not queriedForm:
         #clearSessionFormData()
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))        
     
     if not g.current_user.canViewForm(queriedForm):
+        flash(gettext("Sorry, no permission to view that form"), 'warning')
         return redirect(url_for('my_forms'))
     
     # We use the 'session' because forms/edit maybe showing a new form without a Form() db object yet.
@@ -529,6 +540,8 @@ def change_language():
 def new_user(inviteToken=None):
     if Site().invitationOnly and not inviteToken:
         return redirect(url_for('index'))
+
+    invite=None
     if inviteToken:
         invite=Invite(token=inviteToken)
         if not invite:
@@ -543,34 +556,39 @@ def new_user(inviteToken=None):
         if not isNewUserRequestValid(request.form):
             return render_template('new-user.html')
             
-        admin=User().defaultAdminSettings
         isEnabled=False
+        adminSettings=User().defaultAdminSettings
+        
+        if invite and invite.data['admin'] == True:
+            adminSettings['isAdmin']=invite.data['admin']
         
         if request.form['email'] in app.config['ROOT_USERS']:
-            admin["isAdmin"]=True
+            adminSettings["isAdmin"]=True
             isEnabled=True
+        
         newUser = {
             "username": request.form['username'],
             "email": request.form['email'],
             "password": encryptPassword(request.form['password1']),
             "language": app.config['DEFAULT_LANGUAGE'],
-            "hostname": urlparse(request.host_url).hostname,
+            "hostname": Site().hostname,
             "enabled": isEnabled,
-            "admin": admin,
+            "admin": adminSettings,
             "validatedEmail": False,
             "created": datetime.date.today().strftime("%Y-%m-%d"),
             "token": {}
         }
-        user = createUser(newUser)
+        user = User().create(newUser)
         if not user:
             flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
+
+        if invite:
+            invite.delete()
         
         user.setToken()
         smtpSendConfirmEmail(user)
         
-        if inviteToken:
-            Invite(token=inviteToken).delete()
         if user.isRootUser():
             #login a new root user
             session['username']=user.username
@@ -909,7 +927,7 @@ def list_all_forms():
 @app.route('/forms/toggle-enabled/<string:slug>', methods=['POST'])
 @login_required
 def toggle_form(slug):
-    form=Form(slug=slug, author=g.current_user.username)
+    form=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
     if not form:
         return JsonResponse(json.dumps())
         
@@ -919,7 +937,7 @@ def toggle_form(slug):
 @app.route('/forms/toggle-notification/<string:slug>', methods=['POST'])
 @login_required
 def toggle_form_notification(slug):
-    form=Form(slug=slug, author=g.current_user.username)
+    form=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
     if not form:
         return JsonResponse(json.dumps())
 

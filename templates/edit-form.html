@@ -8,28 +8,33 @@
 
 <div class="container">
     <div class="row col-md-12">
-        <div style="font-size:1.5em">{%trans%}1. Build your form here{%endtrans%}</div>
+        <div style="font-size:1.3em">{%trans%}1. Build your form here{%endtrans%}</div>
         <hr />
         <div id="fb-editor"></div>
-        <hr />
     </div>
+    
     <div class="row col-md-8">
-    
-    <form id="result" action="/forms/edit{% if session['slug'] %}/{{ session['slug'] }}{% endif %}" method="post" style="padding-bottom:0.5em;">
+        <p>&nbsp;</p>
+        <form id="result" action="/forms/edit{% if session['slug'] %}/{{ session['slug'] }}{% endif %}" method="post" style="padding-bottom:0.5em;">
 
-    <h4>{%trans%}2. Say something to the user after the form has been submitted{%endtrans%}</h4>
-    {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
-    <a href="">{%trans%}Learn more{%endtrans%}</a>
-    
-    
-    <textarea id="sm-editor" name="afterSubmitTextMD">{{ session['afterSubmitTextMD'] }}</textarea>
-    
-    <p></p>
-    <h4>{%trans%}3. Your form will have this address{%endtrans%}</h4>
-    
+        
+        <div style="font-size:1.3em">
+            {%trans%}2. Say something to the user after the form has been submitted{%endtrans%}
+        </div>
+        <hr />
+        {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
+        <a href="">{%trans%}Learn more{%endtrans%}</a>
+        
+        <textarea id="sm-editor" name="afterSubmitTextMD">{{ session['afterSubmitTextMD'] }}</textarea>
+        <p></p>
+        <div style="font-size:1.3em">
+            {%trans%}3. Your form will have this address{%endtrans%}
+        </div>
+        <hr />
+        
         <input type="hidden" id="structure" name="structure" />
         {{ request.url_root }}
-        <input id="slug" name="slug" value="{{ session['slug'] }}" size="42" {% if isFormNew %}required{% else %}disabled{% endif %} />
+        <input id="slug" name="slug" value="{{ session['slug'] }}" size="32" {% if isFormNew %}required{% else %}disabled{% endif %} />
         <input id="slug_not_available"  style="display:none"
                                         class="slug-alert btn btn-danger"
                                         type="button"
@@ -38,19 +43,18 @@
 
         <input id="slug_changed" style="display:none" class="slug-alert btn btn-success" type="submit" value="{%trans%}OK, use this URL{%endtrans%}" />
         <br />
-    <p></p>
-    {% if isFormNew %}
-    <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
-    {% else %}
-    <input class="btn-warning btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ session['slug'] }}'">
-    {% endif %}
-    <input class="btn-info btn active" type="submit" value="{%trans%}Preview{%endtrans%}" />
-    
+        <p>&nbsp;</p>
+        
+        <input class="btn-success btn" type="submit" value="{%trans%}Preview{%endtrans%}" />
+        {% if isFormNew %}
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
+        {% else %}
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ session['slug'] }}'">
+        {% endif %}
+        
+        </form>
     </div>
-    </form>
-
 </div>
-
 
 <script>
 jQuery(function($) {
@@ -65,18 +69,9 @@ jQuery(function($) {
     
     var options = {
         showActionButtons: false,
-        disableFields: ['autocomplete','hidden', 'button', 'file'],
-        disabledAttrs: [
-            'className',
-            'name',
-            'toggle',
-            'access',
-            'description'
-        ],
-        controlOrder: [
-            'header',
-            'paragraph'
-        ],
+        disableFields: {{ config['FORMBUILDER_DISABLE_FIELDS'] | tojson }},
+        disabledAttrs: {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }},
+        controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
             locale: "es-ES",
             location: "{{request.host_url}}static/formBuilder-languages/"
@@ -135,6 +130,5 @@ jQuery(function($) {
     });
 });
 </script>
-
   
 {% endblock %}

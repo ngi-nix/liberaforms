@@ -64,7 +64,7 @@
                 </td>
             </tr>
         </table>
-        {% if g.current_user.isRootUser() and not user.username == g.current_user.username %}
+        {% if g.isRootUser and not user.username == g.current_user.username %}
         <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.data.username}}'">
         {% endif %}
 

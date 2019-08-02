@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Delete entries{%endtrans%}
+    </div>
+    <hr />
+    
+    <span style="font-size:1.15em">{%trans%}Form{%endtrans%}: {{ form.slug }}</span>
+    <p></p>
+    {%trans%}You are going to delete{%endtrans%}
+    {{form.totalEntries}} {%trans%}entries{%endtrans%}.
+    <br />
+    {%trans%}Write the total number of entries below{%endtrans%}.
+    <p></p>
+    <span style="font-size:1.15em">{{form.totalEntries}}</span>
+    <p></p>
+    
+    <form method="POST">
+        <input type="text" name="totalEntries" class="form-control" required ><br />
+        <p></p>
+        <input class="btn-danger btn" type="submit" value="{%trans%}Delete entries{%endtrans%}">
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view-data/{{form.slug}}'">
+    </form>
+</div>
+
+<div class="row col-md-4"></div></div>
+
+{% endblock %}

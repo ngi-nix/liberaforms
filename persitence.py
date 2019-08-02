@@ -30,11 +30,6 @@ import pprint
 pp = pprint.PrettyPrinter()
 
 
-def createUser(newUser):
-    mongo.db.users.insert_one(newUser)
-    return User(username=newUser['username'])
-
-
 def isNewUserRequestValid(form):   
     if not ('username' in form and 'email' in form and 'password1' in form and 'password2' in form):
         flash(gettext("All fields are required"), 'warning')
@@ -81,6 +76,9 @@ class User(object):
     def __init__(self, *args, **kwargs):
         pass
 
+    def create(cls, newUser):
+        mongo.db.users.insert_one(newUser)
+        return User(username=newUser['username'])
 
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
@@ -300,7 +298,7 @@ class Form(object):
             return None
         if not g.isRootUser:
             # rootUser can find any form. else only find forms created at this hostname.
-            kwargs['hostname']=urlparse(request.host_url).hostname
+            kwargs['hostname']=Site().hostname
             
         form = mongo.db.forms.find_one(kwargs)
         if form:
@@ -385,11 +383,14 @@ class Form(object):
         mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
     
     def saveEntry(self, entry):
-        mongo.db.forms.update({ "_id": self.form["_id"] }, {"$push": {"entries": entry }})
+        mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
 
     def delete(self):
         return mongo.db.forms.remove({'_id': self.form['_id']})
 
+    def deleteEntries(self):
+        mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
+    
     @property
     def totalEntries(self):
         return len(self.entries)
@@ -420,9 +421,9 @@ class Form(object):
     def lastEntryDate(self):
         if self.entries:
             last_entry = self.entries[-1] 
-            last_entry_date = last_entry["created"]
+            return last_entry["created"]
         else:
-            last_entry_date = ""
+            return ""
 
             
     def isAuthor(self, user):
@@ -570,7 +571,8 @@ class Invite(object):
     def __init__(self, *args, **kwargs):
         pass
 
-    def create(self, hostname, email, message, admin):
+
+    def create(self, hostname, email, message, admin=False):
         token=createToken(Invite)
         data={
             "hostname": hostname,

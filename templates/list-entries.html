@@ -7,10 +7,14 @@
 
 <div class="container">
     <div class="row col-md-11" style="font-size:1.5em">
-    <input class="btn-primary btn" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ slug }}'">
+    <input class="btn-primary btn" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.slug }}'">
+    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form.slug }}'">
     </div>
+    
     <div class="row col-md-1">
-    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ slug }}'">
+    {% if form.totalEntries > 0 %}
+    <input class="btn-danger btn" type="button" value="{%trans%}Delete entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form.slug }}'">
+    {% endif %}
     </div>
 </div>
 
@@ -27,7 +31,7 @@
         </tr>
     </thead>
 
-    {% for entry in entries %}
+    {% for entry in form.entries %}
         <tr>
         <td style="border-right: 1px solid #ccc;">{{ loop.index }}</td>
         {% for field in fieldIndex  %}

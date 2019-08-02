@@ -21,7 +21,8 @@
     <form method="POST">
         <input type="text" name="username" class="form-control" required ><br />
         <p></p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+        <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/users/{{username}}'">
     </form>
 
 </div>

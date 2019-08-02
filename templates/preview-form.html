@@ -9,10 +9,10 @@
         <div style="font-size:1.5em">
             {%trans%}Preview{%endtrans%}
         </div>
-        <div style="font-size:1.25em">
+        <hr />
+        <div style="font-size:1.15em">
             {{ formURL }}
         </div>
-        <hr />
         <div id="fb-render"></div>
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
         
@@ -27,9 +27,9 @@
         
         <p>&nbsp;</p>
         <hr />
-        <form action="/forms/save/{{ slug }}" method="post">    
-            <input class="btn-primary btn" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/forms/edit/{{ slug }}'">
+        <form action="/forms/save/{{ session['slug'] }}" method="post">    
             <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
+            <input class="btn-primary btn" type="button" value="{%trans%}Edit again{%endtrans%}" onClick="location.href='/forms/edit/{{ session['slug'] }}'">
         </form>
     </div>
     <div class="row col-md-3"></div>
@@ -39,7 +39,7 @@
 <script>
     jQuery(function($) {
         var fbRender = document.getElementById('fb-render');
-        var formData = {{ formStructure | safe }};
+        var formData = {{ session['formStructure'] | tojson }};
         var formRenderOpts = {
             formData,
             dataType: 'json'
