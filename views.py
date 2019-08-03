@@ -44,7 +44,6 @@ def before_request():
         if g.current_user and g.current_user.admin:
             g.isAdmin=True
 
-
 @babel.localeselector
 def get_locale():
     if g.current_user:
@@ -93,6 +92,16 @@ def anon_required(f):
             return f(*args, **kwargs)
     return wrap
 
+def sanitized_slug_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if not ('slug' in kwargs and kwargs['slug'] == sanitizeSlug(kwargs['slug'])):
+            flash(gettext("That's a nasty slug!"), 'warning')
+            return render_template('page_not_found.html'), 404
+        else:
+            return f(*args, **kwargs)
+    return wrap
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -113,8 +122,9 @@ def index():
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
+@sanitized_slug_required
 def view_form(slug):
-    queriedForm = Form(slug=sanitizeSlug(slug))
+    queriedForm = Form(slug=slug)
     if not (queriedForm and queriedForm.isPublic()):
         flash(gettext("Form is not available. 404"), 'warning')
         if g.current_user:
@@ -157,8 +167,9 @@ def my_forms():
 
 @app.route('/forms/view-data/<string:slug>', methods=['GET'])
 @login_required
+@sanitized_slug_required
 def list_entries(slug):
-    queriedForm = Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    queriedForm = Form(slug=slug, author=g.current_user.username)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -169,8 +180,9 @@ def list_entries(slug):
 
 @app.route('/forms/csv/<string:slug>', methods=['GET'])
 @login_required
+@sanitized_slug_required
 def csv_form(slug):
-    queriedForm = Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    queriedForm = Form(slug=slug, author=g.current_user.username)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -283,8 +295,8 @@ def preview_form():
 
 @app.route('/forms/save/<string:slug>', methods=['POST'])
 @login_required
+@sanitized_slug_required
 def save_form(slug):
-    slug=sanitizeSlug(slug)
     if slug != session['slug']:
         flash(gettext("Something went wrong. Bad slug!"), 'error')
     
@@ -336,8 +348,9 @@ def save_form(slug):
 
 @app.route('/forms/delete/<string:slug>', methods=['GET', 'POST'])
 @login_required
+@sanitized_slug_required
 def delete_form(slug):
-    queriedForm=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    queriedForm=Form(slug=slug, author=g.current_user.username)
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -356,8 +369,9 @@ def delete_form(slug):
 
 @app.route('/forms/delete-entries/<string:slug>', methods=['GET', 'POST'])
 @login_required
+@sanitized_slug_required
 def delete_entries(slug):
-    queriedForm=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    queriedForm=Form(slug=slug, author=g.current_user.username)
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -394,8 +408,9 @@ def is_slug_available(slug):
 
 @app.route('/forms/view/<string:slug>', methods=['GET'])
 @login_required
+@sanitized_slug_required
 def inspect_form(slug):
-    queriedForm = Form(slug=sanitizeSlug(slug))
+    queriedForm = Form(slug=slug)
     if not queriedForm:
         #clearSessionFormData()
         flash(gettext("No form found"), 'warning')
