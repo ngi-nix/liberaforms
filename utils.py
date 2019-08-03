@@ -128,7 +128,7 @@ def escapeMarkdown(MDtext):
 
 def markdown2HTML(MDtext):
     MDtext=escapeMarkdown(MDtext)
-    return markdown.markdown(MDtext)
+    return markdown.markdown(MDtext, extensions=['nl2br'])
 
 
 """
