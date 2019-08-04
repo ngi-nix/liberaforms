@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from GNGforms import app, mongo
-from flask import flash
+from flask import g, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from unidecode import unidecode
 import re, string, random, datetime, csv
@@ -26,6 +26,107 @@ from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
 import markdown
+from functools import wraps
+
+
+""" ######## View wrappers ######## """
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('index'))
+    return wrap
+
+def admin_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user and g.current_user.admin:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('index'))
+    return wrap
+
+def rootuser_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.isRootUser:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('index'))
+    return wrap
+
+def anon_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user:
+            return redirect(url_for('index'))
+        else:
+            return f(*args, **kwargs)
+    return wrap
+
+def sanitized_slug_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if not ('slug' in kwargs and kwargs['slug'] == sanitizeSlug(kwargs['slug'])):
+            flash(gettext("That's a nasty slug!"), 'warning')
+            return render_template('page_not_found.html'), 404
+        else:
+            return f(*args, **kwargs)
+    return wrap
+
+
+def sanitized_token(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'token' in kwargs and kwargs['token'] != sanitizeTokenString(kwargs['token']):
+            flash(gettext("That's a nasty token!"), 'warning')
+            return render_template('page_not_found.html'), 404
+        else:
+            return f(*args, **kwargs)
+    return wrap
+
+
+""" ######## Escapers ######## """
+
+def sanitizeString(string):
+    string = unidecode(string)
+    string = string.replace(" ", "") 
+    return re.sub('[^A-Za-z0-9\-]', '', string)
+
+
+def sanitizeSlug(slug):
+    slug = slug.lower()
+    slug = slug.replace(" ", "-") 
+    return sanitizeString(slug)
+
+
+def sanitizeUsername(username):
+    return sanitizeString(username)
+    
+
+def sanitizeTokenString(string):
+    return re.sub('[^a-z0-9]', '', string)
+    
+
+def stripHTMLTags(text):
+    TAG_RE = re.compile(r'<[^>]+>')
+    return TAG_RE.sub('', text)
+
+
+def escapeMarkdown(MDtext):
+    #return stripHTMLTags(MDtext)   # which expresion is best?
+    return re.sub(r'<[^>]*?>', '', MDtext)
+
+
+def markdown2HTML(MDtext):
+    MDtext=escapeMarkdown(MDtext)
+    return markdown.markdown(MDtext, extensions=['nl2br'])
+
+
+""" ######## Password ######## """
 
 policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
@@ -35,36 +136,25 @@ policy = PasswordPolicy.from_names(
     nonletters=1,  # need min. 2 non-letter characters (digits, specials, anything)
 )
 
-
-
-def sanitizeSlug(slug):
-    slug = slug.lower()
-    slug = slug.replace(" ", "-") 
-    return sanitizeString(slug)
-
-
-def sanitizeString(string):
-    string = unidecode(string)
-    string = string.replace(" ", "") 
-    return re.sub('[^A-Za-z0-9\-]', '', string)
-
-
-def stripHTMLTags(text):
-    TAG_RE = re.compile(r'<[^>]+>')
-    return TAG_RE.sub('', text)
-
-
 def encryptPassword(password):
     return pbkdf2_sha256.encrypt(password, rounds=200000, salt_size=16)
 
 
 def verifyPassword(password, hash):
     return pbkdf2_sha256.verify(password, hash)
-    
 
-def getRandomString(length=32):
-    return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
 
+def isValidPassword(password1, password2):
+    if password1 != password2:
+        flash(gettext("Passwords do not match"), 'warning')
+        return False
+    if policy.test(password1):
+        flash(gettext("Your password is weak"), 'warning')
+        return False
+    return True
+
+
+""" ######## fieldIndex helpers ######## """
 
 def getFieldByNameInIndex(index, name):
     for field in index:
@@ -85,15 +175,34 @@ def removeHTMLFromLabels(fieldIndex):
     return result
 
 
-def isValidPassword(password1, password2):
-    if password1 != password2:
-        flash(gettext("Passwords do not match"), 'warning')
-        return False
-    if policy.test(password1):
-        flash(gettext("Your password is weak"), 'warning')
-        return False
-    return True
 
+""" ######## Tokens ######## """
+
+def getRandomString(length=32):
+    return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
+
+"""
+Create a unique token.
+persistentClass may be a User class, or an Invite class, ..
+"""
+def createToken(persistentClass, **kwargs):
+    tokenString = getRandomString(length=48)
+    while persistentClass(token=tokenString):
+        tokenString = getRandomString(length=48)
+    
+    result={'token': tokenString, 'created': datetime.datetime.now()}
+    return {**result, **kwargs} 
+
+
+def isValidToken(data):
+    token_age = datetime.datetime.now() - data['created']
+    #print("token age: %s" % token_age)
+    if token_age.total_seconds() < app.config['TOKEN_EXPIRATION']:
+        return True
+    return False
+
+
+""" ######## Others ######## """
 
 def isValidEmail(email):
     if not validate_email(email):
@@ -119,34 +228,3 @@ def writeCSV(form):
             writer.writerow(entry)
 
     return csv_name
-
-
-def escapeMarkdown(MDtext):
-    #return stripHTMLTags(MDtext)   # which expresion is best?
-    return re.sub(r'<[^>]*?>', '', MDtext)
-
-
-def markdown2HTML(MDtext):
-    MDtext=escapeMarkdown(MDtext)
-    return markdown.markdown(MDtext, extensions=['nl2br'])
-
-
-"""
-Create a unique token.
-persistentClass may be a User class, or an Invite class, ..
-"""
-def createToken(persistentClass, **kwargs):
-    tokenString = getRandomString(length=48)
-    while persistentClass(token=tokenString):
-        tokenString = getRandomString(length=48)
-    
-    result={'token': tokenString, 'created': datetime.datetime.now()}
-    return {**result, **kwargs} 
-
-
-def isValidToken(data):
-    token_age = datetime.datetime.now() - data['created']
-    #print("token age: %s" % token_age)
-    if token_age.total_seconds() < app.config['TOKEN_EXPIRATION']:
-        return True
-    return False

@@ -34,7 +34,7 @@ def isNewUserRequestValid(form):
     if not ('username' in form and 'email' in form and 'password1' in form and 'password2' in form):
         flash(gettext("All fields are required"), 'warning')
         return False
-    if form['username'] != sanitizeString(form['username']):
+    if form['username'] != sanitizeUsername(form['username']):
         flash(gettext("Username is not valid"), 'warning')
         return False
     user = User(username=form['username'])
@@ -603,9 +603,5 @@ class Invite(object):
         self.invite['token']=createToken(Invite, **kwargs)
         self.save()
         
-    def deleteToken(self):
-        self.user['token']={}
-        self.save()
-
     def delete(self):
         return mongo.db.invites.remove({'_id': self.invite['_id']})

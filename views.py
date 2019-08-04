@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json, re, datetime, os
 from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
 from GNGforms import app, mongo, babel
-from functools import wraps
 from urllib.parse import urlparse
 from flask_babel import gettext, refresh
 from .persitence import *
@@ -54,53 +53,6 @@ def get_locale():
 @app.errorhandler(404)
 def page_not_found(error):
     return render_template('page_not_found.html'), 404
-
-# login required decorator
-def login_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if g.current_user:
-            return f(*args, **kwargs)
-        else:
-            return redirect(url_for('index'))
-    return wrap
-
-def admin_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if g.current_user and g.current_user.admin:
-            return f(*args, **kwargs)
-        else:
-            return redirect(url_for('index'))
-    return wrap
-
-def rootuser_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if g.isRootUser:
-            return f(*args, **kwargs)
-        else:
-            return redirect(url_for('index'))
-    return wrap
-
-def anon_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if g.current_user:
-            return redirect(url_for('index'))
-        else:
-            return f(*args, **kwargs)
-    return wrap
-
-def sanitized_slug_required(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if not ('slug' in kwargs and kwargs['slug'] == sanitizeSlug(kwargs['slug'])):
-            flash(gettext("That's a nasty slug!"), 'warning')
-            return render_template('page_not_found.html'), 404
-        else:
-            return f(*args, **kwargs)
-    return wrap
 
 
 @app.route('/', methods=['GET'])
@@ -153,6 +105,7 @@ def view_form(slug):
                 if field['name'] in entry:
                     data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
             smtpSendNewFormEntryNotification(user.email, data, queriedForm.slug)
+        
         return render_template('thankyou.html', form=queriedForm)
         
     return render_template('view-form.html', formStructure=queriedForm.structure)     
@@ -282,9 +235,6 @@ def preview_form():
 
     if not ('slug' in session and 'formStructure' in session):
         return redirect(url_for('my_forms'))
-    
-    #pp = pprint.PrettyPrinter()
-    #pp.pprint(session['formStructure'])
     
     formURL = "%s%s" % ( Site().host_url, session['slug'])
     return render_template('preview-form.html', formURL=formURL,
@@ -492,19 +442,20 @@ def change_language():
 
 
 @app.route('/user/new', methods=['GET', 'POST'])
-@app.route('/user/new/<string:inviteToken>', methods=['GET', 'POST'])
-def new_user(inviteToken=None):
-    if Site().invitationOnly and not inviteToken:
+@app.route('/user/new/<string:token>', methods=['GET', 'POST'])
+@sanitized_token
+def new_user(token=None):
+    if Site().invitationOnly and not token:
         return redirect(url_for('index'))
 
     invite=None
-    if inviteToken:
-        invite=Invite(token=inviteToken)
+    if token:
+        invite=Invite(token=token)
         if not invite:
             flash(gettext("Invitation not found"), 'warning')
             return redirect(url_for('index'))
         if not isValidToken(invite.token):
-            deleteToken()
+            invite.delete()
             flash(gettext("This invitation has expired"), 'warning')
             return redirect(url_for('index'))
             
@@ -632,6 +583,7 @@ def logout():
 @app.route('/site/recover-password', methods=['GET', 'POST'])
 @app.route('/site/recover-password/<string:token>', methods=['GET'])
 @anon_required
+@sanitized_token
 def recover_password(token=None):
     if request.method == 'POST':
         if 'email' in request.form and isValidEmail(request.form['email']):
@@ -660,8 +612,7 @@ def recover_password(token=None):
 
         # login the user
         session['username']=user.username
-        g.current_user=user
-
+        #g.current_user=user
         user.deleteToken()
         return redirect(url_for('reset_password'))
 
@@ -725,6 +676,7 @@ def test_smtp(email):
 This may be used to validate a New user's email, or an existing user's Change email request
 """
 @app.route('/user/validate-email/<string:token>', methods=['GET'])
+@sanitized_token
 def validate_email(token):
     user = User(token=token)
     if not user:
@@ -742,7 +694,7 @@ def validate_email(token):
     user.setEnabled(True)
     user.deleteToken()
     session['username']=user.username
-    g.current_user=user
+    #g.current_user=user
     flash(gettext("Your email address is valid"), 'success')
     return redirect(url_for('user_settings', username=user.username))
     
@@ -844,7 +796,7 @@ def inspect_user(username):
 
 @app.route('/admin/users/toggle-enabled/<string:username>', methods=['POST'])
 @admin_required
-def toggle_user(username): 
+def toggle_user(username):       
     user=User(username=username)
     if not user:
         return JsonResponse(json.dumps())
