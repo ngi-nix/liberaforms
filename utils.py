@@ -196,7 +196,6 @@ def createToken(persistentClass, **kwargs):
 
 def isValidToken(data):
     token_age = datetime.datetime.now() - data['created']
-    #print("token age: %s" % token_age)
     if token_age.total_seconds() < app.config['TOKEN_EXPIRATION']:
         return True
     return False

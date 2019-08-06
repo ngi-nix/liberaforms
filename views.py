@@ -492,7 +492,7 @@ def new_user(token=None):
 
         if invite:
             invite.delete()
-        
+
         user.setToken()
         smtpSendConfirmEmail(user)
         
@@ -596,7 +596,7 @@ def recover_password(token=None):
             if not user and request.form['email'] in app.config['ROOT_USERS']:
                 message="New root user at %s." % Site().hostname
                 invite=Invite().create(Site().hostname, request.form['email'], message, True)
-                return redirect(url_for('new_user', inviteToken=invite.token['token']))
+                return redirect(url_for('new_user', token=invite.token['token']))
             
             return redirect(url_for('index'))
         return render_template('recover-password.html')
@@ -777,7 +777,7 @@ def delete_invite(email):
             flash(gettext("Opps! We can't find that invitation"), 'error')
         
     return redirect(url_for('user_settings', username=g.current_user.username))
-    
+
 
 
 @app.route('/admin/users/<string:username>', methods=['GET'])
