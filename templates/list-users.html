@@ -30,17 +30,23 @@
 </thead>
 {% for u in users %}
 <tr>
-   <td><a href="/admin/users/{{u.username}}">{{u.username}}</a></td>
+    <td><a href="/admin/users/{{u.username}}">{{u.username}}</a></td>
    
-   {% if g.current_user.isRootUser() %}
-    <td>{{u.hostname}}</td>
-   {% endif %}
+    {% if g.current_user.isRootUser() %}
+        <td>{{u.hostname}}</td>
+    {% endif %}
    
-   <td>{{u.created}}</td>
-   <td>{{u.email}}</td>
-   <td>{{userFormCount[u.username]}}</td>
-   <td>{{u.enabled}}</td>
-   <td>{{u.admin['isAdmin']}}</td>
+    <td>{{u.created}}</td>
+    <td>{{u.email}}</td>
+    <td>{{userFormCount[u.username]}}</td>
+    
+    {% if u.blocked or not u.validatedEmail %}
+        <td>{%trans%}False{%endtrans%}</td>
+    {% else %}
+        <td>{%trans%}True{%endtrans%}</td>
+    {% endif %}
+    
+    <td>{{u.admin['isAdmin']}}</td>
 </tr>
 {% endfor %}
 </table>

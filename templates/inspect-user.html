@@ -38,28 +38,28 @@
                <td>{{ user.data.created }}</td>
             </tr>
             <tr>
+               <td>{%trans%}Language{%endtrans%}</td>
+               <td>{{ config['LANGUAGES'][user.data.language] }}</td>
+            </tr>
+            <tr>
                <td>{%trans%}Email{%endtrans%}</td>
                <td>{{ user.data.email }}</td>
             </tr>
             <tr>
                <td>{%trans%}Validated email{%endtrans%}</td>
                <td> {% if user.data.validatedEmail %}
-                    <span style="color:green">{%trans%}Yes{%endtrans%}</span>
+                    <span style="color:green">{%trans%}True{%endtrans%}</span>
                     {% else %}
-                    <span style="color:red">{%trans%}No{%endtrans%}</span>
+                    <span style="color:red">{%trans%}False{%endtrans%}</span>
                     {% endif %}
                 </td>
             </tr>
             <tr>
-               <td>{%trans%}Language{%endtrans%}</td>
-               <td>{{ config['LANGUAGES'][user.data.language] }}</td>
-            </tr>
-            <tr>
-               <td>{%trans%}Can publish/login?{%endtrans%}</td>
+               <td>{%trans%}Blocked by admin{%endtrans%}</td>
                <td>
-                   <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if user.enabled %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not user.enabled %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                   <div id="toggle_blocked" class="btn-group btn-toggle">
+                    <button id="blocked_true" class="btn btn-xs btn-default {% if user.blocked %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="blocked_false" class="btn btn-xs btn-default {% if not user.blocked %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                 </td>
             </tr>
@@ -103,20 +103,20 @@
 $(document).ready(function() {
     $('#forms').DataTable();
 });
-document.getElementById('toggle_enabled').addEventListener('click', function(evt){
+document.getElementById('toggle_blocked').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/users/toggle-enabled/{{ user['username'] }}",
+        url : "/admin/users/toggle-blocked/{{ user['username'] }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)
         {
-            if (data.enabled == true) {
-                $('#enabled_true').addClass('active  btn-success');
-                $('#enabled_false').removeClass('active btn-danger');
+            if (data.blocked == true) {
+                $('#blocked_true').addClass('active  btn-success');
+                $('#blocked_false').removeClass('active btn-danger');
             }
-            else if (data.enabled == false) {
-                $('#enabled_true').removeClass('active btn-success');
-                $('#enabled_false').addClass('active btn-danger');
+            else if (data.blocked == false) {
+                $('#blocked_true').removeClass('active btn-success');
+                $('#blocked_false').addClass('active btn-danger');
             }
         }
     });

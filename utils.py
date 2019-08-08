@@ -40,6 +40,15 @@ def login_required(f):
             return redirect(url_for('index'))
     return wrap
 
+def enabled_user_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user and g.current_user.enabled:
+            return f(*args, **kwargs)
+        else:
+            return redirect(url_for('index'))
+    return wrap
+
 def admin_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -196,9 +205,9 @@ def createToken(persistentClass, **kwargs):
 
 def isValidToken(data):
     token_age = datetime.datetime.now() - data['created']
-    if token_age.total_seconds() < app.config['TOKEN_EXPIRATION']:
-        return True
-    return False
+    if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
+        return False
+    return True
 
 
 """ ######## Others ######## """

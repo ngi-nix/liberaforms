@@ -118,10 +118,10 @@ class User(object):
 
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
-            flash(gettext("Email address is not valid"), 'error')
+            flash(gettext("Email address is not valid"), 'warning')
             return False
         if User(email=email):
-            flash(gettext("Email address is not available"), 'error')
+            flash(gettext("Email address is not available"), 'warning')
             return False
         return True
 
@@ -135,8 +135,16 @@ class User(object):
         return self.user['username']
 
     @property
+    def blocked(self):
+        return self.user['blocked']
+
+    @property
     def enabled(self):
-        return self.user['enabled']
+        if not self.user['validatedEmail']:
+            return False
+        if self.user['blocked']:
+            return False
+        return True
     
     @property
     def email(self):
@@ -208,15 +216,15 @@ class User(object):
         self.save()
 
 
-    def toggleEnabled(self):
+    def toggleBlocked(self):
         if self.isRootUser():
-            self.user['enabled']=True
-        elif self.enabled:
-            self.user['enabled']=False
+            self.user['blocked']=False
+        elif self.blocked:
+            self.user['blocked']=False
         else:
-            self.user['enabled']=True
+            self.user['blocked']=True
         self.save()
-        return self.user['enabled']
+        return self.user['blocked']
 
 
     @property
@@ -441,7 +449,6 @@ class Form(object):
 
 
 
-        
 
 class Site(object):
     site = None

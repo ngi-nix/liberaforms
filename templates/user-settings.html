@@ -10,6 +10,18 @@
             {%trans%}Hello{%endtrans%} {{ g.current_user.username }} !!
         </div>
         <p></p>
+        
+        {% if not g.current_user.data.validatedEmail %}
+        <div style="font-size:1.25em; padding-bottom:0.5em; display:inline; float:left;">
+            {%trans%}Your email has not been validated{%endtrans%}
+        </div>
+        <div style="display:inline; float:right;">
+            <input class="btn-success btn btn-sm" type="button" value="{%trans%}Send me an email{%endtrans%}" onClick="location.href='/user/send-validation'">
+        </div>
+        <p style="clear:both;"></p>
+        <p>&nbsp;</p>
+        {% endif %}
+        
         <table class="table table-condensed">
             <tr>
                 <td>{%trans%}Email address{%endtrans%}</td>

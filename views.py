@@ -57,6 +57,13 @@ def page_not_found(error):
 
 @app.route('/', methods=['GET'])
 def index():
+
+    """
+    users= mongo.db.users.find()
+    for user in users:
+        user["blocked"]=False
+        mongo.db.users.save(user)
+    """
     
     """
     forms= mongo.db.forms.find()
@@ -112,14 +119,14 @@ def view_form(slug):
             
 
 @app.route('/forms', methods=['GET'])
-@login_required
+@enabled_user_required
 def my_forms():
     forms = sorted(Form().findAll(author=g.current_user.username), key=lambda k: k['created'], reverse=True)
     return render_template('my-forms.html', forms=forms, username=g.current_user.username) 
 
 
 @app.route('/forms/view-data/<string:slug>', methods=['GET'])
-@login_required
+@enabled_user_required
 @sanitized_slug_required
 def list_entries(slug):
     queriedForm = Form(slug=slug, author=g.current_user.username)
@@ -132,7 +139,7 @@ def list_entries(slug):
 
 
 @app.route('/forms/csv/<string:slug>', methods=['GET'])
-@login_required
+@enabled_user_required
 @sanitized_slug_required
 def csv_form(slug):
     queriedForm = Form(slug=slug, author=g.current_user.username)
@@ -159,7 +166,7 @@ def list_form_templates():
 
 @app.route('/forms/new', methods=['GET'])
 @app.route('/forms/new/<string:templateID>', methods=['GET'])
-@login_required
+@enabled_user_required
 def new_form(templateID=None):
     clearSessionFormData()
     if templateID:
@@ -173,7 +180,7 @@ def new_form(templateID=None):
 
 @app.route('/forms/edit', methods=['GET', 'POST'])
 @app.route('/forms/edit/<string:slug>', methods=['GET', 'POST'])
-@login_required
+@enabled_user_required
 def edit_form(slug=None):
     #pp = pprint.PrettyPrinter(indent=4)
     
@@ -230,7 +237,7 @@ def edit_form(slug=None):
 
 
 @app.route('/forms/preview', methods=['GET'])
-@login_required
+@enabled_user_required
 def preview_form():
 
     if not ('slug' in session and 'formStructure' in session):
@@ -244,7 +251,7 @@ def preview_form():
 
 
 @app.route('/forms/save/<string:slug>', methods=['POST'])
-@login_required
+@enabled_user_required
 @sanitized_slug_required
 def save_form(slug):
     if slug != session['slug']:
@@ -297,7 +304,7 @@ def save_form(slug):
 
 
 @app.route('/forms/delete/<string:slug>', methods=['GET', 'POST'])
-@login_required
+@enabled_user_required
 @sanitized_slug_required
 def delete_form(slug):
     queriedForm=Form(slug=slug, author=g.current_user.username)
@@ -318,7 +325,7 @@ def delete_form(slug):
 
 
 @app.route('/forms/delete-entries/<string:slug>', methods=['GET', 'POST'])
-@login_required
+@enabled_user_required
 @sanitized_slug_required
 def delete_entries(slug):
     queriedForm=Form(slug=slug, author=g.current_user.username)
@@ -344,7 +351,7 @@ def delete_entries(slug):
 
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
-@login_required
+@enabled_user_required
 def is_slug_available(slug):
     available = True
     slug=sanitizeSlug(slug)
@@ -357,7 +364,7 @@ def is_slug_available(slug):
 
 
 @app.route('/forms/view/<string:slug>', methods=['GET'])
-@login_required
+@enabled_user_required
 @sanitized_slug_required
 def inspect_form(slug):
     queriedForm = Form(slug=slug)
@@ -427,6 +434,15 @@ def change_email():
     return render_template('change-email.html')
 
 
+@app.route('/user/send-validation', methods=['GET'])
+@login_required
+def send_validation_email():   
+    g.current_user.setToken(email=g.current_user.email)
+    smtpSendConfirmEmail(g.current_user, g.current_user.email)
+    flash(gettext("We sent an email to %s") % g.current_user.email, 'info')
+    return redirect(url_for('user_settings', username=g.current_user.username))
+    
+
 @app.route('/user/change-language', methods=['GET', 'POST'])
 @login_required
 def change_language():
@@ -455,8 +471,8 @@ def new_user(token=None):
             flash(gettext("Invitation not found"), 'warning')
             return redirect(url_for('index'))
         if not isValidToken(invite.token):
+            flash(gettext("Your petition has expired"), 'warning')
             invite.delete()
-            flash(gettext("This invitation has expired"), 'warning')
             return redirect(url_for('index'))
             
     if request.method == 'POST':
@@ -479,7 +495,7 @@ def new_user(token=None):
             "password": encryptPassword(request.form['password1']),
             "language": app.config['DEFAULT_LANGUAGE'],
             "hostname": Site().hostname,
-            "enabled": isEnabled,
+            "blocked": False,
             "admin": adminSettings,
             "validatedEmail": False,
             "created": datetime.date.today().strftime("%Y-%m-%d"),
@@ -564,10 +580,13 @@ def delete_site(hostname):
 @anon_required
 def login():
     if 'username' in request.form and 'password' in request.form:
-        user=User(username=request.form['username'])
-        if user and user.enabled and verifyPassword(request.form['password'], user.data['password']):
+        user=User(username=request.form['username'], blocked=False)
+        if user and verifyPassword(request.form['password'], user.data['password']):
             session['username']=user.username
-            return redirect(url_for('my_forms'))
+            if not user.data['validatedEmail']:
+                return redirect(url_for('user_settings', username=user.username))
+            else:
+                return redirect(url_for('my_forms'))
     
     flash(gettext("Bad credentials"), 'warning')
     return redirect(url_for('index'))
@@ -587,12 +606,13 @@ def logout():
 def recover_password(token=None):
     if request.method == 'POST':
         if 'email' in request.form and isValidEmail(request.form['email']):
-            user = User(email=request.form['email'])
+            user = User(email=request.form['email'], blocked=False)
             if user:
                 user.setToken()
                 smtpSendRecoverPassword(user)
                 flash(gettext("We may have sent you an email"), 'info')
-                
+            
+            # auto invite root_users
             if not user and request.form['email'] in app.config['ROOT_USERS']:
                 message="New root user at %s." % Site().hostname
                 invite=Invite().create(Site().hostname, request.form['email'], message, True)
@@ -604,15 +624,19 @@ def recover_password(token=None):
     if token:
         user = User(token=token)
         if not user:
+            flash(gettext("Couldn't find that token"), 'warning')
             return redirect(url_for('index'))
-        if user.hasTokenExpired():
+        if not isValidToken(user.token):
+            flash(gettext("Your petition has expired"), 'warning')
+            user.deleteToken()
             return redirect(url_for('index'))
-        if not user.enabled:
+        if user.blocked:
+            user.deleteToken()
+            flash(gettext("Your account has been blocked"), 'warning')
             return redirect(url_for('index'))
 
         # login the user
         session['username']=user.username
-        #g.current_user=user
         user.deleteToken()
         return redirect(url_for('reset_password'))
 
@@ -682,8 +706,8 @@ def validate_email(token):
     if not user:
         return redirect(url_for('index'))
     if not isValidToken(user.token):
+        flash(gettext("Your petition has expired"), 'warning')
         user.deleteToken()
-        flash(gettext("Your petition has expired. Try again."), 'info')
         return redirect(url_for('index'))
     
     # On a Change email request, the new email address is saved in the token.
@@ -794,19 +818,19 @@ def inspect_user(username):
                                                 ) 
 
 
-@app.route('/admin/users/toggle-enabled/<string:username>', methods=['POST'])
+@app.route('/admin/users/toggle-blocked/<string:username>', methods=['POST'])
 @admin_required
-def toggle_user(username):       
+def toggle_user_blocked(username):       
     user=User(username=username)
     if not user:
         return JsonResponse(json.dumps())
 
     if user.username == g.current_user.username:
-        # current_user cannot remove their own login permission
-        enabled=user.enabled
+        # current_user cannot disable themself
+        blocked=user.blocked
     else:
-        enabled=user.toggleEnabled()
-    return JsonResponse(json.dumps({'enabled':enabled}))
+        blocked=user.toggleBlocked()
+    return JsonResponse(json.dumps({'blocked':blocked}))
 
 
 @app.route('/admin/users/toggle-admin/<string:username>', methods=['POST'])
@@ -833,9 +857,10 @@ def list_all_forms():
 
 
 @app.route('/forms/toggle-enabled/<string:slug>', methods=['POST'])
-@login_required
+@enabled_user_required
+@sanitized_slug_required
 def toggle_form(slug):
-    form=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    form=Form(slug=slug, author=g.current_user.username)
     if not form:
         return JsonResponse(json.dumps())
         
@@ -843,9 +868,10 @@ def toggle_form(slug):
 
 
 @app.route('/forms/toggle-notification/<string:slug>', methods=['POST'])
-@login_required
+@enabled_user_required
+@sanitized_slug_required
 def toggle_form_notification(slug):
-    form=Form(slug=sanitizeSlug(slug), author=g.current_user.username)
+    form=Form(slug=slug, author=g.current_user.username)
     if not form:
         return JsonResponse(json.dumps())
 
