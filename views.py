@@ -52,7 +52,11 @@ def get_locale():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('page_not_found.html'), 404
+    return render_template('page-not-found.html'), 400
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('server-error.html'), 500
 
 
 @app.route('/', methods=['GET'])
@@ -704,6 +708,7 @@ This may be used to validate a New user's email, or an existing user's Change em
 def validate_email(token):
     user = User(token=token)
     if not user:
+        flash(gettext("We couldn't find that petition"), 'warning')
         return redirect(url_for('index'))
     if not isValidToken(user.token):
         flash(gettext("Your petition has expired"), 'warning')

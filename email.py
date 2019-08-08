@@ -29,7 +29,7 @@ def createSmtpObj():
         smtpObj = smtplib.SMTP(app.config['SMTP_SERVER'])
         return smtpObj
     except socket.error as e:
-        if g.current_user:
+        if g.isAdmin:
             flash(gettext("Could not connect to SMTP server"), 'error')
         return False        
 
