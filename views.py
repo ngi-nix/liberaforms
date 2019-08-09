@@ -483,7 +483,7 @@ def new_user(token=None):
         if not isNewUserRequestValid(request.form):
             return render_template('new-user.html')
             
-        isEnabled=False
+        validatedEmail=False
         adminSettings=User().defaultAdminSettings
         
         if invite and invite.data['admin'] == True:
@@ -491,8 +491,8 @@ def new_user(token=None):
         
         if request.form['email'] in app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True
-            isEnabled=True
-        
+            validatedEmail=True
+            
         newUser = {
             "username": request.form['username'],
             "email": request.form['email'],
@@ -501,7 +501,7 @@ def new_user(token=None):
             "hostname": Site().hostname,
             "blocked": False,
             "admin": adminSettings,
-            "validatedEmail": False,
+            "validatedEmail": validatedEmail,
             "created": datetime.date.today().strftime("%Y-%m-%d"),
             "token": {}
         }

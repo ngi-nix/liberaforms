@@ -73,7 +73,7 @@ jQuery(function($) {
         disabledAttrs: {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }},
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
-            locale: "es-ES",
+            locale: "{{ config['LANGUAGES'][g.current_user.data['language']][1] }}",
             location: "{{request.host_url}}static/formBuilder-languages/"
             //extension: '.ext'
             //override: {

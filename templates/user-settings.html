@@ -49,7 +49,7 @@
             </tr>
             <tr>
                 <td>{%trans%}Preferred language{%endtrans%}</td>
-                <td>{{ config['LANGUAGES'][g.current_user.data['language']] }}</td>
+                <td>{{ config['LANGUAGES'][g.current_user.data['language']][0] }}</td>
                 <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/user/change-language'">
                 </td>

@@ -46,8 +46,12 @@
 
 <script>
 $(document).ready(function() {
-    $('#formEntries').DataTable();
-} );
+    $('#formEntries').DataTable({
+        "language": {
+            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
+        }
+    });
+});
 
 </script>
   

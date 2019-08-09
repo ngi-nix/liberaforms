@@ -17,7 +17,7 @@
         {% for key in config['LANGUAGES'] %}
         <div style="font-size:1.1em" class="radio radio-info">
           <input style="margin-left:0;" type="radio" name="language" value="{{ key }}" {% if key == g.current_user.language %}checked{% endif %} >
-          <label class="language" style="margin-left:1em;">{{ config['LANGUAGES'][key] }}</label>
+          <label class="language" style="margin-left:1em;">{{ config['LANGUAGES'][key][0] }}</label>
         </div>
         {% endfor %}
         <br />

@@ -55,7 +55,11 @@
 
 <script>
 $(document).ready(function() {
-    $('#users').DataTable();
+    $('#users').DataTable({
+        "language": {
+            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
+        }
+    });
 } );
 </script>
   

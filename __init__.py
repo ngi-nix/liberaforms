@@ -27,14 +27,14 @@ app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
 babel = Babel(app)
 
-app.config['RESERVED_SLUGS'] = ['admin', 'admins', 'user', 'users', 'form', 'forms', 'site']
+app.config['RESERVED_SLUGS'] = ['admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
 
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'
 app.config['LANGUAGES'] = {
-    'en': 'English',
-    'ca': 'Català',
-    'es': 'Castellano'
+    'en': ('English', 'en-US'),
+    'ca': ('Català', 'es-ES'),
+    'es': ('Castellano', 'es-ES')
 }
 
 import sys, os

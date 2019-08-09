@@ -39,7 +39,7 @@
             </tr>
             <tr>
                <td>{%trans%}Language{%endtrans%}</td>
-               <td>{{ config['LANGUAGES'][user.data.language] }}</td>
+               <td>{{ config['LANGUAGES'][user.data.language][0] }}</td>
             </tr>
             <tr>
                <td>{%trans%}Email{%endtrans%}</td>
@@ -101,7 +101,11 @@
 
 <script>
 $(document).ready(function() {
-    $('#forms').DataTable();
+    $('#forms').DataTable({
+        "language": {
+            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
+        }
+    });
 });
 document.getElementById('toggle_blocked').addEventListener('click', function(evt){
     $.ajax({
