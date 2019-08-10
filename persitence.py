@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from GNGforms import app, mongo
+from bson.objectid import ObjectId
 from flask import flash, request, g
 from flask_babel import gettext 
 import os, string, random
@@ -56,16 +57,20 @@ class User(object):
         instance = super(User, cls).__new__(cls)
         if not kwargs:
             return instance
-        if 'username' in kwargs and kwargs['username'] and kwargs['username'] != sanitizeString(kwargs['username']):
-            return None
-        if 'token' in kwargs:
-            kwargs={"token.token": kwargs['token'], **kwargs}
-            kwargs.pop('token')
-        if not (g.isRootUser):
-            # rootUser can find any user. else only find users registered with this hostname.
-            kwargs['hostname']=Site().hostname            
-
-        user = mongo.db.users.find_one(kwargs)
+            
+        if '_id' in kwargs:
+            user = mongo.db.users.find_one({"_id": ObjectId(kwargs['_id'])})
+        else:
+            if 'username' in kwargs and kwargs['username'] and kwargs['username'] != sanitizeString(kwargs['username']):
+                return None
+            if 'token' in kwargs:
+                kwargs={"token.token": kwargs['token'], **kwargs}
+                kwargs.pop('token')
+            if not (g.isRootUser):
+                # rootUser can find any user. else only find users registered with this hostname.
+                kwargs['hostname']=Site().hostname            
+            user = mongo.db.users.find_one(kwargs)        
+        
         if user:
             instance.user=dict(user)
             return instance
@@ -131,6 +136,10 @@ class User(object):
         return self.user
 
     @property
+    def _id(self):
+        return self.user['_id']
+
+    @property
     def username(self):
         return self.user['username']
 
@@ -170,8 +179,7 @@ class User(object):
 
     
     def totalForms(self):
-        forms = Form().findAll(author=self.username)
-        return forms.count()
+        return Form().findAll(author=self._id).count()
 
 
     def save(self):
@@ -302,13 +310,17 @@ class Form(object):
         instance = super(Form, cls).__new__(cls)
         if not kwargs:
             return instance
-        if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
-            return None
-        if not g.isRootUser:
-            # rootUser can find any form. else only find forms created at this hostname.
-            kwargs['hostname']=Site().hostname
             
-        form = mongo.db.forms.find_one(kwargs)
+        if '_id' in kwargs:
+            form = mongo.db.forms.find_one({"_id": ObjectId(kwargs['_id'])})
+        else:
+            if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
+                return None
+            if not g.isRootUser:
+                # rootUser can find any form. else only find forms created at this hostname.
+                kwargs['hostname']=Site().hostname
+            form = mongo.db.forms.find_one(kwargs)
+            
         if form:
             instance.form=dict(form)
             return instance
@@ -326,6 +338,10 @@ class Form(object):
     @property
     def author(self):
         return self.form['author']
+        
+    @property
+    def authorName(self):
+        return User(_id=self.form['author']).username    
 
     @property
     def slug(self):

@@ -35,16 +35,16 @@
             <tr>
                <td>{%trans%}Author{%endtrans%}</td>
                {% if g.current_user.admin %}
-                    <td><a href="/admin/users/{{ form.author }}">{{ form.author }}</a></td>
+                    <td><a href="/admin/users/{{ form.authorName }}">{{ form.authorName }}</a></td>
                {% else %}
-                    <td>{{ form.author }}</td>
+                    <td>{{ form.authorName }}</td>
                 {% endif %}
             </tr>
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ form.created }}</td>
             </tr>
-            {% if g.current_user.isRootUser() %}
+            {% if g.isRootUser %}
                 <tr>
                    <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ form.hostname }}</td>
@@ -72,7 +72,7 @@
             </tr>
             <tr>
                <td>{%trans%}Notify me{%endtrans%}</td>
-               {% if form.author == g.current_user.username %}
+               {% if form.author == g.current_user._id %}
                <td>
                    <div id="toggle_notification" class="btn-group btn-toggle">
                     <button id="notification_true" class="btn btn-xs btn-default {% if form.notification['newEntry'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
@@ -85,7 +85,7 @@
             </tr>
             <tr>
                <td>{%trans%}Is public{%endtrans%}</td>
-               {% if form.author == g.current_user.username %}
+               {% if form.author == g.current_user._id %}
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
                     <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
@@ -104,7 +104,7 @@
                {% endif %}
             </tr>
         </table>
-        {% if form.author == g.current_user.username %}
+        {% if form.author == g.current_user._id %}
         <hr />
         <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/view-data/{{ form.slug }}'">
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form.slug }}'">

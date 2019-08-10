@@ -17,7 +17,7 @@
     <tr>
         <th>{%trans%}Name{%endtrans%}</th>
         
-        {% if g.current_user.isRootUser() %}
+        {% if g.isRootUser %}
             <th>{%trans%}Hostname{%endtrans%}</th>
         {% endif %}
        
@@ -31,12 +31,12 @@
 <tr>
    <td><a href="/forms/view/{{form.slug}}">{{form.slug}}</a></td>
    
-   {% if g.current_user.isRootUser() %}
+   {% if g.isRootUser %}
         <td>{{form.hostname}}</td>
    {% endif %}
    
    <td>{{form.created}}</td>
-   <td><a href="/admin/users/{{form.author}}">{{form.author}}</a></td>
+   <td><a href="/admin/users/{{form.authorName}}">{{form.authorName}}</a></td>
    <td>{{form.entries|length}}</td>
    <td>{{form.enabled}}</td>
 </tr>

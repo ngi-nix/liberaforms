@@ -110,7 +110,7 @@ def view_form(slug):
         queriedForm.saveEntry(entry)
         
         if queriedForm.notification['newEntry'] == True:
-            user=User(username=queriedForm.author)
+            user=User(_id=queriedForm.author)
             data=[]
             for field in queriedForm.fieldIndex:
                 if field['name'] in entry:
@@ -125,7 +125,7 @@ def view_form(slug):
 @app.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    forms = sorted(Form().findAll(author=g.current_user.username), key=lambda k: k['created'], reverse=True)
+    forms = sorted(Form().findAll(author=g.current_user._id), key=lambda k: k['created'], reverse=True)
     return render_template('my-forms.html', forms=forms, username=g.current_user.username) 
 
 
@@ -133,7 +133,7 @@ def my_forms():
 @enabled_user_required
 @sanitized_slug_required
 def list_entries(slug):
-    queriedForm = Form(slug=slug, author=g.current_user.username)
+    queriedForm = Form(slug=slug, author=g.current_user._id)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -146,7 +146,7 @@ def list_entries(slug):
 @enabled_user_required
 @sanitized_slug_required
 def csv_form(slug):
-    queriedForm = Form(slug=slug, author=g.current_user.username)
+    queriedForm = Form(slug=slug, author=g.current_user._id)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -232,7 +232,7 @@ def edit_form(slug=None):
         queriedForm = Form(slug=sanitizeSlug(slug))
         if queriedForm:
             isFormNew = False
-            if queriedForm.author != g.current_user.username:
+            if queriedForm.author != g.current_user._id:
                 flash(gettext("You can't edit that form"), 'warning')
                 return redirect(url_for('my_forms'))
             
@@ -269,7 +269,7 @@ def save_form(slug):
 
     queriedForm=Form(slug=session['slug'])
     if queriedForm:
-        if queriedForm.author != g.current_user.username:
+        if queriedForm.author != g.current_user._id:
             flash(gettext("You can't edit that form"), 'warning')
             return redirect(url_for('my_forms'))
      
@@ -287,10 +287,10 @@ def save_form(slug):
     else:
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
-                    "author": session['username'],
+                    "author": g.current_user._id,
                     "postalCode": "08014",
                     "enabled": False,
-                    "hostname": urlparse(request.host_url).hostname,
+                    "hostname": Site().hostname,
                     "slug": slug,
                     "notification": {"newEntry": True},
                     "structure": session['formStructure'],
@@ -311,7 +311,7 @@ def save_form(slug):
 @enabled_user_required
 @sanitized_slug_required
 def delete_form(slug):
-    queriedForm=Form(slug=slug, author=g.current_user.username)
+    queriedForm=Form(slug=slug, author=g.current_user._id)
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -332,7 +332,7 @@ def delete_form(slug):
 @enabled_user_required
 @sanitized_slug_required
 def delete_entries(slug):
-    queriedForm=Form(slug=slug, author=g.current_user.username)
+    queriedForm=Form(slug=slug, author=g.current_user._id)
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -384,7 +384,7 @@ def inspect_form(slug):
     # We use the 'session' because forms/edit maybe showing a new form without a Form() db object yet.
     populateSessionFormData(queriedForm)
 
-    user=User(username=queriedForm.author)
+    user=User(_id=queriedForm.author)
     # there should be a user with this username in the database. But just in case..
     userEnabled=None
     if user:
@@ -819,7 +819,7 @@ def inspect_user(username):
 
     return render_template('inspect-user.html', user=user,
                                                 formCount=user.totalForms,
-                                                forms=Form().findAll(author=username)
+                                                forms=Form().findAll(author=user._id)
                                                 ) 
 
 
@@ -855,9 +855,11 @@ def toggle_admin(username):
 
 @app.route('/admin/forms', methods=['GET'])
 @admin_required
-def list_all_forms():
+def list_forms():
     #print(Form().findAll())
-    return render_template('list-forms.html', forms=Form().findAll()) 
+    forms = [Form(_id=form['_id']) for form in Form().findAll()]
+    return render_template('list-forms.html', forms=forms) 
+    #return render_template('list-forms.html', forms=Form().findAll()) 
 
 
 
@@ -865,7 +867,7 @@ def list_all_forms():
 @enabled_user_required
 @sanitized_slug_required
 def toggle_form(slug):
-    form=Form(slug=slug, author=g.current_user.username)
+    form=Form(slug=slug, author=g.current_user._id)
     if not form:
         return JsonResponse(json.dumps())
         
@@ -876,7 +878,7 @@ def toggle_form(slug):
 @enabled_user_required
 @sanitized_slug_required
 def toggle_form_notification(slug):
-    form=Form(slug=slug, author=g.current_user.username)
+    form=Form(slug=slug, author=g.current_user._id)
     if not form:
         return JsonResponse(json.dumps())
 
