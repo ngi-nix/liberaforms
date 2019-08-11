@@ -33,11 +33,15 @@
         
         <table class="table table-striped table-condensed">
             <tr>
+               <td>{%trans%}Name{%endtrans%}</td>
+               <td>{{ form.slug }}</td>
+            </tr>
+            <tr>
                <td>{%trans%}Author{%endtrans%}</td>
                {% if g.current_user.admin %}
-                    <td><a href="/admin/users/{{ form.authorName }}">{{ form.authorName }}</a></td>
+                    <td><a href="/admin/users/id/{{ form.user._id }}">{{ form.user.username }}</a></td>
                {% else %}
-                    <td>{{ form.authorName }}</td>
+                    <td>{{ form.user.username }}</td>
                 {% endif %}
             </tr>
             <tr>
@@ -94,7 +98,7 @@
                </td>
                {% else %}
                <td>
-                    {% if not userEnabled and form.enabled %}
+                    {% if not form.user.enabled and form.enabled %}
                         <span style="text-decoration: line-through">{{ form.enabled }}</span>
                         <span style="color:red">({%trans%}user disabled{%endtrans%})</span>
                     {% else %}
@@ -106,13 +110,13 @@
         </table>
         {% if form.author == g.current_user._id %}
         <hr />
-        <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/view-data/{{ form.slug }}'">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form.slug }}'">
+        <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/entries/{{ form._id }}'">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form._id }}'">
         <p></p>
             {% if form.totalEntries == 0 %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form.slug }}'">
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">
             {% else %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form.slug }}'">
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">
             {% endif %}
         {% endif %}
     </div>
@@ -131,7 +135,7 @@ jQuery(function($) {
 });
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/forms/toggle-enabled/{{ form.slug }}",
+        url : "/form/toggle-enabled/{{ form._id }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)
@@ -153,7 +157,7 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
 });
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({
-        url : "/forms/toggle-notification/{{ form.slug }}",
+        url : "/form/toggle-notification/{{ form._id }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)

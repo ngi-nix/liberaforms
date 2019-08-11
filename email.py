@@ -84,8 +84,8 @@ def smtpSendNewFormEntryNotification(email, entry, slug):
     
     sendMail(email, message)
 
-def smtpSendNewFormNotification(adminEmails, slug):
-    message=gettext("New form '%s' created at %s" % (slug, Site().hostname))
+def smtpSendNewFormNotification(adminEmails, form):
+    message=gettext("New form '%s' created at %s" % (form.slug, Site().hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form notification"), message)
     
     for email in adminEmails:

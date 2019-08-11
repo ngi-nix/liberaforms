@@ -81,7 +81,7 @@ def sanitized_slug_required(f):
     def wrap(*args, **kwargs):
         if not ('slug' in kwargs and kwargs['slug'] == sanitizeSlug(kwargs['slug'])):
             flash(gettext("That's a nasty slug!"), 'warning')
-            return render_template('page_not_found.html'), 404
+            return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)
     return wrap

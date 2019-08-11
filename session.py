@@ -22,7 +22,7 @@ from flask import session
 import json
 
 def ensureSessionFormKeys():
-    if not 'formSlug' in session:
+    if not 'slug' in session:
         session['slug'] = ""
     if not 'formFieldIndex' in session:
         session['formFieldIndex'] = []
@@ -39,6 +39,7 @@ def populateSessionFormData(queriedForm):
 
 def clearSessionFormData():
     session['slug'] = ""
+    session['form_id']=None
     session['formFieldIndex'] = []
     session['formStructure'] = json.dumps([])
     session['afterSubmitTextMD'] = ''

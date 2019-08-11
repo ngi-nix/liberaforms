@@ -64,8 +64,8 @@
                 </td>
             </tr>
         </table>
-        {% if g.isRootUser and not user.username == g.current_user.username %}
-        <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.data.username}}'">
+        {% if g.isRootUser and not user._id == g.current_user._id %}
+        <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user._id}}'">
         {% endif %}
 
     </div>
@@ -86,9 +86,9 @@
             </tr>
         </thead>
         
-        {% for form in forms %}
+        {% for form in user.forms %}
         <tr>
-           <td><a href="/forms/view/{{form.slug}}">{{form.slug}}</a></td>
+           <td><a href="/forms/view/{{form._id}}">{{form.slug}}</a></td>
            <td>{{form.created}}</td>
            <td>{{form.enabled}}</td>
            <td>{{form.entries|length}}</td>
@@ -109,7 +109,7 @@ $(document).ready(function() {
 });
 document.getElementById('toggle_blocked').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/users/toggle-blocked/{{ user['username'] }}",
+        url : "/admin/users/toggle-blocked/{{ user['_id'] }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)
@@ -127,7 +127,7 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
 });
 document.getElementById('toggle_admin').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/users/toggle-admin/{{ user['username'] }}",
+        url : "/admin/users/toggle-admin/{{ user['_id'] }}",
         type: "POST",
         dataType: "json",
         success: function(data, textStatus, jqXHR)

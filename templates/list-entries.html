@@ -7,13 +7,13 @@
 
 <div class="container">
     <div class="row col-md-11" style="font-size:1.5em">
-    <input class="btn-primary btn" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.slug }}'">
-    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form.slug }}'">
+    <input class="btn-primary btn" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
     </div>
     
     <div class="row col-md-1">
     {% if form.totalEntries > 0 %}
-    <input class="btn-danger btn" type="button" value="{%trans%}Delete entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form.slug }}'">
+    <input class="btn-danger btn" type="button" value="{%trans%}Delete entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'">
     {% endif %}
     </div>
 </div>

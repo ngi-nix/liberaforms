@@ -15,8 +15,8 @@
     
     <div class="row col-md-8">
         <p>&nbsp;</p>
-        <form id="result" action="/forms/edit{% if session['slug'] %}/{{ session['slug'] }}{% endif %}" method="post" style="padding-bottom:0.5em;">
 
+        <form id="result" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post" style="padding-bottom:0.5em;">
         
         <div style="font-size:1.3em">
             {%trans%}2. Say something to the user after the form has been submitted{%endtrans%}
@@ -34,7 +34,7 @@
         
         <input type="hidden" id="structure" name="structure" />
         {{ request.url_root }}
-        <input id="slug" name="slug" value="{{ session['slug'] }}" size="32" {% if isFormNew %}required{% else %}disabled{% endif %} />
+        <input id="slug" name="slug" value="{{ session['slug'] }}" size="32" {% if session['form_id'] %}disabled{% else %}required{% endif %} />
         <input id="slug_not_available"  style="display:none"
                                         class="slug-alert btn btn-danger"
                                         type="button"
@@ -46,10 +46,10 @@
         <p>&nbsp;</p>
         
         <input class="btn-success btn" type="submit" value="{%trans%}Preview{%endtrans%}" />
-        {% if isFormNew %}
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
+        {% if session['form_id'] %}
+            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ session['form_id'] }}'">
         {% else %}
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ session['slug'] }}'">
+            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
         {% endif %}
         
         </form>
@@ -75,10 +75,6 @@ jQuery(function($) {
         i18n: {
             locale: "{{ config['LANGUAGES'][g.current_user.data['language']][1] }}",
             location: "{{request.host_url}}static/formBuilder-languages/"
-            //extension: '.ext'
-            //override: {
-            //    'en-US': {...}
-            //}
         },
         formData: {{ session['formStructure'] | tojson }}
     };
@@ -88,7 +84,7 @@ jQuery(function($) {
         evt.preventDefault();
         //var formStructure = formBuilder.actions.getData('json', true);
         //console.log(formStructure);
-        if ( "{{ isFormNew }}" == "True" ){
+        if ( {{ session['form_id'] | tojson }} == null ){
             $.ajax({
                 url : "/forms/check-slug-availability/"+$('#slug').val(),
                 type: "POST",

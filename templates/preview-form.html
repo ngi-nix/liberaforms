@@ -26,10 +26,15 @@
         </div>
         
         <p>&nbsp;</p>
-        <hr />
-        <form action="/forms/save/{{ session['slug'] }}" method="post">    
+        <hr /> 
+        <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
+
             <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
-            <input class="btn-primary btn" type="button" value="{%trans%}Edit again{%endtrans%}" onClick="location.href='/forms/edit/{{ session['slug'] }}'">
+            {% if session['form_id'] %}
+                <input class="btn-primary btn" type="button" value="{%trans%}Edit again{%endtrans%}" onClick="location.href='/forms/edit/{{ session['form_id'] }}'">
+            {% else %}
+                <input class="btn-primary btn" type="button" value="{%trans%}Edit again{%endtrans%}" onClick="location.href='/forms/edit'">
+            {% endif %}
         </form>
     </div>
     <div class="row col-md-3"></div>

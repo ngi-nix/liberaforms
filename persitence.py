@@ -57,20 +57,18 @@ class User(object):
         instance = super(User, cls).__new__(cls)
         if not kwargs:
             return instance
-            
+           
         if '_id' in kwargs:
-            user = mongo.db.users.find_one({"_id": ObjectId(kwargs['_id'])})
-        else:
-            if 'username' in kwargs and kwargs['username'] and kwargs['username'] != sanitizeString(kwargs['username']):
-                return None
-            if 'token' in kwargs:
-                kwargs={"token.token": kwargs['token'], **kwargs}
-                kwargs.pop('token')
-            if not (g.isRootUser):
-                # rootUser can find any user. else only find users registered with this hostname.
-                kwargs['hostname']=Site().hostname            
-            user = mongo.db.users.find_one(kwargs)        
+            kwargs['_id'] = ObjectId(kwargs['_id'])
+        if 'username' in kwargs and kwargs['username'] and kwargs['username'] != sanitizeString(kwargs['username']):
+            return None
+        if 'token' in kwargs:
+            kwargs={"token.token": kwargs['token'], **kwargs}
+            kwargs.pop('token')
+        if not ('hostname' in kwargs or g.isRootUser):
+            kwargs['hostname']=Site().hostname
         
+        user = mongo.db.users.find_one(kwargs)       
         if user:
             instance.user=dict(user)
             return instance
@@ -81,9 +79,9 @@ class User(object):
     def __init__(self, *args, **kwargs):
         pass
 
-    def create(cls, newUser):
-        mongo.db.users.insert_one(newUser)
-        return User(username=newUser['username'])
+    def create(cls, newUserData):
+        newUser = mongo.db.users.insert_one(newUserData)
+        return User(_id=newUser.inserted_id)
 
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
@@ -177,10 +175,11 @@ class User(object):
     def hostname(self):
         return self.user['hostname']
 
-    
-    def totalForms(self):
-        return Form().findAll(author=self._id).count()
 
+    @property
+    def forms(self):
+        return Form().findAll(author=self._id)
+    
 
     def save(self):
         mongo.db.users.save(self.user)
@@ -296,7 +295,7 @@ class User(object):
         
 
     def canViewForm(self, form):
-        if self.username == form.author or self.admin:
+        if self._id == form.author or self.admin:
             return True
         flash(gettext("Permission needed to view form"), 'warning')
         return False
@@ -312,14 +311,12 @@ class Form(object):
             return instance
             
         if '_id' in kwargs:
-            form = mongo.db.forms.find_one({"_id": ObjectId(kwargs['_id'])})
-        else:
-            if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
-                return None
-            if not g.isRootUser:
-                # rootUser can find any form. else only find forms created at this hostname.
-                kwargs['hostname']=Site().hostname
-            form = mongo.db.forms.find_one(kwargs)
+            kwargs["_id"] = ObjectId(kwargs['_id'])
+        if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
+            return None
+        if not ('hostname' in kwargs or g.isRootUser):
+            kwargs['hostname']=Site().hostname
+        form = mongo.db.forms.find_one(kwargs)
             
         if form:
             instance.form=dict(form)
@@ -335,13 +332,18 @@ class Form(object):
     def data(self):
         return self.form
 
+
+    @property
+    def _id(self):
+        return self.form['_id']
+
     @property
     def author(self):
         return self.form['author']
         
     @property
-    def authorName(self):
-        return User(_id=self.form['author']).username    
+    def user(self):
+        return User(_id=self.form['author']) 
 
     @property
     def slug(self):
@@ -398,10 +400,11 @@ class Form(object):
         return self.form['notification']['newEntry']
 
 
-    def insert(self, formData):
+    def insert(cls, formData):
         if formData['slug'] in app.config['RESERVED_SLUGS']:
-            return None # just in case
-        return mongo.db.forms.insert_one(formData)
+            return None
+        newForm = mongo.db.forms.insert_one(formData)
+        return Form(_id=newForm.inserted_id)
 
     def update(self, data):
         mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
@@ -451,15 +454,15 @@ class Form(object):
 
             
     def isAuthor(self, user):
-        if self.author != user.username:
-            return False
-        return True
+        if self.author == user._id:
+            return True
+        return False
 
 
     def isPublic(self):
         if not self.enabled:
             return False
-        if not User(username=self.author).enabled:
+        if not User(_id=self.author).enabled:
             return False
         return True
 
@@ -578,7 +581,7 @@ class Invite(object):
         instance = super(Invite, cls).__new__(cls)
         if not kwargs:
             return instance
-        if not (g.isRootUser or 'hostname' in kwargs):
+        if not ('hostname' in kwargs or g.isRootUser):
             kwargs['hostname']=Site().hostname
         if 'token' in kwargs:
             kwargs={"token.token": kwargs['token'], **kwargs}

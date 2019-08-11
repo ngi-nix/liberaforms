@@ -29,14 +29,14 @@
 </thead>
 {% for form in forms %}
 <tr>
-   <td><a href="/forms/view/{{form.slug}}">{{form.slug}}</a></td>
+   <td><a href="/forms/view/{{form._id}}">{{form.slug}}</a></td>
    
    {% if g.isRootUser %}
         <td>{{form.hostname}}</td>
    {% endif %}
    
    <td>{{form.created}}</td>
-   <td><a href="/admin/users/{{form.authorName}}">{{form.authorName}}</a></td>
+   <td><a href="/admin/users/id/{{form.user._id}}">{{form.user.username}}</a></td>
    <td>{{form.entries|length}}</td>
    <td>{{form.enabled}}</td>
 </tr>
