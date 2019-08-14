@@ -54,14 +54,15 @@ class User(object):
     user = None
 
     def __new__(cls, *args, **kwargs):
+        if 'username' in kwargs and not isSaneUsername(kwargs['username']):
+            return None
+            
         instance = super(User, cls).__new__(cls)
         if not kwargs:
             return instance
            
         if '_id' in kwargs:
             kwargs['_id'] = ObjectId(kwargs['_id'])
-        if 'username' in kwargs and kwargs['username'] and kwargs['username'] != sanitizeString(kwargs['username']):
-            return None
         if 'token' in kwargs:
             kwargs={"token.token": kwargs['token'], **kwargs}
             kwargs.pop('token')
@@ -74,7 +75,6 @@ class User(object):
             return instance
         else:
             return None
-        
     
     def __init__(self, *args, **kwargs):
         pass
@@ -91,12 +91,17 @@ class User(object):
 
     def getNotifyNewFormEmails(cls):
         emails=[]
-        criteria={'hostname':Site().hostname, 'enabled':True, 'admin.isAdmin':True, 'admin.notifyNewForm':True}
+        criteria={  'hostname':Site().hostname,
+                    'blocked':False,
+                    'validatedEmail': True,
+                    'admin.isAdmin':True,
+                    'admin.notifyNewForm':True}
         admins=mongo.db.users.find(criteria)
         for admin in admins:
             emails.append(admin['email'])
             
-        rootUsers=mongo.db.users.find({'email': {"$in": app.config['ROOT_USERS']}, 'admin.notifyNewForm':True})
+        rootUsers=mongo.db.users.find({ 'email': {"$in": app.config['ROOT_USERS']},
+                                        'admin.notifyNewForm':True})
         for rootUser in rootUsers:
             if not rootUser['email'] in emails:
                 emails.append(rootUser['email'])
@@ -106,12 +111,17 @@ class User(object):
 
     def getNotifyNewUserEmails(cls):
         emails=[]
-        criteria={'hostname':Site().hostname, 'enabled':True, 'admin.isAdmin':True, 'admin.notifyNewUser':True}
+        criteria={  'hostname':Site().hostname,
+                    'blocked':False,
+                    'validatedEmail': True,
+                    'admin.isAdmin':True,
+                    'admin.notifyNewUser':True}
         admins=mongo.db.users.find(criteria)
         for admin in admins:
             emails.append(admin['email'])
             
-        rootUsers=mongo.db.users.find({'email': {"$in": app.config['ROOT_USERS']}, 'admin.notifyNewUser':True})
+        rootUsers=mongo.db.users.find({ 'email': {"$in": app.config['ROOT_USERS']},
+                                        'admin.notifyNewUser':True})
         for rootUser in rootUsers:
             if not rootUser['email'] in emails:
                 emails.append(rootUser['email'])
@@ -154,18 +164,18 @@ class User(object):
         return True
     
     @property
-    def email(self):
-        if self.user and 'email' in self.user:
-            return self.user['email']
-        return None
-
-    @property
     def language(self):
         return self.user['language']
 
     @language.setter
     def language(self, language):
         self.user['language'] = language
+
+    @property
+    def email(self):
+        if self.user and 'email' in self.user:
+            return self.user['email']
+        return None
     
     @email.setter
     def email(self, email):
@@ -175,53 +185,47 @@ class User(object):
     def hostname(self):
         return self.user['hostname']
 
-
+    @property
+    def token(self):
+        return self.user['token']
+        
     @property
     def forms(self):
+        #return sorted(Form().findAll(author=self._id), key=lambda k: k['created'], reverse=True)
         return Form().findAll(author=self._id)
-    
 
+    @property
+    def admin(self):
+        return self.user['admin']['isAdmin']
+    
     def save(self):
         mongo.db.users.save(self.user)
 
-
     def delete(self):
-        forms = Form().findAll(author=self.username)
+        forms = Form().findAll(author=self._id)
         for form in forms:
             mongo.db.forms.remove({'_id': form['_id']})
         return mongo.db.users.remove({'_id': self.user['_id']})
 
+    def isAdmin(self):
+        return self.user['admin']['isAdmin']
 
     def isRootUser(self):
         if self.email in app.config['ROOT_USERS']:
             return True
         return False
     
-       
-    @property
-    def token(self):
-        return self.user['token']
-
-
     def setToken(self, **kwargs):
         self.user['token']=createToken(User, **kwargs)
         self.save()
-
 
     def deleteToken(self):
         self.user['token']={}
         self.save()
 
-
-    def setEnabled(self, value):
-        self.user['enabled'] = value
-        self.save()
-
-
     def setPassword(self, password):
         self.user['password'] = password
         self.save()
-
 
     def toggleBlocked(self):
         if self.isRootUser():
@@ -232,39 +236,31 @@ class User(object):
             self.user['blocked']=True
         self.save()
         return self.user['blocked']
+            
+    def toggleAdmin(self):
+        if self.isRootUser():
+            return self.isAdmin()
+        if self.isAdmin():
+            self.user['admin']['isAdmin']=False
+            mongo.db.users.save(self.user)
+        else:
+            self.user['admin']['isAdmin']=True
+            mongo.db.users.save(self.user)
+        return self.isAdmin()
 
-
-    @property
-    def admin(self):
-        return self.user['admin']['isAdmin']
-
-
-    @property
     def defaultAdminSettings(cls):
         return {
             "isAdmin": False,
             "notifyNewUser": False,
             "notifyNewForm": False
         }
-            
 
-    def toggleAdmin(self):
-        if self.isRootUser():
-            return self.admin
-        if self.admin:
-            self.user['admin']['isAdmin']=False
-            mongo.db.users.save(self.user)
-        else:
-            self.user['admin']['isAdmin']=True
-            mongo.db.users.save(self.user)
-        return self.admin
-    
 
     """
     send this admin an email when a new user registers at the site
     """
     def toggleNewUserNotification(self):
-        if not self.user['admin']:
+        if not self.isAdmin():
             return False
         if self.user['admin']['notifyNewUser']:
             self.user['admin']['notifyNewUser'] = False
@@ -278,24 +274,17 @@ class User(object):
     send this admin an email when a new form is created
     """
     def toggleNewFormNotification(self):
-        if not self.user['admin']:
+        if not self.isAdmin():
             return False
         if self.user['admin']['notifyNewForm']:
             self.user['admin']['notifyNewForm'] = False
         else:
             self.user['admin']['notifyNewForm'] = True
         mongo.db.users.save(self.user)
-        return self.user['admin']['notifyNewForm']
-
-
-
-    def setValidatedEmail(self, value):
-        self.user['validatedEmail'] = value
-        self.save()
-        
+        return self.user['admin']['notifyNewForm']     
 
     def canViewForm(self, form):
-        if self._id == form.author or self.admin:
+        if self._id == form.author or self.isAdmin():
             return True
         flash(gettext("Permission needed to view form"), 'warning')
         return False
@@ -306,14 +295,15 @@ class Form(object):
     form = None
 
     def __new__(cls, *args, **kwargs):
+        if 'slug' in kwargs and not isSaneSlug(kwargs['slug']):
+            return None
+
         instance = super(Form, cls).__new__(cls)
         if not kwargs:
             return instance
-            
+
         if '_id' in kwargs:
             kwargs["_id"] = ObjectId(kwargs['_id'])
-        if 'slug' in kwargs and kwargs['slug'] and kwargs['slug'] != sanitizeSlug(kwargs['slug']):
-            return None
         if not ('hostname' in kwargs or g.isRootUser):
             kwargs['hostname']=Site().hostname
         form = mongo.db.forms.find_one(kwargs)
@@ -331,7 +321,6 @@ class Form(object):
     @property
     def data(self):
         return self.form
-
 
     @property
     def _id(self):
@@ -360,12 +349,6 @@ class Form(object):
     @property
     def fieldIndex(self):
         return self.form['fieldIndex']
-
-    """
-    @fieldIndex.setter
-    def fieldIndex(self, value):
-        self.form['fieldIndex'] = value
-    """
     
     @property
     def entries(self):
@@ -375,53 +358,9 @@ class Form(object):
     def created(self):
         return self.form['created']
 
-
-    def findAll(cls, *args, **kwargs):
-        if not g.isRootUser:
-            kwargs['hostname']=Site().hostname
-        return mongo.db.forms.find(kwargs)
-
-
-    def toggleEnabled(self):
-        if self.form['enabled']:
-            self.form['enabled']=False
-        else:
-            self.form['enabled']=True
-        mongo.db.forms.save(self.form)
-        return self.form['enabled']
-
-
-    def toggleNotification(self):
-        if self.form['notification']['newEntry']:
-            self.form['notification']['newEntry']=False
-        else:
-            self.form['notification']['newEntry']=True
-        mongo.db.forms.save(self.form)
-        return self.form['notification']['newEntry']
-
-
-    def insert(cls, formData):
-        if formData['slug'] in app.config['RESERVED_SLUGS']:
-            return None
-        newForm = mongo.db.forms.insert_one(formData)
-        return Form(_id=newForm.inserted_id)
-
-    def update(self, data):
-        mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
-    
-    def saveEntry(self, entry):
-        mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
-
-    def delete(self):
-        return mongo.db.forms.remove({'_id': self.form['_id']})
-
-    def deleteEntries(self):
-        mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
-    
     @property
     def totalEntries(self):
         return len(self.entries)
-
 
     @property
     def enabled(self):
@@ -451,24 +390,59 @@ class Form(object):
             return last_entry["created"]
         else:
             return ""
+        
+    def findAll(cls, *args, **kwargs):
+        if not g.isRootUser:
+            kwargs['hostname']=Site().hostname
+        return mongo.db.forms.find(kwargs)
 
+    def insert(cls, formData):
+        if formData['slug'] in app.config['RESERVED_SLUGS']:
+            return None
+        newForm = mongo.db.forms.insert_one(formData)
+        return Form(_id=newForm.inserted_id)
+
+    def update(self, data):
+        mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
+    
+    def saveEntry(self, entry):
+        mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
+
+    def delete(self):
+        return mongo.db.forms.remove({'_id': self.form['_id']})
+
+    def deleteEntries(self):
+        mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
             
     def isAuthor(self, user):
         if self.author == user._id:
             return True
         return False
 
-
     def isPublic(self):
         if not self.enabled:
             return False
-        if not User(_id=self.author).enabled:
+        if not self.user.enabled:
             return False
         return True
 
+    def toggleEnabled(self):
+        if self.form['enabled']:
+            self.form['enabled']=False
+        else:
+            self.form['enabled']=True
+        mongo.db.forms.save(self.form)
+        return self.form['enabled']
 
-
-
+    def toggleNotification(self):
+        if self.form['notification']['newEntry']:
+            self.form['notification']['newEntry']=False
+        else:
+            self.form['notification']['newEntry']=True
+        mongo.db.forms.save(self.form)
+        return self.form['notification']['newEntry']
+        
+        
 class Site(object):
     site = None
 
@@ -510,14 +484,11 @@ class Site(object):
             mongo.db.sites.insert_one(newSiteData)
             return Site()
 
+    def __init__(self, *args, **kwargs):
+        pass
     
     def save(self):
         mongo.db.sites.save(self.site)
-
-
-    def __init__(self, *args, **kwargs):
-        pass
-
 
     @property
     def data(self):
@@ -564,9 +535,9 @@ class Site(object):
         return mongo.db.sites.find(kwargs)
 
     def delete(self):
-        users = User().findAll(hostname=self.site['hostname'])
+        users = [User(_id=user['_id']) for user in User().findAll(hostname=self.site['hostname'])]
         for user in users:
-            mongo.db.users.remove({'_id': user['_id']})
+            user.delete()
         invites = Invite().findAll(hostname=self.site['hostname'])
         for invite in invites:
             mongo.db.invites.remove({'_id': invite['_id']})
@@ -581,6 +552,8 @@ class Invite(object):
         instance = super(Invite, cls).__new__(cls)
         if not kwargs:
             return instance
+        if '_id' in kwargs:
+            kwargs["_id"] = ObjectId(kwargs['_id'])
         if not ('hostname' in kwargs or g.isRootUser):
             kwargs['hostname']=Site().hostname
         if 'token' in kwargs:
@@ -613,6 +586,14 @@ class Invite(object):
     @property
     def data(self):
         return self.invite
+
+    @property
+    def _id(self):
+        return self.invite['_id']
+
+    @property
+    def email(self):
+        return self.invite['email']
 
     @property
     def token(self):

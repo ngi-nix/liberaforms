@@ -28,7 +28,7 @@
         <th>{%trans%}Public{%endtrans%}</th>
     </tr>
 </thead>
-{% for form in forms %}
+{% for form in user.forms %}
 <tr>
    <td><a href="/forms/view/{{form._id}}">{{form.slug}}</a></td>
    <td>{{form.created}}</td>
@@ -45,7 +45,7 @@
 $(document).ready(function() {
     $('#forms').DataTable({
         "language": {
-            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
+            "url": "/static/dataTables-languages/{{user.language}}.js"
         }
     });
 } );

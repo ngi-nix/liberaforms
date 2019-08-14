@@ -56,7 +56,7 @@
             </tr>
         </table>
         
-    {% if g.current_user.admin %}
+    {% if g.isAdmin %}
 
         <p style="padding-top:0.25em;"></p>
         <div style="font-size:1.5em; padding-bottom:0.5em; display:inline; float:left;">
@@ -67,25 +67,38 @@
         </div>
         <p style="clear:both;"></p>
         
+        {% if invites %}
         <table class="table table-condensed">
+        <thead>
+            <tr>
+            <th>{%trans%}Created{%endtrans%}</th>
+            <th>{%trans%}Email{%endtrans%}</th>
+            {% if g.isRootUser %}
+                <th>Hostname</th>
+            {% endif %}
+            <th>{%trans%}Admin{%endtrans%}</th>
+            <th></th>
+            </tr>
+        </thead>
         {% for invite in invites %}
             <tr>
                 <td>{{invite.token.created.strftime('%Y-%m-%d') }}</td>
-                <td>{{invite.email}}</td>
+                <td>{{invite.data['email']}}</td>
                 {% if g.isRootUser %}
-                    <td>{{invite.hostname}}</td>
-                    <td>{{invite.admin}}</td>
+                    <td>{{invite.data['hostname']}}</td>
                 {% endif %}
+                <td>{{invite.data['admin']}}</td>
                 <td class="text-right">
-                <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite.email}}'">
+                <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite._id}}'">
                 </td>
             </tr>
         {% endfor %}
         </table>
+        {% endif %}
         
         <hr />
-        
         <p></p>
+        
         <div style="font-size:1.5em; padding-bottom:0.5em;">
             {%trans%}My admin settings{%endtrans%}
         </div>

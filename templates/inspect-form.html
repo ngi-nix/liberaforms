@@ -38,7 +38,7 @@
             </tr>
             <tr>
                <td>{%trans%}Author{%endtrans%}</td>
-               {% if g.current_user.admin %}
+               {% if g.isAdmin %}
                     <td><a href="/admin/users/id/{{ form.user._id }}">{{ form.user.username }}</a></td>
                {% else %}
                     <td>{{ form.user.username }}</td>
@@ -65,7 +65,7 @@
             <tr>
                <td>{%trans%}URL{%endtrans%}</td>
                <td>
-                   {% if form.enabled and userEnabled %}
+                   {% if form.isPublic() %}
                    <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
                    <span id="formURL" style="display:none">{{ form.url }}</span>
                    {% else %}

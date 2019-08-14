@@ -8,7 +8,13 @@
 
 <div class="container">
     <div class="row col-md-12">
-        <div style="font-size:1.3em">{%trans%}1. Build your form here{%endtrans%}</div>
+        <div style="font-size:1.3em">
+        {% if session['form_id'] %}
+            1. {%trans%}Edit form{%endtrans%} {{ session['slug'] }}
+        {% else %}
+            1. {%trans%}Build your form here{%endtrans%}
+        {% endif %}
+        </div>
         <hr />
         <div id="fb-editor"></div>
     </div>
@@ -82,8 +88,6 @@ jQuery(function($) {
 
     document.getElementById('result').addEventListener('submit', function(evt){
         evt.preventDefault();
-        //var formStructure = formBuilder.actions.getData('json', true);
-        //console.log(formStructure);
         if ( {{ session['form_id'] | tojson }} == null ){
             $.ajax({
                 url : "/forms/check-slug-availability/"+$('#slug').val(),

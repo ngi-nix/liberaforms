@@ -52,7 +52,7 @@ def enabled_user_required(f):
 def admin_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if g.current_user and g.current_user.admin:
+        if g.isAdmin:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('index'))
@@ -98,7 +98,7 @@ def sanitized_token(f):
     return wrap
 
 
-""" ######## Escapers ######## """
+""" ######## Sanitizers ######## """
 
 def sanitizeString(string):
     string = unidecode(string)
@@ -111,10 +111,18 @@ def sanitizeSlug(slug):
     slug = slug.replace(" ", "-") 
     return sanitizeString(slug)
 
+def isSaneSlug(slug):
+    if slug and slug == sanitizeSlug(slug):
+        return True
+    return False
 
 def sanitizeUsername(username):
     return sanitizeString(username)
     
+def isSaneUsername(username):
+    if username and username == sanitizeUsername(username):
+        return True
+    return False
 
 def sanitizeTokenString(string):
     return re.sub('[^a-z0-9]', '', string)
@@ -203,8 +211,8 @@ def createToken(persistentClass, **kwargs):
     return {**result, **kwargs} 
 
 
-def isValidToken(data):
-    token_age = datetime.datetime.now() - data['created']
+def isValidToken(tokenData):
+    token_age = datetime.datetime.now() - tokenData['created']
     if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
         return False
     return True

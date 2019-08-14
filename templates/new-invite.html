@@ -22,7 +22,11 @@
         <br />
         <textarea name="message" class="form-control" ></textarea>
         <br />
+        <label>{%trans%}Make the new user an Admin{%endtrans%}</label>
+        <input style="vertical-align: -2px;" type="checkbox" name="admin" value="True" />
+        
         {% if g.isRootUser %}
+            <p>&nbsp;</p>
             <div style="font-size:1.2em">{%trans%}Root user options{%endtrans%}</div>
             <hr />
             
@@ -36,11 +40,8 @@
                 {% endfor %}
                 <br />
             {% endif %}
-            
-            <label>{%trans%}Make the new user an Admin{%endtrans%}</label>
-            <input style="vertical-align: -2px;" type="checkbox" name="admin" value="True" />
-            
         {% endif %}
+                
         <p>&nbsp;</p>
         <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
     </form>
@@ -49,12 +50,5 @@
 
 <div class="row col-md-4"></div>    
 </div>
-
-
-<script>
-    jQuery(function($) {
-
-    });
-</script>
   
 {% endblock %}

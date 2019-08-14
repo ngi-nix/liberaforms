@@ -11,18 +11,26 @@
         {%trans%}Delete user{%endtrans%}
     </div>
     <hr />
-    {%trans%}You are going to delete a user{%endtrans%}.
+    {% set formCount=user.forms.count() %}
+    {%trans%}You are going to delete a user{%endtrans%}
+    {% if formCount %}
+        {%trans%}and their forms{%endtrans%}
+    {% endif %}
     <br />
     {%trans%}Write the name of the user below{%endtrans%}.
     <p></p>
-    <span style="font-size:1.15em">{{username}}</span>
+    <span style="font-size:1.15em">{{user.username}}</span>
     <p></p>
     
     <form method="POST">
         <input type="text" name="username" class="form-control" required ><br />
         <p></p>
-        <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/users/{{username}}'">
+        {% if formCount %}
+            <input class="btn-danger btn" type="submit" value="{%trans%}Delete user and forms{%endtrans%}">
+        {% else %}
+            <input class="btn-danger btn" type="submit" value="{%trans%}Delete user{%endtrans%}">
+        {% endif %}
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/users/id/{{user._id}}'">
     </form>
 
 </div>
