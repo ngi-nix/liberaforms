@@ -86,7 +86,7 @@ def index():
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
-def show_form(slug):
+def view_form(slug):
     queriedForm = Form(slug=slug)
     if not (queriedForm and queriedForm.isPublic()):
         flash(gettext("Form is not available. 404"), 'warning')
@@ -121,6 +121,33 @@ def show_form(slug):
         
     return render_template('view-form.html', formStructure=queriedForm.structure)     
             
+@app.route('/<string:slug>/results/<string:key>', methods=['GET'])
+@sanitized_slug_required
+def view_entries(slug, key):
+    queriedForm = Form(slug=slug, key=key)
+    if not queriedForm or not queriedForm.areEntriesShared():
+        return render_template('page-not-found.html'), 400
+
+    fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex)
+    return render_template('view-results.html', form=queriedForm,
+                                                fieldIndex=fieldIndex)    
+
+
+@app.route('/<string:slug>/csv/<string:key>', methods=['GET'])
+@sanitized_slug_required
+def view_csv(slug, key):
+    queriedForm = Form(slug=slug, key=key)
+    if not queriedForm or not queriedForm.areEntriesShared():
+        return render_template('page-not-found.html'), 400
+
+    csv_file = writeCSV(queriedForm)
+    
+    @after_this_request 
+    def remove_file(response): 
+        os.remove(csv_file) 
+        return response
+    
+    return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
 """ Author form management """
@@ -260,7 +287,9 @@ def preview_form():
 @enabled_user_required
 def save_form(_id=None):
     
-    """ We prepend the field 'Created' to the index """
+    """ We prepend the reserved field 'Created' to the index
+        app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
+    """
     session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
     
     afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
@@ -292,14 +321,20 @@ def save_form(_id=None):
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author": g.current_user._id,
+                    "editors": [],
                     "postalCode": "08014",
                     "enabled": False,
+                    "expireDate": None,
                     "hostname": Site().hostname,
                     "slug": session['slug'],
                     "notification": {"newEntry": True},
                     "structure": session['formStructure'],
                     "fieldIndex": session['formFieldIndex'],
                     "entries": [],
+                    "sharedEntries": {  "enabled": False,
+                                        "key": getRandomString(32),
+                                        "password": None,
+                                        "expireDate": None},
                     "afterSubmitText": afterSubmitText
                 }
         newForm=Form().insert(newFormData)
@@ -349,6 +384,14 @@ def toggle_form_enabled(_id):
         
     return JsonResponse(json.dumps({'enabled':form.toggleEnabled()}))
 
+@app.route('/form/toggle-shared-entries/<string:_id>', methods=['POST'])
+@enabled_user_required
+def toggle_shared_entries(_id):
+    form=Form(_id=_id, author=g.current_user._id)
+    if not form:
+        return JsonResponse(json.dumps())
+        
+    return JsonResponse(json.dumps({'enabled':form.toggleSharedEntries()}))
 
 @app.route('/form/toggle-notification/<string:_id>', methods=['POST'])
 @enabled_user_required

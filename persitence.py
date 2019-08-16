@@ -304,6 +304,9 @@ class Form(object):
 
         if '_id' in kwargs:
             kwargs["_id"] = ObjectId(kwargs['_id'])
+        if 'key' in kwargs:
+            kwargs={"sharedEntries.key": kwargs['key'], **kwargs}
+            kwargs.pop('key')
         if not ('hostname' in kwargs or g.isRootUser):
             kwargs['hostname']=Site().hostname
         form = mongo.db.forms.find_one(kwargs)
@@ -426,19 +429,24 @@ class Form(object):
             return False
         return True
 
+    def areEntriesShared(self):
+        return self.form['sharedEntries']['enabled']
+    
+    def getSharedEntriesURL(self, part="results"):
+        return "%s/%s/%s" % (self.url, part, self.form['sharedEntries']['key'])
+
     def toggleEnabled(self):
-        if self.form['enabled']:
-            self.form['enabled']=False
-        else:
-            self.form['enabled']=True
+        self.form['enabled'] = False if self.form['enabled'] else True
         mongo.db.forms.save(self.form)
         return self.form['enabled']
 
+    def toggleSharedEntries(self):
+        self.form['sharedEntries']['enabled'] = False if self.form['sharedEntries']['enabled'] else True
+        mongo.db.forms.save(self.form)
+        return self.form['sharedEntries']['enabled']
+    
     def toggleNotification(self):
-        if self.form['notification']['newEntry']:
-            self.form['notification']['newEntry']=False
-        else:
-            self.form['notification']['newEntry']=True
+        self.form['notification']['newEntry'] = False if self.form['notification']['newEntry'] else True
         mongo.db.forms.save(self.form)
         return self.form['notification']['newEntry']
         

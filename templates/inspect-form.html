@@ -55,39 +55,6 @@
                 </tr>
             {% endif %}
             <tr>
-               <td>{%trans%}Nº of entries{%endtrans%}</td>
-               <td>{{ form.totalEntries }}</td>
-            </tr>
-            <tr>
-               <td>{%trans%}Last entry{%endtrans%}</td>
-               <td>{{ form.lastEntryDate }}</td>
-            </tr>
-            <tr>
-               <td>{%trans%}URL{%endtrans%}</td>
-               <td>
-                   {% if form.isPublic() %}
-                   <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
-                   <span id="formURL" style="display:none">{{ form.url }}</span>
-                   {% else %}
-                   <a id="formLink" href="{{ form.url }}" style="display:none">{{ form.url }}</a>
-                   <span id="formURL">{{ form.url }}</span>
-                   {% endif %}
-                </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Notify me{%endtrans%}</td>
-               {% if form.author == g.current_user._id %}
-               <td>
-                   <div id="toggle_notification" class="btn-group btn-toggle">
-                    <button id="notification_true" class="btn btn-xs btn-default {% if form.notification['newEntry'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.notification['newEntry'] %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
-                   </div>
-               </td>
-               {% else %}
-                    <td>{{ form.notification['newEntry'] }}</td>               
-               {% endif %}
-            </tr>
-            <tr>
                <td>{%trans%}Is public{%endtrans%}</td>
                {% if form.author == g.current_user._id %}
                <td>
@@ -105,6 +72,49 @@
                         {{ form.enabled }}
                     {% endif %}
                </td>               
+               {% endif %}
+            </tr>
+            <tr>
+               <td>{%trans%}Public URL{%endtrans%}</td>
+               <td>
+                   {% if form.isPublic() %}
+                   <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
+                   <span id="formURL" style="display:none">{{ form.url }}</span>
+                   {% else %}
+                   <a id="formLink" href="{{ form.url }}" style="display:none">{{ form.url }}</a>
+                   <span id="formURL">{{ form.url }}</span>
+                   {% endif %}
+                </td>
+            </tr>
+            <tr>
+               <td>{%trans%}Nº of entries{%endtrans%}</td>
+               <td>{{ form.totalEntries }}</td>
+            </tr>
+            <tr>
+               <td>{%trans%}Last entry{%endtrans%}</td>
+               <td>{{ form.lastEntryDate }}</td>
+            </tr>
+            <tr>
+               <td>{%trans%}Share results{%endtrans%}</td>
+               <td>
+                   {% if form.author == g.current_user._id %}
+                        <a href="/forms/entries/{{ form._id }}">{{ form.areEntriesShared() }}</a>
+                   {% else %}
+                        {{ form.areEntriesShared() }}
+                   {% endif %}
+               </td>
+            </tr>
+            <tr>
+               <td>{%trans%}Notify me{%endtrans%}</td>
+               {% if form.author == g.current_user._id %}
+               <td>
+                   <div id="toggle_notification" class="btn-group btn-toggle">
+                    <button id="notification_true" class="btn btn-xs btn-default {% if form.notification['newEntry'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.notification['newEntry'] %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                   </div>
+               </td>
+               {% else %}
+                    <td>{{ form.notification['newEntry'] }}</td>               
                {% endif %}
             </tr>
         </table>

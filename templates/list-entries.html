@@ -10,11 +10,21 @@
     <input class="btn-primary btn" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
     <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
     </div>
-    
     <div class="row col-md-1">
-    {% if form.totalEntries > 0 %}
-    <input class="btn-danger btn" type="button" value="{%trans%}Delete entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'">
-    {% endif %}
+    <input class="btn-danger btn" type="button" value="{%trans%}Delete{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
+    </div>
+</div>
+
+
+<div class="container">
+    <div class="row col-md-12" style="margin:1em 0 1em -1em; font-size:1.1.5em">
+        {%trans%}Share results{%endtrans%}
+        <span id="toggle_sharedEntries" class="btn-group btn-toggle">
+            <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}active btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+            <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}active btn-danger{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+        </span>
+        <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
+        <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
     </div>
 </div>
 
@@ -52,7 +62,28 @@ $(document).ready(function() {
         }
     });
 });
-
+document.getElementById('toggle_sharedEntries').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-shared-entries/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.enabled == true) {
+                $('#sharedEntries_true').addClass('active  btn-success');
+                $('#sharedEntries_false').removeClass('active btn-danger');
+                $('#enabled_link').show()
+                $('#disabled_link').hide()
+            }
+            else if (data.enabled == false) {
+                $('#sharedEntries_true').removeClass('active btn-success');
+                $('#sharedEntries_false').addClass('active btn-danger');
+                $('#enabled_link').hide()
+                $('#disabled_link').show()
+            }
+        }
+    });
+});
 </script>
   
 {% endblock %}
