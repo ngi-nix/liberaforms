@@ -181,7 +181,7 @@
                 <td>{{ site.totalForms }}</td>
                 {% if total_forms.append(total_forms.pop() + site.totalForms) %}{% endif %}
                 <td class="text-right">
-                <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/sites/delete/{{site.site.hostname}}'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.site.hostname}}'">
                 </td>
             </tr>
         {% endfor %}

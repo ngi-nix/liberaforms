@@ -121,7 +121,10 @@
         {% if form.author == g.current_user._id %}
         <hr />
         <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/entries/{{ form._id }}'">
+        <p></p>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form._id }}'">
+        <p></p>
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form._id }}'">
         <p></p>
             {% if form.totalEntries == 0 %}
             <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">

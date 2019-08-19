@@ -484,6 +484,7 @@ class Site(object):
             
             newSiteData={
                 "hostname": hostname,
+                "port": None,
                 "scheme": urlparse(request.host_url).scheme,
                 "blurb": blurb,
                 "invitationOnly": True,
@@ -508,7 +509,10 @@ class Site(object):
 
     @property
     def host_url(self):
-        return "%s://%s/" %(self.site['scheme'], self.site['hostname'])
+        url= "%s://%s" % (self.site['scheme'], self.site['hostname'])
+        if self.site['port']:
+            url = "%s:%s" % (url, self.site['port'])
+        return url+'/'
 
     @property
     def blurb(self):
@@ -531,13 +535,23 @@ class Site(object):
     def invitationOnly(self):
         return self.site['invitationOnly']
         
+    @property
+    def totalUsers(self):
+        return User().findAll(hostname=self.hostname).count()
+        
+    @property
+    def totalForms(self):
+        return Form().findAll(hostname=self.hostname).count()
+    
     def toggleInvitationOnly(self):
-        if self.site["invitationOnly"]:
-            self.site["invitationOnly"]=False
-        else:
-            self.site["invitationOnly"]=True
+        self.site["invitationOnly"] = False if self.site["invitationOnly"] else True
         mongo.db.sites.save(self.site)
         return self.site["invitationOnly"]
+
+    def toggleScheme(self):
+        self.site["scheme"] = 'https' if self.site["scheme"]=='http' else 'http'
+        mongo.db.sites.save(self.site)
+        return self.site["scheme"]
 
     def findAll(cls, *args, **kwargs):
         return mongo.db.sites.find(kwargs)

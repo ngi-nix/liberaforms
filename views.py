@@ -194,7 +194,21 @@ def new_form(templateID=None):
             session['formStructure']=template[0]['structure']
     
     session['afterSubmitTextMD'] = "## %s" % gettext("Thank you!!")
-    session['form_id']=None
+    return render_template('edit-form.html', host_url=Site().host_url)
+
+
+@app.route('/forms/duplicate/<string:_id>', methods=['GET'])
+@enabled_user_required
+def duplicate_form(_id):
+    clearSessionFormData()
+    queriedForm = Form(_id=_id, author=g.current_user._id)
+    if not queriedForm:
+        flash(gettext("Form is not available. 404"), 'warning')
+        return redirect(url_for('my_forms'))
+        
+    populateSessionFormData(queriedForm)
+    session['slug']=""
+    flash(gettext("You can edit the duplicate now"), 'info')
     return render_template('edit-form.html')
 
 
@@ -251,7 +265,8 @@ def edit_form(_id=None):
         
         return redirect(url_for('preview_form'))
 
-    return render_template('edit-form.html')
+    return render_template('edit-form.html', host_url=Site().host_url)
+
 
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
@@ -476,11 +491,6 @@ def user_settings(username):
     invites=[]
     if user.isAdmin():
         invites=[Invite(_id=invite['_id']) for invite in Invite().findAll()]
-        if thisSite.data['scheme'] != urlparse(request.host_url).scheme:
-            # background maintenance.
-            # maybe a letsencrypt cert got installed after the initial installation and http is now https.
-            thisSite.data['scheme'] = urlparse(request.host_url).scheme
-            thisSite.save()
     
     sites=[]
     if user.isRootUser():
@@ -768,6 +778,37 @@ def test_smtp(email):
     return redirect(url_for('user_settings', username=g.current_user.username))
 
 
+@app.route('/admin/sites/edit/<string:hostname>', methods=['GET', 'POST'])
+@rootuser_required
+def edit_site(hostname):
+    queriedSite=Site(hostname=hostname)
+    return render_template('edit-site.html', site=queriedSite)
+
+
+@app.route('/admin/sites/toggle-scheme/<string:hostname>', methods=['POST'])
+@rootuser_required
+def toggle_site_scheme(hostname): 
+    queriedSite=Site(hostname=hostname)
+    return json.dumps({'scheme': queriedSite.toggleScheme()})
+
+
+@app.route('/admin/sites/change-port/<string:hostname>/', methods=['POST'])
+@app.route('/admin/sites/change-port/<string:hostname>/<string:port>', methods=['POST'])
+@rootuser_required
+def change_site_port(hostname, port=None):
+    queriedSite=Site(hostname=hostname)
+    if not port:
+        queriedSite.data['port']=None
+    else:
+        try:
+            int(port)
+            queriedSite.data['port']=port
+        except:
+            pass
+    queriedSite.save()
+    return json.dumps({'port': queriedSite.data['port']})
+    
+
 @app.route('/admin/sites/delete/<string:hostname>', methods=['GET', 'POST'])
 @rootuser_required
 def delete_site(hostname):
@@ -808,9 +849,13 @@ def toggle_newForm_notification():
 
 
 @app.route('/admin/toggle-invitation-only', methods=['POST'])
+@app.route('/admin/toggle-invitation-only/<string:hostname>', methods=['POST'])
 @admin_required
-def toggle_invitation_only(): 
-    return json.dumps({'invite': Site().toggleInvitationOnly()})
+def toggle_invitation_only(hostname=None): 
+    if hostname:
+        return json.dumps({'invite': Site(hostname=hostname).toggleInvitationOnly()})
+    else:
+        return json.dumps({'invite': Site().toggleInvitationOnly()})
 
 
 

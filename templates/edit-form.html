@@ -39,7 +39,7 @@
         <hr />
         
         <input type="hidden" id="structure" name="structure" />
-        {{ request.url_root }}
+        {{ host_url }}
         <input id="slug" name="slug" value="{{ session['slug'] }}" size="32" {% if session['form_id'] %}disabled{% else %}required{% endif %} />
         <input id="slug_not_available"  style="display:none"
                                         class="slug-alert btn btn-danger"

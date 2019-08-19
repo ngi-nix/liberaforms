@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-6">
+        
+    <div style="font-size:1.5em; padding-bottom:0.5em;">
+        {{ site.hostname }}
+    </div>
+    <hr />
+    <p></p>
+
+    <table class="table table-striped table-condensed">
+        <tr>
+            <td>{%trans%}Hostname{%endtrans%}</td>
+            <td>{{ site.hostname }}</td>
+        </tr>
+        <tr>
+            <td>{%trans%}Users{%endtrans%}</td>
+            <td>{{ site.totalUsers }}</td>
+        </tr>
+        <tr>
+            <td>{%trans%}Forms{%endtrans%}</td>
+            <td>{{ site.totalForms }}</td>
+        </tr>
+        <tr>
+            <td>{%trans%}Invitation only{%endtrans%}</td>
+            <td>{{ site.invitationOnly }}</td>
+        </tr>
+        <tr>
+            <td>{%trans%}Email address{%endtrans%}</td>
+            <td>{{ site.noreplyEmailAddress }}</td>
+        </tr>
+    </table>
+    
+    <div style="font-size:1.25em; padding-bottom:0.5em;">
+        {%trans%}Link creation{%endtrans%}
+    </div>
+    <p></p>
+    <div  style="font-size:1.15em;">
+    <span id="site_scheme">{{site.data.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.data.port %}style="display:none"{% endif %}>:{{ site.data.port }}</span>/xxxx
+    </div>
+    <table class="table table-striped table-condensed" style="margin-top: 1em">
+        <tr>
+            <td>{%trans%}Scheme{%endtrans%}</td>
+            <td class="text-right">
+                <div id="toggle_scheme" class="btn-group btn-toggle">
+                <button id="site_scheme_http" class="btn btn-xs btn-default {% if site.data.scheme=='http' %}active btn-primary{% endif %}">HTTP</button>
+                <button id="site_scheme_https" class="btn btn-xs btn-default {% if site.data.scheme=='https' %}active btn-primary{% endif %}">HTTPS</button>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>{%trans%}Port{%endtrans%}</td>
+            <td class="text-right">
+            <input id="port" size="12" type="text" value="{% if site.data.port %}{{site.data.port}}{% endif %}" class="form-control" >
+            <input id="port_button" class="btn-primary btn btn-md" type="button" value="{%trans%}Change port{%endtrans%}" >
+            </td>
+        </tr>     
+    </table>
+
+    <form method="GET" action="/admin/sites/delete/{{ site.hostname }}">
+    <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/sites/delete/{{site.site.hostname}}'">
+    </form>
+
+    </div>
+    <div class="row col-md-3"></div>
+</div>
+
+<script>
+document.getElementById('toggle_scheme').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/sites/toggle-scheme/{{site.hostname}}",
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            $('#site_scheme').html(data.scheme)
+            if (data.scheme == 'http') {
+                $('#site_scheme_http').addClass('active btn-primary');
+                $('#site_scheme_https').removeClass('active btn-primary');
+            }
+            else if (data.scheme == 'https') {
+                $('#site_scheme_http').removeClass('active btn-primary');
+                $('#site_scheme_https').addClass('active btn-primary');
+            }
+        }
+    });
+});
+document.getElementById('port_button').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/sites/change-port/{{site.hostname}}/"+$('#port').val(),
+        type: "POST",
+        dataType: "json",
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.port == null){
+                $('#port').val("")
+                $('#site_port').hide();
+            } else {
+                $('#port').val(data.port)
+                $('#site_port').html(":"+data.port);
+                $('#site_port').show();
+            }            
+        }
+    });
+});
+</script>
+
+{% endblock %}
