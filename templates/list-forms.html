@@ -6,45 +6,42 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 
 <div class="container">
+<div class="row col-md-12">
 
     <div style="font-size:1.5em">
-        {%trans%}Forms{%endtrans%}
+        {%trans%}All forms{%endtrans%}
     </div>
     <hr />
 
-<table id="forms" class="table table-striped table-condensed">
-    <thead>
-    <tr>
-        <th>{%trans%}Name{%endtrans%}</th>
-        
-        {% if g.isRootUser %}
-            <th>{%trans%}Hostname{%endtrans%}</th>
-        {% endif %}
-       
-        <th>{%trans%}Created{%endtrans%}</th>
-        <th>{%trans%}Author{%endtrans%}</th>
-        <th>{%trans%}Entries{%endtrans%}</th>
-        <th>{%trans%}Public{%endtrans%}</th>
-    </tr>
-</thead>
-{% for form in forms %}
-<tr>
-   <td><a href="/forms/view/{{form._id}}">{{form.slug}}</a></td>
-   
-   {% if g.isRootUser %}
-        <td>{{form.hostname}}</td>
-   {% endif %}
-   
-   <td>{{form.created}}</td>
-   <td><a href="/admin/users/id/{{form.user._id}}">{{form.user.username}}</a></td>
-   <td>{{form.entries|length}}</td>
-   <td>{{form.enabled}}</td>
-</tr>
-{% endfor %}
-</table>
+    <table id="forms" class="table table-striped table-condensed">
+        <thead>
+        <tr>
+            <th>{%trans%}Name{%endtrans%}</th>
+            {% if g.isRootUser %}
+                <th>{%trans%}Hostname{%endtrans%}</th>
+            {% endif %}
+            <th>{%trans%}Author{%endtrans%}</th>
+            <th>{%trans%}Created{%endtrans%}</th>
+            <th>{%trans%}Public{%endtrans%}</th>
+            <th>{%trans%}Entries{%endtrans%}</th>
+        </tr>
+    </thead>
+    {% for form in forms %}
+        <tr>
+            <td><a href="/forms/view/{{form._id}}">{{form.slug}}</a></td>
+            {% if g.isRootUser %}
+                <td>{{form.hostname}}</td>
+            {% endif %}
+            <td><a href="/admin/users/id/{{form.user._id}}">{{form.user.username}}</a></td>
+            <td>{{form.created}}</td>
+            <td>{{form.enabled}}</td>
+            <td>{{form.entries|length}}</td>
+        </tr>
+    {% endfor %}
+    </table>
 
 </div>
-
+</div>
 
 <script>
 $(document).ready(function() {
@@ -54,7 +51,6 @@ $(document).ready(function() {
         }
     });
 } );
-
 </script>
   
 {% endblock %}

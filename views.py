@@ -81,7 +81,7 @@ def index():
         mongo.db.sites.save(site)
     """
     
-    return render_template('index.html',site=Site(), isAdmin=g.isAdmin)
+    return render_template('index.html',site=Site())
 
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
@@ -119,10 +119,12 @@ def view_form(slug):
         
         return render_template('thankyou.html', form=queriedForm)
         
-    return render_template('view-form.html', formStructure=queriedForm.structure)     
-            
+    return render_template('view-form.html', form=queriedForm)     
+
+
 @app.route('/<string:slug>/results/<string:key>', methods=['GET'])
 @sanitized_slug_required
+@sanitized_key_required
 def view_entries(slug, key):
     queriedForm = Form(slug=slug, key=key)
     if not queriedForm or not queriedForm.areEntriesShared():
@@ -130,11 +132,13 @@ def view_entries(slug, key):
 
     fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex)
     return render_template('view-results.html', form=queriedForm,
-                                                fieldIndex=fieldIndex)    
+                                                fieldIndex=fieldIndex,
+                                                language=get_locale())    
 
 
 @app.route('/<string:slug>/csv/<string:key>', methods=['GET'])
 @sanitized_slug_required
+@sanitized_key_required
 def view_csv(slug, key):
     queriedForm = Form(slug=slug, key=key)
     if not queriedForm or not queriedForm.areEntriesShared():
@@ -155,12 +159,12 @@ def view_csv(slug, key):
 @app.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    return render_template('my-forms.html', user=g.current_user) 
+    forms=[Form(_id=form['_id']) for form in Form().findAll(author=g.current_user._id)]
+    return render_template('my-forms.html', forms=forms) 
 
 
 @app.route('/forms/view/<string:_id>', methods=['GET'])
 @enabled_user_required
-#@sanitized_slug_required
 def inspect_form(_id):
     queriedForm = Form(_id=_id)
     if not queriedForm:
@@ -241,7 +245,7 @@ def edit_form(_id=None):
 
         """
         We keep a list of all the elements of the structure that have a 'name' attribute.
-        These are the elements that will contain the data submitted by users as form.entries in the DB
+        These are the elements that will contain the data submitted by users and saved as form.entries in the DB
         This list of elements is called 'fieldIndex'.
         """    
         session['formFieldIndex']=[]
@@ -292,8 +296,7 @@ def preview_form():
     session['slug']=sanitizeSlug(session['slug'])
     formURL = "%s%s" % ( Site().host_url, session['slug'])
     return render_template('preview-form.html', formURL=formURL,
-                                                afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']),
-                                                slug=session['slug'])
+                                                afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']))
 
 
 
@@ -514,7 +517,7 @@ def change_email():
             g.current_user.setToken(email=request.form['email'])
                         
             smtpSendConfirmEmail(g.current_user, request.form['email'])
-            flash(gettext("We sent an email to %s") % request.form['email'], 'info')
+            flash(gettext("We've sent an email to %s") % request.form['email'], 'info')
             return redirect(url_for('user_settings', username=g.current_user.username))
             
     return render_template('change-email.html')
@@ -525,7 +528,7 @@ def change_email():
 def send_validation_email():   
     g.current_user.setToken(email=g.current_user.email)
     smtpSendConfirmEmail(g.current_user, g.current_user.email)
-    flash(gettext("We sent an email to %s") % g.current_user.email, 'info')
+    flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
     return redirect(url_for('user_settings', username=g.current_user.username))
     
 
@@ -883,7 +886,7 @@ def new_invite():
             invite=Invite().create(hostname, request.form['email'], message, admin)
             smtpSendInvite(invite)
             
-            flash(gettext("We sent an invitation to %s") % invite.data['email'], 'success')
+            flash(gettext("We've sent an invitation to %s") % invite.data['email'], 'success')
             return redirect(url_for('user_settings', username=g.current_user.username))
             
     sites=[]

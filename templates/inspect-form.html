@@ -87,8 +87,10 @@
                 </td>
             </tr>
             <tr>
-               <td>{%trans%}Nº of entries{%endtrans%}</td>
-               <td>{{ form.totalEntries }}</td>
+               <td>{%trans%}Entries{%endtrans%}</td>
+               <td>
+                   <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{ form._id }}'" >
+               </td>
             </tr>
             <tr>
                <td>{%trans%}Last entry{%endtrans%}</td>
@@ -120,10 +122,7 @@
         </table>
         {% if form.author == g.current_user._id %}
         <hr />
-        <input class="btn-success btn btn-sm" type="button" value="{%trans%}View entries{%endtrans%}" onClick="location.href='/forms/entries/{{ form._id }}'">
-        <p></p>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form._id }}'">
-        <p></p>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form._id }}'">
         <p></p>
             {% if form.totalEntries == 0 %}

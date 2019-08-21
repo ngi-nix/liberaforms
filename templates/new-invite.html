@@ -29,21 +29,19 @@
             <p>&nbsp;</p>
             <div style="font-size:1.2em">{%trans%}Root user options{%endtrans%}</div>
             <hr />
-            
-            {% if sites|length > 1 %}
-                <label>{%trans%}Invite to one of these sites{%endtrans%}</label>
-                {% for site in sites %}
-                <div class="radio radio-info">
-                    <input style="margin-left:0;" type="radio" name="hostname" value="{{ site.hostname }}" {% if site.hostname == hostname %}checked{% endif %} >
-                    <label style="margin-left:1em;">{{ site.hostname }}</label>
-                </div>
-                {% endfor %}
-                <br />
-            {% endif %}
+            <label>{%trans%}Invite to one of these sites{%endtrans%}</label>
+            {% for site in sites %}
+            <div class="radio radio-info">
+                <input style="margin-left:0;" type="radio" name="hostname" value="{{ site.hostname }}" {% if site.hostname == hostname %}checked{% endif %} >
+                <label style="margin-left:1em;">{{ site.hostname }}</label>
+            </div>
+            {% endfor %}
+            <br />
         {% endif %}
                 
         <p>&nbsp;</p>
         <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}'">
     </form>
 
 </div>

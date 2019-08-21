@@ -14,14 +14,14 @@
 
     <div id="blurb">
         {{ site.blurb['html']|safe }}
-        {% if isAdmin %}
+        {% if g.isAdmin %}
         <p></p>
         <hr />
         <input id="show-editor" class="btn-success btn" type="button" value="{%trans%}Edit text{%endtrans%}" />
         {% endif %}        
     </div>
 
-    {% if isAdmin %}
+    {% if g.isAdmin %}
     <div id="editor" style="display:none">
         <input id="save-edit" class="btn-success btn" type="button" value="{%trans%}Save{%endtrans%}" />
         <input id="cancel-edit" class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" />
@@ -60,7 +60,7 @@
 </div>
 </div>
 
-{% if isAdmin %}
+{% if g.isAdmin %}
 <script>
 $(document).ready(function() {
 

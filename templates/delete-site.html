@@ -11,9 +11,15 @@
         {%trans%}Delete site{%endtrans%}
     </div>
     <hr />
-    <div style="color:red">
-        {%trans%}You are going to delete a Site{%endtrans%}.
+    <div>
+        {%trans%}You are going to delete this Site{%endtrans%}.
         <br />
+        {%trans%}Including{%endtrans%} ...
+        <br />
+        {{ site.totalUsers }} {%trans%}users{%endtrans%}
+        <br />
+        {{ site.totalForms }} {%trans%}forms{%endtrans%} + {%trans%}entries{%endtrans%}
+        <p>&nbsp;</p>
         {%trans%}Write the name of the site below{%endtrans%}.
     </div>
     <p></p>
@@ -24,7 +30,7 @@
         <input type="text" name="hostname" class="form-control" required ><br />
         <p></p>
         <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.site.hostname}}'">
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
     </form>
 
 </div>

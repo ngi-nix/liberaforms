@@ -32,8 +32,10 @@
             <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
             {% if session['form_id'] %}
                 <input class="btn-primary btn" type="button" value="{%trans%}Edit again{%endtrans%}" onClick="location.href='/forms/edit/{{ session['form_id'] }}'">
+                <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{ session['form_id'] }}'">
             {% else %}
                 <input class="btn-primary btn" type="button" value="{%trans%}Edit again{%endtrans%}" onClick="location.href='/forms/edit'">
+                <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms'">
             {% endif %}
         </form>
     </div>

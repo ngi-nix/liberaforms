@@ -80,18 +80,30 @@ def sanitized_slug_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if not ('slug' in kwargs and kwargs['slug'] == sanitizeSlug(kwargs['slug'])):
-            flash(gettext("That's a nasty slug!"), 'warning')
+            if g.current_user:
+                flash(gettext("That's a nasty slug!"), 'warning')
             return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)
     return wrap
 
+def sanitized_key_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if not ('key' in kwargs and kwargs['key'] == sanitizeString(kwargs['key'])):
+            if g.current_user:
+                flash(gettext("That's a nasty key!"), 'warning')
+            return render_template('page-not-found.html'), 404
+        else:
+            return f(*args, **kwargs)
+    return wrap
 
 def sanitized_token(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if 'token' in kwargs and kwargs['token'] != sanitizeTokenString(kwargs['token']):
-            flash(gettext("That's a nasty token!"), 'warning')
+            if g.current_user:
+                flash(gettext("That's a nasty token!"), 'warning')
             return render_template('page_not_found.html'), 404
         else:
             return f(*args, **kwargs)
@@ -105,11 +117,13 @@ def sanitizeString(string):
     string = string.replace(" ", "") 
     return re.sub('[^A-Za-z0-9\-]', '', string)
 
-
 def sanitizeSlug(slug):
     slug = slug.lower()
     slug = slug.replace(" ", "-") 
     return sanitizeString(slug)
+
+def sanitizeHexidecimal(string): 
+    return re.sub('[^A-Fa-f0-9]', '', string)
 
 def isSaneSlug(slug):
     if slug and slug == sanitizeSlug(slug):
