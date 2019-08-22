@@ -456,44 +456,42 @@ class Site(object):
 
     def __new__(cls, *args, **kwargs):
         instance = super(Site, cls).__new__(cls)
+        if '_id' in kwargs:
+            kwargs["_id"] = ObjectId(kwargs['_id'])
         
-        if 'hostname' in kwargs:
-            searchSiteByHostname=True
-        else:
+        searchSiteByKwargs=True if kwargs else False
+        if not searchSiteByKwargs:
             kwargs['hostname']=urlparse(request.host_url).hostname
-            searchSiteByHostname=False
-
+        
         site = mongo.db.sites.find_one(kwargs)
         if site:
             instance.site=dict(site)
             return instance
-        else:
-            if searchSiteByHostname:
-                return None
+        elif searchSiteByKwargs:
+            return None
             
-            # this Site is new. Let's create it!
-            hostname=urlparse(request.host_url).hostname
-        
-            # create a new site with this hostname
-            with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
-                defaultMD=defaultBlurb.read()
-            blurb = {
-                'markdown': defaultMD,
-                'html': markdown.markdown(defaultMD)
-            }
+        # this Site is new. Let's create a site with this hostname
+        hostname=urlparse(request.host_url).hostname
+
+        with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
+            defaultMD=defaultBlurb.read()
+        blurb = {
+            'markdown': defaultMD,
+            'html': markdown.markdown(defaultMD)
+        }
             
-            newSiteData={
-                "hostname": hostname,
-                "port": None,
-                "scheme": urlparse(request.host_url).scheme,
-                "blurb": blurb,
-                "invitationOnly": True,
-                "noreplyEmailAddress": "no-reply@%s" % hostname
-            }
-            mongo.db.sites.insert_one(newSiteData)
-            #create Installation if it doesn't exist
-            Installation()
-            return Site()
+        newSiteData={
+            "hostname": hostname,
+            "port": None,
+            "scheme": urlparse(request.host_url).scheme,
+            "blurb": blurb,
+            "invitationOnly": True,
+            "noreplyEmailAddress": "no-reply@%s" % hostname
+        }
+        mongo.db.sites.insert_one(newSiteData)
+        #create the Installation if it doesn't exist
+        Installation()
+        return Site()
 
     def __init__(self, *args, **kwargs):
         pass

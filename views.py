@@ -501,12 +501,14 @@ def user_settings(username):
     if user.isRootUser():
         sites=[Site(_id=site['_id']) for site in Site().findAll()]
         installation=Installation()
-    
-    return render_template('user-settings.html',user=user,
-                                                invites=invites,
-                                                site=Site(hostname=user.hostname),
-                                                sites=sites,
-                                                installation=installation)
+    context = {
+        'user': user,
+        'invites': invites,
+        'site': Site(hostname=user.hostname),
+        'sites': sites,
+        'installation': installation
+    }
+    return render_template('user-settings.html', **context)
  
 
 @app.route('/user/change-email', methods=['GET', 'POST'])
