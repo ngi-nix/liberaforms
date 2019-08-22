@@ -33,6 +33,9 @@ import pprint
 
 @app.before_request
 def before_request():
+    if '/static' in request.path:
+        return
+        
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
