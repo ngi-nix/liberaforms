@@ -175,7 +175,7 @@
         {% set total_users = [0] %}        
         {% for site in sites %}
             <tr>
-                <td>{{ site.site.host_url }}</td>
+                <td>{{ site.host_url }}</td>
                 <td>{{ site.totalUsers }}</td>
                 {% if total_users.append(total_users.pop() + site.totalUsers) %}{% endif %}
                 <td>{{ site.totalForms }}</td>
@@ -192,6 +192,26 @@
                 <td></td>
             </tr>        
         </table>
+        
+        <div style="font-size:1.25em; padding-bottom:0.6em;">
+            {%trans%}Installation{%endtrans%}
+        </div>
+
+        <table class="table">
+        <tr>
+            <td>{%trans%}Created{%endtrans%}</td>
+            <td>{{installation.data.created}}</td>
+        </tr>
+        <tr>
+            <td>GNGforms version</td>
+            <td>{{installation.appVersion}}</td>
+        </tr>
+        <tr>
+            <td>Mongo schema version</td>
+            <td>{{installation.schemaVersion}}</td>
+        </tr>
+        </table>
+        
         <table class="table">
         <tr>
             <td>{%trans%}Test SMTP config.{%endtrans%}</td>

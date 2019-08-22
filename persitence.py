@@ -21,7 +21,7 @@ from GNGforms import app, mongo
 from bson.objectid import ObjectId
 from flask import flash, request, g
 from flask_babel import gettext 
-import os, string, random
+import os, string, random, datetime
 from urllib.parse import urlparse
 import markdown
 from .utils import *
@@ -491,6 +491,8 @@ class Site(object):
                 "noreplyEmailAddress": "no-reply@%s" % hostname
             }
             mongo.db.sites.insert_one(newSiteData)
+            #create Installation if it doesn't exist
+            Installation()
             return Site()
 
     def __init__(self, *args, **kwargs):
@@ -634,3 +636,38 @@ class Invite(object):
         
     def delete(self):
         return mongo.db.invites.remove({'_id': self.invite['_id']})
+
+
+class Installation(object):
+    installation = None
+
+    def __new__(cls, *args, **kwargs):
+        instance = super(Installation, cls).__new__(cls)
+        installation = mongo.db.installation.find_one({"name": "GNGforms"})
+            
+        if installation:
+            instance.installation=dict(installation)
+            return instance
+        else:
+            data={  "name": "GNGforms",
+                    "appVersion": app.config['APP_VERSION'],
+                    "schemaVersion": app.config['SCHEMA_VERSION'],
+                    "created": datetime.date.today().strftime("%Y-%m-%d")
+                    }
+            mongo.db.installation.insert_one(data)
+            return Installation()
+                
+    def __init__(self, *args, **kwargs):
+        pass
+
+    @property
+    def data(self):
+        return self.installation
+
+    @property
+    def appVersion(self):
+        return self.installation['appVersion']
+
+    @property
+    def schemaVersion(self):
+        return self.installation['schemaVersion']

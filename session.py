@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from GNGforms import app
 from flask import session
 import json
 
@@ -31,11 +30,12 @@ def ensureSessionFormKeys():
     if not 'afterSubmitTextMD' in session:
         session['afterSubmitTextMD'] = ''
         
-def populateSessionFormData(queriedForm):
-    session['slug'] = queriedForm.slug
-    session['formFieldIndex'] = queriedForm.fieldIndex
-    session['formStructure'] = queriedForm.structure
-    session['afterSubmitTextMD'] = queriedForm.afterSubmitText['markdown']
+def populateSessionFormData(form):
+    #session['form_id'] = str(form._id)
+    session['slug'] = form.slug
+    session['formFieldIndex'] = form.fieldIndex
+    session['formStructure'] = form.structure
+    session['afterSubmitTextMD'] = form.afterSubmitText['markdown']
 
 def clearSessionFormData():
     session['slug'] = ""

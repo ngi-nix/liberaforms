@@ -308,7 +308,7 @@ def save_form(_id=None):
     """ We prepend the reserved field 'Created' to the index
         app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
     """
-    session['formFieldIndex'].insert(0, {'label':'Created', 'name':'created'})
+    session['formFieldIndex'].insert(0, {'label':gettext("Created"), 'name':'created'})
     
     afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
                         'html':markdown2HTML(session['afterSubmitTextMD'])} 
@@ -321,11 +321,11 @@ def save_form(_id=None):
         if queriedForm.author != g.current_user._id:
             flash(gettext("You can't edit that form"), 'warning')
             return redirect(url_for('my_forms'))
-     
+
         if queriedForm.totalEntries > 0:
             for field in queriedForm.fieldIndex:
                 if not getFieldByNameInIndex(session['formFieldIndex'], field['name']):
-                    """ This field was removed by the author but there are entries.
+                    """ This field was removed by the author but there are already entries.
                         So we append it to the index. """
                     session['formFieldIndex'].append(field)
         
@@ -336,6 +336,9 @@ def save_form(_id=None):
         flash(gettext("Updated form OK"), 'success')
         return redirect(url_for('inspect_form', _id=queriedForm._id))
     else:
+        if Form(slug=session['slug'], hostname=Site().hostname):
+            flash(gettext("Slug is not unique. %s" % session['slug']), 'error')
+            return redirect(url_for('edit_form'))
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author": g.current_user._id,
@@ -356,14 +359,11 @@ def save_form(_id=None):
                     "afterSubmitText": afterSubmitText
                 }
         newForm=Form().insert(newFormData)
-        if newForm:
-            clearSessionFormData()
-            flash(gettext("Saved form OK"), 'success')
-            # notify Admins
-            smtpSendNewFormNotification(User().getNotifyNewFormEmails(), newForm)
-            return redirect(url_for('inspect_form', _id=newForm._id))
-        else:
-            flash(gettext("Could not save new form"), 'error')
+        clearSessionFormData()
+        flash(gettext("Saved form OK"), 'success')
+        # notify Admins
+        smtpSendNewFormNotification(User().getNotifyNewFormEmails(), newForm)
+        return redirect(url_for('inspect_form', _id=newForm._id))
 
     clearSessionFormData()
     return redirect(url_for('my_forms'))
@@ -490,23 +490,20 @@ def user_settings(username):
     if username != g.current_user.username:
         return redirect(url_for('my_forms'))
     user=g.current_user
-    thisSite=Site()
     invites=[]
     if user.isAdmin():
         invites=[Invite(_id=invite['_id']) for invite in Invite().findAll()]
-    
     sites=[]
+    installation=None
     if user.isRootUser():
-        for site in Site().findAll():    #mongo objects
-            site=Site(hostname=site['hostname'])
-            totalForms = Form().findAll(hostname=site.hostname).count()
-            totalUsers = User().findAll(hostname=site.hostname).count()
-            sites.append({'site':site, 'totalUsers': totalUsers, 'totalForms':totalForms})
+        sites=[Site(_id=site['_id']) for site in Site().findAll()]
+        installation=Installation()
     
     return render_template('user-settings.html',user=user,
                                                 invites=invites,
-                                                site=thisSite,
-                                                sites=sites)
+                                                site=Site(hostname=user.hostname),
+                                                sites=sites,
+                                                installation=installation)
  
 
 @app.route('/user/change-email', methods=['GET', 'POST'])

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-08-09 07:18+0200\n"
+"POT-Creation-Date: 2019-08-21 20:58+0200\n"
 "PO-Revision-Date: 2019-07-04 16:26+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ca\n"
@@ -84,234 +84,239 @@ msgstr ""
 msgid "SMTP test"
 msgstr ""
 
-#: persitence.py:35
+#: persitence.py:36
 msgid "All fields are required"
 msgstr ""
 
-#: persitence.py:38
+#: persitence.py:39
 msgid "Username is not valid"
 msgstr ""
 
-#: persitence.py:42
+#: persitence.py:43
 msgid "Username is not available"
 msgstr ""
 
-#: persitence.py:121 utils.py:217
+#: persitence.py:134 utils.py:239
 msgid "Email address is not valid"
 msgstr ""
 
-#: persitence.py:124
+#: persitence.py:137
 msgid "Email address is not available"
 msgstr ""
 
-#: persitence.py:293
+#: persitence.py:289
 msgid "Permission needed to view form"
 msgstr ""
 
-#: utils.py:83
+#: utils.py:84
 msgid "That's a nasty slug!"
 msgstr ""
 
-#: utils.py:94
+#: utils.py:95
+msgid "That's a nasty key!"
+msgstr ""
+
+#: utils.py:106
 msgid "That's a nasty token!"
 msgstr ""
 
-#: utils.py:158
+#: utils.py:180
 msgid "Passwords do not match"
 msgstr ""
 
-#: utils.py:161
+#: utils.py:183
 msgid "Your password is weak"
 msgstr ""
 
-#: views.py:92
+#: views.py:92 views.py:210
 msgid "Form is not available. 404"
 msgstr ""
 
-#: views.py:138 views.py:151 views.py:377
+#: views.py:171 views.py:433 views.py:446
 msgid "No form found"
 msgstr ""
 
-#: views.py:181
+#: views.py:175
+msgid "Sorry, no permission to view that form"
+msgstr ""
+
+#: views.py:200
 msgid "Thank you!!"
 msgstr ""
 
-#: views.py:195
-msgid "Something went wrong. No slug!"
+#: views.py:215
+msgid "You can edit the duplicate now"
 msgstr ""
 
-#: views.py:198 views.py:262
-msgid "Something went wrong. Bad slug!"
-msgstr ""
-
-#: views.py:236 views.py:273
+#: views.py:233 views.py:322
 msgid "You can't edit that form"
 msgstr ""
 
-#: views.py:286
+#: views.py:243
+msgid "Something went wrong. No slug!"
+msgstr ""
+
+#: views.py:336
 msgid "Updated form OK"
 msgstr ""
 
-#: views.py:302
+#: views.py:361
 msgid "Saved form OK"
 msgstr ""
 
-#: views.py:316 views.py:337
+#: views.py:366
+msgid "Could not save new form"
+msgstr ""
+
+#: views.py:377 views.py:464
 msgid "Form not found"
 msgstr ""
 
-#: views.py:323
+#: views.py:384
 #, python-format
 msgid "Deleted '%s' and %s entries"
 msgstr ""
 
-#: views.py:326
+#: views.py:387
 msgid "Form name does not match"
 msgstr ""
 
-#: views.py:344
+#: views.py:471
 msgid "We expected a number"
 msgstr ""
 
-#: views.py:349
+#: views.py:476
 #, python-format
 msgid "Deleted %s entries"
 msgstr ""
 
-#: views.py:352
+#: views.py:479
 msgid "Number of entries does not match"
 msgstr ""
 
-#: views.py:381
-msgid "Sorry, no permission to view that form"
-msgstr ""
-
-#: views.py:435 views.py:446
+#: views.py:520 views.py:531
 #, python-format
-msgid "We sent an email to %s"
+msgid "We've sent an email to %s"
 msgstr ""
 
-#: views.py:458
+#: views.py:543
 msgid "Language updated OK"
 msgstr ""
 
-#: views.py:475
+#: views.py:563
 msgid "Invitation not found"
 msgstr ""
 
-#: views.py:478 views.py:634 views.py:714
+#: views.py:566 views.py:684 views.py:730
 msgid "Your petition has expired"
 msgstr ""
 
-#: views.py:510
+#: views.py:601
 msgid "Opps! An error ocurred when creating the user"
 msgstr ""
 
-#: views.py:539
-msgid "User not found"
+#: views.py:615
+msgid "Welcome!"
 msgstr ""
 
-#: views.py:544
-msgid "Cannot delete root user"
+#: views.py:642
+msgid "Bad credentials"
 msgstr ""
 
-#: views.py:547
-msgid "Cannot delete yourself"
+#: views.py:667
+msgid "We may have sent you an email"
 msgstr ""
 
-#: views.py:551
-#, python-format
-msgid "Deleted user '%s'"
+#: views.py:681
+msgid "Couldn't find that token"
 msgstr ""
 
-#: views.py:554
-msgid "Username does not match"
+#: views.py:689
+msgid "Your account has been blocked"
 msgstr ""
 
-#: views.py:564
+#: views.py:713
+msgid "Password changed OK"
+msgstr ""
+
+#: views.py:727
+msgid "We couldn't find that petition"
+msgstr ""
+
+#: views.py:743
+msgid "Your email address is valid"
+msgstr ""
+
+#: views.py:756
+msgid "Text saved OK"
+msgstr ""
+
+#: views.py:767
+msgid "Site email address updated OK"
+msgstr ""
+
+#: views.py:778
+msgid "SMTP config works!"
+msgstr ""
+
+#: views.py:820
 msgid "Site not found"
 msgstr ""
 
-#: views.py:570
+#: views.py:826
 msgid "Cannot delete current site"
 msgstr ""
 
-#: views.py:574
+#: views.py:830
 #, python-format
 msgid "Deleted %s"
 msgstr ""
 
-#: views.py:577
+#: views.py:833
 msgid "Site name does not match"
 msgstr ""
 
-#: views.py:595
-msgid "Bad credentials"
-msgstr ""
-
-#: views.py:617
-msgid "We may have sent you an email"
-msgstr ""
-
-#: views.py:631
-msgid "Couldn't find that token"
-msgstr ""
-
-#: views.py:639
-msgid "Your account has been blocked"
-msgstr ""
-
-#: views.py:662
-msgid "Password changed OK"
-msgstr ""
-
-#: views.py:674
-msgid "Text saved OK"
-msgstr ""
-
-#: views.py:685
-msgid "Site email address updated OK"
-msgstr ""
-
-#: views.py:696
-msgid "SMTP config works!"
-msgstr ""
-
-#: views.py:711
-msgid "We couldn't find that petition"
-msgstr ""
-
-#: views.py:727
-msgid "Your email address is valid"
-msgstr ""
-
-#: views.py:784
+#: views.py:889
 #, python-format
-msgid "We sent an invitation to %s"
+msgid "We've sent an invitation to %s"
 msgstr ""
 
-#: views.py:800
-msgid "Opps! We got a bad email"
-msgstr ""
-
-#: views.py:806
+#: views.py:907
 msgid "Opps! We can't find that invitation"
 msgstr ""
 
-#: views.py:817
-msgid "Username not found"
+#: views.py:928 views.py:969
+msgid "User not found"
+msgstr ""
+
+#: views.py:974
+msgid "Cannot delete root user"
+msgstr ""
+
+#: views.py:977
+msgid "Cannot delete yourself"
+msgstr ""
+
+#: views.py:981
+#, python-format
+msgid "Deleted user '%s'"
+msgstr ""
+
+#: views.py:984
+msgid "Username does not match"
 msgstr ""
 
 #: templates/base.html:29
 msgid "Start"
 msgstr ""
 
-#: templates/base.html:33 templates/list-forms.html:11
+#: templates/base.html:33 templates/edit-site.html:25
 #: templates/list-users.html:26
 msgid "Forms"
 msgstr ""
 
-#: templates/base.html:34 templates/list-users.html:11
+#: templates/base.html:34 templates/edit-site.html:21
+#: templates/list-users.html:11
 msgid "Users"
 msgstr ""
 
@@ -349,7 +354,6 @@ msgid "Change language"
 msgstr ""
 
 #: templates/delete-entries.html:11 templates/delete-entries.html:28
-#: templates/list-entries.html:16
 msgid "Delete entries"
 msgstr ""
 
@@ -362,6 +366,8 @@ msgid "You are going to delete"
 msgstr ""
 
 #: templates/delete-entries.html:18 templates/delete-form.html:15
+#: templates/delete-site.html:21 templates/inspect-form.html:92
+#: templates/list-entries.html:14
 msgid "entries"
 msgstr ""
 
@@ -370,14 +376,15 @@ msgid "Write the total number of entries below"
 msgstr ""
 
 #: templates/delete-entries.html:29 templates/delete-form.html:26
-#: templates/delete-site.html:27 templates/delete-user.html:25
-#: templates/edit-form.html:50 templates/edit-form.html:52
-#: templates/index.html:27 templates/new-user.html:33
-#: templates/recover-password.html:19
+#: templates/delete-site.html:33 templates/delete-user.html:33
+#: templates/edit-form.html:56 templates/edit-form.html:58
+#: templates/index.html:27 templates/new-invite.html:44
+#: templates/new-user.html:33 templates/preview-form.html:35
+#: templates/preview-form.html:38 templates/recover-password.html:19
 msgid "Cancel"
 msgstr ""
 
-#: templates/delete-form.html:11 templates/inspect-form.html:113
+#: templates/delete-form.html:11 templates/inspect-form.html:129
 msgid "Delete form"
 msgstr ""
 
@@ -389,9 +396,9 @@ msgstr ""
 msgid "Write the name of the form below"
 msgstr ""
 
-#: templates/delete-form.html:25 templates/delete-site.html:26
-#: templates/delete-user.html:24 templates/user-settings.html:80
-#: templates/user-settings.html:171
+#: templates/delete-form.html:25 templates/delete-site.html:32
+#: templates/edit-site.html:71 templates/list-entries.html:14
+#: templates/user-settings.html:92
 msgid "Delete"
 msgstr ""
 
@@ -400,55 +407,115 @@ msgid "Delete site"
 msgstr ""
 
 #: templates/delete-site.html:15
-msgid "You are going to delete a Site"
+msgid "You are going to delete this Site"
 msgstr ""
 
 #: templates/delete-site.html:17
+msgid "Including"
+msgstr ""
+
+#: templates/delete-site.html:19
+msgid "users"
+msgstr ""
+
+#: templates/delete-site.html:21
+msgid "forms"
+msgstr ""
+
+#: templates/delete-site.html:23
 msgid "Write the name of the site below"
 msgstr ""
 
-#: templates/delete-user.html:11
+#: templates/delete-user.html:11 templates/delete-user.html:31
+#: templates/inspect-user.html:71
 msgid "Delete user"
 msgstr ""
 
-#: templates/delete-user.html:14
+#: templates/delete-user.html:15
 msgid "You are going to delete a user"
 msgstr ""
 
-#: templates/delete-user.html:16
+#: templates/delete-user.html:17
+msgid "and their forms"
+msgstr ""
+
+#: templates/delete-user.html:20
 msgid "Write the name of the user below"
 msgstr ""
 
-#: templates/edit-form.html:11
-msgid "1. Build your form here"
+#: templates/delete-user.html:29 templates/inspect-user.html:69
+msgid "Delete user and forms"
 msgstr ""
 
-#: templates/edit-form.html:22
+#: templates/edit-form.html:13 templates/inspect-form.html:125
+msgid "Edit form"
+msgstr ""
+
+#: templates/edit-form.html:15
+msgid "Build your form here"
+msgstr ""
+
+#: templates/edit-form.html:28
 msgid "2. Say something to the user after the form has been submitted"
 msgstr ""
 
-#: templates/edit-form.html:25
+#: templates/edit-form.html:31
 msgid "This is a markdown editor, an easy way to write HTML."
 msgstr ""
 
-#: templates/edit-form.html:26
+#: templates/edit-form.html:32
 msgid "Learn more"
 msgstr ""
 
-#: templates/edit-form.html:31
+#: templates/edit-form.html:37
 msgid "3. Your form will have this address"
 msgstr ""
 
-#: templates/edit-form.html:41
+#: templates/edit-form.html:47
 msgid "This URL is not available. Try another!"
 msgstr ""
 
-#: templates/edit-form.html:44
+#: templates/edit-form.html:50
 msgid "OK, use this URL"
 msgstr ""
 
-#: templates/edit-form.html:48 templates/preview-form.html:10
+#: templates/edit-form.html:54 templates/preview-form.html:10
 msgid "Preview"
+msgstr ""
+
+#: templates/edit-site.html:17 templates/inspect-form.html:53
+#: templates/inspect-user.html:23 templates/list-forms.html:21
+#: templates/list-users.html:21
+msgid "Hostname"
+msgstr ""
+
+#: templates/edit-site.html:29 templates/user-settings.html:136
+msgid "Invitation only"
+msgstr ""
+
+#: templates/edit-site.html:33 templates/user-settings.html:27
+#: templates/user-settings.html:147
+msgid "Email address"
+msgstr ""
+
+#: templates/edit-site.html:39
+msgid "Public link creation"
+msgstr ""
+
+#: templates/edit-site.html:49
+msgid "Scheme"
+msgstr ""
+
+#: templates/edit-site.html:59
+msgid "Port"
+msgstr ""
+
+#: templates/edit-site.html:64
+msgid "Change port"
+msgstr ""
+
+#: templates/edit-site.html:72
+msgid "Go back"
 msgstr ""
 
 #: templates/form_templates.html:11
@@ -471,7 +538,7 @@ msgstr ""
 msgid "Edit text"
 msgstr ""
 
-#: templates/index.html:26 templates/preview-form.html:31
+#: templates/index.html:26 templates/preview-form.html:32
 msgid "Save"
 msgstr ""
 
@@ -510,74 +577,78 @@ msgstr ""
 msgid "Post submit text"
 msgstr ""
 
-#: templates/inspect-form.html:30
+#: templates/inspect-form.html:30 templates/list-entries.html:10
 msgid "Form details"
 msgstr ""
 
-#: templates/inspect-form.html:36 templates/list-forms.html:25
+#: templates/inspect-form.html:36 templates/inspect-user.html:86
+#: templates/list-forms.html:19 templates/my-forms.html:26
+msgid "Name"
+msgstr ""
+
+#: templates/inspect-form.html:40 templates/list-forms.html:23
 msgid "Author"
 msgstr ""
 
-#: templates/inspect-form.html:44 templates/inspect-user.html:37
-#: templates/inspect-user.html:83 templates/list-forms.html:24
-#: templates/list-users.html:24 templates/my-forms.html:28
+#: templates/inspect-form.html:48 templates/inspect-user.html:37
+#: templates/inspect-user.html:87 templates/list-forms.html:24
+#: templates/list-users.html:24 templates/my-forms.html:27
+#: templates/user-settings.html:74
 msgid "Created"
 msgstr ""
 
-#: templates/inspect-form.html:49 templates/inspect-user.html:23
-#: templates/list-forms.html:21 templates/list-users.html:21
-msgid "Hostname"
-msgstr ""
-
-#: templates/inspect-form.html:54
-msgid "Nº of entries"
-msgstr ""
-
 #: templates/inspect-form.html:58
-msgid "Last entry"
-msgstr ""
-
-#: templates/inspect-form.html:62
-msgid "URL"
-msgstr ""
-
-#: templates/inspect-form.html:74
-msgid "Notify me"
-msgstr ""
-
-#: templates/inspect-form.html:78 templates/inspect-form.html:91
-#: templates/inspect-user.html:31 templates/inspect-user.html:51
-#: templates/inspect-user.html:61 templates/list-users.html:46
-#: templates/user-settings.html:99 templates/user-settings.html:108
-#: templates/user-settings.html:127
-msgid "True"
-msgstr ""
-
-#: templates/inspect-form.html:79 templates/inspect-form.html:92
-#: templates/inspect-user.html:32 templates/inspect-user.html:53
-#: templates/inspect-user.html:62 templates/list-users.html:44
-#: templates/user-settings.html:100 templates/user-settings.html:109
-#: templates/user-settings.html:128
-msgid "False"
-msgstr ""
-
-#: templates/inspect-form.html:87
 msgid "Is public"
 msgstr ""
 
-#: templates/inspect-form.html:99
+#: templates/inspect-form.html:62 templates/inspect-form.html:114
+#: templates/inspect-user.html:31 templates/inspect-user.html:51
+#: templates/inspect-user.html:61 templates/user-settings.html:112
+#: templates/user-settings.html:121 templates/user-settings.html:140
+msgid "True"
+msgstr ""
+
+#: templates/inspect-form.html:63 templates/inspect-form.html:115
+#: templates/inspect-user.html:32 templates/inspect-user.html:53
+#: templates/inspect-user.html:62 templates/user-settings.html:113
+#: templates/user-settings.html:122 templates/user-settings.html:141
+msgid "False"
+msgstr ""
+
+#: templates/inspect-form.html:70
 msgid "user disabled"
 msgstr ""
 
-#: templates/inspect-form.html:109
-msgid "View entries"
+#: templates/inspect-form.html:78
+msgid "Public URL"
+msgstr ""
+
+#: templates/inspect-form.html:90 templates/inspect-user.html:89
+#: templates/list-forms.html:26 templates/my-forms.html:28
+msgid "Entries"
+msgstr ""
+
+#: templates/inspect-form.html:92
+msgid "View"
+msgstr ""
+
+#: templates/inspect-form.html:96 templates/my-forms.html:29
+msgid "Last entry"
+msgstr ""
+
+#: templates/inspect-form.html:100 templates/list-entries.html:21
+msgid "Share results"
 msgstr ""
 
 #: templates/inspect-form.html:110
-msgid "Edit form"
+msgid "Notify me"
 msgstr ""
 
-#: templates/inspect-form.html:115
+#: templates/inspect-form.html:126
+msgid "Duplicate form"
+msgstr ""
+
+#: templates/inspect-form.html:131
 msgid "Delete form and entries"
 msgstr ""
 
@@ -594,7 +665,7 @@ msgid "Language"
 msgstr ""
 
 #: templates/inspect-user.html:45 templates/list-users.html:25
-#: templates/new-user.html:20
+#: templates/new-user.html:20 templates/user-settings.html:75
 msgid "Email"
 msgstr ""
 
@@ -606,35 +677,29 @@ msgstr ""
 msgid "Blocked by admin"
 msgstr ""
 
-#: templates/inspect-user.html:68
-msgid "Delete user and forms"
-msgstr ""
-
-#: templates/inspect-user.html:75
+#: templates/inspect-user.html:79
 msgid "User's forms"
 msgstr ""
 
-#: templates/inspect-user.html:82 templates/list-forms.html:18
-#: templates/my-forms.html:27
-msgid "Name"
-msgstr ""
-
-#: templates/inspect-user.html:84 templates/list-forms.html:27
+#: templates/inspect-user.html:88 templates/list-forms.html:25
 #: templates/my-forms.html:30
 msgid "Public"
 msgstr ""
 
-#: templates/inspect-user.html:85 templates/list-forms.html:26
-#: templates/my-forms.html:29
-msgid "Entries"
-msgstr ""
-
-#: templates/list-entries.html:10 templates/thankyou.html:9
-msgid "Return to form"
-msgstr ""
-
-#: templates/list-entries.html:11
+#: templates/list-entries.html:11 templates/view-results.html:13
 msgid "Download CSV"
+msgstr ""
+
+#: templates/list-entries.html:23
+msgid "Enabled"
+msgstr ""
+
+#: templates/list-entries.html:24
+msgid "Disabled"
+msgstr ""
+
+#: templates/list-forms.html:12
+msgid "All forms"
 msgstr ""
 
 #: templates/list-users.html:27
@@ -661,19 +726,19 @@ msgstr ""
 msgid "Include message"
 msgstr ""
 
-#: templates/new-invite.html:26
-msgid "Root user options"
-msgstr ""
-
-#: templates/new-invite.html:30
-msgid "Invite to one of these sites"
-msgstr ""
-
-#: templates/new-invite.html:40
+#: templates/new-invite.html:25
 msgid "Make the new user an Admin"
 msgstr ""
 
-#: templates/new-invite.html:45 templates/user-settings.html:189
+#: templates/new-invite.html:30
+msgid "Root user options"
+msgstr ""
+
+#: templates/new-invite.html:32
+msgid "Invite to one of these sites"
+msgstr ""
+
+#: templates/new-invite.html:43 templates/user-settings.html:202
 msgid "Send email"
 msgstr ""
 
@@ -705,15 +770,11 @@ msgstr ""
 msgid "Opps! 404"
 msgstr ""
 
-#: templates/page-not-found.html:9 templates/server-error.html:9
-msgid "Start again"
-msgstr ""
-
 #: templates/preview-form.html:21
 msgid "Post submit note"
 msgstr ""
 
-#: templates/preview-form.html:32
+#: templates/preview-form.html:34 templates/preview-form.html:37
 msgid "Edit again"
 msgstr ""
 
@@ -745,6 +806,14 @@ msgstr ""
 msgid "Opps! 500 server error"
 msgstr ""
 
+#: templates/server-error.html:9
+msgid "Start again"
+msgstr ""
+
+#: templates/thankyou.html:9
+msgid "Return to form"
+msgstr ""
+
 #: templates/user-settings.html:10
 msgid "Hello"
 msgstr ""
@@ -754,15 +823,11 @@ msgid "Your email has not been validated"
 msgstr ""
 
 #: templates/user-settings.html:19
-msgid "Send me an email"
-msgstr ""
-
-#: templates/user-settings.html:27 templates/user-settings.html:134
-msgid "Email address"
+msgid "Validate my email"
 msgstr ""
 
 #: templates/user-settings.html:32 templates/user-settings.html:46
-#: templates/user-settings.html:54 templates/user-settings.html:139
+#: templates/user-settings.html:54 templates/user-settings.html:152
 msgid "Change"
 msgstr ""
 
@@ -778,31 +843,35 @@ msgstr ""
 msgid "Invite a new user"
 msgstr ""
 
-#: templates/user-settings.html:90
+#: templates/user-settings.html:79
+msgid "Admin"
+msgstr ""
+
+#: templates/user-settings.html:103
 msgid "My admin settings"
 msgstr ""
 
-#: templates/user-settings.html:96
+#: templates/user-settings.html:109
 msgid "Notify me when new user has registered"
 msgstr ""
 
-#: templates/user-settings.html:105
+#: templates/user-settings.html:118
 msgid "Notify me when new form has been created"
 msgstr ""
 
-#: templates/user-settings.html:117
+#: templates/user-settings.html:130
 msgid "Site settings"
 msgstr ""
 
-#: templates/user-settings.html:123
-msgid "Invitation only"
-msgstr ""
-
-#: templates/user-settings.html:148
+#: templates/user-settings.html:161
 msgid "Root user"
 msgstr ""
 
 #: templates/user-settings.html:184
+msgid "Edit"
+msgstr ""
+
+#: templates/user-settings.html:197
 msgid "Test SMTP config."
 msgstr ""
 
@@ -876,5 +945,38 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Edit"
+#~ msgstr ""
+
+#~ msgid "Something went wrong. Bad slug!"
+#~ msgstr ""
+
+#~ msgid "We sent an email to %s"
+#~ msgstr ""
+
+#~ msgid "We sent an invitation to %s"
+#~ msgstr ""
+
+#~ msgid "Opps! We got a bad email"
+#~ msgstr ""
+
+#~ msgid "Username not found"
+#~ msgstr ""
+
+#~ msgid "You are going to delete a Site"
+#~ msgstr ""
+
+#~ msgid "1. Build your form here"
+#~ msgstr ""
+
+#~ msgid "Nº of entries"
+#~ msgstr ""
+
+#~ msgid "URL"
+#~ msgstr ""
+
+#~ msgid "View entries"
+#~ msgstr ""
+
+#~ msgid "Send me an email"
 #~ msgstr ""
 

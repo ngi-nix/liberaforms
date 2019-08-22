@@ -6,30 +6,35 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 
 <div class="container">
-    <div class="row col-md-11" style="font-size:1.5em">
-    <input class="btn-primary btn" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
-    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
+    <div class="row col-md-10" style="font-size:1.5em">
+    {{ form.slug }}
     </div>
-    <div class="row col-md-1">
+    <div class="row col-md-2 text-right">
     <input class="btn-danger btn" type="button" value="{%trans%}Delete{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
     </div>
 </div>
 
-
 <div class="container">
-    <div class="row col-md-12" style="margin:1em 0 1em -1em; font-size:1.1.5em">
-        {%trans%}Share results{%endtrans%}
-        <span id="toggle_sharedEntries" class="btn-group btn-toggle">
-            <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}active btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-            <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}active btn-danger{% endif %}">{%trans%}Disabled{%endtrans%}</button>
-        </span>
-        <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
-        <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
+    <hr style="margin-bottom:5px" />
+    <div class="row col-md-12">
+
+    {%trans%}Share results{%endtrans%}
+    <span id="toggle_sharedEntries" class="btn-group btn-toggle">
+        <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}active btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+        <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}active btn-success{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+    </span>
+    <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
+    <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
+
+    <p>&nbsp;</p>
+    <input class="btn-primary btn" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
+        
     </div>
 </div>
 
 <div class="container">
-    <hr />
+    <p>&nbsp;</p>
 
     <table id="formEntries" class="table table-striped table-condensed">
     <thead>
@@ -71,13 +76,13 @@ document.getElementById('toggle_sharedEntries').addEventListener('click', functi
         {
             if (data.enabled == true) {
                 $('#sharedEntries_true').addClass('active  btn-success');
-                $('#sharedEntries_false').removeClass('active btn-danger');
+                $('#sharedEntries_false').removeClass('active btn-success');
                 $('#enabled_link').show()
                 $('#disabled_link').hide()
             }
             else if (data.enabled == false) {
                 $('#sharedEntries_true').removeClass('active btn-success');
-                $('#sharedEntries_false').addClass('active btn-danger');
+                $('#sharedEntries_false').addClass('active btn-success');
                 $('#enabled_link').hide()
                 $('#disabled_link').show()
             }
