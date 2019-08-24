@@ -32,13 +32,12 @@ import pprint
 
 
 @app.before_request
-def before_request():
-    if '/static' in request.path:
-        return
-        
+def before_request():        
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
+    if '/static' in request.path:
+        return
     if 'username' in session:
         g.current_user=User(username=session['username'])
         if g.current_user and g.current_user.isRootUser():
@@ -91,12 +90,18 @@ def index():
 @sanitized_slug_required
 def view_form(slug):
     queriedForm = Form(slug=slug)
-    if not (queriedForm and queriedForm.isPublic()):
-        flash(gettext("Form is not available. 404"), 'warning')
+    
+    if not queriedForm:
         if g.current_user:
+            flash(gettext("Can't find that form"), 'warning')
             return redirect(url_for('my_forms'))
-        return redirect(url_for('index'))
-       
+        return render_template('page-not-found.html'), 400
+    if not queriedForm.isPublic():
+        if g.current_user:
+            flash(gettext("That form is not public"), 'warning')
+            return redirect(url_for('my_forms'))
+        return render_template('page-not-found.html'), 400
+
     if request.method == 'POST':  
         formData=request.form.to_dict(flat=False)
         entry = {}
@@ -743,7 +748,7 @@ def validate_email(token):
     #login the user
     session['username']=user.username
     flash(gettext("Your email address is valid"), 'success')
-    return redirect(url_for('user_settings', username=user.username))
+    return redirect(url_for('my_forms'))
 
 
 
@@ -782,6 +787,27 @@ def test_smtp(email):
         flash("Email not valid", 'warning')
     return redirect(url_for('user_settings', username=g.current_user.username))
 
+
+@app.route('/site/update', methods=['GET', 'POST'])
+def schema_update():
+    installation=Installation()
+    if installation.isSchemaUpToDate():
+        if g.current_user:
+            flash(gettext("Schema is already up to date. Nothing to do."), 'info')
+            return redirect(url_for('my_forms'))
+        else:
+            return render_template('page-not-found.html'), 400
+    
+    if request.method == 'POST':
+        if 'secret_key' in request.form and request.form['secret_key'] == app.config['SECRET_KEY']:
+            installation.updateSchema()
+            flash(gettext("Updated schema OK!"), 'success')
+            return redirect(url_for('index'))
+        else:
+            flash("Wrong secret", 'warning')
+    
+    return render_template('schema-upgrade.html', installation=installation)
+    
 
 @app.route('/admin/sites/edit/<string:hostname>', methods=['GET', 'POST'])
 @rootuser_required

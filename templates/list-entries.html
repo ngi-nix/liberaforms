@@ -6,11 +6,14 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 
 <div class="container">
-    <div class="row col-md-10" style="font-size:1.5em">
+    <div class="row col-md-11" style="font-size:1.5em">
     {{ form.slug }}
+    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+    <input class="btn-success btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
     </div>
-    <div class="row col-md-2 text-right">
-    <input class="btn-danger btn" type="button" value="{%trans%}Delete{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
+    
+    <div class="row col-md-1">
+    <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
     </div>
 </div>
 
@@ -26,10 +29,6 @@
     <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
     <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
 
-    <p>&nbsp;</p>
-    <input class="btn-primary btn" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
-    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
-        
     </div>
 </div>
 

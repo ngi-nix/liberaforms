@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Schema update{%endtrans%}
+    </div>
+    <hr />
+    <p>&nbsp;</p>
+    
+    <table class="table">
+    <tr>
+        <td>Curreny schema version</td>
+        <td>{{installation.schemaVersion}}</td>
+    </tr>
+    <tr>
+        <td>Required version</td>
+        <td>{{config['SCHEMA_VERSION']}}</td>
+    </tr>
+    </table>
+    
+    <p></p>
+    <form method="POST">
+        <label>{%trans%}Your super secret key{%endtrans%}</label>
+        <br />
+        <input type="password" name="secret_key" class="form-control" required ><br />
+        <p></p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Start update{%endtrans%}">
+    </form>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+  
+{% endblock %}

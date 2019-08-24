@@ -21,28 +21,28 @@ input[type="date"] {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color:#00C957;
+    background-color: #5cb85c;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 .info {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color:#2E6DA4;
+    background-color: #337ab7;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 .warning {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color:#FF8000;
+    background-color: #f0ad4e;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 .error {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color:red;
+    background-color: #d9534f;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 

@@ -21,9 +21,9 @@
     {% endif %}
 {% endwith %}
 
-<!-- menu -->
-{% if g.current_user %}
 
+{% if g.current_user %}
+<!-- menu -->
 <div class="container" style="font-size:1.3em;">
     <div class="row col-md-12">
         <a href="/">{%trans%}Start{%endtrans%}</a> | 
@@ -40,7 +40,6 @@
         <a href="/site/logout">{%trans%}Logout{%endtrans%}</a>
     </div>
 </div>
-
 {% endif %}
 
 <div style="margin-top:2em"></div>
@@ -48,11 +47,13 @@
 
 <p>&nbsp;</p>
 <div class="footer">
-<div class="container">
-    <div class="row col-md-12 text-right">
-    GNGforms. AGPLv3 <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
+    <div class="container">
+        <div class="row col-md-12 text-right">
+        GNGforms. AGPLv3
+        <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
+        </div>
     </div>
 </div>
-</div>
+
 </body>
 </html>

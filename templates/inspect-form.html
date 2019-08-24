@@ -89,7 +89,11 @@
             <tr>
                <td>{%trans%}Entries{%endtrans%}</td>
                <td>
-                   <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{ form._id }}'" >
+                   {% if form.author == g.current_user._id %}
+                   <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
+                   {% else %}
+                   {{form.totalEntries}}
+                   {% endif %}
                </td>
             </tr>
             <tr>

@@ -648,13 +648,12 @@ class Installation(object):
             return instance
         else:
             data={  "name": "GNGforms",
-                    "appVersion": app.config['APP_VERSION'],
                     "schemaVersion": app.config['SCHEMA_VERSION'],
                     "created": datetime.date.today().strftime("%Y-%m-%d")
                     }
             mongo.db.installation.insert_one(data)
             return Installation()
-                
+    
     def __init__(self, *args, **kwargs):
         pass
 
@@ -663,9 +662,11 @@ class Installation(object):
         return self.installation
 
     @property
-    def appVersion(self):
-        return self.installation['appVersion']
-
-    @property
     def schemaVersion(self):
         return self.installation['schemaVersion']
+        
+    def isSchemaUpToDate(self):
+        return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
+
+    def updateSchema(self):
+        pass

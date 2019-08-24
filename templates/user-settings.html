@@ -21,7 +21,18 @@
         <p style="clear:both;"></p>
         <p>&nbsp;</p>
         {% endif %}
-        
+
+        {% if g.isRootUser and not installation.isSchemaUpToDate() %}
+        <div style="font-size:1.25em; padding-bottom:0.5em; display:inline; float:left;">
+            You need to update DB schema
+        </div>
+        <div style="display:inline; float:right;">
+            <input class="btn-danger btn" type="button" value="{%trans%}Update{%endtrans%}" onClick="location.href='/site/update'">
+        </div>
+        <p style="clear:both;"></p>
+        <p>&nbsp;</p>
+        {% endif %}
+
         <table class="table table-condensed">
             <tr>
                 <td>{%trans%}Email address{%endtrans%}</td>
@@ -204,7 +215,7 @@
         </tr>
         <tr>
             <td>GNGforms version</td>
-            <td>{{installation.appVersion}}</td>
+            <td>{{config['APP_VERSION']}}</td>
         </tr>
         <tr>
             <td>Mongo schema version</td>
