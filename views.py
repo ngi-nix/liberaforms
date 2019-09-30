@@ -178,7 +178,7 @@ def inspect_form(_id):
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))        
-    
+    print(queriedForm.data)
     if not g.current_user.canViewForm(queriedForm):
         flash(gettext("Sorry, no permission to view that form"), 'warning')
         return redirect(url_for('my_forms'))
@@ -353,7 +353,8 @@ def save_form(_id=None):
                     "editors": [],
                     "postalCode": "08014",
                     "enabled": False,
-                    "expireDate": None,
+                    #"expireDate": None,
+                    "expiryConditions": {"expireDate": None},
                     "hostname": Site().hostname,
                     "slug": session['slug'],
                     "notification": {"newEntry": True},
@@ -748,7 +749,7 @@ def validate_email(token):
     #login the user
     session['username']=user.username
     flash(gettext("Your email address is valid"), 'success')
-    return redirect(url_for('my_forms'))
+    return redirect(url_for('user_settings', username=user.username))
 
 
 
@@ -809,7 +810,7 @@ def schema_update():
     return render_template('schema-upgrade.html', installation=installation)
     
 
-@app.route('/admin/sites/edit/<string:hostname>', methods=['GET', 'POST'])
+@app.route('/admin/sites/edit/<string:hostname>', methods=['GET'])
 @rootuser_required
 def edit_site(hostname):
     queriedSite=Site(hostname=hostname)

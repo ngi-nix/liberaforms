@@ -25,10 +25,11 @@ from flask_babel import Babel
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
+
 babel = Babel(app)
 
-app.config['APP_VERSION'] = 0.1
-app.config['SCHEMA_VERSION'] = 1
+app.config['APP_VERSION'] = 3
+app.config['SCHEMA_VERSION'] = 2
 
 app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']

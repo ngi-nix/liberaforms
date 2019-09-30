@@ -25,6 +25,7 @@ import os, string, random, datetime
 from urllib.parse import urlparse
 import markdown
 from .utils import *
+from .migrate import migrateMongoSchema
 
 
 import pprint
@@ -406,7 +407,7 @@ class Form(object):
         return Form(_id=newForm.inserted_id)
 
     def update(self, data):
-        mongo.db.forms.update_one({'slug':self.slug}, {"$set": data})
+        mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
     
     def saveEntry(self, entry):
         mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
@@ -666,7 +667,15 @@ class Installation(object):
         return self.installation['schemaVersion']
         
     def isSchemaUpToDate(self):
-        return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
+        if self.schemaVersion != app.config['SCHEMA_VERSION']:
+            return False
+        return True
 
     def updateSchema(self):
-        pass
+        if not self.isSchemaUpToDate():
+            migratedUpTo=migrateMongoSchema()
+            if migratedUpTo:
+                self.installation['schemaVersion']=migratedUpTo
+                mongo.db.installation.update_one({"_id": self.installation["_id"]}, {"$set": {'schemaVersion': migratedUpTo}})
+        else:
+            print('Schema already up to date')
