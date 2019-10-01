@@ -17,25 +17,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from GNGforms import app, mongo
+from GNGforms import mongo
 import pprint
 
-def migrateMongoSchema():
+def migrateMongoSchema(schemaVersionBeforeUpdate):
+    schemaVersion=None
     
     # changes in schema version 2
     # replace "expireDate" for "expiryConditions"
-    try:
-        for form in mongo.db.forms.find():
-            if 'expireDate' in form:
-                expireDate=form['expireDate']
-                #del form['expireDate']
-                form["expiryConditions"] = {}
-                form["expiryConditions"]["expireDate"]=expireDate
-                mongo.db.forms.update_one({"_id": form["_id"]}, {"$unset": {'expireDate' :1}})
-                pprint.pprint(form)
-            else:
-                break
-    except:
-        return None
-        
-    return 2
+    for form in mongo.db.forms.find():
+        if 'expireDate' in form:
+            expireDate=form['expireDate']
+            #del form['expireDate']
+            form["expiryConditions"] = {"expireDate": expireDate}
+            mongo.db.forms.save(form)
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$unset": {'expireDate' :1}})
+            pprint.pprint(form)
+        else:
+            break
+    
+    # add the form author to the editors list
+    for form in mongo.db.forms.find():
+        if form['editors'] == []:
+            form['editors'].append(form['author'])
+            mongo.db.forms.save(form)
+        else:
+            break
+    schemaVersion=2
+    
+    return schemaVersion

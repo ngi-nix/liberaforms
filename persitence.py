@@ -336,8 +336,8 @@ class Form(object):
         
     @property
     def user(self):
-        return User(_id=self.form['author']) 
-
+        return User(_id=self.form['author'])
+    
     @property
     def slug(self):
         return self.form['slug']
@@ -369,6 +369,25 @@ class Form(object):
     @property
     def enabled(self):
         return self.form['enabled']
+
+    @property
+    def editors(self):
+        return [User(_id=user_id) for user_id in self.form['editors']]
+
+    def addEditor(self, editor):
+        self.form['editors'].append(editor._id)
+        mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+
+    def removeEditor(self, editor_id):
+        if editor_id == str(self.author):
+            return None
+        if len(self.form['editors']) > 1:
+            ids=[str(_id) for _id in self.form['editors']]
+            if editor_id in ids:
+                del self.form['editors'][ids.index(editor_id)]
+                mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+                return editor_id
+        return None
 
     @property
     def notification(self):
@@ -430,6 +449,13 @@ class Form(object):
             return False
         return True
 
+    def isShared(self):
+        if self.areEntriesShared():
+            return True
+        if len(self.form['editors']) > 1:
+            return True
+        return False
+    
     def areEntriesShared(self):
         return self.form['sharedEntries']['enabled']
     
@@ -673,9 +699,13 @@ class Installation(object):
 
     def updateSchema(self):
         if not self.isSchemaUpToDate():
-            migratedUpTo=migrateMongoSchema()
+            migratedUpTo=migrateMongoSchema(self.schemaVersion)
             if migratedUpTo:
                 self.installation['schemaVersion']=migratedUpTo
-                mongo.db.installation.update_one({"_id": self.installation["_id"]}, {"$set": {'schemaVersion': migratedUpTo}})
+                mongo.db.installation.save(self.installation)
+                #mongo.db.installation.update_one({"_id": self.installation["_id"]}, {"$set": {'schemaVersion': migratedUpTo}})
+                return self.schemaVersion
+            else:
+                return None
         else:
             print('Schema already up to date')

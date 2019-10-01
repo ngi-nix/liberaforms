@@ -177,8 +177,8 @@ def inspect_form(_id):
     queriedForm = Form(_id=_id)
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
-        return redirect(url_for('my_forms'))        
-    print(queriedForm.data)
+        return redirect(url_for('my_forms'))
+    #pprint.pprint(queriedForm.data)
     if not g.current_user.canViewForm(queriedForm):
         flash(gettext("Sorry, no permission to view that form"), 'warning')
         return redirect(url_for('my_forms'))
@@ -222,6 +222,56 @@ def duplicate_form(_id):
     session['slug']=""
     flash(gettext("You can edit the duplicate now"), 'info')
     return render_template('edit-form.html')
+
+
+@app.route('/forms/share/<string:_id>', methods=['GET'])
+@enabled_user_required
+def share_form(_id):
+    queriedForm = Form(_id=_id, author=g.current_user._id)
+    if not queriedForm:
+        flash(gettext("Form is not available. 404"), 'warning')
+        return redirect(url_for('my_forms'))
+        
+    return render_template('share-form.html', form=queriedForm)
+
+
+@app.route('/forms/add-editor/<string:_id>', methods=['POST'])
+@enabled_user_required
+def add_editor(_id):
+    queriedForm = Form(_id=_id, author=g.current_user._id)
+    if not queriedForm:
+        flash(gettext("Form is not available. 404"), 'warning')
+        return redirect(url_for('my_forms'))
+    if not 'email' in request.form:
+        flash(gettext("We need an email"), 'warning')
+        return redirect(url_for('share_form', _id=queriedForm._id))
+    if not isValidEmail(request.form['email']):
+        return redirect(url_for('share_form', _id=queriedForm._id))
+
+    newEditor=User(hostname=Site().hostname, email=request.form['email'])
+    if not newEditor:
+        flash(gettext("Can't find a user with that email"), 'warning')
+        return redirect(url_for('share_form', _id=queriedForm._id))
+    if newEditor._id in queriedForm.data['editors']:
+        flash(gettext("%s is already an editor" % newEditor.email), 'warning')
+        return redirect(url_for('share_form', _id=queriedForm._id))
+    
+    queriedForm.addEditor(newEditor)
+    flash(gettext("New editor added ok"), 'success')
+    return redirect(url_for('share_form', _id=queriedForm._id))
+
+
+@app.route('/forms/remove-editor/<string:form_id>/<string:editor_id>', methods=['POST'])
+@enabled_user_required
+def remove_editor(form_id, editor_id):
+    queriedForm = Form(_id=form_id, author=g.current_user._id)
+    if not queriedForm:
+        return json.dumps(False)
+    if editor_id == queriedForm.author:
+        return json.dumps(False)
+    
+    removedEditor=queriedForm.removeEditor(editor_id)
+    return json.dumps(removedEditor)
 
 
 @app.route('/forms/edit', methods=['GET', 'POST'])
@@ -350,10 +400,9 @@ def save_form(_id=None):
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author": g.current_user._id,
-                    "editors": [],
+                    "editors": [g.current_user._id],
                     "postalCode": "08014",
                     "enabled": False,
-                    #"expireDate": None,
                     "expiryConditions": {"expireDate": None},
                     "hostname": Site().hostname,
                     "slug": session['slug'],

@@ -101,12 +101,16 @@
                <td>{{ form.lastEntryDate }}</td>
             </tr>
             <tr>
-               <td>{%trans%}Share results{%endtrans%}</td>
+               <td>{%trans%}Shared{%endtrans%}</td>
                <td>
                    {% if form.author == g.current_user._id %}
-                        <a href="/forms/entries/{{ form._id }}">{{ form.areEntriesShared() }}</a>
+                        {% if form.isShared() %}
+                        <input class="active btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        {% else %}
+                        <input class="active btn-danger btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        {% endif %}
                    {% else %}
-                        {{ form.areEntriesShared() }}
+                        {{ form.isShared() }}
                    {% endif %}
                </td>
             </tr>
