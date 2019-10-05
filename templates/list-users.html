@@ -22,9 +22,9 @@
         {% endif %}
         
         <th>{%trans%}Created{%endtrans%}</th>
+        <th>{%trans%}Enabled{%endtrans%}</th>
         <th>{%trans%}Email{%endtrans%}</th>
         <th>{%trans%}Forms{%endtrans%}</th>
-        <th>{%trans%}Can publish{%endtrans%}</th>
         <th>{%trans%}Is Admin{%endtrans%}</th>
     </tr>
 </thead>
@@ -35,9 +35,9 @@
         <td>{{u.hostname}}</td>
     {% endif %}
     <td>{{u.data.created}}</td>
+    <td>{{u.enabled}}</td>
     <td>{{u.email}}</td>
     <td>{{u.forms.count()}}</td>
-    <td>{{u.enabled}}</td>    
     <td>{{u.isAdmin()}}</td>
 </tr>
 {% endfor %}

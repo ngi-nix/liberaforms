@@ -192,8 +192,7 @@ class User(object):
         
     @property
     def forms(self):
-        #return sorted(Form().findAll(author=self._id), key=lambda k: k['created'], reverse=True)
-        return Form().findAll(author=self._id)
+        return Form().findAll(editor=str(self._id))
 
     @property
     def admin(self):
@@ -203,7 +202,7 @@ class User(object):
         mongo.db.users.save(self.user)
 
     def delete(self):
-        forms = Form().findAll(author=self._id)
+        forms = Form().findAll(author=str(self._id))
         for form in forms:
             mongo.db.forms.remove({'_id': form['_id']})
         return mongo.db.users.remove({'_id': self.user['_id']})
@@ -285,9 +284,8 @@ class User(object):
         return self.user['admin']['notifyNewForm']     
 
     def canViewForm(self, form):
-        if self._id == form.author or self.isAdmin():
+        if str(self._id) in form.editors or self.isAdmin():
             return True
-        flash(gettext("Permission needed to view form"), 'warning')
         return False
     
         
@@ -305,6 +303,9 @@ class Form(object):
 
         if '_id' in kwargs:
             kwargs["_id"] = ObjectId(kwargs['_id'])
+        if 'editor' in kwargs:
+            kwargs={"editors.%s" % kwargs["editor"]: {"$exists":True}, **kwargs}
+            kwargs.pop('editor')
         if 'key' in kwargs:
             kwargs={"sharedEntries.key": kwargs['key'], **kwargs}
             kwargs.pop('key')
@@ -337,6 +338,10 @@ class Form(object):
     @property
     def user(self):
         return User(_id=self.form['author'])
+
+    @property
+    def editors(self):
+        return self.form['editors']
     
     @property
     def slug(self):
@@ -370,28 +375,22 @@ class Form(object):
     def enabled(self):
         return self.form['enabled']
 
-    @property
-    def editors(self):
-        return [User(_id=user_id) for user_id in self.form['editors']]
+    def newEditorPreferences(cls):
+        return {'notification': {'newEntry': False}}
 
-    def addEditor(self, editor):
-        self.form['editors'].append(editor._id)
-        mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+    def addEditor(self, editor_id):
+        if not editor_id in self.form['editors']:
+            self.form['editors'][editor_id]=Form().newEditorPreferences()
+            mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
 
     def removeEditor(self, editor_id):
-        if editor_id == str(self.author):
+        if editor_id == self.author:
             return None
-        if len(self.form['editors']) > 1:
-            ids=[str(_id) for _id in self.form['editors']]
-            if editor_id in ids:
-                del self.form['editors'][ids.index(editor_id)]
-                mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
-                return editor_id
+        if len(self.form['editors']) > 1 and editor_id in self.form['editors']:
+            del self.form['editors'][editor_id]
+            mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+            return editor_id
         return None
-
-    @property
-    def notification(self):
-        return self.form['notification']
 
     @property
     def afterSubmitText(self):
@@ -417,6 +416,9 @@ class Form(object):
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
             kwargs['hostname']=Site().hostname
+        if 'editor' in kwargs:
+            kwargs={"editors.%s" % kwargs["editor"] :{"$exists":True}, **kwargs}
+            kwargs.pop('editor')
         return mongo.db.forms.find(kwargs)
 
     def insert(cls, formData):
@@ -438,9 +440,10 @@ class Form(object):
         mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
             
     def isAuthor(self, user):
-        if self.author == user._id:
-            return True
-        return False
+        return True if self.author == str(user._id) else False
+        
+    def isEditor(self, user):
+        return True if str(user._id) in self.editors else False
 
     def isPublic(self):
         if not self.enabled:
@@ -471,11 +474,17 @@ class Form(object):
         self.form['sharedEntries']['enabled'] = False if self.form['sharedEntries']['enabled'] else True
         mongo.db.forms.save(self.form)
         return self.form['sharedEntries']['enabled']
-    
+       
     def toggleNotification(self):
-        self.form['notification']['newEntry'] = False if self.form['notification']['newEntry'] else True
-        mongo.db.forms.save(self.form)
-        return self.form['notification']['newEntry']
+        editor_id=str(g.current_user._id)
+        if editor_id in self.editors:
+            if self.editors[editor_id]['notification']['newEntry']:
+                self.editors[editor_id]['notification']['newEntry']=False
+            else:
+                self.editors[editor_id]['notification']['newEntry']=True
+            mongo.db.forms.save(self.form)
+            return self.editors[editor_id]['notification']['newEntry']
+        return False
         
         
 class Site(object):

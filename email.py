@@ -38,7 +38,7 @@ def sendMail(email, message):
     smtpObj = createSmtpObj()
     if smtpObj:
         try:
-            smtpObj.sendmail(Site().noreplyEmailAddress, email, message)         
+            smtpObj.sendmail(Site().noreplyEmailAddress, email, message.encode('utf-8'))         
             return True
         except:
             pass
@@ -61,8 +61,7 @@ def smtpSendInvite(invite):
     link="%suser/new/%s" % (site.host_url, invite.data['token']['token'])
     message="%s\n\n%s" % (invite.data['message'], link)   
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % site.hostname), message)
-      
-    #print(message)
+    
     return sendMail(invite.data['email'], message)
     
 
@@ -75,14 +74,16 @@ def smtpSendRecoverPassword(user):
     return sendMail(user.email, message)
 
 
-def smtpSendNewFormEntryNotification(email, entry, slug):
+def smtpSendNewFormEntryNotification(emails, entry, slug):
     message=gettext("New form entry in %s at %s\n" % (slug, Site().hostname))
     for data in entry:
+        print(data)
         message="%s\n%s: %s" % (message, data[0], data[1])
+    message="%s\n" % message
 
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form entry"), message)
-    
-    sendMail(email, message)
+    for email in emails:
+        sendMail(email, message)
 
 def smtpSendNewFormNotification(adminEmails, form):
     message=gettext("New form '%s' created at %s" % (form.slug, Site().hostname))

@@ -56,11 +56,11 @@
             {% endif %}
             <tr>
                <td>{%trans%}Is public{%endtrans%}</td>
-               {% if form.author == g.current_user._id %}
+               {% if form.editors[g.current_user._id|string] is defined %}
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.enabled %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.enabled %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                </td>
                {% else %}
@@ -89,7 +89,7 @@
             <tr>
                <td>{%trans%}Entries{%endtrans%}</td>
                <td>
-                   {% if form.author == g.current_user._id %}
+                   {% if form.editors[g.current_user._id|string] is defined %}
                    <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
                    {% else %}
                    {{form.totalEntries}}
@@ -103,11 +103,11 @@
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
-                   {% if form.author == g.current_user._id %}
+                   {% if form.editors[g.current_user._id|string] is defined %}
                         {% if form.isShared() %}
-                        <input class="active btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
                         {% else %}
-                        <input class="active btn-danger btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
                         {% endif %}
                    {% else %}
                         {{ form.isShared() }}
@@ -116,19 +116,19 @@
             </tr>
             <tr>
                <td>{%trans%}Notify me{%endtrans%}</td>
-               {% if form.author == g.current_user._id %}
+               {% if form.editors[g.current_user._id|string] is defined %}
                <td>
                    <div id="toggle_notification" class="btn-group btn-toggle">
-                    <button id="notification_true" class="btn btn-xs btn-default {% if form.notification['newEntry'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.notification['newEntry'] %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                </td>
                {% else %}
-                    <td>{{ form.notification['newEntry'] }}</td>               
+                    <td>N/A</td>
                {% endif %}
             </tr>
         </table>
-        {% if form.author == g.current_user._id %}
+        {% if form.editors[g.current_user._id|string] is defined %}
         <hr />
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form._id }}'">
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form._id }}'">
@@ -161,14 +161,14 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {
-                $('#enabled_true').addClass('active  btn-success');
-                $('#enabled_false').removeClass('active btn-danger');
+                $('#enabled_true').addClass('btn-success');
+                $('#enabled_false').removeClass('btn-primary');
                 $('#formURL').hide();
                 $('#formLink').show();
             }
             else if (data.enabled == false) {
-                $('#enabled_true').removeClass('active btn-success');
-                $('#enabled_false').addClass('active btn-danger');
+                $('#enabled_true').removeClass('btn-success');
+                $('#enabled_false').addClass('btn-primary');
                 $('#formURL').show();
                 $('#formLink').hide();
             }
@@ -183,12 +183,12 @@ document.getElementById('toggle_notification').addEventListener('click', functio
         success: function(data, textStatus, jqXHR)
         {
             if (data.notification == true) {
-                $('#notification_true').addClass('active  btn-success');
-                $('#notification_false').removeClass('active btn-danger');
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
             }
             else if (data.notification == false) {
-                $('#notification_true').removeClass('active btn-success');
-                $('#notification_false').addClass('active btn-danger');
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
             }
         }
     });

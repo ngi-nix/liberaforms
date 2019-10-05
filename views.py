@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json, re, datetime, os
+import json, re, os, datetime
 from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
 from GNGforms import app, mongo, babel
 from urllib.parse import urlparse
+from threading import Thread
 from flask_babel import gettext, refresh
 from .persitence import *
 from .session import *
@@ -62,27 +63,7 @@ def server_error(error):
 
 
 @app.route('/', methods=['GET'])
-def index():
-
-    """
-    users= mongo.db.users.find()
-    for user in users:
-        user["blocked"]=False
-        mongo.db.users.save(user)
-    """
-    
-    """
-    forms= mongo.db.forms.find()
-    for form in forms:
-        form["notification"]={"newEntry": True}
-        mongo.db.forms.save(form)    
-    """
-    """
-    for site in Site().findAll():    #mongo objects
-        site['scheme']=urlparse(request.host_url).scheme
-        mongo.db.sites.save(site)
-    """
-    
+def index():    
     return render_template('index.html',site=Site())
 
 
@@ -105,7 +86,7 @@ def view_form(slug):
     if request.method == 'POST':  
         formData=request.form.to_dict(flat=False)
         entry = {}
-        entry["created"] = datetime.date.today().strftime("%Y-%m-%d")
+        entry["created"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         for key in formData:
             value = formData[key]
@@ -116,15 +97,21 @@ def view_form(slug):
             
         #print("save entry: %s" % formData)
         queriedForm.saveEntry(entry)
-        
-        if queriedForm.notification['newEntry'] == True:
-            user=User(_id=queriedForm.author)
-            data=[]
-            for field in queriedForm.fieldIndex:
-                if field['name'] in entry:
-                    data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
-            smtpSendNewFormEntryNotification(user.email, data, queriedForm.slug)
-        
+        emails=[]
+        for editor_id, preferences in queriedForm.editors.items():
+            if preferences["notification"]["newEntry"]:
+                user=User(_id=editor_id)
+                if user and user.enabled:
+                    emails.append(user.email)
+        if emails:
+            def sendEntryNotification():
+                data=[]
+                for field in queriedForm.fieldIndex:
+                    if field['name'] in entry:
+                        data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
+                smtpSendNewFormEntryNotification(emails, data, queriedForm.slug)
+            thread = Thread(target=sendEntryNotification())
+            thread.start()
         return render_template('thankyou.html', form=queriedForm)
         
     return render_template('view-form.html', form=queriedForm)     
@@ -162,12 +149,12 @@ def view_csv(slug, key):
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
-""" Author form management """
+""" Editor form management """
 
 @app.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    forms=[Form(_id=form['_id']) for form in Form().findAll(author=g.current_user._id)]
+    forms=[Form(_id=form['_id']) for form in Form().findAll(editor=str(g.current_user._id))]
     return render_template('my-forms.html', forms=forms) 
 
 
@@ -178,9 +165,10 @@ def inspect_form(_id):
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
+    
     #pprint.pprint(queriedForm.data)
     if not g.current_user.canViewForm(queriedForm):
-        flash(gettext("Sorry, no permission to view that form"), 'warning')
+        flash(gettext("Permission needed to view form"), 'warning')
         return redirect(url_for('my_forms'))
     
     # We use the 'session' because forms/edit may be showing a new form without a Form() db object yet.
@@ -213,7 +201,7 @@ def new_form(templateID=None):
 @enabled_user_required
 def duplicate_form(_id):
     clearSessionFormData()
-    queriedForm = Form(_id=_id, author=g.current_user._id)
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("Form is not available. 404"), 'warning')
         return redirect(url_for('my_forms'))
@@ -221,26 +209,26 @@ def duplicate_form(_id):
     populateSessionFormData(queriedForm)
     session['slug']=""
     flash(gettext("You can edit the duplicate now"), 'info')
-    return render_template('edit-form.html')
+    return render_template('edit-form.html', host_url=Site().host_url)
 
 
 @app.route('/forms/share/<string:_id>', methods=['GET'])
 @enabled_user_required
 def share_form(_id):
-    queriedForm = Form(_id=_id, author=g.current_user._id)
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("Form is not available. 404"), 'warning')
         return redirect(url_for('my_forms'))
-        
-    return render_template('share-form.html', form=queriedForm)
+    editors=[User(_id=user_id) for user_id in queriedForm.editors]
+    return render_template('share-form.html', form=queriedForm, editors=editors)
 
 
 @app.route('/forms/add-editor/<string:_id>', methods=['POST'])
 @enabled_user_required
 def add_editor(_id):
-    queriedForm = Form(_id=_id, author=g.current_user._id)
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
-        flash(gettext("Form is not available. 404"), 'warning')
+        flash(gettext("Form is not available"), 'warning')
         return redirect(url_for('my_forms'))
     if not 'email' in request.form:
         flash(gettext("We need an email"), 'warning')
@@ -252,11 +240,11 @@ def add_editor(_id):
     if not newEditor:
         flash(gettext("Can't find a user with that email"), 'warning')
         return redirect(url_for('share_form', _id=queriedForm._id))
-    if newEditor._id in queriedForm.data['editors']:
+    if str(newEditor._id) in queriedForm.editors:
         flash(gettext("%s is already an editor" % newEditor.email), 'warning')
         return redirect(url_for('share_form', _id=queriedForm._id))
     
-    queriedForm.addEditor(newEditor)
+    queriedForm.addEditor(str(newEditor._id))
     flash(gettext("New editor added ok"), 'success')
     return redirect(url_for('share_form', _id=queriedForm._id))
 
@@ -264,7 +252,7 @@ def add_editor(_id):
 @app.route('/forms/remove-editor/<string:form_id>/<string:editor_id>', methods=['POST'])
 @enabled_user_required
 def remove_editor(form_id, editor_id):
-    queriedForm = Form(_id=form_id, author=g.current_user._id)
+    queriedForm = Form(_id=form_id, editor=str(g.current_user._id))
     if not queriedForm:
         return json.dumps(False)
     if editor_id == queriedForm.author:
@@ -287,7 +275,7 @@ def edit_form(_id=None):
     if _id:
         queriedForm = Form(_id=_id)
         if queriedForm:
-            if queriedForm.author != g.current_user._id:
+            if not queriedForm.isEditor(g.current_user):
                 flash(gettext("You can't edit that form"), 'warning')
                 return redirect(url_for('my_forms'))
             session['form_id'] = str(queriedForm._id)
@@ -373,17 +361,17 @@ def save_form(_id=None):
     
     queriedForm=None
     if _id:
-        queriedForm=Form(_id=_id, author=g.current_user._id)
+        queriedForm=Form(_id=_id, editor=str(g.current_user._id))
     
     if queriedForm:
-        if queriedForm.author != g.current_user._id:
+        if not queriedForm.isEditor(g.current_user):
             flash(gettext("You can't edit that form"), 'warning')
             return redirect(url_for('my_forms'))
 
         if queriedForm.totalEntries > 0:
             for field in queriedForm.fieldIndex:
                 if not getFieldByNameInIndex(session['formFieldIndex'], field['name']):
-                    """ This field was removed by the author but there are already entries.
+                    """ This field was removed by the editor but there are already entries.
                         So we append it to the index. """
                     session['formFieldIndex'].append(field)
         
@@ -399,14 +387,13 @@ def save_form(_id=None):
             return redirect(url_for('edit_form'))
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
-                    "author": g.current_user._id,
-                    "editors": [g.current_user._id],
+                    "author": str(g.current_user._id),
+                    "editors": {str(g.current_user._id): Form().newEditorPreferences()},
                     "postalCode": "08014",
                     "enabled": False,
                     "expiryConditions": {"expireDate": None},
                     "hostname": Site().hostname,
                     "slug": session['slug'],
-                    "notification": {"newEntry": True},
                     "structure": session['formStructure'],
                     "fieldIndex": session['formFieldIndex'],
                     "entries": [],
@@ -430,7 +417,7 @@ def save_form(_id=None):
 @app.route('/forms/delete/<string:_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_form(_id):
-    queriedForm=Form(_id=_id, author=g.current_user._id)
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -454,7 +441,7 @@ def delete_form(_id):
 @app.route('/form/toggle-enabled/<string:_id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_enabled(_id):
-    form=Form(_id=_id, author=g.current_user._id)
+    form=Form(_id=_id, editor=str(g.current_user._id))
     if not form:
         return JsonResponse(json.dumps())
         
@@ -463,7 +450,7 @@ def toggle_form_enabled(_id):
 @app.route('/form/toggle-shared-entries/<string:_id>', methods=['POST'])
 @enabled_user_required
 def toggle_shared_entries(_id):
-    form=Form(_id=_id, author=g.current_user._id)
+    form=Form(_id=_id, editor=str(g.current_user._id))
     if not form:
         return JsonResponse(json.dumps())
         
@@ -472,7 +459,7 @@ def toggle_shared_entries(_id):
 @app.route('/form/toggle-notification/<string:_id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_notification(_id):
-    form=Form(_id=_id, author=g.current_user._id)
+    form=Form(_id=_id, editor=str(g.current_user._id))
     if not form:
         return JsonResponse(json.dumps())
 
@@ -486,7 +473,7 @@ def toggle_form_notification(_id):
 @app.route('/forms/entries/<string:_id>', methods=['GET'])
 @enabled_user_required
 def list_entries(_id):
-    queriedForm = Form(_id=_id, author=g.current_user._id)
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -499,7 +486,7 @@ def list_entries(_id):
 @app.route('/forms/csv/<string:_id>', methods=['GET'])
 @enabled_user_required
 def csv_form(_id):
-    queriedForm = Form(_id=_id, author=g.current_user._id)
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(url_for('my_forms'))
@@ -517,7 +504,7 @@ def csv_form(_id):
 @app.route('/forms/delete-entries/<string:_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_entries(_id):
-    queriedForm=Form(_id=_id, author=g.current_user._id)
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(url_for('my_forms'))

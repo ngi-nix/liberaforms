@@ -29,7 +29,7 @@ mongo = PyMongo(app)
 babel = Babel(app)
 
 app.config['APP_VERSION'] = 3
-app.config['SCHEMA_VERSION'] = 2
+app.config['SCHEMA_VERSION'] = 3
 
 app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']

@@ -100,7 +100,7 @@
                 {% endif %}
                 <td>{{invite.data['admin']}}</td>
                 <td class="text-right">
-                <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite._id}}'">
+                <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite._id}}'">
                 </td>
             </tr>
         {% endfor %}
@@ -120,8 +120,8 @@
                 <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newuser" class="btn-group btn-toggle">
-                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewUser'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewUser'] %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -129,8 +129,8 @@
                 <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newform" class="btn-group btn-toggle">
-                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewForm'] %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewForm'] %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -148,8 +148,8 @@
                 <td></td>
                 <td class="text-right">
                     <div id="toggle_invitation_only" class="btn-group btn-toggle">
-                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}active btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}active btn-danger{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -250,12 +250,12 @@ document.getElementById('toggle_notify_newuser').addEventListener('click', funct
         success: function(data, textStatus, jqXHR)
         {
             if (data.notify == true) {
-                $('#notify_newuser_true').addClass('active  btn-success');
-                $('#notify_newuser_false').removeClass('active btn-danger');
+                $('#notify_newuser_true').addClass('btn-success');
+                $('#notify_newuser_false').removeClass('btn-primary');
             }
             else if (data.notify == false) {
-                $('#notify_newuser_true').removeClass('active btn-success');
-                $('#notify_newuser_false').addClass('active btn-danger');
+                $('#notify_newuser_true').removeClass('btn-success');
+                $('#notify_newuser_false').addClass('btn-primary');
             }
         }
     });
@@ -268,12 +268,12 @@ document.getElementById('toggle_notify_newform').addEventListener('click', funct
         success: function(data, textStatus, jqXHR)
         {
             if (data.notify == true) {
-                $('#notify_newform_true').addClass('active  btn-success');
-                $('#notify_newform_false').removeClass('active btn-danger');
+                $('#notify_newform_true').addClass('btn-success');
+                $('#notify_newform_false').removeClass('btn-primary');
             }
             else if (data.notify == false) {
-                $('#notify_newform_true').removeClass('active btn-success');
-                $('#notify_newform_false').addClass('active btn-danger');
+                $('#notify_newform_true').removeClass('btn-success');
+                $('#notify_newform_false').addClass('btn-primary');
             }
         }
     });
@@ -286,12 +286,12 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         success: function(data, textStatus, jqXHR)
         {
             if (data.invite == true) {
-                $('#invitation_only_true').addClass('active btn-success');
-                $('#invitation_only_false').removeClass('active btn-danger');
+                $('#invitation_only_true').addClass('btn-success');
+                $('#invitation_only_false').removeClass('btn-primary');
             }
             else if (data.invite == false) {
-                $('#invitation_only_true').removeClass('active btn-success');
-                $('#invitation_only_false').addClass('active btn-danger');
+                $('#invitation_only_true').removeClass('btn-success');
+                $('#invitation_only_false').addClass('btn-primary');
             }
         }
     });

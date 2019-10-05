@@ -4,8 +4,8 @@
 <div class="container">
     <div class="row col-md-3"></div>
     <div class="row col-md-7" style="font-size:1.5em">
-        {{ form.slug }}
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+        {{ form.slug }}
         <hr />
     </div>
     <div class="row col-md-2"></div>
@@ -21,8 +21,8 @@
         {%trans%}Share a readonly link with interested parties{%endtrans%}
         <div style="padding-top:0.7em">
             <span id="toggle_sharedEntries" class="btn-group btn-toggle">
-                <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}active btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}active btn-success{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
             </span>
             <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
             <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
@@ -38,21 +38,25 @@
             {%trans%}Editors{%endtrans%}
         </div>
         <div>
-            {%trans%}Users listed here have the same permissions as you{%endtrans%}
+            {%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}
         </div>
 
         <p style="padding-top:1.2em;"></p>
         
         <table class="table table-condensed">
-        {% for editor in form.editors %}
-        <tr id="editor_{{editor._id}}">
-            <td>
-                {{ editor.email }}
-            </td>
-            <td class="text-right">
-            <input class="btn-success btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor._id}}');">
-            </td>
-        </tr>
+        {% for editor in editors %}
+            <tr id="editor_{{editor._id}}">
+                <td>
+                    {{ editor.email }}
+                </td>
+                <td class="text-right">
+                {% if editor._id|string == form.author %}
+                    ({%trans%}Author{%endtrans%})
+                {% else %}
+                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor._id}}');">
+                {% endif %}
+                </td>
+            </tr>
         {% endfor %}
         <tr>
         <form action="/forms/add-editor/{{form._id}}" method="POST">
@@ -93,14 +97,14 @@ document.getElementById('toggle_sharedEntries').addEventListener('click', functi
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {
-                $('#sharedEntries_true').addClass('active  btn-success');
-                $('#sharedEntries_false').removeClass('active btn-success');
+                $('#sharedEntries_true').addClass('btn-success');
+                $('#sharedEntries_false').removeClass('btn-primary');
                 $('#enabled_link').show()
                 $('#disabled_link').hide()
             }
             else if (data.enabled == false) {
-                $('#sharedEntries_true').removeClass('active btn-success');
-                $('#sharedEntries_false').addClass('active btn-success');
+                $('#sharedEntries_true').removeClass('btn-success');
+                $('#sharedEntries_false').addClass('btn-primary');
                 $('#enabled_link').hide()
                 $('#disabled_link').show()
             }
