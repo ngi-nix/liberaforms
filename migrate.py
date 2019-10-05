@@ -42,16 +42,6 @@ def migrateMongoSchema(schemaVersionBeforeUpdate):
         else:
             break
 
-    """
-    # add the form author to the editors list
-    for form in mongo.db.forms.find():
-        if form['editors'] == []:
-            form['editors'] = {}
-            form['editors'][form['author']]={'notification': form['notification']}
-            mongo.db.forms.update_one({"_id": form["_id"]}, {"$unset": {'notification' :1}, "$set": {"editors": form['editors']}})
-        else:
-            break
-    """
     schemaVersion=2
     
     # changes in schema version 2
@@ -66,5 +56,22 @@ def migrateMongoSchema(schemaVersionBeforeUpdate):
         else:
             break
     schemaVersion=3
-    
+
+    # this originally didn't work
+    # get rid of from ObjectIDs
+    for form in mongo.db.forms.find():
+        form['author']=str(form['author'])
+        mongo.db.forms.save(form)
+
+    # this originally didn't work
+    for form in mongo.db.forms.find():
+        newEditorsDict={}
+        for editor in form['editors']:
+            newEditorsDict[editor]={'notification': form['notification']}
+        if not newEditorsDict:
+            newEditorsDict[form['author']]={'notification': {'newEntry': False}}
+        form['editors']=newEditorsDict
+        mongo.db.forms.update_one({"_id": form["_id"]}, {"$unset": {'notification' :1}, "$set": {"editors": form['editors']}})
+
+    schemaVersion=4
     return schemaVersion
