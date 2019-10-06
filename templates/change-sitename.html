@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Change site name{%endtrans%}
+    </div>
+    <hr />
+
+    <p></p>
+    <form method="POST">
+        <label>{%trans%}New site name{%endtrans%}</label>
+        <br />
+        <input type="text" name="sitename" class="form-control" value="{{site.siteName }}" required ><br />
+        <p></p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
+    </form>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+  
+{% endblock %}

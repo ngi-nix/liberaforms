@@ -522,6 +522,7 @@ class Site(object):
             "scheme": urlparse(request.host_url).scheme,
             "blurb": blurb,
             "invitationOnly": True,
+            "siteName": "GNGforms",
             "noreplyEmailAddress": "no-reply@%s" % hostname
         }
         mongo.db.sites.insert_one(newSiteData)
@@ -542,6 +543,10 @@ class Site(object):
     @property
     def hostname(self):
         return self.site['hostname']
+
+    @property
+    def siteName(self):
+        return self.site['siteName'] if 'siteName' in self.site else "GNGforms"
 
     @property
     def host_url(self):

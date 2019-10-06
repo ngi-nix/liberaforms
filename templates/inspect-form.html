@@ -39,7 +39,7 @@
             <tr>
                <td>{%trans%}Author{%endtrans%}</td>
                {% if g.isAdmin %}
-                    <td><a href="/admin/users/id/{{ form.user._id }}">{{ form.user.username }}</a></td>
+                    <td><a href="/admin/users/{{ form.user._id }}">{{ form.user.username }}</a></td>
                {% else %}
                     <td>{{ form.user.username }}</td>
                 {% endif %}

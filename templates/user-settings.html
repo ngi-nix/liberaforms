@@ -144,16 +144,14 @@
 
         <table class="table table-condensed">
             <tr>
-                <td>{%trans%}Invitation only{%endtrans%}</td>
-                <td></td>
+                <td>{%trans%}Site name{%endtrans%}</td>
+                <td>
+                {{ site.siteName }}
+                </td>
                 <td class="text-right">
-                    <div id="toggle_invitation_only" class="btn-group btn-toggle">
-                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-                    </div>
-               </td>
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/change-sitename'">
+                </td>
             </tr>
-            
             <tr>
                 <td>{%trans%}Email address{%endtrans%}</td>
                 <td>
@@ -163,7 +161,16 @@
                 <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/email/change-noreply'">
                 </td>
             </tr>
-
+            <tr>
+                <td>{%trans%}Invitation only{%endtrans%}</td>
+                <td></td>
+                <td class="text-right">
+                    <div id="toggle_invitation_only" class="btn-group btn-toggle">
+                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    </div>
+               </td>
+            </tr>
         </table>
     {% endif %}
     {% if g.isRootUser %}

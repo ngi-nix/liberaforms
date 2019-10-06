@@ -39,6 +39,7 @@ def before_request():
     g.isAdmin=False
     if '/static' in request.path:
         return
+    g.siteName=Site().siteName
     if 'username' in session:
         g.current_user=User(username=session['username'])
         if g.current_user and g.current_user.isRootUser():
@@ -814,6 +815,18 @@ def change_noreply_email():
     return render_template('change-email.html')
 
 
+@app.route('/site/change-sitename', methods=['GET', 'POST'])
+@admin_required
+def change_siteName():
+    site=Site()
+    if request.method == 'POST':
+        if 'sitename' in request.form:
+            site.data['siteName']=request.form['sitename']
+            site.save()
+            flash(gettext("Site name changed OK"), 'success')
+            return redirect(url_for('user_settings', username=g.current_user.username))
+    return render_template('change-sitename.html', site=site)
+
 @app.route('/site/test-smtp/<string:email>', methods=['GET'])
 @rootuser_required
 def test_smtp(email):
@@ -985,6 +998,7 @@ def list_users():
     return render_template('list-users.html', users=users) 
 
 
+@app.route('/admin/users/<string:_id>', methods=['GET'])
 @app.route('/admin/users/id/<string:_id>', methods=['GET'])
 @admin_required
 def inspect_user(_id):

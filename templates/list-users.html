@@ -28,17 +28,17 @@
         <th>{%trans%}Is Admin{%endtrans%}</th>
     </tr>
 </thead>
-{% for u in users %}
+{% for user in users %}
 <tr>
-    <td><a href="/admin/users/id/{{u._id}}">{{u.username}}</a></td>
+    <td><a href="/admin/users/{{user._id}}">{{user.username}}</a></td>
     {% if g.isRootUser %}
-        <td>{{u.hostname}}</td>
+        <td>{{user.hostname}}</td>
     {% endif %}
-    <td>{{u.data.created}}</td>
-    <td>{{u.enabled}}</td>
-    <td>{{u.email}}</td>
-    <td>{{u.forms.count()}}</td>
-    <td>{{u.isAdmin()}}</td>
+    <td>{{user.data.created}}</td>
+    <td>{{user.enabled}}</td>
+    <td>{{user.email}}</td>
+    <td>{{user.forms.count()}}</td>
+    <td>{{user.isAdmin()}}</td>
 </tr>
 {% endfor %}
 </table>
