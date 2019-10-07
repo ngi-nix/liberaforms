@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <script src="/static/formBuilder/form-render.min.js"></script>
 
 <div class="container">
@@ -59,20 +58,40 @@
                {% if form.editors[g.current_user._id|string] is defined %}
                <td>
                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.enabled %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.enabled %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.isPublic() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                </td>
                {% else %}
                <td>
-                    {% if not form.user.enabled and form.enabled %}
-                        <span style="text-decoration: line-through">{{ form.enabled }}</span>
-                        <span style="color:red">({%trans%}user disabled{%endtrans%})</span>
-                    {% else %}
-                        {{ form.enabled }}
+                    {{ form.isPublic() }}
+                    {% if not form.user.enabled %}
+                        <span style="color:red">({%trans%}user disabled{%endtrans%})</span>                
                     {% endif %}
                </td>               
                {% endif %}
+            </tr>
+            <tr>
+               <td>{%trans%}Will expire{%endtrans%}</td>
+               <td>
+                   {% if form.editors[g.current_user._id|string] is defined %}
+                        {% if form.hasExpired() %}
+                            <input class="btn-warning btn btn-xs" type="button" value="{%trans%}Expired{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
+                        {% elif form.willExpire() %}
+                            <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
+                        {% else %}
+                            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
+                        {% endif %}
+                   {% else %}
+                        {% if form.hasExpired() %}
+                            {%trans%}Expired{%endtrans%}
+                        {% elif form.willExpire() %}
+                            {%trans%}True{%endtrans%}
+                        {% else %}
+                            {%trans%}False{%endtrans%}
+                        {% endif %}
+                   {% endif %}
+               </td>
             </tr>
             <tr>
                <td>{%trans%}Public URL{%endtrans%}</td>
@@ -146,7 +165,7 @@
 <script>
 jQuery(function($) {
     var fbRender = document.getElementById('fb-render');
-    var formData = {{ form.structure | safe }};
+    var formData = {{ form.structure | tojson }};
     var formRenderOpts = {
         formData,
         dataType: 'json'

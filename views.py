@@ -80,9 +80,15 @@ def view_form(slug):
         return render_template('page-not-found.html'), 400
     if not queriedForm.isPublic():
         if g.current_user:
-            flash(gettext("That form is not public"), 'warning')
+            if queriedForm.hasExpired():
+                flash(gettext("That form has expired"), 'warning')
+            else:
+                flash(gettext("That form is not public"), 'warning')
             return redirect(url_for('my_forms'))
-        return render_template('page-not-found.html'), 400
+        if queriedForm.hasExpired():
+            return render_template('form-has-expired.html'), 400
+        else:
+            return render_template('page-not-found.html'), 400
 
     if request.method == 'POST':  
         formData=request.form.to_dict(flat=False)
@@ -261,6 +267,36 @@ def remove_editor(form_id, editor_id):
     
     removedEditor=queriedForm.removeEditor(editor_id)
     return json.dumps(removedEditor)
+
+
+@app.route('/forms/expiration/<string:_id>', methods=['GET', 'POST'])
+@enabled_user_required
+def expiration(_id):
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
+        flash(gettext("Form is not available"), 'warning')
+        return redirect(url_for('my_forms'))
+    if request.method == 'POST':
+        if 'date' in request.form and 'time' in request.form:
+            if request.form['date'] and request.form['time']:
+                expireDate="%s %s:00" % (request.form['date'], request.form['time'])
+                if not isValidExpireDate(expireDate):
+                    flash(gettext("Date-time is not valid"), 'warning')
+                else:
+                    queriedForm.data['expiryConditions']['expireDate']=expireDate
+                    flash(gettext("Expiration date set ok"), 'success')
+                    queriedForm.save()                
+            elif not request.form['date'] and not request.form['time']:
+                if queriedForm.data['expiryConditions']['expireDate']:
+                    queriedForm.data['expiryConditions']['expireDate']=None
+                    flash(gettext("Expiration date cancelled ok"), 'success')
+                    queriedForm.save()
+                else:
+                    flash(gettext("No expiry date set"), 'warning')
+            else:
+                flash(gettext("Missing date or time"), 'warning')
+                
+    return render_template('expiration.html', form=queriedForm)
 
 
 @app.route('/forms/edit', methods=['GET', 'POST'])

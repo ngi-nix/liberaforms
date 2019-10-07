@@ -433,6 +433,9 @@ class Form(object):
     def saveEntry(self, entry):
         mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
 
+    def save(self):
+        mongo.db.forms.save(self.form)
+
     def delete(self):
         return mongo.db.forms.remove({'_id': self.form['_id']})
 
@@ -445,7 +448,25 @@ class Form(object):
     def isEditor(self, user):
         return True if str(user._id) in self.editors else False
 
+    def willExpire(self):
+        if self.form["expiryConditions"]["expireDate"]:
+            return True
+        if len(self.form["expiryConditions"]) > 1:
+            return True
+        return False
+
+    def hasExpired(self):
+        if not self.willExpire():
+            return False
+        if isFutureDate(self.form["expiryConditions"]["expireDate"]):
+            return False
+        else:
+            return True
+
+
     def isPublic(self):
+        if self.hasExpired():
+            return False
         if not self.enabled:
             return False
         if not self.user.enabled:
@@ -466,9 +487,12 @@ class Form(object):
         return "%s/%s/%s" % (self.url, part, self.form['sharedEntries']['key'])
 
     def toggleEnabled(self):
-        self.form['enabled'] = False if self.form['enabled'] else True
-        mongo.db.forms.save(self.form)
-        return self.form['enabled']
+        if self.hasExpired():
+            return False
+        else:
+            self.form['enabled'] = False if self.form['enabled'] else True
+            mongo.db.forms.save(self.form)
+            return self.form['enabled']
 
     def toggleSharedEntries(self):
         self.form['sharedEntries']['enabled'] = False if self.form['sharedEntries']['enabled'] else True
@@ -522,7 +546,7 @@ class Site(object):
             "scheme": urlparse(request.host_url).scheme,
             "blurb": blurb,
             "invitationOnly": True,
-            "siteName": "GNGforms",
+            "siteName": "gng-forms!",
             "noreplyEmailAddress": "no-reply@%s" % hostname
         }
         mongo.db.sites.insert_one(newSiteData)
@@ -546,7 +570,7 @@ class Site(object):
 
     @property
     def siteName(self):
-        return self.site['siteName'] if 'siteName' in self.site else "GNGforms"
+        return self.site['siteName'] if 'siteName' in self.site else "gng-forms!"
 
     @property
     def host_url(self):

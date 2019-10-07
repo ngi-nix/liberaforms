@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Expiration conditions{%endtrans%}
+    </div>
+    <hr />
+
+    <p>&nbsp;</p>
+    <style>
+    td {padding-right: 5px}
+    </style>
+    <form method="POST">
+        <table>
+        <tr>
+        <td><label>{%trans%}Date{%endtrans%}</label></td>
+        <td><label>{%trans%}Time{%endtrans%}</label></td>
+        <td></td>
+        </tr>
+        <tr>
+        <td><input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);"></td>
+        <td><input id="time" name="time" type="time" class="form-control"></td>
+        <td>
+        <input type="button" class="btn-danger btn" value="{%trans%}Delete{%endtrans%}" onClick="js:resetDateTime();">
+        </td>
+        </tr>
+        </table>
+        {%trans%}The form will be unavailable after this date{%endtrans%}
+        <p>&nbsp;</p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
+        &nbsp;
+        <input type="button" class="btn-primary btn" value="{%trans%}Return to form{%endtrans%}"  onClick="location.href='/forms/view/{{form._id}}'">
+    </form>
+
+</div>
+<div class="row col-md-4"></div>    
+</div>
+
+
+<script>
+function resetDateTime(){
+    $('#date').val(null);
+    $('#time').val(null);
+}
+function dateSet(e){
+    if ($('#time').val() == ""){
+        $('#time').val("00:00")
+    }
+}
+jQuery(function($) {
+    var savedDate={{form.data['expiryConditions']['expireDate']|tojson}};
+    if (savedDate != null){
+        fields=savedDate.split(' '); 
+        $('#date').val(fields[0]);
+        $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"        
+    }
+});
+</script>
+  
+{% endblock %}

@@ -21,7 +21,8 @@ from GNGforms import app, mongo
 from flask import g, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from unidecode import unidecode
-import re, string, random, datetime, csv
+#from datetime import datetime
+import time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
@@ -230,6 +231,21 @@ def isValidToken(tokenData):
     if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
         return False
     return True
+
+
+""" ######## Dates ######## """
+
+def isValidExpireDate(date):
+    try:
+        datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        return True
+    except:
+        return False
+
+def isFutureDate(date):
+    now=time.time()
+    future=int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").strftime("%s"))
+    return True if future > now else False
 
 
 """ ######## Others ######## """

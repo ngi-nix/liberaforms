@@ -37,7 +37,7 @@
        <td>{{form.created}}</td>
        <td>{{form.lastEntryDate}}</td>
        <td><a style="padding-right:1em" href="/forms/entries/{{form._id}}">{{form.entries|length}}</a></td>
-       <td>{{form.enabled}}</td>
+       <td>{{form.isPublic()}}</td>
        <td>{{form.isShared()}}</td>
     </tr>
     {% endfor %}
