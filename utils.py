@@ -143,7 +143,7 @@ def sanitizeTokenString(string):
     return re.sub('[^a-z0-9]', '', string)
     
 
-def stripHTMLTagsForLabelForLabel(text):
+def stripHTMLTagsForLabel(text):
     h = html.parser.HTMLParser()
     text=h.unescape(text)
     text = text.replace("<br/>","-")
