@@ -113,11 +113,8 @@
                    {% else %}
                    {{form.totalEntries}}
                    {% endif %}
+                   {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
                </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Last entry{%endtrans%}</td>
-               <td>{{ form.lastEntryDate }}</td>
             </tr>
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>

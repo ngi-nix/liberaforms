@@ -26,7 +26,7 @@ import time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
-import markdown
+import markdown, html.parser
 from functools import wraps
 
 
@@ -143,13 +143,14 @@ def sanitizeTokenString(string):
     return re.sub('[^a-z0-9]', '', string)
     
 
-def stripHTMLTags(text):
-    TAG_RE = re.compile(r'<[^>]+>')
-    return TAG_RE.sub('', text)
-
+def stripHTMLTagsForLabelForLabel(text):
+    h = html.parser.HTMLParser()
+    text=h.unescape(text)
+    text = text.replace("<br/>","-")
+    text = text.replace("<br />","-")
+    return re.sub('<[^<]+?>', '', text)
 
 def escapeMarkdown(MDtext):
-    #return stripHTMLTags(MDtext)   # which expresion is best?
     return re.sub(r'<[^>]*?>', '', MDtext)
 
 
@@ -203,7 +204,7 @@ def removeHTMLFromLabels(fieldIndex):
     """
     result=[]
     for field in fieldIndex:
-        result.append({'label': stripHTMLTags(field['label']), 'name': field['name']})
+        result.append({'label': stripHTMLTagsForLabel(field['label']), 'name': field['name']})
     return result
 
 

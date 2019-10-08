@@ -115,7 +115,7 @@ def view_form(slug):
                 data=[]
                 for field in queriedForm.fieldIndex:
                     if field['name'] in entry:
-                        data.append( (stripHTMLTags(field['label']), entry[field['name']]) )
+                        data.append( (stripHTMLTagsForLabel(field['label']), entry[field['name']]) )
                 smtpSendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
@@ -340,8 +340,8 @@ def edit_form(_id=None):
                 """ formbuilder may return empty label attributes or label attributes with html. """
                 if 'label' in formElement:
                     # formbuilder adds a trailing '<br>' to lables.
-                    formElement['label']=formElement['label'].rstrip('<br>')
-                    if not stripHTMLTags(formElement['label']): 
+                    #formElement['label']=formElement['label'].rstrip('<br>')
+                    if not stripHTMLTagsForLabel(formElement['label']): 
                         # we need some text (any text) to save as a label.                 
                         formElement['label'] = "Label"
                 

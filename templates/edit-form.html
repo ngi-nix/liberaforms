@@ -72,11 +72,12 @@ jQuery(function($) {
                              });
 
     const fbEditor = document.getElementById("fb-editor");
-    
+    var disabledAttrs = {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }};
+    disabledAttrs.push("name");
     var options = {
         showActionButtons: false,
         disableFields: {{ config['FORMBUILDER_DISABLE_FIELDS'] | tojson }},
-        disabledAttrs: {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }},
+        disabledAttrs: disabledAttrs,
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
             locale: "{{ config['LANGUAGES'][g.current_user.data['language']][1] }}",
