@@ -109,11 +109,13 @@
                <td>{%trans%}Entries{%endtrans%}</td>
                <td>
                    {% if form.editors[g.current_user._id|string] is defined %}
-                   <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
                    {% else %}
-                   {{form.totalEntries}}
+                        {{form.totalEntries}}
                    {% endif %}
-                   {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
+                   {% if form.totalEntries %}
+                        {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
+                   {% endif %}
                </td>
             </tr>
             <tr>

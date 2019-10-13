@@ -3,62 +3,128 @@
 
 
 <div class="container">
-<div class="row col-md-4"></div>
-    
-<div class="row col-md-4">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-6" style="font-size:1.5em">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+        {{ form.slug }}
+        <hr />
+    </div>
+    <div class="row col-md-3"></div>
+</div>
 
+<div class="container">
+<div class="row col-md-3"></div>
+
+<div class="row col-md-6">
     <div style="font-size:1.5em">
         {%trans%}Expiration conditions{%endtrans%}
     </div>
-    <hr />
-
     <p>&nbsp;</p>
+    
+    <div style="font-size:1.25em">
+        {%trans%}Date / Time{%endtrans%}
+    </div>
+    <br />
+    
     <style>
-    td {padding-right: 5px}
+    #date_time > input {display: inline; vertical-align: top;}
     </style>
-    <form method="POST">
-        <table>
-        <tr>
-        <td><label>{%trans%}Date{%endtrans%}</label></td>
-        <td><label>{%trans%}Time{%endtrans%}</label></td>
-        <td></td>
-        </tr>
-        <tr>
-        <td><input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);"></td>
-        <td><input id="time" name="time" type="time" class="form-control"></td>
-        <td>
-        <input type="button" class="btn-danger btn" value="{%trans%}Delete{%endtrans%}" onClick="js:resetDateTime();">
-        </td>
-        </tr>
-        </table>
-        {%trans%}The form will be unavailable after this date{%endtrans%}
-        <p>&nbsp;</p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
+    <form id="date_time" method="POST">
+        <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
         &nbsp;
-        <input type="button" class="btn-primary btn" value="{%trans%}Return to form{%endtrans%}"  onClick="location.href='/forms/view/{{form._id}}'">
+        <input id="time" name="time" type="time" class="form-control" style="width:auto">
+        &nbsp;
+        <input id="date-button" class="btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
     </form>
-
+        
+        <p>&nbsp;</p>
+        
+        {% if form.getAvailableNumberTypeFields() %}
+        <div style="font-size:1.25em">
+            {%trans%}Conditionals{%endtrans%}
+        </div>
+          
+        <br />
+        <table class="table table-condensed">   
+        {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
+            <tr>
+                <td>
+                {{ form.getFieldLabel(field_name)|safe }}
+                </td>
+                <td>
+                {% if values.type=="number" %}
+                <input id="{{field_name}}" class="condition form-control" style="height:28px" type="number" value="{{values.condition|safe}}" />
+                {% endif %}
+                </td>
+                <td class="text-right">
+                {% if values.type=="number" %}
+                    <input id="button-{{field_name}}" type="button" class="{%if values.condition %}btn-success{% else %}btn-primary{% endif %} btn btn-xs" value="{%trans%}Save max.{%endtrans%}" onClick="js:setMaxValue('{{field_name}}');">
+                {% endif %}
+                </td>
+            </tr>
+        {%endfor %}
+        </table>  
+        {% endif %}
+        
 </div>
-<div class="row col-md-4"></div>    
+<div class="row col-md-3"></div>    
 </div>
 
 
 <script>
-function resetDateTime(){
-    $('#date').val(null);
-    $('#time').val(null);
-}
 function dateSet(e){
     if ($('#time').val() == ""){
         $('#time').val("00:00")
     }
 }
+function setMaxValue(id){
+    var value=$('#'+id).val();
+    $.ajax({
+        url : "/forms/set-field-condition/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        data: {"field_name": id, "condition": value},
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.condition != false && data.condition == value) {
+                $('#button-'+id).removeClass('btn-primary');
+                $('#button-'+id).removeClass('btn-warning');
+                $('#button-'+id).addClass('btn-success');
+            }
+            else{
+                $('#button-'+id).removeClass('btn-success');
+                $('#button-'+id).removeClass('btn-warning');
+                $('#button-'+id).addClass('btn-primary');
+                $('#'+id).val(null)
+            }
+        }
+    });
+}
+$(document).on("change", "#date", function () {
+    $('#date-button').removeClass('btn-success', 'btn-primary');
+    $('#date-button').addClass('btn-warning');
+});
+$(document).on("change", "#time", function () {
+    $('#date-button').removeClass('btn-success', 'btn-primary');
+    $('#date-button').addClass('btn-warning');
+});
+$(document).on("keyup", ".condition", function () {
+    $('#button-'+this.id).removeClass('btn-success', 'btn-primary');
+    $('#button-'+this.id).addClass('btn-warning');
+});
+$(document).on("change", ".condition", function () {
+    $('#button-'+this.id).removeClass('btn-success', 'btn-primary');
+    $('#button-'+this.id).addClass('btn-warning');
+});
 jQuery(function($) {
     var savedDate={{form.data['expiryConditions']['expireDate']|tojson}};
     if (savedDate != null){
         fields=savedDate.split(' '); 
         $('#date').val(fields[0]);
-        $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"        
+        $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"
+        $('#date-button').addClass('btn-success');
+    }else{ 
+        $('#date-button').addClass('btn-primary');
     }
 });
 </script>

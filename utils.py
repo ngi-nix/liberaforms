@@ -142,12 +142,16 @@ def isSaneUsername(username):
 def sanitizeTokenString(string):
     return re.sub('[^a-z0-9]', '', string)
     
+def stripHTMLTags(text):
+    h = html.parser.HTMLParser()
+    text=h.unescape(text)
+    return re.sub('<[^<]+?>', '', text)
 
+# remember to remove this from the code because now tags are stripped from Labels at view/preview
 def stripHTMLTagsForLabel(text):
     h = html.parser.HTMLParser()
     text=h.unescape(text)
-    text = text.replace("<br/>","-")
-    text = text.replace("<br />","-")
+    text = text.replace("<br>","-") # formbuilder generates "<br>"s
     return re.sub('<[^<]+?>', '', text)
 
 def escapeMarkdown(MDtext):

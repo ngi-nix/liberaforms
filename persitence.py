@@ -21,7 +21,7 @@ from GNGforms import app, mongo
 from bson.objectid import ObjectId
 from flask import flash, request, g
 from flask_babel import gettext 
-import os, string, random, datetime
+import os, string, random, datetime, json
 from urllib.parse import urlparse
 import markdown
 from .utils import *
@@ -412,7 +412,27 @@ class Form(object):
             return last_entry["created"]
         else:
             return ""
+
+    def getAvailableNumberTypeFields(self):
+        result={}
+        for element in json.loads(self.structure):
+            if "type" in element and element["type"] == "number":
+                if element["name"] in self.fieldConditions:
+                    result[element["name"]]=self.fieldConditions[element["name"]]
+                else:
+                    result[element["name"]]={"type":"number", "condition": None}
+        return result
         
+    def getFieldLabel(self, fieldName):
+        for element in json.loads(self.structure):
+            if 'name' in element and element['name']==fieldName:
+                return element['label']
+        return None
+
+    @property
+    def fieldConditions(self):
+        return self.form["expiryConditions"]["fields"]
+
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
             kwargs['hostname']=Site().hostname
@@ -451,19 +471,31 @@ class Form(object):
     def willExpire(self):
         if self.form["expiryConditions"]["expireDate"]:
             return True
-        if len(self.form["expiryConditions"]) > 1:
+        if self.form["expiryConditions"]["fields"]:
             return True
         return False
 
     def hasExpired(self):
         if not self.willExpire():
             return False
-        if isFutureDate(self.form["expiryConditions"]["expireDate"]):
-            return False
-        else:
+        if self.form["expiryConditions"]["expireDate"] and not isFutureDate(self.form["expiryConditions"]["expireDate"]):
             return True
+        for fieldName, value in self.fieldConditions.items():
+            if value['type'] == 'number':
+                total=self.tallyNumberField(fieldName)
+                if total >= int(value['condition']):
+                    return True
+        return False
 
-
+    def tallyNumberField(self, fieldName):
+        total=0
+        for entry in self.entries:
+            try:
+                total = total + int(entry[fieldName])
+            except:
+                continue
+        return total
+                
     def isPublic(self):
         if self.hasExpired():
             return False

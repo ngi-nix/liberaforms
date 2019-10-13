@@ -77,8 +77,15 @@ def migrateMongoSchema(schemaVersion):
         for site in mongo.db.sites.find():
             site["siteName"]="GNGforms"
             mongo.db.sites.save(site)
-        
         schemaVersion=5
+
+    if schemaVersion < 6:
+        # Add field conditions
+        for form in mongo.db.forms.find():
+            form["expiryConditions"]["fields"]={}
+            conditions=form["expiryConditions"]
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"expiryConditions": conditions}})
+        schemaVersion=6
 
     # this can't be a good migration setup :(
     return schemaVersion

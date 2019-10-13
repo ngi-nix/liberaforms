@@ -174,6 +174,7 @@ def inspect_form(_id):
         return redirect(url_for('my_forms'))
     
     #pprint.pprint(queriedForm.data)
+    
     if not g.current_user.canViewForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(url_for('my_forms'))
@@ -284,19 +285,45 @@ def expiration(_id):
                     flash(gettext("Date-time is not valid"), 'warning')
                 else:
                     queriedForm.data['expiryConditions']['expireDate']=expireDate
-                    flash(gettext("Expiration date set ok"), 'success')
                     queriedForm.save()                
             elif not request.form['date'] and not request.form['time']:
                 if queriedForm.data['expiryConditions']['expireDate']:
                     queriedForm.data['expiryConditions']['expireDate']=None
-                    flash(gettext("Expiration date cancelled ok"), 'success')
                     queriedForm.save()
-                else:
-                    flash(gettext("No expiry date set"), 'warning')
             else:
                 flash(gettext("Missing date or time"), 'warning')
                 
     return render_template('expiration.html', form=queriedForm)
+
+
+@app.route('/forms/set-field-condition/<string:_id>', methods=['POST'])
+@enabled_user_required
+def set_field_condition(_id):
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
+        return JsonResponse(json.dumps({'condition': False}))
+
+    availableFields=queriedForm.getAvailableNumberTypeFields()
+    if not request.form['field_name'] in availableFields:
+        return JsonResponse(json.dumps({'condition': False}))
+    
+    if not request.form['condition']:
+        if request.form['field_name'] in queriedForm.fieldConditions:
+            del queriedForm.fieldConditions[request.form['field_name']]
+            queriedForm.save()
+        return JsonResponse(json.dumps({'condition': False}))
+    
+    fieldType=availableFields[request.form['field_name']]['type']
+    if fieldType == "number":
+        try:
+            int(request.form['condition'])
+        except:
+            return JsonResponse(json.dumps({'condition': False}))
+    
+    queriedForm.fieldConditions[request.form['field_name']]={   "type": fieldType,
+                                                                "condition": request.form['condition']}
+    queriedForm.save()
+    return JsonResponse(json.dumps({'condition': request.form['condition']}))
 
 
 @app.route('/forms/edit', methods=['GET', 'POST'])
@@ -375,12 +402,18 @@ def preview_form():
 
     if not ('slug' in session and 'formStructure' in session):
         return redirect(url_for('my_forms'))
+     
+    # formBuilder includes tags in labels. Let's remove them
+    structure=json.loads(session['formStructure'])
+    for element in structure:
+        if "type" in element and element["type"] != "paragraph":
+            element['label']=stripHTMLTags(element['label'])
+    session['formStructure']=json.dumps(structure)
     
     session['slug']=sanitizeSlug(session['slug'])
     formURL = "%s%s" % ( Site().host_url, session['slug'])
     return render_template('preview-form.html', formURL=formURL,
                                                 afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']))
-
 
 
 @app.route('/forms/save', methods=['POST'])
@@ -419,6 +452,10 @@ def save_form(_id=None):
         flash(gettext("Updated form OK"), 'success')
         return redirect(url_for('inspect_form', _id=queriedForm._id))
     else:
+        if not session['slug']:
+            # just in case!
+            flash(gettext("Slug is missing."), 'error')
+            return redirect(url_for('edit_form'))
         if Form(slug=session['slug'], hostname=Site().hostname):
             flash(gettext("Slug is not unique. %s" % session['slug']), 'error')
             return redirect(url_for('edit_form'))
@@ -428,7 +465,7 @@ def save_form(_id=None):
                     "editors": {str(g.current_user._id): Form().newEditorPreferences()},
                     "postalCode": "08014",
                     "enabled": False,
-                    "expiryConditions": {"expireDate": None},
+                    "expiryConditions": {"expireDate": None, "fields": {}},
                     "hostname": Site().hostname,
                     "slug": session['slug'],
                     "structure": session['formStructure'],

@@ -6,13 +6,13 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 
 <div class="container">
-    <div class="row col-md-11" style="font-size:1.5em">
+    <div class="row col-md-9" style="font-size:1.5em">
     <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
-    <input class="btn-success btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
     {{ form.slug }}
     </div>
     
-    <div class="row col-md-1" style="text-align:right">
+    <div class="row col-md-3" style="text-align:right">
+    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
     <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete{%endtrans%} {{ form.totalEntries }} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
     </div>
 </div>

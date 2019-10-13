@@ -15,6 +15,14 @@ hr { margin-top: 5px }
 input[type="date"] {
     width: auto !important;
 }
+.fb-required {
+  visibility: hidden;
+}
+.fb-required:after {
+  content: '●';
+  visibility: visible;
+}
+
 
 /* Flash messages */
 .success {
