@@ -244,7 +244,7 @@ def add_editor(_id):
     if not isValidEmail(request.form['email']):
         return redirect(url_for('share_form', _id=queriedForm._id))
 
-    newEditor=User(hostname=Site().hostname, email=request.form['email'])
+    newEditor=User(hostname=Site().hostname, email=request.form['email'], validatedEmail=True)
     if not newEditor:
         flash(gettext("Can't find a user with that email"), 'warning')
         return redirect(url_for('share_form', _id=queriedForm._id))
@@ -316,13 +316,13 @@ def set_field_condition(_id):
     fieldType=availableFields[request.form['field_name']]['type']
     if fieldType == "number":
         try:
-            int(request.form['condition'])
+            queriedForm.fieldConditions[request.form['field_name']]={
+                                                        "type": fieldType,
+                                                        "condition": int(request.form['condition'])}
+            queriedForm.save()
         except:
             return JsonResponse(json.dumps({'condition': False}))
     
-    queriedForm.fieldConditions[request.form['field_name']]={   "type": fieldType,
-                                                                "condition": request.form['condition']}
-    queriedForm.save()
     return JsonResponse(json.dumps({'condition': request.form['condition']}))
 
 
@@ -429,15 +429,17 @@ def save_form(_id=None):
     afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
                         'html':markdown2HTML(session['afterSubmitTextMD'])} 
     
-    queriedForm=None
-    if _id:
-        queriedForm=Form(_id=_id, editor=str(g.current_user._id))
-    
+    queriedForm = Form(_id=_id, editor=str(g.current_user._id)) if _id else None    
     if queriedForm:
-        if not queriedForm.isEditor(g.current_user):
-            flash(gettext("You can't edit that form"), 'warning')
-            return redirect(url_for('my_forms'))
-
+        # update form.fieldConditions
+        savedConditionalFields = [field for field in queriedForm.fieldConditions]
+        availableConditionalFields=[element["name"] 
+                                    for element in json.loads(session['formStructure'])
+                                    if "name" in element]
+        for field in savedConditionalFields:
+            if not field in availableConditionalFields:
+                del queriedForm.fieldConditions[field]
+        
         if queriedForm.totalEntries > 0:
             for field in queriedForm.fieldIndex:
                 if not getFieldByNameInIndex(session['formFieldIndex'], field['name']):
@@ -447,6 +449,7 @@ def save_form(_id=None):
         
         queriedForm.update({    "structure": session['formStructure'], 
                                 "fieldIndex": session['formFieldIndex'],
+                                "expiryConditions.fields": queriedForm.fieldConditions,
                                 "afterSubmitText": afterSubmitText })
         
         flash(gettext("Updated form OK"), 'success')

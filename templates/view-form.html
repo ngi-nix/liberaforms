@@ -16,15 +16,37 @@
 
 
 <script>
-    jQuery(function($) {
-        var fbRender = document.getElementById('fb-render');
-        var formData = {{ form.structure | tojson }};
-        var formRenderOpts = {
-            formData,
-            dataType: 'json'
-        };
-        $(fbRender).formRender(formRenderOpts);
-    });
+jQuery(function($) {
+    var fbRender = document.getElementById('fb-render');
+    var formData = {{ form.structure | tojson }};
+    var formRenderOpts = {
+        formData,
+        dataType: 'json',
+        notify: {
+            success: function(message) {
+                setLimits();
+                return;
+            }
+        }
+    };
+    $(fbRender).formRender(formRenderOpts);
+});
+function setLimits(){
+    {% if form.willExpire() %}
+    {% for field, values in form.fieldConditions.items() %}
+        {% if values["type"] == "number" %}
+            {% set available = values["condition"] - form.tallyNumberField(field) %}
+            if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
+                    var hint=$("<div style='margin-top:-5px' class='hint'></div>")
+                    hint.text("{{ gettext('Maximum is now: %(max)s', max=available) }}");
+                    hint.insertBefore("#{{field}}");
+            }
+            $("#{{field}}").prop("max", {{available}});
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+    return
+}
 </script>
-  
+
 {% endblock %}

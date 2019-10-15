@@ -55,21 +55,19 @@
             {% endif %}
             <tr>
                <td>{%trans%}Is public{%endtrans%}</td>
-               {% if form.editors[g.current_user._id|string] is defined %}
                <td>
+               {% if form.editors[g.current_user._id|string] is defined %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
                     <button id="enabled_true" class="btn btn-xs btn-default {% if form.isPublic() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
-               </td>
                {% else %}
-               <td>
                     {{ form.isPublic() }}
                     {% if not form.user.enabled %}
                         <span style="color:red">({%trans%}user disabled{%endtrans%})</span>                
-                    {% endif %}
-               </td>               
+                    {% endif %}               
                {% endif %}
+               </td>
             </tr>
             <tr>
                <td>{%trans%}Will expire{%endtrans%}</td>
@@ -171,6 +169,8 @@ jQuery(function($) {
     };
     $(fbRender).formRender(formRenderOpts);
 });
+
+{% if form.editors[g.current_user._id|string] is defined %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-enabled/{{ form._id }}",
@@ -211,6 +211,8 @@ document.getElementById('toggle_notification').addEventListener('click', functio
         }
     });
 });
+{% endif %}
+
 </script>
   
 {% endblock %}

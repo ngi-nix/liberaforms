@@ -311,6 +311,7 @@ class Form(object):
             kwargs.pop('key')
         if not ('hostname' in kwargs or g.isRootUser):
             kwargs['hostname']=Site().hostname
+        #print(kwargs)
         form = mongo.db.forms.find_one(kwargs)
             
         if form:

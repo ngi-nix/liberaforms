@@ -8,23 +8,22 @@ body {
   margin-bottom: 25px;
 }
 
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 25px;
+}
+
 hr { margin-top: 5px }
 
-
-/* formBuilder fixes */
-input[type="date"] {
-    width: auto !important;
-}
-.fb-required {
-  visibility: hidden;
-}
-.fb-required:after {
-  content: '●';
-  visibility: visible;
+.hint {
+    color: grey;
+    font-style: italic;
 }
 
-
-/* Flash messages */
+/* ######### Flash messages ######### */
 .success {
     color: white;
     font-size: 1.2em;
@@ -54,10 +53,21 @@ input[type="date"] {
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 25px;
+/* ######### formBuilder fixes ######### */
+input[type="date"], input[type="number"] {
+    width: auto !important;
+}
+.required-asterisk {
+  visibility: hidden;
+}
+.required-asterisk:after {
+  content: '●';
+  visibility: visible;
+}
+.fb-required {
+  visibility: hidden;
+}
+.fb-required:after {
+  content: '●';
+  visibility: visible;
 }
