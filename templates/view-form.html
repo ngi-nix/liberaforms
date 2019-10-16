@@ -32,20 +32,21 @@ jQuery(function($) {
     $(fbRender).formRender(formRenderOpts);
 });
 function setLimits(){
-    {% if form.willExpire() %}
     {% for field, values in form.fieldConditions.items() %}
         {% if values["type"] == "number" %}
             {% set available = values["condition"] - form.tallyNumberField(field) %}
             if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
                     var hint=$("<div style='margin-top:-5px' class='hint'></div>")
-                    hint.text("{{ gettext('Maximum is now: %(max)s', max=available) }}");
+                    hint.text("{{ gettext('Note: Maximum is now %(max)s', max=available) }}");
                     hint.insertBefore("#{{field}}");
+                    $("#{{field}}").prop("max", {{available}});
             }
-            $("#{{field}}").prop("max", {{available}});
+            if (! $("#{{field}}").prop("max")){
+                $("#{{field}}").prop("max", {{available}});
+            }
         {% endif %}
     {% endfor %}
-    {% endif %}
-    return
+    return;
 }
 </script>
 

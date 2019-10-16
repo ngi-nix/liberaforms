@@ -5,7 +5,6 @@
 <script src="/static/simplemde/simplemde.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
-
 <div class="container">
     <div class="row col-md-12">
         <div style="font-size:1.3em">
@@ -29,7 +28,7 @@
         </div>
         <hr />
         {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
-        <a href="">{%trans%}Learn more{%endtrans%}</a>
+        <a href="https://www.markdownguide.org/basic-syntax" target="_blank">{%trans%}Learn more{%endtrans%}</a>
         
         <textarea id="sm-editor" name="afterSubmitTextMD">{{ session['afterSubmitTextMD'] }}</textarea>
         <p></p>
@@ -81,12 +80,18 @@ jQuery(function($) {
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
             locale: "{{ config['LANGUAGES'][g.current_user.data['language']][1] }}",
-            location: "{{request.host_url}}static/formBuilder-languages/"
+            location: "{{host_url}}static/formBuilder-languages/"
         },
         formData: {{ session['formStructure'] | tojson }}
     };
     const formBuilder = $(fbEditor).formBuilder(options);
-
+    
+    /*
+    formBuilder.promise.then(function(fb) {
+        formBuilderFixes(fb.formData);
+    });
+    */
+    
     document.getElementById('result').addEventListener('submit', function(evt){
         evt.preventDefault();
         if ( {{ session['form_id'] | tojson }} == null ){
@@ -130,6 +135,13 @@ jQuery(function($) {
         $('.slug-alert').hide(); 
     });
 });
+function formBuilderFixes(renderedData){
+    //console.log(renderedData);
+    return
+
+    // Populate Max and Min fields.
+    //var max = $("#fb-editor").find(".field-{{field}}-preview").parent().find("input.fld-max[type=number]");
+}
 </script>
   
 {% endblock %}
