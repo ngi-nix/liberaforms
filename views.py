@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json, re, os, datetime
 from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
+from flask_wtf.csrf import CSRFError
 from GNGforms import app, mongo, babel
 from threading import Thread
 from flask_babel import gettext, refresh
@@ -61,11 +62,14 @@ def page_not_found(error):
 def server_error(error):
     return render_template('server-error.html'), 500
 
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    flash(e.description, 'error')
+    return redirect(url_for('index'))
 
 @app.route('/', methods=['GET'])
 def index():    
     return render_template('index.html',site=Site())
-
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required

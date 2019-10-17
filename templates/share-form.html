@@ -60,6 +60,7 @@
         {% endfor %}
         <tr>
         <form action="/forms/add-editor/{{form._id}}" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <td>
             <input name="email" type="text" placeholder="New editor's email" class="form-control" required >
         </td>
@@ -76,11 +77,17 @@
 
 
 <script>
+var csrftoken = "{{ csrf_token() }}";
 function removeEditor(editor_id){
     $.ajax({
         url : "/forms/remove-editor/{{form._id}}/"+editor_id,
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data == editor_id) {
@@ -94,6 +101,11 @@ document.getElementById('toggle_sharedEntries').addEventListener('click', functi
         url : "/form/toggle-shared-entries/{{ form._id }}",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {

@@ -160,6 +160,7 @@
 
 
 <script>
+var csrftoken = "{{ csrf_token() }}";
 jQuery(function($) {
     var fbRender = document.getElementById('fb-render');
     var formData = {{ form.structure | tojson }};
@@ -176,6 +177,11 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         url : "/form/toggle-enabled/{{ form._id }}",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {
@@ -198,6 +204,11 @@ document.getElementById('toggle_notification').addEventListener('click', functio
         url : "/form/toggle-notification/{{ form._id }}",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.notification == true) {

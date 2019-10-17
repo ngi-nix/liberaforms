@@ -23,6 +23,7 @@
     <p></p>
     
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <input type="text" name="totalEntries" class="form-control" required ><br />
         <p></p>
         <input class="btn-danger btn" type="submit" value="{%trans%}Delete entries{%endtrans%}">

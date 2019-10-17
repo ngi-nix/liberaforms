@@ -20,15 +20,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import Flask
 from flask_pymongo import PyMongo
 from flask_babel import Babel
-
+from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
-
 babel = Babel(app)
 
-app.config['APP_VERSION'] = 10
+csrf = CSRFProtect()
+csrf.init_app(app)
+
+app.config['APP_VERSION'] = 11
 app.config['SCHEMA_VERSION'] = 6
 
 app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']

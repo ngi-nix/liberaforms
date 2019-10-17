@@ -114,6 +114,7 @@
 
 
 <script>
+var csrftoken = "{{ csrf_token() }}";
 $(document).ready(function() {
     $('#forms').DataTable({
         "language": {
@@ -126,6 +127,11 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
         url : "/admin/users/toggle-blocked/{{ user._id }}",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.blocked == true) {
@@ -144,6 +150,11 @@ document.getElementById('toggle_admin').addEventListener('click', function(evt){
         url : "/admin/users/toggle-admin/{{ user._id }}",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.admin == true) {

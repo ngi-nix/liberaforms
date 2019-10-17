@@ -26,6 +26,7 @@
     
     <p></p>
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <label>{%trans%}Your super secret key{%endtrans%}</label>
         <br />
         <input type="password" name="secret_key" class="form-control" required ><br />

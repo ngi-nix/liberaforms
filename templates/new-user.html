@@ -13,6 +13,7 @@
     <hr />
     
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <label>{%trans%}Username{%endtrans%}</label><br />
             <input type="text" name="username" class="form-control" placeholder="{%trans%}Letters and numbers. No accents.{%endtrans%}" required >
             <br />

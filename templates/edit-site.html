@@ -67,7 +67,8 @@
     </table>
 
     <hr />
-    <form method="GET" action="/admin/sites/delete/{{ site.hostname }}">
+    <form method="POST" action="/admin/sites/delete/{{ site.hostname }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/sites/delete/{{site.site.hostname}}'">
     <input class="btn-primary btn" type="button" value="{%trans%}Go back{%endtrans%}" onClick="location.href='/user/{{ g.current_user.username }}#root_user_settings'">
     </form>
@@ -77,11 +78,17 @@
 </div>
 
 <script>
+var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_scheme').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/sites/toggle-scheme/{{site.hostname}}",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             $('#site_scheme').html(data.scheme)
@@ -101,6 +108,11 @@ document.getElementById('port_button').addEventListener('click', function(evt){
         url : "/admin/sites/change-port/{{site.hostname}}/"+$('#port').val(),
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.port == null){

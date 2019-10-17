@@ -14,6 +14,7 @@
 
     <p></p>
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         {% for key in config['LANGUAGES'] %}
         <div style="font-size:1.1em" class="radio radio-info">
           <input style="margin-left:0;" type="radio" name="language" value="{{ key }}" {% if key == g.current_user.language %}checked{% endif %} >

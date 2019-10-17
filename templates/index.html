@@ -36,6 +36,7 @@
 <div class="row col-md-1"></div>
 <div class="row col-md-3">
     <form action="/site/login" method="POST" style="margin-top:1.5em">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <p>
         <label>{%trans%}Username{%endtrans%}</label><br />
         <input name="username" class="form-control" value="" />

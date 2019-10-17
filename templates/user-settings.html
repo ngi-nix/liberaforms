@@ -249,11 +249,17 @@
 </div>
 
 <script>
+var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/toggle-newuser-notification",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.notify == true) {
@@ -272,6 +278,11 @@ document.getElementById('toggle_notify_newform').addEventListener('click', funct
         url : "/admin/toggle-newform-notification",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.notify == true) {
@@ -290,6 +301,11 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         url : "/admin/toggle-invitation-only",
         type: "POST",
         dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
         success: function(data, textStatus, jqXHR)
         {
             if (data.invite == true) {
