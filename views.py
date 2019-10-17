@@ -20,7 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import json, re, os, datetime
 from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
 from GNGforms import app, mongo, babel
-from urllib.parse import urlparse
 from threading import Thread
 from flask_babel import gettext, refresh
 from .persitence import *
@@ -41,7 +40,7 @@ def before_request():
         return
     g.siteName=Site().siteName
     if 'username' in session:
-        g.current_user=User(username=session['username'])
+        g.current_user=User(hostname=Site().hostname, username=session['username'])
         if g.current_user and g.current_user.isRootUser():
             g.isRootUser=True
         if g.current_user and g.current_user.isAdmin():
@@ -752,7 +751,7 @@ def new_user(token=None):
 @anon_required
 def login():
     if 'username' in request.form and 'password' in request.form:
-        user=User(username=request.form['username'], blocked=False)
+        user=User(hostname=Site().hostname, username=request.form['username'], blocked=False)
         if user and verifyPassword(request.form['password'], user.data['password']):
             session['username']=user.username
             if not user.data['validatedEmail']:
