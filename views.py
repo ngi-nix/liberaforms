@@ -99,12 +99,14 @@ def view_form(slug):
         entry["created"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         for key in formData:
+            if key=='csrf_token':
+                continue
             value = formData[key]
             if isinstance(value, list): # A checkboxes-group contains multiple values 
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             entry[key]=value
-            
+        
         #print("save entry: %s" % formData)
         queriedForm.saveEntry(entry)
         emails=[]
@@ -257,6 +259,7 @@ def add_editor(_id):
     
     queriedForm.addEditor(str(newEditor._id))
     flash(gettext("New editor added ok"), 'success')
+    queriedForm.addLog(gettext("Added editor %s" % newEditor.email))
     return redirect(url_for('share_form', _id=queriedForm._id))
 
 
@@ -269,8 +272,13 @@ def remove_editor(form_id, editor_id):
     if editor_id == queriedForm.author:
         return json.dumps(False)
     
-    removedEditor=queriedForm.removeEditor(editor_id)
-    return json.dumps(removedEditor)
+    removedEditor_id=queriedForm.removeEditor(editor_id)
+    try:
+        editor=User(_id=removedEditor_id).email
+    except:
+        editor=removedEditor_id
+    queriedForm.addLog(gettext("Removed editor %s" % editor))
+    return json.dumps(removedEditor_id)
 
 
 @app.route('/forms/expiration/<string:_id>', methods=['GET', 'POST'])
@@ -288,11 +296,13 @@ def expiration(_id):
                     flash(gettext("Date-time is not valid"), 'warning')
                 else:
                     queriedForm.data['expiryConditions']['expireDate']=expireDate
-                    queriedForm.save()                
+                    queriedForm.save()
+                    queriedForm.addLog(gettext("Expiry date set to: %s" % expireDate))
             elif not request.form['date'] and not request.form['time']:
                 if queriedForm.data['expiryConditions']['expireDate']:
                     queriedForm.data['expiryConditions']['expireDate']=None
                     queriedForm.save()
+                    queriedForm.addLog(gettext("Expiry date cancelled"))
             else:
                 flash(gettext("Missing date or time"), 'warning')
                 
@@ -456,6 +466,7 @@ def save_form(_id=None):
                                 "afterSubmitText": afterSubmitText })
         
         flash(gettext("Updated form OK"), 'success')
+        queriedForm.addLog(gettext("Form edited"))
         return redirect(url_for('inspect_form', _id=queriedForm._id))
     else:
         if not session['slug']:
@@ -481,10 +492,12 @@ def save_form(_id=None):
                                         "key": getRandomString(32),
                                         "password": None,
                                         "expireDate": None},
-                    "afterSubmitText": afterSubmitText
+                    "afterSubmitText": afterSubmitText,
+                    "log": []
                 }
         newForm=Form().insert(newFormData)
         clearSessionFormData()
+        newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify Admins
         smtpSendNewFormNotification(User().getNotifyNewFormEmails(), newForm)
@@ -514,6 +527,14 @@ def delete_form(_id):
     return render_template('delete-form.html', form=queriedForm)
 
 
+@app.route('/forms/log/list/<string:_id>', methods=['GET'])
+@enabled_user_required
+def list_log(_id):
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
+        flash(gettext("Form not found"), 'warning')
+        return redirect(url_for('my_forms'))
+    return render_template('list-log.html', form=queriedForm)
 
 
 """ Author form settings """
@@ -524,8 +545,9 @@ def toggle_form_enabled(_id):
     form=Form(_id=_id, editor=str(g.current_user._id))
     if not form:
         return JsonResponse(json.dumps())
-        
-    return JsonResponse(json.dumps({'enabled':form.toggleEnabled()}))
+    enabled=form.toggleEnabled()
+    form.addLog(gettext("Public set to: %s" % enabled))
+    return JsonResponse(json.dumps({'enabled': enabled}))
 
 @app.route('/form/toggle-shared-entries/<string:_id>', methods=['POST'])
 @enabled_user_required
@@ -533,8 +555,9 @@ def toggle_shared_entries(_id):
     form=Form(_id=_id, editor=str(g.current_user._id))
     if not form:
         return JsonResponse(json.dumps())
-        
-    return JsonResponse(json.dumps({'enabled':form.toggleSharedEntries()}))
+    shared=form.toggleSharedEntries()
+    form.addLog(gettext("Shared entries set to: %s" % shared))
+    return JsonResponse(json.dumps({'enabled':shared}))
 
 @app.route('/form/toggle-notification/<string:_id>', methods=['POST'])
 @enabled_user_required
@@ -931,7 +954,7 @@ def schema_update():
         if 'secret_key' in request.form and request.form['secret_key'] == app.config['SECRET_KEY']:
             installation.updateSchema()
             flash(gettext("Updated schema OK!"), 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('user_settings', username=g.current_user.username))
         else:
             flash("Wrong secret", 'warning')
     

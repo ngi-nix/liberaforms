@@ -39,6 +39,9 @@ def isNewUserRequestValid(form):
     if form['username'] != sanitizeUsername(form['username']):
         flash(gettext("Username is not valid"), 'warning')
         return False
+    if form['username'] in app.config['RESERVED_USERNAMES']:
+        flash(gettext("Username is not available"), 'warning')
+        return False
     user = User(username=form['username'])
     if user:
         flash(gettext("Username is not available"), 'warning')
@@ -543,7 +546,16 @@ class Form(object):
             return self.editors[editor_id]['notification']['newEntry']
         return False
         
-        
+    def addLog(self, message, anonymous=False):
+        if anonymous:
+            actor="system"
+        else:
+            actor=g.current_user.username if g.current_user else "system"
+        logTime=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.form['log'].insert(0, (logTime, actor, message))
+        self.save()
+
+
 class Site(object):
     site = None
 

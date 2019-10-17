@@ -31,10 +31,11 @@ csrf = CSRFProtect()
 csrf.init_app(app)
 
 app.config['APP_VERSION'] = 11
-app.config['SCHEMA_VERSION'] = 6
+app.config['SCHEMA_VERSION'] = 7
 
 app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
+app.config['RESERVED_USERNAMES'] = ['system']
 
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'
 app.config['LANGUAGES'] = {

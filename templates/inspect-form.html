@@ -6,7 +6,7 @@
 <div class="container">
     <div class="row col-md-6">
         <div style="font-size:1.5em;">
-            {%trans%}The form{%endtrans%}
+            {%trans%}Form{%endtrans%}: {{ form.slug }}
         </div> 
         <hr />
           
@@ -26,15 +26,12 @@
     <div class="row col-md-1"></div> 
     <div class="row col-md-5">
         <div style="font-size:1.5em">
-            {%trans%}Form details{%endtrans%}
+            {%trans%}Details{%endtrans%}
+            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View log{%endtrans%}" onClick="location.href='/forms/log/list/{{form._id}}'" >
         </div>
         <hr />
         
         <table class="table table-striped table-condensed">
-            <tr>
-               <td>{%trans%}Name{%endtrans%}</td>
-               <td>{{ form.slug }}</td>
-            </tr>
             <tr>
                <td>{%trans%}Author{%endtrans%}</td>
                {% if g.isAdmin %}
@@ -117,6 +114,19 @@
                </td>
             </tr>
             <tr>
+               <td>{%trans%}Notify me{%endtrans%}</td>
+               {% if form.editors[g.current_user._id|string] is defined %}
+               <td>
+                   <div id="toggle_notification" class="btn-group btn-toggle">
+                    <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                   </div>
+               </td>
+               {% else %}
+                    <td>N/A</td>
+               {% endif %}
+            </tr>
+            <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
                    {% if form.editors[g.current_user._id|string] is defined %}
@@ -129,19 +139,6 @@
                         {{ form.isShared() }}
                    {% endif %}
                </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Notify me{%endtrans%}</td>
-               {% if form.editors[g.current_user._id|string] is defined %}
-               <td>
-                   <div id="toggle_notification" class="btn-group btn-toggle">
-                    <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-                   </div>
-               </td>
-               {% else %}
-                    <td>N/A</td>
-               {% endif %}
             </tr>
         </table>
         {% if form.editors[g.current_user._id|string] is defined %}

@@ -87,5 +87,11 @@ def migrateMongoSchema(schemaVersion):
             mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"expiryConditions": conditions}})
         schemaVersion=6
 
+    if schemaVersion < 7:
+        # Add log array
+        for form in mongo.db.forms.find():
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"log": []}})
+        schemaVersion=7
+
     # this can't be a good migration setup :(
     return schemaVersion
