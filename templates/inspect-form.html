@@ -27,7 +27,9 @@
     <div class="row col-md-5">
         <div style="font-size:1.5em">
             {%trans%}Details{%endtrans%}
+            {% if form.editors[g.current_user._id|string] is defined %}
             <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View log{%endtrans%}" onClick="location.href='/forms/log/list/{{form._id}}'" >
+            {% endif %}
         </div>
         <hr />
         

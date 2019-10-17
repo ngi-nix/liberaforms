@@ -32,6 +32,12 @@ from form_templates import formTemplates
 import pprint
 
 
+def make_url_for(function, **kwargs):
+    kwargs["_external"]=True
+    kwargs["_scheme"]=Site().data["scheme"]
+    return url_for(function, **kwargs)
+
+
 @app.before_request
 def before_request():        
     g.current_user=None
@@ -460,13 +466,23 @@ def save_form(_id=None):
                         So we append it to the index. """
                     session['formFieldIndex'].append(field)
         
+        #pprint.pprint(session['formStructure'])
+        """
         queriedForm.update({    "structure": session['formStructure'], 
                                 "fieldIndex": session['formFieldIndex'],
                                 "expiryConditions.fields": queriedForm.fieldConditions,
                                 "afterSubmitText": afterSubmitText })
+        """
+        
+        queriedForm.data["structure"]=session["formStructure"]
+        queriedForm.data["fieldIndex"]=session["formFieldIndex"]
+        queriedForm.data["expiryConditions"]["fields"]=queriedForm.fieldConditions
+        queriedForm.data["afterSubmitText"]=afterSubmitText
+        queriedForm.save()
+        
         
         flash(gettext("Updated form OK"), 'success')
-        queriedForm.addLog(gettext("Form edited"))
+        #queriedForm.addLog(gettext("Form edited"))
         return redirect(url_for('inspect_form', _id=queriedForm._id))
     else:
         if not session['slug']:

@@ -452,6 +452,7 @@ class Form(object):
         return Form(_id=newForm.inserted_id)
 
     def update(self, data):
+        pprint.pprint(data)
         mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
     
     def saveEntry(self, entry):
