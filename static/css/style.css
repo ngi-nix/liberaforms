@@ -53,6 +53,12 @@ hr { margin-top: 5px }
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
+.required {
+    font-size: 1.15em;
+    color: #c10000;
+    padding: 1em 0 1em 0;
+}
+
 /* ######### formBuilder fixes ######### */
 input[type="date"], input[type="number"] {
     width: auto !important;

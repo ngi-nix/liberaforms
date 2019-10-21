@@ -473,7 +473,7 @@ def save_form(_id=None):
         
         flash(gettext("Updated form OK"), 'success')
         queriedForm.addLog(gettext("Form edited"))
-        return redirect(make_make_url_for('inspect_form', _id=queriedForm._id))
+        return redirect(make_url_for('inspect_form', _id=queriedForm._id))
     else:
         if not session['slug']:
             # just in case!

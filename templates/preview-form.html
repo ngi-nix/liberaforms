@@ -45,15 +45,23 @@
 
 
 <script>
-    jQuery(function($) {
-        var fbRender = document.getElementById('fb-render');
-        var formData = {{ session['formStructure'] | tojson }};
-        var formRenderOpts = {
-            formData,
-            dataType: 'json'
-        };
-        $(fbRender).formRender(formRenderOpts);
-    });
+jQuery(function($) {
+    var fbRender = document.getElementById('fb-render');
+    var formData = {{ session['formStructure'] | tojson }};
+    var formRenderOpts = {
+        formData,
+        dataType: 'json'
+    };
+    $(fbRender).formRender(formRenderOpts);
+});
+$(document).ready(function () {
+    if ($('#fb-render').find("span.fb-required").length) {
+        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
+        if (firstGroup.length) {
+            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore(firstGroup);
+        }
+    }
+});
 </script>
   
 {% endblock %}
