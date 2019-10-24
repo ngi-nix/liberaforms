@@ -50,18 +50,24 @@ jQuery(function($) {
     var formData = {{ session['formStructure'] | tojson }};
     var formRenderOpts = {
         formData,
-        dataType: 'json'
+        dataType: 'json',
+        notify: {
+            success: function(message) {
+                addRequiredMsg();
+                return;
+            }
+        }
     };
     $(fbRender).formRender(formRenderOpts);
 });
-$(document).ready(function () {
+function addRequiredMsg(){
     if ($('#fb-render').find("span.fb-required").length) {
         var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
         if (firstGroup.length) {
             $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore(firstGroup);
         }
-    }
-});
+    }    
+}
 </script>
   
 {% endblock %}

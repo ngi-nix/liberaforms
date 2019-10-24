@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from GNGforms import mongo
+from GNGforms import persistence
 import pprint
 
 def migrateMongoSchema(schemaVersion):
@@ -92,6 +93,17 @@ def migrateMongoSchema(schemaVersion):
         for form in mongo.db.forms.find():
             mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"log": []}})
         schemaVersion=7
+
+    if schemaVersion < 8:
+        # Add expired bool
+        forms=[persistence.Form(_id=form['_id']) for form in mongo.db.forms.find()]
+        for form in forms:
+            for editor in form.data['editors']:
+                form.data['editors'][editor]["notification"]["expiredForm"]=True
+            form.update({   "expired": form.hasExpired(),
+                            "editors": form.data['editors']
+                        })
+        schemaVersion=8
 
     # this can't be a good migration setup :(
     return schemaVersion

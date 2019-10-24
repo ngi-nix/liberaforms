@@ -20,9 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import g, flash, request
 from flask_babel import gettext
 from GNGforms import app
+from GNGforms.persistence import Site
 import smtplib, socket
-from .persitence import Site
-
 
 def createSmtpObj():
     try:
@@ -85,6 +84,13 @@ def smtpSendNewFormEntryNotification(emails, entry, slug):
     for email in emails:
         sendMail(email, message)
 
+def smtpSendExpiredFormNotification(editorEmails, form):
+    message=gettext("The form '%s' has expired at %s" % (form.slug, Site().hostname))
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. A form has expired"), message)
+    
+    for email in editorEmails:
+        sendMail(email, message)
+    
 def smtpSendNewFormNotification(adminEmails, form):
     message=gettext("New form '%s' created at %s" % (form.slug, Site().hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form notification"), message)

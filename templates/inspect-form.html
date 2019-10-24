@@ -72,7 +72,7 @@
                <td>{%trans%}Will expire{%endtrans%}</td>
                <td>
                    {% if form.editors[g.current_user._id|string] is defined %}
-                        {% if form.hasExpired() %}
+                        {% if form.expired %}
                             <input class="btn-warning btn btn-xs" type="button" value="{%trans%}Expired{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
                         {% elif form.willExpire() %}
                             <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
@@ -80,7 +80,7 @@
                             <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
                         {% endif %}
                    {% else %}
-                        {% if form.hasExpired() %}
+                        {% if form.expired %}
                             {%trans%}Expired{%endtrans%}
                         {% elif form.willExpire() %}
                             {%trans%}True{%endtrans%}
@@ -114,19 +114,6 @@
                         {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
                    {% endif %}
                </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Notify me{%endtrans%}</td>
-               {% if form.editors[g.current_user._id|string] is defined %}
-               <td>
-                   <div id="toggle_notification" class="btn-group btn-toggle">
-                    <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-                   </div>
-               </td>
-               {% else %}
-                    <td>N/A</td>
-               {% endif %}
             </tr>
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
@@ -165,7 +152,13 @@ jQuery(function($) {
     var formData = {{ form.structure | tojson }};
     var formRenderOpts = {
         formData,
-        dataType: 'json'
+        dataType: 'json',
+        notify: {
+            success: function(message) {
+                addRequiredMsg();
+                return;
+            }
+        }
     };
     $(fbRender).formRender(formRenderOpts);
 });
@@ -198,31 +191,15 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         }
     });
 });
-document.getElementById('toggle_notification').addEventListener('click', function(evt){
-    $.ajax({
-        url : "/form/toggle-notification/{{ form._id }}",
-        type: "POST",
-        dataType: "json",
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.notification == true) {
-                $('#notification_true').addClass('btn-success');
-                $('#notification_false').removeClass('btn-primary');
-            }
-            else if (data.notification == false) {
-                $('#notification_true').removeClass('btn-success');
-                $('#notification_false').addClass('btn-primary');
-            }
-        }
-    });
-});
 {% endif %}
-
+function addRequiredMsg(){
+    if ($('#fb-render').find("span.fb-required").length) {
+        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
+        if (firstGroup.length) {
+            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore(firstGroup);
+        }
+    }    
+}
 </script>
   
 {% endblock %}

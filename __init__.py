@@ -22,6 +22,7 @@ from flask_pymongo import PyMongo
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
+
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
 mongo = PyMongo(app)
@@ -30,8 +31,8 @@ babel = Babel(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = 12
-app.config['SCHEMA_VERSION'] = 7
+app.config['APP_VERSION'] = 13
+app.config['SCHEMA_VERSION'] = 8
 
 app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']

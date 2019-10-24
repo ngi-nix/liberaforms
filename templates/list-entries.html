@@ -20,6 +20,14 @@
 <div class="container">
     <hr style="margin-bottom:5px" />
     
+    {% if form.editors[g.current_user._id|string] is defined %}
+        <div id="toggle_notification" class="btn-group btn-toggle">
+            <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+            <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+        </div>
+        {%trans%}Notify me on each new entry{%endtrans%}
+    {% endif %}
+    
     <p>&nbsp;</p>
 
     <table id="formEntries" class="table table-striped table-condensed">
@@ -53,6 +61,32 @@ $(document).ready(function() {
         }
     });
 });
+{% if form.editors[g.current_user._id|string] is defined %}
+var csrftoken = "{{ csrf_token() }}";
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-notification/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+{% endif %}
 </script>
   
 {% endblock %}

@@ -18,15 +18,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from GNGforms import app, mongo
+from GNGforms.utils import *
+from GNGforms.migrate import migrateMongoSchema
 from bson.objectid import ObjectId
 from flask import flash, request, g
 from flask_babel import gettext 
-import os, string, random, datetime, json
 from urllib.parse import urlparse
-import markdown
-from .utils import *
-from .migrate import migrateMongoSchema
-
+import os, string, random, datetime, json, markdown
 
 import pprint
 pp = pprint.PrettyPrinter()
@@ -380,7 +378,7 @@ class Form(object):
         return self.form['enabled']
 
     def newEditorPreferences(cls):
-        return {'notification': {'newEntry': False}}
+        return {'notification': {'newEntry': False, 'expiredForm': True}}
 
     def addEditor(self, editor_id):
         if not editor_id in self.form['editors']:
@@ -390,7 +388,7 @@ class Form(object):
     def removeEditor(self, editor_id):
         if editor_id == self.author:
             return None
-        if len(self.form['editors']) > 1 and editor_id in self.form['editors']:
+        if editor_id in self.form['editors']:
             del self.form['editors'][editor_id]
             mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
             return editor_id
@@ -454,9 +452,11 @@ class Form(object):
     def update(self, data):
         mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
     
+    """
     def saveEntry(self, entry):
         mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
-
+    """
+    
     def save(self):
         mongo.db.forms.save(self.form)
 
@@ -478,6 +478,14 @@ class Form(object):
         if self.form["expiryConditions"]["fields"]:
             return True
         return False
+        
+    @property
+    def expired(self):
+        return self.form["expired"]
+
+    @expired.setter
+    def expired(self, value):
+        self.form["expired"]=value
 
     def hasExpired(self):
         if not self.willExpire():
@@ -501,7 +509,7 @@ class Form(object):
         return total
                 
     def isPublic(self):
-        if self.hasExpired():
+        if self.expired:
             return False
         if not self.enabled:
             return False
@@ -523,7 +531,7 @@ class Form(object):
         return "%s/%s/%s" % (self.url, part, self.form['sharedEntries']['key'])
 
     def toggleEnabled(self):
-        if self.hasExpired():
+        if self.expired:
             return False
         else:
             self.form['enabled'] = False if self.form['enabled'] else True
@@ -545,7 +553,18 @@ class Form(object):
             mongo.db.forms.save(self.form)
             return self.editors[editor_id]['notification']['newEntry']
         return False
-        
+
+    def toggleExpirationNotification(self):
+        editor_id=str(g.current_user._id)
+        if editor_id in self.editors:
+            if self.editors[editor_id]['notification']['expiredForm']:
+                self.editors[editor_id]['notification']['expiredForm']=False
+            else:
+                self.editors[editor_id]['notification']['expiredForm']=True
+            mongo.db.forms.save(self.form)
+            return self.editors[editor_id]['notification']['expiredForm']
+        return False
+                
     def addLog(self, message, anonymous=False):
         if anonymous:
             actor="system"

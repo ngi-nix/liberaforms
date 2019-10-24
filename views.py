@@ -23,7 +23,7 @@ from flask_wtf.csrf import CSRFError
 from GNGforms import app, mongo, babel
 from threading import Thread
 from flask_babel import gettext, refresh
-from .persitence import *
+from GNGforms.persistence import User, Form, Site, Invite, Installation
 from .session import *
 from .utils import *
 from .email import *
@@ -89,12 +89,12 @@ def view_form(slug):
         return render_template('page-not-found.html'), 400
     if not queriedForm.isPublic():
         if g.current_user:
-            if queriedForm.hasExpired():
+            if queriedForm.expired:
                 flash(gettext("That form has expired"), 'warning')
             else:
                 flash(gettext("That form is not public"), 'warning')
             return redirect(make_url_for('my_forms'))
-        if queriedForm.hasExpired():
+        if queriedForm.expired:
             return render_template('form-has-expired.html'), 400
         else:
             return render_template('page-not-found.html'), 400
@@ -114,7 +114,24 @@ def view_form(slug):
             entry[key]=value
         
         #print("save entry: %s" % formData)
-        queriedForm.saveEntry(entry)
+        #queriedForm.saveEntry(entry)
+        queriedForm.entries.append(entry)
+        
+        if not queriedForm.expired and queriedForm.hasExpired():
+            queriedForm.expired=True
+            emails=[]
+            for editor_id, preferences in queriedForm.editors.items():
+                if preferences["notification"]["expiredForm"]:
+                    user=User(_id=editor_id)
+                    if user and user.enabled:
+                        emails.append(user.email)
+            if emails:
+                def sendExpiredFormNotification():
+                    smtpSendExpiredFormNotification(emails, queriedForm)
+                thread = Thread(target=sendExpiredFormNotification())
+                thread.start()
+        queriedForm.save()
+            
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
             if preferences["notification"]["newEntry"]:
@@ -130,6 +147,7 @@ def view_form(slug):
                 smtpSendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
+        
         return render_template('thankyou.html', form=queriedForm)
         
     return render_template('view-form.html', form=queriedForm)     
@@ -184,7 +202,7 @@ def inspect_form(_id):
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
     
-    #pprint.pprint(queriedForm.data)
+    pprint.pprint(queriedForm.data)
     
     if not g.current_user.canViewForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
@@ -289,7 +307,7 @@ def remove_editor(form_id, editor_id):
 
 @app.route('/forms/expiration/<string:_id>', methods=['GET', 'POST'])
 @enabled_user_required
-def expiration(_id):
+def set_expiration_date(_id):
     queriedForm = Form(_id=_id, editor=str(g.current_user._id))
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
@@ -302,11 +320,13 @@ def expiration(_id):
                     flash(gettext("Date-time is not valid"), 'warning')
                 else:
                     queriedForm.data['expiryConditions']['expireDate']=expireDate
+                    queriedForm.expired=queriedForm.hasExpired()
                     queriedForm.save()
                     queriedForm.addLog(gettext("Expiry date set to: %s" % expireDate))
             elif not request.form['date'] and not request.form['time']:
                 if queriedForm.data['expiryConditions']['expireDate']:
                     queriedForm.data['expiryConditions']['expireDate']=None
+                    queriedForm.expired=queriedForm.hasExpired()
                     queriedForm.save()
                     queriedForm.addLog(gettext("Expiry date cancelled"))
             else:
@@ -329,6 +349,7 @@ def set_field_condition(_id):
     if not request.form['condition']:
         if request.form['field_name'] in queriedForm.fieldConditions:
             del queriedForm.fieldConditions[request.form['field_name']]
+            queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
         return JsonResponse(json.dumps({'condition': False}))
     
@@ -338,6 +359,7 @@ def set_field_condition(_id):
             queriedForm.fieldConditions[request.form['field_name']]={
                                                         "type": fieldType,
                                                         "condition": int(request.form['condition'])}
+            queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
         except:
             return JsonResponse(json.dumps({'condition': False}))
@@ -488,6 +510,7 @@ def save_form(_id=None):
                     "editors": {str(g.current_user._id): Form().newEditorPreferences()},
                     "postalCode": "08014",
                     "enabled": False,
+                    "expired": False,
                     "expiryConditions": {"expireDate": None, "fields": {}},
                     "hostname": Site().hostname,
                     "slug": session['slug'],
@@ -571,10 +594,16 @@ def toggle_form_notification(_id):
     form=Form(_id=_id, editor=str(g.current_user._id))
     if not form:
         return JsonResponse(json.dumps())
-
     return JsonResponse(json.dumps({'notification':form.toggleNotification()}))
 
 
+@app.route('/form/toggle-expiration-notification/<string:_id>', methods=['POST'])
+@enabled_user_required
+def toggle_form_expiration_notification(_id):
+    form=Form(_id=_id, editor=str(g.current_user._id))
+    if not form:
+        return JsonResponse(json.dumps())
+    return JsonResponse(json.dumps({'notification':form.toggleExpirationNotification()}))
 
 
 """ Form entries """

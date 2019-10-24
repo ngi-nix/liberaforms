@@ -7,7 +7,7 @@
     <div class="row col-md-6" style="font-size:1.5em">
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
         {{ form.slug }}
-        <hr />
+        <hr style="margin-bottom:5px" />
     </div>
     <div class="row col-md-3"></div>
 </div>
@@ -16,6 +16,13 @@
 <div class="row col-md-3"></div>
 
 <div class="row col-md-6">
+    <div id="toggle_notification" class="btn-group btn-toggle">
+        <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+        <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+    </div>
+    {%trans%}Notify me when this form expires{%endtrans%}
+    <p>&nbsp;</p>
+
     <div style="font-size:1.5em">
         {%trans%}Expiration conditions{%endtrans%}
     </div>
@@ -107,6 +114,29 @@ function setMaxValue(id){
         }
     });
 }
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-expiration-notification/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
 $(document).on("change", "#date", function () {
     $('#date-button').removeClass('btn-success', 'btn-primary');
     $('#date-button').addClass('btn-warning');
