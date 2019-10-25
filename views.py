@@ -23,7 +23,7 @@ from flask_wtf.csrf import CSRFError
 from GNGforms import app, mongo, babel
 from threading import Thread
 from flask_babel import gettext, refresh
-from GNGforms.persistence import User, Form, Site, Invite, Installation
+from GNGforms.persistence import *
 from .session import *
 from .utils import *
 from .email import *
