@@ -23,6 +23,8 @@ hr { margin-top: 5px }
     font-style: italic;
 }
 
+.formFootNote { padding: 1em 0 1em 0 }
+
 /* ######### Flash messages ######### */
 .success {
     color: white;

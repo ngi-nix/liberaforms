@@ -105,5 +105,18 @@ def migrateMongoSchema(schemaVersion):
                         })
         schemaVersion=8
 
+    if schemaVersion < 9:
+        # Add site footnote. To be displayed at foot of forms.
+        for site in mongo.db.sites.find():
+            mongo.db.sites.update_one({"_id": site["_id"]}, {"$set": {"defaultFormFootNote": {
+                                                                        'markdown': "",
+                                                                        'html': "",
+                                                                        'enabled': False }} })
+        for form in mongo.db.forms.find():
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"showFootNote": False }})
+                                                        
+        schemaVersion=9
+
+
     # this can't be a good migration setup :(
     return schemaVersion

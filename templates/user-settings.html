@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% if g.isAdmin %}
+<script src="/static/simplemde/simplemde.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
+{% endif %}
 
 <div class="container">
     <div class="row col-md-3"></div>
@@ -171,7 +175,31 @@
                     </div>
                </td>
             </tr>
+            <tr>
+                <td>{%trans%}Form foot note{%endtrans%}</td>
+                <td>
+                <a id="show-editor" style="cursor:pointer">{%trans%}Edit text{%endtrans%}</a>
+                </td>
+                <td class="text-right">
+                    <div id="toggle_footnote_enabled" class="btn-group btn-toggle">
+                    <button id="footnote_enabled_true" class="btn btn-xs btn-default {% if site.isDefaultFootNoteEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="footnote_enabled_false" class="btn btn-xs btn-default {% if not site.isDefaultFootNoteEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                    </div>                    
+                </div>
+               </td>
+            </tr>
         </table>
+        
+    <div id="editor" style="display:none">
+        <input id="save-edit" class="btn-success btn" type="button" value="{%trans%}Save{%endtrans%}" />
+        <input id="cancel-edit" class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" />
+        <p></p>
+        <form id="editor-form" action="/site/save-default-footnote" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <textarea id="sm-editor" name="editor">{{ site.defaultFormFootNote['markdown'] }}</textarea>
+        </form>
+    </div>
+        
     {% endif %}
     {% if g.isRootUser %}
         <p></p>
@@ -319,11 +347,61 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         }
     });
 });
+
+document.getElementById('toggle_footnote_enabled').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-default-footnote",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.footnote_enabled == true) {
+                $('#footnote_enabled_true').addClass('btn-success');
+                $('#footnote_enabled_false').removeClass('btn-primary');
+            }
+            else if (data.footnote_enabled == false) {
+                $('#footnote_enabled_true').removeClass('btn-success');
+                $('#footnote_enabled_false').addClass('btn-primary');
+            }
+        }
+    });
+});
 document.getElementById('test-email-button').addEventListener('click', function(evt){
     var email = $("#test-email").val();
     if (email){
         location.href="/site/test-smtp/"+email
     }
+});
+$(document).ready(function() {
+
+    var simplemde = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: true,
+                                spellChecker: false,
+                                element: $("#sm-editor")[0]
+                             });
+
+    $("#show-editor").click(function(){
+        $('#blurb').hide();
+        $('#editor').show();
+        $('.flash_message').hide();
+        simplemde.value($("#sm-editor").val())
+        return false;
+    });
+    $("#save-edit").click(function(){
+        $('#editor').hide();
+        simplemde.toTextArea();
+        $("#editor-form").submit();
+    });
+    $("#cancel-edit").click(function(){
+        $('#editor').hide();
+        $('#blurb').show();
+    });
 });
 </script>
 

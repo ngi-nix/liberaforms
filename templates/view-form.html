@@ -11,9 +11,13 @@
         <div id="fb-render"></div>
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}">
         </form>
+        {% if form.isFootNoteEnabled() %}
+            <div class="formFootNote">{{ form.footNote|safe }}</div>
+        {% endif %}
     </div>
     <div class="row col-md-3"></div>
 </div>
+
 
 
 <script>

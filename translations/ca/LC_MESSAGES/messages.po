@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-10-24 21:32+0200\n"
-"PO-Revision-Date: 2019-10-24 21:34+0200\n"
+"PO-Revision-Date: 2019-11-01 14:38+0100\n"
 "Last-Translator: \n"
 "Language: ca\n"
 "Language-Team: ca <LL@li.org>\n"
@@ -67,11 +67,11 @@ msgstr "GNGforms. Nova entrada de formulari"
 #: email.py:88
 #, python-format
 msgid "The form '%s' has expired at %s"
-msgstr ""
+msgstr "El formulari '%s' ha caducat %s"
 
 #: email.py:89
 msgid "GNGforms. A form has expired"
-msgstr ""
+msgstr "GNGforms. Aquest formulari ha caducat"
 
 #: email.py:95
 #, python-format
@@ -195,12 +195,12 @@ msgstr "Nou editor afegit correctament"
 #: views.py:286
 #, python-format
 msgid "Added editor %s"
-msgstr ""
+msgstr "Editor afegit %s"
 
 #: views.py:304
 #, python-format
 msgid "Removed editor %s"
-msgstr ""
+msgstr "Editor %s eliminat"
 
 #: views.py:320
 msgid "Date-time is not valid"
@@ -209,11 +209,11 @@ msgstr "La data o el tems no són vàlids"
 #: views.py:325
 #, python-format
 msgid "Expiry date set to: %s"
-msgstr ""
+msgstr "Data de caducitat: %s"
 
 #: views.py:331
 msgid "Expiry date cancelled"
-msgstr ""
+msgstr "Data de caducitat cancel·lada"
 
 #: views.py:333
 msgid "Missing date or time"
@@ -240,7 +240,7 @@ msgstr "Formulari actualitzat correctament"
 
 #: views.py:497
 msgid "Form edited"
-msgstr ""
+msgstr "Formulari editat"
 
 #: views.py:502
 msgid "Slug is missing."
@@ -253,7 +253,7 @@ msgstr "La fitxa no és única %sfitxa"
 
 #: views.py:529
 msgid "Form created"
-msgstr ""
+msgstr "Formulari creat"
 
 #: views.py:530
 msgid "Saved form OK"
@@ -275,12 +275,12 @@ msgstr "El nom del formulari no coincideix"
 #: views.py:578
 #, python-format
 msgid "Public set to: %s"
-msgstr ""
+msgstr "Publicat a:  %s"
 
 #: views.py:588
 #, python-format
 msgid "Shared entries set to: %s"
-msgstr ""
+msgstr "Les entrades compartides estan a %s"
 
 #: views.py:654
 msgid "We expected a number"
@@ -425,15 +425,15 @@ msgstr "Inici"
 
 #: templates/base.html:33 templates/edit-site.html:29 templates/list-users.html:27
 msgid "Forms"
-msgstr "Formulari"
+msgstr "Formularis"
 
 #: templates/base.html:34 templates/edit-site.html:25 templates/list-users.html:11
 msgid "Users"
-msgstr "Usuari"
+msgstr "Usuaris"
 
 #: templates/base.html:36 templates/my-forms.html:10
 msgid "My forms"
-msgstr "El meu formulari"
+msgstr "Els meus formularis"
 
 #: templates/base.html:39
 msgid "Settings"
@@ -505,7 +505,7 @@ msgstr "Cancel·lat"
 
 #: templates/delete-form.html:11 templates/inspect-form.html:139
 msgid "Delete form"
-msgstr "Formulari eliminat"
+msgstr "Elimina el formulari"
 
 #: templates/delete-form.html:14
 msgid "You are going to delete this form and"
@@ -548,7 +548,7 @@ msgstr "Escriu el nom del lloc"
 #: templates/delete-user.html:11 templates/delete-user.html:32
 #: templates/inspect-user.html:71
 msgid "Delete user"
-msgstr "Usuari esborrat"
+msgstr "Esborra usuari"
 
 #: templates/delete-user.html:15
 msgid "You are going to delete a user"
@@ -610,7 +610,7 @@ msgstr "Nom d'allotjament"
 
 #: templates/edit-site.html:21
 msgid "Sitename"
-msgstr ""
+msgstr "Nom del lloc"
 
 #: templates/edit-site.html:33 templates/user-settings.html:165
 msgid "Invitation only"
@@ -668,7 +668,7 @@ msgstr "Fals"
 
 #: templates/expiration.html:23
 msgid "Notify me when this form expires"
-msgstr ""
+msgstr "Avisa'm quan el formulari caduqui"
 
 #: templates/expiration.html:27
 msgid "Expiration conditions"
@@ -753,11 +753,11 @@ msgstr "Enviar el missatge de text"
 
 #: templates/inspect-form.html:29
 msgid "Details"
-msgstr ""
+msgstr "Detalls"
 
 #: templates/inspect-form.html:31
 msgid "View log"
-msgstr ""
+msgstr "Veure el registre"
 
 #: templates/inspect-form.html:38 templates/inspect-user.html:88
 #: templates/list-forms.html:23 templates/share-form.html:54
@@ -871,7 +871,7 @@ msgstr "Baixa CSV"
 
 #: templates/list-entries.html:28
 msgid "Notify me on each new entry"
-msgstr ""
+msgstr "Avisa'm quan hi hagi una entrada nova"
 
 #: templates/list-forms.html:12
 msgid "All forms"
@@ -883,19 +883,19 @@ msgstr "Públic"
 
 #: templates/list-log.html:15
 msgid "Log"
-msgstr ""
+msgstr "Registre"
 
 #: templates/list-log.html:21
 msgid "Time"
-msgstr ""
+msgstr "Temps"
 
 #: templates/list-log.html:22
 msgid "User"
-msgstr ""
+msgstr "Usuari"
 
 #: templates/list-log.html:23
 msgid "Message"
-msgstr ""
+msgstr "Missatge"
 
 #: templates/my-forms.html:13
 msgid "New form"
@@ -927,7 +927,7 @@ msgstr "Fes que el nou usuari sigui un administrador"
 
 #: templates/new-invite.html:31
 msgid "Root user options"
-msgstr "Opcions d’usuari arrel"
+msgstr "Opcions d’usuari root"
 
 #: templates/new-invite.html:33
 msgid "Invite to one of these sites"

@@ -293,6 +293,7 @@ class User(object):
 
 class Form(object):
     form = None
+    site = None
 
     def __new__(cls, *args, **kwargs):
         if 'slug' in kwargs and not isSaneSlug(kwargs['slug']):
@@ -323,7 +324,9 @@ class Form(object):
 
 
     def __init__(self, *args, **kwargs):
-        pass
+        if self.form and self.form["hostname"]:
+            self.site=Site(hostname=self.form["hostname"])
+        #pass
 
     @property
     def data(self):
@@ -404,8 +407,17 @@ class Form(object):
     
     @property
     def url(self):
-        formSite=Site(hostname=self.hostname)
-        return "%s%s" % ( formSite.host_url, self.slug)  
+        return "%s%s" % (self.site.host_url, self.slug)  
+
+    def isFootNoteEnabled(self):
+        if not self.site.isDefaultFootNoteEnabled():
+            return False
+        else:
+            return self.form["showFootNote"]
+
+    @property
+    def footNote(self):
+        return self.site.data['defaultFormFootNote']['html']
 
     @property
     def lastEntryDate(self):
@@ -564,7 +576,12 @@ class Form(object):
             mongo.db.forms.save(self.form)
             return self.editors[editor_id]['notification']['expiredForm']
         return False
-                
+
+    def toggleShowFootNote(self):
+        self.form['showFootNote'] = False if self.form['showFootNote'] else True
+        mongo.db.forms.save(self.form)
+        return self.form['showFootNote']
+
     def addLog(self, message, anonymous=False):
         if anonymous:
             actor="system"
@@ -611,7 +628,8 @@ class Site(object):
             "blurb": blurb,
             "invitationOnly": True,
             "siteName": "gng-forms!",
-            "noreplyEmailAddress": "no-reply@%s" % hostname
+            "noreplyEmailAddress": "no-reply@%s" % hostname,
+            "defaultFormFootNote": {"markdown": "", "html": "", "enabled": False }
         }
         mongo.db.sites.insert_one(newSiteData)
         #create the Installation if it doesn't exist
@@ -651,6 +669,16 @@ class Site(object):
         self.site['blurb'] = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
         mongo.db.sites.save(self.site)
 
+    def saveDefaultFormFootNote(self, MDtext):
+        self.site['defaultFormFootNote'] = {    'markdown':escapeMarkdown(MDtext),
+                                                'html':markdown2HTML(MDtext),
+                                                'enabled': self.site['defaultFormFootNote']['enabled']}
+        mongo.db.sites.save(self.site)
+
+    @property
+    def defaultFormFootNote(self):
+        return self.site['defaultFormFootNote']
+
     @property
     def noreplyEmailAddress(self):
         return self.site['noreplyEmailAddress']
@@ -664,6 +692,9 @@ class Site(object):
     def invitationOnly(self):
         return self.site['invitationOnly']
         
+    def isDefaultFootNoteEnabled(self):
+        return self.site["defaultFormFootNote"]["enabled"]
+                
     @property
     def totalUsers(self):
         return User().findAll(hostname=self.hostname).count()
@@ -676,6 +707,11 @@ class Site(object):
         self.site["invitationOnly"] = False if self.site["invitationOnly"] else True
         mongo.db.sites.save(self.site)
         return self.site["invitationOnly"]
+
+    def toggleDefaultFootNoteEnabled(self):
+        self.site["defaultFormFootNote"]["enabled"] = False if self.site["defaultFormFootNote"]["enabled"] else True
+        mongo.db.sites.save(self.site)
+        return self.site["defaultFormFootNote"]["enabled"]
 
     def toggleScheme(self):
         self.site["scheme"] = 'https' if self.site["scheme"]=='http' else 'http'

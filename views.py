@@ -147,9 +147,7 @@ def view_form(slug):
                 smtpSendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
-        
         return render_template('thankyou.html', form=queriedForm)
-        
     return render_template('view-form.html', form=queriedForm)     
 
 
@@ -522,7 +520,8 @@ def save_form(_id=None):
                                         "password": None,
                                         "expireDate": None},
                     "afterSubmitText": afterSubmitText,
-                    "log": []
+                    "log": [],
+                    "showFootNote": False
                 }
         newForm=Form().insert(newFormData)
         clearSessionFormData()
@@ -596,6 +595,15 @@ def toggle_form_notification(_id):
         return JsonResponse(json.dumps())
     return JsonResponse(json.dumps({'notification':form.toggleNotification()}))
 
+@app.route('/form/toggle-footnote/<string:_id>', methods=['POST'])
+@enabled_user_required
+def toggle_form_footnote(_id):
+    form=Form(_id=_id, editor=str(g.current_user._id))
+    if not form:
+        return JsonResponse(json.dumps())
+    footnoteBool=form.toggleShowFootNote()
+    form.addLog(gettext("Footnote enabled set to: %s" % footnoteBool))
+    return JsonResponse(json.dumps({'footnote':footnoteBool}))
 
 @app.route('/form/toggle-expiration-notification/<string:_id>', methods=['POST'])
 @enabled_user_required
@@ -937,7 +945,17 @@ def save_blurb():
             Site().saveBlurb(request.form['editor'])
             flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('index'))
-            
+
+
+@app.route('/site/save-default-footnote', methods=['POST'])
+@admin_required
+def save_footnote():
+    if request.method == 'POST':
+        if 'editor' in request.form:            
+            Site().saveDefaultFormFootNote(request.form['editor'])
+            flash(gettext("Text saved OK"), 'success')
+    return redirect(make_url_for('user_settings', username=g.current_user.username))
+
 
 @app.route('/site/email/change-noreply', methods=['GET', 'POST'])
 @admin_required
@@ -1075,7 +1093,10 @@ def toggle_invitation_only(hostname=None):
     else:
         return json.dumps({'invite': Site().toggleInvitationOnly()})
 
-
+@app.route('/admin/toggle-default-footnote', methods=['POST'])
+@admin_required
+def toggle_default_footnote(): 
+    return json.dumps({'footnote_enabled': Site().toggleDefaultFootNoteEnabled()})
 
 """ Invitations """
 

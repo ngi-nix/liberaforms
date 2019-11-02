@@ -12,7 +12,11 @@
           
         <div id="fb-render"></div>
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
-
+        
+        <div id="footnote" class="formFootNote" {% if not form.isFootNoteEnabled() %}style="display:none;"{% endif %}>
+            {{ form.footNote|safe }}
+        </div>
+        
         <p>&nbsp;</p>
         <div style="font-size:1.4em">
             {%trans%}Post-submit text{%endtrans%}
@@ -129,6 +133,23 @@
                    {% endif %}
                </td>
             </tr>
+
+            {% if form.site.isDefaultFootNoteEnabled() %}
+            <tr>
+               <td>{%trans%}Show footnote{%endtrans%}</td>
+               <td>
+               {% if form.editors[g.current_user._id|string] is defined %}
+                   <div id="toggle_footnote" class="btn-group btn-toggle">
+                    <button id="footnote_true" class="btn btn-xs btn-default {% if form.isFootNoteEnabled() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="footnote_false" class="btn btn-xs btn-default {% if not form.isFootNoteEnabled() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                   </div>
+               {% else %}
+                    {{ form.isFootNoteEnabled() }}            
+               {% endif %}
+               </td>
+            </tr>
+            {% endif %}
+            
         </table>
         {% if form.editors[g.current_user._id|string] is defined %}
         <hr />
@@ -187,6 +208,31 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
                 $('#enabled_false').addClass('btn-primary');
                 $('#formURL').show();
                 $('#formLink').hide();
+            }
+        }
+    });
+});
+document.getElementById('toggle_footnote').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-footnote/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.footnote == true) {
+                $('#footnote_true').addClass('btn-success');
+                $('#footnote_false').removeClass('btn-primary');
+                $('#footnote').show();
+            }
+            else if (data.footnote == false) {
+                $('#footnote_true').removeClass('btn-success');
+                $('#footnote_false').addClass('btn-primary');
+                $('#footnote').hide();
             }
         }
     });
