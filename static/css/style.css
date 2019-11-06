@@ -61,6 +61,19 @@ hr { margin-top: 5px }
     padding: 0.5em 0 0.5em 0;
 }
 
+.delete-row {
+    font-weight: bold !important;
+    color: #d9534f;
+    cursor: pointer;
+}
+.undo-delete-row {
+    font-weight: bold !important;
+    color: #5cb85c;
+    cursor: pointer;
+}
+.deleted-row {
+    background-color: #FAAFBE;
+}
 /* ######### formBuilder fixes ######### */
 input[type="date"], input[type="number"] {
     width: auto !important;

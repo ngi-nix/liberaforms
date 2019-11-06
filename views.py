@@ -646,6 +646,46 @@ def csv_form(_id):
     
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
+@app.route('/forms/delete-entry/<string:_id>', methods=['POST'])
+@enabled_user_required
+def delete_entry(_id):
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
+        return json.dumps({'deleted': False})
+    
+    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[0]]
+    if not foundEntries or len(foundEntries) > 1:
+        """ If there are two entries with the same 'created' value, we don't delete anything """
+        return json.dumps({'deleted': False})
+
+    queriedForm.entries.remove(foundEntries[0])
+    queriedForm.save()
+    queriedForm.addLog(gettext("Deleted and entry"))
+    return json.dumps({'deleted': True})
+
+@app.route('/forms/undo-delete-entry/<string:_id>', methods=['POST'])
+@enabled_user_required
+def undo_delete_entry(_id):
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
+        return json.dumps({'undone': False})
+    
+    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[0]]
+    if foundEntries:
+        """ There is already an entry in the DB with the same 'created' value, we don't do anything """
+        return json.dumps({'undone': False})
+
+    entry={}
+    for loop, field in enumerate(queriedForm.fieldIndex):
+        try:
+            entry[field['name']]=request.json[loop]
+        except:
+            break
+    queriedForm.entries.append(entry)
+    queriedForm.save()
+    queriedForm.addLog(gettext("Undeleted and entry"))
+    return json.dumps({'undone': True})
+
 
 @app.route('/forms/delete-entries/<string:_id>', methods=['GET', 'POST'])
 @enabled_user_required
