@@ -200,7 +200,7 @@ def inspect_form(_id):
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
     
-    pprint.pprint(queriedForm.data)
+    #pprint.pprint(queriedForm.data)
     
     if not g.current_user.canViewForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
@@ -659,6 +659,10 @@ def delete_entry(_id):
         return json.dumps({'deleted': False})
 
     queriedForm.entries.remove(foundEntries[0])
+    
+    if not queriedForm.hasExpired() and queriedForm.expired:
+            queriedForm.expired=False
+    
     queriedForm.save()
     queriedForm.addLog(gettext("Deleted and entry"))
     return json.dumps({'deleted': True})
@@ -704,7 +708,10 @@ def delete_entries(_id):
         
         if queriedForm.totalEntries == totalEntries:
             queriedForm.deleteEntries()
-            flash(gettext("Deleted %s entries" % queriedForm.totalEntries), 'success')
+            if not queriedForm.hasExpired() and queriedForm.expired:
+                queriedForm.expired=False
+                queriedForm.save()
+            flash(gettext("Deleted %s entries" % totalEntries), 'success')
             return redirect(make_url_for('list_entries', _id=queriedForm._id))
         else:
             flash(gettext("Number of entries does not match"), 'warning')

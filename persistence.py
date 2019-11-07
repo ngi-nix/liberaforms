@@ -476,6 +476,7 @@ class Form(object):
         return mongo.db.forms.remove({'_id': self.form['_id']})
 
     def deleteEntries(self):
+        self.form["entries"]=[]
         mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
             
     def isAuthor(self, user):
