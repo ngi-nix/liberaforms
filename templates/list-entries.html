@@ -47,14 +47,14 @@
         </tr>
     </thead>
 
+    <!-- Keep the data TD on one line! -->
     {% for entry in form.entries %}
     <tr>
-        <td id="row_{{ loop.index }}" style="border-right: 1px solid #ccc;">
+        <td id="row_{{ loop.index }}" style="border-right: 1px solid #ccc; border-left: 1px solid #ccc;">
             <i class="fa fa-ban delete-row" aria-hidden="true"></i>
         </td>
         {% for field in fieldIndex  %}
-            <!-- Keep this TD on one line! -->
-            <td class="{{ fieldName }}" style="border-right: 1px solid #ccc;">{{ entry[field['name']] }}</td>
+            <td style="border-right: 1px solid #ccc;">{{ entry[field['name']] }}</td>
         {% endfor %}
     </tr>
     {% endfor %}
@@ -112,7 +112,7 @@ $(document).ready(function() {
     
     $('#formEntries tbody').on('click', '.undo-delete-row', function () {
         var $row_number=$(this).parent('td').attr('id');
-        console.log($(this).parents('td').attr('id'));
+        //console.log($(this).parents('td').attr('id'));
         
         if (!($row_number in deletedEntries)) {
             return;

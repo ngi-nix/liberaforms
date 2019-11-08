@@ -45,9 +45,13 @@ def before_request():
     g.isAdmin=False
     if '/static' in request.path:
         return
-    g.siteName=Site().siteName
-    if 'username' in session:
-        g.current_user=User(hostname=Site().hostname, username=session['username'])
+    site=Site()
+    g.siteName=site.siteName
+    if 'user_id' in session:
+        g.current_user=User(_id=session["user_id"])
+        if g.current_user and g.current_user.hostname != site.hostname:
+            g.current_user=None
+            return
         if g.current_user and g.current_user.isRootUser():
             g.isRootUser=True
         if g.current_user and g.current_user.isAdmin():
@@ -355,8 +359,10 @@ def set_field_condition(_id):
     if fieldType == "number":
         try:
             queriedForm.fieldConditions[request.form['field_name']]={
-                                                        "type": fieldType,
-                                                        "condition": int(request.form['condition'])}
+                                                            "type": fieldType,
+                                                            "condition": int(request.form['condition'])
+                                                        }          
+            
             queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
         except:
@@ -664,7 +670,7 @@ def delete_entry(_id):
             queriedForm.expired=False
     
     queriedForm.save()
-    queriedForm.addLog(gettext("Deleted and entry"))
+    queriedForm.addLog(gettext("Deleted an entry"))
     return json.dumps({'deleted': True})
 
 @app.route('/forms/undo-delete-entry/<string:_id>', methods=['POST'])
@@ -870,11 +876,12 @@ def login():
     if 'username' in request.form and 'password' in request.form:
         user=User(hostname=Site().hostname, username=request.form['username'], blocked=False)
         if user and verifyPassword(request.form['password'], user.data['password']):
-            session['username']=user.username
+            session["user_id"]=str(user._id)
             if not user.data['validatedEmail']:
                 return redirect(make_url_for('user_settings', username=user.username))
             else:
                 return redirect(make_url_for('my_forms'))
+        session["user_id"]=None
     
     flash(gettext("Bad credentials"), 'warning')
     return redirect(make_url_for('index'))
@@ -883,7 +890,7 @@ def login():
 @app.route('/site/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    session['username']=None
+    session["user_id"]=None
     return redirect(make_url_for('index'))
 
 
