@@ -364,6 +364,20 @@ class Form(object):
     def fieldIndex(self):
         return self.form['fieldIndex']
     
+    def getFieldIndexForDataDisplay(self):
+        """
+        formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
+        The tags (formatted lables) are good when rendering the form but we do not want them included in CSV column headers.
+        This function is called when viewing form entry data.
+        """
+        result=[]
+        for field in self.fieldIndex:
+            result.append({'label': stripHTMLTagsForLabel(field['label']), 'name': field['name']})
+        """ insert this optional field """
+        if self.isDataConsentEnabled():
+            result.insert(1, {"name": "DPL", "label": gettext("DPL")})
+        return result
+    
     @property
     def entries(self):
         return self.form['entries']
@@ -409,15 +423,15 @@ class Form(object):
     def url(self):
         return "%s%s" % (self.site.host_url, self.slug)  
 
-    def isFootNoteEnabled(self):
-        if not self.site.isDefaultFootNoteEnabled():
+    def isDataConsentEnabled(self):
+        if not self.site.isPersonalDataConsentEnabled():
             return False
         else:
-            return self.form["showFootNote"]
+            return self.form["requireDataConsent"]
 
     @property
-    def footNote(self):
-        return self.site.data['defaultFormFootNote']['html']
+    def dataConsent(self):
+        return self.site.data['personalDataConsent']['html']
 
     @property
     def lastEntryDate(self):
@@ -578,10 +592,10 @@ class Form(object):
             return self.editors[editor_id]['notification']['expiredForm']
         return False
 
-    def toggleShowFootNote(self):
-        self.form['showFootNote'] = False if self.form['showFootNote'] else True
+    def toggleRequireDataConsent(self):
+        self.form['requireDataConsent'] = False if self.form['requireDataConsent'] else True
         mongo.db.forms.save(self.form)
-        return self.form['showFootNote']
+        return self.form['requireDataConsent']
 
     def addLog(self, message, anonymous=False):
         if anonymous:
@@ -630,7 +644,7 @@ class Site(object):
             "invitationOnly": True,
             "siteName": "gng-forms!",
             "noreplyEmailAddress": "no-reply@%s" % hostname,
-            "defaultFormFootNote": {"markdown": "", "html": "", "enabled": False }
+            "personalDataConsent": {"markdown": "", "html": "", "enabled": False }
         }
         mongo.db.sites.insert_one(newSiteData)
         #create the Installation if it doesn't exist
@@ -671,14 +685,14 @@ class Site(object):
         mongo.db.sites.save(self.site)
 
     def saveDefaultFormFootNote(self, MDtext):
-        self.site['defaultFormFootNote'] = {    'markdown':escapeMarkdown(MDtext),
+        self.site['personalDataConsent'] = {    'markdown':escapeMarkdown(MDtext),
                                                 'html':markdown2HTML(MDtext),
-                                                'enabled': self.site['defaultFormFootNote']['enabled']}
+                                                'enabled': self.site['personalDataConsent']['enabled']}
         mongo.db.sites.save(self.site)
 
     @property
-    def defaultFormFootNote(self):
-        return self.site['defaultFormFootNote']
+    def personalDataConsent(self):
+        return self.site['personalDataConsent']
 
     @property
     def noreplyEmailAddress(self):
@@ -693,8 +707,8 @@ class Site(object):
     def invitationOnly(self):
         return self.site['invitationOnly']
         
-    def isDefaultFootNoteEnabled(self):
-        return self.site["defaultFormFootNote"]["enabled"]
+    def isPersonalDataConsentEnabled(self):
+        return self.site["personalDataConsent"]["enabled"]
                 
     @property
     def totalUsers(self):
@@ -709,10 +723,10 @@ class Site(object):
         mongo.db.sites.save(self.site)
         return self.site["invitationOnly"]
 
-    def toggleDefaultFootNoteEnabled(self):
-        self.site["defaultFormFootNote"]["enabled"] = False if self.site["defaultFormFootNote"]["enabled"] else True
+    def togglePersonalDataConsentEnabled(self):
+        self.site["personalDataConsent"]["enabled"] = False if self.site["personalDataConsent"]["enabled"] else True
         mongo.db.sites.save(self.site)
-        return self.site["defaultFormFootNote"]["enabled"]
+        return self.site["personalDataConsent"]["enabled"]
 
     def toggleScheme(self):
         self.site["scheme"] = 'https' if self.site["scheme"]=='http' else 'http'

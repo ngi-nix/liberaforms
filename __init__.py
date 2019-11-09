@@ -31,11 +31,12 @@ babel = Babel(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = 18
-app.config['SCHEMA_VERSION'] = 9
+app.config['APP_VERSION'] = 19
+app.config['SCHEMA_VERSION'] = 10
 
 app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
-app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token']
+# DPL = Data Protection Law
+app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL']
 app.config['RESERVED_USERNAMES'] = ['system', 'admin']
 
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'

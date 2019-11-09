@@ -9,11 +9,15 @@
         <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <div id="fb-render"></div>
+        {% if form.isDataConsentEnabled() %}
+            <div class="formDataConsent">
+                {{ form.dataConsent|safe }}
+                {%trans%}I agree{%endtrans%}
+                <input type="checkbox" style="position:relative; top:3px;" name="DPL" value="ok" required />
+            </div>
+        {% endif %}
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}">
         </form>
-        {% if form.isFootNoteEnabled() %}
-            <div class="formFootNote">{{ form.footNote|safe }}</div>
-        {% endif %}
     </div>
     <div class="row col-md-3"></div>
 </div>

@@ -117,6 +117,18 @@ def migrateMongoSchema(schemaVersion):
                                                         
         schemaVersion=9
 
+    if schemaVersion < 10:
+        # Changed site footnote to personalDataConsent.
+        for site in mongo.db.sites.find():
+            consent=site["defaultFormFootNote"]
+            mongo.db.sites.update_one({"_id": site["_id"]}, {"$unset": {'defaultFormFootNote' :1}, "$set": {"personalDataConsent": consent} })
+              
+        for form in mongo.db.forms.find():
+            boolean=form["showFootNote"]
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$unset": {'showFootNote' :1}, "$set": {"requireDataConsent": boolean }})
+            
+        schemaVersion=10
+
 
     # this can't be a good migration setup :(
     return schemaVersion

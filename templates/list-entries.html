@@ -50,10 +50,10 @@
     <!-- Keep the data TD on one line! -->
     {% for entry in form.entries %}
     <tr>
-        <td id="row_{{ loop.index }}" style="border-right: 1px solid #ccc; border-left: 1px solid #ccc;">
+        <td style="border-right: 1px solid #ccc; border-left: 1px solid #ccc;">
             <i class="fa fa-ban delete-row" aria-hidden="true"></i>
         </td>
-        {% for field in fieldIndex  %}
+        {% for field in fieldIndex %}
             <td style="border-right: 1px solid #ccc;">{{ entry[field['name']] }}</td>
         {% endfor %}
     </tr>
@@ -61,11 +61,28 @@
     </table>
 </div>
 
-
 {% if form.editors[g.current_user._id|string] is defined %}
 <script>
 var csrftoken = "{{ csrf_token() }}";
-var deletedEntries={};
+var fieldIndex={{fieldIndex|tojson}};
+
+function getFieldValueInRow(fieldName, $row){
+    var arrayLength = fieldIndex.length;
+    for (var loop = 0; loop < arrayLength; loop++) {
+        if (fieldIndex[loop]["name"] == fieldName) {
+            return $row.children('td').eq(loop+1).html()
+        }   
+    }
+    return null;
+}
+function getRowData($row) {
+    var rowData = new Array();
+    var arrayLength = fieldIndex.length;
+    for (var loop = 0; loop < arrayLength; loop++) {      
+        rowData.push({"name": fieldIndex[loop]["name"], "value": $row.children('td').eq(loop+1).html()})
+    }
+    return rowData;
+}
 $(document).ready(function() {
     $('#formEntries').DataTable({
         "language": {
@@ -76,78 +93,51 @@ $(document).ready(function() {
             { "orderable": false, "targets": 0 }
         ]
     });
-    
-    $('#formEntries tbody').on('click', '.delete-row', function () {
-        var $row=$(this).parents('tr');
-        var $row_number=$(this).parent('td').attr('id');
-        var rowData = new Array();
-        $row.find('td:not(:first-child)').each (function() {
-            rowData.push($(this).html())
-        });
-        //console.log(rowData);
-        $.ajax({
-            url : "/forms/delete-entry/{{ form._id }}",
-            type: "POST",
-            dataType: "json",
-            contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify(rowData),
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                }
-            },
-            success: function(data, textStatus, jqXHR)
-            {
-                if (data.deleted == true) {
-                    deletedEntries[$row_number] = rowData;
-                    //console.log(deletedEntries);
-                    $row.children(':not(:first-child)').addClass('deleted-row');
-                    $row.children(':not(:first-child)').html('');
-                    $row.children('td').eq(1).html("{%trans%}Deleted{%endtrans%}");
-                    $row.children('td').eq(0).html('<i class="fa fa-undo undo-delete-row" aria-hidden="true"></i>');
-                }
-            }
-        });
-    });
-    
-    $('#formEntries tbody').on('click', '.undo-delete-row', function () {
-        var $row_number=$(this).parent('td').attr('id');
-        //console.log($(this).parents('td').attr('id'));
-        
-        if (!($row_number in deletedEntries)) {
-            return;
-        }
-        var rowData = deletedEntries[$row_number]
-        var $row = $(this).parents('tr');
-        $.ajax({
-            url : "/forms/undo-delete-entry/{{ form._id }}",
-            type: "POST",
-            dataType: "json",
-            contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify(rowData),
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                }
-            },
-            success: function(data, textStatus, jqXHR)
-            {
-                if (data.undone == true) {
-                    delete deletedEntries[$row_number]
-                    //console.log(deletedEntries);
-                    //console.log(rowData);
-                    loop=0
-                    $row.find('td:not(:first-child)').each (function() {
-                        $(this).html(rowData[loop])
-                        loop=loop+1;
-                    });
-                    $row.children(':not(:first-child)').removeClass('deleted-row');
-                    $row.children('td').eq(0).html('<i class="fa fa-ban delete-row" aria-hidden="true"></i>');
-                }
-            }
-        });
-    });
     $('.delete-row').attr('title', "{%trans%}Delete entry{%endtrans%}");
+});
+$('#formEntries tbody').on('click', '.delete-row', function () {
+    var $row=$(this).parents('tr');
+    $.ajax({
+        url : "/forms/delete-entry/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify({"created": getFieldValueInRow("created", $row)}),
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.deleted == true) {
+                $row.children(':not(:first-child)').addClass('deleted-row');
+                $row.children('td').eq(0).html('<i class="fa fa-undo undo-delete-row" aria-hidden="true"></i>');
+            }
+        }
+    });
+});
+$('#formEntries tbody').on('click', '.undo-delete-row', function () {
+    var $row = $(this).parents('tr');
+    $.ajax({
+        url : "/forms/undo-delete-entry/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify(getRowData($row)),
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.undone == true) {
+                $row.children(':not(:first-child)').removeClass('deleted-row');
+                $row.children('td').eq(0).html('<i class="fa fa-ban delete-row" aria-hidden="true"></i>');
+            }
+        }
+    });
 });
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({

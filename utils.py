@@ -200,19 +200,6 @@ def getFieldByNameInIndex(index, name):
     return None
 
 
-def removeHTMLFromLabels(fieldIndex):
-    """
-    formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
-    The tags (formatted lables) are good when rendering the form but we do not want them included in CSV column headers.
-    This function is called when viewing form entry data.
-    """
-    result=[]
-    for field in fieldIndex:
-        result.append({'label': stripHTMLTagsForLabel(field['label']), 'name': field['name']})
-    return result
-
-
-
 """ ######## Tokens ######## """
 
 def getRandomString(length=32):

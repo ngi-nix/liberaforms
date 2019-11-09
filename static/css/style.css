@@ -23,7 +23,7 @@ hr { margin-top: 5px }
     font-style: italic;
 }
 
-.formFootNote { padding: 1em 0 1em 0 }
+.formDataConsent { padding: 1em 0 2em 0 }
 
 /* ######### Flash messages ######### */
 .success {
@@ -73,6 +73,7 @@ hr { margin-top: 5px }
 }
 .deleted-row {
     background-color: #FAAFBE;
+    text-decoration: line-through;
 }
 /* ######### formBuilder fixes ######### */
 input[type="date"], input[type="number"] {

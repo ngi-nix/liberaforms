@@ -177,14 +177,14 @@
                </td>
             </tr>
             <tr>
-                <td>{%trans%}Form foot note{%endtrans%}</td>
+                <td>{%trans%}Data protection consent{%endtrans%}</td>
                 <td>
                 <a id="show-editor" style="cursor:pointer">{%trans%}Edit text{%endtrans%}</a>
                 </td>
                 <td class="text-right">
-                    <div id="toggle_footnote_enabled" class="btn-group btn-toggle">
-                    <button id="footnote_enabled_true" class="btn btn-xs btn-default {% if site.isDefaultFootNoteEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                    <button id="footnote_enabled_false" class="btn btn-xs btn-default {% if not site.isDefaultFootNoteEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                    <div id="toggle_dataprotection_enabled" class="btn-group btn-toggle">
+                    <button id="dataprotection_enabled_true" class="btn btn-xs btn-default {% if site.isPersonalDataConsentEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="dataprotection_enabled_false" class="btn btn-xs btn-default {% if not site.isPersonalDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                     </div>                    
                 </div>
                </td>
@@ -197,7 +197,7 @@
         <p></p>
         <form id="editor-form" action="/site/save-default-footnote" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <textarea id="sm-editor" name="editor">{{ site.defaultFormFootNote['markdown'] }}</textarea>
+            <textarea id="sm-editor" name="editor">{{ site.personalDataConsent['markdown'] }}</textarea>
         </form>
     </div>
         
@@ -349,9 +349,9 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
     });
 });
 
-document.getElementById('toggle_footnote_enabled').addEventListener('click', function(evt){
+document.getElementById('toggle_dataprotection_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/toggle-default-footnote",
+        url : "/admin/toggle-dataprotection",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -361,13 +361,13 @@ document.getElementById('toggle_footnote_enabled').addEventListener('click', fun
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.footnote_enabled == true) {
-                $('#footnote_enabled_true').addClass('btn-success');
-                $('#footnote_enabled_false').removeClass('btn-primary');
+            if (data.dataprotection_enabled == true) {
+                $('#dataprotection_enabled_true').addClass('btn-success');
+                $('#dataprotection_enabled_false').removeClass('btn-primary');
             }
-            else if (data.footnote_enabled == false) {
-                $('#footnote_enabled_true').removeClass('btn-success');
-                $('#footnote_enabled_false').addClass('btn-primary');
+            else if (data.dataprotection_enabled == false) {
+                $('#dataprotection_enabled_true').removeClass('btn-success');
+                $('#dataprotection_enabled_false').addClass('btn-primary');
             }
         }
     });

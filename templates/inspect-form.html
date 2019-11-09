@@ -11,11 +11,14 @@
         <hr />
           
         <div id="fb-render"></div>
-        <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
-        
-        <div id="footnote" class="formFootNote" {% if not form.isFootNoteEnabled() %}style="display:none;"{% endif %}>
-            {{ form.footNote|safe }}
+
+        <div id="dataConsent" class="formDataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
+            {{ form.dataConsent|safe }}
+            {%trans%}I agree{%endtrans%}
+            <input type="checkbox" style="position:relative; top:3px;" required />
         </div>
+
+        <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
         
         <p>&nbsp;</p>
         <div style="font-size:1.4em">
@@ -134,17 +137,17 @@
                </td>
             </tr>
 
-            {% if form.site.isDefaultFootNoteEnabled() %}
+            {% if form.site.isPersonalDataConsentEnabled() %}
             <tr>
-               <td>{%trans%}Show footnote{%endtrans%}</td>
+               <td>{%trans%}Require consent{%endtrans%}</td>
                <td>
                {% if form.editors[g.current_user._id|string] is defined %}
-                   <div id="toggle_footnote" class="btn-group btn-toggle">
-                    <button id="footnote_true" class="btn btn-xs btn-default {% if form.isFootNoteEnabled() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="footnote_false" class="btn btn-xs btn-default {% if not form.isFootNoteEnabled() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                   <div id="toggle_dataConsent" class="btn-group btn-toggle">
+                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentEnabled() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                {% else %}
-                    {{ form.isFootNoteEnabled() }}            
+                    {{ form.isDataConsentEnabled() }}            
                {% endif %}
                </td>
             </tr>
@@ -212,9 +215,9 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         }
     });
 });
-document.getElementById('toggle_footnote').addEventListener('click', function(evt){
+document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-footnote/{{ form._id }}",
+        url : "/form/toggle-data-consent/{{ form._id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -224,15 +227,15 @@ document.getElementById('toggle_footnote').addEventListener('click', function(ev
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.footnote == true) {
-                $('#footnote_true').addClass('btn-success');
-                $('#footnote_false').removeClass('btn-primary');
-                $('#footnote').show();
+            if (data.consent == true) {
+                $('#dataConsent_true').addClass('btn-success');
+                $('#dataConsent_false').removeClass('btn-primary');
+                $('#dataConsent').show();
             }
-            else if (data.footnote == false) {
-                $('#footnote_true').removeClass('btn-success');
-                $('#footnote_false').addClass('btn-primary');
-                $('#footnote').hide();
+            else if (data.consent == false) {
+                $('#dataConsent_true').removeClass('btn-success');
+                $('#dataConsent_false').addClass('btn-primary');
+                $('#dataConsent').hide();
             }
         }
     });

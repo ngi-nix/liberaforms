@@ -163,9 +163,8 @@ def view_entries(slug, key):
     if not queriedForm or not queriedForm.areEntriesShared():
         return render_template('page-not-found.html'), 400
 
-    fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex)
     return render_template('view-results.html', form=queriedForm,
-                                                fieldIndex=fieldIndex,
+                                                fieldIndex=queriedForm.getFieldIndexForDataDisplay(),
                                                 language=get_locale())    
 
 
@@ -494,6 +493,7 @@ def save_form(_id=None):
         
         queriedForm.data["structure"]=session["formStructure"]
         queriedForm.data["fieldIndex"]=session["formFieldIndex"]
+        
         queriedForm.data["afterSubmitText"]=afterSubmitText
         queriedForm.save()
         
@@ -508,6 +508,7 @@ def save_form(_id=None):
         if Form(slug=session['slug'], hostname=Site().hostname):
             flash(gettext("Slug is not unique. %s" % session['slug']), 'error')
             return redirect(make_url_for('edit_form'))
+
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author": str(g.current_user._id),
@@ -527,7 +528,7 @@ def save_form(_id=None):
                                         "expireDate": None},
                     "afterSubmitText": afterSubmitText,
                     "log": [],
-                    "showFootNote": False
+                    "requireDataConsent": Site().isPersonalDataConsentEnabled()
                 }
         newForm=Form().insert(newFormData)
         clearSessionFormData()
@@ -601,15 +602,15 @@ def toggle_form_notification(_id):
         return JsonResponse(json.dumps())
     return JsonResponse(json.dumps({'notification':form.toggleNotification()}))
 
-@app.route('/form/toggle-footnote/<string:_id>', methods=['POST'])
+@app.route('/form/toggle-data-consent/<string:_id>', methods=['POST'])
 @enabled_user_required
-def toggle_form_footnote(_id):
-    form=Form(_id=_id, editor=str(g.current_user._id))
-    if not form:
+def toggle_form_dataconsent(_id):
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
         return JsonResponse(json.dumps())
-    footnoteBool=form.toggleShowFootNote()
-    form.addLog(gettext("Footnote enabled set to: %s" % footnoteBool))
-    return JsonResponse(json.dumps({'footnote':footnoteBool}))
+    dataConsentBool=queriedForm.toggleRequireDataConsent()
+    queriedForm.addLog(gettext("Data protection consent set to: %s" % dataConsentBool))
+    return JsonResponse(json.dumps({'consent':dataConsentBool}))
 
 @app.route('/form/toggle-expiration-notification/<string:_id>', methods=['POST'])
 @enabled_user_required
@@ -630,9 +631,8 @@ def list_entries(_id):
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
 
-    fieldIndex=removeHTMLFromLabels(queriedForm.fieldIndex)
     return render_template('list-entries.html', form=queriedForm,
-                                                fieldIndex=fieldIndex)
+                                                fieldIndex=queriedForm.getFieldIndexForDataDisplay())
 
 
 @app.route('/forms/csv/<string:_id>', methods=['GET'])
@@ -659,16 +659,17 @@ def delete_entry(_id):
     if not queriedForm:
         return json.dumps({'deleted': False})
     
-    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[0]]
+    # we going to use the entry's "created" value as a unique value (gulps).
+    if not "created" in request.json:
+        return json.dumps({'deleted': False})
+    
+    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json["created"]]
     if not foundEntries or len(foundEntries) > 1:
         """ If there are two entries with the same 'created' value, we don't delete anything """
         return json.dumps({'deleted': False})
 
-    queriedForm.entries.remove(foundEntries[0])
-    
-    if not queriedForm.hasExpired() and queriedForm.expired:
-            queriedForm.expired=False
-    
+    queriedForm.entries.remove(foundEntries[0])    
+    queriedForm.expired = queriedForm.hasExpired()
     queriedForm.save()
     queriedForm.addLog(gettext("Deleted an entry"))
     return json.dumps({'deleted': True})
@@ -680,18 +681,24 @@ def undo_delete_entry(_id):
     if not queriedForm:
         return json.dumps({'undone': False})
     
-    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[0]]
+    # check we have a "created" key
+    created_pos=next((i for i,field in enumerate(request.json) if "name" in field and field["name"] == "created"), None)
+    if not isinstance(created_pos, int):
+        return json.dumps({'undone': False})
+    
+    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[created_pos]["value"]]
     if foundEntries:
         """ There is already an entry in the DB with the same 'created' value, we don't do anything """
         return json.dumps({'undone': False})
 
     entry={}
-    for loop, field in enumerate(queriedForm.fieldIndex):
+    for field in request.json:
         try:
-            entry[field['name']]=request.json[loop]
+            entry[field["name"]]=field["value"]
         except:
-            break
+            return json.dumps({'undone': False})
     queriedForm.entries.append(entry)
+    queriedForm.expired = queriedForm.hasExpired()
     queriedForm.save()
     queriedForm.addLog(gettext("Undeleted and entry"))
     return json.dumps({'undone': True})
@@ -1147,10 +1154,10 @@ def toggle_invitation_only(hostname=None):
     else:
         return json.dumps({'invite': Site().toggleInvitationOnly()})
 
-@app.route('/admin/toggle-default-footnote', methods=['POST'])
+@app.route('/admin/toggle-dataprotection', methods=['POST'])
 @admin_required
-def toggle_default_footnote(): 
-    return json.dumps({'footnote_enabled': Site().toggleDefaultFootNoteEnabled()})
+def toggle_site_data_consent(): 
+    return json.dumps({'dataprotection_enabled': Site().togglePersonalDataConsentEnabled()})
 
 """ Invitations """
 
