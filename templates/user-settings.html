@@ -195,7 +195,7 @@
         <input id="save-edit" class="btn-success btn" type="button" value="{%trans%}Save{%endtrans%}" />
         <input id="cancel-edit" class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" />
         <p></p>
-        <form id="editor-form" action="/site/save-default-footnote" method="post">
+        <form id="editor-form" action="/site/save-personal-data-consent-text" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <textarea id="sm-editor" name="editor">{{ site.personalDataConsent['markdown'] }}</textarea>
         </form>

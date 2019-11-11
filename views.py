@@ -861,7 +861,7 @@ def new_user(token=None):
         
         if validatedEmail == True:
             # login an invited user
-            session['username']=user.username
+            session["user_id"]=str(user._id)
             flash(gettext("Welcome!"), 'success')
             return redirect(make_url_for('my_forms'))
         else:
@@ -869,7 +869,7 @@ def new_user(token=None):
             smtpSendConfirmEmail(user)
             return render_template('new-user.html', site=Site(), created=True)
 
-    session['username']=None
+    session["user_id"]=None
     return render_template('new-user.html')
 
 
@@ -945,7 +945,7 @@ def recover_password(token=None):
         user.save()
         
         # login the user
-        session['username']=user.username
+        session['user_id']=str(user._id)
         return redirect(make_url_for('reset_password'))
 
     return render_template('recover-password.html')
@@ -1008,12 +1008,12 @@ def save_blurb():
     return redirect(make_url_for('index'))
 
 
-@app.route('/site/save-default-footnote', methods=['POST'])
+@app.route('/site/save-personal-data-consent-text', methods=['POST'])
 @admin_required
-def save_footnote():
+def save_data_consent():
     if request.method == 'POST':
         if 'editor' in request.form:            
-            Site().saveDefaultFormFootNote(request.form['editor'])
+            Site().savePersonalDataConsentText(request.form['editor'])
             flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
 

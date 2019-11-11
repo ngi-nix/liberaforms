@@ -684,7 +684,7 @@ class Site(object):
         self.site['blurb'] = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
         mongo.db.sites.save(self.site)
 
-    def saveDefaultFormFootNote(self, MDtext):
+    def savePersonalDataConsentText(self, MDtext):
         self.site['personalDataConsent'] = {    'markdown':escapeMarkdown(MDtext),
                                                 'html':markdown2HTML(MDtext),
                                                 'enabled': self.site['personalDataConsent']['enabled']}
