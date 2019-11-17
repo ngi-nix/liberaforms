@@ -69,7 +69,7 @@ class User(object):
             kwargs={"token.token": kwargs['token'], **kwargs}
             kwargs.pop('token')
         if not ('hostname' in kwargs or g.isRootUser):
-            kwargs['hostname']=Site().hostname
+            kwargs['hostname']=g.site.hostname
         
         user = mongo.db.users.find_one(kwargs)       
         if user:
@@ -87,13 +87,13 @@ class User(object):
 
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
-            kwargs['hostname']=Site().hostname
+            kwargs['hostname']=g.site.hostname
         return mongo.db.users.find(kwargs)
 
 
     def getNotifyNewFormEmails(cls):
         emails=[]
-        criteria={  'hostname':Site().hostname,
+        criteria={  'hostname':g.site.hostname,
                     'blocked':False,
                     'validatedEmail': True,
                     'admin.isAdmin':True,
@@ -113,7 +113,7 @@ class User(object):
 
     def getNotifyNewUserEmails(cls):
         emails=[]
-        criteria={  'hostname':Site().hostname,
+        criteria={  'hostname':g.site.hostname,
                     'blocked':False,
                     'validatedEmail': True,
                     'admin.isAdmin':True,
@@ -312,7 +312,7 @@ class Form(object):
             kwargs={"sharedEntries.key": kwargs['key'], **kwargs}
             kwargs.pop('key')
         if not ('hostname' in kwargs or g.isRootUser):
-            kwargs['hostname']=Site().hostname
+            kwargs['hostname']=g.site.hostname
         #print(kwargs)
         form = mongo.db.forms.find_one(kwargs)
             
@@ -463,7 +463,7 @@ class Form(object):
 
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
-            kwargs['hostname']=Site().hostname
+            kwargs['hostname']=g.site.hostname
         if 'editor' in kwargs:
             kwargs={"editors.%s" % kwargs["editor"] :{"$exists":True}, **kwargs}
             kwargs.pop('editor')
@@ -757,7 +757,7 @@ class Invite(object):
         if '_id' in kwargs:
             kwargs["_id"] = ObjectId(kwargs['_id'])
         if not ('hostname' in kwargs or g.isRootUser):
-            kwargs['hostname']=Site().hostname
+            kwargs['hostname']=g.site.hostname
         if 'token' in kwargs:
             kwargs={"token.token": kwargs['token'], **kwargs}
             kwargs.pop('token') 
@@ -805,7 +805,7 @@ class Invite(object):
 
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
-            kwargs['hostname']=Site().hostname
+            kwargs['hostname']=g.site.hostname
         return mongo.db.invites.find(kwargs)
 
     def setToken(self, **kwargs):

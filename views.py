@@ -45,11 +45,10 @@ def before_request():
     g.isAdmin=False
     if '/static' in request.path:
         return
-    site=Site()
-    g.siteName=site.siteName
+    g.site=Site()
     if 'user_id' in session:
         g.current_user=User(_id=session["user_id"])
-        if g.current_user and g.current_user.hostname != site.hostname:
+        if g.current_user and g.current_user.hostname != g.site.hostname:
             g.current_user=None
             return
         if g.current_user and g.current_user.isRootUser():
@@ -990,7 +989,7 @@ def validate_email(token):
     user.data['validatedEmail']=True
     user.save()
     #login the user
-    session['username']=user.username
+    session['user_id']=str(user._id)
     flash(gettext("Your email address is valid"), 'success')
     return redirect(make_url_for('user_settings', username=user.username))
 
