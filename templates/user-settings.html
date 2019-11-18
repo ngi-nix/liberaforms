@@ -381,8 +381,12 @@ $(document).ready(function() {
                              });
 
     $("#show-editor").click(function(){
-        $('#editor').show();
-        simplemde.value($("#sm-editor").val())
+        $('#editor').show(0, function() {
+            simplemde.value($("#sm-editor").val())
+            $('html, body').animate({
+                scrollTop: $("#editor").offset().top -200
+            }, 250);
+        });
         return false;
     });
     $("#save-edit").click(function(){

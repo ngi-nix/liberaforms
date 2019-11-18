@@ -28,7 +28,8 @@
         <input id="cancel-edit" class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" />
         <p></p>
         <form id="editor-form" action="/site/save-blurb" method="post">
-        <textarea id="sm-editor" name="editor">{{ site.blurb['markdown'] }}</textarea>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <textarea id="sm-editor" name="editor">{{ site.blurb['markdown'] }}</textarea>
         </form>
     </div>
     {% endif %}

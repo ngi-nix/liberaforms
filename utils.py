@@ -21,7 +21,6 @@ from GNGforms import app, mongo
 from flask import g, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from unidecode import unidecode
-#from datetime import datetime
 import time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy

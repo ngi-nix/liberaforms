@@ -47,9 +47,9 @@ def before_request():
         return
     g.site=Site()
     if 'user_id' in session:
-        g.current_user=User(_id=session["user_id"])
-        if g.current_user and g.current_user.hostname != g.site.hostname:
-            g.current_user=None
+        g.current_user=User(_id=session["user_id"], hostname=g.site.hostname)
+        if not g.current_user:
+            session.pop("user_id")
             return
         if g.current_user and g.current_user.isRootUser():
             g.isRootUser=True
@@ -78,7 +78,7 @@ def handle_csrf_error(e):
 
 @app.route('/', methods=['GET'])
 def index():    
-    return render_template('index.html',site=Site())
+    return render_template('index.html',site=g.site)
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
@@ -231,7 +231,7 @@ def new_form(templateID=None):
             session['formStructure']=template[0]['structure']
     
     session['afterSubmitTextMD'] = "## %s" % gettext("Thank you!!")
-    return render_template('edit-form.html', host_url=Site().host_url)
+    return render_template('edit-form.html', host_url=g.site.host_url)
 
 
 @app.route('/forms/duplicate/<string:_id>', methods=['GET'])
@@ -246,7 +246,7 @@ def duplicate_form(_id):
     populateSessionFormData(queriedForm)
     session['slug']=""
     flash(gettext("You can edit the duplicate now"), 'info')
-    return render_template('edit-form.html', host_url=Site().host_url)
+    return render_template('edit-form.html', host_url=g.site.host_url)
 
 
 @app.route('/forms/share/<string:_id>', methods=['GET'])
@@ -273,7 +273,7 @@ def add_editor(_id):
     if not isValidEmail(request.form['email']):
         return redirect(make_url_for('share_form', _id=queriedForm._id))
 
-    newEditor=User(hostname=Site().hostname, email=request.form['email'], validatedEmail=True)
+    newEditor=User(hostname=g.site.hostname, email=request.form['email'], validatedEmail=True)
     if not newEditor:
         flash(gettext("Can't find a user with that email"), 'warning')
         return redirect(make_url_for('share_form', _id=queriedForm._id))
@@ -422,7 +422,7 @@ def edit_form(_id=None):
         
         return redirect(make_url_for('preview_form'))
 
-    return render_template('edit-form.html', host_url=Site().host_url)
+    return render_template('edit-form.html', host_url=g.site.host_url)
 
 
 
@@ -431,7 +431,7 @@ def edit_form(_id=None):
 def is_slug_available(slug):
     available = True
     slug=sanitizeSlug(slug)
-    if Form(slug=slug, hostname=Site().hostname):
+    if Form(slug=slug, hostname=g.site.hostname):
         available = False
     if slug in app.config['RESERVED_SLUGS']:
         available = False
@@ -454,7 +454,7 @@ def preview_form():
     session['formStructure']=json.dumps(structure)
     
     session['slug']=sanitizeSlug(session['slug'])
-    formURL = "%s%s" % ( Site().host_url, session['slug'])
+    formURL = "%s%s" % ( g.site.host_url, session['slug'])
     return render_template('preview-form.html', formURL=formURL,
                                                 afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']))
 
@@ -504,7 +504,7 @@ def save_form(_id=None):
             # just in case!
             flash(gettext("Slug is missing."), 'error')
             return redirect(make_url_for('edit_form'))
-        if Form(slug=session['slug'], hostname=Site().hostname):
+        if Form(slug=session['slug'], hostname=g.site.hostname):
             flash(gettext("Slug is not unique. %s" % session['slug']), 'error')
             return redirect(make_url_for('edit_form'))
 
@@ -516,7 +516,7 @@ def save_form(_id=None):
                     "enabled": False,
                     "expired": False,
                     "expiryConditions": {"expireDate": None, "fields": {}},
-                    "hostname": Site().hostname,
+                    "hostname": g.site.hostname,
                     "slug": session['slug'],
                     "structure": session['formStructure'],
                     "fieldIndex": session['formFieldIndex'],
@@ -527,7 +527,7 @@ def save_form(_id=None):
                                         "expireDate": None},
                     "afterSubmitText": afterSubmitText,
                     "log": [],
-                    "requireDataConsent": Site().isPersonalDataConsentEnabled()
+                    "requireDataConsent": g.site.isPersonalDataConsentEnabled()
                 }
         newForm=Form().insert(newFormData)
         clearSessionFormData()
@@ -802,7 +802,7 @@ def change_language():
 @app.route('/user/new/<string:token>', methods=['GET', 'POST'])
 @sanitized_token
 def new_user(token=None):
-    if Site().invitationOnly and not token:
+    if g.site.invitationOnly and not token:
         return redirect(make_url_for('index'))
 
     invite=None
@@ -838,7 +838,7 @@ def new_user(token=None):
             "email": request.form['email'],
             "password": encryptPassword(request.form['password1']),
             "language": app.config['DEFAULT_LANGUAGE'],
-            "hostname": Site().hostname,
+            "hostname": g.site.hostname,
             "blocked": False,
             "admin": adminSettings,
             "validatedEmail": validatedEmail,
@@ -866,7 +866,7 @@ def new_user(token=None):
         else:
             user.setToken()
             smtpSendConfirmEmail(user)
-            return render_template('new-user.html', site=Site(), created=True)
+            return render_template('new-user.html', site=g.site, created=True)
 
     session["user_id"]=None
     return render_template('new-user.html')
@@ -880,7 +880,7 @@ def new_user(token=None):
 @anon_required
 def login():
     if 'username' in request.form and 'password' in request.form:
-        user=User(hostname=Site().hostname, username=request.form['username'], blocked=False)
+        user=User(hostname=g.site.hostname, username=request.form['username'], blocked=False)
         if user and verifyPassword(request.form['password'], user.data['password']):
             session["user_id"]=str(user._id)
             if not user.data['validatedEmail']:
@@ -896,7 +896,7 @@ def login():
 @app.route('/site/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    session["user_id"]=None
+    session.pop("user_id")
     return redirect(make_url_for('index'))
 
 
@@ -918,8 +918,8 @@ def recover_password(token=None):
             
             # auto invite root_users
             if not user and request.form['email'] in app.config['ROOT_USERS']:
-                message="New root user at %s." % Site().hostname
-                invite=Invite().create(Site().hostname, request.form['email'], message, True)
+                message="New root user at %s." % g.site.hostname
+                invite=Invite().create(g.site.hostname, request.form['email'], message, True)
                 return redirect(make_url_for('new_user', token=invite.token['token']))
             
             return redirect(make_url_for('index'))
@@ -1002,7 +1002,7 @@ def validate_email(token):
 def save_blurb():
     if request.method == 'POST':
         if 'editor' in request.form:            
-            Site().saveBlurb(request.form['editor'])
+            g.site.saveBlurb(request.form['editor'])
             flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('index'))
 
@@ -1012,7 +1012,7 @@ def save_blurb():
 def save_data_consent():
     if request.method == 'POST':
         if 'editor' in request.form:            
-            Site().savePersonalDataConsentText(request.form['editor'])
+            g.site.savePersonalDataConsentText(request.form['editor'])
             flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
 
@@ -1022,7 +1022,7 @@ def save_data_consent():
 def change_noreply_email():
     if request.method == 'POST':
         if 'email' in request.form and isValidEmail(request.form['email']):
-            Site().noreplyEmailAddress=request.form['email']
+            g.site.noreplyEmailAddress=request.form['email']
             
             flash(gettext("Site email address updated OK"), 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
@@ -1033,14 +1033,13 @@ def change_noreply_email():
 @app.route('/site/change-sitename', methods=['GET', 'POST'])
 @admin_required
 def change_siteName():
-    site=Site()
     if request.method == 'POST':
         if 'sitename' in request.form:
-            site.data['siteName']=request.form['sitename']
-            site.save()
+            g.site.data['siteName']=request.form['sitename']
+            g.site.save()
             flash(gettext("Site name changed OK"), 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
-    return render_template('change-sitename.html', site=site)
+    return render_template('change-sitename.html', site=g.site)
 
 @app.route('/site/test-smtp/<string:email>', methods=['GET'])
 @rootuser_required
@@ -1115,7 +1114,7 @@ def delete_site(hostname):
 
     if request.method == 'POST' and 'hostname' in request.form:
         if queriedSite.hostname == request.form['hostname']:
-            if Site().hostname == queriedSite.hostname:
+            if g.site.hostname == queriedSite.hostname:
                 flash(gettext("Cannot delete current site"), 'warning')
                 return redirect(make_url_for('user_settings', username=g.current_user.username)) 
             
@@ -1145,18 +1144,14 @@ def toggle_newForm_notification():
 
 
 @app.route('/admin/toggle-invitation-only', methods=['POST'])
-@app.route('/admin/toggle-invitation-only/<string:hostname>', methods=['POST'])
 @admin_required
-def toggle_invitation_only(hostname=None): 
-    if hostname:
-        return json.dumps({'invite': Site(hostname=hostname).toggleInvitationOnly()})
-    else:
-        return json.dumps({'invite': Site().toggleInvitationOnly()})
+def toggle_invitation_only(): 
+    return json.dumps({'invite': g.site.toggleInvitationOnly()})
 
 @app.route('/admin/toggle-dataprotection', methods=['POST'])
 @admin_required
 def toggle_site_data_consent(): 
-    return json.dumps({'dataprotection_enabled': Site().togglePersonalDataConsentEnabled()})
+    return json.dumps({'dataprotection_enabled': g.site.togglePersonalDataConsentEnabled()})
 
 """ Invitations """
 
@@ -1166,7 +1161,7 @@ def new_invite():
     if request.method == 'POST':
         if 'email' in request.form and isValidEmail(request.form['email']):           
             admin=False
-            hostname=Site().hostname
+            hostname=g.site.hostname
             
             if g.isRootUser:
                 if 'admin' in request.form:
@@ -1190,7 +1185,7 @@ def new_invite():
         # rootUser can choose the site to invite to.
         sites = [site for site in Site().findAll()]
 
-    return render_template('new-invite.html', hostname=Site().hostname, sites=sites)
+    return render_template('new-invite.html', hostname=g.site.hostname, sites=sites)
 
 
 @app.route('/admin/invites/delete/<string:_id>', methods=['GET'])
