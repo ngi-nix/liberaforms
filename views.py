@@ -43,9 +43,9 @@ def before_request():
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
+    g.site=Site()
     if '/static' in request.path:
         return
-    g.site=Site()
     if 'user_id' in session:
         g.current_user=User(_id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
@@ -1040,6 +1040,32 @@ def change_siteName():
             flash(gettext("Site name changed OK"), 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
     return render_template('change-sitename.html', site=g.site)
+
+@app.route('/site/change-favicon', methods=['GET', 'POST'])
+@admin_required
+def change_site_favicon():
+    if request.method == 'POST':
+        if not request.files['file']:
+            flash(gettext("Required file is missing"), 'warning')
+            return render_template('change-site-favicon.html')
+        file=request.files['file']
+        if len(file.filename) > 4 and file.filename[-4:] == ".png":
+            filename="%s_favicon.png" % g.site.hostname
+            file.save(os.path.join(app.config['FAVICON_FOLDER'], filename))
+        else:
+            flash(gettext("Bad file name. PNG only"), 'warning')
+            return render_template('change-site-favicon.html')
+        flash(gettext("Favicon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+        return redirect(make_url_for('user_settings', username=g.current_user.username))
+    return render_template('change-site-favicon.html')
+
+@app.route('/site/reset-favicon', methods=['GET'])
+@admin_required
+def reset_site_favicon():
+    if g.site.deleteFavicon():
+        flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
+    return redirect(make_url_for('user_settings', username=g.current_user.username))
+    
 
 @app.route('/site/test-smtp/<string:email>', methods=['GET'])
 @rootuser_required

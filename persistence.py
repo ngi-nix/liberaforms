@@ -26,6 +26,7 @@ from flask_babel import gettext
 from urllib.parse import urlparse
 import os, string, random, datetime, json, markdown
 
+
 import pprint
 pp = pprint.PrettyPrinter()
 
@@ -675,6 +676,20 @@ class Site(object):
         if self.site['port']:
             url = "%s:%s" % (url, self.site['port'])
         return url+'/'
+
+    def faviconURL(self):
+        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        if os.path.exists(path):
+            return "/static/images/favicon/%s_favicon.png" % self.hostname
+        else:
+            return "/static/images/favicon/default-favicon.png"
+
+    def deleteFavicon(self):
+        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        if os.path.exists(path):
+            os.remove(path)
+            return True
+        return False
 
     @property
     def blurb(self):

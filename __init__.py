@@ -21,7 +21,7 @@ from flask import Flask
 from flask_pymongo import PyMongo
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
-
+import sys, os
 
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
@@ -31,10 +31,10 @@ babel = Babel(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = 20
+app.config['APP_VERSION'] = 21
 app.config['SCHEMA_VERSION'] = 10
 
-app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites']
+app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites', 'update']
 # DPL = Data Protection Law
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL']
 app.config['RESERVED_USERNAMES'] = ['system', 'admin']
@@ -45,8 +45,8 @@ app.config['LANGUAGES'] = {
     'ca': ('Català', 'es-ES'),
     'es': ('Castellano', 'es-ES')
 }
+app.config['FAVICON_FOLDER'] = "%s/static/images/favicon/" % os.path.dirname(os.path.abspath(__file__))
 
-import sys, os
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
 from GNGforms import views

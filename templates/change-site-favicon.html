@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">
+        {%trans%}Change site favicon{%endtrans%}
+        <img src="{{g.site.faviconURL()}}" width=24 height=24 />
+    </div>
+    <hr />
+
+    <p></p>
+    <form method="POST" enctype=multipart/form-data >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label>{%trans%}Upload image{%endtrans%}</label>
+        <br />
+        <span class="hint">{%trans%}A small, square PNG image{%endtrans%}</span>
+        <br />
+        <input type=file name=file><br />
+        <p></p>
+        <input class="btn-danger btn" type="button" value="{%trans%}Reset{%endtrans%}" onClick="location.href='/site/reset-favicon'">
+        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
+    </form>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+  
+{% endblock %}
