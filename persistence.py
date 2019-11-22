@@ -644,8 +644,15 @@ class Site(object):
             "blurb": blurb,
             "invitationOnly": True,
             "siteName": "gng-forms!",
-            "noreplyEmailAddress": "no-reply@%s" % hostname,
-            "personalDataConsent": {"markdown": "", "html": "", "enabled": False }
+            "personalDataConsent": {"markdown": "", "html": "", "enabled": False },
+            "smtpConfig": {
+                "host": "smtp.%s" % hostname,
+                "port": 25,
+                "encryption": "",
+                "user": "",
+                "password": "",
+                "noreplyAddress": "no-reply@%s" % hostname
+            }
         }
         mongo.db.sites.insert_one(newSiteData)
         #create the Installation if it doesn't exist
@@ -709,14 +716,9 @@ class Site(object):
     def personalDataConsent(self):
         return self.site['personalDataConsent']
 
-    @property
-    def noreplyEmailAddress(self):
-        return self.site['noreplyEmailAddress']
-
-    @noreplyEmailAddress.setter
-    def noreplyEmailAddress(self, email):
-        self.site["noreplyEmailAddress"] = email
-        mongo.db.sites.save(self.site)
+    def saveSMTPconfig(self, **kwargs):
+        self.site["smtpConfig"]=kwargs
+        self.save()
 
     @property
     def invitationOnly(self):

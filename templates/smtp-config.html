@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+label { margin-top:0.25em }
+</style>
+
+<div class="container">
+<div class="row col-md-4"></div>
+    
+<div class="row col-md-4">
+
+    <div style="font-size:1.5em">{%trans%}Email server configuration{%endtrans%}</div>
+    <hr />
+    
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <label>{%trans%}Email server{%endtrans%}</label>
+        <span class='required'>●</span>
+        <br />
+        <input type="text" name="host" class="form-control" value="{{host}}" required />
+
+        <label>{%trans%}Port{%endtrans%}</label>
+        <span class='required'>●</span>
+        <br />
+        <input type="number" name="port" class="form-control" value="{{port}}" required />
+
+        <label>{%trans%}Encryption{%endtrans%}</label>
+        <span class='required'>●</span>
+        <br />
+        <select type="number" name="encryption" class="form-control" value="{{encryption}}" >
+            <option class="form-control" name="hello" {% if not encryption == "SSL" %}selected=True{% endif %} >{%trans%}None{%endtrans%}</option>
+            <option class="form-control" name="SSL" {% if encryption == "SSL" %}selected=True{% endif %} >SSL</option>
+        </select>
+        
+        <label>{%trans%}User{%endtrans%}</label>
+        <br />
+        <input type="text" name="user" class="form-control" value="{{user}}" />
+
+        <label>{%trans%}Password{%endtrans%}</label>
+        <br />
+        <input type="password" name="password" class="form-control" value="{{password}}" />
+
+        <label>{%trans%}Sender address{%endtrans%}</label>
+        <span class='required'>●</span>
+        <br />
+        <input type="email" name="noreplyAddress" class="form-control" value="{{noreplyAddress}}" required />
+
+        <p></p>
+        <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
+        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
+    </form>
+
+    <p>&nbsp;</p>
+    <div style="font-size:1.25em">{%trans%}Test server configuration{%endtrans%}</div>
+    <table class="table">
+    <tr>
+        <td>
+        <input id="test-email" name="email" type="email" placeholder="person@example.com" class="form-control" required >
+        </td>
+        <td class="text-right">
+        <input id="test-email-button" class="btn-primary btn btn-md" type="button" value="{%trans%}Send{%endtrans%}" >
+        </td>
+    </tr>
+    </table>
+
+</div>
+
+<div class="row col-md-4"></div>    
+</div>
+
+<script>
+document.getElementById('test-email-button').addEventListener('click', function(evt){
+    var email = $("#test-email").val();
+    if (email){
+        location.href="/site/email/test-config/"+email
+    }
+});
+</script> 
+
+{% endblock %}

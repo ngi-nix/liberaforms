@@ -115,7 +115,7 @@
         <hr />
         <p></p>
         
-        <div style="font-size:1.5em; padding-bottom:0.5em;">
+        <div id="admin_settings" style="font-size:1.5em; padding-bottom:0.5em;">
             {%trans%}My admin settings{%endtrans%}
         </div>
         <p></p>
@@ -142,7 +142,7 @@
         </table>
 
         <p></p>
-        <div style="font-size:1.5em; padding-bottom:0.5em;">
+        <div id="site_settings" style="font-size:1.5em; padding-bottom:0.5em;">
             {%trans%}Site settings{%endtrans%}
         </div>
         <p></p>
@@ -167,12 +167,10 @@
                 </td>
             </tr>
             <tr>
-                <td>{%trans%}Email address{%endtrans%}</td>
-                <td>
-                {{ site.noreplyEmailAddress }}
-                </td>
+                <td>{%trans%}Email server{%endtrans%}</td>
+                <td></td>
                 <td class="text-right">
-                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/email/change-noreply'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Configure{%endtrans%}" onClick="location.href='/site/email/config'">
                 </td>
             </tr>
             <tr>
@@ -268,17 +266,6 @@
         </tr>
         </table>
         
-        <table class="table">
-        <tr>
-            <td>{%trans%}Test SMTP config.{%endtrans%}</td>
-            <td>
-            <input id="test-email" type="text" placeholder="person@example.com" class="form-control" required >
-            </td>
-            <td class="text-right">
-            <input id="test-email-button" class="btn-primary btn btn-md" type="button" value="{%trans%}Send email{%endtrans%}" >
-            </td>
-        </tr>
-        </table>
     {% endif %}
     </div>
     <div class="row col-md-3"></div>
@@ -407,15 +394,6 @@ $(document).ready(function() {
         $('#editor').hide();
     });
 });
-
-{% if g.isRootUser %}
-document.getElementById('test-email-button').addEventListener('click', function(evt){
-    var email = $("#test-email").val();
-    if (email){
-        location.href="/site/test-smtp/"+email
-    }
-});
-{% endif %}
 
 </script>
 

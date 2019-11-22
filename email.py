@@ -24,23 +24,33 @@ from GNGforms.persistence import Site
 import smtplib, socket
 
 def createSmtpObj():
+    config=g.site.data["smtpConfig"]
     try:
-        smtpObj = smtplib.SMTP(app.config['SMTP_SERVER'])
-        return smtpObj
+        if config["encryption"] == "SSL":
+            server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
+            server.login(config["user"], config["password"])
+        else:
+            server = smtplib.SMTP(config["host"], port=config["port"])
+            if config["user"] and config["password"]:
+                server.login(config["user"], config["password"])
+        return server
     except socket.error as e:
         if g.isAdmin:
-            flash(gettext("Could not connect to SMTP server"), 'error')
+            flash(str(e), 'error')
         return False        
 
 
 def sendMail(email, message):
-    smtpObj = createSmtpObj()
-    if smtpObj:
+    server = createSmtpObj()
+    if server:
         try:
-            smtpObj.sendmail(Site().noreplyEmailAddress, email, message.encode('utf-8'))         
+            header='To: ' + email + '\n' + 'From: ' + g.site.data["smtpConfig"]["noreplyAddress"] + '\n'
+            message=header + message
+            server.sendmail(g.site.data["smtpConfig"]["noreplyAddress"], email, message.encode('utf-8'))         
             return True
-        except:
-            pass
+        except Exception as e:
+            if g.isAdmin:
+                flash(str(e) , 'error')
     return False
 
 
@@ -48,7 +58,6 @@ def smtpSendConfirmEmail(user, newEmail=None):
     link="%suser/validate-email/%s" % (Site().host_url, user.token['token'])
     message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
     message = 'Subject: {}\n\n{}'.format(gettext("GNGforms. Confirm email"), message)
-
     if newEmail:
         return sendMail(newEmail, message)
     else:
@@ -76,7 +85,6 @@ def smtpSendRecoverPassword(user):
 def smtpSendNewFormEntryNotification(emails, entry, slug):
     message=gettext("New form entry in %s at %s\n" % (slug, Site().hostname))
     for data in entry:
-        print(data)
         message="%s\n%s: %s" % (message, data[0], data[1])
     message="%s\n" % message
 

@@ -1016,19 +1016,43 @@ def save_data_consent():
             flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
 
-
-@app.route('/site/email/change-noreply', methods=['GET', 'POST'])
+@app.route('/site/email/config', methods=['GET', 'POST'])
 @admin_required
-def change_noreply_email():
+def smtp_config():
+    config=g.site.data["smtpConfig"] 
     if request.method == 'POST':
-        if 'email' in request.form and isValidEmail(request.form['email']):
-            g.site.noreplyEmailAddress=request.form['email']
-            
-            flash(gettext("Site email address updated OK"), 'success')
-            return redirect(make_url_for('user_settings', username=g.current_user.username))
-            
-    return render_template('change-email.html')
+        config['host'] = request.form['host']
+        config['port'] = request.form['port']
+        config['encryption']=request.form['encryption'] if not request.form['encryption']=="None" else ""
+        config['user'] = request.form['user']
+        config['password'] = request.form['password']
+        config['noreplyAddress'] = request.form['noreplyAddress']
 
+        if not config['host']:
+            flash(gettext("We need a host"), 'warning')
+            return render_template('smtp-config.html', **config)
+        if not config['port']:
+            flash(gettext("We need a port"), 'warning')
+            return render_template('smtp-config.html', **config)
+        if not isValidEmail(config['noreplyAddress']):            
+            flash(gettext("We need a valid sender address"), 'warning')
+            return render_template('smtp-config.html', **config)
+
+        g.site.saveSMTPconfig(**config)
+        flash(gettext("Confguration saved OK"), 'success')
+        return render_template('smtp-config.html', **config)
+    
+    return render_template('smtp-config.html', **config)
+
+@app.route('/site/email/test-config/<string:email>', methods=['GET'])
+@admin_required
+def test_smtp(email):
+    if isValidEmail(email):
+        if smtpSendTestEmail(email):
+            flash(gettext("SMTP config works!"), 'success')
+    else:
+        flash("Email not valid", 'warning')
+    return redirect(make_url_for('smtp_config'))
 
 @app.route('/site/change-sitename', methods=['GET', 'POST'])
 @admin_required
@@ -1066,18 +1090,6 @@ def reset_site_favicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
     
-
-@app.route('/site/test-smtp/<string:email>', methods=['GET'])
-@rootuser_required
-def test_smtp(email):
-    if isValidEmail(email):
-        if smtpSendTestEmail(email):
-            flash(gettext("SMTP config works!"), 'success')
-    else:
-        flash("Email not valid", 'warning')
-    return redirect(make_url_for('user_settings', username=g.current_user.username))
-
-
 @app.route('/site/update', methods=['GET', 'POST'])
 def schema_update():
     installation=Installation()

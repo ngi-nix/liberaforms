@@ -129,6 +129,20 @@ def migrateMongoSchema(schemaVersion):
             
         schemaVersion=10
 
+    if schemaVersion < 11:
+        # Added smtp config per Site.
+        for site in mongo.db.sites.find():
+            smtpConfig={
+                "host": "smtp.%s" % site["hostname"],
+                "port": 25,
+                "encryption": "",
+                "user": "",
+                "password": "",
+                "noreplyAddress": site["noreplyEmailAddress"]
+            }
+            mongo.db.sites.update_one({"_id": site["_id"]}, {"$unset": {'noreplyEmailAddress' :1},"$set": {"smtpConfig": smtpConfig} })
 
+        schemaVersion=11
+        
     # this can't be a good migration setup :(
     return schemaVersion
