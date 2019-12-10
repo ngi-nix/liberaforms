@@ -27,6 +27,7 @@ pip install validate_email
 pip install password_strength
 pip install passlib
 pip install gunicorn
+pip install flask_wtf
 
 
 
@@ -65,7 +66,7 @@ apt-get install supervisor
 Edit /etc/supervisor/conf.d/GNGforms.conf
 
 [program:GNGforms]
-command = /opt/venv/bin/gunicorn -c /opt/gunicorn_gngforms.py almacen:app
+command = /opt/venv/bin/gunicorn -c /opt/gunicorn_gngforms.py GNGforms:app
 directory = /opt
 user = www-data
 

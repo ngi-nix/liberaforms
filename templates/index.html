@@ -47,7 +47,7 @@
         <label>{%trans%}Password{%endtrans%}</label><br />
         <input type="password" name="password" class="form-control" value="" />
         </p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Login{%endtrans%}" />
+        <input class="btn-success btn" type="submit" value="{%trans%}Login{%endtrans%}" {% if g.current_user %}disabled{%endif%} />
     </form>
     <br />
     {% if g.current_user %}

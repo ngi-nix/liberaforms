@@ -116,8 +116,6 @@ def view_form(slug):
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             entry[key]=value
         
-        #print("save entry: %s" % formData)
-        #queriedForm.saveEntry(entry)
         queriedForm.entries.append(entry)
         
         if not queriedForm.expired and queriedForm.hasExpired():
