@@ -60,7 +60,7 @@
                 </tr>
             {% endif %}
             <tr>
-               <td>{%trans%}Is public{%endtrans%}</td>
+               <td>{%trans%}Published{%endtrans%}</td>
                <td>
                {% if form.editors[g.current_user._id|string] is defined %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
@@ -136,7 +136,20 @@
                    {% endif %}
                </td>
             </tr>
-
+            <tr>
+               <td>{%trans%}Restricted access{%endtrans%}</td>
+               <td>
+                   {% if form.editors[g.current_user._id|string] is defined %}
+                        {% if form.data.restrictedAccess %}
+                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        {% else %}
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        {% endif %}
+                   {% else %}
+                        {{ form.data.restrictedAccess }}
+                   {% endif %}
+               </td>
+            </tr>
             {% if form.site.isPersonalDataConsentEnabled() %}
             <tr>
                <td>{%trans%}Require consent{%endtrans%}</td>

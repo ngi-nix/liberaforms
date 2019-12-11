@@ -143,6 +143,12 @@ def migrateMongoSchema(schemaVersion):
             mongo.db.sites.update_one({"_id": site["_id"]}, {"$unset": {'noreplyEmailAddress' :1},"$set": {"smtpConfig": smtpConfig} })
 
         schemaVersion=11
-        
+
+    if schemaVersion < 12:
+        # Add restrictedAccess
+        for form in mongo.db.forms.find():
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"restrictedAccess": False}})
+        schemaVersion=12
+
     # this can't be a good migration setup :(
     return schemaVersion

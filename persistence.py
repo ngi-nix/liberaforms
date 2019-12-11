@@ -570,7 +570,12 @@ class Form(object):
         self.form['sharedEntries']['enabled'] = False if self.form['sharedEntries']['enabled'] else True
         mongo.db.forms.save(self.form)
         return self.form['sharedEntries']['enabled']
-       
+
+    def toggleRestrictedAccess(self):
+        self.form['restrictedAccess'] = False if self.form['restrictedAccess'] else True
+        mongo.db.forms.save(self.form)
+        return self.form['restrictedAccess']
+        
     def toggleNotification(self):
         editor_id=str(g.current_user._id)
         if editor_id in self.editors:

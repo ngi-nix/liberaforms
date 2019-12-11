@@ -30,11 +30,28 @@
     </div>
 </div>
 
-<div class="container" style="padding-top:1em;">
+<div class="container" style="padding-top:2em;">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-9">
+
+        <div style="font-size:1.5em;">
+            {%trans%}Restricted access{%endtrans%}
+        </div>
+        {%trans%}Only visible to people with a user account (login required){%endtrans%}
+        <div style="padding-top:0.7em">
+            <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
+                <button id="restrictedAccess_true" class="btn btn-xs btn-default {% if form.data.restrictedAccess %}btn-success{% endif %}">{%trans%}Restricted{%endtrans%}</button>
+                <button id="restrictedAccess_false" class="btn btn-xs btn-default {% if not form.data.restrictedAccess %}btn-primary{% endif %}">{%trans%}Public form{%endtrans%}</button>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding-top:2em;">
     <div class="row col-md-3"></div>
     <div class="row col-md-5">
 
-        <div style="padding-top:1.2em; font-size:1.5em;">
+        <div style="font-size:1.5em;">
             {%trans%}Editors{%endtrans%}
         </div>
         <div>
@@ -119,6 +136,30 @@ document.getElementById('toggle_sharedEntries').addEventListener('click', functi
                 $('#sharedEntries_false').addClass('btn-primary');
                 $('#enabled_link').hide()
                 $('#disabled_link').show()
+            }
+        }
+    });
+});
+
+document.getElementById('toggle_restrictedAccess').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-restricted-access/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.restricted == true) {
+                $('#restrictedAccess_true').addClass('btn-success');
+                $('#restrictedAccess_false').removeClass('btn-primary');
+            }
+            else if (data.restricted == false) {
+                $('#restrictedAccess_true').removeClass('btn-success');
+                $('#restrictedAccess_false').addClass('btn-primary');
             }
         }
     });

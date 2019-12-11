@@ -101,6 +101,8 @@ def view_form(slug):
             return render_template('form-has-expired.html'), 400
         else:
             return render_template('page-not-found.html'), 400
+    if queriedForm.data["restrictedAccess"] and not g.current_user:
+        return render_template('page-not-found.html'), 400
 
     if request.method == 'POST':  
         formData=request.form.to_dict(flat=False)
@@ -171,6 +173,8 @@ def view_entries(slug, key):
 def view_csv(slug, key):
     queriedForm = Form(slug=slug, key=key)
     if not queriedForm or not queriedForm.areEntriesShared():
+        return render_template('page-not-found.html'), 400
+    if queriedForm.data["restrictedAccess"] and not g.current_user:
         return render_template('page-not-found.html'), 400
 
     csv_file = writeCSV(queriedForm)
@@ -525,7 +529,8 @@ def save_form(_id=None):
                                         "expireDate": None},
                     "afterSubmitText": afterSubmitText,
                     "log": [],
-                    "requireDataConsent": g.site.isPersonalDataConsentEnabled()
+                    "requireDataConsent": g.site.isPersonalDataConsentEnabled(),
+                    "restrictedAccess": False
                 }
         newForm=Form().insert(newFormData)
         clearSessionFormData()
@@ -590,6 +595,16 @@ def toggle_shared_entries(_id):
     shared=form.toggleSharedEntries()
     form.addLog(gettext("Shared entries set to: %s" % shared))
     return JsonResponse(json.dumps({'enabled':shared}))
+
+@app.route('/form/toggle-restricted-access/<string:_id>', methods=['POST'])
+@enabled_user_required
+def toggle_restricted_access(_id):
+    form=Form(_id=_id, editor=str(g.current_user._id))
+    if not form:
+        return JsonResponse(json.dumps())
+    access=form.toggleRestrictedAccess()
+    form.addLog(gettext("Restricted access set to: %s" % access))
+    return JsonResponse(json.dumps({'restricted':access}))
 
 @app.route('/form/toggle-notification/<string:_id>', methods=['POST'])
 @enabled_user_required
