@@ -493,7 +493,7 @@ class Form(object):
     def deleteEntries(self):
         self.form["entries"]=[]
         mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
-            
+    
     def isAuthor(self, user):
         return True if self.author == str(user._id) else False
         

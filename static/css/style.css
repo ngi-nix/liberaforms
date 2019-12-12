@@ -61,6 +61,7 @@ hr { margin-top: 5px }
     padding: 0.5em 0 0.5em 0;
 }
 
+/* ######### Entries table ######### */
 .delete-row {
     font-weight: bold !important;
     color: #d9534f;
@@ -74,6 +75,26 @@ hr { margin-top: 5px }
 .deleted-row {
     background-color: #FAAFBE;
     text-decoration: line-through;
+    cursor: auto;
+}
+#entriesTable td:not(.deleted-row):not(:nth-child(-n+2)):not(.cellEditionMode):hover {
+    background-color: #ffffcc;
+    cursor: pointer;
+}
+.cellEditionMode {
+    cursor: auto;
+}
+.saveCellEdition {
+    font-size: 1.25em !important;
+    color: #5cb85c;
+    cursor: pointer;
+    padding-left: 0.27em;
+}
+.cancelCellEdition {
+    font-size: 1.25em !important;
+    color: #d9534f;
+    cursor: pointer;
+    padding-left: 0.27em;
 }
 /* ######### formBuilder fixes ######### */
 input[type="date"], input[type="number"] {

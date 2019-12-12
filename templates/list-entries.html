@@ -37,7 +37,7 @@
     
     <p>&nbsp;</p>
 
-    <table id="formEntries" style="display:none" class="table table-striped table-condensed">
+    <table id="entriesTable" style="display:none" class="table table-striped table-condensed">
     <thead>
         <tr>
         <th></th>
@@ -51,7 +51,7 @@
     {% for entry in form.entries %}
     <tr>
         <td style="border-right: 1px solid #ccc; border-left: 1px solid #ccc;">
-            <i class="fa fa-ban delete-row" aria-hidden="true"></i>
+            <i class="fa fa-minus-circle delete-row" aria-hidden="true"></i>
         </td>
         {% for field in fieldIndex %}
             <td style="border-right: 1px solid #ccc;">{{ entry[field['name']] }}</td>
@@ -84,12 +84,12 @@ function getRowData($row) {
     return rowData;
 }
 $(document).ready(function() {
-    $('#formEntries').DataTable({
+    $('#entriesTable').DataTable({
         "language": {
             "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
         },
         "initComplete": function(settings, json) {
-            $("#formEntries").show();
+            $("#entriesTable").show();
         },
         "order": [[1, 'desc']],
         "columnDefs": [
@@ -98,8 +98,54 @@ $(document).ready(function() {
     });
     $('.delete-row').attr('title', "{%trans%}Delete entry{%endtrans%}");
 });
-$('#formEntries tbody').on('click', '.delete-row', function () {
+// Edit cell
+$('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(1)):not(:nth-child(2)):not(.cellEditionMode)", function () {
+    $(this).addClass('cellEditionMode');
+    var cellValue = $(this).html();
+    var $editor = $("<div style='white-space:nowrap;' initial_value=\""+ cellValue +"\"></div>");
+    $editor.append("<input style='width:70%' type='text' value=\""+ cellValue +"\" />");
+    $editor.append('<i class="fa fa-check-circle saveCellEdition" aria-hidden="true"></i>');
+    $editor.append('<i class="fa fa-times-circle cancelCellEdition" aria-hidden="true"></i>');
+    $(this).html($editor);
+});
+// Cancel edition
+$('#entriesTable tbody').on('click', '.cancelCellEdition', function () {
+    $(this).parents("td").removeClass('cellEditionMode');
+    var initialValue = $(this).parent("div").attr("initial_value")
+    $(this).parents("td").html(initialValue);
+});
+// Save edition
+$('#entriesTable tbody').on('click', '.saveCellEdition', function () {
+    var initialValue = $(this).parent("div").attr("initial_value");
+    var newValue = $(this).parent("div").find('input').val();
+    var $row = $(this).parents('tr');
+    var $cell = $(this).parents("td");
+    $cell.html(newValue);
+    $.ajax({
+        url : "/forms/change-entry-field-value/{{ form._id }}",
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify(getRowData($row)),
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            $cell.removeClass('cellEditionMode');
+            if (data.saved != true) {
+                $cell.html(initialValue);
+            }
+        }
+    });    
+});
+$('#entriesTable tbody').on('click', '.delete-row', function () {
     var $row=$(this).parents('tr');
+    if ($row.find(".cellEditionMode").length == 1){
+        return
+    }
     $.ajax({
         url : "/forms/delete-entry/{{ form._id }}",
         type: "POST",
@@ -120,7 +166,7 @@ $('#formEntries tbody').on('click', '.delete-row', function () {
         }
     });
 });
-$('#formEntries tbody').on('click', '.undo-delete-row', function () {
+$('#entriesTable tbody').on('click', '.undo-delete-row', function () {
     var $row = $(this).parents('tr');
     $.ajax({
         url : "/forms/undo-delete-entry/{{ form._id }}",
@@ -137,7 +183,7 @@ $('#formEntries tbody').on('click', '.undo-delete-row', function () {
         {
             if (data.undone == true) {
                 $row.children(':not(:first-child)').removeClass('deleted-row');
-                $row.children('td').eq(0).html('<i class="fa fa-ban delete-row" aria-hidden="true"></i>');
+                $row.children('td').eq(0).html('<i class="fa fa-minus-circle delete-row" aria-hidden="true"></i>');
             }
         }
     });

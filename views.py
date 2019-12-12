@@ -712,9 +712,45 @@ def undo_delete_entry(_id):
     queriedForm.entries.append(entry)
     queriedForm.expired = queriedForm.hasExpired()
     queriedForm.save()
-    queriedForm.addLog(gettext("Undeleted and entry"))
+    queriedForm.addLog(gettext("Undeleted an entry"))
     return json.dumps({'undone': True})
 
+@app.route('/forms/change-entry-field-value/<string:_id>', methods=['POST'])
+@enabled_user_required
+def change_entry(_id):
+    queriedForm=Form(_id=_id, editor=str(g.current_user._id))
+    if not queriedForm:
+        return json.dumps({'saved': False})
+        
+    # get the 'created' field position
+    created_pos=next((i for i,field in enumerate(request.json) if "name" in field and field["name"] == "created"), None)
+    if not isinstance(created_pos, int):
+        return json.dumps({'saved': False})
+    
+    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[created_pos]["value"]]
+    if not foundEntries or len(foundEntries) > 1:
+        """ If there are two entries with the same 'created' value, we don't change anything """
+        print("not foubnd")
+        return json.dumps({'saved': False})
+    
+    try:
+        entry_pos = [pos for pos, entry in enumerate(queriedForm.entries) if entry == foundEntries[0]][0]
+    except:
+        return json.dumps({'saved': False})
+
+    modifiedEntry={}
+    for field in request.json:
+        try:
+            modifiedEntry[field["name"]]=field["value"]
+        except:
+            return json.dumps({'saved': False})
+    
+    del queriedForm.entries[entry_pos]
+    queriedForm.entries.insert(entry_pos, modifiedEntry)
+    queriedForm.expired = queriedForm.hasExpired()
+    queriedForm.save()
+    queriedForm.addLog(gettext("Modified an entry"))
+    return json.dumps({'saved': True})
 
 @app.route('/forms/delete-entries/<string:_id>', methods=['GET', 'POST'])
 @enabled_user_required

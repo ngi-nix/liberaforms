@@ -228,31 +228,33 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         }
     });
 });
-document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
-    $.ajax({
-        url : "/form/toggle-data-consent/{{ form._id }}",
-        type: "POST",
-        dataType: "json",
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+{% if form.site.isPersonalDataConsentEnabled() %}
+    document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
+        $.ajax({
+            url : "/form/toggle-data-consent/{{ form._id }}",
+            type: "POST",
+            dataType: "json",
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                if (data.consent == true) {
+                    $('#dataConsent_true').addClass('btn-success');
+                    $('#dataConsent_false').removeClass('btn-primary');
+                    $('#dataConsent').show();
+                }
+                else if (data.consent == false) {
+                    $('#dataConsent_true').removeClass('btn-success');
+                    $('#dataConsent_false').addClass('btn-primary');
+                    $('#dataConsent').hide();
+                }
             }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.consent == true) {
-                $('#dataConsent_true').addClass('btn-success');
-                $('#dataConsent_false').removeClass('btn-primary');
-                $('#dataConsent').show();
-            }
-            else if (data.consent == false) {
-                $('#dataConsent_true').removeClass('btn-success');
-                $('#dataConsent_false').addClass('btn-primary');
-                $('#dataConsent').hide();
-            }
-        }
+        });
     });
-});
+{% endif %}
 {% endif %}
 function addRequiredMsg(){
     if ($('#fb-render').find("span.fb-required").length) {
