@@ -13,14 +13,15 @@
 </style>
 
 <div class="container">
-    <div class="row col-md-9" style="font-size:1.5em">
+    <div class="row col-md-8" style="font-size:1.5em">
     <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
     {{ form.slug }}
     </div>
     
-    <div class="row col-md-3" style="text-align:right">
+    <div class="row col-md-4" style="text-align:right">
+    <input id="editModeButton" class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable edition{%endtrans%}" onClick="js:setEditMode();">
     <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
-    <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete all entries{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
+    <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete all{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
     </div>
 </div>
 
@@ -51,7 +52,7 @@
     {% for entry in form.entries %}
     <tr>
         <td style="border-right: 1px solid #ccc; border-left: 1px solid #ccc;">
-            <i class="fa fa-minus-circle delete-row" aria-hidden="true"></i>
+            <i class="fa fa-minus-circle delete-row-icon" aria-hidden="true"></i>
         </td>
         {% for field in fieldIndex %}
             <td style="border-right: 1px solid #ccc;">{{ entry[field['name']] }}</td>
@@ -65,7 +66,16 @@
 <script>
 var csrftoken = "{{ csrf_token() }}";
 var fieldIndex={{fieldIndex|tojson}};
+var editMode = false;
 
+function setEditMode(){
+    editMode = true;
+    $('#editModeButton').removeClass('btn-primary');
+    $('#editModeButton').addClass('btn-success');
+    $('#editModeButton').val('{%trans%}Edition enabled{%endtrans%}');
+    $('.delete-row-icon').addClass('enabled');
+    $('#entriesTable tbody').addClass('entryCellHighlighter');
+}
 function getFieldValueInRow(fieldName, $row){
     var arrayLength = fieldIndex.length;
     for (var loop = 0; loop < arrayLength; loop++) {
@@ -96,16 +106,19 @@ $(document).ready(function() {
             { "orderable": false, "targets": 0 }
         ]
     });
-    $('.delete-row').attr('title', "{%trans%}Delete entry{%endtrans%}");
+    $('.delete-row-icon').attr('title', "{%trans%}Delete entry{%endtrans%}");
 });
 // Edit cell
-$('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(1)):not(:nth-child(2)):not(.cellEditionMode)", function () {
+$('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(-n+2)):not(.cellEditionMode)", function () {
+    if(editMode == false){
+        return;
+    }
     $(this).addClass('cellEditionMode');
     var cellValue = $(this).html();
     var $editor = $("<div style='white-space:nowrap;' initial_value=\""+ cellValue +"\"></div>");
     $editor.append("<input style='width:70%' type='text' value=\""+ cellValue +"\" />");
-    $editor.append('<i class="fa fa-check-circle saveCellEdition" aria-hidden="true"></i>');
-    $editor.append('<i class="fa fa-times-circle cancelCellEdition" aria-hidden="true"></i>');
+    $editor.append('<i class="fa fa-check-circle saveCellEdition" aria-hidden="true" title="{%trans%}Save{%endtrans%}"></i>');
+    $editor.append('<i class="fa fa-times-circle cancelCellEdition" aria-hidden="true" title="{%trans%}Cancel{%endtrans%}"></i>');
     $(this).html($editor);
 });
 // Cancel edition
@@ -141,7 +154,11 @@ $('#entriesTable tbody').on('click', '.saveCellEdition', function () {
         }
     });    
 });
-$('#entriesTable tbody').on('click', '.delete-row', function () {
+$('#entriesTable tbody').on('click', '.delete-row-icon', function () {
+    if(editMode == false){
+        console.log(editMode)
+        return;
+    }
     var $row=$(this).parents('tr');
     if ($row.find(".cellEditionMode").length == 1){
         return
@@ -183,7 +200,7 @@ $('#entriesTable tbody').on('click', '.undo-delete-row', function () {
         {
             if (data.undone == true) {
                 $row.children(':not(:first-child)').removeClass('deleted-row');
-                $row.children('td').eq(0).html('<i class="fa fa-minus-circle delete-row" aria-hidden="true"></i>');
+                $row.children('td').eq(0).html('<i class="fa fa-minus-circle delete-row-icon enabled" aria-hidden="true"></i>');
             }
         }
     });

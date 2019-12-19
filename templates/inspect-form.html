@@ -42,23 +42,18 @@
         
         <table class="table table-striped table-condensed">
             <tr>
-               <td>{%trans%}Author{%endtrans%}</td>
-               {% if g.isAdmin %}
-                    <td><a href="/admin/users/{{ form.user._id }}">{{ form.user.username }}</a></td>
-               {% else %}
-                    <td>{{ form.user.username }}</td>
-                {% endif %}
+               <td>{%trans%}Entries{%endtrans%}</td>
+               <td>
+                   {% if form.editors[g.current_user._id|string] is defined %}
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
+                   {% else %}
+                        {{form.totalEntries}}
+                   {% endif %}
+                   {% if form.totalEntries %}
+                        {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
+                   {% endif %}
+               </td>
             </tr>
-            <tr>
-               <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ form.created }}</td>
-            </tr>
-            {% if g.isRootUser %}
-                <tr>
-                   <td>{%trans%}Hostname{%endtrans%}</td>
-                   <td>{{ form.hostname }}</td>
-                </tr>
-            {% endif %}
             <tr>
                <td>{%trans%}Published{%endtrans%}</td>
                <td>
@@ -110,19 +105,6 @@
                 </td>
             </tr>
             <tr>
-               <td>{%trans%}Entries{%endtrans%}</td>
-               <td>
-                   {% if form.editors[g.current_user._id|string] is defined %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
-                   {% else %}
-                        {{form.totalEntries}}
-                   {% endif %}
-                   {% if form.totalEntries %}
-                        {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
-                   {% endif %}
-               </td>
-            </tr>
-            <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
                    {% if form.editors[g.current_user._id|string] is defined %}
@@ -163,6 +145,24 @@
                     {{ form.isDataConsentEnabled() }}            
                {% endif %}
                </td>
+            </tr>
+            {% endif %}
+            <tr>
+               <td>{%trans%}Author{%endtrans%}</td>
+               {% if g.isAdmin %}
+                    <td><a href="/admin/users/{{ form.user._id }}">{{ form.user.username }}</a></td>
+               {% else %}
+                    <td>{{ form.user.username }}</td>
+                {% endif %}
+            </tr>
+            <tr>
+               <td>{%trans%}Created{%endtrans%}</td>
+               <td>{{ form.created }}</td>
+            </tr>
+            {% if g.isRootUser %}
+            <tr>
+                <td>{%trans%}Hostname{%endtrans%}</td>
+                <td>{{ form.hostname }}</td>
             </tr>
             {% endif %}
             

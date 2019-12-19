@@ -62,8 +62,11 @@ hr { margin-top: 5px }
 }
 
 /* ######### Entries table ######### */
-.delete-row {
-    font-weight: bold !important;
+.delete-row-icon {
+    font-size: 1.15em !important;
+    color: grey;
+}
+.delete-row-icon.enabled {
     color: #d9534f;
     cursor: pointer;
 }
@@ -77,7 +80,7 @@ hr { margin-top: 5px }
     text-decoration: line-through;
     cursor: auto;
 }
-#entriesTable td:not(.deleted-row):not(:nth-child(-n+2)):not(.cellEditionMode):hover {
+.entryCellHighlighter td:not(.deleted-row):not(:nth-child(-n+2)):not(.cellEditionMode):hover {
     background-color: #ffffcc;
     cursor: pointer;
 }
