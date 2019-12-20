@@ -644,6 +644,7 @@ def list_entries(_id):
         return redirect(make_url_for('my_forms'))
 
     return render_template('list-entries.html', form=queriedForm,
+                                                tallyColumns=queriedForm.getConditionalFieldPositions(),
                                                 fieldIndex=queriedForm.getFieldIndexForDataDisplay())
 
 

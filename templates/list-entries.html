@@ -3,6 +3,9 @@
 
 <script src="/static/dataTables/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/dataTables.bootstrap.min.js"></script>
+{% if tallyColumns %}
+<script src="/static/dataTables/plugins/sum().js"></script>
+{% endif %}
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
 
@@ -67,6 +70,7 @@
 var csrftoken = "{{ csrf_token() }}";
 var fieldIndex={{fieldIndex|tojson}};
 var editMode = false;
+var tallyColumns = {{tallyColumns|tojson}};
 
 function setEditMode(){
     editMode = true;
@@ -94,11 +98,16 @@ function getRowData($row) {
     return rowData;
 }
 $(document).ready(function() {
-    $('#entriesTable').DataTable({
+    var table = $('#entriesTable').DataTable({
         "language": {
             "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
         },
         "initComplete": function(settings, json) {
+            tallyColumns.forEach(function(column) {
+                col=column+1;
+                sum=table.column( col ).data().sum();
+                $("#entriesTable th:nth-child("+ (col+1) +")" ).append( " <span class='col_sum'>("+sum+")</span>" );
+            });
             $("#entriesTable").show();
         },
         "order": [[1, 'desc']],
@@ -150,6 +159,9 @@ $('#entriesTable tbody').on('click', '.saveCellEdition', function () {
             $cell.removeClass('cellEditionMode');
             if (data.saved != true) {
                 $cell.html(initialValue);
+            }else{
+                // could improve this to recalculate the given column
+                $(".col_sum").hide();
             }
         }
     });    
@@ -179,6 +191,7 @@ $('#entriesTable tbody').on('click', '.delete-row-icon', function () {
             if (data.deleted == true) {
                 $row.children(':not(:first-child)').addClass('deleted-row');
                 $row.children('td').eq(0).html('<i class="fa fa-undo undo-delete-row" aria-hidden="true"></i>');
+                $(".col_sum").hide();
             }
         }
     });

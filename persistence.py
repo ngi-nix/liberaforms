@@ -462,6 +462,17 @@ class Form(object):
     def fieldConditions(self):
         return self.form["expiryConditions"]["fields"]
 
+    def getConditionalFieldPositions(self):
+        conditionalFieldPositions=[]
+        if self.fieldConditions:
+            for fieldName, condition in self.fieldConditions.items():
+                if condition['type'] == 'number':
+                    for position, field in enumerate(self.fieldIndex):
+                        if field['name'] == fieldName:
+                            conditionalFieldPositions.append(position)
+                            break
+        return conditionalFieldPositions
+
     def findAll(cls, *args, **kwargs):
         if not g.isRootUser:
             kwargs['hostname']=g.site.hostname
