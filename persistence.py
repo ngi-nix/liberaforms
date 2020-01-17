@@ -211,7 +211,7 @@ class User(object):
 
     def isAdmin(self):
         return self.user['admin']['isAdmin']
-
+        
     def isRootUser(self):
         if self.email in app.config['ROOT_USERS']:
             return True
@@ -464,13 +464,12 @@ class Form(object):
 
     def getConditionalFieldPositions(self):
         conditionalFieldPositions=[]
-        if self.fieldConditions:
-            for fieldName, condition in self.fieldConditions.items():
-                if condition['type'] == 'number':
-                    for position, field in enumerate(self.fieldIndex):
-                        if field['name'] == fieldName:
-                            conditionalFieldPositions.append(position)
-                            break
+        for fieldName, condition in self.fieldConditions.items():
+            if condition['type'] == 'number':
+                for position, field in enumerate(self.fieldIndex):
+                    if field['name'] == fieldName:
+                        conditionalFieldPositions.append(position)
+                        break
         return conditionalFieldPositions
 
     def findAll(cls, *args, **kwargs):
@@ -746,7 +745,12 @@ class Site(object):
     @property
     def totalUsers(self):
         return User().findAll(hostname=self.hostname).count()
-        
+
+    @property
+    def admins(self):
+        criteria={"admin.isAdmin": True, 'hostname': self.hostname}
+        return [User(_id=user['_id']) for user in mongo.db.users.find(criteria)]
+    
     @property
     def totalForms(self):
         return Form().findAll(hostname=self.hostname).count()

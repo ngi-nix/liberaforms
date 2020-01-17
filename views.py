@@ -643,9 +643,7 @@ def list_entries(_id):
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
 
-    return render_template('list-entries.html', form=queriedForm,
-                                                tallyColumns=queriedForm.getConditionalFieldPositions(),
-                                                fieldIndex=queriedForm.getFieldIndexForDataDisplay())
+    return render_template('list-entries.html', form=queriedForm)
 
 
 @app.route('/forms/csv/<string:_id>', methods=['GET'])
@@ -878,6 +876,10 @@ def new_user(token=None):
                 validatedEmail=True
             if invite.data['admin'] == True:
                 adminSettings['isAdmin']=invite.data['admin']
+                # the first admin of a new Site needs to config. SMTP before we can send emails.
+                # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
+                if not g.site.admins:
+                    validatedEmail=True
 
         if request.form['email'] in app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True

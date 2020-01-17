@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% set fieldIndex = form.getFieldIndexForDataDisplay() %}
+{% set tallyColumns = form.getConditionalFieldPositions() %}
+
 <script src="/static/dataTables/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/dataTables.bootstrap.min.js"></script>
 {% if tallyColumns %}
