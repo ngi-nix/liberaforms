@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-7" style="font-size:1.5em">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+        {{ form.slug }}
+        <hr />
+    </div>
+    <div class="row col-md-2"></div>
+</div>
+
+<div class="container">
+    <div class="row col-md-3"></div>
+    <div class="row col-md-5">
+
+        <div style="font-size:1.5em; padding-bottom:1em;">
+            {%trans%}Change author{%endtrans%}
+        </div>
+        
+        <table class="table table-striped table-condensed">
+            <tr>
+               <td>{%trans%}Current author{%endtrans%}</td>
+               <td>{{ form.user.username }}</td>
+            </tr>
+        </table>
+
+        {%trans%}You are going to change the author of this form.{%endtrans%}<br />
+        {%trans%}Are you sure?{%endtrans%}
+        <p>&nbsp;</p>
+
+        <form action="/admin/forms/change-author/{{form._id}}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input name="new_author_username" type="text" placeholder="{%trans%}New author's username{%endtrans%}" class="form-control" required />
+            <p></p>
+            <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Change author{%endtrans%}" />
+        </form>
+        
+        {% if editors|length > 1 %}
+        <p>&nbsp;</p>
+        <div style="font-size:1.5em;">
+            {%trans%}Editors{%endtrans%}
+        </div>
+        <div>
+            {%trans%}Users listed here have the <b>same permissions</b> as the author{%endtrans%}
+        </div>
+
+        <p style="padding-top:1.2em;"></p>
+        
+        <table class="table table-condensed">
+        {% for editor in editors %}
+            <tr id="editor_{{editor._id}}">
+                <td>{{ editor.username }}</td>
+                <td>{{ editor.email }}</td>
+                <td class="text-right">
+                {% if editor._id|string == form.author %}
+                    ({%trans%}Author{%endtrans%})
+                {% else %}
+                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor._id}}');">
+                {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% endif %}
+
+    </div>
+    <div class="row col-md-4"></div>
+</div>
+
+<script>
+var csrftoken = "{{ csrf_token() }}";
+function removeEditor(editor_id){
+    $.ajax({
+        url : "/forms/remove-editor/{{form._id}}/"+editor_id,
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data == editor_id) {
+                $('#editor_'+editor_id).hide();
+            }
+        }
+    });
+}
+</script>
+  
+{% endblock %}

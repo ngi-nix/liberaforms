@@ -55,7 +55,7 @@
                </td>
             </tr>
             <tr>
-               <td>{%trans%}Published{%endtrans%}</td>
+               <td>{%trans%}Public{%endtrans%}</td>
                <td>
                {% if form.editors[g.current_user._id|string] is defined %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
@@ -63,10 +63,7 @@
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                {% else %}
-                    {{ form.isPublic() }}
-                    {% if not form.user.enabled %}
-                        <span style="color:red">({%trans%}user disabled{%endtrans%})</span>                
-                    {% endif %}               
+                    {{ form.isPublic() }}              
                {% endif %}
                </td>
             </tr>
@@ -93,7 +90,12 @@
                </td>
             </tr>
             <tr>
-               <td>{%trans%}Public URL{%endtrans%}</td>
+               <td>
+                    {%trans%}Public URL{%endtrans%}
+                    {% if not form.data['adminPreferences']['public'] %}
+                        <span style="color:red">({%trans%}disabled{%endtrans%})</span>
+                    {% endif %}
+               </td>
                <td>
                    {% if form.isPublic() %}
                    <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
@@ -148,12 +150,19 @@
             </tr>
             {% endif %}
             <tr>
-               <td>{%trans%}Author{%endtrans%}</td>
+               <td>
+                    {%trans%}Author{%endtrans%}
+                    {% if not form.user.enabled %}
+                        <span style="color:red">({%trans%}disabled{%endtrans%})</span>            
+                    {% endif %} 
+               </td>
+               <td>
                {% if g.isAdmin %}
-                    <td><a href="/admin/users/{{ form.user._id }}">{{ form.user.username }}</a></td>
+                    <a href="/admin/users/{{ form.user._id }}">{{ form.user.username }}</a>
                {% else %}
-                    <td>{{ form.user.username }}</td>
+                    {{ form.user.username }}
                 {% endif %}
+                </td>
             </tr>
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
@@ -176,6 +185,19 @@
             <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">
             {% else %}
             <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">
+            {% endif %}
+        {% endif %}
+        
+        {% if g.isAdmin %}
+        <div style="font-size:1.5em; padding-top:1em;">
+            {%trans%}Admin options{%endtrans%}
+        </div>
+        <hr />
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change author{%endtrans%}" onClick="location.href='/admin/forms/change-author/{{form._id}}'" >
+            {% if form.data['adminPreferences']['public'] %}
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form._id}}'" >
+            {% else %}
+            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form._id}}'" >
             {% endif %}
         {% endif %}
     </div>

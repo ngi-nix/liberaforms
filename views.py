@@ -24,9 +24,9 @@ from GNGforms import app, mongo, babel
 from threading import Thread
 from flask_babel import gettext, refresh
 from GNGforms.persistence import *
-from .session import *
-from .utils import *
-from .email import *
+from GNGforms.session import *
+from GNGforms.utils import *
+from GNGforms.email import *
 from form_templates import formTemplates
 
 import pprint
@@ -275,17 +275,17 @@ def add_editor(_id):
     if not isValidEmail(request.form['email']):
         return redirect(make_url_for('share_form', _id=queriedForm._id))
 
-    newEditor=User(hostname=g.site.hostname, email=request.form['email'], validatedEmail=True)
-    if not newEditor:
+    newEditor=User(hostname=g.site.hostname, email=request.form['email'])
+    if not newEditor or newEditor.enabled==False:
         flash(gettext("Can't find a user with that email"), 'warning')
         return redirect(make_url_for('share_form', _id=queriedForm._id))
     if str(newEditor._id) in queriedForm.editors:
         flash(gettext("%s is already an editor" % newEditor.email), 'warning')
         return redirect(make_url_for('share_form', _id=queriedForm._id))
     
-    queriedForm.addEditor(str(newEditor._id))
-    flash(gettext("New editor added ok"), 'success')
-    queriedForm.addLog(gettext("Added editor %s" % newEditor.email))
+    if queriedForm.addEditor(newEditor):
+        flash(gettext("New editor added ok"), 'success')
+        queriedForm.addLog(gettext("Added editor %s" % newEditor.email))
     return redirect(make_url_for('share_form', _id=queriedForm._id))
 
 
@@ -530,7 +530,8 @@ def save_form(_id=None):
                     "afterSubmitText": afterSubmitText,
                     "log": [],
                     "requireDataConsent": g.site.isPersonalDataConsentEnabled(),
-                    "restrictedAccess": False
+                    "restrictedAccess": False,
+                    "adminPreferences": { "public": True }
                 }
         newForm=Form().insert(newFormData)
         clearSessionFormData()
@@ -901,14 +902,11 @@ def new_user(token=None):
         if not user:
             flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
-
         if invite:
-            invite.delete()
-
-        @after_this_request 
-        def send_newuser_email(response): 
-            smtpSendNewUserNotification(User().getNotifyNewUserEmails(), user.username)
-            return response
+            invite.delete()           
+        
+        thread = Thread(target=smtpSendNewUserNotification(User().getNotifyNewUserEmails(), user.username))
+        thread.start()
         
         if validatedEmail == True:
             # login an invited user
@@ -1377,7 +1375,40 @@ def list_forms():
     forms = [Form(_id=form['_id']) for form in Form().findAll()]
     return render_template('list-forms.html', forms=forms) 
 
-
+@app.route('/admin/forms/toggle-public/<string:_id>', methods=['GET'])
+@admin_required
+def toggle_form_public_admin_prefs(_id):
+    queriedForm = Form(_id=_id)
+    if not queriedForm:
+        flash(gettext("Can't find that form"), 'warning')
+        return redirect(make_url_for('my_forms'))
+    
+    queriedForm.toggleAdminFormPublic()
+    return redirect(make_url_for('inspect_form', _id=_id))
+    
+@app.route('/admin/forms/change-author/<string:_id>', methods=['GET', 'POST'])
+@admin_required
+def change_author(_id):
+    queriedForm = Form(_id=_id)
+    if not queriedForm:
+        flash(gettext("Form is not available"), 'warning')
+        return redirect(make_url_for('my_forms'))
+    if request.method == 'POST':
+        if 'new_author_username' in request.form:
+            new_author=User(username=request.form['new_author_username'], hostname=g.site.hostname)
+            if new_author:
+                if new_author.enabled:
+                    old_author=queriedForm.user # we really need to find better property names than author and user
+                    if queriedForm.changeAuthor(new_author):
+                        queriedForm.addLog(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
+                        flash(gettext("Changed author OK"), 'success')
+                        return redirect(make_url_for('inspect_form', _id=queriedForm._id))
+                else:
+                    flash(gettext("Cannot use %s. The user is not enabled" % request.form['new_author_username']), 'warning')
+            else:
+                flash(gettext("Can't find username %s" % request.form['new_author_username']), 'warning')
+    editors=[User(_id=user_id) for user_id in queriedForm.editors]
+    return render_template('change-author.html', form=queriedForm, editors=editors)
 
 
 """

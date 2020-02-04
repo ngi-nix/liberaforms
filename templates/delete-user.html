@@ -11,7 +11,7 @@
         {%trans%}Delete user{%endtrans%}
     </div>
     <hr />
-    {% set formCount=user.forms.count() %}
+    {% set formCount=user.forms|length %}
     {%trans%}You are going to delete a user{%endtrans%}
     {% if formCount %}
         {%trans%}and their forms{%endtrans%}

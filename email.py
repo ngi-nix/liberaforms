@@ -22,6 +22,7 @@ from flask_babel import gettext
 from GNGforms import app
 from GNGforms.persistence import Site
 import smtplib, socket
+from threading import Thread
 
 def createSmtpObj():
     config=g.site.data["smtpConfig"]

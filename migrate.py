@@ -150,5 +150,11 @@ def migrateMongoSchema(schemaVersion):
             mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"restrictedAccess": False}})
         schemaVersion=12
 
+    if schemaVersion == 12:
+        # Add admin prefs. to forms
+        for form in mongo.db.forms.find():
+            mongo.db.forms.update_one({"_id": form["_id"]}, {"$set": {"adminPreferences": { "public": True }}})
+        schemaVersion=13
+    
     # this can't be a good migration setup :(
     return schemaVersion

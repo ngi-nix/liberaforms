@@ -48,7 +48,7 @@
             <tr>
                <td>{%trans%}Validated email{%endtrans%}</td>
                <td> {% if user.data.validatedEmail %}
-                    <span style="color:green">{%trans%}True{%endtrans%}</span>
+                    <span>{%trans%}True{%endtrans%}</span>
                     {% else %}
                     <span style="color:red">{%trans%}False{%endtrans%}</span>
                     {% endif %}
@@ -65,7 +65,7 @@
             </tr>
         </table>
         {% if g.isAdmin and not user._id == g.current_user._id %}
-            {% if user.forms.count() %}
+            {% if user.forms|length %}
             <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user._id}}'">
             {% else %}
             <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user._id}}'">
@@ -87,7 +87,7 @@
                 <th>{%trans%}Created{%endtrans%}</th>
                 <th>{%trans%}Author{%endtrans%}</th>
                 <th>{%trans%}Editors{%endtrans%}</th>
-                <th>{%trans%}Enabled{%endtrans%}</th>
+                <th>{%trans%}Public{%endtrans%}</th>
                 <th>{%trans%}Entries{%endtrans%}</th>
             </tr>
         </thead>

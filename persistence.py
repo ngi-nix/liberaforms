@@ -194,7 +194,8 @@ class User(object):
         
     @property
     def forms(self):
-        return Form().findAll(editor=str(self._id))
+        #return Form().findAll(editor=str(self._id))
+        return [Form(_id=form['_id']) for form in Form().findAll(editor=str(self._id))]
 
     @property
     def admin(self):
@@ -340,7 +341,21 @@ class Form(object):
     @property
     def author(self):
         return self.form['author']
-        
+
+    @author.setter
+    def author(self, value):
+        self.form["author"]=value
+
+    def changeAuthor(self, new_author):
+        if new_author.enabled:
+            if self.author in self.editors:
+                del self.editors[self.author]
+            self.author=str(new_author._id)
+            if self.addEditor(new_author):
+                self.save()
+                return True
+        return False
+
     @property
     def user(self):
         return User(_id=self.form['author'])
@@ -393,15 +408,22 @@ class Form(object):
 
     @property
     def enabled(self):
+        if not self.form['adminPreferences']['public']:
+            return False
         return self.form['enabled']
 
     def newEditorPreferences(cls):
         return {'notification': {'newEntry': False, 'expiredForm': True}}
 
-    def addEditor(self, editor_id):
+    def addEditor(self, editor):
+        if not editor.enabled:
+            return False
+        editor_id=str(editor._id)
         if not editor_id in self.form['editors']:
             self.form['editors'][editor_id]=Form().newEditorPreferences()
             mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+            return True
+        return False
 
     def removeEditor(self, editor_id):
         if editor_id == self.author:
@@ -569,13 +591,18 @@ class Form(object):
         return "%s/%s/%s" % (self.url, part, self.form['sharedEntries']['key'])
 
     def toggleEnabled(self):
-        if self.expired:
+        if self.expired or self.form['adminPreferences']['public']==False:
             return False
         else:
             self.form['enabled'] = False if self.form['enabled'] else True
             mongo.db.forms.save(self.form)
             return self.form['enabled']
-
+            
+    def toggleAdminFormPublic(self):
+        self.form['adminPreferences']['public'] = False if self.form['adminPreferences']['public'] else True
+        mongo.db.forms.save(self.form)
+        return self.form['adminPreferences']['public']
+    
     def toggleSharedEntries(self):
         self.form['sharedEntries']['enabled'] = False if self.form['sharedEntries']['enabled'] else True
         mongo.db.forms.save(self.form)
