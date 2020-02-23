@@ -32,6 +32,8 @@
 
         <form action="/admin/forms/change-author/{{form._id}}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input name="old_author_username" type="text" placeholder="{%trans%}Current author's username{%endtrans%}" class="form-control" required />
+            <br />
             <input name="new_author_username" type="text" placeholder="{%trans%}New author's username{%endtrans%}" class="form-control" required />
             <p></p>
             <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Change author{%endtrans%}" />

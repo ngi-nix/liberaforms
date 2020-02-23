@@ -119,7 +119,7 @@ def sanitizeString(string):
 
 def sanitizeSlug(slug):
     slug = slug.lower()
-    slug = slug.replace(" ", "-") 
+    slug = slug.replace(" ", "-")
     return sanitizeString(slug)
 
 def sanitizeHexidecimal(string): 

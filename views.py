@@ -84,7 +84,6 @@ def index():
 @sanitized_slug_required
 def view_form(slug):
     queriedForm = Form(slug=slug)
-    
     if not queriedForm:
         if g.current_user:
             flash(gettext("Can't find that form"), 'warning')
@@ -176,7 +175,6 @@ def view_csv(slug, key):
         return render_template('page-not-found.html'), 400
     if queriedForm.data["restrictedAccess"] and not g.current_user:
         return render_template('page-not-found.html'), 400
-
     csv_file = writeCSV(queriedForm)
     
     @after_this_request 
@@ -1250,24 +1248,19 @@ def new_invite():
         if 'email' in request.form and isValidEmail(request.form['email']):           
             admin=False
             hostname=g.site.hostname
-            
             if g.isRootUser:
                 if 'admin' in request.form:
                     admin=True
                 if 'hostname' in request.form:
                     hostname=request.form['hostname']
-                
             if not request.form['message']:
                 message="You have been invited to %s." % hostname
             else:
                 message=request.form['message']
-                
             invite=Invite().create(hostname, request.form['email'], message, admin)
             smtpSendInvite(invite)
-            
             flash(gettext("We've sent an invitation to %s") % invite.data['email'], 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
-            
     sites=[]
     if g.isRootUser:
         # rootUser can choose the site to invite to.
@@ -1284,7 +1277,6 @@ def delete_invite(_id):
         invite.delete()
     else:
         flash(gettext("Opps! We can't find that invitation"), 'error')
-        
     return redirect(make_url_for('user_settings', username=g.current_user.username))
 
 
@@ -1362,7 +1354,6 @@ def delete_user(_id):
             return redirect(make_url_for('list_users'))
         else:
             flash(gettext("Username does not match"), 'warning')
-                   
     return render_template('delete-user.html', user=user)
 
 
@@ -1382,7 +1373,6 @@ def toggle_form_public_admin_prefs(_id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('my_forms'))
-    
     queriedForm.toggleAdminFormPublic()
     return redirect(make_url_for('inspect_form', _id=_id))
     
@@ -1393,7 +1383,11 @@ def change_author(_id):
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
         return redirect(make_url_for('my_forms'))
+    editors=[User(_id=user_id) for user_id in queriedForm.editors]
     if request.method == 'POST':
+        if not 'old_author_username' in request.form or not request.form['old_author_username']==queriedForm.user.username:
+            flash(gettext("Current author incorrect"), 'warning')
+            return render_template('change-author.html', form=queriedForm, editors=editors)
         if 'new_author_username' in request.form:
             new_author=User(username=request.form['new_author_username'], hostname=g.site.hostname)
             if new_author:
@@ -1407,7 +1401,6 @@ def change_author(_id):
                     flash(gettext("Cannot use %s. The user is not enabled" % request.form['new_author_username']), 'warning')
             else:
                 flash(gettext("Can't find username %s" % request.form['new_author_username']), 'warning')
-    editors=[User(_id=user_id) for user_id in queriedForm.editors]
     return render_template('change-author.html', form=queriedForm, editors=editors)
 
 
