@@ -926,3 +926,10 @@ class Installation(object):
                 return None
         else:
             print('Schema already up to date')
+            
+    @classmethod
+    def isUser(self, email):
+        if mongo.db.users.find_one({'email':email}):
+            return True
+        else:
+            return False

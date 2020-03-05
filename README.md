@@ -39,6 +39,7 @@ ROOT_USERS is a list of emails. Users with these emails are "Root users".
  * Admins **cannot** read collected data of other users' forms
 
 GNGforms can serve multiple sites.
+
 **Root users:**
  * Bootstrap the first Admin of a new site
  * All the same permissions as admins, across **all sites**.
@@ -50,4 +51,4 @@ GNGforms can serve multiple sites.
 
 ## Bootstrapping a second site
 1. Configure nginx proxy to direct traffic to the running gunicorn process.
-2. Send a new Admin invitation of the new site from your config page. (not neccessary to create yourself a user on the new site).
+2. Send a new Admin invitation for the new site from your config page. (not neccessary to create yourself a user on the new site).

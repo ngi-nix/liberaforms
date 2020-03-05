@@ -964,12 +964,13 @@ def recover_password(token=None):
                 smtpSendRecoverPassword(user)
                 flash(gettext("We may have sent you an email"), 'info')
             
-            # auto invite root_users
             if not user and request.form['email'] in app.config['ROOT_USERS']:
-                message="New root user at %s." % g.site.hostname
-                invite=Invite().create(g.site.hostname, request.form['email'], message, True)
-                return redirect(make_url_for('new_user', token=invite.token['token']))
-            
+                # root_user emails are only good for one account, across all sites.
+                if not Installation.isUser(request.form['email']):
+                    # auto invite root users
+                    message="New root user at %s." % g.site.hostname
+                    invite=Invite().create(g.site.hostname, request.form['email'], message, True)
+                    return redirect(make_url_for('new_user', token=invite.token['token']))
             return redirect(make_url_for('index'))
         return render_template('recover-password.html')
 
