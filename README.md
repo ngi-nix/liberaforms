@@ -9,9 +9,9 @@ Please read INSTALL.txt for installation instructions.
 At the center of GNGforms is the WYSIWYG web form creator [formbuilder](https://formbuilder.online/). Users build a form, choose a URL slug, and publish it.
 
 ## Resources
-One installation (one instance running on your server), can be used for many domains. An nginx proxy in front of GNGforms can route as many domains as you wish to the gunicorn running process.
+We'd like to think that sharing resources makes things easier, so GNGforms has been built to share server infraestructure with others. One server can serve to multiple domains. An nginx proxy in front of GNGforms can route the domains you choose to the gunicorn process.
 
-One installation, one database, one monitoring and one backup system, means less work for sysadmins.
+One installation, one database, one monitoring and one backup system mean less work for sysadmins.
 
 ## Config
 Copy `config.example.cfg` to `config.cfg`. The configuration option are pretty straight forward.
