@@ -728,7 +728,6 @@ def change_entry(_id):
     foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[created_pos]["value"]]
     if not foundEntries or len(foundEntries) > 1:
         """ If there are two entries with the same 'created' value, we don't change anything """
-        print("not foubnd")
         return json.dumps({'saved': False})
     
     try:
