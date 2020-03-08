@@ -30,11 +30,11 @@
 </thead>
 {% for user in users %}
 <tr>
-    <td><a href="/admin/users/{{user._id}}">{{user.username}}</a></td>
+    <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
     {% if g.isRootUser %}
         <td>{{user.hostname}}</td>
     {% endif %}
-    <td>{{user.data.created}}</td>
+    <td>{{user.created}}</td>
     <td>{{user.enabled}}</td>
     <td>{{user.email}}</td>
     <td>{{user.forms|length}}</td>

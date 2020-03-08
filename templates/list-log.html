@@ -9,7 +9,7 @@
     <div class="row col-md-2"></div>
     <div class="row col-md-8">
         <div style="font-size:1.5em">
-            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
             {{ form.slug }}
             <hr />
             {%trans%}Log{%endtrans%}
@@ -23,7 +23,7 @@
                 <th>{%trans%}Message{%endtrans%}</th>
             </tr>
         </thead>
-        {% for entry in form.data.log %}
+        {% for entry in form.log %}
         <tr>
             <td>{{entry[0]}}</td>
             <td>{{entry[1]}}</td>

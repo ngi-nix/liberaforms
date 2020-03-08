@@ -18,14 +18,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from flask import Flask
-from flask_pymongo import PyMongo
+#from flask_pymongo import PyMongo
+from flask_mongoengine import MongoEngine
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 import sys, os
 
+#from mongoengine import connect
+#db = connect("GNGforms")
+
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-mongo = PyMongo(app)
+#mongo = PyMongo(app)
+db = MongoEngine(app)
 babel = Babel(app)
 
 csrf = CSRFProtect()

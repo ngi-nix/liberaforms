@@ -82,7 +82,7 @@ jQuery(function($) {
         disabledAttrs: disabledAttrs,
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
-            locale: "{{ config['LANGUAGES'][g.current_user.data['language']][1] }}",
+            locale: "{{ config['LANGUAGES'][g.current_user.language][1] }}",
             location: "{{host_url}}static/formBuilder-languages/"
         },
         formData: {{ session['formStructure'] | tojson }}
