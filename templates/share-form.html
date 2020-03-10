@@ -62,7 +62,7 @@
         
         <table class="table table-condensed">
         {% for editor in editors %}
-            <tr id="editor_{{editor._id}}">
+            <tr id="editor_{{editor.id}}">
                 <td>
                     {{ editor.email }}
                 </td>
@@ -70,13 +70,13 @@
                 {% if editor.id|string == form.author %}
                     ({%trans%}Author{%endtrans%})
                 {% else %}
-                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor._id}}');">
+                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor.id}}');">
                 {% endif %}
                 </td>
             </tr>
         {% endfor %}
         <tr>
-        <form action="/forms/add-editor/{{form._id}}" method="POST">
+        <form action="/forms/add-editor/{{form.id}}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <td>
             <input name="email" type="text" placeholder="New editor's email" class="form-control" required >

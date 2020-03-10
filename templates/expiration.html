@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row col-md-3"></div>
     <div class="row col-md-6" style="font-size:1.5em">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
         {{ form.slug }}
         <hr style="margin-bottom:5px" />
     </div>
@@ -17,8 +17,8 @@
 
 <div class="row col-md-6">
     <div id="toggle_notification" class="btn-group btn-toggle">
-        <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-        <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+        <button id="notification_true" class="btn btn-xs btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+        <button id="notification_false" class="btn btn-xs btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
     </div>
     {%trans%}Notify me when this form expires{%endtrans%}
     <p>&nbsp;</p>
@@ -89,7 +89,7 @@ function dateSet(e){
 function setMaxValue(id){
     var value=$('#'+id).val();
     $.ajax({
-        url : "/forms/set-field-condition/{{ form._id }}",
+        url : "/forms/set-field-condition/{{ form.id }}",
         type: "POST",
         dataType: "json",
         data: {"field_name": id, "condition": value},
@@ -116,7 +116,7 @@ function setMaxValue(id){
 }
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-expiration-notification/{{ form._id }}",
+        url : "/form/toggle-expiration-notification/{{ form.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -154,8 +154,8 @@ $(document).on("change", ".condition", function () {
     $('#button-'+this.id).addClass('btn-warning');
 });
 jQuery(function($) {
-    var savedDate={{form.data['expiryConditions']['expireDate']|tojson}};
-    if (savedDate != null){
+    var savedDate={{form.expiryConditions['expireDate']|tojson}};
+    if (savedDate != false){
         fields=savedDate.split(' '); 
         $('#date').val(fields[0]);
         $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"

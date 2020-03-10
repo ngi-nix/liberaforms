@@ -18,7 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import json, re, os, datetime
-from flask import request, g, Response, render_template, redirect, url_for, session, flash, send_file, after_this_request
+from flask import g, request, Response, render_template, redirect, url_for
+from flask import session, flash, send_file, after_this_request
 from flask_wtf.csrf import CSRFError
 from GNGforms import app, db, babel
 from threading import Thread
@@ -29,7 +30,8 @@ from GNGforms.utils import *
 from GNGforms.email import *
 from form_templates import formTemplates
 
-import pprint
+from pprint import pprint as pp
+
 
 
 def make_url_for(function, **kwargs):
@@ -43,22 +45,30 @@ def test():
     #sites=Site.objects(hostname=urlparse(request.host_url).hostname)
     sites=Site.objects
     for site in sites:
-        print(site.id)
+        #print(site.id)
+        pp (site.get_obj_values_as_dict())
        # print (site.get_obj_values_as_dict())
        
+    """
     users=User.objects
     for user in users:
-        print (user.get_obj_values_as_dict())
-        
+        if user.username=='alice':
+            print (user.get_obj_values_as_dict())
+            user.
+            user.save()
+    """
+    """
     forms=Form.objects
     for form in forms:
-        pprint.pprint (form.get_obj_values_as_dict())
-        
-    form=Form.find(id='5e638385174b6f10dd39bf46')
-    pprint.pprint (form.get_obj_values_as_dict())
-    form.enabled=True
-    pprint.pprint(form.structure[0])
-    form.save()
+        #pp (form.get_obj_values_as_dict())
+        form.expiryConditions={"expireDate": None, "fields": {}}
+        form.save()
+    """
+    #form=Form.find(id='5e638385174b6f10dd39bf46')
+    #pp (form.get_obj_values_as_dict())
+    #form.enabled=True
+    #pp(form.structure[0])
+    #form.save()
     return render_template('test.html', sites=sites)
 
 
@@ -67,12 +77,12 @@ def before_request():
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
-    g.site=Site.objects(hostname=urlparse(request.host_url).hostname).first()
+    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     if '/static' in request.path:
         return
 
-    if 'user_id' in session:
-        g.current_user=User.objects(id=session["user_id"], hostname=g.site.hostname).first()
+    if 'user_id' in session and session["user_id"] != None:
+        g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
             session.pop("user_id")
             return
@@ -229,7 +239,7 @@ def inspect_form(id):
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
     
-    #pprint.pprint(queriedForm.data)
+    pp(queriedForm.get_obj_values_as_dict())
     
     if not g.current_user.canViewForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
@@ -237,7 +247,6 @@ def inspect_form(id):
     
     # We use the 'session' because forms/edit may be showing a new form without a Form() db object yet.
     populateSessionFormData(queriedForm)
-    
     return render_template('inspect-form.html', form=queriedForm)
 
 
@@ -256,7 +265,6 @@ def new_form(templateID=None):
         template = list(filter(lambda template: template['id'] == templateID, formTemplates))
         if template:
             session['formStructure']=template[0]['structure']
-    
     session['afterSubmitTextMD'] = "## %s" % gettext("Thank you!!")
     return render_template('edit-form.html', host_url=g.site.host_url)
 
@@ -269,7 +277,6 @@ def duplicate_form(id):
     if not queriedForm:
         flash(gettext("Form is not available. 404"), 'warning')
         return redirect(make_url_for('my_forms'))
-        
     populateSessionFormData(queriedForm)
     session['slug']=""
     flash(gettext("You can edit the duplicate now"), 'info')
@@ -290,7 +297,7 @@ def share_form(id):
 @app.route('/forms/add-editor/<string:id>', methods=['POST'])
 @enabled_user_required
 def add_editor(id):
-    queriedForm = Form(id=id, editor=str(g.current_user.id))
+    queriedForm = Form.find(id=id, editor=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
         return redirect(make_url_for('my_forms'))
@@ -300,11 +307,11 @@ def add_editor(id):
     if not isValidEmail(request.form['email']):
         return redirect(make_url_for('share_form', id=queriedForm.id))
 
-    newEditor=User(hostname=g.site.hostname, email=request.form['email'])
+    newEditor=User.find(email=request.form['email'], hostname=queriedForm.hostname)
     if not newEditor or newEditor.enabled==False:
         flash(gettext("Can't find a user with that email"), 'warning')
         return redirect(make_url_for('share_form', id=queriedForm.id))
-    if str(newEditor._id) in queriedForm.editors:
+    if str(newEditor.id) in queriedForm.editors:
         flash(gettext("%s is already an editor" % newEditor.email), 'warning')
         return redirect(make_url_for('share_form', id=queriedForm.id))
     
@@ -334,7 +341,7 @@ def remove_editor(form_id, editor_id):
 
 @app.route('/forms/expiration/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
-def set_expiration_date(_id):
+def set_expiration_date(id):
     queriedForm = Form.find(id=id, editor=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
@@ -346,13 +353,13 @@ def set_expiration_date(_id):
                 if not isValidExpireDate(expireDate):
                     flash(gettext("Date-time is not valid"), 'warning')
                 else:
-                    queriedForm.data['expiryConditions']['expireDate']=expireDate
+                    queriedForm.expiryConditions['expireDate']=expireDate
                     queriedForm.expired=queriedForm.hasExpired()
                     queriedForm.save()
                     queriedForm.addLog(gettext("Expiry date set to: %s" % expireDate))
             elif not request.form['date'] and not request.form['time']:
-                if queriedForm.data['expiryConditions']['expireDate']:
-                    queriedForm.data['expiryConditions']['expireDate']=None
+                if queriedForm.expiryConditions['expireDate']:
+                    queriedForm.expiryConditions['expireDate']=False
                     queriedForm.expired=queriedForm.hasExpired()
                     queriedForm.save()
                     queriedForm.addLog(gettext("Expiry date cancelled"))
@@ -386,8 +393,7 @@ def set_field_condition(_id):
             queriedForm.fieldConditions[request.form['field_name']]={
                                                             "type": fieldType,
                                                             "condition": int(request.form['condition'])
-                                                        }          
-            
+                                                            }
             queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
         except:
@@ -470,7 +476,6 @@ def is_slug_available(slug):
 @app.route('/forms/preview', methods=['GET'])
 @enabled_user_required
 def preview_form():
-
     if not ('slug' in session and 'formStructure' in session):
         return redirect(make_url_for('my_forms'))
      
@@ -526,7 +531,7 @@ def save_form(id=None):
         
         flash(gettext("Updated form OK"), 'success')
         queriedForm.addLog(gettext("Form edited"))
-        return redirect(make_url_for('inspect_form', _id=queriedForm._id))
+        return redirect(make_url_for('inspect_form', id=queriedForm.id))
     else:
         if not session['slug']:
             # just in case!
@@ -543,7 +548,7 @@ def save_form(id=None):
                     "postalCode": "08014",
                     "enabled": False,
                     "expired": False,
-                    "expiryConditions": {"expireDate": None, "fields": {}},
+                    "expiryConditions": {"expireDate": False, "fields": {}},
                     "hostname": g.site.hostname,
                     "slug": session['slug'],
                     "structure": session['formStructure'],
@@ -551,20 +556,20 @@ def save_form(id=None):
                     "entries": [],
                     "sharedEntries": {  "enabled": False,
                                         "key": getRandomString(32),
-                                        "password": None,
-                                        "expireDate": None},
+                                        "password": False,
+                                        "expireDate": False},
                     "afterSubmitText": afterSubmitText,
                     "log": [],
                     "requireDataConsent": g.site.isPersonalDataConsentEnabled(),
                     "restrictedAccess": False,
                     "adminPreferences": { "public": True }
                 }
-        newForm=Form.insert(newFormData)
+        newForm=Form.saveNewForm(newFormData)
         clearSessionFormData()
         newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify Admins
-        smtpSendNewFormNotification(User().getNotifyNewFormEmails(), newForm)
+        smtpSendNewFormNotification(User.getNotifyNewFormEmails(), newForm)
         return redirect(make_url_for('inspect_form', id=newForm.id))
 
     clearSessionFormData()
@@ -578,7 +583,6 @@ def delete_form(id):
     if not queriedForm:
         flash(gettext("Form not found"), 'warning')
         return redirect(make_url_for('my_forms'))
-  
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
             entries = queriedForm.totalEntries
@@ -587,7 +591,6 @@ def delete_form(id):
             return redirect(make_url_for('my_forms'))
         else:
             flash(gettext("Form name does not match"), 'warning')
-                   
     return render_template('delete-form.html', form=queriedForm)
 
 
@@ -672,7 +675,6 @@ def list_entries(id):
 
     return render_template('list-entries.html', form=queriedForm)
 
-
 @app.route('/forms/csv/<string:id>', methods=['GET'])
 @enabled_user_required
 def csv_form(id):
@@ -680,14 +682,12 @@ def csv_form(id):
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
-
     csv_file = writeCSV(queriedForm)
     
     @after_this_request 
     def remove_file(response): 
         os.remove(csv_file) 
         return response
-    
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 @app.route('/forms/delete-entry/<string:id>', methods=['POST'])
@@ -696,16 +696,13 @@ def delete_entry(id):
     queriedForm=Form.find(id=id, editor=str(g.current_user.id))
     if not queriedForm:
         return json.dumps({'deleted': False})
-    
     # we going to use the entry's "created" value as a unique value (gulps).
     if not "created" in request.json:
         return json.dumps({'deleted': False})
-    
     foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json["created"]]
     if not foundEntries or len(foundEntries) > 1:
         """ If there are two entries with the same 'created' value, we don't delete anything """
         return json.dumps({'deleted': False})
-
     queriedForm.entries.remove(foundEntries[0])    
     queriedForm.expired = queriedForm.hasExpired()
     queriedForm.save()
@@ -816,16 +813,16 @@ def user_settings(username):
     user=g.current_user
     invites=[]
     if user.isAdmin():
-        invites=[Invite(id=invite['id']) for invite in Invite().findAll()]
-    sites=[]
+        invites=Invite.findAll()
+    sites=None
     installation=None
     if user.isRootUser():
-        sites=[Site(id=site['id']) for site in Site().findAll()]
-        installation=Installation()
+        sites=Site.findAll()
+        installation=Installation.get()
     context = {
         'user': user,
         'invites': invites,
-        'site': Site(hostname=user.hostname),
+        'site': g.site,
         'sites': sites,
         'installation': installation
     }
@@ -985,7 +982,7 @@ def logout():
 def recover_password(token=None):
     if request.method == 'POST':
         if 'email' in request.form and isValidEmail(request.form['email']):
-            user = User(email=request.form['email'], blocked=False)
+            user = User.find(email=request.form['email'], blocked=False)
             if user:
                 user.setToken()
                 smtpSendRecoverPassword(user)
@@ -1033,12 +1030,10 @@ def reset_password():
         if 'password1' in request.form and 'password2' in request.form:
             if not isValidPassword(request.form['password1'], request.form['password2']):
                 return render_template('reset-password.html')
-
-            g.current_user.setPassword(encryptPassword(request.form['password1']))
+            g.current_user.password=encryptPassword(request.form['password1'])
             g.current_user.save()
             flash(gettext("Password changed OK"), 'success')
             return redirect(make_url_for('my_forms', username=g.current_user.username))
-    
     return render_template('reset-password.html')
 
 
@@ -1070,7 +1065,6 @@ def validate_email(token):
     return redirect(make_url_for('user_settings', username=user.username))
 
 
-
 """ Site settings """
 
 @app.route('/site/save-blurb', methods=['POST'])
@@ -1095,7 +1089,7 @@ def save_data_consent():
 @app.route('/site/email/config', methods=['GET', 'POST'])
 @admin_required
 def smtp_config():
-    config=g.site.data["smtpConfig"] 
+    config=g.site.smtpConfig
     if request.method == 'POST':
         config['host'] = request.form['host']
         config['port'] = request.form['port']
@@ -1135,7 +1129,7 @@ def test_smtp(email):
 def change_siteName():
     if request.method == 'POST':
         if 'sitename' in request.form:
-            g.site.data['siteName']=request.form['sitename']
+            g.site.siteName=request.form['sitename']
             g.site.save()
             flash(gettext("Site name changed OK"), 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
@@ -1175,7 +1169,6 @@ def schema_update():
             return redirect(make_url_for('my_forms'))
         else:
             return render_template('page-not-found.html'), 400
-    
     if request.method == 'POST':
         if 'secret_key' in request.form and request.form['secret_key'] == app.config['SECRET_KEY']:
             installation.updateSchema()
@@ -1183,7 +1176,6 @@ def schema_update():
             return redirect(make_url_for('user_settings', username=g.current_user.username))
         else:
             flash("Wrong secret", 'warning')
-    
     return render_template('schema-upgrade.html', installation=installation)
     
 
@@ -1285,9 +1277,9 @@ def new_invite():
                 message="You have been invited to %s." % hostname
             else:
                 message=request.form['message']
-            invite=Invite().create(hostname, request.form['email'], message, admin)
+            invite=Invite.create(hostname, request.form['email'], message, admin)
             smtpSendInvite(invite)
-            flash(gettext("We've sent an invitation to %s") % invite.data['email'], 'success')
+            flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
     sites=[]
     if g.isRootUser:
@@ -1299,8 +1291,8 @@ def new_invite():
 
 @app.route('/admin/invites/delete/<string:id>', methods=['GET'])
 @admin_required
-def delete_invite(_id):
-    invite=Invite(_id=_id)
+def delete_invite(id):
+    invite=Invite.find(id=id)
     if invite:
         invite.delete()
     else:
@@ -1405,7 +1397,7 @@ def toggle_form_public_admin_prefs(id):
 @app.route('/admin/forms/change-author/<string:id>', methods=['GET', 'POST'])
 @admin_required
 def change_author(id):
-    queriedForm = Form.objects(id=id).first()
+    queriedForm = Form.find(id=id)
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
         return redirect(make_url_for('my_forms'))
@@ -1415,7 +1407,7 @@ def change_author(id):
             flash(gettext("Current author incorrect"), 'warning')
             return render_template('change-author.html', form=queriedForm, editors=editors)
         if 'new_author_username' in request.form:
-            new_author=User(username=request.form['new_author_username'], hostname=g.site.hostname)
+            new_author=User.find(username=request.form['new_author_username'], hostname=queriedForm.hostname)
             if new_author:
                 if new_author.enabled:
                     old_author=queriedForm.user # we really need to find better property names than author and user

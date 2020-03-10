@@ -210,7 +210,7 @@ persistentClass may be a User class, or an Invite class, ..
 """
 def createToken(persistentClass, **kwargs):
     tokenString = getRandomString(length=48)
-    while persistentClass(token=tokenString):
+    while persistentClass.find(token=tokenString):
         tokenString = getRandomString(length=48)
     
     result={'token': tokenString, 'created': datetime.datetime.now()}
