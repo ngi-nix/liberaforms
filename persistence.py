@@ -48,11 +48,11 @@ def isNewUserRequestValid(form):
     if form['username'] in app.config['RESERVED_USERNAMES']:
         flash(gettext("Username is not available"), 'warning')
         return False
-    user = User(username=form['username'])
+    user = User.find(username=form['username'])
     if user:
         flash(gettext("Username is not available"), 'warning')
         return False
-    if not User().isEmailAvailable(form['email']):
+    if not User.isEmailAvailable(form['email']):
         return False
     if not isValidPassword(form['password1'], form['password2']):
         return False
@@ -86,8 +86,9 @@ class User(db.Document):
     
     @classmethod
     def create(cls, newUserData):
-        newUser = db.users.insert_one(newUserData)
-        return User(id=newUser.inserted_id)
+        newUser=User(**newUserData)
+        newUser.save()
+        return newUser
 
     @classmethod
     def find(cls, **kwargs):
@@ -109,7 +110,7 @@ class User(db.Document):
                     'validatedEmail':True,
                     'admin__isAdmin':True,
                     'admin__notifyNewForm':True}
-        admins=User.objects(**criteria)
+        admins=User.findAll(**criteria)
         for admin in admins:
             emails.append(admin['email'])
         rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
@@ -120,6 +121,7 @@ class User(db.Document):
         print("new form notify %s" % emails)
         return emails
 
+    @classmethod
     def getNotifyNewUserEmails(cls):
         emails=[]
         criteria={  'hostname':g.site.hostname,
@@ -127,7 +129,7 @@ class User(db.Document):
                     'validatedEmail': True,
                     'admin__isAdmin':True,
                     'admin__notifyNewUser':True}
-        admins=User.objects(**criteria)
+        admins=User.findAll(**criteria)
         for admin in admins:
             emails.append(admin['email'])
         rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
@@ -138,11 +140,12 @@ class User(db.Document):
         print("new user notify: %s" % emails)
         return emails
 
+    @classmethod
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
             flash(gettext("Email address is not valid"), 'warning')
             return False
-        if User(email=email):
+        if User.find(email=email):
             flash(gettext("Email address is not available"), 'warning')
             return False
         return True
@@ -154,34 +157,26 @@ class User(db.Document):
         if self.blocked:
             return False
         return True
-    
-    """
-    !!! Where is this used???
-    @property
-    def email(self):
-        if self.user and 'email' in self.user:
-            return self.user['email']
-        return None
-    """
-           
+               
     @property
     def forms(self):
-        #return [Form(_id=form['_id']) for form in Form().findAll(editor=str(self.id))]
         return Form.findAll(editor=str(self.id))
 
     def isAdmin(self):
-        return True if self.admin and self.admin['isAdmin'] else False
+        return True if self.admin['isAdmin']==True else False
 
     def isRootUser(self):
-        if self.email in app.config['ROOT_USERS']:
-            return True
-        return False
+        return True if self.email in app.config['ROOT_USERS'] else False
     
-    def delete(self):
+    def deleteUser(self):
         forms = Form.findAll(author=str(self.id))
         for form in forms:
-            db.forms.remove({'id': form.id})
-        return db.users.remove({'id': self.id})
+            form.delete()
+        forms = Form.findAll(editor=str(self.id))
+        for form in forms:
+            del form.editors[str(self.id)]
+            form.save()
+        return self.delete()
     
     def setToken(self, **kwargs):
         self.token=createToken(User, **kwargs)
@@ -246,10 +241,8 @@ class User(db.Document):
         self.save()
         return self.admin['notifyNewForm']    
 
-    def canViewForm(self, form):
-        if str(self.id) in form.editors or self.isAdmin():
-            return True
-        return False
+    def canInspectForm(self, form):
+        return True if (str(self.id) in form.editors or self.isAdmin()) else False
     
 
 class Form(db.Document):
@@ -441,7 +434,6 @@ class Form(db.Document):
 
     def getEditors(self):
         editors=[]
-        print(self.editors)
         for editor_id in self.editors:
             print (editor_id)
             user=User.find(id=editor_id)
@@ -450,8 +442,6 @@ class Form(db.Document):
             else:
                 # remove editor_id from self.editors
                 pass
-        for edito in editors:
-            print("%s - %s" % (edito.id,edito.username))
         return editors
 
     def willExpire(self):
@@ -641,6 +631,7 @@ class Site(db.Document):
 
     def __init__(self, *args, **kwargs):        
         db.Document.__init__(self, *args, **kwargs)
+        print("site.hostname: %s" % self.hostname)
     
     def __repr__(self):
         print("<Site=%s" % self.hostname)
@@ -679,15 +670,19 @@ class Site(db.Document):
                 "noreplyAddress": "no-reply@%s" % hostname
             }
         }
-        new_site=Site(newSiteData)
+        new_site=Site(**newSiteData)
         new_site.save()
         #create the Installation if it doesn't exist
-        #Installation()
+        Installation.get()
         return new_site
 
     @classmethod
     def find(cls, *args, **kwargs):
-        return cls.findAll(*args, **kwargs).first()
+        print("site_newsite: %s" % kwargs)
+        site = cls.findAll(*args, **kwargs).first()
+        if not site:
+            site=Site.create()
+        return site
 
     @classmethod
     def findAll(cls, *args, **kwargs):
@@ -769,7 +764,7 @@ class Site(db.Document):
 
 
 class Invite(db.Document):
-    meta = {'collection': 'invites'}
+    meta = {'collection': 'invites', 'queryset_class': HostnameQuerySet}
     hostname = db.StringField(required=True)
     email = db.EmailField(required=True)
     message = db.StringField(required=False)
@@ -778,15 +773,22 @@ class Invite(db.Document):
    
     def __init__(self, *args, **kwargs):        
         db.Document.__init__(self, *args, **kwargs)
-    
+
+    def get_obj_values_as_dict(self):
+        values = {}
+        fields = type(self).__dict__['_fields']
+        for key, _ in fields.items():
+            value = getattr(self, key, None)
+            values[key] = value
+        return values
+
     @classmethod
     def create(cls, hostname, email, message, admin=False):
-        token=createToken(Invite)
         data={
             "hostname": hostname,
             "email": email,
             "message": message,
-            "token": token,
+            "token": createToken(Invite),
             "admin": admin
         }
         newInvite=Invite(**data)
@@ -795,15 +797,15 @@ class Invite(db.Document):
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.objects(**kwargs).first()
-
-    @classmethod
-    def findAll(cls, **kwargs):
         if 'token' in kwargs:
             kwargs={"token__token": kwargs['token'], **kwargs}
             kwargs.pop('token')
-        return cls.objects(**kwargs)
+        return cls.findAll(**kwargs).first()
 
+    @classmethod
+    def findAll(cls, **kwargs):
+        return cls.objects.ensure_hostname(**kwargs)
+    
     def setToken(self, **kwargs):
         self.invite['token']=createToken(Invite, **kwargs)
         self.save()
@@ -813,42 +815,38 @@ class Installation(db.Document):
     name = db.StringField(required=True)
     schemaVersion = db.StringField(required=True)
     created = db.StringField(required=True)
-
-    """
-    def __new__(cls, *args, **kwargs):
-        instance = super(Installation, cls).__new__(cls)
-        installation = cls.find({"name": "GNGforms"})
-            
-        if installation:
-            instance.installation=dict(installation)
-            return instance
-        else:
-            data={  "name": "GNGforms",
-                    "schemaVersion": app.config['SCHEMA_VERSION'],
-                    "created": datetime.date.today().strftime("%Y-%m-%d")
-                    }
-            db.installation.insert_one(data)
-            return Installation()
-    """
-    
+   
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
 
     @classmethod
     def get(cls):
-        return cls.objects.first()
-        
+        installation=cls.objects.first()
+        if not installation:
+            installation=Installation.create()
+        return installation
+    
+    @classmethod
+    def create(cls):
+        if cls.objects.first():
+            return
+        data={  "name": "GNGforms",
+                "schemaVersion": app.config['SCHEMA_VERSION'],
+                "created": datetime.date.today().strftime("%Y-%m-%d")}
+        new_installation=cls(**data)
+        new_installation.save()
+        return new_installation
+    
     def isSchemaUpToDate(self):
-        if self.schemaVersion != app.config['SCHEMA_VERSION']:
-            return False
-        return True
+        return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
 
     def updateSchema(self):
         if not self.isSchemaUpToDate():
             migratedUpTo=migrateMongoSchema(self.schemaVersion)
             if migratedUpTo:
                 self.schemaVersion=migratedUpTo
-                db.installation.save(self.installation)
+                self.save()
+                #db.installation.save(self.installation)
                 #db.installation.update_one({"_id": self.installation["_id"]}, {"$set": {'schemaVersion': migratedUpTo}})
                 return self.schemaVersion
             else:

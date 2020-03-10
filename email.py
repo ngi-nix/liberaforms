@@ -66,7 +66,7 @@ def smtpSendConfirmEmail(user, newEmail=None):
 
 
 def smtpSendInvite(invite):
-    site=Site.find()
+    site=Site.find(hostname=invite.hostname)
     link="%suser/new/%s" % (site.host_url, invite.token['token'])
     message="%s\n\n%s" % (invite.message, link)   
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % site.hostname), message)

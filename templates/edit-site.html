@@ -41,7 +41,7 @@
     <p></p>
     <div style="font-size:1.15em;">
         <span style="color:#337ab7; cursor:pointer;">
-        <span id="site_scheme">{{site.data.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.data.port %}style="display:none"{% endif %}>:{{ site.data.port }}</span>/xxxx
+        <span id="site_scheme">{{site.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.port %}style="display:none"{% endif %}>:{{ site.port }}</span>/xxxx
         </span>
     </div>
     <table class="table table-striped table-condensed" style="margin-top: 1em">
@@ -50,15 +50,15 @@
             <td></td>
             <td class="text-right">
                 <div id="toggle_scheme" class="btn-group btn-toggle">
-                <button id="site_scheme_http" class="btn btn-xs btn-default {% if site.data.scheme=='http' %}active btn-primary{% endif %}">HTTP</button>
-                <button id="site_scheme_https" class="btn btn-xs btn-default {% if site.data.scheme=='https' %}active btn-primary{% endif %}">HTTPS</button>
+                <button id="site_scheme_http" class="btn btn-xs btn-default {% if site.scheme=='http' %}active btn-primary{% endif %}">HTTP</button>
+                <button id="site_scheme_https" class="btn btn-xs btn-default {% if site.scheme=='https' %}active btn-primary{% endif %}">HTTPS</button>
                 </div>
             </td>
         </tr>
         <tr>
             <td>{%trans%}Port{%endtrans%}</td>
             <td>
-                <input id="port" size="12" type="text" value="{% if site.data.port %}{{site.data.port}}{% endif %}" class="form-control" >            
+                <input id="port" size="12" type="text" value="{% if site.port %}{{site.port}}{% endif %}" class="form-control" >            
             </td>
             <td class="text-right">
                 <input id="port_button" class="btn-primary btn btn-md" type="button" value="{%trans%}Change port{%endtrans%}" >
@@ -69,7 +69,7 @@
     <hr />
     <form method="POST" action="/admin/sites/delete/{{ site.hostname }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-    <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/sites/delete/{{site.site.hostname}}'">
+    <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/sites/delete/{{site.hostname}}'">
     <input class="btn-primary btn" type="button" value="{%trans%}Go back{%endtrans%}" onClick="location.href='/user/{{ g.current_user.username }}#root_user_settings'">
     </form>
 

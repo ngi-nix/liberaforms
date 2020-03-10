@@ -42,13 +42,14 @@ def make_url_for(function, **kwargs):
 
 @app.route('/test', methods=['GET'])
 def test():
-    #sites=Site.objects(hostname=urlparse(request.host_url).hostname)
-    sites=Site.objects
+    sites=Site.findAll()
+    """
     for site in sites:
         #print(site.id)
         pp (site.get_obj_values_as_dict())
        # print (site.get_obj_values_as_dict())
-       
+    """   
+    
     """
     users=User.objects
     for user in users:
@@ -64,6 +65,12 @@ def test():
         form.expiryConditions={"expireDate": None, "fields": {}}
         form.save()
     """
+    
+    invites=Invite.objects
+    for invite in invites:
+        pp (invite.get_obj_values_as_dict())
+
+        
     #form=Form.find(id='5e638385174b6f10dd39bf46')
     #pp (form.get_obj_values_as_dict())
     #form.enabled=True
@@ -77,21 +84,21 @@ def before_request():
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
-    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     if '/static' in request.path:
         return
-
+    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
             session.pop("user_id")
             return
-        #print(g.current_user.get_obj_values_as_dict())
-        if g.current_user and g.current_user.isRootUser():
+        if g.current_user.isRootUser():
             g.isRootUser=True
-        if g.current_user and g.current_user.isAdmin():
+        if g.current_user.isAdmin():
             g.isAdmin=True
-
+            
+        pp(g.current_user.get_obj_values_as_dict())
+        print(g.isRootUser, g.isAdmin)
 
 @babel.localeselector
 def get_locale():
@@ -120,7 +127,7 @@ def index():
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
 def view_form(slug):
-    queriedForm = Form.objects(slug=slug).first()
+    queriedForm = Form.find(slug=slug)
     if not queriedForm:
         if g.current_user:
             flash(gettext("Can't find that form"), 'warning')
@@ -161,7 +168,7 @@ def view_form(slug):
             emails=[]
             for editor_id, preferences in queriedForm.editors.items():
                 if preferences["notification"]["expiredForm"]:
-                    user=User(_id=editor_id)
+                    user=User.find(id=editor_id)
                     if user and user.enabled:
                         emails.append(user.email)
             if emails:
@@ -174,7 +181,7 @@ def view_form(slug):
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
             if preferences["notification"]["newEntry"]:
-                user=User(_id=editor_id)
+                user=User.find(id=editor_id)
                 if user and user.enabled:
                     emails.append(user.email)
         if emails:
@@ -241,7 +248,7 @@ def inspect_form(id):
     
     pp(queriedForm.get_obj_values_as_dict())
     
-    if not g.current_user.canViewForm(queriedForm):
+    if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('my_forms'))
     
@@ -523,10 +530,10 @@ def save_form(id=None):
                         So we append it to the index. """
                     session['formFieldIndex'].append(field)
         
-        queriedForm.data["structure"]=session["formStructure"]
-        queriedForm.data["fieldIndex"]=session["formFieldIndex"]
+        queriedForm.structure=session["formStructure"]
+        queriedForm.fieldIndex=session["formFieldIndex"]
         
-        queriedForm.data["afterSubmitText"]=afterSubmitText
+        queriedForm.afterSubmitText=afterSubmitText
         queriedForm.save()
         
         flash(gettext("Updated form OK"), 'success')
@@ -544,7 +551,7 @@ def save_form(id=None):
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author": str(g.current_user.id),
-                    "editors": {str(g.current_user.id): Form().newEditorPreferences()},
+                    "editors": {str(g.current_user.id): Form.newEditorPreferences()},
                     "postalCode": "08014",
                     "enabled": False,
                     "expired": False,
@@ -878,7 +885,7 @@ def new_user(token=None):
 
     invite=None
     if token:
-        invite=Invite(token=token)
+        invite=Invite.find(token=token)
         if not invite:
             flash(gettext("Invitation not found"), 'warning')
             return redirect(make_url_for('index'))
@@ -892,13 +899,13 @@ def new_user(token=None):
             return render_template('new-user.html')
             
         validatedEmail=False
-        adminSettings=User().defaultAdminSettings()
+        adminSettings=User.defaultAdminSettings()
         
         if invite:
-            if invite.data['email'] == request.form['email']:
+            if invite.email == request.form['email']:
                 validatedEmail=True
-            if invite.data['admin'] == True:
-                adminSettings['isAdmin']=invite.data['admin']
+            if invite.admin == True:
+                adminSettings['isAdmin']=True
                 # the first admin of a new Site needs to config. SMTP before we can send emails.
                 # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.admins:
@@ -908,7 +915,7 @@ def new_user(token=None):
             adminSettings["isAdmin"]=True
             validatedEmail=True
             
-        newUser = {
+        newUserData = {
             "username": request.form['username'],
             "email": request.form['email'],
             "password": encryptPassword(request.form['password1']),
@@ -920,19 +927,19 @@ def new_user(token=None):
             "created": datetime.date.today().strftime("%Y-%m-%d"),
             "token": {}
         }
-        user = User().create(newUser)
+        user = User.create(newUserData)
         if not user:
             flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
         if invite:
             invite.delete()           
         
-        thread = Thread(target=smtpSendNewUserNotification(User().getNotifyNewUserEmails(), user.username))
+        thread = Thread(target=smtpSendNewUserNotification(User.getNotifyNewUserEmails(), user.username))
         thread.start()
         
         if validatedEmail == True:
             # login an invited user
-            session["user_id"]=str(user._id)
+            session["user_id"]=str(user.id)
             flash(gettext("Welcome!"), 'success')
             return redirect(make_url_for('my_forms'))
         else:
@@ -960,7 +967,6 @@ def login():
             else:
                 return redirect(make_url_for('my_forms'))
         session["user_id"]=None
-    
     flash(gettext("Bad credentials"), 'warning')
     return redirect(make_url_for('index'))
 
@@ -970,7 +976,6 @@ def login():
 def logout():
     session.pop("user_id")
     return redirect(make_url_for('index'))
-
 
 
 """ Password recovery """
@@ -987,19 +992,17 @@ def recover_password(token=None):
                 user.setToken()
                 smtpSendRecoverPassword(user)
                 flash(gettext("We may have sent you an email"), 'info')
-            
             if not user and request.form['email'] in app.config['ROOT_USERS']:
                 # root_user emails are only good for one account, across all sites.
                 if not Installation.isUser(request.form['email']):
                     # auto invite root users
                     message="New root user at %s." % g.site.hostname
-                    invite=Invite().create(g.site.hostname, request.form['email'], message, True)
+                    invite=Invite.create(g.site.hostname, request.form['email'], message, True)
                     return redirect(make_url_for('new_user', token=invite.token['token']))
             return redirect(make_url_for('index'))
         return render_template('recover-password.html')
-
     if token:
-        user = User(token=token)
+        user = User.find(token=token)
         if not user:
             flash(gettext("Couldn't find that token"), 'warning')
             return redirect(make_url_for('index'))
@@ -1011,15 +1014,12 @@ def recover_password(token=None):
             user.deleteToken()
             flash(gettext("Your account has been blocked"), 'warning')
             return redirect(make_url_for('index'))
-
         user.deleteToken()
-        user.data['validatedEmail']=True
+        user.validatedEmail=True
         user.save()
-        
         # login the user
-        session['user_id']=str(user._id)
+        session['user_id']=str(user.id)
         return redirect(make_url_for('reset_password'))
-
     return render_template('recover-password.html')
 
 
@@ -1057,10 +1057,10 @@ def validate_email(token):
         user.email = user.token['email']
 
     user.deleteToken()
-    user.data['validatedEmail']=True
+    user.validatedEmail=True
     user.save()
     #login the user
-    session['user_id']=str(user._id)
+    session['user_id']=str(user.id)
     flash(gettext("Your email address is valid"), 'success')
     return redirect(make_url_for('user_settings', username=user.username))
 
@@ -1162,7 +1162,7 @@ def reset_site_favicon():
     
 @app.route('/site/update', methods=['GET', 'POST'])
 def schema_update():
-    installation=Installation()
+    installation=Installation.get()
     if installation.isSchemaUpToDate():
         if g.current_user:
             flash(gettext("Schema is already up to date. Nothing to do."), 'info')
@@ -1182,14 +1182,14 @@ def schema_update():
 @app.route('/admin/sites/edit/<string:hostname>', methods=['GET'])
 @rootuser_required
 def edit_site(hostname):
-    queriedSite=Site(hostname=hostname)
+    queriedSite=Site.find(hostname=hostname)
     return render_template('edit-site.html', site=queriedSite)
 
 
 @app.route('/admin/sites/toggle-scheme/<string:hostname>', methods=['POST'])
 @rootuser_required
 def toggle_site_scheme(hostname): 
-    queriedSite=Site(hostname=hostname)
+    queriedSite=Site.find(hostname=hostname)
     return json.dumps({'scheme': queriedSite.toggleScheme()})
 
 
@@ -1197,23 +1197,23 @@ def toggle_site_scheme(hostname):
 @app.route('/admin/sites/change-port/<string:hostname>/<string:port>', methods=['POST'])
 @rootuser_required
 def change_site_port(hostname, port=None):
-    queriedSite=Site(hostname=hostname)
+    queriedSite=Site.find(hostname=hostname)
     if not port:
-        queriedSite.data['port']=None
+        queriedSite.port=None
     else:
         try:
             int(port)
-            queriedSite.data['port']=port
+            queriedSite.port=port
         except:
             pass
     queriedSite.save()
-    return json.dumps({'port': queriedSite.data['port']})
+    return json.dumps({'port': queriedSite.port})
     
 
 @app.route('/admin/sites/delete/<string:hostname>', methods=['GET', 'POST'])
 @rootuser_required
 def delete_site(hostname):
-    queriedSite=Site(hostname=hostname)
+    queriedSite=Site.find(hostname=hostname)
     if not queriedSite:
         flash(gettext("Site not found"), 'warning')
         return redirect(make_url_for('user_settings', username=g.current_user.username))
@@ -1284,7 +1284,7 @@ def new_invite():
     sites=[]
     if g.isRootUser:
         # rootUser can choose the site to invite to.
-        sites = [site for site in Site().findAll()]
+        sites = Site.findAll()
 
     return render_template('new-invite.html', hostname=g.site.hostname, sites=sites)
 
@@ -1314,7 +1314,7 @@ def list_users():
 @app.route('/admin/users/id/<string:id>', methods=['GET'])
 @admin_required
 def inspect_user(id):
-    user=User.objects(id=id).first()
+    user=User.find(id=id)
     if not user:
         flash(gettext("User not found"), 'warning')
         return redirect(make_url_for('list_users'))
@@ -1325,7 +1325,7 @@ def inspect_user(id):
 @app.route('/admin/users/toggle-blocked/<string:id>', methods=['POST'])
 @admin_required
 def toggle_user_blocked(id):       
-    user=User.objects(id=id).first()
+    user=User.find(id=id)
     if not user:
         return JsonResponse(json.dumps())
 
@@ -1340,7 +1340,7 @@ def toggle_user_blocked(id):
 @app.route('/admin/users/toggle-admin/<string:id>', methods=['POST'])
 @admin_required
 def toggle_admin(id):       
-    user=User.objects(id=id).first()
+    user=User.find(id=id)
     if not user:
         return JsonResponse(json.dumps())
     
@@ -1355,7 +1355,7 @@ def toggle_admin(id):
 @app.route('/admin/users/delete/<string:id>', methods=['GET', 'POST'])
 @admin_required
 def delete_user(id):       
-    user=User.objects(id=id).first()
+    user=User.find(id=id)
     if not user:
         flash(gettext("User not found"), 'warning')
         return redirect(make_url_for('my_forms'))
@@ -1363,12 +1363,12 @@ def delete_user(id):
     if request.method == 'POST' and 'username' in request.form:
         if user.isRootUser():
             flash(gettext("Cannot delete root user"), 'warning')
-            return redirect(make_url_for('inspect_user', _id=user._id)) 
-        if user._id == g.current_user._id:
+            return redirect(make_url_for('inspect_user', id=user.id)) 
+        if user.id == g.current_user.id:
             flash(gettext("Cannot delete yourself"), 'warning')
             return redirect(make_url_for('inspect_user', username=user.username)) 
         if user.username == request.form['username']:
-            if user.delete():
+            if user.deleteUser():
                 flash(gettext("Deleted user '%s'" % (user.username)), 'success')
             return redirect(make_url_for('list_users'))
         else:
