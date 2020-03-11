@@ -92,7 +92,6 @@ class User(db.Document):
 
     @classmethod
     def find(cls, **kwargs):
-        #print('kw-find-user: %s' % kwargs)
         return cls.findAll(**kwargs).first()
 
     @classmethod
@@ -105,8 +104,7 @@ class User(db.Document):
     @classmethod
     def getNotifyNewFormEmails(cls):
         emails=[]
-        criteria={  'hostname':g.site.hostname,
-                    'blocked':False,
+        criteria={  'blocked':False,
                     'validatedEmail':True,
                     'admin__isAdmin':True,
                     'admin__notifyNewForm':True}
@@ -124,8 +122,7 @@ class User(db.Document):
     @classmethod
     def getNotifyNewUserEmails(cls):
         emails=[]
-        criteria={  'hostname':g.site.hostname,
-                    'blocked':False,
+        criteria={  'blocked':False,
                     'validatedEmail': True,
                     'admin__isAdmin':True,
                     'admin__notifyNewUser':True}
@@ -199,12 +196,8 @@ class User(db.Document):
     def toggleAdmin(self):
         if self.isRootUser():
             return self.isAdmin()
-        if self.isAdmin():
-            self.admin['isAdmin']=False
-            self.save()
-        else:
-            self.admin['isAdmin']=True
-            self.save()
+        self.admin['isAdmin']=False if self.isAdmin() else True
+        self.save()
         return self.isAdmin()
 
     @classmethod
@@ -221,10 +214,7 @@ class User(db.Document):
     def toggleNewUserNotification(self):
         if not self.isAdmin():
             return False
-        if self.admin['notifyNewUser']:
-            self.admin['notifyNewUser'] = False
-        else:
-            self.admin['notifyNewUser'] = True
+        self.admin['notifyNewUser']=False if self.admin['notifyNewUser'] else True
         self.save()
         return self.admin['notifyNewUser']
 
@@ -234,10 +224,7 @@ class User(db.Document):
     def toggleNewFormNotification(self):
         if not self.isAdmin():
             return False
-        if self.admin['notifyNewForm']:
-            self.admin['notifyNewForm'] = False
-        else:
-            self.admin['notifyNewForm'] = True
+        self.admin['notifyNewForm']=False if self.admin['notifyNewForm'] else True
         self.save()
         return self.admin['notifyNewForm']    
 
@@ -416,13 +403,7 @@ class Form(db.Document):
     def update(self, data):
         db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
     
-    """
-    def saveEntry(self, entry):
-        db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
-    """
-    
     def deleteEntries(self):
-        #db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
         self.entries=[]
         self.save()
     
@@ -473,11 +454,9 @@ class Form(db.Document):
         return total
                 
     def isPublic(self):
-        if self.expired:
+        if self.expired or self.adminPreferences['public']==False:
             return False
-        if not self.enabled:
-            return False
-        if not self.user.enabled:
+        if not (self.enabled and self.user.enabled):
             return False
         return True
 
@@ -558,76 +537,12 @@ class Site(db.Document):
     meta = {'collection': 'sites', 'queryset_class': HostnameQuerySet}
     hostname = db.StringField(required=True)
     port = db.StringField(required=False)
-    siteName = db.StringField(required=False)
+    siteName = db.StringField(required=True)
     scheme = db.StringField(required=False)
     blurb = db.DictField(required=True)
     invitationOnly = db.BooleanField()
     personalDataConsent = db.DictField(required=False)
-    smtpConfig = db.DictField(required=False)
-
-    
-    """
-    def __new__(cls, *args, **kwargs):
-        instance = super(Site, cls).__new__(cls)
-
-        #searchSiteByKwargs=True if kwargs else False
-        #if not searchSiteByKwargs:
-        #    kwargs['hostname']=urlparse(request.host_url).hostname
-        
-        #site = db.sites.find_one(kwargs)
-        
-        #if not 'hostname' in kwargs:
-       #     kwargs['hostname']=urlparse(request.host_url).hostname
-       #     site = Site.objects(hostname=kwargs['hostname'])
-       #     if site:
-       #         return instance
-       #     else:
-       #         return None
-            
-        #ºreturn instance
-    """
-    """
-        site = Site.objects(hostname=kwargs['hostname'])
-        if site:
-            instance.site=dict(site)
-            return instance
-            
-        #elif searchSiteByKwargs:
-        #    return None
-    """
-    """       
-        # this Site is new. Let's create a site with this hostname
-        hostname=urlparse(request.host_url).hostname
-
-        with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
-            defaultMD=defaultBlurb.read()
-        blurb = {
-            'markdown': defaultMD,
-            'html': markdown.markdown(defaultMD)
-        }
-            
-        newSiteData={
-            "hostname": hostname,
-            "port": None,
-            "scheme": urlparse(request.host_url).scheme,
-            "blurb": blurb,
-            "invitationOnly": True,
-            "siteName": "gng-forms!",
-            "personalDataConsent": {"markdown": "", "html": "", "enabled": False },
-            "smtpConfig": {
-                "host": "smtp.%s" % hostname,
-                "port": 25,
-                "encryption": "",
-                "user": "",
-                "password": "",
-                "noreplyAddress": "no-reply@%s" % hostname
-            }
-        }
-        db.sites.insert_one(newSiteData)
-        #create the Installation if it doesn't exist
-        #Installation()
-        return Site()
-    """
+    smtpConfig = db.DictField(required=True)
 
     def __init__(self, *args, **kwargs):        
         db.Document.__init__(self, *args, **kwargs)
@@ -756,7 +671,7 @@ class Site(db.Document):
     def delete(self):
         user=User.findAll(hostname=self.hostname)
         for user in users:
-            user.delete()
+            user.deleteUser()
         invites = Invite.findAll(hostname=self.site['hostname'])
         for invite in invites:
             invite.delete()

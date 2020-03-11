@@ -58,18 +58,21 @@ def test():
             user.
             user.save()
     """
+
+    form=Form.find()
+    pp (form.get_obj_values_as_dict())
     """
-    forms=Form.objects
     for form in forms:
         #pp (form.get_obj_values_as_dict())
-        form.expiryConditions={"expireDate": None, "fields": {}}
-        form.save()
+        #form.expiryConditions={"expireDate": None, "fields": {}}
+        #form.save()
+        print("form: '%s' %s %s" % (form.slug, form.id, form.hostname))
     """
-    
+    """
     invites=Invite.objects
     for invite in invites:
         pp (invite.get_obj_values_as_dict())
-
+    """
         
     #form=Form.find(id='5e638385174b6f10dd39bf46')
     #pp (form.get_obj_values_as_dict())
@@ -96,9 +99,6 @@ def before_request():
             g.isRootUser=True
         if g.current_user.isAdmin():
             g.isAdmin=True
-            
-        pp(g.current_user.get_obj_values_as_dict())
-        print(g.isRootUser, g.isAdmin)
 
 @babel.localeselector
 def get_locale():
@@ -127,12 +127,13 @@ def index():
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
 def view_form(slug):
-    queriedForm = Form.find(slug=slug)
+    queriedForm = Form.find(slug=slug, hostname=g.site.hostname)
     if not queriedForm:
         if g.current_user:
             flash(gettext("Can't find that form"), 'warning')
             return redirect(make_url_for('my_forms'))
-        return render_template('page-not-found.html'), 400
+        else:
+            return render_template('page-not-found.html'), 400
     if not queriedForm.isPublic():
         if g.current_user:
             if queriedForm.expired:
@@ -252,7 +253,7 @@ def inspect_form(id):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('my_forms'))
     
-    # We use the 'session' because forms/edit may be showing a new form without a Form() db object yet.
+    # We use the 'session' because /forms/edit may be showing a new form without a Form() db object yet.
     populateSessionFormData(queriedForm)
     return render_template('inspect-form.html', form=queriedForm)
 
@@ -378,7 +379,7 @@ def set_expiration_date(id):
 
 @app.route('/forms/set-field-condition/<string:id>', methods=['POST'])
 @enabled_user_required
-def set_field_condition(_id):
+def set_field_condition(id):
     queriedForm = Form.find(id=id, editor=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps({'condition': False}))
