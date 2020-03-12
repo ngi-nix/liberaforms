@@ -30,57 +30,11 @@ from GNGforms.utils import *
 from GNGforms.email import *
 from form_templates import formTemplates
 
-from pprint import pprint as pp
-
-
 
 def make_url_for(function, **kwargs):
     kwargs["_external"]=True
     kwargs["_scheme"]=g.site.scheme
     return url_for(function, **kwargs)
-
-
-@app.route('/test', methods=['GET'])
-def test():
-    sites=Site.findAll()
-    """
-    for site in sites:
-        #print(site.id)
-        pp (site.get_obj_values_as_dict())
-       # print (site.get_obj_values_as_dict())
-    """   
-    
-    """
-    users=User.objects
-    for user in users:
-        if user.username=='alice':
-            print (user.get_obj_values_as_dict())
-            user.
-            user.save()
-    """
-
-    form=Form.find()
-    pp (form.get_obj_values_as_dict())
-    """
-    for form in forms:
-        #pp (form.get_obj_values_as_dict())
-        #form.expiryConditions={"expireDate": None, "fields": {}}
-        #form.save()
-        print("form: '%s' %s %s" % (form.slug, form.id, form.hostname))
-    """
-    """
-    invites=Invite.objects
-    for invite in invites:
-        pp (invite.get_obj_values_as_dict())
-    """
-        
-    #form=Form.find(id='5e638385174b6f10dd39bf46')
-    #pp (form.get_obj_values_as_dict())
-    #form.enabled=True
-    #pp(form.structure[0])
-    #form.save()
-    return render_template('test.html', sites=sites)
-
 
 @app.before_request
 def before_request():    
@@ -247,7 +201,7 @@ def inspect_form(id):
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
     
-    pp(queriedForm.get_obj_values_as_dict())
+    print(queriedForm)
     
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
@@ -414,14 +368,10 @@ def set_field_condition(id):
 @app.route('/forms/edit/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
 def edit_form(id=None):
-    #pp = pprint.PrettyPrinter(indent=4)
-
     ensureSessionFormKeys()
-    
     session['form_id']=None
     queriedForm=None
     if id:
-        print("id form-edit: %s" % id)
         queriedForm = Form.find(id=id)
         if queriedForm:
             if not queriedForm.isEditor(g.current_user):
@@ -452,7 +402,7 @@ def edit_form(id=None):
                 """ formbuilder may return empty label attributes or label attributes with html. """
                 if 'label' in formElement:
                     # formbuilder adds a trailing '<br>' to lables.
-                    #formElement['label']=formElement['label'].rstrip('<br>')
+                    # formElement['label']=formElement['label'].rstrip('<br>')
                     if not stripHTMLTagsForLabel(formElement['label']): 
                         # we need some text (any text) to save as a label.                 
                         formElement['label'] = "Label"
@@ -461,11 +411,8 @@ def edit_form(id=None):
        
         session['formStructure'] = json.dumps(formStructure)
         session['afterSubmitTextMD'] = escapeMarkdown(request.form['afterSubmitTextMD'])
-        
         return redirect(make_url_for('preview_form'))
-
     return render_template('edit-form.html', host_url=g.site.host_url)
-
 
 
 @app.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
@@ -953,7 +900,6 @@ def new_user(token=None):
 
 
 
-
 """ Login / Logout """
 
 @app.route('/site/login', methods=['POST'])
@@ -964,10 +910,11 @@ def login():
         if user and verifyPassword(request.form['password'], user.password):
             session["user_id"]=str(user.id)
             if not user.validatedEmail:
-                return redirect(make_url_for('user_settings', username=username))
+                return redirect(make_url_for('user_settings', username=user.username))
             else:
                 return redirect(make_url_for('my_forms'))
-        session["user_id"]=None
+        if "user_id" in session:
+            session.pop("user_id")
     flash(gettext("Bad credentials"), 'warning')
     return redirect(make_url_for('index'))
 
@@ -1225,7 +1172,7 @@ def delete_site(hostname):
                 flash(gettext("Cannot delete current site"), 'warning')
                 return redirect(make_url_for('user_settings', username=g.current_user.username)) 
             
-            queriedSite.delete()
+            queriedSite.deleteSite()
             flash(gettext("Deleted %s" % (queriedSite.host_url)), 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))       
         else:
@@ -1431,3 +1378,8 @@ def JsonResponse(json_response="1", status_code=200):
     response.headers.add('content-length', len(json_response))
     response.status_code=status_code
     return response
+
+@enabled_user_required
+@app.route('/test', methods=['GET'])
+def test():
+    return render_template('test.html', sites=[])

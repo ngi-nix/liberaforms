@@ -20,21 +20,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from GNGforms import app, db
 from GNGforms.utils import *
 from GNGforms.migrate import migrateMongoSchema
-from bson.objectid import ObjectId
 from flask import flash, request, g
 from flask_babel import gettext 
 from urllib.parse import urlparse
 import os, string, random, datetime, json, markdown
 from mongoengine import QuerySet
+from pprint import pformat
 
-from pprint import pprint as pp
+#from pprint import pprint as pp
 
+
+def get_obj_values_as_dict(obj):
+    values = {}
+    fields = type(obj).__dict__['_fields']
+    for key, _ in fields.items():
+        value = getattr(obj, key, None)
+        values[key] = value
+    return values
 
 class HostnameQuerySet(QuerySet):
     def ensure_hostname(self, **kwargs):
         if not g.isRootUser and not 'hostname' in kwargs:
             kwargs={'hostname':g.site.hostname, **kwargs}
-        print("ensure_hostname kwargs: %s" % kwargs)
+        #print("ensure_hostname kwargs: %s" % kwargs)
         return self.filter(**kwargs)
 
 
@@ -59,7 +67,6 @@ def isNewUserRequestValid(form):
     return True
 
 
-
 class User(db.Document):
     meta = {'collection': 'users', 'queryset_class': HostnameQuerySet}
     username = db.StringField(required=True)
@@ -76,13 +83,8 @@ class User(db.Document):
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
 
-    def get_obj_values_as_dict(self):
-        values = {}
-        fields = type(self).__dict__['_fields']
-        for key, _ in fields.items():
-            value = getattr(self, key, None)
-            values[key] = value
-        return values
+    def __str__(self):
+        return pformat({'User': get_obj_values_as_dict(self)})
     
     @classmethod
     def create(cls, newUserData):
@@ -116,7 +118,7 @@ class User(db.Document):
         for rootUser in rootUsers:
             if not rootUser['email'] in emails:
                 emails.append(rootUser['email'])
-        print("new form notify %s" % emails)
+        #print("new form notify %s" % emails)
         return emails
 
     @classmethod
@@ -134,7 +136,7 @@ class User(db.Document):
         for rootUser in rootUsers:
             if not rootUser['email'] in emails:
                 emails.append(rootUser['email'])
-        print("new user notify: %s" % emails)
+        #print("new user notify: %s" % emails)
         return emails
 
     @classmethod
@@ -186,10 +188,7 @@ class User(db.Document):
     def toggleBlocked(self):
         if self.isRootUser():
             self.blocked=False
-        elif self.blocked:
-            self.blocked=False
-        else:
-            self.blocked=True
+        self.blocked=False if self.blocked else True
         self.save()
         return self.blocked
             
@@ -258,13 +257,8 @@ class Form(db.Document):
         db.Document.__init__(self, *args, **kwargs)
         self.site=Site.objects(hostname=self.hostname).first()
    
-    def get_obj_values_as_dict(self):
-        values = {}
-        fields = type(self).__dict__['_fields']
-        for key, _ in fields.items():
-            value = getattr(self, key, None)
-            values[key] = value
-        return values
+    def __str__(self):
+        return pformat({'Form': get_obj_values_as_dict(self)})
         
     @classmethod
     def find(cls, **kwargs):
@@ -312,8 +306,8 @@ class Form(db.Document):
     def totalEntries(self):
         return len(self.entries)
 
-    def is_enabled(self):
-        if not self.adminPreferences['public']:
+    def isEnabled(self):
+        if not (self.user.enabled and self.adminPreferences['public']):
             return False
         return self.enabled
 
@@ -400,8 +394,10 @@ class Form(db.Document):
         new_form.save()
         return new_form
 
+    """
     def update(self, data):
         db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
+    """
     
     def deleteEntries(self):
         self.entries=[]
@@ -416,7 +412,7 @@ class Form(db.Document):
     def getEditors(self):
         editors=[]
         for editor_id in self.editors:
-            print (editor_id)
+            #print (editor_id)
             user=User.find(id=editor_id)
             if user:
                 editors.append(user)
@@ -454,11 +450,10 @@ class Form(db.Document):
         return total
                 
     def isPublic(self):
-        if self.expired or self.adminPreferences['public']==False:
+        if not self.isEnabled() or self.expired:
             return False
-        if not (self.enabled and self.user.enabled):
-            return False
-        return True
+        else:
+            return True
 
     def isShared(self):
         if self.areEntriesShared():
@@ -546,18 +541,9 @@ class Site(db.Document):
 
     def __init__(self, *args, **kwargs):        
         db.Document.__init__(self, *args, **kwargs)
-        print("site.hostname: %s" % self.hostname)
     
-    def __repr__(self):
-        print("<Site=%s" % self.hostname)
-
-    def get_obj_values_as_dict(self):
-        values = {}
-        fields = type(self).__dict__['_fields']
-        for key, _ in fields.items():
-            value = getattr(self, key, None)
-            values[key] = value
-        return values
+    def __str__(self):
+        return pformat({'Site': get_obj_values_as_dict(self)})
     
     @classmethod
     def create(cls):
@@ -593,7 +579,6 @@ class Site(db.Document):
 
     @classmethod
     def find(cls, *args, **kwargs):
-        print("site_newsite: %s" % kwargs)
         site = cls.findAll(*args, **kwargs).first()
         if not site:
             site=Site.create()
@@ -668,11 +653,11 @@ class Site(db.Document):
         self.save()
         return self.scheme
 
-    def delete(self):
-        user=User.findAll(hostname=self.hostname)
+    def deleteSite(self):
+        users=User.findAll(hostname=self.hostname)
         for user in users:
             user.deleteUser()
-        invites = Invite.findAll(hostname=self.site['hostname'])
+        invites = Invite.findAll(hostname=self.hostname)
         for invite in invites:
             invite.delete()
         return self.delete()
@@ -689,13 +674,8 @@ class Invite(db.Document):
     def __init__(self, *args, **kwargs):        
         db.Document.__init__(self, *args, **kwargs)
 
-    def get_obj_values_as_dict(self):
-        values = {}
-        fields = type(self).__dict__['_fields']
-        for key, _ in fields.items():
-            value = getattr(self, key, None)
-            values[key] = value
-        return values
+    def __str__(self):
+        return pformat({'Invite': get_obj_values_as_dict(self)})
 
     @classmethod
     def create(cls, hostname, email, message, admin=False):
@@ -728,11 +708,14 @@ class Invite(db.Document):
 
 class Installation(db.Document):
     name = db.StringField(required=True)
-    schemaVersion = db.StringField(required=True)
+    schemaVersion = db.IntField(required=True)
     created = db.StringField(required=True)
    
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
+
+    def __str__(self):
+        return pformat({'Installation': get_obj_values_as_dict(self)})
 
     @classmethod
     def get(cls):
@@ -761,8 +744,6 @@ class Installation(db.Document):
             if migratedUpTo:
                 self.schemaVersion=migratedUpTo
                 self.save()
-                #db.installation.save(self.installation)
-                #db.installation.update_one({"_id": self.installation["_id"]}, {"$set": {'schemaVersion': migratedUpTo}})
                 return self.schemaVersion
             else:
                 return None
