@@ -139,6 +139,9 @@ class User(object):
         if User(email=email):
             flash(gettext("Email address is not available"), 'warning')
             return False
+        if email in app.config['ROOT_USERS'] and Installation.isUser(email):
+            flash(gettext("Email address is not available"), 'warning')
+            return False 
         return True
 
 

@@ -26,7 +26,7 @@ from flask_babel import gettext, refresh
 from GNGforms.persistence import *
 from GNGforms.session import *
 from GNGforms.utils import *
-from GNGforms.email import *
+import GNGforms.email as smtp
 from form_templates import formTemplates
 
 import pprint
@@ -129,7 +129,7 @@ def view_form(slug):
                         emails.append(user.email)
             if emails:
                 def sendExpiredFormNotification():
-                    smtpSendExpiredFormNotification(emails, queriedForm)
+                    smtp.sendExpiredFormNotification(emails, queriedForm)
                 thread = Thread(target=sendExpiredFormNotification())
                 thread.start()
         queriedForm.save()
@@ -146,7 +146,7 @@ def view_form(slug):
                 for field in queriedForm.fieldIndex:
                     if field['name'] in entry:
                         data.append( (stripHTMLTagsForLabel(field['label']), entry[field['name']]) )
-                smtpSendNewFormEntryNotification(emails, data, queriedForm.slug)
+                smtp.sendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
         return render_template('thankyou.html', form=queriedForm)
@@ -536,7 +536,7 @@ def save_form(_id=None):
         newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify Admins
-        smtpSendNewFormNotification(User().getNotifyNewFormEmails(), newForm)
+        smtp.sendNewFormNotification(User().getNotifyNewFormEmails(), newForm)
         return redirect(make_url_for('inspect_form', _id=newForm._id))
 
     clearSessionFormData()
@@ -811,7 +811,7 @@ def change_email():
         if 'email' in request.form and isValidEmail(request.form['email']):
             g.current_user.setToken(email=request.form['email'])
                         
-            smtpSendConfirmEmail(g.current_user, request.form['email'])
+            smtp.sendConfirmEmail(g.current_user, request.form['email'])
             flash(gettext("We've sent an email to %s") % request.form['email'], 'info')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
             
@@ -822,7 +822,7 @@ def change_email():
 @login_required
 def send_validation_email():   
     g.current_user.setToken(email=g.current_user.email)
-    smtpSendConfirmEmail(g.current_user, g.current_user.email)
+    smtp.sendConfirmEmail(g.current_user, g.current_user.email)
     flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
     
@@ -902,7 +902,7 @@ def new_user(token=None):
         if invite:
             invite.delete()           
         
-        thread = Thread(target=smtpSendNewUserNotification(User().getNotifyNewUserEmails(), user.username))
+        thread = Thread(target=smtp.sendNewUserNotification(User().getNotifyNewUserEmails(), user.username))
         thread.start()
         
         if validatedEmail == True:
@@ -912,7 +912,7 @@ def new_user(token=None):
             return redirect(make_url_for('my_forms'))
         else:
             user.setToken()
-            smtpSendConfirmEmail(user)
+            smtp.sendConfirmEmail(user)
             return render_template('new-user.html', site=g.site, created=True)
 
     session["user_id"]=None
@@ -960,7 +960,7 @@ def recover_password(token=None):
             user = User(email=request.form['email'], blocked=False)
             if user:
                 user.setToken()
-                smtpSendRecoverPassword(user)
+                smtp.sendRecoverPassword(user)
                 flash(gettext("We may have sent you an email"), 'info')
             
             if not user and request.form['email'] in app.config['ROOT_USERS']:
@@ -1096,7 +1096,7 @@ def smtp_config():
 @admin_required
 def test_smtp(email):
     if isValidEmail(email):
-        if smtpSendTestEmail(email):
+        if smtp.sendTestEmail(email):
             flash(gettext("SMTP config works!"), 'success')
     else:
         flash("Email not valid", 'warning')
@@ -1258,7 +1258,7 @@ def new_invite():
             else:
                 message=request.form['message']
             invite=Invite().create(hostname, request.form['email'], message, admin)
-            smtpSendInvite(invite)
+            smtp.sendInvite(invite)
             flash(gettext("We've sent an invitation to %s") % invite.data['email'], 'success')
             return redirect(make_url_for('user_settings', username=g.current_user.username))
     sites=[]

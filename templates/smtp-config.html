@@ -31,6 +31,7 @@ label { margin-top:0.25em }
         <select type="number" name="encryption" class="form-control" value="{{encryption}}" >
             <option class="form-control" name="hello" {% if not encryption == "SSL" %}selected=True{% endif %} >{%trans%}None{%endtrans%}</option>
             <option class="form-control" name="SSL" {% if encryption == "SSL" %}selected=True{% endif %} >SSL</option>
+            <option class="form-control" name="STARTTLS" {% if encryption == "STARTTLS" %}selected=True{% endif %} >STARTTLS (may work)</option>
         </select>
         
         <label>{%trans%}User{%endtrans%}</label>
