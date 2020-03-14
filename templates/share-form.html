@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row col-md-3"></div>
     <div class="row col-md-7" style="font-size:1.5em">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
         {{ form.slug }}
         <hr />
     </div>
@@ -40,8 +40,8 @@
         {%trans%}Only visible to people with a user account (login required){%endtrans%}
         <div style="padding-top:0.7em">
             <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
-                <button id="restrictedAccess_true" class="btn btn-xs btn-default {% if form.data.restrictedAccess %}btn-success{% endif %}">{%trans%}Restricted{%endtrans%}</button>
-                <button id="restrictedAccess_false" class="btn btn-xs btn-default {% if not form.data.restrictedAccess %}btn-primary{% endif %}">{%trans%}Public form{%endtrans%}</button>
+                <button id="restrictedAccess_true" class="btn btn-xs btn-default {% if form.restrictedAccess %}btn-success{% endif %}">{%trans%}Restricted{%endtrans%}</button>
+                <button id="restrictedAccess_false" class="btn btn-xs btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">{%trans%}Public form{%endtrans%}</button>
             </span>
         </div>
     </div>
@@ -61,22 +61,22 @@
         <p style="padding-top:1.2em;"></p>
         
         <table class="table table-condensed">
-        {% for editor in editors %}
-            <tr id="editor_{{editor._id}}">
+        {% for editor in form.getEditors() %}
+            <tr id="editor_{{editor.id}}">
                 <td>
                     {{ editor.email }}
                 </td>
                 <td class="text-right">
-                {% if editor._id|string == form.author %}
+                {% if editor.id|string == form.author %}
                     ({%trans%}Author{%endtrans%})
                 {% else %}
-                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor._id}}');">
+                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor.id}}');">
                 {% endif %}
                 </td>
             </tr>
         {% endfor %}
         <tr>
-        <form action="/forms/add-editor/{{form._id}}" method="POST">
+        <form action="/forms/add-editor/{{form.id}}" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <td>
             <input name="email" type="text" placeholder="New editor's email" class="form-control" required >
@@ -97,7 +97,7 @@
 var csrftoken = "{{ csrf_token() }}";
 function removeEditor(editor_id){
     $.ajax({
-        url : "/forms/remove-editor/{{form._id}}/"+editor_id,
+        url : "/forms/remove-editor/{{form.id}}/"+editor_id,
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -115,7 +115,7 @@ function removeEditor(editor_id){
 }
 document.getElementById('toggle_sharedEntries').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-shared-entries/{{ form._id }}",
+        url : "/form/toggle-shared-entries/{{ form.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -143,7 +143,7 @@ document.getElementById('toggle_sharedEntries').addEventListener('click', functi
 
 document.getElementById('toggle_restrictedAccess').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-restricted-access/{{ form._id }}",
+        url : "/form/toggle-restricted-access/{{ form.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {

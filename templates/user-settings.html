@@ -16,7 +16,7 @@
         </div>
         <p></p>
         
-        {% if not g.current_user.data.validatedEmail %}
+        {% if not g.current_user.validatedEmail %}
         <div style="font-size:1.25em; padding-bottom:0.5em; display:inline; float:left;">
             {%trans%}Your email has not been validated{%endtrans%}
         </div>
@@ -65,7 +65,7 @@
             </tr>
             <tr>
                 <td>{%trans%}Preferred language{%endtrans%}</td>
-                <td>{{ config['LANGUAGES'][g.current_user.data['language']][0] }}</td>
+                <td>{{ config['LANGUAGES'][g.current_user.language][0] }}</td>
                 <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/user/change-language'">
                 </td>
@@ -99,13 +99,13 @@
         {% for invite in invites %}
             <tr>
                 <td>{{invite.token.created.strftime('%Y-%m-%d') }}</td>
-                <td>{{invite.data['email']}}</td>
+                <td>{{invite.email}}</td>
                 {% if g.isRootUser %}
-                    <td>{{invite.data['hostname']}}</td>
+                    <td>{{invite.hostname}}</td>
                 {% endif %}
-                <td>{{invite.data['admin']}}</td>
+                <td>{{invite.admin}}</td>
                 <td class="text-right">
-                <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite._id}}'">
+                <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite.id}}'">
                 </td>
             </tr>
         {% endfor %}
@@ -125,8 +125,8 @@
                 <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newuser" class="btn-group btn-toggle">
-                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.admin['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -134,8 +134,8 @@
                 <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newform" class="btn-group btn-toggle">
-                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.data['admin']['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.data['admin']['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.admin['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -235,7 +235,7 @@
                 <td>{{ site.totalForms }}</td>
                 {% if total_forms.append(total_forms.pop() + site.totalForms) %}{% endif %}
                 <td class="text-right">
-                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.site.hostname}}'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
                 </td>
             </tr>
         {% endfor %}
@@ -254,7 +254,7 @@
         <table class="table">
         <tr>
             <td>{%trans%}Created{%endtrans%}</td>
-            <td>{{installation.data.created}}</td>
+            <td>{{installation.created}}</td>
         </tr>
         <tr>
             <td>GNGforms version</td>

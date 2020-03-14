@@ -18,23 +18,24 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from flask import Flask
-from flask_pymongo import PyMongo
+from flask_mongoengine import MongoEngine
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 import sys, os
 
+
 app = Flask(__name__)
 app.config.from_pyfile('config.cfg')
-mongo = PyMongo(app)
+db = MongoEngine(app)
 babel = Babel(app)
 
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = 31
+app.config['APP_VERSION'] = 32
 app.config['SCHEMA_VERSION'] = 13
 
-app.config['RESERVED_SLUGS'] = ['static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites', 'update']
+app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users', 'form', 'forms', 'site', 'sites', 'update']
 # DPL = Data Protection Law
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL']
 app.config['RESERVED_USERNAMES'] = ['system', 'admin']

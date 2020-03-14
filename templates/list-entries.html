@@ -20,24 +20,24 @@
 
 <div class="container">
     <div class="row col-md-8" style="font-size:1.5em">
-    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form._id }}'">
+    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
     {{ form.slug }}
     </div>
     
     <div class="row col-md-4" style="text-align:right">
     <input id="editModeButton" class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable edition{%endtrans%}" onClick="js:setEditMode();">
-    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form._id }}'">
-    <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete all{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form._id }}'" {% if not form.totalEntries %}disabled{%endif%} >
+    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form.id }}'">
+    <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete all{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form.id }}'" {% if not form.totalEntries %}disabled{%endif%} >
     </div>
 </div>
 
 <div class="container">
     <hr style="margin-bottom:5px" />
     
-    {% if form.editors[g.current_user._id|string] is defined %}
+    {% if form.editors[g.current_user.id|string] is defined %}
         <div id="toggle_notification" class="btn-group btn-toggle">
-            <button id="notification_true" class="btn btn-xs btn-default {% if form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-            <button id="notification_false" class="btn btn-xs btn-default {% if not form.data.editors[g.current_user._id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+            <button id="notification_true" class="btn btn-xs btn-default {% if form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+            <button id="notification_false" class="btn btn-xs btn-default {% if not form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
         </div>
         {%trans%}Notify me on each new entry{%endtrans%}
     {% endif %}
@@ -68,7 +68,7 @@
     </table>
 </div>
 
-{% if form.editors[g.current_user._id|string] is defined %}
+{% if form.editors[g.current_user.id|string] is defined %}
 <script>
 var csrftoken = "{{ csrf_token() }}";
 var fieldIndex={{fieldIndex|tojson}};
@@ -147,7 +147,7 @@ $('#entriesTable tbody').on('click', '.saveCellEdition', function () {
     var $cell = $(this).parents("td");
     $cell.html(newValue);
     $.ajax({
-        url : "/forms/change-entry-field-value/{{ form._id }}",
+        url : "/forms/change-entry-field-value/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
@@ -179,7 +179,7 @@ $('#entriesTable tbody').on('click', '.delete-row-icon', function () {
         return
     }
     $.ajax({
-        url : "/forms/delete-entry/{{ form._id }}",
+        url : "/forms/delete-entry/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
@@ -202,7 +202,7 @@ $('#entriesTable tbody').on('click', '.delete-row-icon', function () {
 $('#entriesTable tbody').on('click', '.undo-delete-row', function () {
     var $row = $(this).parents('tr');
     $.ajax({
-        url : "/forms/undo-delete-entry/{{ form._id }}",
+        url : "/forms/undo-delete-entry/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
@@ -223,7 +223,7 @@ $('#entriesTable tbody').on('click', '.undo-delete-row', function () {
 });
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-notification/{{ form._id }}",
+        url : "/form/toggle-notification/{{ form.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {

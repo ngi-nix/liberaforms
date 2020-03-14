@@ -24,19 +24,16 @@
 
 
 {% if g.current_user %}
-<!-- menu -->
 <div class="container" style="font-size:1.3em;">
     <div class="row col-md-12">
         <a href="/">{%trans%}Start{%endtrans%}</a> | 
-
-        {% if g.current_user and g.current_user.enabled %}
-            {% if g.current_user.admin %}
+        {% if g.current_user.enabled %}
+            {% if g.isAdmin %}
                 <a href="/admin/forms">{%trans%}Forms{%endtrans%}</a> | 
                 <a href="/admin/users">{%trans%}Users{%endtrans%}</a> | 
             {% endif %}
             <a href="/forms">{%trans%}My forms{%endtrans%}</a> |
         {% endif %}
-        
         <a href="/user/{{ g.current_user.username }}">{%trans%}Settings{%endtrans%}</a> | 
         <a href="/site/logout">{%trans%}Logout{%endtrans%}</a>
     </div>

@@ -17,18 +17,7 @@ virtualenv /opt/venv --python=python3
 ## Install python packages
 
 source /opt/venv/bin/activate
-pip install flask
-pip install flask_script
-pip install flask_pymongo
-pip install Markdown
-pip install unidecode
-pip install flask_babel
-pip install validate_email
-pip install password_strength
-pip install passlib
-pip install gunicorn
-pip install flask_wtf
-
+pip install ./requirements.txt
 
 
 ## Clone gngforms and create config.cfg

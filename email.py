@@ -25,7 +25,7 @@ import smtplib, ssl, socket
 from threading import Thread
 
 def createSmtpObj():
-    config=g.site.data["smtpConfig"]
+    config=g.site.smtpConfig
     try:
         if config["encryption"] == "SSL":
             server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
@@ -53,9 +53,9 @@ def sendMail(email, message):
     server = createSmtpObj()
     if server:
         try:
-            header='To: ' + email + '\n' + 'From: ' + g.site.data["smtpConfig"]["noreplyAddress"] + '\n'
+            header='To: ' + email + '\n' + 'From: ' + g.site.smtpConfig["noreplyAddress"] + '\n'
             message=header + message
-            server.sendmail(g.site.data["smtpConfig"]["noreplyAddress"], email, message.encode('utf-8'))         
+            server.sendmail(g.site.smtpConfig["noreplyAddress"], email, message.encode('utf-8'))         
             return True
         except Exception as e:
             if g.isAdmin:
@@ -64,7 +64,7 @@ def sendMail(email, message):
 
 
 def sendConfirmEmail(user, newEmail=None):
-    link="%suser/validate-email/%s" % (Site().host_url, user.token['token'])
+    link="%suser/validate-email/%s" % (g.site.host_url, user.token['token'])
     message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
     message = 'Subject: {}\n\n{}'.format(gettext("GNGforms. Confirm email"), message)
     if newEmail:
@@ -74,16 +74,16 @@ def sendConfirmEmail(user, newEmail=None):
 
 
 def sendInvite(invite):
-    site=Site(hostname=invite.data['hostname'])
-    link="%suser/new/%s" % (site.host_url, invite.data['token']['token'])
-    message="%s\n\n%s" % (invite.data['message'], link)   
+    site=Site.find(hostname=invite.hostname)
+    link="%suser/new/%s" % (site.host_url, invite.token['token'])
+    message="%s\n\n%s" % (invite.message, link)
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % site.hostname), message)
     
-    return sendMail(invite.data['email'], message)
+    return sendMail(invite.email, message)
     
 
 def sendRecoverPassword(user):
-    link="%ssite/recover-password/%s" % (Site().host_url, user.token['token'])
+    link="%ssite/recover-password/%s" % (g.site.host_url, user.token['token'])
     message=gettext("Please use this link to recover your password")
     message="%s\n\n%s" % (message, link)
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Recover password"), message)
@@ -92,7 +92,7 @@ def sendRecoverPassword(user):
 
 
 def sendNewFormEntryNotification(emails, entry, slug):
-    message=gettext("New form entry in %s at %s\n" % (slug, Site().hostname))
+    message=gettext("New form entry in %s at %s\n" % (slug, g.site.hostname))
     for data in entry:
         message="%s\n%s: %s" % (message, data[0], data[1])
     message="%s\n" % message
@@ -101,22 +101,25 @@ def sendNewFormEntryNotification(emails, entry, slug):
     for email in emails:
         sendMail(email, message)
 
+
 def sendExpiredFormNotification(editorEmails, form):
-    message=gettext("The form '%s' has expired at %s" % (form.slug, Site().hostname))
+    message=gettext("The form '%s' has expired at %s" % (form.slug, g.site.hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. A form has expired"), message)
     
     for email in editorEmails:
         sendMail(email, message)
     
+
 def sendNewFormNotification(adminEmails, form):
-    message=gettext("New form '%s' created at %s" % (form.slug, Site().hostname))
+    message=gettext("New form '%s' created at %s" % (form.slug, g.site.hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form notification"), message)
     
     for email in adminEmails:
         sendMail(email, message)
 
+
 def sendNewUserNotification(adminEmails, username):
-    message=gettext("New user '%s' created at %s" % (username, Site().hostname))
+    message=gettext("New user '%s' created at %s" % (username, g.site.hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New user notification"), message)
     
     for email in adminEmails:

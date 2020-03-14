@@ -35,19 +35,19 @@
             </tr>            
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ user.data.created }}</td>
+               <td>{{ user.created }}</td>
             </tr>
             <tr>
                <td>{%trans%}Language{%endtrans%}</td>
-               <td>{{ config['LANGUAGES'][user.data.language][0] }}</td>
+               <td>{{ config['LANGUAGES'][user.language][0] }}</td>
             </tr>
             <tr>
                <td>{%trans%}Email{%endtrans%}</td>
-               <td>{{ user.data.email }}</td>
+               <td>{{ user.email }}</td>
             </tr>
             <tr>
                <td>{%trans%}Validated email{%endtrans%}</td>
-               <td> {% if user.data.validatedEmail %}
+               <td> {% if user.validatedEmail %}
                     <span>{%trans%}True{%endtrans%}</span>
                     {% else %}
                     <span style="color:red">{%trans%}False{%endtrans%}</span>
@@ -64,11 +64,11 @@
                 </td>
             </tr>
         </table>
-        {% if g.isAdmin and not user._id == g.current_user._id %}
+        {% if g.isAdmin and not user.id == g.current_user.id %}
             {% if user.forms|length %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user._id}}'">
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user._id}}'">
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% endif %}
         {% endif %}
 
@@ -94,10 +94,10 @@
         
         {% for form in user.forms %}
         <tr>
-           <td><a href="/forms/view/{{form._id}}">{{form.slug}}</a></td>
+           <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
            <td>{{form.created}}</td>
            <td>
-                {% if user._id|string == form.author %}
+                {% if user.id|string == form.author %}
                     {%trans%}True{%endtrans%}
                 {% else %}
                     {%trans%}False{%endtrans%}
@@ -128,7 +128,7 @@ $(document).ready(function() {
 });
 document.getElementById('toggle_blocked').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/users/toggle-blocked/{{ user._id }}",
+        url : "/admin/users/toggle-blocked/{{ user.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -151,7 +151,7 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
 });
 document.getElementById('toggle_admin').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/users/toggle-admin/{{ user._id }}",
+        url : "/admin/users/toggle-admin/{{ user.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {

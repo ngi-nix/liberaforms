@@ -34,8 +34,8 @@
     <div class="row col-md-5">
         <div style="font-size:1.5em">
             {%trans%}Details{%endtrans%}
-            {% if form.editors[g.current_user._id|string] is defined %}
-            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View log{%endtrans%}" onClick="location.href='/forms/log/list/{{form._id}}'" >
+            {% if form.editors[g.current_user.id|string] is defined %}
+            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View log{%endtrans%}" onClick="location.href='/forms/log/list/{{form.id}}'" >
             {% endif %}
         </div>
         <hr />
@@ -44,8 +44,8 @@
             <tr>
                <td>{%trans%}Entries{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user._id|string] is defined %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form._id}}'" >
+                   {% if form.editors[g.current_user.id|string] is defined %}
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form.id}}'" >
                    {% else %}
                         {{form.totalEntries}}
                    {% endif %}
@@ -57,7 +57,7 @@
             <tr>
                <td>{%trans%}Public{%endtrans%}</td>
                <td>
-               {% if form.editors[g.current_user._id|string] is defined %}
+               {% if form.editors[g.current_user.id|string] is defined %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
                     <button id="enabled_true" class="btn btn-xs btn-default {% if form.isPublic() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
@@ -70,13 +70,13 @@
             <tr>
                <td>{%trans%}Will expire{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user._id|string] is defined %}
+                   {% if form.editors[g.current_user.id|string] is defined %}
                         {% if form.expired %}
-                            <input class="btn-warning btn btn-xs" type="button" value="{%trans%}Expired{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
+                            <input class="btn-warning btn btn-xs" type="button" value="{%trans%}Expired{%endtrans%}" onClick="location.href='/forms/expiration/{{form.id}}'" >
                         {% elif form.willExpire() %}
-                            <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
+                            <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/expiration/{{form.id}}'" >
                         {% else %}
-                            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/expiration/{{form._id}}'" >
+                            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/expiration/{{form.id}}'" >
                         {% endif %}
                    {% else %}
                         {% if form.expired %}
@@ -92,7 +92,7 @@
             <tr>
                <td>
                     {%trans%}Public URL{%endtrans%}
-                    {% if not form.data['adminPreferences']['public'] %}
+                    {% if not form.adminPreferences['public'] %}
                         <span style="color:red">({%trans%}disabled{%endtrans%})</span>
                     {% endif %}
                </td>
@@ -109,11 +109,11 @@
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user._id|string] is defined %}
+                   {% if form.editors[g.current_user.id|string] is defined %}
                         {% if form.isShared() %}
-                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
                         {% else %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
                         {% endif %}
                    {% else %}
                         {{ form.isShared() }}
@@ -123,14 +123,14 @@
             <tr>
                <td>{%trans%}Restricted access{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user._id|string] is defined %}
-                        {% if form.data.restrictedAccess %}
-                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                   {% if form.editors[g.current_user.id|string] is defined %}
+                        {% if form.restrictedAccess %}
+                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
                         {% else %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form._id}}'" >
+                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
                         {% endif %}
                    {% else %}
-                        {{ form.data.restrictedAccess }}
+                        {{ form.restrictedAccess }}
                    {% endif %}
                </td>
             </tr>
@@ -138,7 +138,7 @@
             <tr>
                <td>{%trans%}Require consent{%endtrans%}</td>
                <td>
-               {% if form.editors[g.current_user._id|string] is defined %}
+               {% if form.editors[g.current_user.id|string] is defined %}
                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
                     <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentEnabled() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
                     <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
@@ -158,7 +158,7 @@
                </td>
                <td>
                {% if g.isAdmin %}
-                    <a href="/admin/users/{{ form.user._id }}">{{ form.user.username }}</a>
+                    <a href="/admin/users/{{ form.user.id }}">{{ form.user.username }}</a>
                {% else %}
                     {{ form.user.username }}
                 {% endif %}
@@ -176,15 +176,15 @@
             {% endif %}
             
         </table>
-        {% if form.editors[g.current_user._id|string] is defined %}
+        {% if form.editors[g.current_user.id|string] is defined %}
         <hr />
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form._id }}'">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form._id }}'">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form.id }}'">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form.id }}'">
         <p></p>
             {% if form.totalEntries == 0 %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
             {% else %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form._id }}'">
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
             {% endif %}
         {% endif %}
         
@@ -193,11 +193,11 @@
             {%trans%}Admin options{%endtrans%}
         </div>
         <hr />
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change author{%endtrans%}" onClick="location.href='/admin/forms/change-author/{{form._id}}'" >
-            {% if form.data['adminPreferences']['public'] %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form._id}}'" >
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change author{%endtrans%}" onClick="location.href='/admin/forms/change-author/{{form.id}}'" >
+            {% if form.adminPreferences['public'] %}
+            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
             {% else %}
-            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form._id}}'" >
+            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
             {% endif %}
         {% endif %}
     </div>
@@ -222,10 +222,10 @@ jQuery(function($) {
     $(fbRender).formRender(formRenderOpts);
 });
 
-{% if form.editors[g.current_user._id|string] is defined %}
+{% if form.editors[g.current_user.id|string] is defined %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-enabled/{{ form._id }}",
+        url : "/form/toggle-enabled/{{ form.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -253,7 +253,7 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
 {% if form.site.isPersonalDataConsentEnabled() %}
     document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
         $.ajax({
-            url : "/form/toggle-data-consent/{{ form._id }}",
+            url : "/form/toggle-data-consent/{{ form.id }}",
             type: "POST",
             dataType: "json",
             beforeSend: function(xhr, settings) {

@@ -17,18 +17,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from GNGforms import app, mongo
+from GNGforms import app, db
 from GNGforms.utils import *
 from GNGforms.migrate import migrateMongoSchema
-from bson.objectid import ObjectId
 from flask import flash, request, g
 from flask_babel import gettext 
 from urllib.parse import urlparse
 import os, string, random, datetime, json, markdown
+from mongoengine import QuerySet
+from pprint import pformat
+
+#from pprint import pprint as pp
 
 
-import pprint
-pp = pprint.PrettyPrinter()
+def get_obj_values_as_dict(obj):
+    values = {}
+    fields = type(obj).__dict__['_fields']
+    for key, _ in fields.items():
+        value = getattr(obj, key, None)
+        values[key] = value
+    return values
+
+class HostnameQuerySet(QuerySet):
+    def ensure_hostname(self, **kwargs):
+        if not g.isRootUser and not 'hostname' in kwargs:
+            kwargs={'hostname':g.site.hostname, **kwargs}
+        #print("ensure_hostname kwargs: %s" % kwargs)
+        return self.filter(**kwargs)
 
 
 def isNewUserRequestValid(form):   
@@ -41,102 +56,95 @@ def isNewUserRequestValid(form):
     if form['username'] in app.config['RESERVED_USERNAMES']:
         flash(gettext("Username is not available"), 'warning')
         return False
-    user = User(username=form['username'])
+    user = User.find(username=form['username'])
     if user:
         flash(gettext("Username is not available"), 'warning')
         return False
-    if not User().isEmailAvailable(form['email']):
+    if not User.isEmailAvailable(form['email']):
         return False
     if not isValidPassword(form['password1'], form['password2']):
         return False
     return True
 
 
-
-class User(object):
-    user = None
-
-    def __new__(cls, *args, **kwargs):
-        if 'username' in kwargs and not isSaneUsername(kwargs['username']):
-            return None
-            
-        instance = super(User, cls).__new__(cls)
-        if not kwargs:
-            return instance
-           
-        if '_id' in kwargs:
-            kwargs['_id'] = ObjectId(kwargs['_id'])
-        if 'token' in kwargs:
-            kwargs={"token.token": kwargs['token'], **kwargs}
-            kwargs.pop('token')
-        if not ('hostname' in kwargs or g.isRootUser):
-            kwargs['hostname']=g.site.hostname
-        
-        user = mongo.db.users.find_one(kwargs)       
-        if user:
-            instance.user=dict(user)
-            return instance
-        else:
-            return None
+class User(db.Document):
+    meta = {'collection': 'users', 'queryset_class': HostnameQuerySet}
+    username = db.StringField(required=True)
+    email = db.StringField(required=True)
+    password =db.StringField(required=True)
+    language = db.StringField(required=True)
+    hostname = db.StringField(required=True)
+    blocked = db.BooleanField()
+    admin = db.DictField(required=True)
+    validatedEmail = db.BooleanField()
+    created = db.StringField(required=True)
+    token = db.DictField(required=False)
     
     def __init__(self, *args, **kwargs):
-        pass
+        db.Document.__init__(self, *args, **kwargs)
 
+    def __str__(self):
+        return pformat({'User': get_obj_values_as_dict(self)})
+    
+    @classmethod
     def create(cls, newUserData):
-        newUser = mongo.db.users.insert_one(newUserData)
-        return User(_id=newUser.inserted_id)
+        newUser=User(**newUserData)
+        newUser.save()
+        return newUser
 
+    @classmethod
+    def find(cls, **kwargs):
+        return cls.findAll(**kwargs).first()
+
+    @classmethod
     def findAll(cls, *args, **kwargs):
-        if not g.isRootUser:
-            kwargs['hostname']=g.site.hostname
-        return mongo.db.users.find(kwargs)
+        if 'token' in kwargs:
+            kwargs={"token__token": kwargs['token'], **kwargs}
+            kwargs.pop('token')
+        return cls.objects.ensure_hostname(**kwargs)
 
-
+    @classmethod
     def getNotifyNewFormEmails(cls):
         emails=[]
-        criteria={  'hostname':g.site.hostname,
-                    'blocked':False,
-                    'validatedEmail': True,
-                    'admin.isAdmin':True,
-                    'admin.notifyNewForm':True}
-        admins=mongo.db.users.find(criteria)
+        criteria={  'blocked':False,
+                    'validatedEmail':True,
+                    'admin__isAdmin':True,
+                    'admin__notifyNewForm':True}
+        admins=User.findAll(**criteria)
         for admin in admins:
             emails.append(admin['email'])
-            
-        rootUsers=mongo.db.users.find({ 'email': {"$in": app.config['ROOT_USERS']},
+        rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
                                         'admin.notifyNewForm':True})
         for rootUser in rootUsers:
             if not rootUser['email'] in emails:
                 emails.append(rootUser['email'])
-        
+        #print("new form notify %s" % emails)
         return emails
 
-
+    @classmethod
     def getNotifyNewUserEmails(cls):
         emails=[]
-        criteria={  'hostname':g.site.hostname,
-                    'blocked':False,
+        criteria={  'blocked':False,
                     'validatedEmail': True,
-                    'admin.isAdmin':True,
-                    'admin.notifyNewUser':True}
-        admins=mongo.db.users.find(criteria)
+                    'admin__isAdmin':True,
+                    'admin__notifyNewUser':True}
+        admins=User.findAll(**criteria)
         for admin in admins:
             emails.append(admin['email'])
-            
-        rootUsers=mongo.db.users.find({ 'email': {"$in": app.config['ROOT_USERS']},
+        rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
                                         'admin.notifyNewUser':True})
         for rootUser in rootUsers:
             if not rootUser['email'] in emails:
                 emails.append(rootUser['email'])
-        
+        #print("new user notify: %s" % emails)
         return emails
 
-
+    @classmethod
     def isEmailAvailable(cls, email):
         if not isValidEmail(email):
             flash(gettext("Email address is not valid"), 'warning')
             return False
-        if User(email=email):
+        if User.find(email=email):
             flash(gettext("Email address is not available"), 'warning')
             return False
         if email in app.config['ROOT_USERS'] and Installation.isUser(email):
@@ -144,116 +152,57 @@ class User(object):
             return False 
         return True
 
-
-    @property
-    def data(self):
-        return self.user
-
-    @property
-    def _id(self):
-        return self.user['_id']
-
-    @property
-    def username(self):
-        return self.user['username']
-
-    @property
-    def blocked(self):
-        return self.user['blocked']
-
     @property
     def enabled(self):
-        if not self.user['validatedEmail']:
+        if not self.validatedEmail:
             return False
-        if self.user['blocked']:
+        if self.blocked:
             return False
         return True
-    
-    @property
-    def language(self):
-        return self.user['language']
-
-    @language.setter
-    def language(self, language):
-        self.user['language'] = language
-
-    @property
-    def email(self):
-        if self.user and 'email' in self.user:
-            return self.user['email']
-        return None
-    
-    @email.setter
-    def email(self, email):
-        self.user['email'] = email
-    
-    @property
-    def hostname(self):
-        return self.user['hostname']
-
-    @property
-    def token(self):
-        return self.user['token']
-        
+               
     @property
     def forms(self):
-        #return Form().findAll(editor=str(self._id))
-        return [Form(_id=form['_id']) for form in Form().findAll(editor=str(self._id))]
-
-    @property
-    def admin(self):
-        return self.user['admin']['isAdmin']
-    
-    def save(self):
-        mongo.db.users.save(self.user)
-
-    def delete(self):
-        forms = Form().findAll(author=str(self._id))
-        for form in forms:
-            mongo.db.forms.remove({'_id': form['_id']})
-        return mongo.db.users.remove({'_id': self.user['_id']})
+        return Form.findAll(editor=str(self.id))
 
     def isAdmin(self):
-        return self.user['admin']['isAdmin']
-        
+        return True if self.admin['isAdmin']==True else False
+
     def isRootUser(self):
-        if self.email in app.config['ROOT_USERS']:
-            return True
-        return False
+        return True if self.email in app.config['ROOT_USERS'] else False
+    
+    def deleteUser(self):
+        forms = Form.findAll(author=str(self.id))
+        for form in forms:
+            form.delete()
+        forms = Form.findAll(editor=str(self.id))
+        for form in forms:
+            del form.editors[str(self.id)]
+            form.save()
+        return self.delete()
     
     def setToken(self, **kwargs):
-        self.user['token']=createToken(User, **kwargs)
+        self.token=createToken(User, **kwargs)
         self.save()
 
     def deleteToken(self):
-        self.user['token']={}
-        self.save()
-
-    def setPassword(self, password):
-        self.user['password'] = password
+        self.token={}
         self.save()
 
     def toggleBlocked(self):
         if self.isRootUser():
-            self.user['blocked']=False
-        elif self.blocked:
-            self.user['blocked']=False
-        else:
-            self.user['blocked']=True
+            self.blocked=False
+        self.blocked=False if self.blocked else True
         self.save()
-        return self.user['blocked']
+        return self.blocked
             
     def toggleAdmin(self):
         if self.isRootUser():
             return self.isAdmin()
-        if self.isAdmin():
-            self.user['admin']['isAdmin']=False
-            mongo.db.users.save(self.user)
-        else:
-            self.user['admin']['isAdmin']=True
-            mongo.db.users.save(self.user)
+        self.admin['isAdmin']=False if self.isAdmin() else True
+        self.save()
         return self.isAdmin()
 
+    @classmethod
     def defaultAdminSettings(cls):
         return {
             "isAdmin": False,
@@ -261,20 +210,15 @@ class User(object):
             "notifyNewForm": False
         }
 
-
     """
     send this admin an email when a new user registers at the site
     """
     def toggleNewUserNotification(self):
         if not self.isAdmin():
             return False
-        if self.user['admin']['notifyNewUser']:
-            self.user['admin']['notifyNewUser'] = False
-        else:
-            self.user['admin']['notifyNewUser'] = True
-        mongo.db.users.save(self.user)
-        return self.user['admin']['notifyNewUser']
-
+        self.admin['notifyNewUser']=False if self.admin['notifyNewUser'] else True
+        self.save()
+        return self.admin['notifyNewUser']
 
     """
     send this admin an email when a new form is created
@@ -282,78 +226,62 @@ class User(object):
     def toggleNewFormNotification(self):
         if not self.isAdmin():
             return False
-        if self.user['admin']['notifyNewForm']:
-            self.user['admin']['notifyNewForm'] = False
-        else:
-            self.user['admin']['notifyNewForm'] = True
-        mongo.db.users.save(self.user)
-        return self.user['admin']['notifyNewForm']     
+        self.admin['notifyNewForm']=False if self.admin['notifyNewForm'] else True
+        self.save()
+        return self.admin['notifyNewForm']    
 
-    def canViewForm(self, form):
-        if str(self._id) in form.editors or self.isAdmin():
-            return True
-        return False
+    def canInspectForm(self, form):
+        return True if (str(self.id) in form.editors or self.isAdmin()) else False
     
-        
 
-class Form(object):
-    form = None
+class Form(db.Document):
+    meta = {'collection': 'forms', 'queryset_class': HostnameQuerySet}
+    created = db.StringField(required=True)
+    hostname = db.StringField(required=True)
+    slug = db.StringField(required=True)
+    author = db.StringField(required=True)
+    editors = db.DictField(required=True)
+    postalCode = db.StringField(required=False)
+    enabled = db.BooleanField()
+    expired = db.BooleanField()
+    expiryConditions = db.DictField(required=True)
+    structure = db.StringField(required=True)
+    fieldIndex = db.ListField(required=True)
+    entries = db.ListField(required=False)
+    sharedEntries = db.DictField(required=False)
+    log = db.ListField(required=False)
+    requireDataConsent = db.BooleanField()
+    restrictedAccess = db.BooleanField()
+    adminPreferences = db.DictField(required=True)
+    afterSubmitText = db.DictField(required=True)
     site = None
 
-    def __new__(cls, *args, **kwargs):
-        if 'slug' in kwargs and not isSaneSlug(kwargs['slug']):
-            return None
+    def __init__(self, *args, **kwargs):
+        db.Document.__init__(self, *args, **kwargs)
+        self.site=Site.objects(hostname=self.hostname).first()
+   
+    def __str__(self):
+        return pformat({'Form': get_obj_values_as_dict(self)})
+        
+    @classmethod
+    def find(cls, **kwargs):
+        return cls.findAll(**kwargs).first()
 
-        instance = super(Form, cls).__new__(cls)
-        if not kwargs:
-            return instance
-
-        if '_id' in kwargs:
-            kwargs["_id"] = ObjectId(kwargs['_id'])
+    @classmethod
+    def findAll(cls, **kwargs):
         if 'editor' in kwargs:
-            kwargs={"editors.%s" % kwargs["editor"]: {"$exists":True}, **kwargs}
+            kwargs={"__raw__": {'editors.%s' % kwargs["editor"]: {'$exists': True}}, **kwargs}
             kwargs.pop('editor')
         if 'key' in kwargs:
-            kwargs={"sharedEntries.key": kwargs['key'], **kwargs}
+            kwargs={"sharedEntries__key": kwargs['key'], **kwargs}
             kwargs.pop('key')
-        if not ('hostname' in kwargs or g.isRootUser):
-            kwargs['hostname']=g.site.hostname
-        #print(kwargs)
-        form = mongo.db.forms.find_one(kwargs)
-            
-        if form:
-            instance.form=dict(form)
-            return instance
-        else:
-            return None
-
-
-    def __init__(self, *args, **kwargs):
-        if self.form and self.form["hostname"]:
-            self.site=Site(hostname=self.form["hostname"])
-        #pass
-
-    @property
-    def data(self):
-        return self.form
-
-    @property
-    def _id(self):
-        return self.form['_id']
-
-    @property
-    def author(self):
-        return self.form['author']
-
-    @author.setter
-    def author(self, value):
-        self.form["author"]=value
+        return cls.objects.ensure_hostname(**kwargs)
 
     def changeAuthor(self, new_author):
         if new_author.enabled:
             if self.author in self.editors:
                 del self.editors[self.author]
-            self.author=str(new_author._id)
+            self.author=str(new_author.id)
             if self.addEditor(new_author):
                 self.save()
                 return True
@@ -361,27 +289,7 @@ class Form(object):
 
     @property
     def user(self):
-        return User(_id=self.form['author'])
-
-    @property
-    def editors(self):
-        return self.form['editors']
-    
-    @property
-    def slug(self):
-        return self.form['slug']
-
-    @property
-    def structure(self):
-        return self.form['structure']
-
-    @structure.setter
-    def structure(self, value):
-        self.form['structure'] = value
-    
-    @property
-    def fieldIndex(self):
-        return self.form['fieldIndex']
+        return User.find(id=self.author)
     
     def getFieldIndexForDataDisplay(self):
         """
@@ -398,53 +306,37 @@ class Form(object):
         return result
     
     @property
-    def entries(self):
-        return self.form['entries']
-
-    @property
-    def created(self):
-        return self.form['created']
-
-    @property
     def totalEntries(self):
         return len(self.entries)
 
-    @property
-    def enabled(self):
-        if not self.form['adminPreferences']['public']:
+    def isEnabled(self):
+        if not (self.user.enabled and self.adminPreferences['public']):
             return False
-        return self.form['enabled']
+        return self.enabled
 
+    @classmethod
     def newEditorPreferences(cls):
         return {'notification': {'newEntry': False, 'expiredForm': True}}
 
     def addEditor(self, editor):
         if not editor.enabled:
             return False
-        editor_id=str(editor._id)
-        if not editor_id in self.form['editors']:
-            self.form['editors'][editor_id]=Form().newEditorPreferences()
-            mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+        editor_id=str(editor.id)
+        if not editor_id in self.editors:
+            self.editors[editor_id]=Form.newEditorPreferences()
+            self.save()
             return True
         return False
 
     def removeEditor(self, editor_id):
         if editor_id == self.author:
             return None
-        if editor_id in self.form['editors']:
-            del self.form['editors'][editor_id]
-            mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": {"editors": self.form['editors']}})
+        if editor_id in self.editors:
+            del self.editors[editor_id]
+            self.save()
             return editor_id
         return None
-
-    @property
-    def afterSubmitText(self):
-        return self.form['afterSubmitText']
-
-    @property
-    def hostname(self):
-        return self.form['hostname']
-    
+   
     @property
     def url(self):
         return "%s%s" % (self.site.host_url, self.slug)  
@@ -453,11 +345,11 @@ class Form(object):
         if not self.site.isPersonalDataConsentEnabled():
             return False
         else:
-            return self.form["requireDataConsent"]
+            return self.requireDataConsent
 
     @property
     def dataConsent(self):
-        return self.site.data['personalDataConsent']['html']
+        return self.site.personalDataConsent['html']
 
     @property
     def lastEntryDate(self):
@@ -485,7 +377,7 @@ class Form(object):
 
     @property
     def fieldConditions(self):
-        return self.form["expiryConditions"]["fields"]
+        return self.expiryConditions["fields"]
 
     def getConditionalFieldPositions(self):
         conditionalFieldPositions=[]
@@ -497,63 +389,52 @@ class Form(object):
                         break
         return conditionalFieldPositions
 
-    def findAll(cls, *args, **kwargs):
-        if not g.isRootUser:
-            kwargs['hostname']=g.site.hostname
-        if 'editor' in kwargs:
-            kwargs={"editors.%s" % kwargs["editor"] :{"$exists":True}, **kwargs}
-            kwargs.pop('editor')
-        return mongo.db.forms.find(kwargs)
-
-    def insert(cls, formData):
+    @classmethod
+    def saveNewForm(cls, formData):
         if formData['slug'] in app.config['RESERVED_SLUGS']:
             return None
-        newForm = mongo.db.forms.insert_one(formData)
-        return Form(_id=newForm.inserted_id)
+        new_form=Form(**formData)
+        new_form.save()
+        return new_form
 
+    """
     def update(self, data):
-        mongo.db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
-    
-    """
-    def saveEntry(self, entry):
-        mongo.db.forms.update({"_id": self.form["_id"]}, {"$push": {"entries": entry }})
+        db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
     """
     
-    def save(self):
-        mongo.db.forms.save(self.form)
-
-    def delete(self):
-        return mongo.db.forms.remove({'_id': self.form['_id']})
-
     def deleteEntries(self):
-        self.form["entries"]=[]
-        mongo.db.forms.update({"_id": self.form["_id"]}, {"$set": {"entries":[] }})
+        self.entries=[]
+        self.save()
     
     def isAuthor(self, user):
-        return True if self.author == str(user._id) else False
+        return True if self.author == str(user.id) else False
         
     def isEditor(self, user):
-        return True if str(user._id) in self.editors else False
+        return True if str(user.id) in self.editors else False
+
+    def getEditors(self):
+        editors=[]
+        for editor_id in self.editors:
+            #print (editor_id)
+            user=User.find(id=editor_id)
+            if user:
+                editors.append(user)
+            else:
+                # remove editor_id from self.editors
+                pass
+        return editors
 
     def willExpire(self):
-        if self.form["expiryConditions"]["expireDate"]:
+        if self.expiryConditions["expireDate"]:
             return True
-        if self.form["expiryConditions"]["fields"]:
+        if self.expiryConditions["fields"]:
             return True
         return False
-        
-    @property
-    def expired(self):
-        return self.form["expired"]
-
-    @expired.setter
-    def expired(self, value):
-        self.form["expired"]=value
-
+    
     def hasExpired(self):
         if not self.willExpire():
             return False
-        if self.form["expiryConditions"]["expireDate"] and not isFutureDate(self.form["expiryConditions"]["expireDate"]):
+        if self.expiryConditions["expireDate"] and not isFutureDate(self.expiryConditions["expireDate"]):
             return True
         for fieldName, value in self.fieldConditions.items():
             if value['type'] == 'number':
@@ -572,76 +453,73 @@ class Form(object):
         return total
                 
     def isPublic(self):
-        if self.expired:
+        if not self.isEnabled() or self.expired:
             return False
-        if not self.enabled:
-            return False
-        if not self.user.enabled:
-            return False
-        return True
+        else:
+            return True
 
     def isShared(self):
         if self.areEntriesShared():
             return True
-        if len(self.form['editors']) > 1:
+        if len(self.editors) > 1:
             return True
         return False
     
     def areEntriesShared(self):
-        return self.form['sharedEntries']['enabled']
+        return self.sharedEntries['enabled']
     
     def getSharedEntriesURL(self, part="results"):
-        return "%s/%s/%s" % (self.url, part, self.form['sharedEntries']['key'])
+        return "%s/%s/%s" % (self.url, part, self.sharedEntries['key'])
 
     def toggleEnabled(self):
-        if self.expired or self.form['adminPreferences']['public']==False:
+        if self.expired or self.adminPreferences['public']==False:
             return False
         else:
-            self.form['enabled'] = False if self.form['enabled'] else True
-            mongo.db.forms.save(self.form)
-            return self.form['enabled']
+            self.enabled = False if self.enabled else True
+            self.save()
+            return self.enabled
             
     def toggleAdminFormPublic(self):
-        self.form['adminPreferences']['public'] = False if self.form['adminPreferences']['public'] else True
-        mongo.db.forms.save(self.form)
-        return self.form['adminPreferences']['public']
+        self.adminPreferences['public'] = False if self.adminPreferences['public'] else True
+        self.save()
+        return self.adminPreferences['public']
     
     def toggleSharedEntries(self):
-        self.form['sharedEntries']['enabled'] = False if self.form['sharedEntries']['enabled'] else True
-        mongo.db.forms.save(self.form)
-        return self.form['sharedEntries']['enabled']
+        self.sharedEntries['enabled'] = False if self.sharedEntries['enabled'] else True
+        self.save()
+        return self.sharedEntries['enabled']
 
     def toggleRestrictedAccess(self):
-        self.form['restrictedAccess'] = False if self.form['restrictedAccess'] else True
-        mongo.db.forms.save(self.form)
-        return self.form['restrictedAccess']
+        self.restrictedAccess = False if self.restrictedAccess else True
+        self.save()
+        return self.restrictedAccess
         
     def toggleNotification(self):
-        editor_id=str(g.current_user._id)
+        editor_id=str(g.current_user.id)
         if editor_id in self.editors:
             if self.editors[editor_id]['notification']['newEntry']:
                 self.editors[editor_id]['notification']['newEntry']=False
             else:
                 self.editors[editor_id]['notification']['newEntry']=True
-            mongo.db.forms.save(self.form)
+            self.save()
             return self.editors[editor_id]['notification']['newEntry']
         return False
 
     def toggleExpirationNotification(self):
-        editor_id=str(g.current_user._id)
+        editor_id=str(g.current_user.id)
         if editor_id in self.editors:
             if self.editors[editor_id]['notification']['expiredForm']:
                 self.editors[editor_id]['notification']['expiredForm']=False
             else:
                 self.editors[editor_id]['notification']['expiredForm']=True
-            mongo.db.forms.save(self.form)
+            self.save()
             return self.editors[editor_id]['notification']['expiredForm']
         return False
 
     def toggleRequireDataConsent(self):
-        self.form['requireDataConsent'] = False if self.form['requireDataConsent'] else True
-        mongo.db.forms.save(self.form)
-        return self.form['requireDataConsent']
+        self.requireDataConsent = False if self.requireDataConsent else True
+        self.save()
+        return self.requireDataConsent
 
     def addLog(self, message, anonymous=False):
         if anonymous:
@@ -649,39 +527,36 @@ class Form(object):
         else:
             actor=g.current_user.username if g.current_user else "system"
         logTime=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.form['log'].insert(0, (logTime, actor, message))
+        self.log.insert(0, (logTime, actor, message))
         self.save()
 
 
-class Site(object):
-    site = None
+class Site(db.Document):
+    meta = {'collection': 'sites', 'queryset_class': HostnameQuerySet}
+    hostname = db.StringField(required=True)
+    port = db.StringField(required=False)
+    siteName = db.StringField(required=True)
+    scheme = db.StringField(required=False)
+    blurb = db.DictField(required=True)
+    invitationOnly = db.BooleanField()
+    personalDataConsent = db.DictField(required=False)
+    smtpConfig = db.DictField(required=True)
 
-    def __new__(cls, *args, **kwargs):
-        instance = super(Site, cls).__new__(cls)
-        if '_id' in kwargs:
-            kwargs["_id"] = ObjectId(kwargs['_id'])
-        
-        searchSiteByKwargs=True if kwargs else False
-        if not searchSiteByKwargs:
-            kwargs['hostname']=urlparse(request.host_url).hostname
-        
-        site = mongo.db.sites.find_one(kwargs)
-        if site:
-            instance.site=dict(site)
-            return instance
-        elif searchSiteByKwargs:
-            return None
-            
-        # this Site is new. Let's create a site with this hostname
+    def __init__(self, *args, **kwargs):        
+        db.Document.__init__(self, *args, **kwargs)
+    
+    def __str__(self):
+        return pformat({'Site': get_obj_values_as_dict(self)})
+    
+    @classmethod
+    def create(cls):
         hostname=urlparse(request.host_url).hostname
-
         with open('%s/default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
             defaultMD=defaultBlurb.read()
         blurb = {
             'markdown': defaultMD,
             'html': markdown.markdown(defaultMD)
         }
-            
         newSiteData={
             "hostname": hostname,
             "port": None,
@@ -699,34 +574,28 @@ class Site(object):
                 "noreplyAddress": "no-reply@%s" % hostname
             }
         }
-        mongo.db.sites.insert_one(newSiteData)
+        new_site=Site(**newSiteData)
+        new_site.save()
         #create the Installation if it doesn't exist
-        Installation()
-        return Site()
+        Installation.get()
+        return new_site
 
-    def __init__(self, *args, **kwargs):
-        pass
-    
-    def save(self):
-        mongo.db.sites.save(self.site)
+    @classmethod
+    def find(cls, *args, **kwargs):
+        site = cls.findAll(*args, **kwargs).first()
+        if not site:
+            site=Site.create()
+        return site
 
-    @property
-    def data(self):
-        return self.site
-
-    @property
-    def hostname(self):
-        return self.site['hostname']
-
-    @property
-    def siteName(self):
-        return self.site['siteName'] if 'siteName' in self.site else "gng-forms!"
+    @classmethod
+    def findAll(cls, *args, **kwargs):
+        return cls.objects.ensure_hostname(**kwargs)
 
     @property
     def host_url(self):
-        url= "%s://%s" % (self.site['scheme'], self.site['hostname'])
-        if self.site['port']:
-            url = "%s:%s" % (url, self.site['port'])
+        url= "%s://%s" % (self.scheme, self.hostname)
+        if self.port:
+            url = "%s:%s" % (url, self.port)
         return url+'/'
 
     def faviconURL(self):
@@ -743,187 +612,141 @@ class Site(object):
             return True
         return False
 
-    @property
-    def blurb(self):
-        return self.site['blurb']
-
     def saveBlurb(self, MDtext):
-        self.site['blurb'] = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
-        mongo.db.sites.save(self.site)
-
-    def savePersonalDataConsentText(self, MDtext):
-        self.site['personalDataConsent'] = {    'markdown':escapeMarkdown(MDtext),
-                                                'html':markdown2HTML(MDtext),
-                                                'enabled': self.site['personalDataConsent']['enabled']}
-        mongo.db.sites.save(self.site)
-
-    @property
-    def personalDataConsent(self):
-        return self.site['personalDataConsent']
-
-    def saveSMTPconfig(self, **kwargs):
-        self.site["smtpConfig"]=kwargs
+        self.blurb = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
         self.save()
 
-    @property
-    def invitationOnly(self):
-        return self.site['invitationOnly']
-        
+    def savePersonalDataConsentText(self, MDtext):
+        self.personalDataConsent = {'markdown':escapeMarkdown(MDtext),
+                                    'html':markdown2HTML(MDtext),
+                                    'enabled': self.personalDataConsent['enabled']}
+        self.save()
+
+    def saveSMTPconfig(self, **kwargs):
+        self.smtpConfig=kwargs
+        self.save()
+
     def isPersonalDataConsentEnabled(self):
-        return self.site["personalDataConsent"]["enabled"]
+        return self.personalDataConsent["enabled"]
                 
     @property
     def totalUsers(self):
-        return User().findAll(hostname=self.hostname).count()
+        return User.findAll(hostname=self.hostname).count()
 
     @property
     def admins(self):
-        criteria={"admin.isAdmin": True, 'hostname': self.hostname}
-        return [User(_id=user['_id']) for user in mongo.db.users.find(criteria)]
+        return User.findAll(admin__isAdmin=True, hostname=self.hostname)
     
     @property
     def totalForms(self):
-        return Form().findAll(hostname=self.hostname).count()
+        return Form.findAll(hostname=self.hostname).count()
     
     def toggleInvitationOnly(self):
-        self.site["invitationOnly"] = False if self.site["invitationOnly"] else True
-        mongo.db.sites.save(self.site)
-        return self.site["invitationOnly"]
+        self.invitationOnly = False if self.invitationOnly else True
+        self.save()
+        return self.invitationOnly
 
     def togglePersonalDataConsentEnabled(self):
-        self.site["personalDataConsent"]["enabled"] = False if self.site["personalDataConsent"]["enabled"] else True
-        mongo.db.sites.save(self.site)
-        return self.site["personalDataConsent"]["enabled"]
+        self.personalDataConsent["enabled"] = False if self.personalDataConsent["enabled"] else True
+        self.save()
+        return self.personalDataConsent["enabled"]
 
     def toggleScheme(self):
-        self.site["scheme"] = 'https' if self.site["scheme"]=='http' else 'http'
-        mongo.db.sites.save(self.site)
-        return self.site["scheme"]
+        self.scheme = 'https' if self.scheme=='http' else 'http'
+        self.save()
+        return self.scheme
 
-    def findAll(cls, *args, **kwargs):
-        return mongo.db.sites.find(kwargs)
-
-    def delete(self):
-        users = [User(_id=user['_id']) for user in User().findAll(hostname=self.site['hostname'])]
+    def deleteSite(self):
+        users=User.findAll(hostname=self.hostname)
         for user in users:
-            user.delete()
-        invites = Invite().findAll(hostname=self.site['hostname'])
+            user.deleteUser()
+        invites = Invite.findAll(hostname=self.hostname)
         for invite in invites:
-            mongo.db.invites.remove({'_id': invite['_id']})
-        
-        return mongo.db.sites.remove({'_id': self.site['_id']})
+            invite.delete()
+        return self.delete()
 
 
-class Invite(object):
-    invite = None
+class Invite(db.Document):
+    meta = {'collection': 'invites', 'queryset_class': HostnameQuerySet}
+    hostname = db.StringField(required=True)
+    email = db.EmailField(required=True)
+    message = db.StringField(required=False)
+    token = db.DictField(required=True)
+    admin = db.BooleanField()
+   
+    def __init__(self, *args, **kwargs):        
+        db.Document.__init__(self, *args, **kwargs)
 
-    def __new__(cls, *args, **kwargs):
-        instance = super(Invite, cls).__new__(cls)
-        if not kwargs:
-            return instance
-        if '_id' in kwargs:
-            kwargs["_id"] = ObjectId(kwargs['_id'])
-        if not ('hostname' in kwargs or g.isRootUser):
-            kwargs['hostname']=g.site.hostname
-        if 'token' in kwargs:
-            kwargs={"token.token": kwargs['token'], **kwargs}
-            kwargs.pop('token') 
-            
-        invite = mongo.db.invites.find_one(kwargs)
-        if invite:
-            instance.invite=dict(invite)
-            return instance
-        else:
-            return None
-        
-    def __init__(self, *args, **kwargs):
-        pass
+    def __str__(self):
+        return pformat({'Invite': get_obj_values_as_dict(self)})
 
-
-    def create(self, hostname, email, message, admin=False):
-        token=createToken(Invite)
+    @classmethod
+    def create(cls, hostname, email, message, admin=False):
         data={
             "hostname": hostname,
             "email": email,
             "message": message,
-            "token": token,
+            "token": createToken(Invite),
             "admin": admin
         }
-        mongo.db.invites.insert_one(data)
-        return Invite(hostname=hostname, token=token['token'])
+        newInvite=Invite(**data)
+        newInvite.save()
+        return newInvite
 
-    @property
-    def data(self):
-        return self.invite
+    @classmethod
+    def find(cls, **kwargs):
+        if 'token' in kwargs:
+            kwargs={"token__token": kwargs['token'], **kwargs}
+            kwargs.pop('token')
+        return cls.findAll(**kwargs).first()
 
-    @property
-    def _id(self):
-        return self.invite['_id']
-
-    @property
-    def email(self):
-        return self.invite['email']
-
-    @property
-    def token(self):
-        if self.invite:
-            return self.invite['token']
-        return None
-
-    def findAll(cls, *args, **kwargs):
-        if not g.isRootUser:
-            kwargs['hostname']=g.site.hostname
-        return mongo.db.invites.find(kwargs)
-
+    @classmethod
+    def findAll(cls, **kwargs):
+        return cls.objects.ensure_hostname(**kwargs)
+    
     def setToken(self, **kwargs):
         self.invite['token']=createToken(Invite, **kwargs)
         self.save()
         
-    def delete(self):
-        return mongo.db.invites.remove({'_id': self.invite['_id']})
 
-
-class Installation(object):
-    installation = None
-
-    def __new__(cls, *args, **kwargs):
-        instance = super(Installation, cls).__new__(cls)
-        installation = mongo.db.installation.find_one({"name": "GNGforms"})
-            
-        if installation:
-            instance.installation=dict(installation)
-            return instance
-        else:
-            data={  "name": "GNGforms",
-                    "schemaVersion": app.config['SCHEMA_VERSION'],
-                    "created": datetime.date.today().strftime("%Y-%m-%d")
-                    }
-            mongo.db.installation.insert_one(data)
-            return Installation()
-    
+class Installation(db.Document):
+    name = db.StringField(required=True)
+    schemaVersion = db.IntField(required=True)
+    created = db.StringField(required=True)
+   
     def __init__(self, *args, **kwargs):
-        pass
+        db.Document.__init__(self, *args, **kwargs)
 
-    @property
-    def data(self):
-        return self.installation
+    def __str__(self):
+        return pformat({'Installation': get_obj_values_as_dict(self)})
 
-    @property
-    def schemaVersion(self):
-        return self.installation['schemaVersion']
-        
+    @classmethod
+    def get(cls):
+        installation=cls.objects.first()
+        if not installation:
+            installation=Installation.create()
+        return installation
+    
+    @classmethod
+    def create(cls):
+        if cls.objects.first():
+            return
+        data={  "name": "GNGforms",
+                "schemaVersion": app.config['SCHEMA_VERSION'],
+                "created": datetime.date.today().strftime("%Y-%m-%d")}
+        new_installation=cls(**data)
+        new_installation.save()
+        return new_installation
+    
     def isSchemaUpToDate(self):
-        if self.schemaVersion != app.config['SCHEMA_VERSION']:
-            return False
-        return True
+        return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
 
     def updateSchema(self):
         if not self.isSchemaUpToDate():
             migratedUpTo=migrateMongoSchema(self.schemaVersion)
             if migratedUpTo:
-                self.installation['schemaVersion']=migratedUpTo
-                mongo.db.installation.save(self.installation)
-                #mongo.db.installation.update_one({"_id": self.installation["_id"]}, {"$set": {'schemaVersion': migratedUpTo}})
+                self.schemaVersion=migratedUpTo
+                self.save()
                 return self.schemaVersion
             else:
                 return None
@@ -931,8 +754,5 @@ class Installation(object):
             print('Schema already up to date')
             
     @classmethod
-    def isUser(self, email):
-        if mongo.db.users.find_one({'email':email}):
-            return True
-        else:
-            return False
+    def isUser(cls, email):
+        return True if User.objects(email=email).first() else False

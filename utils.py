@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from GNGforms import app, mongo
+from GNGforms import app, db
 from flask import g, flash, redirect, render_template, url_for
 from flask_babel import gettext
 from unidecode import unidecode
@@ -210,7 +210,7 @@ persistentClass may be a User class, or an Invite class, ..
 """
 def createToken(persistentClass, **kwargs):
     tokenString = getRandomString(length=48)
-    while persistentClass(token=tokenString):
+    while persistentClass.find(token=tokenString):
         tokenString = getRandomString(length=48)
     
     result={'token': tokenString, 'created': datetime.datetime.now()}
@@ -247,21 +247,16 @@ def isValidEmail(email):
         return False
     return True
 
-
 def writeCSV(form):
     fieldnames=[]
     fieldheaders={}
     for field in form.fieldIndex:
         fieldnames.append(field['name'])
         fieldheaders[field['name']]=field['label']
-      
     csv_name='%s/%s.csv' % (app.config['TMP_DIR'], form.slug)
-    print(csv_name)
-    
     with open(csv_name, mode='w') as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
         writer.writerow(fieldheaders)
-        for entry in form.data['entries']:
+        for entry in form.entries:
             writer.writerow(entry)
-
     return csv_name

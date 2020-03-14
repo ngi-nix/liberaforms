@@ -1,0 +1,49 @@
+Upgrading GNGforms
+
+PLEASE read this before upgrading.
+
+Most upgrades only require you to do this:
+
+cd GNGforms
+git pull origin master
+source venv/bin/activate
+pip install ./requirements.txt
+supervisorctl restart GNGforms
+
+but...!! Some upgrades may require special attention.
+
+BEFORE upgrading..
+1. Backup your database
+2. Check your current "GNGforms version" and "Mongo schema version".
+
+* You can find these version numbers by navigating to the config page
+
+_______________________________________
+# Your GNGforms version is less than 32
+We integrated mongoengine into GNGforms 32, and a lot of code got changed.
+
+1. If your "Schema version" is less than 13, read below FIRST.
+2. Make sure your Schema version is 13.
+3. Change one line in config.cfg
+
+#MONGO_URI = "mongodb://localhost:27017/GNGforms"
+MONGODB_SETTINGS = {'host': 'mongodb://localhost:27017/GNGforms'}
+
+Now continue with normal upgrade.
+
+_____________________________________
+# Your Schema version is less than 13
+Update to version 13
+
+1. Pull the code
+
+cd GNGforms
+git pull origin pre-mongoengine
+supervisorctl restart GNGforms
+
+2. Navigate to the config page and update the database.
+Now you will be running GNGforms 31 with Schema version 13 
+
+___
+END
+
