@@ -171,14 +171,14 @@ class User(db.Document):
         return True if self.email in app.config['ROOT_USERS'] else False
     
     def deleteUser(self):
-        forms = Form.findAll(author=str(self.id))
+        forms = Form.findAll(author_id=str(self.id))
         for form in forms:
             form.delete()
         forms = Form.findAll(editor=str(self.id))
         for form in forms:
             del form.editors[str(self.id)]
             form.save()
-        return self.delete()
+        self.delete()
     
     def setToken(self, **kwargs):
         self.token=createToken(User, **kwargs)
@@ -239,7 +239,7 @@ class Form(db.Document):
     created = db.StringField(required=True)
     hostname = db.StringField(required=True)
     slug = db.StringField(required=True)
-    author = db.StringField(required=True)
+    author_id = db.StringField(db_field="author", required=True)
     editors = db.DictField(required=True)
     postalCode = db.StringField(required=False)
     enabled = db.BooleanField()
@@ -277,20 +277,24 @@ class Form(db.Document):
             kwargs.pop('key')
         return cls.objects.ensure_hostname(**kwargs)
 
+    @property
+    def user(self):
+        return self.author
+        
+    @property
+    def author(self):
+        return User.find(id=self.author_id)
+
     def changeAuthor(self, new_author):
         if new_author.enabled:
-            if self.author in self.editors:
-                del self.editors[self.author]
-            self.author=str(new_author.id)
+            if self.author_id in self.editors:
+                del self.editors[self.author_id]
+            self.author_id=str(new_author.id)
             if self.addEditor(new_author):
                 self.save()
                 return True
         return False
 
-    @property
-    def user(self):
-        return User.find(id=self.author)
-    
     def getFieldIndexForDataDisplay(self):
         """
         formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
@@ -310,7 +314,7 @@ class Form(db.Document):
         return len(self.entries)
 
     def isEnabled(self):
-        if not (self.user.enabled and self.adminPreferences['public']):
+        if not (self.author.enabled and self.adminPreferences['public']):
             return False
         return self.enabled
 
@@ -329,7 +333,7 @@ class Form(db.Document):
         return False
 
     def removeEditor(self, editor_id):
-        if editor_id == self.author:
+        if editor_id == self.author_id:
             return None
         if editor_id in self.editors:
             del self.editors[editor_id]
@@ -407,7 +411,7 @@ class Form(db.Document):
         self.save()
     
     def isAuthor(self, user):
-        return True if self.author == str(user.id) else False
+        return True if self.author_id == user.id else False
         
     def isEditor(self, user):
         return True if str(user.id) in self.editors else False

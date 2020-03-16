@@ -115,7 +115,6 @@ def view_form(slug):
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             entry[key]=value
-        
         queriedForm.entries.append(entry)
         
         if not queriedForm.expired and queriedForm.hasExpired():
@@ -159,10 +158,7 @@ def view_entries(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
     if not queriedForm or not queriedForm.areEntriesShared():
         return render_template('page-not-found.html'), 400
-
-    return render_template('view-results.html', form=queriedForm,
-                                                fieldIndex=queriedForm.getFieldIndexForDataDisplay(),
-                                                language=get_locale())    
+    return render_template('view-results.html', form=queriedForm, language=get_locale())    
 
 
 @app.route('/<string:slug>/csv/<string:key>', methods=['GET'])
@@ -288,7 +284,7 @@ def remove_editor(form_id, editor_id):
     queriedForm = Form.find(id=form_id, editor=str(g.current_user.id))
     if not queriedForm:
         return json.dumps(False)
-    if editor_id == queriedForm.author:
+    if editor_id == queriedForm.author_id:
         return json.dumps(False)
     
     removedEditor_id=queriedForm.removeEditor(editor_id)
@@ -497,7 +493,7 @@ def save_form(id=None):
 
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
-                    "author": str(g.current_user.id),
+                    "author_id": str(g.current_user.id),
                     "editors": {str(g.current_user.id): Form.newEditorPreferences()},
                     "postalCode": "08014",
                     "enabled": False,
@@ -626,7 +622,6 @@ def list_entries(id):
     if not queriedForm:
         flash(gettext("No form found"), 'warning')
         return redirect(make_url_for('my_forms'))
-
     return render_template('list-entries.html', form=queriedForm)
 
 @app.route('/forms/csv/<string:id>', methods=['GET'])
@@ -1318,8 +1313,8 @@ def delete_user(id):
             flash(gettext("Cannot delete yourself"), 'warning')
             return redirect(make_url_for('inspect_user', username=user.username)) 
         if user.username == request.form['username']:
-            if user.deleteUser():
-                flash(gettext("Deleted user '%s'" % (user.username)), 'success')
+            user.deleteUser()
+            flash(gettext("Deleted user '%s'" % (user.username)), 'success')
             return redirect(make_url_for('list_users'))
         else:
             flash(gettext("Username does not match"), 'warning')
@@ -1351,16 +1346,15 @@ def change_author(id):
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
         return redirect(make_url_for('my_forms'))
-    editors=queriedForm.getEditors()
     if request.method == 'POST':
-        if not 'old_author_username' in request.form or not request.form['old_author_username']==queriedForm.user.username:
+        if not ('old_author_username' in request.form and request.form['old_author_username']==queriedForm.author.username):
             flash(gettext("Current author incorrect"), 'warning')
-            return render_template('change-author.html', form=queriedForm, editors=editors)
+            return render_template('change-author.html', form=queriedForm)
         if 'new_author_username' in request.form:
             new_author=User.find(username=request.form['new_author_username'], hostname=queriedForm.hostname)
             if new_author:
                 if new_author.enabled:
-                    old_author=queriedForm.user # we really need to find better property names than author and user
+                    old_author=queriedForm.author
                     if queriedForm.changeAuthor(new_author):
                         queriedForm.addLog(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
                         flash(gettext("Changed author OK"), 'success')
@@ -1369,7 +1363,7 @@ def change_author(id):
                     flash(gettext("Cannot use %s. The user is not enabled" % request.form['new_author_username']), 'warning')
             else:
                 flash(gettext("Can't find username %s" % request.form['new_author_username']), 'warning')
-    return render_template('change-author.html', form=queriedForm, editors=editors)
+    return render_template('change-author.html', form=queriedForm)
 
 
 """

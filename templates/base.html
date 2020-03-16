@@ -13,7 +13,6 @@
 
 <body>
 
-
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages and request.path != '/login' %}
         {% for category, message in messages %}
@@ -21,7 +20,6 @@
         {% endfor %}
     {% endif %}
 {% endwith %}
-
 
 {% if g.current_user %}
 <div class="container" style="font-size:1.3em;">

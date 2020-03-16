@@ -152,15 +152,15 @@
             <tr>
                <td>
                     {%trans%}Author{%endtrans%}
-                    {% if not form.user.enabled %}
+                    {% if not form.author.enabled %}
                         <span style="color:red">({%trans%}disabled{%endtrans%})</span>            
                     {% endif %} 
                </td>
                <td>
                {% if g.isAdmin %}
-                    <a href="/admin/users/{{ form.user.id }}">{{ form.user.username }}</a>
+                    <a href="/admin/users/{{ form.author.id }}">{{ form.author.username }}</a>
                {% else %}
-                    {{ form.user.username }}
+                    {{ form.author.username }}
                 {% endif %}
                 </td>
             </tr>
@@ -182,9 +182,9 @@
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form.id }}'">
         <p></p>
             {% if form.totalEntries == 0 %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
+            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
             {% else %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
+            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
             {% endif %}
         {% endif %}
         

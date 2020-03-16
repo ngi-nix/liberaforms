@@ -67,7 +67,7 @@
                     {{ editor.email }}
                 </td>
                 <td class="text-right">
-                {% if editor.id|string == form.author %}
+                {% if editor == form.author %}
                     ({%trans%}Author{%endtrans%})
                 {% else %}
                     <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor.id}}');">

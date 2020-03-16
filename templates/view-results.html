@@ -5,6 +5,8 @@
 <script src="/static/dataTables/dataTables.bootstrap.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 
+{% set fieldIndex=form.getFieldIndexForDataDisplay() %}
+
 <div class="container">
     <div class="row col-md-11" style="font-size:1.5em">
     {{ form.slug }}

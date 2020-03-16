@@ -28,7 +28,7 @@
         {% endif %}
             <tr>
                <td>{%trans%}Current author{%endtrans%}</td>
-               <td>{{ form.user.username }}</td>
+               <td>{{ form.author.username }}</td>
             </tr>
         </table>
 
@@ -42,9 +42,10 @@
             <br />
             <input name="new_author_username" type="text" placeholder="{%trans%}New author's username{%endtrans%}" class="form-control" required />
             <p></p>
-            <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Change author{%endtrans%}" />
+            <input class="btn-danger btn btn-md" type="submit" value="{%trans%}Change author{%endtrans%}" />
         </form>
         
+    {% set editors=form.getEditors() %}
     {% if editors|length > 1 %}
         <p>&nbsp;</p>
         <div style="font-size:1.5em;">
@@ -62,7 +63,7 @@
                 <td>{{ editor.username }}</td>
                 <td>{{ editor.email }}</td>
                 <td class="text-right">
-                {% if editor.id|string == form.author %}
+                {% if editor == form.author %}
                     {%trans%}Author{%endtrans%}
                 {% else %}
                     {%trans%}Editor{%endtrans%}
