@@ -46,27 +46,6 @@ class HostnameQuerySet(QuerySet):
         return self.filter(**kwargs)
 
 
-def isNewUserRequestValid(form):   
-    if not ('username' in form and 'email' in form and 'password1' in form and 'password2' in form):
-        flash(gettext("All fields are required"), 'warning')
-        return False
-    if form['username'] != sanitizeUsername(form['username']):
-        flash(gettext("Username is not valid"), 'warning')
-        return False
-    if form['username'] in app.config['RESERVED_USERNAMES']:
-        flash(gettext("Username is not available"), 'warning')
-        return False
-    user = User.find(username=form['username'])
-    if user:
-        flash(gettext("Username is not available"), 'warning')
-        return False
-    if not User.isEmailAvailable(form['email']):
-        return False
-    if not isValidPassword(form['password1'], form['password2']):
-        return False
-    return True
-
-
 class User(db.Document):
     meta = {'collection': 'users', 'queryset_class': HostnameQuerySet}
     username = db.StringField(required=True)
@@ -202,8 +181,8 @@ class User(db.Document):
         self.save()
         return self.isAdmin()
 
-    @classmethod
-    def defaultAdminSettings(cls):
+    @staticmethod
+    def defaultAdminSettings():
         return {
             "isAdmin": False,
             "notifyNewUser": False,
@@ -401,11 +380,6 @@ class Form(db.Document):
         new_form.save()
         return new_form
 
-    """
-    def update(self, data):
-        db.forms.update_one({'_id': self.form['_id']}, {"$set": data})
-    """
-    
     def deleteEntries(self):
         self.entries=[]
         self.save()

@@ -37,18 +37,20 @@
 </div>
 <div class="row col-md-1"></div>
 <div class="row col-md-3">
+    
     <form action="/site/login" method="POST" style="margin-top:1.5em">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        {{ wtform.csrf_token }}
         <p>
-        <label>{%trans%}Username{%endtrans%}</label><br />
-        <input name="username" class="form-control" value="" />
-        </p>
+            {{ wtform.username.label }}<br />
+            {{ wtform.username(class_="form-control") }}
+        </p>    
         <p>
-        <label>{%trans%}Password{%endtrans%}</label><br />
-        <input type="password" name="password" class="form-control" value="" />
+            {{ wtform.password.label }}<br />
+            {{ wtform.password(class_="form-control") }}
         </p>
         <input class="btn-success btn" type="submit" value="{%trans%}Login{%endtrans%}" {% if g.current_user %}disabled{%endif%} />
     </form>
+
     <br />
     {% if g.current_user %}
         <a href="/site/reset-password">{%trans%}Forgot your password?{%endtrans%}</a>

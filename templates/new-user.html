@@ -13,23 +13,39 @@
     <hr />
     
     <form method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <label>{%trans%}Username{%endtrans%}</label><br />
-            <input type="text" name="username" class="form-control" placeholder="{%trans%}Letters and numbers. No accents.{%endtrans%}" required >
-            <br />
-
-        <label>{%trans%}Email{%endtrans%}</label><br />
-            <input type="email" name="email" class="form-control" required ><br />
-            <br />
-
-        <label>{%trans%}Password{%endtrans%}</label><br />
-            {%trans%}Use a passphrase, with spaces{%endtrans%}<br />
-            <input type="password" name="password1" class="form-control" placeholder="{%trans%}eg: No holidays this year{%endtrans%}" required ><br />
-
-        <label>Password again</label><br />
-            <input type="password" name="password2" class="form-control" placeholder="{%trans%}Another eg: My dog has fleas{%endtrans%}" required ><br />
-
-    <p></p>
+        {{ wtform.csrf_token }}
+        <p>
+            {{ wtform.username.label }} <span class='required'>●</span><br />
+            {{ wtform.username(class_="form-control", placeholder=_('Letters and numbers. No accents.')) }}
+            {% for error in wtform.username.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+        <p>
+            {{ wtform.email.label }} <span class='required'>●</span><br />
+            <span class="hint"></span>
+            {{ wtform.email(class_="form-control") }}
+            {% for error in wtform.email.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+        <p>
+            {{ wtform.password.label }} <span class='required'>●</span><br />
+            <span class="hint">{%trans%}Use a passphrase, with spaces{%endtrans%}</span>
+            {{ wtform.password(class_="form-control", placeholder=_('eg: No holidays this year')) }}
+            {% for error in wtform.password.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+        <p>
+            {{ wtform.password2.label }} <span class='required'>●</span><br />
+            {{ wtform.password2(class_="form-control", placeholder=_('Another eg: My dog has fleas')) }}
+            {% for error in wtform.password2.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+    
+    <p>&nbsp;</p>
     <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
     <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onclick="window.location.href='/';">
     </form>

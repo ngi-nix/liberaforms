@@ -1,31 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="container">
 <div class="row col-md-4"></div>
     
 <div class="row col-md-4">
-
     <div style="font-size:1.5em">
         {%trans%}Change email address{%endtrans%}
     </div>
     <hr />
 
-    <p></p>
     <form method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <label>{%trans%}New email address{%endtrans%}</label>
-        <br />
-        <input type="text" name="email" class="form-control" required ><br />
-        <p></p>
+        {{ wtform.csrf_token }}
+        <p>
+            {{ wtform.email.label }}<br />
+            <span class="hint"></span>
+            {{ wtform.email(class_="form-control") }}
+            {% for error in wtform.email.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
         <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
     </form>
-
 </div>
 
 <div class="row col-md-4"></div>    
 </div>
-
   
 {% endblock %}

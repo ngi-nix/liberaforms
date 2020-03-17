@@ -27,6 +27,7 @@ from flask_babel import gettext, refresh
 from GNGforms.persistence import *
 from GNGforms.session import *
 from GNGforms.utils import *
+import GNGforms.wtf as wtf
 import GNGforms.email as smtp
 from form_templates import formTemplates
 
@@ -41,9 +42,9 @@ def before_request():
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
+    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     if '/static' in request.path:
         return
-    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
@@ -63,6 +64,8 @@ def get_locale():
 
 @app.errorhandler(404)
 def page_not_found(error):
+    if not g.site:
+         g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     return render_template('page-not-found.html'), 400
 
 @app.errorhandler(500)
@@ -75,8 +78,8 @@ def handle_csrf_error(e):
     return redirect(make_url_for('index'))
 
 @app.route('/', methods=['GET'])
-def index():    
-    return render_template('index.html',site=g.site)
+def index():
+    return render_template('index.html', site=g.site, wtform=wtf.Login())
 
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
@@ -781,15 +784,13 @@ def user_settings(username):
 @app.route('/user/change-email', methods=['GET', 'POST'])
 @login_required
 def change_email():
-    if request.method == 'POST':
-        if 'email' in request.form and isValidEmail(request.form['email']):
-            g.current_user.setToken(email=request.form['email'])
-                        
-            smtp.sendConfirmEmail(g.current_user, request.form['email'])
-            flash(gettext("We've sent an email to %s") % request.form['email'], 'info')
-            return redirect(make_url_for('user_settings', username=g.current_user.username))
-            
-    return render_template('change-email.html')
+    wtform=wtf.ChangeEmail()
+    if wtform.validate_on_submit():
+        g.current_user.setToken(email=wtform.email.data)
+        smtp.sendConfirmEmail(g.current_user, wtform.email.data)
+        flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
+        return redirect(make_url_for('user_settings', username=g.current_user.username))
+    return render_template('change-email.html', wtform=wtform)
 
 
 @app.route('/user/send-validation', methods=['GET'])
@@ -835,16 +836,13 @@ def new_user(token=None):
             flash(gettext("Your petition has expired"), 'warning')
             invite.delete()
             return redirect(make_url_for('index'))
-            
-    if request.method == 'POST':
-        if not isNewUserRequestValid(request.form):
-            return render_template('new-user.html')
-            
+    
+    wtform=wtf.NewUser()
+    if wtform.validate_on_submit():
         validatedEmail=False
-        adminSettings=User.defaultAdminSettings()
-        
+        adminSettings=User.defaultAdminSettings()        
         if invite:
-            if invite.email == request.form['email']:
+            if invite.email == wtform.email.data:
                 validatedEmail=True
             if invite.admin == True:
                 adminSettings['isAdmin']=True
@@ -852,15 +850,14 @@ def new_user(token=None):
                 # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.admins:
                     validatedEmail=True
-
-        if request.form['email'] in app.config['ROOT_USERS']:
+        if wtform.email.data in app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
-            
+        
         newUserData = {
-            "username": request.form['username'],
-            "email": request.form['email'],
-            "password": encryptPassword(request.form['password1']),
+            "username": wtform.username.data,
+            "email": wtform.email.data,
+            "password": encryptPassword(wtform.password.data),
             "language": app.config['DEFAULT_LANGUAGE'],
             "hostname": g.site.hostname,
             "blocked": False,
@@ -890,9 +887,8 @@ def new_user(token=None):
             return render_template('new-user.html', site=g.site, created=True)
 
     if "user_id" in session:
-        #session["user_id"]=None
         session.pop("user_id")
-    return render_template('new-user.html')
+    return render_template('new-user.html', wtform=wtform)
 
 
 
@@ -901,16 +897,17 @@ def new_user(token=None):
 @app.route('/site/login', methods=['POST'])
 @anon_required
 def login():
-    if 'username' in request.form and 'password' in request.form:
-        user=User.find(hostname=g.site.hostname, username=request.form['username'], blocked=False)
-        if user and verifyPassword(request.form['password'], user.password):
+    wtform=wtf.Login()
+    if wtform.validate_on_submit():
+        user=User.find(hostname=g.site.hostname, username=wtform.username.data, blocked=False)
+        if user and verifyPassword(wtform.password.data, user.password):
             session["user_id"]=str(user.id)
             if not user.validatedEmail:
                 return redirect(make_url_for('user_settings', username=user.username))
             else:
                 return redirect(make_url_for('my_forms'))
-        if "user_id" in session:
-            session.pop("user_id")
+    if "user_id" in session:
+        session.pop("user_id")
     flash(gettext("Bad credentials"), 'warning')
     return redirect(make_url_for('index'))
 
@@ -995,11 +992,10 @@ def validate_email(token):
         flash(gettext("Your petition has expired"), 'warning')
         user.deleteToken()
         return redirect(make_url_for('index'))
-    
     # On a Change email request, the new email address is saved in the token.
     if 'email' in user.token:
         user.email = user.token['email']
-
+    
     user.deleteToken()
     user.validatedEmail=True
     user.save()

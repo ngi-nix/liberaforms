@@ -164,7 +164,7 @@ def markdown2HTML(MDtext):
 
 """ ######## Password ######## """
 
-policy = PasswordPolicy.from_names(
+pwd_policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
     uppercase=0,  # need min. 2 uppercase letters
     numbers=0,  # need min. 2 digits
@@ -182,10 +182,10 @@ def verifyPassword(password, hash):
 
 def isValidPassword(password1, password2):
     if password1 != password2:
-        flash(gettext("Passwords do not match"), 'warning')
+        #flash(gettext("Passwords do not match"), 'warning')
         return False
-    if policy.test(password1):
-        flash(gettext("Your password is weak"), 'warning')
+    if pwd_policy.test(password1):
+        #flash(gettext("Your password is weak"), 'warning')
         return False
     return True
 

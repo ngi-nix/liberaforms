@@ -61,6 +61,10 @@ hr { margin-top: 5px }
     padding: 0.5em 0 0.5em 0;
 }
 
+.formError {
+    color: #d9534f;
+}
+
 /* ######### Entries table ######### */
 .delete-row-icon {
     font-size: 1.15em !important;
