@@ -730,7 +730,7 @@ class Installation(db.Document):
                 return None
         else:
             print('Schema already up to date')
-            
-    @classmethod
-    def isUser(cls, email):
+    
+    @staticmethod
+    def isUser(email):
         return True if User.objects(email=email).first() else False

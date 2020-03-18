@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{{ g.site.siteName }}</title>
-  <link rel="shortcut icon" type="image/png" href="{{g.site.faviconURL()}}"/>
+  <title>{% if g.site %}{{ g.site.siteName }}{% endif %}</title>
+  <link rel="shortcut icon" type="image/png" href="{% if g.site %}{{g.site.faviconURL()}}{% endif %}"/>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>

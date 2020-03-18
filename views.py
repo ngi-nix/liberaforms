@@ -38,13 +38,14 @@ def make_url_for(function, **kwargs):
     return url_for(function, **kwargs)
 
 @app.before_request
-def before_request():    
+def before_request():
+    g.site=None
     g.current_user=None
     g.isRootUser=False
     g.isAdmin=False
-    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
-    if '/static' in request.path:
+    if request.path[0:7] == '/static':
         return
+    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
@@ -64,8 +65,6 @@ def get_locale():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    if not g.site:
-         g.site=Site.find(hostname=urlparse(request.host_url).hostname)
     return render_template('page-not-found.html'), 400
 
 @app.errorhandler(500)

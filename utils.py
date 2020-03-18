@@ -79,12 +79,19 @@ def anon_required(f):
 def sanitized_slug_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if not ('slug' in kwargs and kwargs['slug'] == sanitizeSlug(kwargs['slug'])):
+        if not 'slug' in kwargs:
             if g.current_user:
-                flash(gettext("That's a nasty slug!"), 'warning')
+                flash("No slug found!", 'error')
             return render_template('page-not-found.html'), 404
-        else:
-            return f(*args, **kwargs)
+        if kwargs['slug'] in app.config['RESERVED_SLUGS']:
+            if g.current_user:
+                flash("Reserved slug!", 'warning')
+            return render_template('page-not-found.html'), 404
+        if kwargs['slug'] != sanitizeSlug(kwargs['slug']):
+            if g.current_user:
+                flash("That's a nasty slug!", 'warning')
+            return render_template('page-not-found.html'), 404
+        return f(*args, **kwargs)
     return wrap
 
 def sanitized_key_required(f):
