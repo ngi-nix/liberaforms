@@ -21,7 +21,7 @@ import json, re, os, datetime
 from flask import g, request, Response, render_template, redirect, url_for
 from flask import session, flash, send_file, after_this_request
 from flask_wtf.csrf import CSRFError
-from GNGforms import app, db, babel
+from GNGforms import app, db, babel, csrf
 from threading import Thread
 from flask_babel import gettext, refresh
 from GNGforms.persistence import *
@@ -80,9 +80,18 @@ def handle_csrf_error(e):
 def index():
     return render_template('index.html', site=g.site, wtform=wtf.Login())
 
+
+@app.route('/e/<string:slug>', methods=['GET', 'POST'])
+@anon_required
+@csrf.exempt
+@sanitized_slug_required
+def view_embedded_form(slug):
+    return view_form(slug=slug, embedded=True)
+
+
 @app.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
-def view_form(slug):
+def view_form(slug, embedded=False):
     queriedForm = Form.find(slug=slug, hostname=g.site.hostname)
     if not queriedForm:
         if g.current_user:
@@ -149,8 +158,8 @@ def view_form(slug):
                 smtp.sendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
-        return render_template('thankyou.html', form=queriedForm)
-    return render_template('view-form.html', form=queriedForm)     
+        return render_template('thankyou.html', form=queriedForm, embedded=embedded)
+    return render_template('view-form.html', form=queriedForm, embedded=embedded)
 
 
 @app.route('/<string:slug>/results/<string:key>', methods=['GET'])
