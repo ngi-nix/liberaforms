@@ -50,7 +50,7 @@ class User(db.Document):
     meta = {'collection': 'users', 'queryset_class': HostnameQuerySet}
     username = db.StringField(required=True)
     email = db.StringField(required=True)
-    password =db.StringField(required=True)
+    password_hash =db.StringField(db_field="password", required=True)
     language = db.StringField(required=True)
     hostname = db.StringField(required=True)
     blocked = db.BooleanField()
@@ -136,6 +136,9 @@ class User(db.Document):
     def isRootUser(self):
         return True if self.email in app.config['ROOT_USERS'] else False
     
+    def verifyPassword(self, password):
+        return verifyPassword(password, self.password_hash)
+        
     def deleteUser(self):
         forms = Form.findAll(author_id=str(self.id))
         for form in forms:

@@ -178,8 +178,8 @@ pwd_policy = PasswordPolicy.from_names(
     nonletters=1,  # need min. 2 non-letter characters (digits, specials, anything)
 )
 
-def encryptPassword(password):
-    return pbkdf2_sha256.encrypt(password, rounds=200000, salt_size=16)
+def hashPassword(password):
+    return pbkdf2_sha256.hash(password, rounds=200000, salt_size=16)
 
 
 def verifyPassword(password, hash):

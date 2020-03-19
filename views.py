@@ -852,7 +852,7 @@ def new_user(token=None):
         newUserData = {
             "username": wtform.username.data,
             "email": wtform.email.data,
-            "password": encryptPassword(wtform.password.data),
+            "password_hash": hashPassword(wtform.password.data),
             "language": app.config['DEFAULT_LANGUAGE'],
             "hostname": g.site.hostname,
             "blocked": False,
@@ -893,9 +893,9 @@ def new_user(token=None):
 @anon_required
 def login():
     wtform=wtf.Login()
-    if wtform.validate_on_submit():
+    if wtform.validate():
         user=User.find(hostname=g.site.hostname, username=wtform.username.data, blocked=False)
-        if user and verifyPassword(wtform.password.data, user.password):
+        if user and user.verifyPassword(wtform.password.data):
             session["user_id"]=str(user.id)
             if not user.validatedEmail:
                 return redirect(make_url_for('user_settings', username=user.username))
@@ -964,7 +964,7 @@ def recover_password(token=None):
 def reset_password():
     wtform=wtf.ResetPassword()
     if wtform.validate_on_submit():
-        g.current_user.password=encryptPassword(wtform.password.data)
+        g.current_user.password_hash=hashPassword(wtform.password.data)
         g.current_user.save()
         flash(gettext("Password changed OK"), 'success')
         return redirect(make_url_for('user_settings', username=g.current_user.username))

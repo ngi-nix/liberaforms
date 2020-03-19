@@ -87,7 +87,7 @@ class NewInvite(FlaskForm):
     hostname = StringField(_("hostname"), validators=[DataRequired()])
     
     def validate_email(self, email):
-        if User.find(email=email.data):
+        if User.find(email=email.data, hostname=self.hostname.data):
             raise ValidationError(_("Please use a different email address"))
         elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
             # a root_user email can only be used once across all sites.
