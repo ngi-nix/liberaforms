@@ -117,20 +117,7 @@ class User(db.Document):
                 emails.append(rootUser['email'])
         #print("new user notify: %s" % emails)
         return emails
-
-    @classmethod
-    def isEmailAvailable(cls, email):
-        if not isValidEmail(email):
-            flash(gettext("Email address is not valid"), 'warning')
-            return False
-        if User.find(email=email):
-            flash(gettext("Email address is not available"), 'warning')
-            return False
-        if email in app.config['ROOT_USERS'] and Installation.isUser(email):
-            flash(gettext("Email address is not available"), 'warning')
-            return False 
-        return True
-
+    
     @property
     def enabled(self):
         if not self.validatedEmail:

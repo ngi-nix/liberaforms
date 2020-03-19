@@ -1,82 +1,72 @@
 {% extends "base.html" %}
 {% block content %}
 
-<style>
-label { margin-top:0.25em }
-</style>
-
 <div class="container">
-<div class="row col-md-4"></div>
+<div class="row col-md-2"></div>
     
 <div class="row col-md-4">
-
     <div style="font-size:1.5em">{%trans%}Email server configuration{%endtrans%}</div>
     <hr />
-    
-    <form method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <label>{%trans%}Email server{%endtrans%}</label>
-        <span class='required'>●</span>
-        <br />
-        <input type="text" name="host" class="form-control" value="{{host}}" required />
 
-        <label>{%trans%}Port{%endtrans%}</label>
-        <span class='required'>●</span>
-        <br />
-        <input type="number" name="port" class="form-control" value="{{port}}" required />
-
-        <label>{%trans%}Encryption{%endtrans%}</label>
-        <span class='required'>●</span>
-        <br />
-        <select type="number" name="encryption" class="form-control" value="{{encryption}}" >
-            <option class="form-control" name="hello" {% if not encryption == "SSL" %}selected=True{% endif %} >{%trans%}None{%endtrans%}</option>
-            <option class="form-control" name="SSL" {% if encryption == "SSL" %}selected=True{% endif %} >SSL</option>
-            <option class="form-control" name="STARTTLS" {% if encryption == "STARTTLS" %}selected=True{% endif %} >STARTTLS (may work)</option>
-        </select>
-        
-        <label>{%trans%}User{%endtrans%}</label>
-        <br />
-        <input type="text" name="user" class="form-control" value="{{user}}" />
-
-        <label>{%trans%}Password{%endtrans%}</label>
-        <br />
-        <input type="password" name="password" class="form-control" value="{{password}}" />
-
-        <label>{%trans%}Sender address{%endtrans%}</label>
-        <span class='required'>●</span>
-        <br />
-        <input type="email" name="noreplyAddress" class="form-control" value="{{noreplyAddress}}" required />
-
+    <form method="POST" action="/site/email/config">
+        {{ wtf_smtp.csrf_token }}
+        <p>
+            {{ wtf_smtp.host.label }} <span class='required'>●</span><br />
+            {{ wtf_smtp.host(class_="form-control") }}
+            {% for error in wtf_smtp.host.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+            {{ wtf_smtp.port.label }} <span class='required'>●</span><br />
+            {{ wtf_smtp.port(class_="form-control") }}
+            {% for error in wtf_smtp.port.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+        </p>
+            {{ wtf_smtp.encryption.label }} <span class='required'>●</span><br />
+            {{ wtf_smtp.encryption(class_="form-control") }}
+        </p>
+        </p>
+            {{ wtf_smtp.user.label }}<br />
+            {{ wtf_smtp.user(class_="form-control") }}
+        </p>
+        </p>
+            {{ wtf_smtp.password.label }}<br />
+            <input class="form-control" id="password" name="password" type="password" value="{{wtf_smtp.password.data}}">
+        </p>
+        </p>
+            {{ wtf_smtp.noreplyAddress.label }} <span class='required'>●</span><br />
+            {{ wtf_smtp.noreplyAddress(class_="form-control") }}
+            {% for error in wtf_smtp.noreplyAddress.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
         <p></p>
         <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
         <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
     </form>
-
-    <p>&nbsp;</p>
-    <div style="font-size:1.25em">{%trans%}Test server configuration{%endtrans%}</div>
-    <table class="table">
-    <tr>
-        <td>
-        <input id="test-email" name="email" type="email" placeholder="person@example.com" class="form-control" required >
-        </td>
-        <td class="text-right">
-        <input id="test-email-button" class="btn-primary btn btn-md" type="button" value="{%trans%}Send{%endtrans%}" >
-        </td>
-    </tr>
-    </table>
-
 </div>
 
-<div class="row col-md-4"></div>    
+<div class="row col-md-1"></div>
+<div class="row col-md-4">
+    <div style="font-size:1.5em">{%trans%}Test configuration{%endtrans%}</div>
+    <hr />
+    
+    <form method="POST" action="/site/email/test-config">
+        <p>
+            {{ wtf_email.csrf_token }}
+            {{ wtf_email.email.label }}<br />
+            {{ wtf_email.email(class_="form-control", placeholder="person@example.com") }}
+            {% for error in wtf_email.email.errors %}
+                <span class="formError">{{ error }}</span><br />
+            {% endfor %}
+        </p>
+        <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Send{%endtrans%}" >
+    </form>
 </div>
 
-<script>
-document.getElementById('test-email-button').addEventListener('click', function(evt){
-    var email = $("#test-email").val();
-    if (email){
-        location.href="/site/email/test-config/"+email
-    }
-});
-</script> 
+<div class="row col-md-1"></div>
+</div>
 
 {% endblock %}

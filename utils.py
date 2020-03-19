@@ -24,7 +24,6 @@ from unidecode import unidecode
 import time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
-from validate_email import validate_email
 import markdown, html.parser
 from functools import wraps
 
@@ -187,16 +186,6 @@ def verifyPassword(password, hash):
     return pbkdf2_sha256.verify(password, hash)
 
 
-def isValidPassword(password1, password2):
-    if password1 != password2:
-        #flash(gettext("Passwords do not match"), 'warning')
-        return False
-    if pwd_policy.test(password1):
-        #flash(gettext("Your password is weak"), 'warning')
-        return False
-    return True
-
-
 """ ######## fieldIndex helpers ######## """
 
 def getFieldByNameInIndex(index, name):
@@ -219,7 +208,6 @@ def createToken(persistentClass, **kwargs):
     tokenString = getRandomString(length=48)
     while persistentClass.find(token=tokenString):
         tokenString = getRandomString(length=48)
-    
     result={'token': tokenString, 'created': datetime.datetime.now()}
     return {**result, **kwargs} 
 
@@ -248,11 +236,6 @@ def isFutureDate(date):
 
 """ ######## Others ######## """
 
-def isValidEmail(email):
-    if not validate_email(email):
-        flash(gettext("Email address is not valid"), 'warning')
-        return False
-    return True
 
 def writeCSV(form):
     fieldnames=[]

@@ -77,13 +77,16 @@
         {% endfor %}
         <tr>
         <form action="/forms/add-editor/{{form.id}}" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <td>
-            <input name="email" type="text" placeholder="New editor's email" class="form-control" required >
-        </td>
-        <td class="text-right">
-            <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Add{%endtrans%}" >
-        </td>
+            {{ wtform.csrf_token }}
+            <td>
+                {{ wtform.email(class_="form-control", placeholder=_("New editor's email")) }}
+                {% for error in wtform.email.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </td>
+            <td class="text-right">
+                <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Add{%endtrans%}" >
+            </td>
         </form>
         </tr>
         </table>

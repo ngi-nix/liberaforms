@@ -250,7 +250,7 @@ def share_form(id):
     if not queriedForm:
         flash(gettext("Form is not available. 404"), 'warning')
         return redirect(make_url_for('my_forms'))
-    return render_template('share-form.html', form=queriedForm)
+    return render_template('share-form.html', form=queriedForm, wtform=wtf.GetEmail())
 
 
 @app.route('/forms/add-editor/<string:id>', methods=['POST'])
@@ -260,23 +260,19 @@ def add_editor(id):
     if not queriedForm:
         flash(gettext("Form is not available"), 'warning')
         return redirect(make_url_for('my_forms'))
-    if not 'email' in request.form:
-        flash(gettext("We need an email"), 'warning')
-        return redirect(make_url_for('share_form', id=queriedForm.id))
-    if not isValidEmail(request.form['email']):
-        return redirect(make_url_for('share_form', id=queriedForm.id))
-
-    newEditor=User.find(email=request.form['email'], hostname=queriedForm.hostname)
-    if not newEditor or newEditor.enabled==False:
-        flash(gettext("Can't find a user with that email"), 'warning')
-        return redirect(make_url_for('share_form', id=queriedForm.id))
-    if str(newEditor.id) in queriedForm.editors:
-        flash(gettext("%s is already an editor" % newEditor.email), 'warning')
-        return redirect(make_url_for('share_form', id=queriedForm.id))
-    
-    if queriedForm.addEditor(newEditor):
-        flash(gettext("New editor added ok"), 'success')
-        queriedForm.addLog(gettext("Added editor %s" % newEditor.email))
+    wtform=wtf.GetEmail()
+    if wtform.validate():
+        newEditor=User.find(email=wtform.email.data, hostname=queriedForm.hostname)
+        if not newEditor or newEditor.enabled==False:
+            flash(gettext("Can't find a user with that email"), 'warning')
+            return redirect(make_url_for('share_form', id=queriedForm.id))
+        if str(newEditor.id) in queriedForm.editors:
+            flash(gettext("%s is already an editor" % newEditor.email), 'warning')
+            return redirect(make_url_for('share_form', id=queriedForm.id))
+        
+        if queriedForm.addEditor(newEditor):
+            flash(gettext("New editor added ok"), 'success')
+            queriedForm.addLog(gettext("Added editor %s" % newEditor.email))
     return redirect(make_url_for('share_form', id=queriedForm.id))
 
 
@@ -925,22 +921,6 @@ def logout():
 @anon_required
 @sanitized_token
 def recover_password(token=None):
-    if request.method == 'POST':
-        if 'email' in request.form and isValidEmail(request.form['email']):
-            user = User.find(email=request.form['email'], blocked=False)
-            if user:
-                user.setToken()
-                smtp.sendRecoverPassword(user)
-                flash(gettext("We may have sent you an email"), 'info')
-            if not user and request.form['email'] in app.config['ROOT_USERS']:
-                # root_user emails are only good for one account, across all sites.
-                if not Installation.isUser(request.form['email']):
-                    # auto invite root users
-                    message="New root user at %s." % g.site.hostname
-                    invite=Invite.create(g.site.hostname, request.form['email'], message, True)
-                    return redirect(make_url_for('new_user', token=invite.token['token']))
-            return redirect(make_url_for('index'))
-        return render_template('recover-password.html')
     if token:
         user = User.find(token=token)
         if not user:
@@ -960,21 +940,35 @@ def recover_password(token=None):
         # login the user
         session['user_id']=str(user.id)
         return redirect(make_url_for('reset_password'))
-    return render_template('recover-password.html')
+    
+    wtform=wtf.GetEmail()
+    if wtform.validate_on_submit():
+        user = User.find(email=wtform.email.data, blocked=False)
+        if user:
+            user.setToken()
+            smtp.sendRecoverPassword(user)
+            flash(gettext("We may have sent you an email"), 'info')
+        if not user and wtform.email.data in app.config['ROOT_USERS']:
+            # root_user emails are only good for one account, across all sites.
+            if not Installation.isUser(wtform.email.data):
+                # auto invite root users
+                message="New root user at %s." % g.site.hostname
+                invite=Invite.create(g.site.hostname, wtform.email.data, message, True)
+                return redirect(make_url_for('new_user', token=invite.token['token']))
+        return redirect(make_url_for('index'))
+    return render_template('recover-password.html', wtform=wtform)
 
 
 @app.route('/site/reset-password', methods=['GET', 'POST'])
 @login_required
 def reset_password():
-    if request.method == 'POST':
-        if 'password1' in request.form and 'password2' in request.form:
-            if not isValidPassword(request.form['password1'], request.form['password2']):
-                return render_template('reset-password.html')
-            g.current_user.password=encryptPassword(request.form['password1'])
-            g.current_user.save()
-            flash(gettext("Password changed OK"), 'success')
-            return redirect(make_url_for('my_forms', username=g.current_user.username))
-    return render_template('reset-password.html')
+    wtform=wtf.ResetPassword()
+    if wtform.validate_on_submit():
+        g.current_user.password=encryptPassword(wtform.password.data)
+        g.current_user.save()
+        flash(gettext("Password changed OK"), 'success')
+        return redirect(make_url_for('user_settings', username=g.current_user.username))
+    return render_template('reset-password.html', wtform=wtform)
 
 
 """
@@ -1009,70 +1003,61 @@ def validate_email(token):
 @app.route('/site/save-blurb', methods=['POST'])
 @admin_required
 def save_blurb():
-    if request.method == 'POST':
-        if 'editor' in request.form:            
-            g.site.saveBlurb(request.form['editor'])
-            flash(gettext("Text saved OK"), 'success')
+    if 'editor' in request.form:            
+        g.site.saveBlurb(request.form['editor'])
+        flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('index'))
 
 
 @app.route('/site/save-personal-data-consent-text', methods=['POST'])
 @admin_required
 def save_data_consent():
-    if request.method == 'POST':
-        if 'editor' in request.form:            
-            g.site.savePersonalDataConsentText(request.form['editor'])
-            flash(gettext("Text saved OK"), 'success')
+    if 'editor' in request.form:            
+        g.site.savePersonalDataConsentText(request.form['editor'])
+        flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
+
 
 @app.route('/site/email/config', methods=['GET', 'POST'])
 @admin_required
 def smtp_config():
-    config=g.site.smtpConfig
-    if request.method == 'POST':
-        config['host'] = request.form['host']
-        config['port'] = request.form['port']
-        config['encryption']=request.form['encryption'] if not request.form['encryption']=="None" else ""
-        config['user'] = request.form['user']
-        config['password'] = request.form['password']
-        config['noreplyAddress'] = request.form['noreplyAddress']
-
-        if not config['host']:
-            flash(gettext("We need a host"), 'warning')
-            return render_template('smtp-config.html', **config)
-        if not config['port']:
-            flash(gettext("We need a port"), 'warning')
-            return render_template('smtp-config.html', **config)
-        if not isValidEmail(config['noreplyAddress']):            
-            flash(gettext("We need a valid sender address"), 'warning')
-            return render_template('smtp-config.html', **config)
-
+    wtf_smtp=wtf.smtpConfig(**g.site.smtpConfig)
+    if wtf_smtp.validate_on_submit():
+        config={}
+        config['host'] = wtf_smtp.host.data
+        config['port'] = wtf_smtp.port.data
+        config['encryption']=wtf_smtp.encryption.data if not wtf_smtp.encryption.data=="None" else ""
+        config['user'] = wtf_smtp.user.data
+        config['password'] = wtf_smtp.password.data
+        config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
         g.site.saveSMTPconfig(**config)
         flash(gettext("Confguration saved OK"), 'success')
-        return render_template('smtp-config.html', **config)
-    
-    return render_template('smtp-config.html', **config)
+    wtf_email=wtf.GetEmail()
+    return render_template('smtp-config.html', wtf_smtp=wtf_smtp, wtf_email=wtf_email)
 
-@app.route('/site/email/test-config/<string:email>', methods=['GET'])
+
+@app.route('/site/email/test-config', methods=['POST'])
 @admin_required
-def test_smtp(email):
-    if isValidEmail(email):
-        if smtp.sendTestEmail(email):
+def test_smtp():
+    wtform=wtf.GetEmail()
+    if wtform.validate():
+        if smtp.sendTestEmail(wtform.email.data):
             flash(gettext("SMTP config works!"), 'success')
     else:
         flash("Email not valid", 'warning')
     return redirect(make_url_for('smtp_config'))
 
+
 @app.route('/site/change-sitename', methods=['GET', 'POST'])
 @admin_required
 def change_siteName():
-    if request.method == 'POST':
-        if 'sitename' in request.form:
-            g.site.siteName=request.form['sitename']
-            g.site.save()
-            flash(gettext("Site name changed OK"), 'success')
-            return redirect(make_url_for('user_settings', username=g.current_user.username))
+    if request.method == 'POST' and 'sitename' in request.form:
+        g.site.siteName=request.form['sitename']
+        g.site.save()
+        flash(gettext("Site name changed OK"), 'success')
+        return redirect(make_url_for('user_settings', username=g.current_user.username))
     return render_template('change-sitename.html', site=g.site)
+
 
 @app.route('/site/change-favicon', methods=['GET', 'POST'])
 @admin_required
@@ -1093,13 +1078,15 @@ def change_site_favicon():
         return redirect(make_url_for('user_settings', username=g.current_user.username))
     return render_template('change-site-favicon.html')
 
+
 @app.route('/site/reset-favicon', methods=['GET'])
 @admin_required
 def reset_site_favicon():
     if g.site.deleteFavicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('user_settings', username=g.current_user.username))
-    
+
+
 @app.route('/site/update', methods=['GET', 'POST'])
 def schema_update():
     installation=Installation.get()
@@ -1204,29 +1191,16 @@ def toggle_site_data_consent():
 @app.route('/admin/invites/new', methods=['GET', 'POST'])
 @admin_required
 def new_invite():
-    if request.method == 'POST':
-        if 'email' in request.form and isValidEmail(request.form['email']):           
-            admin=False
-            hostname=g.site.hostname
-            if g.isRootUser:
-                if 'admin' in request.form:
-                    admin=True
-                if 'hostname' in request.form:
-                    hostname=request.form['hostname']
-            if request.form['message']:
-                message=request.form['message']
-            else:
-                message=gettext("You have been invited to %s." % hostname)
-            invite=Invite.create(hostname, request.form['email'], message, admin)
-            smtp.sendInvite(invite)
-            flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
-            return redirect(make_url_for('user_settings', username=g.current_user.username))
-    sites=[]
-    if g.isRootUser:
-        # rootUser can choose the site to invite to.
-        sites = Site.findAll()
-
-    return render_template('new-invite.html', hostname=g.site.hostname, sites=sites)
+    wtform=wtf.NewInvite()
+    if wtform.validate_on_submit():  
+        message=wtform.message.data
+        if not message:
+            message=gettext("You have been invited to %s." % wtform.hostname.data)
+        invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
+        smtp.sendInvite(invite)
+        flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
+        return redirect(make_url_for('user_settings', username=g.current_user.username))
+    return render_template('new-invite.html', wtform=wtform, sites=Site.findAll())
 
 
 @app.route('/admin/invites/delete/<string:id>', methods=['GET'])
