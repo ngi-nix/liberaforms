@@ -179,7 +179,7 @@
         {% if form.editors[g.current_user.id|string] is defined %}
         <hr />
         <div id="embed_snippet" style="display:none">
-        <pre><code>{{'<iframe width="500" height="600" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code></pre>
+        <pre><code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code></pre>
         </div>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form.id }}'">
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
