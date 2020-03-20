@@ -24,8 +24,6 @@
     <div class="row col-md-3"></div>
 </div>
 
-
-
 <script>
 jQuery(function($) {
     var fbRender = document.getElementById('fb-render');
@@ -61,7 +59,7 @@ function setLimits(){
     return;
 }
 function addRequiredMsg(){
-    if ($('#fb-render').find("span.fb-required").length) {
+    if ($('#fb-render').find("span.formbuilder-required").length) {
         var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
         if (firstGroup.length) {
             $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore(firstGroup);

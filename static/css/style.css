@@ -114,10 +114,10 @@ input[type="date"], input[type="number"] {
   content: '●';
   visibility: visible;
 }
-.fb-required {
+.formbuilder-required {
   visibility: hidden;
 }
-.fb-required:after {
+.formbuilder-required:after {
   content: '●';
   visibility: visible;
 }
