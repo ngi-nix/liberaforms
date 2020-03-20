@@ -27,7 +27,7 @@
     <div class="row col-md-4" style="text-align:right">
     <input id="editModeButton" class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable edition{%endtrans%}" onClick="js:setEditMode();">
     <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form.id }}'">
-    <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Delete all{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form.id }}'" {% if not form.totalEntries %}disabled{%endif%} >
+    <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete all{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form.id }}'" {% if not form.totalEntries %}disabled{%endif%} >
     </div>
 </div>
 

@@ -436,13 +436,20 @@ def preview_form():
     if not ('slug' in session and 'formStructure' in session):
         return redirect(make_url_for('my_forms'))
      
-    # formBuilder includes tags in labels. Let's remove them
+    # we run though the structure and repair things if needed.
     structure=json.loads(session['formStructure'])
     for element in structure:
-        if "type" in element and element["type"] != "paragraph":
-            element['label']=stripHTMLTags(element['label'])
+        if "type" in element:
+            # formBuilder includes tags in labels. Let's remove them
+            if element["type"] != "paragraph":
+                element['label']=stripHTMLTags(element['label'])
+            # formBuilder UI does not enforce values for checkboxes and radios.
+            # here we add a value when missing
+            if element["type"] == "checkbox-group" or element["type"] == "radio-group":
+                for input_type in element["values"]:
+                    if not input_type["value"] and input_type["label"]:
+                        input_type["value"] = sanitizeString(input_type["label"].replace(" ", "-"))
     session['formStructure']=json.dumps(structure)
-    
     session['slug']=sanitizeSlug(session['slug'])
     formURL = "%s%s" % ( g.site.host_url, session['slug'])
     return render_template('preview-form.html', formURL=formURL,
@@ -761,7 +768,7 @@ def delete_entries(id):
 
 """ User settings """
 
-@app.route('/user/<string:username>', methods=['GET', 'POST'])
+@app.route('/user/<string:username>', methods=['GET'])
 @login_required
 def user_settings(username):
     if username != g.current_user.username:

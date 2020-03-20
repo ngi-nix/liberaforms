@@ -8,7 +8,16 @@ body {
   margin-bottom: 25px;
 }
 
-.footer {
+#header{
+  font-size: 1.3em;
+}
+
+#main-content {
+  margin-top: 2em;
+}
+
+#footer {
+  text-align:right;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -19,13 +28,17 @@ body {
 hr { margin-top: 5px }
 
 .hint {
-    color: grey;
-    font-style: italic;
+  color: grey;
+  font-style: italic;
 }
 
 .formDataConsent { padding: 1em 0 2em 0 }
 
 /* ######### Flash messages ######### */
+
+.flash_message {
+    text-align: center;
+}
 .success {
     color: white;
     font-size: 1.2em;
@@ -61,11 +74,13 @@ hr { margin-top: 5px }
     padding: 0.5em 0 0.5em 0;
 }
 
+/* ######### WTForms ######### */
 .formError {
     color: #d9534f;
 }
 
 /* ######### Entries table ######### */
+
 .delete-row-icon {
     font-size: 1.15em !important;
     color: grey;
@@ -103,7 +118,9 @@ hr { margin-top: 5px }
     cursor: pointer;
     padding-left: 0.27em;
 }
+
 /* ######### formBuilder fixes ######### */
+
 input[type="date"], input[type="number"] {
     width: auto !important;
 }

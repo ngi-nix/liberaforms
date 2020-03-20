@@ -8,23 +8,25 @@
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/gngforms.css">
   <link rel="stylesheet" href="/static/css/custom.css">
 </head>
 
 <body>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages and request.path != '/login' %}
+    {% if messages %}
         {% for category, message in messages %}
-            <div class="flash_message {{ category }}" style="text-align:center;">{{ message | safe }}</div>
+            <div class="flash_message {{ category }}">
+                {{ message | safe }}
+            </div>
         {% endfor %}
     {% endif %}
 {% endwith %}
 
 {% if g.current_user %}
-<div class="container" style="font-size:1.3em;">
-    <div class="row col-md-12">
+<div id="header" class="container">
+    <div id="menu" class="row col-md-12">
         <a href="/">{%trans%}Start{%endtrans%}</a> | 
         {% if g.current_user.enabled %}
             {% if g.isAdmin %}
@@ -39,11 +41,13 @@
 </div>
 {% endif %}
 
-<div style="margin-top:2em"></div>
+<div id="main-content">
 {% block content %}{% endblock %}
+</div>
+
 
 <p>&nbsp;</p>
-<div class="footer" style="text-align:right">
+<div id="footer">
     GNGforms. AGPLv3
     <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
     &nbsp;
