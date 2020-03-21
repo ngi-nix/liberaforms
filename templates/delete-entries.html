@@ -1,26 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 
-
 <div class="container">
 <div class="row col-md-4"></div>
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">
-        {%trans%}Delete entries{%endtrans%}
-    </div>
-    <hr />
-    
-    <span style="font-size:1.15em">{%trans%}Form{%endtrans%}: {{ form.slug }}</span>
-    <p></p>
+    <div class="title_1 delimited">{%trans%}Delete entries{%endtrans%}</div>    
+    <div class="title_2">{%trans%}Form{%endtrans%}: {{ form.slug }}</div>
+
     {%trans%}You are going to delete{%endtrans%}
     {{form.totalEntries}} {%trans%}entries{%endtrans%}.
     <br />
+    
     {%trans%}Write the total number of entries below{%endtrans%}.
     <p></p>
-    <span style="font-size:1.15em">{{form.totalEntries}}</span>
-    <p></p>
+    
+    <div class="title_3">{{form.totalEntries}}</div>  
     
     <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -31,6 +27,7 @@
     </form>
 </div>
 
-<div class="row col-md-4"></div></div>
+<div class="row col-md-4"></div>
+</div>
 
 {% endblock %}

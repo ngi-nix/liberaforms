@@ -6,23 +6,19 @@
 <div class="container">
     <div class="row col-md-3"></div>
     <div class="row col-md-6">
-        <div style="font-size:1.5em">
-            {%trans%}Preview{%endtrans%}
+        <div class="title_1 delimited">
+            {%trans%}Preview{%endtrans%}: {{ slug }}
         </div>
-        <hr style="margin-bottom:0" />
-        <div style="font-size:1.15em">
-            {{ formURL }}
-        </div>
-        <p>&nbsp;</p>
+
         <div id="fb-render"></div>
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
         <p>&nbsp;</p>
-        <div style="font-size:1.5em">
+        
+        <div class="title_1 delimited">
             {%trans%}Post-submit text{%endtrans%}
         </div>
-        <hr />
         <div>
-        {{ afterSubmitTextHTML | safe }}
+        {{ afterSubmitMsg | safe }}
         </div>
         
         <p>&nbsp;</p>

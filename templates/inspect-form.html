@@ -5,26 +5,24 @@
 
 <div class="container">
     <div class="row col-md-6">
-        <div style="font-size:1.5em;">
+        <div class="title_1 delimited">
             {%trans%}Form{%endtrans%}: {{ form.slug }}
         </div> 
-        <hr />
           
         <div id="fb-render"></div>
 
-        <div id="dataConsent" class="formDataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
+        <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
             {{ form.dataConsent|safe }}
             {%trans%}I agree{%endtrans%}
-            <input type="checkbox" style="position:relative; top:3px;" required />
+            <input type="checkbox" required />
         </div>
 
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
         
         <p>&nbsp;</p>
-        <div style="font-size:1.4em">
+        <div class="title_1 delimited">
             {%trans%}Post-submit text{%endtrans%}
         </div>
-        <hr />
         <div>
         {{ form.afterSubmitText['html'] | safe }}
         </div>
@@ -32,13 +30,12 @@
     </div>
     <div class="row col-md-1"></div> 
     <div class="row col-md-5">
-        <div style="font-size:1.5em">
+        <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
             {% if form.editors[g.current_user.id|string] is defined %}
             <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View log{%endtrans%}" onClick="location.href='/forms/log/list/{{form.id}}'" >
             {% endif %}
         </div>
-        <hr />
         
         <table class="table table-striped table-condensed">
             <tr>
@@ -93,7 +90,7 @@
                <td>
                     {%trans%}Public URL{%endtrans%}
                     {% if not form.adminPreferences['public'] %}
-                        <span style="color:red">({%trans%}disabled{%endtrans%})</span>
+                        <span class="highlightedText">({%trans%}disabled{%endtrans%})</span>
                     {% endif %}
                </td>
                <td>
@@ -153,7 +150,7 @@
                <td>
                     {%trans%}Author{%endtrans%}
                     {% if not form.author.enabled %}
-                        <span style="color:red">({%trans%}disabled{%endtrans%})</span>            
+                        <span class="highlightedText">({%trans%}disabled{%endtrans%})</span>            
                     {% endif %} 
                </td>
                <td>
@@ -181,22 +178,23 @@
         <div id="embed_snippet" style="display:none">
         <pre><code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code></pre>
         </div>
+        <p>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form.id }}'">
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form.id }}'">
-        <p></p>
+        </p>
             {% if form.totalEntries == 0 %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
             {% else %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
             {% endif %}
         {% endif %}
-        
+
         {% if g.isAdmin %}
-        <div style="font-size:1.5em; padding-top:1em;">
+        <p>&nbsp;</p>
+        <div class="title_1 delimited">
             {%trans%}Admin options{%endtrans%}
         </div>
-        <hr />
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change author{%endtrans%}" onClick="location.href='/admin/forms/change-author/{{form.id}}'" >
             {% if form.adminPreferences['public'] %}
             <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >

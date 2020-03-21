@@ -7,10 +7,7 @@
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">
-        {%trans%}Send a new user invitation{%endtrans%}
-    </div>
-    <hr />
+    <div class="title_1 delimited">{%trans%}Send a new user invitation{%endtrans%}</div>
 
     <form method="POST">
         {{ wtform.csrf_token }}
@@ -26,19 +23,20 @@
             {{ wtform.message(class_="form-control") }}
         </p>
         <p>
-            {{ wtform.admin.label }} {{ wtform.admin(style="vertical-align:-3px;") }}
+            {{ wtform.admin.label }} {{ wtform.admin() }}
         </p>
         {% if g.isRootUser %}
-            <p>&nbsp;</p>
-            <div style="font-size:1.2em">{%trans%}Root user options{%endtrans%}</div>
-            <hr />
+            <div class="title_2 delimited">{%trans%}Root user options{%endtrans%}</div>
+
             <label>{%trans%}Invite to one of these sites{%endtrans%}</label>
+            <div class="app_radios">
             {% for site in sites %}
             <div class="radio radio-info">
-                <input style="margin-left:0;" type="radio" name="hostname" value="{{ site.hostname }}" {% if site.hostname == g.site.hostname %}checked{% endif %} >
-                <label style="margin-left:1em;">{{ site.hostname }}</label>
+                <input type="radio" name="hostname" value="{{ site.hostname }}" {% if site.hostname == g.site.hostname %}checked{% endif %} >
+                <label>{{ site.hostname }}</label>
             </div>
             {% endfor %}
+            </div>
             <br />
         {% else %}
             <input type="hidden" name="hostname" value="{{ g.site.hostname }}" />

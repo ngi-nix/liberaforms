@@ -7,21 +7,18 @@
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">
+    <div class="title_1 delimited">
         {%trans%}Change site favicon{%endtrans%}
         <img src="{{g.site.faviconURL()}}" width=24 height=24 />
     </div>
-    <hr />
 
-    <p></p>
     <form method="POST" enctype=multipart/form-data >
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <label>{%trans%}Upload image{%endtrans%}</label>
-        <br />
-        <span class="hint">{%trans%}A small, square PNG image{%endtrans%}</span>
-        <br />
+        <p>
+        <label>{%trans%}Upload image{%endtrans%}</label><br />
+        <span class="hint">{%trans%}A small, square PNG image{%endtrans%}</span><br />
         <input type=file name=file><br />
-        <p></p>
+        </p>
         <input class="btn-success btn" type="submit" value="{%trans%}Upload{%endtrans%}">
         <input class="btn-primary btn" type="button" value="{%trans%}Use default{%endtrans%}" onClick="location.href='/site/reset-favicon'">
         <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">

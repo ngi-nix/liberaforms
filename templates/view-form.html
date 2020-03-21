@@ -12,10 +12,10 @@
         {% endif %}
         <div id="fb-render"></div>
         {% if form.isDataConsentEnabled() %}
-            <div class="formDataConsent">
+            <div class="dataConsent">
                 {{ form.dataConsent|safe }}
                 {%trans%}I agree{%endtrans%}
-                <input type="checkbox" style="position:relative; top:3px;" name="DPL" value="ok" required />
+                <input type="checkbox" name="DPL" value="ok" required />
             </div>
         {% endif %}
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}">

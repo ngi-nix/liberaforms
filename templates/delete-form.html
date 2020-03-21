@@ -3,28 +3,32 @@
 
 
 <div class="container">
-<div class="row col-md-4"></div>
+<div class="row col-md-3"></div>
     
-<div class="row col-md-4">
+<div class="row col-md-5">
 
-    <div style="font-size:1.5em">
+    <div class="returnToForm">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+        {{ form.slug }}
+    </div>
+
+    <div class="title_1">
         {%trans%}Delete form{%endtrans%}
     </div>
-    <hr />
+
     {%trans%}You are going to delete this form and{%endtrans%}
-    {{form.totalEntries}} {%trans%}entries{%endtrans%}.
+    <span class="highlightedText">{{form.totalEntries}} {%trans%}entries{%endtrans%}</span>.
     <br />
     {%trans%}Write the name of the form below{%endtrans%}.
     <p></p>
-    <span style="font-size:1.15em">{{form.slug}}</span>
-    <p></p>
+    
+    <div class="title_3">{{form.slug}}</div>
     
     <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <input type="text" name="slug" class="form-control" required ><br />
-        <p></p>
+
         <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/forms/view/{{form.id}}'">
     </form>
 </div>
 

@@ -7,18 +7,14 @@
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">
-        {%trans%}Change site name{%endtrans%}
-    </div>
-    <hr />
+    <div class="title_1 delimited">{%trans%}Change site name{%endtrans%}</div>
 
-    <p></p>
     <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <label>{%trans%}New site name{%endtrans%}</label>
-        <br />
+        <p>
+        <label>{%trans%}New site name{%endtrans%}</label><br />
         <input type="text" name="sitename" class="form-control" value="{{site.siteName }}" required ><br />
-        <p></p>
+        </p>
         <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
     </form>
 

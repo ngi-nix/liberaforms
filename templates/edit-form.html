@@ -8,35 +8,33 @@
 
 <div class="container">
     <div class="row col-md-12">
-        <div style="font-size:1.3em">
+        <div class="title_1 delimited">
         {% if session['form_id'] %}
             1. {%trans%}Edit form{%endtrans%} {{ session['slug'] }}
         {% else %}
             1. {%trans%}Build your form here{%endtrans%}
         {% endif %}
         </div>
-        <hr />
+
         <div id="fb-editor"></div>
     </div>
     
     <div class="row col-md-8">
         <p>&nbsp;</p>
-
-        <form id="result" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post" style="padding-bottom:0.5em;">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div style="font-size:1.3em">
+        <div class="title_2 delimited">
             {%trans%}2. Say something to the user after the form has been submitted{%endtrans%}
         </div>
-        <hr />
+
+        <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
         {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
         <a href="https://www.markdownguide.org/basic-syntax" target="_blank">{%trans%}Learn more{%endtrans%}</a>
-        
         <textarea id="sm-editor" name="afterSubmitTextMD">{{ session['afterSubmitTextMD'] }}</textarea>
-        <p></p>
-        <div style="font-size:1.3em">
+        
+        <div class="title_2 delimited">
             {%trans%}3. Your form will have this address{%endtrans%}
         </div>
-        <hr />
         
         <input type="hidden" id="structure" name="structure" />
         {{ host_url }}
@@ -89,12 +87,6 @@ jQuery(function($) {
     };
     const formBuilder = $(fbEditor).formBuilder(options);
     
-    /*
-    formBuilder.promise.then(function(fb) {
-        formBuilderFixes(fb.formData);
-    });
-    */
-    
     document.getElementById('result').addEventListener('submit', function(evt){
         evt.preventDefault();
         if ( {{ session['form_id'] | tojson }} == null ){
@@ -143,13 +135,6 @@ jQuery(function($) {
         $('.slug-alert').hide(); 
     });
 });
-function formBuilderFixes(renderedData){
-    //console.log(renderedData);
-    return
-
-    // Populate Max and Min fields.
-    //var max = $("#fb-editor").find(".field-{{field}}-preview").parent().find("input.fld-max[type=number]");
-}
 </script>
   
 {% endblock %}

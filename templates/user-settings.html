@@ -11,7 +11,7 @@
     <div class="row col-md-3"></div>
     <div class="row col-md-6">
         
-        <div style="font-size:1.5em; padding-bottom:0.5em;">
+        <div class="title_1">
             {%trans%}Hello{%endtrans%} {{ g.current_user.username }} !!
         </div>
         <p></p>
@@ -72,10 +72,8 @@
             </tr>
         </table>
         
-    {% if g.isAdmin %}
-        <p style="padding-top:0.25em;"></p>
-        
-        <div style="font-size:1.5em; padding-bottom:0.5em; display:inline;">
+    {% if g.isAdmin %}       
+        <div class="title_1" style="display:inline;">
             {%trans%}Invitations{%endtrans%}
         </div>
         <div style="display:inline; float:right;">
@@ -113,12 +111,10 @@
         {% endif %}
         
         <hr />
-        <p></p>
         
-        <div id="admin_settings" style="font-size:1.5em; padding-bottom:0.5em;">
+        <div id="admin_settings" class="title_1">
             {%trans%}My admin settings{%endtrans%}
         </div>
-        <p></p>
 
         <table class="table table-condensed">
             <tr>
@@ -141,11 +137,9 @@
             </tr>
         </table>
 
-        <p></p>
-        <div id="site_settings" style="font-size:1.5em; padding-bottom:0.5em;">
+        <div id="site_settings" class="title_1">
             {%trans%}Site settings{%endtrans%}
         </div>
-        <p></p>
 
         <table class="table table-condensed">
             <tr>
@@ -210,11 +204,9 @@
             
     {% endif %}
     {% if g.isRootUser %}
-        <p></p>
-        <div id="root_user_settings" style="font-size:1.5em; padding-bottom:0.5em;">
+        <div id="root_user_settings" class="title_1">
             {%trans%}Root user{%endtrans%}
         </div>
-        <p></p>
         <table class="table">
             <thead>
                 <tr>
@@ -247,7 +239,7 @@
             </tr>        
         </table>
         
-        <div style="font-size:1.25em; padding-bottom:0.6em;">
+        <div class="title_2">
             {%trans%}Installation{%endtrans%}
         </div>
 
@@ -265,7 +257,6 @@
             <td>{{installation.schemaVersion}}</td>
         </tr>
         </table>
-        
     {% endif %}
     </div>
     <div class="row col-md-3"></div>

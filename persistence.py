@@ -130,6 +130,10 @@ class User(db.Document):
     def forms(self):
         return Form.findAll(editor=str(self.id))
 
+    @property
+    def authored_forms(self):
+        return Form.findAll(author_id=str(self.id))
+
     def isAdmin(self):
         return True if self.admin['isAdmin']==True else False
 

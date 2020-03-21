@@ -7,22 +7,19 @@
     
 <div class="row col-md-4">
 
-    <div style="font-size:1.5em">
-        {%trans%}Change language{%endtrans%}
-    </div>
-    <hr />
+    <div class="title_1 delimited">{%trans%}Change language{%endtrans%}</div>
 
-    <p></p>
     <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="app_radios">
         {% for key in config['LANGUAGES'] %}
-        <div style="font-size:1.1em" class="radio radio-info">
-          <input style="margin-left:0;" type="radio" name="language" value="{{ key }}" {% if key == g.current_user.language %}checked{% endif %} >
-          <label class="language" style="margin-left:1em;">{{ config['LANGUAGES'][key][0] }}</label>
+        <div class="radio radio-info">
+          <input type="radio" name="language" value="{{ key }}" {% if key == g.current_user.language %}checked{% endif %} >
+          <label>{{ config['LANGUAGES'][key][0] }}</label>
         </div>
         {% endfor %}
+        </div>
         <br />
-        <p></p>
         <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
     </form>
 
@@ -33,7 +30,7 @@
 
 
 <script>
-jQuery(".language").click(function(){
+jQuery("label").click(function(){
     $(this).prev('input').prop("checked", true);
 });
 </script>

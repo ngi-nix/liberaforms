@@ -1,21 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-<div class="container">
-    <div class="row col-md-3"></div>
-    <div class="row col-md-6" style="font-size:1.5em">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
-        {{ form.slug }}
-        <hr style="margin-bottom:5px" />
-    </div>
-    <div class="row col-md-3"></div>
-</div>
-
 <div class="container">
 <div class="row col-md-3"></div>
 
-<div class="row col-md-6">
+<div class="row col-md-5">
+    
+    <div class="returnToForm">
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+        {{ form.slug }}
+    </div>
+    
     <div id="toggle_notification" class="btn-group btn-toggle">
         <button id="notification_true" class="btn btn-xs btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
         <button id="notification_false" class="btn btn-xs btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
@@ -23,59 +18,53 @@
     {%trans%}Notify me when this form expires{%endtrans%}
     <p>&nbsp;</p>
 
-    <div style="font-size:1.5em">
+    <div class="title_1">
         {%trans%}Expiration conditions{%endtrans%}
     </div>
-    <p>&nbsp;</p>
     
-    <div style="font-size:1.25em">
+    <div class="title_2">
         {%trans%}Date / Time{%endtrans%}
     </div>
-    <br />
     
-    <style>
-    #date_time > input {display: inline; vertical-align: top;}
-    </style>
-    <form id="date_time" method="POST">
+    <form class="horzizontal-inputs" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
         &nbsp;
-        <input id="time" name="time" type="time" class="form-control" style="width:auto">
+        <input id="time" name="time" type="time" class="form-control">
         &nbsp;
         <input id="date-button" class="btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
     </form>
         
-        <p>&nbsp;</p>
+    <p>&nbsp;</p>
         
-        {% if form.getAvailableNumberTypeFields() %}
-        <div style="font-size:1.25em">
-            {%trans%}Conditionals{%endtrans%}
-        </div>
-          
-        <br />
-        <table class="table table-condensed">   
-        {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
-            <tr>
-                <td>
-                {{ form.getFieldLabel(field_name)|safe }}
-                </td>
-                <td>
-                {% if values.type=="number" %}
-                <input id="{{field_name}}" class="condition form-control" style="height:28px" type="number" value="{{values.condition|safe}}" />
-                {% endif %}
-                </td>
-                <td class="text-right">
-                {% if values.type=="number" %}
-                    <input id="button-{{field_name}}" type="button" class="{%if values.condition %}btn-success{% else %}btn-primary{% endif %} btn btn-xs" value="{%trans%}Save max.{%endtrans%}" onClick="js:setMaxValue('{{field_name}}');">
-                {% endif %}
-                </td>
-            </tr>
-        {%endfor %}
-        </table>  
-        {% endif %}
+    {% if form.getAvailableNumberTypeFields() %}
+    <div class="title_2">
+        {%trans%}Conditionals{%endtrans%}
+    </div>
+    
+    <table class="table table-condensed">   
+    {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
+        <tr>
+            <td>
+            {{ form.getFieldLabel(field_name)|safe }}
+            </td>
+            <td>
+            {% if values.type=="number" %}
+            <input id="{{field_name}}" class="condition form-control sm-input" type="number" value="{{values.condition|safe}}" />
+            {% endif %}
+            </td>
+            <td class="text-right">
+            {% if values.type=="number" %}
+                <input id="button-{{field_name}}" type="button" class="{%if values.condition %}btn-success{% else %}btn-primary{% endif %} btn btn-xs" value="{%trans%}Save max.{%endtrans%}" onClick="js:setMaxValue('{{field_name}}');">
+            {% endif %}
+            </td>
+        </tr>
+    {%endfor %}
+    </table>  
+    {% endif %}
         
 </div>
-<div class="row col-md-3"></div>    
+<div class="row col-md-4"></div>    
 </div>
 
 

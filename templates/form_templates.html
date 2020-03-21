@@ -7,25 +7,22 @@
     <div class="row col-md-3"></div>
     <div class="row col-md-6">
 
-    <div style="font-size:1.5em">
-        {%trans%}Form templates{%endtrans%}
-        <hr />
-    </div>
+    <div class="title_1 delimited">{%trans%}Form templates{%endtrans%}</div>
 
-    <div style="font-size:1.1em">
+    <p>
     {%trans%}We've put together some forms you can use to get started.{%endtrans%}
     <br />
     {%trans%}Choose the template that best suits your needs and edit it to fit.{%endtrans%}
-    </div>
-    <p>&nbsp;</p>
+    </p>
     
     {% for template in templates %}
-        <a style="font-size:1.15em" href="#{{template.id}}">{{template.name}}</a>
+    <p>
+        <a class="title_3" href="#{{template.id}}">{{template.name}}</a>
         <br />
         {{template.description}}
-        <br />
-        <br />
+    </p>
     {% endfor %}
+
     <hr />
     {% for template in templates %}
         <a name="{{template.id}}"></a>
@@ -39,9 +36,6 @@
     </div>
     <div class="row col-md-3"></div>
 </div>
-
-
-
 
 <script>
 {% for template in templates %}

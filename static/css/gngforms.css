@@ -32,7 +32,67 @@ hr { margin-top: 5px }
   font-style: italic;
 }
 
-.formDataConsent { padding: 1em 0 2em 0 }
+.returnToForm {
+  font-size: 1.5em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 0.5em;
+}
+.title_1 {
+  font-size: 1.5em;
+  margin-bottom: 1em;
+}
+.title_2 {
+  font-size: 1.25em;
+  margin-bottom: 0.65em;
+}
+.title_3 {
+  font-size: 1.15em;
+  margin-bottom: 0.4em;
+}
+.delimited {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.25em;
+}
+.app_radios label {
+  margin-left: 1em;
+}
+.app_radios input[type="radio"] {
+  margin-left: 0;
+}
+input[type="date"], input[type="number"], input[type="time"] {
+  width: auto !important;
+}
+input[type="checkbox"] {
+  vertical-align:-3px;
+}
+.sm-input {
+  height: 28px;
+}
+.horzizontal-inputs > input {
+  display: inline;
+  vertical-align: top;
+}
+.td-controls td:first-child {
+    text-align: center;
+}
+.cell-editor  {
+  white-space:nowrap;
+}
+.cell-editor > input[type="text"] {
+  width: 70%;
+}
+.link {
+  color:#337ab7;
+  cursor:pointer;
+}
+.dataConsent {
+  padding: 1em 0 2em 0;
+}
+.highlightedText {
+    color: #d9534f;
+}
+
 
 /* ######### Flash messages ######### */
 
@@ -121,9 +181,6 @@ hr { margin-top: 5px }
 
 /* ######### formBuilder fixes ######### */
 
-input[type="date"], input[type="number"] {
-    width: auto !important;
-}
 .required-asterisk {
   visibility: hidden;
 }

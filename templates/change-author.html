@@ -3,21 +3,13 @@
 
 <div class="container">
     <div class="row col-md-3"></div>
-    <div class="row col-md-7" style="font-size:1.5em">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
-        {{ form.slug }}
-        <hr />
-    </div>
-    <div class="row col-md-2"></div>
-</div>
-
-<div class="container">
-    <div class="row col-md-3"></div>
     <div class="row col-md-5">
-
-        <div style="font-size:1.5em; padding-bottom:1em;">
-            {%trans%}Change author{%endtrans%}
+        
+        <div class="returnToForm">
+            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+            {{ form.slug }}
         </div>
+        <div class="title_1">{%trans%}Change author{%endtrans%}</div>
         
         <table class="table table-striped table-condensed">
         {% if g.isRootUser %}
@@ -48,15 +40,11 @@
     {% set editors=form.getEditors() %}
     {% if editors|length > 1 %}
         <p>&nbsp;</p>
-        <div style="font-size:1.5em;">
-            {%trans%}Editors{%endtrans%}
-        </div>
-        <div>
-            {%trans%}Users listed here have the <b>same permissions</b> as the author{%endtrans%}
-        </div>
+        <div class="title_2">{%trans%}Editors{%endtrans%}</div>
+        <p>
+        {%trans%}Users listed here have the <b>same permissions</b> as the author{%endtrans%}
+        </p>
 
-        <p style="padding-top:1.2em;"></p>
-        
         <table class="table table-condensed">
         {% for editor in editors %}
             <tr>

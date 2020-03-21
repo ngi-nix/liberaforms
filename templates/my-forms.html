@@ -36,7 +36,7 @@
        <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
        <td>{{form.created}}</td>
        <td>{{form.lastEntryDate}}</td>
-       <td><a style="padding-right:1em" href="/forms/entries/{{form.id}}">{{form.entries|length}}</a></td>
+       <td><a href="/forms/entries/{{form.id}}">&nbsp;{{form.entries|length}}&nbsp;</a></td>
        <td>{{form.isPublic()}}</td>
        <td>{{form.isShared()}}</td>
     </tr>

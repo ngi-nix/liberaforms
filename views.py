@@ -435,7 +435,6 @@ def is_slug_available(slug):
 def preview_form():
     if not ('slug' in session and 'formStructure' in session):
         return redirect(make_url_for('my_forms'))
-     
     # we run though the structure and repair things if needed.
     structure=json.loads(session['formStructure'])
     for element in structure:
@@ -443,17 +442,19 @@ def preview_form():
             # formBuilder includes tags in labels. Let's remove them
             if element["type"] != "paragraph":
                 element['label']=stripHTMLTags(element['label'])
-            # formBuilder UI does not enforce values for checkboxes and radios.
-            # here we add a value when missing
-            if element["type"] == "checkbox-group" or element["type"] == "radio-group":
+            # formBuilder does not enforce values for checkbox groups, radio groups and selects.
+            # we add a value when missing, and sanitize all values just in case.
+            if  element["type"] == "checkbox-group" or \
+                element["type"] == "radio-group" or \
+                element["type"] == "select":
                 for input_type in element["values"]:
                     if not input_type["value"] and input_type["label"]:
-                        input_type["value"] = sanitizeString(input_type["label"].replace(" ", "-"))
+                        input_type["value"] = input_type["label"]
+                    input_type["value"] = sanitizeString(input_type["value"].replace(" ", "-"))
     session['formStructure']=json.dumps(structure)
     session['slug']=sanitizeSlug(session['slug'])
-    formURL = "%s%s" % ( g.site.host_url, session['slug'])
-    return render_template('preview-form.html', formURL=formURL,
-                                                afterSubmitTextHTML=markdown2HTML(session['afterSubmitTextMD']))
+    afterSubmitMsg=markdown2HTML(session['afterSubmitTextMD'])
+    return render_template('preview-form.html', slug=session['slug'], afterSubmitMsg=afterSubmitMsg)
 
 
 @app.route('/forms/save', methods=['POST'])

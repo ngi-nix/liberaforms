@@ -8,13 +8,11 @@
 <div class="container">
     <div class="row col-md-2"></div>
     <div class="row col-md-8">
-        <div style="font-size:1.5em">
+        <div class="returnToForm">
             <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
             {{ form.slug }}
-            <hr />
-            {%trans%}Log{%endtrans%}
-            <p>&nbsp;</p>
         </div>
+        <div class="title_1">{%trans%}Log{%endtrans%}</div>
         <table id="log" style="display:none" class="table table-striped table-condensed">
         <thead>
             <tr>

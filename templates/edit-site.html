@@ -6,11 +6,7 @@
     <div class="row col-md-3"></div>
     <div class="row col-md-6">
         
-    <div style="font-size:1.5em; padding-bottom:0.5em;">
-        {{ site.hostname }}
-    </div>
-    <hr />
-    <p></p>
+    <div class="title_1 delimited">{{ site.hostname }}</div>
 
     <table class="table table-striped table-condensed">
         <tr>
@@ -35,16 +31,13 @@
         </tr>
     </table>
     
-    <div style="font-size:1.25em; padding-bottom:0.5em;">
-        {%trans%}Public link creation{%endtrans%}
-    </div>
-    <p></p>
-    <div style="font-size:1.15em;">
-        <span style="color:#337ab7; cursor:pointer;">
+    <div class="title_2">{%trans%}Public link creation{%endtrans%}</div>
+
+    <div class="title_3 link">
         <span id="site_scheme">{{site.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.port %}style="display:none"{% endif %}>:{{ site.port }}</span>/xxxx
         </span>
     </div>
-    <table class="table table-striped table-condensed" style="margin-top: 1em">
+    <table class="table table-striped table-condensed">
         <tr>
             <td>{%trans%}Scheme{%endtrans%}</td>
             <td></td>

@@ -6,43 +6,42 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
 
 <div class="container">
+<div class="row col-md-12">
 
-    <div style="font-size:1.5em">
-        {%trans%}Users{%endtrans%}
-    </div>
-    <hr />
+    <div class="title_1 delimited">{%trans%}Users{%endtrans%}</div>
 
-<table id="users" style="display:none" class="table table-striped table-condensed">
-<thead>
+    <table id="users" style="display:none" class="table table-striped table-condensed">
+    <thead>
+        <tr>
+            <th>{%trans%}Username{%endtrans%}</th>
+            
+            {% if g.isRootUser %}
+                <th>{%trans%}Hostname{%endtrans%}</th>
+            {% endif %}
+            
+            <th>{%trans%}Created{%endtrans%}</th>
+            <th>{%trans%}Enabled{%endtrans%}</th>
+            <th>{%trans%}Email{%endtrans%}</th>
+            <th>{%trans%}Forms{%endtrans%}</th>
+            <th>{%trans%}Is Admin{%endtrans%}</th>
+        </tr>
+    </thead>
+    {% for user in users %}
     <tr>
-        <th>{%trans%}Username{%endtrans%}</th>
-        
+        <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
         {% if g.isRootUser %}
-            <th>{%trans%}Hostname{%endtrans%}</th>
+            <td>{{user.hostname}}</td>
         {% endif %}
-        
-        <th>{%trans%}Created{%endtrans%}</th>
-        <th>{%trans%}Enabled{%endtrans%}</th>
-        <th>{%trans%}Email{%endtrans%}</th>
-        <th>{%trans%}Forms{%endtrans%}</th>
-        <th>{%trans%}Is Admin{%endtrans%}</th>
+        <td>{{user.created}}</td>
+        <td>{{user.enabled}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.forms|length}}</td>
+        <td>{{user.isAdmin()}}</td>
     </tr>
-</thead>
-{% for user in users %}
-<tr>
-    <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
-    {% if g.isRootUser %}
-        <td>{{user.hostname}}</td>
-    {% endif %}
-    <td>{{user.created}}</td>
-    <td>{{user.enabled}}</td>
-    <td>{{user.email}}</td>
-    <td>{{user.forms|length}}</td>
-    <td>{{user.isAdmin()}}</td>
-</tr>
-{% endfor %}
-</table>
+    {% endfor %}
+    </table>
 
+</div>
 </div>
 
 <script>

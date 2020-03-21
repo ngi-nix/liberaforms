@@ -5,8 +5,7 @@
 <div class="row col-md-2"></div>
     
 <div class="row col-md-4">
-    <div style="font-size:1.5em">{%trans%}Email server configuration{%endtrans%}</div>
-    <hr />
+    <div class="title_1 delimited">{%trans%}Email server configuration{%endtrans%}</div>
 
     <form method="POST" action="/site/email/config">
         {{ wtf_smtp.csrf_token }}
@@ -50,8 +49,7 @@
 
 <div class="row col-md-1"></div>
 <div class="row col-md-4">
-    <div style="font-size:1.5em">{%trans%}Test configuration{%endtrans%}</div>
-    <hr />
+    <div class="title_1 delimited">{%trans%}Test configuration{%endtrans%}</div>
     
     <form method="POST" action="/site/email/test-config">
         <p>
