@@ -18,25 +18,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from GNGforms import app, db
-from GNGforms.utils import *
-from GNGforms.migrate import migrateMongoSchema
+from GNGforms.utils.utils import *
+from GNGforms.utils.migrate import migrateMongoSchema
 from flask import flash, request, g
 from flask_babel import gettext 
 from urllib.parse import urlparse
 import os, string, random, datetime, json, markdown
 from mongoengine import QuerySet
-from pprint import pformat
+
 
 #from pprint import pprint as pp
 
-
-def get_obj_values_as_dict(obj):
-    values = {}
-    fields = type(obj).__dict__['_fields']
-    for key, _ in fields.items():
-        value = getattr(obj, key, None)
-        values[key] = value
-    return values
 
 class HostnameQuerySet(QuerySet):
     def ensure_hostname(self, **kwargs):
@@ -125,10 +117,10 @@ class User(db.Document):
         if self.blocked:
             return False
         return True
-               
+
     @property
     def forms(self):
-        return Form.findAll(editor=str(self.id))
+        return Form.findAll(editor_id=str(self.id))
 
     @property
     def authored_forms(self):
@@ -147,7 +139,7 @@ class User(db.Document):
         forms = Form.findAll(author_id=str(self.id))
         for form in forms:
             form.delete()
-        forms = Form.findAll(editor=str(self.id))
+        forms = Form.findAll(editor_id=str(self.id))
         for form in forms:
             del form.editors[str(self.id)]
             form.save()
@@ -242,9 +234,9 @@ class Form(db.Document):
 
     @classmethod
     def findAll(cls, **kwargs):
-        if 'editor' in kwargs:
-            kwargs={"__raw__": {'editors.%s' % kwargs["editor"]: {'$exists': True}}, **kwargs}
-            kwargs.pop('editor')
+        if 'editor_id' in kwargs:
+            kwargs={"__raw__": {'editors.%s' % kwargs["editor_id"]: {'$exists': True}}, **kwargs}
+            kwargs.pop('editor_id')
         if 'key' in kwargs:
             kwargs={"sharedEntries__key": kwargs['key'], **kwargs}
             kwargs.pop('key')

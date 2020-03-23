@@ -14,26 +14,8 @@
     <div class="col-md-2"></div>
 </div>
 <div class="row">
-    
-    <div class="col-md-3"></div>
-    <div class="col-md-9">
-
-        <div class="title_1">{%trans%}Share results{%endtrans%}</div>
-        <p>{%trans%}Share a readonly link with interested parties{%endtrans%}</p>
-        <div>
-            <span id="toggle_sharedEntries" class="btn-group btn-toggle">
-                <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
-            </span>
-            <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
-            <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
-        </div>
-    </div>
-</div>
-<div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-        <p>&nbsp;</p>
         <div class="title_1">{%trans%}Editors{%endtrans%}</div>
         <p>{%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}</p>
 
@@ -71,6 +53,24 @@
     </div>
     <div class="col-md-4"></div>
 </div>
+<div class="row">
+    
+    <div class="col-md-3"></div>
+    <div class="col-md-9">
+
+        <div class="title_1">{%trans%}Share results{%endtrans%}</div>
+        <p>{%trans%}Share a readonly link with interested parties{%endtrans%}</p>
+        <div>
+            <span id="toggle_sharedEntries" class="btn-group btn-toggle">
+                <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+            </span>
+            <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
+            <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
+        </div>
+    </div>
+</div>
+<p>&nbsp;</p>
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-9">

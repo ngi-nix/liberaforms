@@ -32,7 +32,7 @@ babel = Babel(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = 41
+app.config['APP_VERSION'] = 42
 app.config['SCHEMA_VERSION'] = 13
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
@@ -51,7 +51,21 @@ app.config['FAVICON_FOLDER'] = "%s/static/images/favicon/" % os.path.dirname(os.
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
-from GNGforms import views
+
+from GNGforms.views.main import main_bp
+from GNGforms.views.user import user_bp
+from GNGforms.views.form import form_bp
+from GNGforms.views.site import site_bp
+from GNGforms.views.admin import admin_bp
+from GNGforms.views.entries import entries_bp
+
+app.register_blueprint(main_bp)
+app.register_blueprint(user_bp)
+app.register_blueprint(form_bp)
+app.register_blueprint(site_bp)
+app.register_blueprint(admin_bp)
+app.register_blueprint(entries_bp)
+
 
 if __name__ == '__main__':
     app.run()

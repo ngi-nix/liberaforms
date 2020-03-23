@@ -38,7 +38,7 @@
 <div class="row col-md-1"></div>
 <div class="row col-md-3">
     
-    <form action="/site/login" method="POST" style="margin-top:1.5em">
+    <form action="/user/login" method="POST" style="margin-top:1.5em">
         {{ wtform.csrf_token }}
         <p>
             {{ wtform.username.label }}<br />
@@ -53,7 +53,7 @@
 
     <br />
     {% if g.current_user %}
-        <a href="/site/reset-password">{%trans%}Forgot your password?{%endtrans%}</a>
+        <a href="/user/reset-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% else %}
         <a href="/site/recover-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% endif %}

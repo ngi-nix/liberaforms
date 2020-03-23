@@ -1,0 +1,9 @@
+
+## v.42 2020/03/23
+ * Added flask blueprints.
+ * Split views and templates into folders
+ * Created utils module
+ * Refactored lots of code.
+ * No database changes
+
+ 

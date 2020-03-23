@@ -29,7 +29,7 @@
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
             <td>{{form.created}}</td>
-            <td><a href="/admin/users/id/{{form.user.id}}">{{form.user.username}}</a></td>
+            <td><a href="/admin/users/{{form.user.id}}">{{form.user.username}}</a></td>
             <td>{{form.isPublic()}}</td>
             <td>{{form.entries|length}}</td>
             {% if g.isRootUser %}
