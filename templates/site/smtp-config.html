@@ -2,69 +2,65 @@
 {% block content %}
 
 <div class="container">
-<div class="row col-md-2"></div>
+<div class="row">
+    <div class="col-md-3"></div>
     
-<div class="row col-md-4">
-    <div class="title_1 delimited">{%trans%}Email server configuration{%endtrans%}</div>
+    <div class="col-md-5">
+        <div class="title_1 delimited">{%trans%}Email server configuration{%endtrans%}</div>
 
-    <form method="POST" action="/site/email/config">
-        {{ wtf_smtp.csrf_token }}
-        <p>
-            {{ wtf_smtp.host.label }} <span class='required'>●</span><br />
-            {{ wtf_smtp.host(class_="form-control") }}
-            {% for error in wtf_smtp.host.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-            {{ wtf_smtp.port.label }} <span class='required'>●</span><br />
-            {{ wtf_smtp.port(class_="form-control") }}
-            {% for error in wtf_smtp.port.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-        </p>
-            {{ wtf_smtp.encryption.label }} <span class='required'>●</span><br />
-            {{ wtf_smtp.encryption(class_="form-control") }}
-        </p>
-        </p>
-            {{ wtf_smtp.user.label }}<br />
-            {{ wtf_smtp.user(class_="form-control") }}
-        </p>
-        </p>
-            {{ wtf_smtp.password.label }}<br />
-            <input class="form-control" id="password" name="password" type="password" value="{{wtf_smtp.password.data}}">
-        </p>
-        </p>
-            {{ wtf_smtp.noreplyAddress.label }} <span class='required'>●</span><br />
-            {{ wtf_smtp.noreplyAddress(class_="form-control") }}
-            {% for error in wtf_smtp.noreplyAddress.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-        <p></p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
-    </form>
-</div>
+        <form method="POST" action="/site/email/config">
+            {{ wtf_smtp.csrf_token }}
+            <p>
+                {{ wtf_smtp.host.label }} <span class='required'>●</span><br />
+                {{ wtf_smtp.host(class_="form-control") }}
+                {% for error in wtf_smtp.host.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </p>
+                {{ wtf_smtp.port.label }} <span class='required'>●</span><br />
+                {{ wtf_smtp.port(class_="form-control") }}
+                {% for error in wtf_smtp.port.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </p>
+            </p>
+                {{ wtf_smtp.encryption.label }} <span class='required'>●</span><br />
+                {{ wtf_smtp.encryption(class_="form-control") }}
+            </p>
+            </p>
+                {{ wtf_smtp.user.label }}<br />
+                {{ wtf_smtp.user(class_="form-control") }}
+            </p>
+            </p>
+                {{ wtf_smtp.password.label }}<br />
+                <input class="form-control" id="password" name="password" type="password" value="{{wtf_smtp.password.data}}">
+            </p>
+            </p>
+                {{ wtf_smtp.noreplyAddress.label }} <span class='required'>●</span><br />
+                {{ wtf_smtp.noreplyAddress(class_="form-control") }}
+                {% for error in wtf_smtp.noreplyAddress.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </p>
+            <p></p>
+            <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
+            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
+        </form>
 
-<div class="row col-md-1"></div>
-<div class="row col-md-4">
-    <div class="title_1 delimited">{%trans%}Test configuration{%endtrans%}</div>
-    
-    <form method="POST" action="/site/email/test-config">
-        <p>
+        <p>&nbsp;</p>
+
+        <div class="title_1 delimited">{%trans%}Test configuration{%endtrans%}</div>
+        
+        <form method="POST" action="/site/email/test-config">
             {{ wtf_email.csrf_token }}
-            {{ wtf_email.email.label }}<br />
-            {{ wtf_email.email(class_="form-control", placeholder="person@example.com") }}
-            {% for error in wtf_email.email.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-        <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Send{%endtrans%}" >
-    </form>
+            <div class="input-group mb-3">
+              <input id="email-recipient" name="email" type="text" class="form-control" placeholder="person@example.com" aria-label="Recipient's username" aria-describedby="button-sendmail">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit" id="button-sendmail">{%trans%}Send{%endtrans%}</button>
+              </div>
+            </div>
+        </form>
 </div>
-
-<div class="row col-md-1"></div>
 </div>
 
 {% endblock %}

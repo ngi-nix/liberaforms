@@ -3,24 +3,26 @@
 
 
 <div class="container">
-<div class="row col-md-4"></div>
-    
-<div class="row col-md-4">
+<div class="row">
+    <div class="col-md-3"></div>
+        
+    <div class="col-md-5">
 
-    <div class="title_1 delimited">{%trans%}Change site name{%endtrans%}</div>
+        <div class="title_1 delimited">{%trans%}Change site name{%endtrans%}</div>
 
-    <form method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <p>
-        <label>{%trans%}New site name{%endtrans%}</label><br />
-        <input type="text" name="sitename" class="form-control" value="{{site.siteName }}" required ><br />
-        </p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
-    </form>
+        <div class="title_2">{%trans%}New site name{%endtrans%}</div>
+        
+        <form method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <p>
+            <input type="text" name="sitename" class="form-control" value="{{site.siteName }}" required ><br />
+            </p>
+            <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
+        </form>
+
+    </div>
 
 </div>
-
-<div class="row col-md-4"></div>    
 </div>
 
   

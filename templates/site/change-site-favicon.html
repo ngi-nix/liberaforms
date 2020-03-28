@@ -3,30 +3,32 @@
 
 
 <div class="container">
-<div class="row col-md-4"></div>
-    
-<div class="row col-md-4">
+<div class="row">
+    <div class="col-md-3"></div>
+        
+    <div class="col-md-5">
 
-    <div class="title_1 delimited">
-        {%trans%}Change site favicon{%endtrans%}
-        <img src="{{g.site.faviconURL()}}" width=24 height=24 />
+        <div class="title_1 delimited">
+            {%trans%}Change site favicon{%endtrans%}
+            <img src="{{g.site.faviconURL()}}" width=24 height=24 />
+        </div>
+
+        <div class="title_2">{%trans%}Upload image{%endtrans%}</div>
+
+        <form method="POST" enctype=multipart/form-data >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <p>
+            <span class="hint">{%trans%}A small, square PNG image{%endtrans%}</span><br />
+            <input type=file name=file><br />
+            </p>
+            <input class="btn-success btn" type="submit" value="{%trans%}Upload{%endtrans%}">
+            <input class="btn-primary btn" type="button" value="{%trans%}Use default{%endtrans%}" onClick="location.href='/site/reset-favicon'">
+            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
+        </form>
+
     </div>
 
-    <form method="POST" enctype=multipart/form-data >
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <p>
-        <label>{%trans%}Upload image{%endtrans%}</label><br />
-        <span class="hint">{%trans%}A small, square PNG image{%endtrans%}</span><br />
-        <input type=file name=file><br />
-        </p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Upload{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Use default{%endtrans%}" onClick="location.href='/site/reset-favicon'">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
-    </form>
-
 </div>
-
-<div class="row col-md-4"></div>    
 </div>
 
   

@@ -9,7 +9,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <script src="/static/bootstrap/popper.1.14.3.min.js"></script>
+  <link rel="stylesheet" href="/static/bootstrap/4.1/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
   <link rel="stylesheet" href="/static/css/gngforms.css">
   <link rel="stylesheet" href="/static/css/custom.css">
 </head>
@@ -28,17 +30,19 @@
 
 {% if 'current_user' in g and g.current_user %}
 <div id="header" class="container">
-    <div id="menu" class="row col-md-12">
-        <a href="/">{%trans%}Start{%endtrans%}</a> | 
-        {% if g.current_user.enabled %}
-            {% if g.isAdmin %}
-                <a href="/admin/forms">{%trans%}Forms{%endtrans%}</a> | 
-                <a href="/admin/users">{%trans%}Users{%endtrans%}</a> | 
+    <div class="row">
+        <div id="menu" class="col-md-12">
+            <a href="/">{%trans%}Start{%endtrans%}</a> | 
+            {% if g.current_user.enabled %}
+                {% if g.isAdmin %}
+                    <a href="/admin/forms">{%trans%}Forms{%endtrans%}</a> | 
+                    <a href="/admin/users">{%trans%}Users{%endtrans%}</a> | 
+                {% endif %}
+                <a href="/forms">{%trans%}My forms{%endtrans%}</a> |
             {% endif %}
-            <a href="/forms">{%trans%}My forms{%endtrans%}</a> |
-        {% endif %}
-        <a href="/user/{{ g.current_user.username }}">{%trans%}Settings{%endtrans%}</a> | 
-        <a href="/user/logout">{%trans%}Logout{%endtrans%}</a>
+            <a href="/user/{{ g.current_user.username }}">{%trans%}Settings{%endtrans%}</a> | 
+            <a href="/user/logout">{%trans%}Logout{%endtrans%}</a>
+        </div>
     </div>
 </div>
 {% endif %}
@@ -49,12 +53,11 @@
 
 
 <p>&nbsp;</p>
-<div id="footer">
+<div id="footer" class="container-fluid">
     GNGforms. AGPLv3
     {% if not embedded %}
     <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
     {% endif %}
-    &nbsp;
 </div>
 
 </body>

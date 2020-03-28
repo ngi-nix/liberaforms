@@ -1,4 +1,11 @@
 
+## v.44
+ * Upgraded to Bootstrap 4
+ * Upgraded dataTables to 1.10.20
+ * Fixed grid HTML in templates
+ * Toggle block root_user always returns false now.
+ * Improved INSTALL
+
 ## v.43
  * Fixed skewed number field total and missing csv column cause by dynamic DPL field
  * More embedded form stuff. csrf error correction.

@@ -3,52 +3,62 @@
 
 
 <div class="container">
-<div class="row col-md-4"></div>
-    
-<div class="row col-md-4">
+<div class="row">
+    <div class="col-md-3"></div>
+        
+    <div class="col-md-5">
 
-    <div class="title_1 delimited">{%trans%}Send a new user invitation{%endtrans%}</div>
-
-    <form method="POST">
-        {{ wtform.csrf_token }}
-        <p>
-            {{ wtform.email.label }} <span class='required'>●</span><br />
-            {{ wtform.email(class_="form-control") }}
-            {% for error in wtform.email.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-        <p>
-            {{ wtform.message.label }}<br />
-            {{ wtform.message(class_="form-control") }}
-        </p>
-        <p>
-            {{ wtform.admin.label }} {{ wtform.admin() }}
-        </p>
-        {% if g.isRootUser %}
-            <div class="title_2 delimited">{%trans%}Root user options{%endtrans%}</div>
-
-            <label>{%trans%}Invite to one of these sites{%endtrans%}</label>
-            <div class="app_radios">
-            {% for site in sites %}
-            <div class="radio radio-info">
-                <input type="radio" name="hostname" value="{{ site.hostname }}" {% if site.hostname == g.site.hostname %}checked{% endif %} >
-                <label>{{ site.hostname }}</label>
+        <div class="title_1 delimited">{%trans%}Send a new user invitation{%endtrans%}</div>
+        <form method="POST">
+            {{ wtform.csrf_token }}
+            <p>
+                {{ wtform.email.label }} <span class='required'>●</span><br />
+                {{ wtform.email(class_="form-control") }}
+                {% for error in wtform.email.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </p>
+            <p>
+                {{ wtform.message.label }}<br />
+                {{ wtform.message(class_="form-control") }}
+            </p>
+            <p>
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" name="admin" class="custom-control-input" id="adminCheck" checked>
+                <label class="custom-control-label" for="adminCheck">{{ wtform.admin.label }}</label>
             </div>
-            {% endfor %}
-            </div>
-            <br />
-        {% else %}
-            <input type="hidden" name="hostname" value="{{ g.site.hostname }}" />
-        {% endif %}
+            </p>
+            {% if g.isRootUser %}
+                <div class="title_2 delimited">{%trans%}Root user options{%endtrans%}</div>
 
-        <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}'">
-    </form>
+                <label>{%trans%}Invite to one of these sites{%endtrans%}</label>
+                <div class="app_radios">
+                {% for site in sites %}
+                    <div class="custom-control custom-radio">
+                        <input  type="radio"
+                                id="customRadio{{loop.index}}"
+                                class="custom-control-input" 
+                                name="hostname" value="{{ site.hostname }}"
+                                {% if site.hostname == g.site.hostname %}checked{% endif %}
+                                >
+                        <label  class="custom-control-label"
+                                for="customRadio{{loop.index}}">
+                                {{ site.hostname }}
+                        </label>
+                    </div>
+                {% endfor %}
+                </div>
+                <br />
+            {% else %}
+                <input type="hidden" name="hostname" value="{{ g.site.hostname }}" />
+            {% endif %}
 
-</div>
+            <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
+            <a class="btn btn-primary" role="button" href="/user/{{g.current_user.username}}">{%trans%}Cancel{%endtrans%}</a>
+        </form>
+    </div>
 
-<div class="row col-md-4"></div>    
+</div>    
 </div>
   
 {% endblock %}

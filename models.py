@@ -156,7 +156,8 @@ class User(db.Document):
     def toggleBlocked(self):
         if self.isRootUser():
             self.blocked=False
-        self.blocked=False if self.blocked else True
+        else:
+            self.blocked=False if self.blocked else True
         self.save()
         return self.blocked
             

@@ -2,18 +2,18 @@
 {% block content %}
 
 <div class="container">
-<div class="row col-md-3"></div>
-
-<div class="row col-md-5">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
     
     <div class="returnToForm">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
         {{ form.slug }}
     </div>
     
     <div id="toggle_notification" class="btn-group btn-toggle">
-        <button id="notification_true" class="btn btn-xs btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-        <button id="notification_false" class="btn btn-xs btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+        <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+        <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
     </div>
     {%trans%}Notify me when this form expires{%endtrans%}
     <p>&nbsp;</p>
@@ -50,12 +50,12 @@
             </td>
             <td>
             {% if values.type=="number" %}
-            <input id="{{field_name}}" class="condition form-control sm-input" type="number" value="{{values.condition|safe}}" />
+            <input id="{{field_name}}" class="condition form-control form-control-sm" type="number" value="{{values.condition|safe}}" />
             {% endif %}
             </td>
             <td class="text-right">
             {% if values.type=="number" %}
-                <input id="button-{{field_name}}" type="button" class="{%if values.condition %}btn-success{% else %}btn-primary{% endif %} btn btn-xs" value="{%trans%}Save max.{%endtrans%}" onClick="js:setMaxValue('{{field_name}}');">
+                <input id="button-{{field_name}}" type="button" class="{%if values.condition %}btn-success{% else %}btn-primary{% endif %} btn btn-sm" value="{%trans%}Save max.{%endtrans%}" onClick="js:setMaxValue('{{field_name}}');">
             {% endif %}
             </td>
         </tr>
@@ -63,8 +63,8 @@
     </table>  
     {% endif %}
         
-</div>
-<div class="row col-md-4"></div>    
+    </div>
+</div>    
 </div>
 
 

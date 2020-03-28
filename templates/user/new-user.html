@@ -4,8 +4,9 @@
 
 {% if not created %}
 <div class="container">
-    <div class="row col-md-4"></div>
-    <div class="row col-md-4">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
     
     <div class="title_1 delimited">{%trans%}New user{%endtrans%}</div>
     
@@ -48,18 +49,18 @@
     </form>
     
     </div>
-    <div class="row col-md-4"></div>
     
 </div>
+</div>
 {% else %}
-    <div class="container">
-        <div class="row col-md-3"></div>
-        <div class="row col-md-6 text-center">
-        
+<div class="container">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-9 text-center">
         <h1>{%trans%}We sent you an email!{%endtrans%}</h1>
-
-        <div class="row col-md-3"></div>
     </div>
+</div>
+</div>
 {% endif %}
 
 {% endblock %}

@@ -1,26 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script src="/static/dataTables/jquery.dataTables.min.js"></script>
-<script src="/static/dataTables/dataTables.bootstrap.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/dataTables.bootstrap.min.css">
+<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
+<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
 
 {% set fieldIndex=form.getFieldIndexForDataDisplay() %}
 
 <div class="container">
-    <div class="row col-md-11" style="font-size:1.5em">
+<div class="row">
+    <div class="col-md-8" style="font-size:1.5em">
     {{ form.slug }}
     </div>
-    <div class="row col-md-1">
-    <input class="btn-success btn" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='{{ form.getSharedEntriesURL('csv') }}'">
+    <div class="col-md-4" style="text-align:right">
+    <input class="btn-success btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='{{ form.getSharedEntriesURL('csv') }}'">
     </div>
 </div>
-
-
-<div class="container">
+<div class="row">
+    <div class="col-md-12">
     <hr />
 
-    <table id="formEntries" style="display:none" class="table table-bordered table-striped table-condensed">
+    <table id="formEntries" style="display:none" class="table table-bordered table-striped table-sm">
     <thead>
         <tr>
         {% for field in fieldIndex %}
@@ -36,6 +36,7 @@
         </tr>
     {% endfor %}
     </table>
+</div>
 </div>
 
 <script>

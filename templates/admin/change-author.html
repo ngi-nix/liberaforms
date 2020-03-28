@@ -2,16 +2,17 @@
 {% block content %}
 
 <div class="container">
-    <div class="row col-md-3"></div>
-    <div class="row col-md-5">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
         
         <div class="returnToForm">
-            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
             {{ form.slug }}
         </div>
         <div class="title_1">{%trans%}Change author{%endtrans%}</div>
         
-        <table class="table table-striped table-condensed">
+        <table class="table table-sm">
         {% if g.isRootUser %}
             <tr>
                <td>{%trans%}Form site{%endtrans%}</td>
@@ -30,9 +31,9 @@
 
         <form action="/admin/forms/change-author/{{form.id}}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input name="old_author_username" type="text" placeholder="{%trans%}Current author's username{%endtrans%}" class="form-control" required />
+            <input name="old_author_username" class="form-control" type="text" placeholder="{%trans%}Current author's username{%endtrans%}" required />
             <br />
-            <input name="new_author_username" type="text" placeholder="{%trans%}New author's username{%endtrans%}" class="form-control" required />
+            <input name="new_author_username" class="form-control" type="text" placeholder="{%trans%}New author's username{%endtrans%}" required />
             <p></p>
             <input class="btn-danger btn btn-md" type="submit" value="{%trans%}Change author{%endtrans%}" />
         </form>
@@ -45,7 +46,7 @@
         {%trans%}Users listed here have the <b>same permissions</b> as the author{%endtrans%}
         </p>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
         {% for editor in editors %}
             <tr>
                 <td>{{ editor.username }}</td>
@@ -63,7 +64,8 @@
     {% endif %}
 
     </div>
-    <div class="row col-md-4"></div>
+
+</div>
 </div>
   
 {% endblock %}

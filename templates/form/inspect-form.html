@@ -4,7 +4,8 @@
 <script src="/static/formBuilder/form-render.min.js"></script>
 
 <div class="container">
-    <div class="row col-md-6">
+<div class="row">
+    <div class="col-md-6">
         <div class="title_1 delimited">
             {%trans%}Form{%endtrans%}: {{ form.slug }}
         </div> 
@@ -26,23 +27,22 @@
         <div>
         {{ form.afterSubmitText['html'] | safe }}
         </div>
-        
     </div>
-    <div class="row col-md-1"></div> 
-    <div class="row col-md-5">
+    
+    <div class="col-md-6">
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
             {% if form.editors[g.current_user.id|string] is defined %}
-            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View log{%endtrans%}" onClick="location.href='/forms/log/list/{{form.id}}'" >
+            <a class="btn btn-primary btn-xs" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>
             {% endif %}
         </div>
         
-        <table class="table table-striped table-condensed">
+        <table class="table table-sm table-striped">
             <tr>
                <td>{%trans%}Entries{%endtrans%}</td>
                <td>
                    {% if form.editors[g.current_user.id|string] is defined %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}" onClick="location.href='/forms/entries/{{form.id}}'" >
+                        <a class="btn btn-primary btn-xs" role="button" href="/forms/entries/{{form.id}}">{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}</a>
                    {% else %}
                         {{form.totalEntries}}
                    {% endif %}
@@ -69,11 +69,11 @@
                <td>
                    {% if form.editors[g.current_user.id|string] is defined %}
                         {% if form.expired %}
-                            <input class="btn-warning btn btn-xs" type="button" value="{%trans%}Expired{%endtrans%}" onClick="location.href='/forms/expiration/{{form.id}}'" >
+                            <a class="btn btn-warning btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}Expired{%endtrans%}</a>
                         {% elif form.willExpire() %}
-                            <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/expiration/{{form.id}}'" >
+                            <a class="btn btn-success btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
-                            <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/expiration/{{form.id}}'" >
+                            <a class="btn btn-primary btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}False{%endtrans%}</a>
                         {% endif %}
                    {% else %}
                         {% if form.expired %}
@@ -108,9 +108,9 @@
                <td>
                    {% if form.editors[g.current_user.id|string] is defined %}
                         {% if form.isShared() %}
-                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
+                        <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
+                        <a class="btn btn-primary btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}False{%endtrans%}</a>
                         {% endif %}
                    {% else %}
                         {{ form.isShared() }}
@@ -122,9 +122,9 @@
                <td>
                    {% if form.editors[g.current_user.id|string] is defined %}
                         {% if form.restrictedAccess %}
-                        <input class="btn-success btn btn-xs" type="button" value="{%trans%}True{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
+                        <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
-                        <input class="btn-primary btn btn-xs" type="button" value="{%trans%}False{%endtrans%}" onClick="location.href='/forms/share/{{form.id}}'" >
+                        <a class="btn btn-primary btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}False{%endtrans%}</a>
                         {% endif %}
                    {% else %}
                         {{ form.restrictedAccess }}
@@ -176,17 +176,18 @@
         {% if form.editors[g.current_user.id|string] is defined %}
         <hr />
         <div id="embed_snippet" style="display:none">
-        <pre><code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code></pre>
+        <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
+        <p>&nbsp;</p>
         </div>
         <p>
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit form{%endtrans%}" onClick="location.href='/forms/edit/{{ form.id }}'">
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">{%trans%}Edit form{%endtrans%}</a>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Duplicate form{%endtrans%}" onClick="location.href='/forms/duplicate/{{ form.id }}'">
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
         </p>
             {% if form.totalEntries == 0 %}
-            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete form{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
             {% else %}
-            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete form and entries{%endtrans%}" onClick="location.href='/forms/delete/{{ form.id }}'">
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}</a>
             {% endif %}
         {% endif %}
 
@@ -195,14 +196,15 @@
         <div class="title_1 delimited">
             {%trans%}Admin options{%endtrans%}
         </div>
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change author{%endtrans%}" onClick="location.href='/admin/forms/change-author/{{form.id}}'" >
+        <a class="btn btn-primary" role="button" href="/admin/forms/change-author/{{form.id}}">{%trans%}Change author{%endtrans%}</a>
             {% if form.adminPreferences['public'] %}
-            <input class="btn-danger btn btn-sm" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
+            <input class="btn btn-danger" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
             {% else %}
-            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
+            <input class="btn btn-primary" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
             {% endif %}
         {% endif %}
     </div>
+</div>
 </div>
 
 

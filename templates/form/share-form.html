@@ -7,7 +7,7 @@
     <div class="col-md-7">
         
         <div class="returnToForm">
-            <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Return to form{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
             {{ form.slug }}
         </div>
     </div>
@@ -19,7 +19,7 @@
         <div class="title_1">{%trans%}Editors{%endtrans%}</div>
         <p>{%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}</p>
 
-        <table class="table table-condensed">
+        <table class="table table-sm">
         {% for editor in form.getEditors() %}
             <tr id="editor_{{editor.id}}">
                 <td>
@@ -34,24 +34,19 @@
                 </td>
             </tr>
         {% endfor %}
-        <tr>
+        </table>
+            
         <form action="/forms/add-editor/{{form.id}}" method="POST">
             {{ wtform.csrf_token }}
-            <td>
-                {{ wtform.email(class_="form-control", placeholder=_("New editor's email")) }}
-                {% for error in wtform.email.errors %}
-                    <span class="formError">{{ error }}</span><br />
-                {% endfor %}
-            </td>
-            <td class="text-right">
-                <input class="btn-primary btn btn-md" type="submit" value="{%trans%}Add{%endtrans%}" >
-            </td>
+            <div class="input-group mb-3">
+              <input name="email" type="text" class="form-control" placeholder="person@example.com" aria-label="Recipient's username" aria-describedby="button-editor">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit" id="button-editor">{%trans%}Add new editor{%endtrans%}</button>
+              </div>
+            </div>
         </form>
-        </tr>
-        </table>
-
+        <p>&nbsp;</p>
     </div>
-    <div class="col-md-4"></div>
 </div>
 <div class="row">
     
@@ -62,8 +57,8 @@
         <p>{%trans%}Share a readonly link with interested parties{%endtrans%}</p>
         <div>
             <span id="toggle_sharedEntries" class="btn-group btn-toggle">
-                <button id="sharedEntries_true" class="btn btn-xs btn-default {% if form.areEntriesShared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                <button id="sharedEntries_false" class="btn btn-xs btn-default {% if not form.areEntriesShared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                <button id="sharedEntries_true" class="btn btn-sm btn-default {% if form.areEntriesShared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                <button id="sharedEntries_false" class="btn btn-sm btn-default {% if not form.areEntriesShared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
             </span>
             <a id="enabled_link" href="{{ form.getSharedEntriesURL() }}" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>{{ form.getSharedEntriesURL() }}</a>
             <span id="disabled_link" style="text-decoration:line-through; {%if form.areEntriesShared()%}display:None{%endif%}" >{{ form.getSharedEntriesURL() }}</span>
@@ -79,8 +74,8 @@
         <p>{%trans%}Only visible to people with a user account (login required){%endtrans%}</p>
         <div>
             <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
-                <button id="restrictedAccess_true" class="btn btn-xs btn-default {% if form.restrictedAccess %}btn-success{% endif %}">{%trans%}Restricted{%endtrans%}</button>
-                <button id="restrictedAccess_false" class="btn btn-xs btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">{%trans%}Public form{%endtrans%}</button>
+                <button id="restrictedAccess_true" class="btn btn-sm btn-default {% if form.restrictedAccess %}btn-success{% endif %}">{%trans%}Restricted{%endtrans%}</button>
+                <button id="restrictedAccess_false" class="btn btn-sm btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">{%trans%}Public form{%endtrans%}</button>
             </span>
         </div>
     </div>

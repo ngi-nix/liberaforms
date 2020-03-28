@@ -1,6 +1,8 @@
 html {
   position: relative;
   min-height: 100%;
+  font-size: 14px;
+  line-height: 1;
 }
 body {
   color: #333333;
@@ -20,7 +22,6 @@ body {
   text-align:right;
   position: absolute;
   bottom: 0;
-  width: 100%;
   /* Set the fixed height of the footer here */
   height: 25px;
 }
@@ -54,11 +55,18 @@ hr { margin-top: 5px }
   border-bottom: 1px solid #eee;
   padding-bottom: 0.25em;
 }
-.app_radios label {
-  margin-left: 1em;
+.btn-xs {
+  padding: .45rem .45rem;
+  font-size: .875rem;
+  line-height: .55;
+  border-radius: .2rem;
 }
-.app_radios input[type="radio"] {
-  margin-left: 0;
+.app_radios label {
+  padding-left: 0.75em;
+  cursor: pointer;
+}
+.app_radios  > .custom-radio {
+    margin-bottom: 0.4em;
 }
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
@@ -89,6 +97,9 @@ input[type="checkbox"] {
 .dataConsent {
   padding: 1em 0 2em 0;
 }
+code {
+  margin-bottom: 1em;
+}
 .highlightedText {
     color: #d9534f;
 }
@@ -103,14 +114,14 @@ input[type="checkbox"] {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color: #5cb85c;
+    background-color: #28a745;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 .info {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color: #337ab7;
+    background-color: #17a2b8;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 .warning {
@@ -124,7 +135,7 @@ input[type="checkbox"] {
     color: white;
     font-size: 1.2em;
     font-weight: bold;
-    background-color: #d9534f;
+    background-color: #dc3545;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
