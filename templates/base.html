@@ -2,8 +2,10 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>{% if g.site %}{{ g.site.siteName }}{% endif %}</title>
-  <link rel="shortcut icon" type="image/png" href="{% if g.site %}{{g.site.faviconURL()}}{% endif %}"/>
+  {% if 'site' in g and g.site %}
+  <title>{{ g.site.siteName }}</title>
+  <link rel="shortcut icon" type="image/png" href="{{g.site.faviconURL()}}"/>
+  {% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>
@@ -24,7 +26,7 @@
     {% endif %}
 {% endwith %}
 
-{% if g.current_user %}
+{% if 'current_user' in g and g.current_user %}
 <div id="header" class="container">
     <div id="menu" class="row col-md-12">
         <a href="/">{%trans%}Start{%endtrans%}</a> | 
@@ -49,7 +51,9 @@
 <p>&nbsp;</p>
 <div id="footer">
     GNGforms. AGPLv3
+    {% if not embedded %}
     <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
+    {% endif %}
     &nbsp;
 </div>
 

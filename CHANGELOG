@@ -1,9 +1,22 @@
 
+## v.43
+ * Fixed skewed number field total and missing csv column cause by dynamic DPL field
+ * More embedded form stuff. csrf error correction.
+
 ## v.42 2020/03/23
  * Added flask blueprints.
  * Split views and templates into folders
  * Created utils module
- * Refactored lots of code.
- * No database changes
 
+## v.40 2020/03/20
+ * Fixed missing checkbox and radio values that may be created by forgotten by formbuilder
+
+## v.39 2020/03/19
+ * Upgrade formbuilder to v3.4.2
  
+## v.34 2020/03/17
+ * Added Flask's WTF.
+
+ ## v.32 2020/03/14
+ * Added mongoengine
+ * Added UPGRADE

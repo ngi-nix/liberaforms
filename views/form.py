@@ -465,7 +465,7 @@ def toggle_form_expiration_notification(id):
     return JsonResponse(json.dumps({'notification':queriedForm.toggleExpirationNotification()}))
     
 
-@form_bp.route('/e/<string:slug>', methods=['GET', 'POST'])
+@form_bp.route('/embed/<string:slug>', methods=['GET', 'POST'])
 @anon_required
 @csrf.exempt
 @sanitized_slug_required

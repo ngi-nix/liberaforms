@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from flask import g, render_template
 from GNGforms.utils.utils import *
 from functools import wraps
 
@@ -65,6 +66,7 @@ def anon_required(f):
             return f(*args, **kwargs)
     return wrap
 
+"""
 def queriedForm_editor_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
@@ -75,6 +77,7 @@ def queriedForm_editor_required(f):
         kwargs['queriedForm']=queriedForm
         return f(*args, **kwargs)
     return wrap
+"""
 
 def sanitized_slug_required(f):
     @wraps(f)

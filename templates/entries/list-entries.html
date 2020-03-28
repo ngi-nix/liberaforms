@@ -101,9 +101,9 @@ $(document).ready(function() {
         },
         "initComplete": function(settings, json) {
             tallyColumns.forEach(function(column) {
-                col=column+1;
+                col=column+1{% if form.isDataConsentEnabled() %}+1{% endif %};
                 sum=table.column( col ).data().sum();
-                $("#entriesTable th:nth-child("+ (col+1) +")" ).append( " <span class='col_sum'>("+sum+")</span>" );
+                $("#entriesTable th:nth-child("+ (col+1) +")").append(" <span class='col_sum'>("+sum+")</span>");
             });
             $("#entriesTable").show();
         },

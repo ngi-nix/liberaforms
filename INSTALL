@@ -2,7 +2,20 @@
 
 # Install GNGforms
 
-Create a python3 venv.
+## Install mongodb
+apt-get install mongodb
+
+## Clone gngforms and create config.cfg
+
+git clone https://gitlab.com/lleialtec/gngforms.git /opt/GNGforms
+cd /opt/GNGforms
+cp config.example.cfg config.cfg
+
+And edit /opt/GNGforms/config.cfg
+
+
+## Create a python3 venv
+
 If you have Python3 on your host
 
 apt-get install python3-venv
@@ -17,20 +30,7 @@ virtualenv /opt/venv --python=python3
 ## Install python packages
 
 source /opt/venv/bin/activate
-pip install ./requirements.txt
-
-
-## Clone gngforms and create config.cfg
-
-git clone https://gitlab.com/lleialtec/gngforms.git /opt/GNGforms
-cd /opt/GNGforms
-cp config.example.cfg config.cfg
-
-And edit /opt/gngforms/config.cfg
-
-
-## Install mongodb
-apt-get install mongodb
+pip install /opt/GNGforms/requirements.txt
 
 
 ## Configure gunicorn
@@ -92,7 +92,6 @@ if __name__ == "__main__":
 
 Now start the server
 /opt/venv/bin/python3 /opt/gngforms_manager.py runserver
-
 
 
 # Configure nginx proxy

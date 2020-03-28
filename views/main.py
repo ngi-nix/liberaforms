@@ -18,9 +18,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from urllib.parse import urlparse
-from flask import request, render_template, redirect
-from flask import g, session, flash, Blueprint
+from flask import request, render_template, redirect, flash
+from flask import g, session, Blueprint
 from flask_wtf.csrf import CSRFError
+
+#from flask import ctx, current_app, has_app_context, app_ctx_globals_class
 
 from GNGforms import app
 from GNGforms.models import Site, User
@@ -28,8 +30,17 @@ from GNGforms.utils.wraps import *
 from GNGforms.utils.utils import *
 import GNGforms.utils.wtf as wtf
 
+
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='../templates/main')
+#main_bp.before_request(shared_functions.before_request)
+
+
+def print_g(string=None):
+    if string:
+        print("printing from: %s" % string)
+    for e in iter(g):
+        print(e)
 
 @app.before_request
 def before_request():
@@ -51,25 +62,27 @@ def before_request():
             g.isAdmin=True
 
 
-@main_bp.route('/', methods=['GET'])
-def index():
-    return render_template('index.html', site=g.site, wtform=wtf.Login())
-
 @app.errorhandler(404)
 def page_not_found(error):
-    print('404!!!!')
-    return render_template('page-not-found.html'), 400
+    #print('404!!!!')
+    return render_template('page-not-found.html', error=error), 400
 
 @app.errorhandler(500)
 def server_error(error):
     return render_template('server-error.html'), 500
 
 @app.errorhandler(CSRFError)
-def handle_csrf_error(e):
-    flash(e.description, 'error')
-    return redirect(make_url_for('main_bp.index'))
+def handle_csrf_error(e):   
+    if 'current_user' in g:
+        flash(e.description, 'error')
+        return redirect(make_url_for('main_bp.index'))
+    else:
+        return render_template('server-error.html', error=e.description), 500
 
 
+@main_bp.route('/', methods=['GET'])
+def index():
+    return render_template('index.html', site=g.site, wtform=wtf.Login())
 
 @enabled_user_required
 @main_bp.route('/test', methods=['GET'])

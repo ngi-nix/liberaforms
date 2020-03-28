@@ -312,7 +312,7 @@ class Form(db.Document):
 
     @property
     def embed_url(self):
-        return "%se/%s" % (self.site.host_url, self.slug) 
+        return "%sembed/%s" % (self.site.host_url, self.slug)
 
     def isDataConsentEnabled(self):
         if not self.site.isPersonalDataConsentEnabled():

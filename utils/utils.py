@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from GNGforms import app, babel
 from GNGforms import models
 from flask import Response, redirect, request, url_for
-from flask import g, flash
+from flask import g, flash #, has_app_context
 from flask_babel import gettext
 from unidecode import unidecode
 import json, time, re, string, random, datetime, csv
@@ -40,12 +40,13 @@ def get_obj_values_as_dict(obj):
 
 def make_url_for(function, **kwargs):
     kwargs["_external"]=True
-    kwargs["_scheme"]=g.site.scheme
+    if 'site' in g:
+        kwargs["_scheme"]=g.site.scheme
     return url_for(function, **kwargs)
 
 @babel.localeselector
 def get_locale():
-    if g.current_user:
+    if 'current_user' in g and g.current_user:
         return g.current_user.language
     else:
         return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
@@ -185,7 +186,7 @@ def isFutureDate(date):
 def writeCSV(form):
     fieldnames=[]
     fieldheaders={}
-    for field in form.fieldIndex:
+    for field in form.getFieldIndexForDataDisplay():
         fieldnames.append(field['name'])
         fieldheaders[field['name']]=field['label']
     csv_name='%s/%s.csv' % (app.config['TMP_DIR'], form.slug)

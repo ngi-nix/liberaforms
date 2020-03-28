@@ -24,7 +24,7 @@ from flask_wtf.csrf import CSRFProtect
 import sys, os
 
 
-app = Flask(__name__)
+app = Flask(__name__.split('.')[0])
 app.config.from_pyfile('config.cfg')
 db = MongoEngine(app)
 babel = Babel(app)
@@ -32,7 +32,7 @@ babel = Babel(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = 42
+app.config['APP_VERSION'] = 43
 app.config['SCHEMA_VERSION'] = 13
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
