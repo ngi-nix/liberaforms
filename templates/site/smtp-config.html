@@ -44,7 +44,7 @@
             </p>
             <p></p>
             <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
-            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
+            <a class="btn btn-primary" role="button" href="/user/{{ g.current_user.username }}#site_settings">{%trans%}Cancel{%endtrans%}</a>
         </form>
 
         <p>&nbsp;</p>

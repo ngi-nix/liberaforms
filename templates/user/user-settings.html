@@ -21,7 +21,7 @@
             {%trans%}Your email has not been validated{%endtrans%}
         </div>
         <div style="display:inline; float:right;">
-            <a class="btn btn-success" role="button" href="/user/send-validation">{%trans%}Validate my email{%endtrans%}</a>
+            <a class="btn btn-sm btn-success" role="button" href="/user/send-validation">{%trans%}Validate my email{%endtrans%}</a>
         </div>
         <p style="clear:both;"></p>
         <p>&nbsp;</p>
@@ -32,20 +32,20 @@
             You need to update DB schema
         </div>
         <div style="display:inline; float:right;">
-            <a class="btn btn-success" role="button" href="/site/update">{%trans%}Update{%endtrans%}</a>
+            <a class="btn btn-sm btn-success" role="button" href="/site/update">{%trans%}Update{%endtrans%}</a>
         </div>
         <p style="clear:both;"></p>
         <p>&nbsp;</p>
         {% endif %}
 
-        <table class="table">
+        <table class="table table-sm">
             <tr>
                 <td>{%trans%}Email address{%endtrans%}</td>
                 <td>
                 {{ g.current_user.email }}
                 </td>
                 <td class="text-right">
-                <a class="btn btn-primary btn-sm" role="button" href="/user/change-email">{%trans%}Change{%endtrans%}</a>
+                <a class="btn btn-primary btn-xs" role="button" href="/user/change-email">{%trans%}Change{%endtrans%}</a>
                 </td>
             </tr>
             <tr>
@@ -59,7 +59,7 @@
                     <i class="fa fa-asterisk" aria-hidden="true"></i>
                 </td>
                 <td class="text-right">
-                <a class="btn btn-primary btn-sm" role="button" href="/user/reset-password">{%trans%}Change{%endtrans%}</a>
+                <a class="btn btn-primary btn-xs" role="button" href="/user/reset-password">{%trans%}Change{%endtrans%}</a>
                 </td>
             </tr>
             </tr>
@@ -67,7 +67,7 @@
                 <td>{%trans%}Preferred language{%endtrans%}</td>
                 <td>{{ config['LANGUAGES'][g.current_user.language][0] }}</td>
                 <td class="text-right">
-                <a class="btn btn-primary btn-sm" role="button" href="/user/change-language">{%trans%}Change{%endtrans%}</a>
+                <a class="btn btn-primary btn-xs" role="button" href="/user/change-language">{%trans%}Change{%endtrans%}</a>
                 </td>
             </tr>
         </table>
@@ -78,7 +78,7 @@
             {%trans%}Invitations{%endtrans%}
         </div>
         <div style="display:inline; float:right;">
-            <a class="btn btn-success" role="button" href="/admin/invites/new">{%trans%}Invite a new user{%endtrans%}</a>
+            <a class="btn btn-sm btn-success" role="button" href="/admin/invites/new">{%trans%}Invite a new user{%endtrans%}</a>
         </div>
         <p style="clear:both;"></p>
         
@@ -104,7 +104,7 @@
                 {% endif %}
                 <td>{{invite.admin}}</td>
                 <td class="text-right">
-                <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Delete{%endtrans%}" onClick="location.href='/admin/invites/delete/{{invite.id}}'">
+                <a class="btn btn-xs btn-danger" role="button" href="/admin/invites/delete/{{invite.id}}">{%trans%}Delete{%endtrans%}</a>
                 </td>
             </tr>
         {% endfor %}
@@ -116,13 +116,13 @@
             {%trans%}My admin settings{%endtrans%}
         </div>
 
-        <table class="table">
+        <table class="table table-sm">
             <tr>
                 <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newuser" class="btn-group btn-toggle">
-                    <button id="notify_newuser_true" class="btn btn-sm btn-default {% if user.admin['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newuser_false" class="btn btn-sm btn-default {% if not user.admin['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.admin['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -130,8 +130,8 @@
                 <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newform" class="btn-group btn-toggle">
-                    <button id="notify_newform_true" class="btn btn-sm btn-default {% if user.admin['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newform_false" class="btn btn-sm btn-default {% if not user.admin['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.admin['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -142,14 +142,14 @@
             {%trans%}Site settings{%endtrans%}
         </div>
 
-        <table class="table">
+        <table class="table table-sm">
             <tr>
                 <td>{%trans%}Site name{%endtrans%}</td>
                 <td>
                 {{ site.siteName }}
                 </td>
                 <td class="text-right">
-                <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/change-sitename'">
+                <a class="btn-primary btn btn-xs" role="button" href="/site/change-sitename">{%trans%}Change{%endtrans%}</a>
                 </td>
             </tr>
             <tr>
@@ -158,14 +158,14 @@
                 <img src="{{g.site.faviconURL()}}" width=18 height=18 />
                 </td>
                 <td class="text-right">
-                <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/change-favicon'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/change-favicon'">
                 </td>
             </tr>
             <tr>
                 <td>{%trans%}Email server{%endtrans%}</td>
                 <td></td>
                 <td class="text-right">
-                <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Configure{%endtrans%}" onClick="location.href='/site/email/config'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Configure{%endtrans%}" onClick="location.href='/site/email/config'">
                 </td>
             </tr>
             <tr>
@@ -173,8 +173,8 @@
                 <td></td>
                 <td class="text-right">
                     <div id="toggle_invitation_only" class="btn-group btn-toggle">
-                    <button id="invitation_only_true" class="btn btn-sm btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="invitation_only_false" class="btn btn-sm btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                </td>
             </tr>
@@ -185,8 +185,8 @@
                 </td>
                 <td class="text-right">
                     <div id="toggle_dataprotection_enabled" class="btn-group btn-toggle">
-                    <button id="dataprotection_enabled_true" class="btn btn-sm btn-default {% if site.isPersonalDataConsentEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                    <button id="dataprotection_enabled_false" class="btn btn-sm btn-default {% if not site.isPersonalDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                    <button id="dataprotection_enabled_true" class="btn btn-xs btn-default {% if site.isPersonalDataConsentEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="dataprotection_enabled_false" class="btn btn-xs btn-default {% if not site.isPersonalDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                     </div>                    
                 </div>
                </td>
@@ -209,7 +209,7 @@
         <div id="root_user_settings" class="title_1">
             {%trans%}Root user{%endtrans%}
         </div>
-        <table class="table">
+        <table class="table table-sm">
             <thead>
                 <tr>
                 <th>Site</th>
@@ -229,7 +229,7 @@
                 <td>{{ site.totalForms }}</td>
                 {% if total_forms.append(total_forms.pop() + site.totalForms) %}{% endif %}
                 <td class="text-right">
-                <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
                 </td>
             </tr>
         {% endfor %}
@@ -246,7 +246,7 @@
             {%trans%}Installation{%endtrans%}
         </div>
 
-        <table class="table">
+        <table class="table table-sm">
         <tr>
             <td>{%trans%}Created{%endtrans%}</td>
             <td>{{installation.created}}</td>
@@ -266,6 +266,7 @@
 </div>
 </div>
 
+{% if g.isAdmin %}
 <script>
 var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
@@ -389,7 +390,7 @@ $(document).ready(function() {
         $('#editor').hide();
     });
 });
-
 </script>
+{% endif %}
 
 {% endblock %}

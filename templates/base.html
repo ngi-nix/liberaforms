@@ -11,6 +11,7 @@
   <script src="/static/jquery/jquery-ui.min.js"></script>
   <script src="/static/bootstrap/popper.1.14.3.min.js"></script>
   <link rel="stylesheet" href="/static/bootstrap/4.1/bootstrap.min.css">
+    
   <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
   <link rel="stylesheet" href="/static/css/gngforms.css">
   <link rel="stylesheet" href="/static/css/custom.css">
@@ -21,7 +22,7 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
-            <div class="flash_message {{ category }}">
+            <div class="{{ category }} flash_message">
                 {{ message | safe }}
             </div>
         {% endfor %}

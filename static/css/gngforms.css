@@ -1,15 +1,13 @@
 html {
   position: relative;
   min-height: 100%;
-  font-size: 14px;
-  line-height: 1;
 }
 body {
   color: #333333;
   /* Margin bottom by footer height */
   margin-bottom: 25px;
+  font-size: 16px;
 }
-
 #header{
   font-size: 1.3em;
 }
@@ -32,7 +30,6 @@ hr { margin-top: 5px }
   color: grey;
   font-style: italic;
 }
-
 .returnToForm {
   font-size: 1.5em;
   padding-bottom: 0.25em;
@@ -74,12 +71,12 @@ input[type="date"], input[type="number"], input[type="time"] {
 input[type="checkbox"] {
   vertical-align:-3px;
 }
-.sm-input {
-  height: 28px;
-}
 .horzizontal-inputs > input {
   display: inline;
   vertical-align: top;
+}
+.entries-table {
+  font-size: 14px;
 }
 .td-controls td:first-child {
     text-align: center;

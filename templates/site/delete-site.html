@@ -3,39 +3,38 @@
 
 
 <div class="container">
-<div class="row col-md-4"></div>
-    
-<div class="row col-md-4">
+<div class="row">
+    <div class="col-md-3"></div>
+        
+    <div class="col-md-5">
 
-    <div class="title_1 delimited">{%trans%}Delete site{%endtrans%}</div>
-    <p>
-        {%trans%}You are going to delete this Site{%endtrans%}.
-    </p>
-    <p>
-        {%trans%}Including{%endtrans%} ...
-        <br />
-        {{ site.totalUsers }} {%trans%}users{%endtrans%}
-        <br />
-        {{ site.totalForms }} {%trans%}forms{%endtrans%} + {%trans%}entries{%endtrans%}
-    </p>
-    <p>
-        {%trans%}Write the name of the site below{%endtrans%}.
-    </p>
-    <div class="title_2">{{site.hostname}}</div>
-    
-    <form method="POST">
+        <div class="title_1 delimited">{%trans%}Delete site{%endtrans%}</div>
         <p>
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <input type="text" name="hostname" class="form-control" required ><br />
+            {%trans%}You are going to delete this Site{%endtrans%}.
         </p>
-        <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
-        <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
-    </form>
+        <p>
+            {%trans%}Including{%endtrans%} ...
+            <br />
+            {{ site.totalUsers }} {%trans%}users{%endtrans%}
+            <br />
+            {{ site.totalForms }} {%trans%}forms{%endtrans%} + {%trans%}entries{%endtrans%}
+        </p>
+        <p>
+            {%trans%}Write the name of the site below{%endtrans%}.
+        </p>
+        <div class="title_2">{{site.hostname}}</div>
+        
+        <form method="POST">
+            <p>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <input type="text" name="hostname" class="form-control" required ><br />
+            </p>
+            <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
+        </form>
+    </div>
 
+</div>    
 </div>
 
-<div class="row col-md-4"></div>    
-</div>
-
-  
 {% endblock %}

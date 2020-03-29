@@ -4,8 +4,9 @@
 <script src="/static/formBuilder/form-render.min.js"></script>
 
 <div class="container">
-    <div class="row col-md-3"></div>
-    <div class="row col-md-6">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
 
     <div class="title_1 delimited">{%trans%}Form templates{%endtrans%}</div>
 
@@ -16,25 +17,26 @@
     </p>
     
     {% for template in templates %}
-    <p>
-        <a class="title_3" href="#{{template.id}}">{{template.name}}</a>
-        <br />
-        {{template.description}}
-    </p>
+        <p>
+            <a class="title_3" href="#{{template.id}}">{{template.name}}</a>
+            <br />
+            {{template.description}}
+        </p>
     {% endfor %}
-
+    
     <hr />
     {% for template in templates %}
         <a name="{{template.id}}"></a>
         <div id="fb-render-{{loop.index}}"></div>
-        <br />
-        <input class="btn-success btn" type="button" value="{%trans%}Use this template{%endtrans%}" onClick="location.href='/forms/new/{{ template.id }}'">
-        <p>&nbsp;</p>
+        <p>
+        <a class="btn btn-sm btn-success" role="button" href="/forms/new/{{template.id}}">{%trans%}Use this template{%endtrans%}</a>
+        </p>
         <hr />
     {% endfor %}
     
     </div>
-    <div class="row col-md-3"></div>
+
+</div>
 </div>
 
 <script>
@@ -50,6 +52,5 @@
     });
 {% endfor %}
 </script>
-
 
 {% endblock %}

@@ -22,8 +22,8 @@
             <input type=file name=file><br />
             </p>
             <input class="btn-success btn" type="submit" value="{%trans%}Upload{%endtrans%}">
-            <input class="btn-primary btn" type="button" value="{%trans%}Use default{%endtrans%}" onClick="location.href='/site/reset-favicon'">
-            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/user/{{g.current_user.username}}#site_settings'">
+            <a class="btn btn-primary" role="button" href="/site/reset-favicon">{%trans%}Use default{%endtrans%}</a>
+            <a class="btn btn-primary" role="button" href="/user/{{ g.current_user.username }}#site_settings">{%trans%}Cancel{%endtrans%}</a>
         </form>
 
     </div>
