@@ -42,9 +42,11 @@
                     <span class="formError">{{ error }}</span><br />
                 {% endfor %}
             </p>
-            <p></p>
+            
+            <div class="form-actions">
             <input class="btn-success btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
             <a class="btn btn-primary" role="button" href="/user/{{ g.current_user.username }}#site_settings">{%trans%}Cancel{%endtrans%}</a>
+            </div>
         </form>
 
         <p>&nbsp;</p>

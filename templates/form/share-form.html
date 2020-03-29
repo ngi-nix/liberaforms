@@ -38,7 +38,7 @@
             
         <form action="/forms/add-editor/{{form.id}}" method="POST">
             {{ wtform.csrf_token }}
-            <div class="input-group mb-3">
+            <div class="input-group input-group-sm mb-3">
               <input name="email" type="text" class="form-control" placeholder="person@example.com" aria-label="Recipient's username" aria-describedby="button-editor">
               <div class="input-group-append">
                 <button class="btn btn-primary" type="submit" id="button-editor">{%trans%}Add new editor{%endtrans%}</button>

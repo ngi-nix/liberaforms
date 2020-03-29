@@ -27,9 +27,11 @@
         
         <form method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="text" name="slug" class="form-control" required ><br />
+            <input type="text" name="slug" class="form-control" required >
 
-            <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
+            <div class="form-actions">
+            <input class="btn btn-danger" type="submit" value="{%trans%}Delete{%endtrans%}">
+            </div>
         </form>
     </div>
 

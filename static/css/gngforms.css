@@ -6,14 +6,14 @@ body {
   color: #333333;
   /* Margin bottom by footer height */
   margin-bottom: 25px;
-  font-size: 16px;
+  font-size: 0.85rem;
 }
 #header{
   font-size: 1.3em;
 }
 
 #main-content {
-  margin-top: 2em;
+  margin-top: 1.5em;
 }
 
 #footer {
@@ -51,6 +51,9 @@ hr { margin-top: 5px }
 .delimited {
   border-bottom: 1px solid #eee;
   padding-bottom: 0.25em;
+}
+.form-actions {
+  margin-top:2.15em;
 }
 .btn-xs {
   padding: .45rem .45rem;

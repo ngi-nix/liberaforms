@@ -24,7 +24,7 @@
             </p>
             <p>
             <div class="custom-control custom-checkbox">
-                <input type="checkbox" name="admin" class="custom-control-input" id="adminCheck" checked>
+                <input type="checkbox" name="admin" class="custom-control-input" id="adminCheck" />
                 <label class="custom-control-label" for="adminCheck">{{ wtform.admin.label }}</label>
             </div>
             </p>
@@ -48,13 +48,15 @@
                     </div>
                 {% endfor %}
                 </div>
-                <br />
+
             {% else %}
                 <input type="hidden" name="hostname" value="{{ g.site.hostname }}" />
             {% endif %}
-
+            
+            <div class="form-actions">
             <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
             <a class="btn btn-primary" role="button" href="/user/{{g.current_user.username}}">{%trans%}Cancel{%endtrans%}</a>
+            </div>
         </form>
     </div>
 

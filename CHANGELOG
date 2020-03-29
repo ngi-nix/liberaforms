@@ -1,5 +1,9 @@
 
-## v.44
+## v.45 2020/03/29
+ * Fixed HTML in some forgotten templates
+ * Bootstrap adjusts
+
+## v.44 2020/03/28
  * Upgraded to Bootstrap 4
  * Upgraded dataTables to 1.10.20
  * Fixed grid HTML in templates

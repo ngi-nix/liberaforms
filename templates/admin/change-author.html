@@ -34,8 +34,10 @@
             <input name="old_author_username" class="form-control" type="text" placeholder="{%trans%}Current author's username{%endtrans%}" required />
             <br />
             <input name="new_author_username" class="form-control" type="text" placeholder="{%trans%}New author's username{%endtrans%}" required />
-            <p></p>
+            
+            <div class="form-actions">
             <input class="btn-danger btn btn-md" type="submit" value="{%trans%}Change author{%endtrans%}" />
+            </div>
         </form>
         
     {% set editors=form.getEditors() %}

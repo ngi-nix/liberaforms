@@ -27,10 +27,13 @@
         <form method="POST">
             <p>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <input type="text" name="hostname" class="form-control" required ><br />
+            <input type="text" name="hostname" class="form-control" required >
             </p>
+            
+            <div class="form-actions">
             <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
-            <input class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
+            <a class="btn btn-primary" role="button" href="/admin/sites/edit/{{site.hostname}}">{%trans%}Cancel{%endtrans%}</a>
+            </div>
         </form>
     </div>
 
