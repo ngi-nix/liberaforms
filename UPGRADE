@@ -7,6 +7,7 @@ Most upgrades only require you to do this:
 cd GNGforms
 git pull origin master
 source venv/bin/activate
+pip install --upgrade setuptools
 pip install ./requirements.txt
 supervisorctl restart GNGforms
 
@@ -18,8 +19,14 @@ BEFORE upgrading..
 
 * You can find these version numbers by navigating to the config page
 
-_______________________________________
-# Your GNGforms version is less than 32
+
+READ BELOW!
+
+
+
+
+#### Your GNGforms version is less than 32
+
 We integrated mongoengine into GNGforms 32, and a lot of code got changed.
 
 1. If your "Schema version" is less than 13, read below FIRST.
@@ -31,8 +38,11 @@ MONGODB_SETTINGS = {'host': 'mongodb://localhost:27017/GNGforms'}
 
 Now continue with normal upgrade.
 
-_____________________________________
-# Your Schema version is less than 13
+
+
+
+#### Your Schema version is less than 13
+
 Update to version 13
 
 1. Pull the code
@@ -44,6 +54,24 @@ supervisorctl restart GNGforms
 2. Navigate to the config page and update the database.
 Now you will be running GNGforms 31 with Schema version 13 
 
+
+
+
+#### Your GNGforms version is less than 46
+
+As GNGforms is getting bigger, we need to restructure the directories.
+This is easy to do.
+
+1. Backup your database
+2. Stop GNGforms ( # supervisorctl stop GNGforms )
+3. Make a copy of any custom css you have
+4. Delete /opt/GNGforms Yes, delete it, or move it somewhere else if you want
+5. Delete /opt/venv
+6. Follow the INSTALL instructions.
+7. Don't forget to change the supervisor config
+8. Change the port in your nginx config (now using port 5000)
+9. Restart the supervisor. ( # systemctl restart supervisor )
+
+
 ___
 END
-

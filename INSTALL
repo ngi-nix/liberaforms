@@ -1,5 +1,4 @@
 
-
 # Install GNGforms
 
 ## Install mongodb
@@ -19,79 +18,50 @@ And edit /opt/GNGforms/config.cfg
 If you have Python3 on your host
 
 apt-get install python3-venv
-python3 -m venv /opt/venv
+python3 -m venv /opt/GNGforms/venv
 
 Or if you have old python2 on your host
 
 apt-get install virtualenv
-virtualenv /opt/venv --python=python3
+virtualenv /opt/GNGforms/venv --python=python3
 
 
 ## Install python packages
 
-source /opt/venv/bin/activate
-pip install /opt/GNGforms/requirements.txt
+source /opt/GNGforms/venv/bin/activate
+pip install --upgrade setuptools
+pip install -r /opt/GNGforms/requirements.txt
+pip install gunicorn
 
 
-## Configure gunicorn
-Edit /opt/gunicorn_gngforms.py
-We are installing in a lxc container, so we bind to 0.0.0.0
-If your instalation is on the same machine as your nginx proxy, try 127.0.0.1 instead.
-
-command = '/opt/venv/bin/gunicorn'
-pythonpath = '/opt'
-bind = '0.0.0.0:5001'
-workers = 3
-user = 'www-data'
+### Test your installation
+source /opt/GNGforms/venv/bin/activate
+gunicorn -c /opt/GNGforms/gunicorn.py gngforms:app
 
 
-## Test gunicorn
-gunicorn -c /opt/gunicorn_gngforms.py GNGforms:app
-
-
-## Install Supervisor
+## Install Supervisor to keep GNGforms running
 apt-get install supervisor
 
 Edit /etc/supervisor/conf.d/GNGforms.conf
 
 [program:GNGforms]
-command = /opt/venv/bin/gunicorn -c /opt/gunicorn_gngforms.py GNGforms:app
-directory = /opt
+command = /opt/GNGforms/venv/bin/gunicorn -c /opt/GNGforms/gunicorn.py gngforms:app
+directory = /opt/GNGforms
 user = www-data
 
 
-## Restart supervisor and check if GNGforms is running
+### Restart supervisor and check if GNGforms is running
 
 systemctl restart supervisor
 supervisorctl status GNGforms
 
 
 ## Debug GNGforms
-Maybe GNGforms fails to run. You can use a development server instead of gunicorn
 
-Edit /opt/gngforms_manager.py
-
-```
-from flask_script import Manager, Server
-from GNGforms import app
-
-manager = Manager(app)
-
-# Turn on debugger by default and reloader
-manager.add_command("runserver", Server(
-    use_debugger = True,
-    use_reloader = True,
-    threaded = True,
-    port = "5001",
-    host = '0.0.0.0')
-)
-
-if __name__ == "__main__":
-    manager.run()
-```
-
-Now start the server
-/opt/venv/bin/python3 /opt/gngforms_manager.py runserver
+supervisorctl stop GNGforms
+cd /opt/GNGforms
+source /opt/GNGforms/venv/bin/activate
+python run
 
 
 # Configure nginx proxy
@@ -110,7 +80,7 @@ server {
     ssl_certificate_key       /etc/letsencrypt/live/my_domain.com/privkey.pem;
 
     location / {
-        proxy_pass          http://gngforms:5001;
+        proxy_pass          http://gngforms:5000;
         proxy_set_header    Host    $host;
         proxy_set_header    X-Forwarded-For $remote_addr;
         proxy_set_header    X-Real-IP   $remote_addr;
