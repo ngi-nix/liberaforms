@@ -56,34 +56,33 @@ hr { margin-top: 5px }
   font-style: italic;
   color: grey;
 }
-label {
-  font-size: 1.1em;
-}
-.formbuilder-checkbox label, .formbuilder-radio label {
-  font-size: 1rem;
-}
 .btn-xs {
   padding: .45rem .45rem;
   font-size: .875rem;
   line-height: .55;
   border-radius: .2rem;
 }
-.app_radios label {
+label {
+  font-size: 1.1em;
+}
+.author-badge {
+  font-size:0.95em;
+  font-weight: 400;
+}
+.custom-radio, .custom-checkbox {
+    margin-bottom: 0.4em;
+}
+.custom-radio label {
   padding-left: 0.75em;
   cursor: pointer;
 }
-.app_radios  > .custom-radio {
-    margin-bottom: 0.4em;
+.custom-control-label label {
+  font-size: 1em;
+  margin-top:-3px;
 }
+
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
-}
-input[type="checkbox"] {
-  vertical-align:-3px;
-}
-.horzizontal-inputs > input {
-  display: inline;
-  vertical-align: top;
 }
 .entries-table {
   font-size: 14px;
@@ -104,8 +103,9 @@ input[type="checkbox"] {
 .dataConsent {
   padding: 1em 0 2em 0;
 }
-code {
-  margin-bottom: 1em;
+#embed_snippet {
+  display:none;
+  padding-bottom: 1.5em;
 }
 .highlightedText {
     color: #d9534f;
@@ -197,8 +197,20 @@ code {
     padding-left: 0.27em;
 }
 
-/* ######### formBuilder fixes ######### */
+/* ######### formBuilder ######### */
 
+.formbuilder-checkbox label,
+.formbuilder-checkbox-inline label,
+.formbuilder-radio label,
+.formbuilder-radio-inline label {
+  font-size: 1rem;
+}
+.formbuilder-checkbox-group input[type="checkbox"] {
+  vertical-align:-2px;
+}
+.formbuilder-radio-group input[type="radio"] {
+  vertical-align:-2px;
+}
 .required-asterisk {
   visibility: hidden;
 }

@@ -192,3 +192,15 @@ def view_csv(slug, key):
         os.remove(csv_file) 
         return response
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
+
+
+@entries_bp.route('/<string:slug>/json/<string:key>', methods=['GET'])
+@sanitized_slug_required
+@sanitized_key_required
+def view_json(slug, key):
+    queriedForm = Form.find(slug=slug, key=key)
+    if not queriedForm or not queriedForm.areEntriesShared():
+        return JsonResponse(json.dumps({}), 404)
+    if queriedForm.restrictedAccess and not g.current_user:
+        return JsonResponse(json.dumps({}), 404)
+    return JsonResponse(json.dumps(queriedForm.getEntries()))

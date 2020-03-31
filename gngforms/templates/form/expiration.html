@@ -4,7 +4,7 @@
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
-    <div class="col-md-5">
+    <div class="col-md-6">
     
     <div class="returnToForm">
         <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
@@ -26,45 +26,57 @@
         {%trans%}Date / Time{%endtrans%}
     </div>
     
-    <form class="horzizontal-inputs" method="POST">
+    <form class="form-inline" method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-group mr-1">
         <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
-        &nbsp;
+        </div>
+        <div class="form-group mr-1">
         <input id="time" name="time" type="time" class="form-control">
-        &nbsp;
-        <input id="date-button" class="btn" type="submit" value="{%trans%}Save changes{%endtrans%}">
+        </div>
+        <div class="form-group">
+        <input  id="date-button"
+                class="btn {%if form.expiryConditions['expireDate']%}btn-success{%else%}btn-primary{%endif%}"
+                type="submit" value="{%trans%}Save changes{%endtrans%}" />
+        </div>
     </form>
-        
-    <p>&nbsp;</p>
-        
-    {% if form.getAvailableNumberTypeFields() %}
+
+    </div>
+</div>
+{% if form.getAvailableNumberTypeFields() %}
+<p>&nbsp;</p>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
+    
     <div class="title_2">
         {%trans%}Conditionals{%endtrans%}
     </div>
     
-    <table class="table table-condensed">   
     {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
-        <tr>
-            <td>
-            {{ form.getFieldLabel(field_name)|safe }}
-            </td>
-            <td>
-            {% if values.type=="number" %}
-            <input id="{{field_name}}" class="condition form-control form-control-sm" type="number" value="{{values.condition|safe}}" />
-            {% endif %}
-            </td>
-            <td class="text-right">
-            {% if values.type=="number" %}
-                <input id="button-{{field_name}}" type="button" class="{%if values.condition %}btn-success{% else %}btn-primary{% endif %} btn btn-sm" value="{%trans%}Save max.{%endtrans%}" onClick="js:setMaxValue('{{field_name}}');">
-            {% endif %}
-            </td>
-        </tr>
-    {%endfor %}
-    </table>  
-    {% endif %}
-        
+    
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="addon-{{field_name}}">
+                {{ form.getFieldLabel(field_name)|safe }}
+            </span>
+          </div>
+          <input    id="{{field_name}}" type="number" class="form-control pl-sm-3 condition"
+                    value="{{values.condition|safe}}"
+                    aria-label="{{ form.getFieldLabel(field_name)|safe }}"
+                    aria-describedby="addon-{{field_name}}">
+          <div class="input-group-append">
+            <input  id="button-{{field_name}}"
+                    class="btn {% if values.condition %}btn-success{% else %}btn-primary{% endif %}"
+                    type="button" value="{%trans%}Save max.{%endtrans%}"
+                    onClick="js:setMaxValue('{{field_name}}');" >
+          </div>
+        </div>
+    
+    {%endfor %}        
     </div>
-</div>    
+</div>
+{% endif %}
 </div>
 
 
@@ -75,34 +87,7 @@ function dateSet(e){
         $('#time').val("00:00")
     }
 }
-function setMaxValue(id){
-    var value=$('#'+id).val();
-    $.ajax({
-        url : "/forms/set-field-condition/{{ form.id }}",
-        type: "POST",
-        dataType: "json",
-        data: {"field_name": id, "condition": value},
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.condition != false && data.condition == value) {
-                $('#button-'+id).removeClass('btn-primary');
-                $('#button-'+id).removeClass('btn-warning');
-                $('#button-'+id).addClass('btn-success');
-            }
-            else{
-                $('#button-'+id).removeClass('btn-success');
-                $('#button-'+id).removeClass('btn-warning');
-                $('#button-'+id).addClass('btn-primary');
-                $('#'+id).val(null)
-            }
-        }
-    });
-}
+
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-expiration-notification/{{ form.id }}",
@@ -134,6 +119,44 @@ $(document).on("change", "#time", function () {
     $('#date-button').removeClass('btn-success', 'btn-primary');
     $('#date-button').addClass('btn-warning');
 });
+jQuery(function($) {
+    var savedDate={{form.expiryConditions['expireDate']|tojson}};
+    if (savedDate != false){
+        fields=savedDate.split(' '); 
+        $('#date').val(fields[0]);
+        $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"
+    }
+});
+
+{% if form.getAvailableNumberTypeFields() %}
+function setMaxValue(id){
+    var value=$('#'+id).val();
+    $.ajax({
+        url : "/forms/set-field-condition/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        data: {"field_name": id, "condition": value},
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.condition != false && data.condition == value) {
+                $('#button-'+id).removeClass('btn-primary');
+                $('#button-'+id).removeClass('btn-warning');
+                $('#button-'+id).addClass('btn-success');
+            }
+            else{
+                $('#button-'+id).removeClass('btn-success');
+                $('#button-'+id).removeClass('btn-warning');
+                $('#button-'+id).addClass('btn-primary');
+                $('#'+id).val(null)
+            }
+        }
+    });
+}
 $(document).on("keyup", ".condition", function () {
     $('#button-'+this.id).removeClass('btn-success', 'btn-primary');
     $('#button-'+this.id).addClass('btn-warning');
@@ -142,17 +165,8 @@ $(document).on("change", ".condition", function () {
     $('#button-'+this.id).removeClass('btn-success', 'btn-primary');
     $('#button-'+this.id).addClass('btn-warning');
 });
-jQuery(function($) {
-    var savedDate={{form.expiryConditions['expireDate']|tojson}};
-    if (savedDate != false){
-        fields=savedDate.split(' '); 
-        $('#date').val(fields[0]);
-        $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"
-        $('#date-button').addClass('btn-success');
-    }else{ 
-        $('#date-button').addClass('btn-primary');
-    }
-});
+{% endif %}
+
 </script>
   
 {% endblock %}

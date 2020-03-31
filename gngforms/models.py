@@ -440,6 +440,16 @@ class Form(db.Document):
     def getSharedEntriesURL(self, part="results"):
         return "%s/%s/%s" % (self.url, part, self.sharedEntries['key'])
 
+    def getEntries(self):
+        result=[]
+        for saved_entry in self.entries:
+            entry={}
+            for field in self.getFieldIndexForDataDisplay():
+                value=saved_entry[field['name']] if field['name'] in saved_entry else ""
+                entry[field['label']]=value
+            result.append(entry)
+        return result
+
     def toggleEnabled(self):
         if self.expired or self.adminPreferences['public']==False:
             return False

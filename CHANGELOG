@@ -1,4 +1,8 @@
 
+## v.48 2020/03/31
+ * Added option to download entries in json
+ * Some cosmetics
+
 ## v.46 2020/03/30
  * Restructured the directory layout. Please read UPGRADE
 

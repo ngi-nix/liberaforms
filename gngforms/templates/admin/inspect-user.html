@@ -63,7 +63,7 @@
                 </td>
             </tr>
         </table>
-        {% if g.isAdmin and not user.id == g.current_user.id %}
+        {% if not user.id == g.current_user.id %}
             {% if user.forms|length %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
@@ -101,7 +101,7 @@
                 {% endif %}
             </td>
            <td>{{form.editors|length}}</td>
-           <td>{{form.enabled}}</td>
+           <td>{{form.isPublic()}}</td>
            <td>{{form.entries|length}}</td>
         </tr>
         {% endfor %}

@@ -33,21 +33,24 @@
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
             {% if form.editors[g.current_user.id|string] is defined %}
-            <a class="btn btn-primary btn-xs" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>
+                <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
+                    {%trans%}View entries{%endtrans%}
+                    <span class="badge badge-light">{{form.totalEntries}}</span>
+                </a>
+            {% else %}
+                <button class="btn btn-primary btn-sm" disabled>
+                    {%trans%}Total entries{%endtrans%}
+                    <span class="badge badge-light">{{form.totalEntries}}</span>
+                </button>
             {% endif %}
         </div>
         
         <table class="table table-sm table-striped">
             <tr>
-               <td>{%trans%}Entries{%endtrans%}</td>
+               <td>{%trans%}Last entry{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user.id|string] is defined %}
-                        <a class="btn btn-primary btn-xs" role="button" href="/forms/entries/{{form.id}}">{%trans%}View{%endtrans%} {{form.totalEntries}} {%trans%}entries{%endtrans%}</a>
-                   {% else %}
-                        {{form.totalEntries}}
-                   {% endif %}
                    {% if form.totalEntries %}
-                        {%trans%}Last{%endtrans%}: {{ form.lastEntryDate }}
+                   {{ form.lastEntryDate }}
                    {% endif %}
                </td>
             </tr>
@@ -175,13 +178,14 @@
         </table>
         {% if form.editors[g.current_user.id|string] is defined %}
         <hr />
-        <div id="embed_snippet" style="display:none">
+        <div id="embed_snippet">
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
         <p>
         <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">{%trans%}Edit form{%endtrans%}</a>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
         <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>
         </p>
             {% if form.totalEntries == 0 %}
             <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
