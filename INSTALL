@@ -30,6 +30,7 @@ virtualenv /opt/GNGforms/venv --python=python3
 
 source /opt/GNGforms/venv/bin/activate
 pip install --upgrade setuptools
+pip install wheel
 pip install -r /opt/GNGforms/requirements.txt
 pip install gunicorn
 

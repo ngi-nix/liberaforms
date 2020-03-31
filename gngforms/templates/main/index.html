@@ -2,7 +2,6 @@
 {% block content %}
 
 
-
 {% if g.isAdmin %}
 <script src="/static/simplemde/simplemde.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
@@ -39,16 +38,18 @@
 <div class="col-md-3">
     
     <form action="/user/login" method="POST" style="margin-top:1.5em">
+        <fieldset {% if g.current_user %}disabled{%endif%}>
         {{ wtform.csrf_token }}
         <p>
             {{ wtform.username.label }}<br />
-            {{ wtform.username(class_="form-control") }}
+            {{ wtform.username(class_="form-control form-control-sm") }}
         </p>    
         <p>
             {{ wtform.password.label }}<br />
-            {{ wtform.password(class_="form-control") }}
+            {{ wtform.password(class_="form-control form-control-sm") }}
         </p>
-        <input class="btn-success btn" type="submit" value="{%trans%}Login{%endtrans%}" {% if g.current_user %}disabled{%endif%} />
+        <input class="btn btn-success btn-sm" type="submit" value="{%trans%}Login{%endtrans%}" />
+        </fieldset>
     </form>
 
     <br />

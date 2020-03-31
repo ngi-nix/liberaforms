@@ -1,12 +1,12 @@
 html {
   position: relative;
   min-height: 100%;
+  font-size: 15px;
 }
 body {
   color: #333333;
   /* Margin bottom by footer height */
   margin-bottom: 25px;
-  font-size: 0.85rem;
 }
 #header{
   font-size: 1.3em;
@@ -26,10 +26,6 @@ body {
 
 hr { margin-top: 5px }
 
-.hint {
-  color: grey;
-  font-style: italic;
-}
 .returnToForm {
   font-size: 1.5em;
   padding-bottom: 0.25em;
@@ -54,6 +50,17 @@ hr { margin-top: 5px }
 }
 .form-actions {
   margin-top:2.15em;
+}
+.hint {
+  font-size: 1em;
+  font-style: italic;
+  color: grey;
+}
+label {
+  font-size: 1.1em;
+}
+.formbuilder-checkbox label, .formbuilder-radio label {
+  font-size: 1rem;
 }
 .btn-xs {
   padding: .45rem .45rem;
