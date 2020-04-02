@@ -93,7 +93,7 @@
                <td>
                     {%trans%}Public URL{%endtrans%}
                     {% if not form.adminPreferences['public'] %}
-                        <span class="highlightedText">({%trans%}disabled{%endtrans%})</span>
+                        <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>
                     {% endif %}
                </td>
                <td>
@@ -140,8 +140,8 @@
                <td>
                {% if form.editors[g.current_user.id|string] is defined %}
                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
-                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentEnabled() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                    </div>
                {% else %}
                     {{ form.isDataConsentEnabled() }}            
@@ -153,7 +153,7 @@
                <td>
                     {%trans%}Author{%endtrans%}
                     {% if not form.author.enabled %}
-                        <span class="highlightedText">({%trans%}disabled{%endtrans%})</span>            
+                        <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>            
                     {% endif %} 
                </td>
                <td>

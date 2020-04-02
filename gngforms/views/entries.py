@@ -38,7 +38,7 @@ entries_bp = Blueprint('entries_bp', __name__,
 def list_entries(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("No form found"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('list-entries.html', form=queriedForm)
 
@@ -48,7 +48,7 @@ def list_entries(id):
 def csv_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("No form found"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     csv_file = writeCSV(queriedForm)
     
@@ -144,7 +144,7 @@ def change_entry(id):
 def delete_entries(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form not found"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         try:

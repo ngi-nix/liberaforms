@@ -128,7 +128,7 @@ def toggle_form_public_admin_prefs(id):
 def change_author(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
-        flash(gettext("Form is not available"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
     if request.method == 'POST':
         if not ('old_author_username' in request.form and request.form['old_author_username']==queriedForm.author.username):
@@ -144,9 +144,9 @@ def change_author(id):
                         flash(gettext("Changed author OK"), 'success')
                         return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
                 else:
-                    flash(gettext("Cannot use %s. The user is not enabled" % request.form['new_author_username']), 'warning')
+                    flash(gettext("Cannot use %s. The user is not enabled" % (request.form['new_author_username'])), 'warning')
             else:
-                flash(gettext("Can't find username %s" % request.form['new_author_username']), 'warning')
+                flash(gettext("Can't find username %s" % (request.form['new_author_username'])), 'warning')
     return render_template('change-author.html', form=queriedForm)
 
 

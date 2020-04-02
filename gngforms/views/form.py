@@ -194,7 +194,7 @@ def save_form(id=None):
             flash(gettext("Slug is missing."), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if Form.find(slug=session['slug'], hostname=g.site.hostname):
-            flash(gettext("Slug is not unique. %s" % session['slug']), 'error')
+            flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
 
         newFormData={
@@ -236,7 +236,7 @@ def save_form(id=None):
 def delete_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form not found"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
@@ -254,7 +254,7 @@ def delete_form(id):
 def inspect_form(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
-        flash(gettext("No form found"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     #print(queriedForm)
     if not g.current_user.canInspectForm(queriedForm):
@@ -270,7 +270,7 @@ def inspect_form(id):
 def share_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form is not available. 404"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('share-form.html', form=queriedForm, wtform=wtf.GetEmail())
 
@@ -280,7 +280,7 @@ def share_form(id):
 def add_editor(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form is not available"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
     if wtform.validate():
@@ -320,7 +320,7 @@ def remove_editor(form_id, editor_id):
 def set_expiration_date(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form is not available"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         if 'date' in request.form and 'time' in request.form:
@@ -382,7 +382,7 @@ def set_field_condition(id):
 def duplicate_form(id): #, queriedForm):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form is not available. 404"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     clearSessionFormData()
     populateSessionFormData(queriedForm)
@@ -396,7 +396,7 @@ def duplicate_form(id): #, queriedForm):
 def list_log(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Form not found"), 'warning')
+        flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('list-log.html', form=queriedForm)
 
@@ -497,7 +497,7 @@ def view_form(slug, embedded=False):
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
 
-    if request.method == 'POST':  
+    if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
         entry = {}
         entry["created"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

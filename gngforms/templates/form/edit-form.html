@@ -36,11 +36,11 @@
         <textarea id="sm-editor" name="afterSubmitTextMD">{{ session['afterSubmitTextMD'] }}</textarea>
         
         {% if not session['form_id'] %}
-        <div class="title_2 delimited">
+        <div class="title_1 delimited">
             {%trans%}3. Your form will have this address{%endtrans%}
         </div>
         
-        <div class="input-group mb-3 input-group-sm" style="margin-bottom: 0 !important;">
+        <div class="input-group mb-3 input-group" style="margin-bottom: 0 !important;">
           <div class="input-group-prepend">
             <span class="input-group-text" id="hostname-addon">{{host_url}}</span>
           </div>

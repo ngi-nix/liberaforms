@@ -71,7 +71,7 @@ def page_not_found(error):
 
 @app.errorhandler(500)
 def server_error(error):
-    return render_template('server-error.html'), 500
+    return render_template('server-error.html', error=error), 500
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):   
