@@ -12,12 +12,14 @@
         {% if not embedded %}
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         {% endif %}
-        <div id="fb-render"></div>
+        <div id="fb-render"></div>        
         {% if form.isDataConsentEnabled() %}
-            <div class="dataConsent">
-                {{ form.dataConsent|safe }}
-                {%trans%}I agree{%endtrans%}
+            <div id="dataConsent" class="dataConsent">
+                <div class="blurb">{{ form.dataConsent|safe }}</div>
+                <div class="consent">
+                {%trans%}I agree{%endtrans%}&nbsp;
                 <input type="checkbox" name="DPL" value="ok" required />
+                </div>
             </div>
         {% endif %}
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}">

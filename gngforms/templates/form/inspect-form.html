@@ -13,9 +13,11 @@
         <div id="fb-render"></div>
 
         <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
-            {{ form.dataConsent|safe }}
-            {%trans%}I agree{%endtrans%}
+            <div class="blurb">{{ form.dataConsent|safe }}</div>
+            <div class="consent">
+            {%trans%}I agree{%endtrans%}&nbsp;
             <input type="checkbox" required />
+            </div>
         </div>
 
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />

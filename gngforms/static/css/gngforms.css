@@ -103,6 +103,13 @@ input[type="date"], input[type="number"], input[type="time"] {
 .dataConsent {
   padding: 1em 0 2em 0;
 }
+.dataConsent > .blurb {
+  font-size: 0.85em;
+  color: #666;
+}
+.dataConsent input {
+  vertical-align: -2px;
+}
 #embed_snippet {
   display:none;
   padding-bottom: 1.5em;

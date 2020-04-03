@@ -112,14 +112,20 @@ def edit_form(id=None):
     return render_template('edit-form.html', host_url=g.site.host_url)
 
 
-@form_bp.route('/forms/check-slug-availability/<string:slug>', methods=['POST'])
+@form_bp.route('/forms/check-slug-availability', methods=['POST'])
 @enabled_user_required
-def is_slug_available(slug):
+def is_slug_available():    
+    if 'slug' in request.form and request.form['slug']:
+        slug=request.form['slug']
+    else:
+        return JsonResponse(json.dumps({'slug':"", 'available':False}))
     available = True
     slug=sanitizeSlug(slug)
-    if Form.find(slug=slug, hostname=g.site.hostname):
+    if not slug:
         available = False
-    if slug in app.config['RESERVED_SLUGS']:
+    elif Form.find(slug=slug, hostname=g.site.hostname):
+        available = False
+    elif slug in app.config['RESERVED_SLUGS']:
         available = False
     # we return a sanitized slug as a suggestion for the user.
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
