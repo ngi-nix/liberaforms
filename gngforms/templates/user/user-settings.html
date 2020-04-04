@@ -14,27 +14,33 @@
         <div class="title_1">
             {%trans%}Hello{%endtrans%} {{ g.current_user.username }} !!
         </div>
-        <p></p>
+
         
         {% if not g.current_user.validatedEmail %}
-        <div style="font-size:1.25em; padding-bottom:0.5em; display:inline; float:left;">
-            {%trans%}Your email has not been validated{%endtrans%}
+        <div class="row">
+            <div class="col title_2">
+                {%trans%}Your email has not been validated{%endtrans%}
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-sm btn-success" role="button" href="/user/send-validation">
+                    {%trans%}Validate my email{%endtrans%}
+                </a>
+            </div>
         </div>
-        <div style="display:inline; float:right;">
-            <a class="btn btn-sm btn-success" role="button" href="/user/send-validation">{%trans%}Validate my email{%endtrans%}</a>
-        </div>
-        <p style="clear:both;"></p>
         <p>&nbsp;</p>
         {% endif %}
 
         {% if g.isRootUser and not installation.isSchemaUpToDate() %}
-        <div style="font-size:1.25em; padding-bottom:0.5em; display:inline; float:left;">
-            You need to update DB schema
+        <div class="row">
+            <div class="col title_2">
+                You need to update DB schema
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-sm btn-success" role="button" href="/site/update">
+                    {%trans%}Update{%endtrans%}
+                </a>
+            </div>
         </div>
-        <div style="display:inline; float:right;">
-            <a class="btn btn-sm btn-success" role="button" href="/site/update">{%trans%}Update{%endtrans%}</a>
-        </div>
-        <p style="clear:both;"></p>
         <p>&nbsp;</p>
         {% endif %}
 
@@ -74,14 +80,16 @@
         
     {% if g.isAdmin %}
         <p>&nbsp;</p>
-        <div class="title_1" style="display:inline;">
-            {%trans%}Invitations{%endtrans%}
+        <div class="row">
+            <div class="col title_1">
+                {%trans%}Invitations{%endtrans%}
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-sm btn-success" role="button" href="/admin/invites/new">
+                    {%trans%}Invite a new user{%endtrans%}
+                </a>
+            </div>
         </div>
-        <div style="display:inline; float:right;">
-            <a class="btn btn-sm btn-success" role="button" href="/admin/invites/new">{%trans%}Invite a new user{%endtrans%}</a>
-        </div>
-        <p style="clear:both;"></p>
-        
         {% if invites %}
         <table class="table table-sm">
         <thead>

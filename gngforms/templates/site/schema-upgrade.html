@@ -8,18 +8,16 @@
         
     <div class="col-md-5">
         <div class="title_1 delimited">
-            {%trans%}Schema update{%endtrans%}
+            {%trans%}Schema{%endtrans%}
         </div>
-
-        <p>&nbsp;</p>
         
         <table class="table">
         <tr>
-            <td>Curreny schema version</td>
+            <td>{%trans%}Curreny schema version{%endtrans%}</td>
             <td>{{installation.schemaVersion}}</td>
         </tr>
         <tr>
-            <td>Required version</td>
+            <td>{%trans%}Required version{%endtrans%}</td>
             <td>{{config['SCHEMA_VERSION']}}</td>
         </tr>
         </table>

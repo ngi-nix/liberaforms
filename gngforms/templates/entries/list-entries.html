@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set fieldIndex = form.getFieldIndexForDataDisplay() %}
+{% set fieldIndex = form.getFieldIndexForDataDisplay(with_deleted_columns=with_deleted_columns) %}
 {% set tallyColumns = form.getConditionalFieldPositions() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
@@ -14,16 +14,29 @@
 
 
 <div class="container">
-<div class="row">
-    <div class="col-md-8" style="font-size:1.5em">
-    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Form details{%endtrans%}" onClick="location.href='/forms/view/{{ form.id }}'">
+<div class="row" style="font-size:1.5em">
+    <div class="col">
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Form details{%endtrans%}</a>
     {{ form.slug }}
     </div>
     
-    <div class="col-md-4" style="text-align:right">
+    <div class="col-auto">
+    {% if with_deleted_columns %}
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}?with_deleted_columns=true">{%trans%}Download CSV{%endtrans%}</a>
+    {% else %}
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
+    {% endif %}
+    {% if form.totalEntries %}
     <input id="editModeButton" class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable edition{%endtrans%}" onClick="js:setEditMode();">
-    <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='/forms/csv/{{ form.id }}'">
-    <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete all{%endtrans%}" onClick="location.href='/forms/delete-entries/{{ form.id }}'" {% if not form.totalEntries %}disabled{%endif%} >
+    {% if form.hasRemovedFields() %}
+        {% if with_deleted_columns %}
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Hide deleted columns{%endtrans%}</a>
+        {% else %}
+    <a class="btn btn-primary btn-sm" role="button" href="?with_deleted_columns=true">{%trans%}Show deleted columns{%endtrans%}</a>
+        {% endif %}
+    {% endif %}
+    <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-entries/{{form.id}}">{%trans%}Delete all{%endtrans%}</a>
+    {%endif%}
     </div>
 </div>
 

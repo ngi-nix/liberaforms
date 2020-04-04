@@ -8,12 +8,12 @@
 {% set fieldIndex=form.getFieldIndexForDataDisplay() %}
 
 <div class="container">
-<div class="row">
-    <div class="col-md-8" style="font-size:1.5em">
+<div class="row" style="font-size:1.5em">
+    <div class="col">
     {{ form.slug }}
     </div>
-    <div class="col-md-4" style="text-align:right">
-    <input class="btn-success btn btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='{{ form.getSharedEntriesURL('csv') }}'">
+    <div class="col-auto">
+    <input class="btn btn-success btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='{{ form.getSharedEntriesURL('csv') }}'">
     </div>
 </div>
 <div class="row">

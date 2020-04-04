@@ -178,21 +178,3 @@ def isFutureDate(date):
     now=time.time()
     future=int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").strftime("%s"))
     return True if future > now else False
-
-
-""" ######## Others ######## """
-
-
-def writeCSV(form):
-    fieldnames=[]
-    fieldheaders={}
-    for field in form.getFieldIndexForDataDisplay():
-        fieldnames.append(field['name'])
-        fieldheaders[field['name']]=field['label']
-    csv_name='%s/%s.csv' % (app.config['TMP_DIR'], form.slug)
-    with open(csv_name, mode='w') as csv_file:
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
-        writer.writerow(fieldheaders)
-        for entry in form.entries:
-            writer.writerow(entry)
-    return csv_name

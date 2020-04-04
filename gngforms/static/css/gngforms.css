@@ -115,9 +115,8 @@ input[type="date"], input[type="number"], input[type="time"] {
   padding-bottom: 1.5em;
 }
 .highlightedText {
-    color: #d9534f;
+  color: #d9534f;
 }
-
 
 /* ######### Flash messages ######### */
 

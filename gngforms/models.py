@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import flash, request, g
 from flask_babel import gettext 
 from urllib.parse import urlparse
-import os, string, random, datetime, json, markdown
+import os, string, random, datetime, json, markdown, csv
 from mongoengine import QuerySet
 
 from gngforms import app, db
@@ -261,7 +261,7 @@ class Form(db.Document):
                 return True
         return False
 
-    def getFieldIndexForDataDisplay(self):
+    def getFieldIndexForDataDisplay(self, with_deleted_columns=False):
         """
         formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
         The tags (formatted lables) are good when rendering the form but we do not want them included in CSV column headers.
@@ -269,12 +269,18 @@ class Form(db.Document):
         """
         result=[]
         for field in self.fieldIndex:
-            result.append({'label': stripHTMLTagsForLabel(field['label']), 'name': field['name']})
-        """ insert this optional field """
+            if 'removed' in field and not with_deleted_columns:
+                continue
+            item={'label': stripHTMLTagsForLabel(field['label']), 'name': field['name']}
+            result.append(item)
         if self.isDataConsentEnabled():
+            # insert dynamic DPL field
             result.insert(1, {"name": "DPL", "label": gettext("DPL")})
         return result
     
+    def hasRemovedFields(self):
+        return any('removed' in field for field in self.fieldIndex)
+
     @property
     def totalEntries(self):
         return len(self.entries)
@@ -508,6 +514,20 @@ class Form(db.Document):
         logTime=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.log.insert(0, (logTime, actor, message))
         self.save()
+
+    def writeCSV(self, with_deleted_columns=False):
+        fieldnames=[]
+        fieldheaders={}
+        for field in self.getFieldIndexForDataDisplay(with_deleted_columns):
+            fieldnames.append(field['name'])
+            fieldheaders[field['name']]=field['label']
+        csv_name='%s/%s.csv' % (app.config['TMP_DIR'], self.slug)
+        with open(csv_name, mode='w') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer.writerow(fieldheaders)
+            for entry in self.entries:
+                writer.writerow(entry)
+        return csv_name
 
 
 class Site(db.Document):

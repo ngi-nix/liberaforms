@@ -7,7 +7,10 @@
 <div class="row">
     <div class="col-md-6">
         <div class="title_1 delimited">
-            {%trans%}Form{%endtrans%}: {{ form.slug }}
+        {{ form.slug }}
+        {% if form.editors[g.current_user.id|string] is defined %}
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">{%trans%}Edit{%endtrans%}</a>
+        {% endif %}
         </div> 
           
         <div id="fb-render"></div>
@@ -184,7 +187,6 @@
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
         <p>
-        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">{%trans%}Edit form{%endtrans%}</a>
         <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
         <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
         <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>

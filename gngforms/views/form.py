@@ -33,6 +33,7 @@ import gngforms.utils.wtf as wtf
 import gngforms.utils.email as smtp
 from form_templates import formTemplates
 
+from pprint import pprint as pp
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -71,12 +72,11 @@ def edit_form(id=None):
     session['form_id']=None
     queriedForm=None
     if id:
-        queriedForm = Form.find(id=id)
-        if queriedForm:
-            if not queriedForm.isEditor(g.current_user):
-                flash(gettext("You can't edit that form"), 'warning')
-                return redirect(make_url_for('form_bp.my_forms'))
-            session['form_id'] = str(queriedForm.id)
+        queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+        if not queriedForm:
+            flash(gettext("You can't edit that form"), 'warning')
+            return redirect(make_url_for('form_bp.my_forms'))
+        session['form_id'] = str(queriedForm.id)
 
     if request.method == 'POST':
         if queriedForm:
@@ -179,12 +179,28 @@ def save_form(id=None):
         for field in savedConditionalFields:
             if not field in availableConditionalFields:
                 del queriedForm.fieldConditions[field]
+        # update form.fieldIndex
         if queriedForm.totalEntries > 0:
+            # We want to remove the fields the editor has deleted,
+            # but we don't want to remove fields that contain data
             for field in queriedForm.fieldIndex:
                 if not getFieldByNameInIndex(session['formFieldIndex'], field['name']):
-                    """ This field was removed by the editor but there are already entries.
-                        So we append it to the index. """
-                    session['formFieldIndex'].append(field)
+                    # This field was removed by the editor. Can we safely remove it?
+                    can_delete=True
+                    for entry in queriedForm.entries:
+                        if field['name'] in entry and entry[field['name']]:
+                            # This field contains data
+                            can_delete=False
+                            break
+                    if can_delete:
+                        # A pseudo delete. We drop the field (it's reference) from the index.
+                        # Note that the empty field in each entry is not deleted from the db.
+                        pass
+                    else:
+                        # We maintain this field in the index because it contains data
+                        field['removed']=True
+                        session['formFieldIndex'].append(field)
+
         queriedForm.structure=session["formStructure"]
         queriedForm.fieldIndex=session["formFieldIndex"]
         
@@ -262,11 +278,11 @@ def inspect_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #print(queriedForm)
+    #pp(queriedForm.fieldIndex)
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    # We use the 'session' because /forms/edit may be showing a new form without a Form() db object yet.
+    # We populate the 'session' because /forms/edit uses it.
     populateSessionFormData(queriedForm)
     return render_template('inspect-form.html', form=queriedForm)
 

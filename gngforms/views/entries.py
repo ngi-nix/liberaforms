@@ -40,7 +40,9 @@ def list_entries(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    return render_template('list-entries.html', form=queriedForm)
+    return render_template('list-entries.html',
+                            form=queriedForm,
+                            with_deleted_columns=request.args.get('with_deleted_columns'))
 
 
 @entries_bp.route('/forms/csv/<string:id>', methods=['GET'])
@@ -50,7 +52,7 @@ def csv_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    csv_file = writeCSV(queriedForm)
+    csv_file=queriedForm.writeCSV(with_deleted_columns=request.args.get('with_deleted_columns'))
     
     @after_this_request 
     def remove_file(response): 
@@ -185,7 +187,7 @@ def view_csv(slug, key):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
-    csv_file = writeCSV(queriedForm)
+    csv_file = queriedForm.writeCSV()
     
     @after_this_request 
     def remove_file(response): 
