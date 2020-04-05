@@ -1,4 +1,7 @@
 
+## v.1.0.3 2020/04/05
+ * Fixed formbuilder dropdown creation
+
 ## v.1.0.2 2020/04/04
  * Deleted form fields are now hidden when viewing entries and CSVs.
  * Viewing deleted form fiels that contain data can be toggled

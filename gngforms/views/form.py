@@ -140,9 +140,14 @@ def preview_form():
     structure=json.loads(session['formStructure'])
     for element in structure:
         if "type" in element:
+            #pp(element)
             # formBuilder includes tags in labels. Let's remove them
             if element["type"] != "paragraph":
                 element['label']=stripHTMLTags(element['label'])
+            # formBuilder does not save select dropdown correctly
+            if element["type"] == "select" and "multiple" in element:
+                if element["multiple"] == False:
+                    del element["multiple"]
             # formBuilder does not enforce values for checkbox groups, radio groups and selects.
             # we add a value when missing, and sanitize all values just in case.
             if  element["type"] == "checkbox-group" or \
