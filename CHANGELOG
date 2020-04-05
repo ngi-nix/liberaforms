@@ -1,56 +1,59 @@
+v.1.0.4
+ * Moved notification email lookups to utils/email.py
+ * Fixed bug that sent New form notifications to all admins.
 
-## v.1.0.3 2020/04/05
+v.1.0.3 2020/04/05
  * Fixed formbuilder dropdown creation
 
-## v.1.0.2 2020/04/04
+v.1.0.2 2020/04/04
  * Deleted form fields are now hidden when viewing entries and CSVs.
  * Viewing deleted form fiels that contain data can be toggled
  * Sone HTML/CSS fixes 
 
-## v.1.0.1 2020/04/04
+v.1.0.1 2020/04/04
  * Fixed bug when checking slug availability
 
 
-## v.1.0.0 2020/04/03
+v.1.0.0 2020/04/03
  * Changed version number system
  * Updated gettext translations
 
-## v.48 2020/03/31
+v.48 2020/03/31
  * Added option to download entries in json
  * Some cosmetics
 
-## v.46 2020/03/30
+v.46 2020/03/30
  * Restructured the directory layout. Please read UPGRADE
 
-## v.45 2020/03/29
+v.45 2020/03/29
  * Fixed HTML in some forgotten templates
  * Bootstrap adjusts
 
-## v.44 2020/03/28
+v.44 2020/03/28
  * Upgraded to Bootstrap 4
  * Upgraded dataTables to 1.10.20
  * Fixed grid HTML in templates
  * Toggle block root_user always returns false now.
  * Improved INSTALL
 
-## v.43
+v.43
  * Fixed skewed number field total and missing csv column cause by dynamic DPL field
  * More embedded form stuff. csrf error correction.
 
-## v.42 2020/03/23
+v.42 2020/03/23
  * Added flask blueprints.
  * Split views and templates into folders
  * Created utils module
 
-## v.40 2020/03/20
+v.40 2020/03/20
  * Fixed missing checkbox and radio values that may be created by forgotten by formbuilder
 
-## v.39 2020/03/19
+v.39 2020/03/19
  * Upgrade formbuilder to v3.4.2
  
-## v.34 2020/03/17
+v.34 2020/03/17
  * Added Flask's WTF.
 
- ## v.32 2020/03/14
+v.32 2020/03/14
  * Added mongoengine
  * Added UPGRADE

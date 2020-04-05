@@ -73,42 +73,6 @@ class User(db.Document):
             kwargs={"token__token": kwargs['token'], **kwargs}
             kwargs.pop('token')
         return cls.objects.ensure_hostname(**kwargs)
-
-    @classmethod
-    def getNotifyNewFormEmails(cls):
-        emails=[]
-        criteria={  'blocked':False,
-                    'validatedEmail':True,
-                    'admin__isAdmin':True,
-                    'admin__notifyNewForm':True}
-        admins=User.findAll(**criteria)
-        for admin in admins:
-            emails.append(admin['email'])
-        rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
-                                        'admin.notifyNewForm':True})
-        for rootUser in rootUsers:
-            if not rootUser['email'] in emails:
-                emails.append(rootUser['email'])
-        #print("new form notify %s" % emails)
-        return emails
-
-    @classmethod
-    def getNotifyNewUserEmails(cls):
-        emails=[]
-        criteria={  'blocked':False,
-                    'validatedEmail': True,
-                    'admin__isAdmin':True,
-                    'admin__notifyNewUser':True}
-        admins=User.findAll(**criteria)
-        for admin in admins:
-            emails.append(admin['email'])
-        rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
-                                        'admin.notifyNewUser':True})
-        for rootUser in rootUsers:
-            if not rootUser['email'] in emails:
-                emails.append(rootUser['email'])
-        #print("new user notify: %s" % emails)
-        return emails
     
     @property
     def enabled(self):

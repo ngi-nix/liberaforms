@@ -87,7 +87,7 @@ def new_user(token=None):
         if invite:
             invite.delete()           
 
-        thread = Thread(target=smtp.sendNewUserNotification(User.getNotifyNewUserEmails(), user.username))
+        thread = Thread(target=smtp.sendNewUserNotification(user))
         thread.start()
         
         if validatedEmail == True:

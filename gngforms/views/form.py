@@ -141,7 +141,7 @@ def preview_form():
     for element in structure:
         if "type" in element:
             #pp(element)
-            # formBuilder includes tags in labels. Let's remove them
+            # formBuilder includes html tags in labels. Let's remove them
             if element["type"] != "paragraph":
                 element['label']=stripHTMLTags(element['label'])
             # formBuilder does not save select dropdown correctly
@@ -251,8 +251,9 @@ def save_form(id=None):
         clearSessionFormData()
         newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
-        # notify Admins
-        smtp.sendNewFormNotification(User.getNotifyNewFormEmails(), newForm)
+        # notify form.site.admins
+        thread = Thread(target=smtp.sendNewFormNotification(newForm))
+        thread.start()
         return redirect(make_url_for('form_bp.inspect_form', id=newForm.id))
     clearSessionFormData()
     return redirect(make_url_for('form_bp.my_forms'))

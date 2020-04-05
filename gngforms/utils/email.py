@@ -23,7 +23,7 @@ import smtplib, ssl, socket
 from threading import Thread
 
 from gngforms import app
-from gngforms.models import Site
+from gngforms.models import Site, User
 
 def createSmtpObj():
     config=g.site.smtpConfig
@@ -111,19 +111,47 @@ def sendExpiredFormNotification(editorEmails, form):
         sendMail(email, message)
     
 
-def sendNewFormNotification(adminEmails, form):
-    message=gettext("New form '%s' created at %s" % (form.slug, g.site.hostname))
+def sendNewFormNotification(form):
+    emails=[]
+    criteria={  'blocked':False,
+                'hostname': form.hostname,
+                'validatedEmail':True,
+                'admin__isAdmin':True,
+                'admin__notifyNewForm':True}
+    admins=User.findAll(**criteria)
+    for admin in admins:
+        emails.append(admin['email'])
+    rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
+                                    'admin.notifyNewForm':True})
+    for rootUser in rootUsers:
+        if not rootUser['email'] in emails:
+            emails.append(rootUser['email'])
+
+    message=gettext("New form '%s' created at %s" % (form.slug, form.hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form notification"), message)
-    
-    for email in adminEmails:
+    for email in emails:
         sendMail(email, message)
 
 
-def sendNewUserNotification(adminEmails, username):
-    message=gettext("New user '%s' created at %s" % (username, g.site.hostname))
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New user notification"), message)
-    
-    for email in adminEmails:
+def sendNewUserNotification(user):
+    emails=[]
+    criteria={  'blocked':False,
+                'hostname': user.hostname,
+                'validatedEmail': True,
+                'admin__isAdmin':True,
+                'admin__notifyNewUser':True}
+    admins=User.findAll(**criteria)
+    for admin in admins:
+        emails.append(admin['email'])
+    rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
+                                    'admin.notifyNewUser':True})
+    for rootUser in rootUsers:
+        if not rootUser['email'] in emails:
+            emails.append(rootUser['email'])
+
+    message=gettext("New user '%s' created at %s" % (user.username, user.hostname))
+    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New user notification"), message)    
+    for email in emails:
         sendMail(email, message)
 
 
