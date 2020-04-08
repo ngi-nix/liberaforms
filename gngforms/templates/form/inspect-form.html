@@ -13,21 +13,22 @@
         {% endif %}
         </div> 
 
-        <div class="formIntroduction marked-up">
-        {{ form.introductionText['html'] | safe }}
-        </div>
-
-        <div id="fb-render"></div>
-
-        <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
-            <div class="blurb">{{ form.dataConsent|safe }}</div>
-            <div class="consent">
-            {%trans%}I agree{%endtrans%}&nbsp;
-            <input type="checkbox" required />
+        <div class="gngform">
+            <div class="formIntroduction marked-up">
+            {{ form.introductionText['html'] | safe }}
             </div>
-        </div>
 
-        <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
+            <div id="fb-render"></div>
+
+            <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
+                <div class="blurb">{{ form.dataConsent|safe }}</div>
+                <div class="consent">
+                    <input type="checkbox" name="DPL" value="ok" required />
+                    &nbsp;{%trans%}I agree{%endtrans%}
+                </div>
+            </div>
+            <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
+        </div>
         
         <p>&nbsp;</p>
         <hr />
@@ -292,10 +293,10 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
 {% endif %}
 {% endif %}
 function addRequiredMsg(){
-    if ($('#fb-render').find("span.fb-required").length) {
+    if ($('#fb-render').find("span.formbuilder-required").length) {
         var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
         if (firstGroup.length) {
-            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore(firstGroup);
+            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($('#fb-render'));
         }
     }    
 }

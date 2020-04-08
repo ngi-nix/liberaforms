@@ -11,34 +11,34 @@
             {%trans%}Preview{%endtrans%}: {{ slug }}
         </div>
 
-        <div class="formIntroduction marked-up">
-        {{ introductionText | safe }}
-        </div>
-
-        <div id="fb-render"></div>
-        <div class="form-actions">
-        <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
-        </div>
-        <p>&nbsp;</p>
-        
-        <div class="afterSubmitText marked-up">
-        {{ afterSubmitMsg | safe }}
-        </div>
-        
-        <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <div class="form-actions">
-            <hr />
-            <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
-            {% if session['form_id'] %}
-                <a class="btn-primary btn" role="button" href="/forms/edit/{{session['form_id']}}">{%trans%}Edit again{%endtrans%}</a>
-                <a class="btn-primary btn" role="button" href="/forms/view/{{session['form_id']}}">{%trans%}Cancel{%endtrans%}</a>
-            {% else %}
-                <a class="btn-primary btn" role="button" href="/forms/edit">{%trans%}Edit again{%endtrans%}</a>
-                <a class="btn-primary btn" role="button" href="/forms">{%trans%}Cancel{%endtrans%}</a>
-            {% endif %}
+        <div class="gngform">
+            <div class="formIntroduction marked-up">
+            {{ introductionText | safe }}
             </div>
-        </form>
+
+            <div id="fb-render"></div>
+            
+            <div class="form-actions">
+            <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
+            </div>
+            <p>&nbsp;</p>
+            
+            <div class="afterSubmitText marked-up">
+            {{ afterSubmitMsg | safe }}
+            </div>
+            <hr />
+            <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
+                {% if session['form_id'] %}
+                    <a class="btn-primary btn" role="button" href="/forms/edit/{{session['form_id']}}">{%trans%}Edit again{%endtrans%}</a>
+                    <a class="btn-primary btn" role="button" href="/forms/view/{{session['form_id']}}">{%trans%}Cancel{%endtrans%}</a>
+                {% else %}
+                    <a class="btn-primary btn" role="button" href="/forms/edit">{%trans%}Edit again{%endtrans%}</a>
+                    <a class="btn-primary btn" role="button" href="/forms">{%trans%}Cancel{%endtrans%}</a>
+                {% endif %}
+            </form>
+        </div>
     </div>
 </div>
 </div>
@@ -61,10 +61,10 @@ jQuery(function($) {
     $(fbRender).formRender(formRenderOpts);
 });
 function addRequiredMsg(){
-    if ($('#fb-render').find("span.fb-required").length) {
+    if ($('#fb-render').find("span.formbuilder-required").length) {
         var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
         if (firstGroup.length) {
-            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore(firstGroup);
+            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($('#fb-render'));
         }
     }    
 }

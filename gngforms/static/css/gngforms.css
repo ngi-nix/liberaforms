@@ -124,7 +124,7 @@ input[type="date"], input[type="number"], input[type="time"] {
   margin-bottom: 1rem
 }
 .formIntroduction, .afterSubmitText {
-    padding-bottom: 1.5em; 
+    padding-bottom: 1em; 
 }
 .formIntroduction img, .afterSubmitText img {
   width: 100%;
@@ -168,7 +168,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 .required {
     font-size: 1.05em;
     color: #c10000;
-    padding: 0.5em 0 0.5em 0;
+    padding-bottom: 1em;
 }
 
 /* ######### WTForms ######### */
@@ -243,4 +243,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 .formbuilder-required:after {
   content: '●';
   visibility: visible;
+}
+.gngform label:empty {
+  display: none;
 }

@@ -26,7 +26,7 @@ from unidecode import unidecode
 import json, time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
-import markdown, html.parser
+import markdown, re
 from pprint import pformat
 
 
@@ -92,22 +92,14 @@ def isSaneUsername(username):
 
 def sanitizeTokenString(string):
     return re.sub('[^a-z0-9]', '', string)
-    
-def stripHTMLTags(text):
-    h = html.parser.HTMLParser()
-    text=h.unescape(text)
-    return re.sub('<[^<]+?>', '', text)
 
-# remember to remove this from the code because now tags are stripped from Labels at view/preview
-def stripHTMLTagsForLabel(text):
-    h = html.parser.HTMLParser()
-    text=h.unescape(text)
-    text = text.replace("<br>","-") # formbuilder generates "<br>"s
-    return re.sub('<[^<]+?>', '', text)
+TAG_RE = re.compile(r'<[^>]+>')
+def stripHTMLTags(text):
+    return TAG_RE.sub(' ', text).strip(' ')
 
 def escapeMarkdown(MDtext):
-    return re.sub(r'<[^>]*?>', '', MDtext)
-
+    return TAG_RE.sub('', MDtext)
+    #return re.sub(r'<[^>]*?>', '', MDtext)
 
 def markdown2HTML(MDtext):
     MDtext=escapeMarkdown(MDtext)

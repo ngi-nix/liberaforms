@@ -1,3 +1,7 @@
+v.1.1.1
+ * We now allow empty field labels
+ * Tidied up stripHTMLTags function and POST form/edit
+
 v.1.1.0
  * Added new Introduction markdown text field to form
  * Temporarly removed form templates

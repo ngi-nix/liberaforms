@@ -175,6 +175,13 @@ class Form(db.Document):
     enabled = db.BooleanField()
     expired = db.BooleanField()
     expiryConditions = db.DictField(required=True)
+    """
+    structure: Json dict that is rendered by formbuilder
+    fieldIndex: List of dictionaries. Each dict contains one field.
+                [{"label": <visible_field_name>, "name": <unique_field_identifier>}]
+    entries: List of dictionaries containing the data submitted by visitors.
+                [{unique_field_identifier: value, unique_field_identifier: value}]
+    """
     structure = db.StringField(required=True)
     fieldIndex = db.ListField(required=True)
     entries = db.ListField(required=False)
@@ -229,14 +236,15 @@ class Form(db.Document):
     def getFieldIndexForDataDisplay(self, with_deleted_columns=False):
         """
         formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
-        The tags (formatted lables) are good when rendering the form but we do not want them included in CSV column headers.
+        The tags (formatted lables) are good when rendering the form but
+        we do not want them included in CSV column headers.
         This function is called when viewing form entry data.
         """
         result=[]
         for field in self.fieldIndex:
             if 'removed' in field and not with_deleted_columns:
                 continue
-            item={'label': stripHTMLTagsForLabel(field['label']), 'name': field['name']}
+            item={'label': stripHTMLTags(field['label']), 'name': field['name']}
             result.append(item)
         if self.isDataConsentEnabled():
             # insert dynamic DPL field
