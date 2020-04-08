@@ -100,6 +100,9 @@ input[type="date"], input[type="number"], input[type="time"] {
   color:#337ab7;
   cursor:pointer;
 }
+.formIntroduction {
+
+}
 .dataConsent {
   padding: 1em 0 2em 0;
 }
@@ -117,6 +120,16 @@ input[type="date"], input[type="number"], input[type="time"] {
 .highlightedText {
   color: #d9534f;
 }
+.marked-up h1, .marked-up h2 {
+  margin-bottom: 1rem
+}
+.formIntroduction, .afterSubmitText {
+    padding-bottom: 1.5em; 
+}
+.formIntroduction img, .afterSubmitText img {
+  width: 100%;
+}
+
 
 /* ######### Flash messages ######### */
 

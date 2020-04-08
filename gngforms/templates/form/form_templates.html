@@ -27,10 +27,11 @@
     <hr />
     {% for template in templates %}
         <a name="{{template.id}}"></a>
+
         <div id="fb-render-{{loop.index}}"></div>
-        <p>
+        <div class="form-actions">
         <a class="btn btn-sm btn-success" role="button" href="/forms/new/{{template.id}}">{%trans%}Use this template{%endtrans%}</a>
-        </p>
+        </div>
         <hr />
     {% endfor %}
     

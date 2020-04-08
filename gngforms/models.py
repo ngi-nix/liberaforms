@@ -183,6 +183,7 @@ class Form(db.Document):
     requireDataConsent = db.BooleanField()
     restrictedAccess = db.BooleanField()
     adminPreferences = db.DictField(required=True)
+    introductionText = db.DictField(required=True)
     afterSubmitText = db.DictField(required=True)
     site = None
 
@@ -492,6 +493,13 @@ class Form(db.Document):
             for entry in self.entries:
                 writer.writerow(entry)
         return csv_name
+        
+    @staticmethod
+    def defaultIntroductionText():
+        title=gettext("Form title")
+        context=gettext("Context")
+        content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
+        return "## {}\n\n### {}\n\n{}".format(title, context, content)
 
 
 class Site(db.Document):

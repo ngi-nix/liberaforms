@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from gngforms.models import *
+from gngforms import models
 #from pprint import pprint as pp
 
 """
@@ -27,9 +27,9 @@ schemaVersion >= 13 uses flask_mongoengine.
 
 def migrateMongoSchema(schemaVersion):
 
-    #if schemaVersion == 13:
-    #   ....
-    #   schemaVersion = 14
-
+    if schemaVersion == 13:
+        query = models.Form.objects()
+        query.update(set__introductionText={"markdown":"", "html":""})
+        schemaVersion = 14
 
     return schemaVersion

@@ -27,6 +27,8 @@ def ensureSessionFormKeys():
         session['formFieldIndex'] = []
     if not 'formStructure' in session:
         session['formStructure'] = json.dumps([])
+    if not 'introductionTextMD' in session:
+        session['introductionTextMD'] = ''
     if not 'afterSubmitTextMD' in session:
         session['afterSubmitTextMD'] = ''
         
@@ -35,6 +37,7 @@ def populateSessionFormData(form):
     session['slug'] = form.slug
     session['formFieldIndex'] = form.fieldIndex
     session['formStructure'] = form.structure
+    session['introductionTextMD'] = form.introductionText['markdown']
     session['afterSubmitTextMD'] = form.afterSubmitText['markdown']
 
 def clearSessionFormData():
@@ -42,4 +45,5 @@ def clearSessionFormData():
     session['form_id']=None
     session['formFieldIndex'] = []
     session['formStructure'] = json.dumps([])
+    session['introductionTextMD'] = ''
     session['afterSubmitTextMD'] = ''

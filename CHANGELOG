@@ -1,3 +1,7 @@
+v.1.1.0
+ * Added new Introduction markdown text field to form
+ * Temporarly removed form templates
+
 v.1.0.4
  * Moved notification email lookups to utils/email.py
  * Fixed bug that sent New form notifications to all admins.

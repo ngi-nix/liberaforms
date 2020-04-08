@@ -11,21 +11,24 @@
             {%trans%}Preview{%endtrans%}: {{ slug }}
         </div>
 
+        <div class="formIntroduction marked-up">
+        {{ introductionText | safe }}
+        </div>
+
         <div id="fb-render"></div>
+        <div class="form-actions">
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
+        </div>
         <p>&nbsp;</p>
         
-        <div class="title_1 delimited">
-            {%trans%}Post-submit text{%endtrans%}
-        </div>
-        <div>
+        <div class="afterSubmitText marked-up">
         {{ afterSubmitMsg | safe }}
         </div>
         
-        <p>&nbsp;</p>
-        <hr /> 
         <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <div class="form-actions">
+            <hr />
             <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
             {% if session['form_id'] %}
                 <a class="btn-primary btn" role="button" href="/forms/edit/{{session['form_id']}}">{%trans%}Edit again{%endtrans%}</a>
@@ -34,6 +37,7 @@
                 <a class="btn-primary btn" role="button" href="/forms/edit">{%trans%}Edit again{%endtrans%}</a>
                 <a class="btn-primary btn" role="button" href="/forms">{%trans%}Cancel{%endtrans%}</a>
             {% endif %}
+            </div>
         </form>
     </div>
 </div>

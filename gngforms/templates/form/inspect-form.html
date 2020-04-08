@@ -12,7 +12,11 @@
         <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">{%trans%}Edit{%endtrans%}</a>
         {% endif %}
         </div> 
-          
+
+        <div class="formIntroduction marked-up">
+        {{ form.introductionText['html'] | safe }}
+        </div>
+
         <div id="fb-render"></div>
 
         <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
@@ -26,10 +30,8 @@
         <input class="btn-success btn" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
         
         <p>&nbsp;</p>
-        <div class="title_1 delimited">
-            {%trans%}Post-submit text{%endtrans%}
-        </div>
-        <div>
+        <hr />
+        <div class="afterSubmitText marked-up">
         {{ form.afterSubmitText['html'] | safe }}
         </div>
     </div>

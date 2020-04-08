@@ -60,6 +60,10 @@ def new_form(templateID=None):
         template = list(filter(lambda template: template['id'] == templateID, formTemplates))
         if template:
             session['formStructure']=template[0]['structure']
+    if not session['formStructure']:
+        session['introductionTextMD'] = "## {}\n\n{}".format(template['title'], template['introduction'])
+    else:
+        session['introductionTextMD'] = Form.defaultIntroductionText()
     session['afterSubmitTextMD'] = "## %s" % gettext("Thank you!!")
     return render_template('edit-form.html', host_url=g.site.host_url)
 
@@ -106,8 +110,11 @@ def edit_form(id=None):
                         # we need some text (any text) to save as a label.                 
                         formElement['label'] = "Label"
                 session['formFieldIndex'].append({'name': formElement['name'], 'label': formElement['label']})
+                
         session['formStructure'] = json.dumps(formStructure)
+        session['introductionTextMD'] = escapeMarkdown(request.form['introductionTextMD'])
         session['afterSubmitTextMD'] = escapeMarkdown(request.form['afterSubmitTextMD'])
+        
         return redirect(make_url_for('form_bp.preview_form'))
     return render_template('edit-form.html', host_url=g.site.host_url)
 
@@ -157,10 +164,13 @@ def preview_form():
                     if not input_type["value"] and input_type["label"]:
                         input_type["value"] = input_type["label"]
                     input_type["value"] = sanitizeString(input_type["value"].replace(" ", "-"))
+    
     session['formStructure']=json.dumps(structure)
     session['slug']=sanitizeSlug(session['slug'])
-    afterSubmitMsg=markdown2HTML(session['afterSubmitTextMD'])
-    return render_template('preview-form.html', slug=session['slug'], afterSubmitMsg=afterSubmitMsg)
+    return render_template( 'preview-form.html',
+                            slug=session['slug'],
+                            introductionText=markdown2HTML(session['introductionTextMD']),
+                            afterSubmitMsg=markdown2HTML(session['afterSubmitTextMD']))
 
 
 @form_bp.route('/forms/save', methods=['POST'])
@@ -172,6 +182,8 @@ def save_form(id=None):
         app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
     """
     session['formFieldIndex'].insert(0, {'label':gettext("Created"), 'name':'created'})
+    introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
+                        'html':markdown2HTML(session['introductionTextMD'])} 
     afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
                         'html':markdown2HTML(session['afterSubmitTextMD'])} 
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
@@ -209,6 +221,7 @@ def save_form(id=None):
         queriedForm.structure=session["formStructure"]
         queriedForm.fieldIndex=session["formFieldIndex"]
         
+        queriedForm.introductionText=introductionText
         queriedForm.afterSubmitText=afterSubmitText
         queriedForm.save()
         
@@ -241,6 +254,7 @@ def save_form(id=None):
                                         "key": getRandomString(32),
                                         "password": False,
                                         "expireDate": False},
+                    "introductionText": introductionText,
                     "afterSubmitText": afterSubmitText,
                     "log": [],
                     "requireDataConsent": g.site.isPersonalDataConsentEnabled(),
@@ -284,7 +298,7 @@ def inspect_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #pp(queriedForm.fieldIndex)
+    pp(queriedForm)
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
