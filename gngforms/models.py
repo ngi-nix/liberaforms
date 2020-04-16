@@ -428,6 +428,14 @@ class Form(db.Document):
                 entry[field['label']]=value
             result.append(entry)
         return result
+        
+    def getEntriesForStats(self):
+        total=0
+        result=[]
+        for entry in self.entries:
+            total+=1
+            result.append({'x': entry['created'], 'y': total})
+        return result
 
     def toggleEnabled(self):
         if self.expired or self.adminPreferences['public']==False:

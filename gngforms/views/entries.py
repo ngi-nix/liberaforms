@@ -45,6 +45,16 @@ def list_entries(id):
                             with_deleted_columns=request.args.get('with_deleted_columns'))
 
 
+@entries_bp.route('/forms/entries/stats/<string:id>', methods=['GET'])
+@enabled_user_required
+def entry_stats(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        flash(gettext("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    return render_template('chart-entries.html', form=queriedForm)
+
+
 @entries_bp.route('/forms/csv/<string:id>', methods=['GET'])
 @enabled_user_required
 def csv_form(id):

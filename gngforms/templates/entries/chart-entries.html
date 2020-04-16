@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+
+<div class="container">
+<div class="row" style="font-size:1.5em">
+    <div class="col">
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Go back{%endtrans%}</a>
+    {{ form.slug }}
+    <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+    <canvas id="myChart" height="100"></canvas>
+    </div>
+</div>
+
+
+<script>
+var ctx = document.getElementById('myChart');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: [{
+            label: 'Total entries {{ form.totalEntries }}',
+            fill: false,
+            borderWidth: 3,
+            lineTension: 0.1,
+            borderColor: [" rgba(0,123,255)"],
+            data: {{ form.getEntriesForStats() | tojson }},
+        }],
+    },
+    options: {
+        scales: {
+            xAxes: [{
+                type: 'time',
+            }],
+            /*
+            ticks: {
+                display: false,
+            },
+            */
+        }
+    }
+});
+</script>
+
+
+{% endblock %}

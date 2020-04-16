@@ -21,6 +21,7 @@
     </div>
     
     <div class="col-auto">
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/stats/{{form.id}}">{%trans%}Stats{%endtrans%}</a>
     {% if with_deleted_columns %}
     <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}?with_deleted_columns=true">{%trans%}Download CSV{%endtrans%}</a>
     {% else %}
