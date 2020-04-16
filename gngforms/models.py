@@ -236,9 +236,8 @@ class Form(db.Document):
     def getFieldIndexForDataDisplay(self, with_deleted_columns=False):
         """
         formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
-        The tags (formatted lables) are good when rendering the form but
-        we do not want them included in CSV column headers.
-        This function is called when viewing form entry data.
+        We remove all HTML tags from label before the form is saved,
+        but gngform versions before 1.2.1 did not do this.
         """
         result=[]
         for field in self.fieldIndex:

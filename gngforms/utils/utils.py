@@ -95,8 +95,6 @@ def sanitizeTokenString(string):
     return re.sub('[^a-z0-9]', '', string)
 
 TAG_RE = re.compile(r'<[^>]+>')
-def stripHTMLTags(text):
-    return TAG_RE.sub(' ', text).strip(' ')
 
 def escapeMarkdown(MDtext):
     return TAG_RE.sub('', MDtext)
@@ -105,6 +103,12 @@ def markdown2HTML(MDtext):
     MDtext=escapeMarkdown(MDtext)
     return markdown.markdown(MDtext, extensions=['nl2br'])
 
+def stripHTMLTags(text):
+    #return TAG_RE.sub(' ', text).strip(' ')
+    text=html.unescape(text) 
+    soup=BeautifulSoup(text, features="html.parser")
+    return soup.get_text()
+    
 def cleanLabel(text):
     # We should change this to use a whitelist
     text=html.unescape(text) 
