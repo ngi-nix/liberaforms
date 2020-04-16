@@ -19,3 +19,4 @@ FormBuilder: MIT license
 DataTables: MIT license
 Simplemde: MIT license
 Font Awesome 4.7.0 Font: SIL OFL 1.1, CSS: MIT License
+Chartjs MIT license
