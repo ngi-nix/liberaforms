@@ -1,3 +1,6 @@
+v.1.1.2
+ * More formbuilder label repairs
+
 v.1.1.1
  * We now allow empty field labels
  * Tidied up stripHTMLTags function and POST form/edit

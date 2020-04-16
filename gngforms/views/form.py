@@ -96,13 +96,21 @@ def edit_form(id=None):
         
         session['formFieldIndex']=[]   
         for element in formStructure:
+            if "label" in element:
+                # remove unwanted HTML tags
+                element["label"]=cleanLabel(element["label"])
+
             # Create a fieldIndex from the submitted structure
             if 'name' in element:
+                # before appending this field to the index, we repair the label.
                 if "label" not in element:
                     element['label']=""
                 if not stripHTMLTags(element['label']):
                     # label = empty if formbuilder returns only tags. eg "<div></div>"
                     element['label']=""
+                if element['label'][-4:]=="<br>":
+                    # trailing breaklines are bad when appending required '●' to the label
+                    element['label']=element['label'][:-4]
                 session['formFieldIndex'].append({  'name': element['name'],
                                                     'label': element['label']})
             # repair some things if needed.

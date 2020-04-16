@@ -168,7 +168,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 .required {
     font-size: 1.05em;
     color: #c10000;
-    padding-bottom: 1em;
+    padding: 1em 0 1em 0;
 }
 
 /* ######### WTForms ######### */
@@ -246,4 +246,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 }
 .gngform label:empty {
   display: none;
+}
+.gngform label > div:last-of-type {
+  display: inline-block;
 }

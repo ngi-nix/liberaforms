@@ -26,7 +26,8 @@ from unidecode import unidecode
 import json, time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
-import markdown, re
+import markdown, re, html
+from bs4 import BeautifulSoup
 from pprint import pformat
 
 
@@ -99,11 +100,20 @@ def stripHTMLTags(text):
 
 def escapeMarkdown(MDtext):
     return TAG_RE.sub('', MDtext)
-    #return re.sub(r'<[^>]*?>', '', MDtext)
 
 def markdown2HTML(MDtext):
     MDtext=escapeMarkdown(MDtext)
     return markdown.markdown(MDtext, extensions=['nl2br'])
+
+def cleanLabel(text):
+    # We should change this to use a whitelist
+    text=html.unescape(text) 
+    soup=BeautifulSoup(text, features="html.parser")
+    for script in soup.find_all("script"):
+        script.decompose()
+    for style in soup.find_all("style"):
+        style.decompose()
+    return html.escape(str(soup))
 
 
 """ ######## Password ######## """

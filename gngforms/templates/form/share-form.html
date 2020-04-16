@@ -63,24 +63,24 @@
         </div>
         <p></p>
         <div id="disabled_links" {%if form.areEntriesShared()%}style="display:None"{%endif%}>
-            <span class="badge badge-secondary">WEB</span>
-            <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL() }}</span>
-            <br />
             <span class="badge badge-secondary">CSV</span>
             <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL('csv') }}</span>
             <br />
             <span class="badge badge-secondary">JSON</span>
             <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL('json') }}</span>
+            <br />
+            <span class="badge badge-secondary">WEB</span>
+            <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL() }}</span>
         </div>
         <div id="enabled_links" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>
-            <span class="badge badge-secondary">WEB</span>
-            <a href="{{ form.getSharedEntriesURL() }}">{{ form.getSharedEntriesURL() }}</a>
-            <br />
             <span class="badge badge-secondary">CSV</span>
             <a href="{{ form.getSharedEntriesURL('csv') }}">{{ form.getSharedEntriesURL('csv') }}</a>
             <br />
             <span class="badge badge-secondary">JSON</span>
             <a href="{{ form.getSharedEntriesURL('json') }}">{{ form.getSharedEntriesURL('json') }}</a>
+            <br />
+            <span class="badge badge-secondary">WEB</span>
+            <a href="{{ form.getSharedEntriesURL() }}">{{ form.getSharedEntriesURL() }}</a>
         </div>        
     </div>
 </div>
