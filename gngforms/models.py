@@ -428,13 +428,25 @@ class Form(db.Document):
             result.append(entry)
         return result
         
-    def getEntriesForStats(self):
-        total=0
-        result=[]
+    def getDataForStats(self):
+        total={'entries':0}
+        chart_data={'entries':[]}
+        chartableFields=[]
+        for field in self.getAvailableNumberTypeFields():
+            label=self.getFieldLabel(field)
+            total[label]=0
+            chart_data[label]=[]
+            chartableFields.append({'name':field, 'label':label})
         for entry in self.entries:
-            total+=1
-            result.append({'x': entry['created'], 'y': total})
-        return result
+            total['entries']+=1
+            chart_data['entries'].append({'x': entry['created'], 'y': total['entries']})
+            for field in chartableFields:
+                try:
+                    total[field['label']]+=int(entry[field['name']])
+                    chart_data[field['label']].append({'x': entry['created'], 'y': total[field['label']]})
+                except:
+                    continue
+        return chart_data
 
     def toggleEnabled(self):
         if self.expired or self.adminPreferences['public']==False:

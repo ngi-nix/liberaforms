@@ -2,7 +2,6 @@
 {% block content %}
 
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
 
 <div class="container">
 <div class="row" style="font-size:1.5em">
@@ -21,29 +20,45 @@
 
 
 <script>
+{% set chart_data = form.getDataForStats() %}
+{% set colors = ["rgba(182, 0, 181, 1)", "rgba(0, 190, 0, 1)", "rgba(233, 132, 0, 1)", "rgba(255, 228, 0, 1)"] %}
 var ctx = document.getElementById('myChart');
 var myChart = new Chart(ctx, {
     type: 'line',
     data: {
-        datasets: [{
-            label: 'Total entries {{ form.totalEntries }}',
-            fill: false,
-            borderWidth: 3,
-            lineTension: 0.1,
-            borderColor: [" rgba(0,123,255)"],
-            data: {{ form.getEntriesForStats() | tojson }},
-        }],
+        datasets: [
+            {
+                label: "{%trans%}Entries{%endtrans%}",
+                borderColor: ["rgba(0,123,255)"],                
+                fill: false,
+                borderWidth: 3,
+                lineTension: 0.1,
+                data: {{ chart_data['entries']|tojson }},
+            },
+            {% if chart_data.pop('entries') %}{% endif %}
+            {% for label, data in chart_data.items() %}
+            {
+                label: "{{ label }}",
+                {% if loop.index > colors|length %}
+                    borderColor: ["{{ colors[range(0, 3)|random] }}"],
+                {% else %}
+                    borderColor: ["{{ colors[loop.index-1] }}"],
+                {% endif %}
+                hidden: true,
+                
+                fill: false,
+                borderWidth: 3,
+                lineTension: 0.1,
+                data: {{ data|tojson }},
+            },
+            {% endfor %}
+        ],
     },
     options: {
         scales: {
             xAxes: [{
                 type: 'time',
             }],
-            /*
-            ticks: {
-                display: false,
-            },
-            */
         }
     }
 });
