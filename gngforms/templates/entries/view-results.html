@@ -13,7 +13,8 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <input class="btn btn-success btn-sm" type="button" value="{%trans%}Download CSV{%endtrans%}" onClick="location.href='{{ form.getSharedEntriesURL('csv') }}'">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('stats')}}">{%trans%}Graphs{%endtrans%}</a>
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('csv')}}">{%trans%}Download CSV{%endtrans%}</a>
     </div>
 </div>
 <div class="row">

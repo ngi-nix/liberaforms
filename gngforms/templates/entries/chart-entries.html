@@ -1,55 +1,85 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% set chart_data = form.getChartData() %}
+
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
 <div class="container">
 <div class="row" style="font-size:1.5em">
+    
+    {% if key %}
+    <div class="col">
+    {{ form.slug }}
+    </div>
+    <div class="col-auto">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL()}}">{%trans%}Grid{%endtrans%}</a>
+    <a class="btn btn-primary btn-sm" role="button" href="{{ form.getSharedEntriesURL('csv')}}">{%trans%}Download CSV{%endtrans%}</a>
+    </div>
+    {% else %}
     <div class="col">
     <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Go back{%endtrans%}</a>
     {{ form.slug }}
-    <hr />
     </div>
+    <div class="col-auto">
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
+    </div>
+    {% endif %}
+
 </div>
 
 <div class="row">
     <div class="col-md-12">
-    <canvas id="myChart" height="100"></canvas>
+    <hr />
+    <canvas id="time_chart" height="100"></canvas>
     </div>
 </div>
+{% if chart_data['multi_choice']|length %}
+
+<div class="row" style="margin-top:1rem;">
+    <div class="col-md-12">
+    <div class="title_1 delimited">{%trans%}Multiple choice{%endtrans%}</div>
+    </div>
+    
+    {% for field in chart_data['multi_choice'] %}
+    <div class="col-md-4">
+    <canvas id="{{ loop.index }}_multi_choice_chart" height="100"></canvas>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 
 
 <script>
-{% set chart_data = form.getDataForStats() %}
-{% set colors = ["rgba(182, 0, 181, 1)", "rgba(0, 190, 0, 1)", "rgba(233, 132, 0, 1)", "rgba(255, 228, 0, 1)"] %}
-var ctx = document.getElementById('myChart');
-var myChart = new Chart(ctx, {
+{% set fg_colors = ["rgba(233, 132, 0, 1)", "rgba(182, 0, 181, 1)", "rgba(255, 228, 0, 1)", "rgba(0, 123 ,255, 1)", "rgba(0, 190, 0, 1)"] %}
+{% set bg_colors = ["rgba(233, 132, 0, 0.7)", "rgba(182, 0, 181, 0.7)", "rgba(255, 228, 0, 0.7)", "rgba(0, 123 ,255, 0.7)", "rgba(0, 190, 0, 0.7)"] %}
+var ctx = document.getElementById('time_chart');
+var time_chart = new Chart(ctx, {
     type: 'line',
     data: {
         datasets: [
             {
                 label: "{%trans%}Entries{%endtrans%}",
-                borderColor: ["rgba(0,123,255)"],                
+                data: {{ chart_data['time_chart']['entries']|tojson }},
+                borderColor: ["rgba(0, 190, 0)"],                
                 fill: false,
                 borderWidth: 3,
                 lineTension: 0.1,
-                data: {{ chart_data['entries']|tojson }},
             },
-            {% if chart_data.pop('entries') %}{% endif %}
-            {% for label, data in chart_data.items() %}
+            {% if chart_data['time_chart'].pop('entries') %}{% endif %}
+            {% for label, data in chart_data['time_chart'].items() %}
             {
                 label: "{{ label }}",
-                {% if loop.index > colors|length %}
-                    borderColor: ["{{ colors[range(0, 3)|random] }}"],
+                data: {{ data|tojson }},
+                {% if loop.index > fg_colors|length %}
+                    borderColor: "{{ fg_colors[range(0, 3)|random] }}",
                 {% else %}
-                    borderColor: ["{{ colors[loop.index-1] }}"],
+                    borderColor: ["{{ fg_colors[loop.index-1] }}"],
                 {% endif %}
                 hidden: true,
-                
                 fill: false,
                 borderWidth: 3,
                 lineTension: 0.1,
-                data: {{ data|tojson }},
             },
             {% endfor %}
         ],
@@ -58,10 +88,59 @@ var myChart = new Chart(ctx, {
         scales: {
             xAxes: [{
                 type: 'time',
+                precision: 0,
             }],
         }
     }
 });
+
+{% if chart_data['multi_choice']|length %}
+    {% for label, data in chart_data['multi_choice'].items() %}
+
+var ctx = document.getElementById("{{ loop.index }}_multi_choice_chart");
+ctx.height = 250;
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: {{data['axis_1']|tojson}},
+        datasets: [
+            {
+                label: "{{label}}",
+                data: {{ data['axis_2']|tojson }},
+                {% if loop.index > fg_colors|length %}
+                    {% set color_index=range(0, 3)|random %}
+                    backgroundColor: "{{ bg_colors[color_index] }}",
+                {% else %}
+                    backgroundColor: "{{ bg_colors[loop.index-1] }}",
+                {% endif %}
+                fill: true,
+                borderWidth: 0,
+            }
+        ]
+    },
+    options: {
+        animation: {
+            duration: 0
+        },
+        hover: {
+            animationDuration: 0
+        },
+        responsiveAnimationDuration: 0,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    precision: 0,
+                }
+            }]
+        }
+    }
+});
+
+    {% endfor %}
+
+{% endif %}
+
 </script>
 
 

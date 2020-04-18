@@ -185,7 +185,19 @@ def view_entries(slug, key):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
-    return render_template('view-results.html', form=queriedForm, language=get_locale())    
+    return render_template('view-results.html', form=queriedForm, key=key, language=get_locale())    
+
+
+@entries_bp.route('/<string:slug>/stats/<string:key>', methods=['GET'])
+@sanitized_slug_required
+@sanitized_key_required
+def view_stats(slug, key):
+    queriedForm = Form.find(slug=slug, key=key)
+    if not queriedForm or not queriedForm.areEntriesShared():
+        return render_template('page-not-found.html'), 400
+    if queriedForm.restrictedAccess and not g.current_user:
+        return render_template('page-not-found.html'), 400
+    return render_template('chart-entries.html', form=queriedForm, key=key, language=get_locale())
 
 
 @entries_bp.route('/<string:slug>/csv/<string:key>', methods=['GET'])

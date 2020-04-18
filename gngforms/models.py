@@ -320,7 +320,17 @@ class Form(db.Document):
                 else:
                     result[element["name"]]={"type":"number", "condition": None}
         return result
-        
+
+    def getMultiChoiceFields(self):
+        result=[]
+        for element in json.loads(self.structure):
+            if "type" in element:
+                if  element["type"] == "checkbox-group" or \
+                    element["type"] == "radio-group" or \
+                    element["type"] == "select":
+                    result.append(element)
+        return result        
+
     def getFieldLabel(self, fieldName):
         for element in json.loads(self.structure):
             if 'name' in element and element['name']==fieldName:
@@ -428,25 +438,52 @@ class Form(db.Document):
             result.append(entry)
         return result
         
-    def getDataForStats(self):
+    def getChartData(self):
+        chartable_time_fields=[]
         total={'entries':0}
-        chart_data={'entries':[]}
-        chartableFields=[]
+        time_data={'entries':[]}
         for field in self.getAvailableNumberTypeFields():
             label=self.getFieldLabel(field)
             total[label]=0
-            chart_data[label]=[]
-            chartableFields.append({'name':field, 'label':label})
+            time_data[label]=[]
+            chartable_time_fields.append({'name':field, 'label':label})
+            
+        multichoice_fields=self.getMultiChoiceFields()
+        multi_choice_data={}
+        for field in multichoice_fields:
+            multi_choice_data[field['label']]={}
+            multi_choice_data[field['label']]['axis_1']=[]
+            multi_choice_data[field['label']]['axis_2']=[]
+            for value in field['values']:
+                multi_choice_data[field['label']]['axis_1'].append(value['label'])
+                multi_choice_data[field['label']]['axis_2'].append(0)
+
         for entry in self.entries:
+            #pp(entry)
             total['entries']+=1
-            chart_data['entries'].append({'x': entry['created'], 'y': total['entries']})
-            for field in chartableFields:
+            time_data['entries'].append({   'x': entry['created'],
+                                            'y': total['entries']})
+            for field in chartable_time_fields:
                 try:
                     total[field['label']]+=int(entry[field['name']])
-                    chart_data[field['label']].append({'x': entry['created'], 'y': total[field['label']]})
+                    time_data[field['label']].append({  'x': entry['created'],
+                                                        'y': total[field['label']]})
                 except:
                     continue
-        return chart_data
+
+            for field in multichoice_fields:
+                if not (field['name'] in entry and entry[field['name']]):
+                    continue
+                entry_values=entry[field['name']].split(', ')
+                for idx, field_value in enumerate(field['values']):
+                    if field_value['value'] in entry_values:
+                        multi_choice_data[field['label']]['axis_2'][idx]+=1
+        #pp(multi_choice_data)
+
+        result={}
+        result['multi_choice']=multi_choice_data
+        result['time_chart']=time_data
+        return result
 
     def toggleEnabled(self):
         if self.expired or self.adminPreferences['public']==False:

@@ -63,6 +63,23 @@
                </td>
             </tr>
             <tr>
+               <td>
+                    {%trans%}Public URL{%endtrans%}
+                    {% if not form.adminPreferences['public'] %}
+                        <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>
+                    {% endif %}
+               </td>
+               <td>
+                   {% if form.isPublic() %}
+                   <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
+                   <span id="formURL" style="display:none">{{ form.url }}</span>
+                   {% else %}
+                   <a id="formLink" href="{{ form.url }}" style="display:none">{{ form.url }}</a>
+                   <span id="formURL">{{ form.url }}</span>
+                   {% endif %}
+                </td>
+            </tr>
+            <tr>
                <td>{%trans%}Public{%endtrans%}</td>
                <td>
                {% if form.editors[g.current_user.id|string] is defined %}
@@ -96,23 +113,6 @@
                         {% endif %}
                    {% endif %}
                </td>
-            </tr>
-            <tr>
-               <td>
-                    {%trans%}Public URL{%endtrans%}
-                    {% if not form.adminPreferences['public'] %}
-                        <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>
-                    {% endif %}
-               </td>
-               <td>
-                   {% if form.isPublic() %}
-                   <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
-                   <span id="formURL" style="display:none">{{ form.url }}</span>
-                   {% else %}
-                   <a id="formLink" href="{{ form.url }}" style="display:none">{{ form.url }}</a>
-                   <span id="formURL">{{ form.url }}</span>
-                   {% endif %}
-                </td>
             </tr>
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>

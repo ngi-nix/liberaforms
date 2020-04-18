@@ -115,7 +115,7 @@ def edit_form(id=None):
                     if element["multiple"] == False:
                         del element["multiple"]
                 # formBuilder does not enforce values for checkbox groups, radio groups and selects.
-                # we add a value when missing, and sanitize all values just in case.
+                # we add a value when missing, and sanitize values (eg. a comma would be bad).
                 if  element["type"] == "checkbox-group" or \
                     element["type"] == "radio-group" or \
                     element["type"] == "select":
