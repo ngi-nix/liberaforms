@@ -13,15 +13,24 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL()}}">{%trans%}Grid{%endtrans%}</a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{ form.getSharedEntriesURL('csv')}}">{%trans%}Download CSV{%endtrans%}</a>
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL()}}">
+        {%trans%}View entries{%endtrans%}
+        <span class="badge badge-light">{{form.totalEntries}}</span>
+    </a>
+    <a class="btn btn-primary btn-sm" role="button" href="{{ form.getSharedEntriesURL('csv')}}">
+        {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
+    </a>
     </div>
     {% else %}
     <div class="col">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Go back{%endtrans%}</a>
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Form details{%endtrans%}</a>
     {{ form.slug }}
     </div>
     <div class="col-auto">
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
+        {%trans%}View entries{%endtrans%}
+        <span class="badge badge-light">{{form.totalEntries}}</span>
+    </a>
     <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
     </div>
     {% endif %}

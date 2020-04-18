@@ -13,8 +13,12 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('stats')}}">{%trans%}Graphs{%endtrans%}</a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('csv')}}">{%trans%}Download CSV{%endtrans%}</a>
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('stats')}}">
+        {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
+    </a>
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('csv')}}">
+        {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
+    </a>
     </div>
 </div>
 <div class="row">

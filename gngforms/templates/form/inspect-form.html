@@ -9,7 +9,9 @@
         <div class="title_1 delimited">
         {{ form.slug }}
         {% if form.editors[g.current_user.id|string] is defined %}
-        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">{%trans%}Edit{%endtrans%}</a>
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">
+            {%trans%}Edit form{%endtrans%}
+        </a>
         {% endif %}
         </div> 
 
@@ -44,6 +46,9 @@
                 <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
                     {%trans%}View entries{%endtrans%}
                     <span class="badge badge-light">{{form.totalEntries}}</span>
+                </a>
+                <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/stats/{{form.id}}">
+                    {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
                 </a>
             {% else %}
                 <button class="btn btn-primary btn-sm" disabled>
@@ -190,9 +195,9 @@
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
         <p>
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
-        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
         <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
+        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
         </p>
             {% if form.totalEntries == 0 %}
             <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>

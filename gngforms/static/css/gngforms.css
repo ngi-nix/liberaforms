@@ -62,6 +62,9 @@ hr { margin-top: 5px }
   line-height: .55;
   border-radius: .2rem;
 }
+.btn > i {
+  padding-left: 4px;
+}
 label {
   font-size: 1.1em;
 }
