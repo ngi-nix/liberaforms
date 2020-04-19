@@ -9,9 +9,11 @@
         <div class="title_1 delimited">
         {{ form.slug }}
         {% if form.editors[g.current_user.id|string] is defined %}
+        <div style="float:right">
         <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">
-            {%trans%}Edit form{%endtrans%}
+            {%trans%}Edit form{%endtrans%}<i class="fa fa-pencil" aria-hidden="true"></i>
         </a>
+        </div>
         {% endif %}
         </div> 
 
@@ -42,6 +44,7 @@
     <div class="col-md-6">
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
+            <div style="float:right">
             {% if form.editors[g.current_user.id|string] is defined %}
                 <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
                     {%trans%}View entries{%endtrans%}
@@ -56,6 +59,7 @@
                     <span class="badge badge-light">{{form.totalEntries}}</span>
                 </button>
             {% endif %}
+            </div>
         </div>
         
         <table class="table table-sm table-striped">
@@ -63,7 +67,11 @@
                <td>{%trans%}Last entry{%endtrans%}</td>
                <td>
                    {% if form.totalEntries %}
-                   {{ form.lastEntryDate }}
+                        {% if form.editors[g.current_user.id|string] is defined %}
+                        <a href="/forms/entries/{{form.id}}">{{ form.lastEntryDate }}</a>
+                        {% else %}
+                        {{ form.lastEntryDate }}
+                        {% endif %}
                    {% endif %}
                </td>
             </tr>
@@ -138,9 +146,9 @@
                <td>
                    {% if form.editors[g.current_user.id|string] is defined %}
                         {% if form.restrictedAccess %}
-                        <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}True{%endtrans%}</a>
+                        <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}#restricted_access">{%trans%}True{%endtrans%}</a>
                         {% else %}
-                        <a class="btn btn-primary btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}False{%endtrans%}</a>
+                        <a class="btn btn-primary btn-xs" role="button" href="/forms/share/{{form.id}}#restricted_access">{%trans%}False{%endtrans%}</a>
                         {% endif %}
                    {% else %}
                         {{ form.restrictedAccess }}

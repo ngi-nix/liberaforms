@@ -4,7 +4,6 @@
 <script src="/static/formBuilder/form-builder.min.js"></script>
 <script src="/static/simplemde/simplemde.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
-<link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
 
 <div class="container">
 
@@ -13,7 +12,10 @@
     <div class="col-md-9">
         <div class="title_1 delimited">
         {% if session['form_id'] %}
-            {%trans%}Edit form{%endtrans%}: {{ session['slug'] }}
+            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{session['form_id']}}">
+                {%trans%}Return to form{%endtrans%}
+            </a>
+            {{ session['slug'] }}
         {% else %}
             {%trans%}Build your form here{%endtrans%}
         {% endif %}

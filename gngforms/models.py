@@ -458,7 +458,7 @@ class Form(db.Document):
                 multi_choice_data[field['label']]['axis_1'].append(value['label'])
                 multi_choice_data[field['label']]['axis_2'].append(0)
 
-        for entry in self.entries:
+        for entry in sorted(self.entries, key=lambda k: k['created']):
             #pp(entry)
             total['entries']+=1
             time_data['entries'].append({   'x': entry['created'],

@@ -1,48 +1,32 @@
-v.1.2.4
- * Improved some navigation a little
-
-v.1.2.3
- * Added graphs for multi choice fields
- 
-v.1.2.2
- * Number type fields now show on stat graph
-
-v.1.2.1
- * Removed HTML tags from form labels.
-
-v.1.2.0
+v.1.2
  * Added Chartjs for some form stats.
+ * Removed HTML tags from form labels. (Too much trouble) 
+ * Number type fields now show on stat graph
+ * Added graphs for multi choice fields
+ * Some navigation improvement
+ * Fixed entries ordered by created, when creating graph data.
+ * Fixed My Forms datatable Entry column ordering.
 
-v.1.1.2
- * More formbuilder label repairs
 
-v.1.1.1
+v.1.1
+ * Added new Introduction markdown text field to form
+ * Removed form templates (temporarly)
  * We now allow empty field labels
  * Tidied up stripHTMLTags function and POST form/edit
+ * More formbuilder label repairs
 
-v.1.1.0
- * Added new Introduction markdown text field to form
- * Temporarly removed form templates
 
-v.1.0.4
+v.1.0
+ * Changed version number system
+ * Updated gettext translations
+ * Fixed bug when checking slug availability
+ * Deleted form fields are now hidden when viewing entries and CSVs.
+ * Viewing deleted form fields that contain data can be toggled
+ * Some HTML/CSS fixes
+ * Fixed formbuilder dropdown creation
  * Moved notification email lookups to utils/email.py
  * Fixed bug that sent New form notifications to all admins.
 
-v.1.0.3 2020/04/05
- * Fixed formbuilder dropdown creation
-
-v.1.0.2 2020/04/04
- * Deleted form fields are now hidden when viewing entries and CSVs.
- * Viewing deleted form fiels that contain data can be toggled
- * Sone HTML/CSS fixes 
-
-v.1.0.1 2020/04/04
- * Fixed bug when checking slug availability
-
-
-v.1.0.0 2020/04/03
- * Changed version number system
- * Updated gettext translations
 
 v.48 2020/03/31
  * Added option to download entries in json

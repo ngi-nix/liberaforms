@@ -11,7 +11,7 @@
         {%trans%}My forms{%endtrans%}
     </div>
     <div class="col-md-4 text-right">
-    <a class="btn btn-sm btn-success" role="button" href="/forms/new">
+    <a class="btn btn-sm btn-primary" role="button" href="/forms/new">
         {%trans%}New form{%endtrans%} <i class="fa fa-star" aria-hidden="true"></i>
     </a>
     </div>
@@ -21,7 +21,7 @@
 <div class="col-md-12">
 <hr />
 
-<table id="forms" style="display:none" class="table table-sm table-striped">
+<table id="my_forms" style="display:none" class="table table-sm table-striped">
     <thead>
     <tr>
         <th>{%trans%}Name{%endtrans%}</th>
@@ -39,8 +39,7 @@
        <td>{{form.lastEntryDate}}</td>
        <td>
            <a href="/forms/entries/stats/{{form.id}}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>
-           &nbsp;&nbsp;
-           <a href="/forms/entries/{{form.id}}">&nbsp;{{form.entries|length}}&nbsp;</a>
+           <a href="/forms/entries/{{form.id}}"><span>{{form.entries|length}}</span></a>
        </td>
        <td>{{form.isPublic()}}</td>
        <td>{{form.isShared()}}</td>
@@ -53,16 +52,16 @@
 
 <script>
 $(document).ready(function() {
-    $('#forms').DataTable({
+    $('#my_forms').DataTable({
         "language": {
             "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
         },
         "initComplete": function(settings, json) {
-            $("#forms").show();
+            $("#my_forms").show();
         },
         "order": [[1, 'desc']]
     });
-} );
+});
 </script>
   
 {% endblock %}

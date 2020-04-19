@@ -8,7 +8,7 @@
 <div class="container">
 <div class="row" style="font-size:1.5em">
     
-    {% if key %}
+    {% if shared %}
     <div class="col">
     {{ form.slug }}
     </div>
@@ -34,12 +34,23 @@
     <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
     </div>
     {% endif %}
-
 </div>
 
 <div class="row">
     <div class="col-md-12">
     <hr />
+
+    {% if not shared %}
+    {% if form.editors[g.current_user.id|string] is defined %}
+        <div id="toggle_notification" class="btn-group btn-toggle">
+            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+        </div>
+        {%trans%}Notify me on each new entry{%endtrans%}
+    {% endif %}
+    <p>&nbsp;</p>
+    {% endif %}
+
     <canvas id="time_chart" height="100"></canvas>
     </div>
 </div>
@@ -60,8 +71,10 @@
 
 
 <script>
-{% set fg_colors = ["rgba(233, 132, 0, 1)", "rgba(182, 0, 181, 1)", "rgba(255, 228, 0, 1)", "rgba(0, 123 ,255, 1)", "rgba(0, 190, 0, 1)"] %}
-{% set bg_colors = ["rgba(233, 132, 0, 0.7)", "rgba(182, 0, 181, 0.7)", "rgba(255, 228, 0, 0.7)", "rgba(0, 123 ,255, 0.7)", "rgba(0, 190, 0, 0.7)"] %}
+{% set fg_colors = [    "rgba(233, 132, 0, 1)", "rgba(182, 0, 181, 1)", "rgba(255, 228, 0, 1)",
+                        "rgba(255, 0, 0, 1)", "rgba(0, 123 ,255, 1)", "rgba(0, 190, 0, 1)"] %}
+{% set bg_colors = [    "rgba(233, 132, 0, 0.7)", "rgba(182, 0, 181, 0.7)", "rgba(255, 228, 0, 0.7)",
+                        "rgba(255, 0, 0, 0.7)", "rgba(0, 123 ,255, 0.7)", "rgba(0, 190, 0, 0.7)"] %}
 var ctx = document.getElementById('time_chart');
 var time_chart = new Chart(ctx, {
     type: 'line',
@@ -99,6 +112,11 @@ var time_chart = new Chart(ctx, {
                 type: 'time',
                 precision: 0,
             }],
+            yAxes: [{
+                ticks: {
+                    precision: 0,
+                }
+            }],
         }
     }
 });
@@ -107,7 +125,7 @@ var time_chart = new Chart(ctx, {
     {% for label, data in chart_data['multi_choice'].items() %}
 
 var ctx = document.getElementById("{{ loop.index }}_multi_choice_chart");
-ctx.height = 250;
+ctx.height = 275;
 new Chart(ctx, {
     type: 'bar',
     data: {
@@ -147,9 +165,33 @@ new Chart(ctx, {
 });
 
     {% endfor %}
-
 {% endif %}
 
+{% if not shared %}
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-notification/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}")
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+{% endif %}
 </script>
 
 
