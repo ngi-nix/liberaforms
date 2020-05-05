@@ -12,8 +12,9 @@ Python passlib: BSD License
 Python password_strength: BSD License
 Python validate_email: LGPL License
 Python Unidecode: GPLv2+ license
+Python Beautiful Soup 4: MIT license
 
-Bootstrap3: MIT license
+Bootstrap4: MIT license
 Jquery and Jquery-UI: MIT license
 FormBuilder: MIT license
 DataTables: MIT license

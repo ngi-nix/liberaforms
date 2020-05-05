@@ -1,3 +1,5 @@
+https://keepachangelog.com/en/1.0.0/
+
 v.1.2
  * Added Chartjs for some form stats.
  * Removed HTML tags from form labels. (Too much trouble) 
@@ -6,7 +8,7 @@ v.1.2
  * Some navigation improvement
  * Fixed entries ordered by created, when creating graph data.
  * Fixed My Forms datatable Entry column ordering.
-
+ * Added Catalan Formbuilder translation. Thanks @origola
 
 v.1.1
  * Added new Introduction markdown text field to form

@@ -42,9 +42,10 @@ app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL']
 app.config['RESERVED_USERNAMES'] = ['system', 'admin']
 
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'
+#http://www.lingoes.net/en/translator/langcode.htm
 app.config['LANGUAGES'] = {
     'en': ('English', 'en-US'),
-    'ca': ('Català', 'es-ES'),
+    'ca': ('Català', 'ca-ES'),
     'es': ('Castellano', 'es-ES')
 }
 app.config['FAVICON_FOLDER'] = "%s/static/images/favicon/" % os.path.dirname(os.path.abspath(__file__))

@@ -67,6 +67,13 @@ python run
 
 # Configure nginx proxy
 
+## edit /etc/hosts and add an entry to point to your gunicorn process ip
+
+127.0.0.1	gngforms
+
+
+## edit a new nginx hosts file
+
 server {
     listen         80;
     server_name    my_domain.com;
@@ -76,9 +83,9 @@ server {
     listen 443 ssl;    
     server_name my_domain.com;
 
-    ssl_trusted_certificate   /etc/letsencrypt/live/my_domain.com/fullchain.pem;
     ssl_certificate           /etc/letsencrypt/live/my_domain.com/fullchain.pem;
     ssl_certificate_key       /etc/letsencrypt/live/my_domain.com/privkey.pem;
+    ssl_dhparam               /etc/letsencrypt/ssl-dhparams.pem;
 
     location / {
         proxy_pass          http://gngforms:5000;
