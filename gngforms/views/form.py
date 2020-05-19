@@ -245,8 +245,10 @@ def save_form(id=None):
                                         "expireDate": False},
                     "introductionText": introductionText,
                     "afterSubmitText": afterSubmitText,
+                    "dataConsent": {"markdown":"",
+                                    "html":"",
+                                    "required": g.site.isPersonalDataConsentEnabled()},
                     "log": [],
-                    "requireDataConsent": g.site.isPersonalDataConsentEnabled(),
                     "restrictedAccess": False,
                     "adminPreferences": { "public": True }
                 }
@@ -261,6 +263,20 @@ def save_form(id=None):
     clearSessionFormData()
     return redirect(make_url_for('form_bp.my_forms'))
 
+
+@form_bp.route('/forms/save-consent-text/<string:id>', methods=['POST'])
+@enabled_user_required
+def save_data_consent_text(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        flash(gettext("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    MDtext=request.form['DPLMD'].strip()
+    if MDtext:
+        queriedForm.saveDataConsentText(MDtext)
+        flash(gettext("Text saved OK"), 'success')
+    return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
+    
 
 @form_bp.route('/forms/delete/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
@@ -287,7 +303,7 @@ def inspect_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #pp(queriedForm.entries)
+    #pp(queriedForm)
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))

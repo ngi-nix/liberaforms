@@ -52,17 +52,17 @@
         </fieldset>
     </form>
 
+    {% if not site.invitationOnly %}
+        <br />
+        <a href="/user/new">{%trans%}Publish your own form{%endtrans%}</a>
+    {% endif %}
     <br />
     {% if g.current_user %}
         <a href="/user/reset-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% else %}
         <a href="/site/recover-password">{%trans%}Forgot your password?{%endtrans%}</a>
     {% endif %}
-    
-    {% if not site.invitationOnly %}
-        <br />
-        <a href="/user/new">{%trans%}Publish your own form{%endtrans%}</a>
-    {% endif %}
+
 </div>
 </div>
 </div>

@@ -1,5 +1,9 @@
 https://keepachangelog.com/en/1.0.0/
 
+v.1.3
+ * Added custom data protection consent text.
+
+
 v.1.2
  * Added Chartjs for some form stats.
  * Removed HTML tags from form labels. (Too much trouble) 

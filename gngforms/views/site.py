@@ -139,8 +139,10 @@ def schema_update():
             return render_template('page-not-found.html'), 400
     if request.method == 'POST':
         if 'secret_key' in request.form and request.form['secret_key'] == app.config['SECRET_KEY']:
-            installation.updateSchema()
-            flash(gettext("Updated schema OK!"), 'success')
+            if installation.updateSchema():
+                flash(gettext("Schema is up to date!"), 'success')
+            else:
+                flash(gettext("Something went wrong"), 'error')
             if g.current_user:
                 return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
             else:

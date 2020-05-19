@@ -18,10 +18,10 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% endif %}
                 <div id="fb-render"></div>
-                       
-                {% if form.isDataConsentEnabled() %}
+                
+                {% if form.isDataConsentRequired() %}
                     <div id="dataConsent" class="dataConsent">
-                        <div class="blurb">{{ form.dataConsent|safe }}</div>
+                        <div class="blurb">{{ form.dataConsentHTML|safe }}</div>
                         <div class="consent">
                             <input type="checkbox" name="DPL" value="ok" required />
                             &nbsp;{%trans%}I agree{%endtrans%}

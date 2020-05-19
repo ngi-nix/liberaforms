@@ -72,6 +72,10 @@ label {
   font-size:0.95em;
   font-weight: 400;
 }
+.sparse-table tr:first-child > td {
+    border-top: 0;
+    padding-top: 0;
+}
 .custom-radio, .custom-checkbox {
     margin-bottom: 0.4em;
 }

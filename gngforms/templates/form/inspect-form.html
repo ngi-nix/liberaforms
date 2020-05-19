@@ -2,6 +2,8 @@
 {% block content %}
 
 <script src="/static/formBuilder/form-render.min.js"></script>
+<script src="/static/simplemde/simplemde.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
 <div class="container">
 <div class="row">
@@ -25,7 +27,7 @@
             <div id="fb-render"></div>
 
             <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
-                <div class="blurb">{{ form.dataConsent|safe }}</div>
+                <div id="dpl-blurb" class="blurb">{{ form.dataConsentHTML|safe }}</div>
                 <div class="consent">
                     <input type="checkbox" name="DPL" value="ok" required />
                     &nbsp;{%trans%}I agree{%endtrans%}
@@ -62,7 +64,7 @@
             </div>
         </div>
         
-        <table class="table table-sm table-striped">
+        <table class="table table-sm sparse-table">
             <tr>
                <td>{%trans%}Last entry{%endtrans%}</td>
                <td>
@@ -155,21 +157,34 @@
                    {% endif %}
                </td>
             </tr>
-            {% if form.site.isPersonalDataConsentEnabled() %}
             <tr>
                <td>{%trans%}Require consent{%endtrans%}</td>
                <td>
                {% if form.editors[g.current_user.id|string] is defined %}
                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
-                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentRequired() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentRequired() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                    </div>
+                   &nbsp;
+                   <a id="show-dpl-editor" style="white-space: nowrap" href="#">{%trans%}Edit text{%endtrans%}</a>
                {% else %}
-                    {{ form.isDataConsentEnabled() }}            
+                    {{ form.isDataConsentRequired() }}            
                {% endif %}
                </td>
             </tr>
-            {% endif %}
+            <tr id="dpl-editor" style="display:none">
+                <td colspan="2">
+                <p></p>
+                <form id="dpl-editor-form" action="/forms/save-consent-text/{{form.id}}" method="post">
+                    <input class="btn-success btn btn-sm" type="submit" value="{%trans%}Save{%endtrans%}" />
+                    <input id="cancel-edit" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <p></p>
+                    <textarea id="sm-editor" name="editor">{{ form.dataConsentMarkdown }}</textarea>
+                    <input id="dpl-markdown" type="hidden" name="DPLMD" />
+                </form>
+                </td>
+            </tr>
             <tr>
                <td>
                     {%trans%}Author{%endtrans%}
@@ -198,7 +213,7 @@
             
         </table>
         {% if form.editors[g.current_user.id|string] is defined %}
-        <hr />
+
         <div id="embed_snippet">
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
@@ -248,7 +263,14 @@ jQuery(function($) {
     };
     $(fbRender).formRender(formRenderOpts);
 });
-
+function addRequiredMsg(){
+    if ($('#fb-render').find("span.formbuilder-required").length) {
+        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
+        if (firstGroup.length) {
+            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($('#fb-render'));
+        }
+    }    
+}
 {% if form.editors[g.current_user.id|string] is defined %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
@@ -277,42 +299,60 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         }
     });
 });
-{% if form.site.isPersonalDataConsentEnabled() %}
-    document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
-        $.ajax({
-            url : "/form/toggle-data-consent/{{ form.id }}",
-            type: "POST",
-            dataType: "json",
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                }
-            },
-            success: function(data, textStatus, jqXHR)
-            {
-                if (data.consent == true) {
-                    $('#dataConsent_true').addClass('btn-success');
-                    $('#dataConsent_false').removeClass('btn-primary');
-                    $('#dataConsent').show();
-                }
-                else if (data.consent == false) {
-                    $('#dataConsent_true').removeClass('btn-success');
-                    $('#dataConsent_false').addClass('btn-primary');
-                    $('#dataConsent').hide();
-                }
+document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-data-consent/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
             }
-        });
-    });
-{% endif %}
-{% endif %}
-function addRequiredMsg(){
-    if ($('#fb-render').find("span.formbuilder-required").length) {
-        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
-        if (firstGroup.length) {
-            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($('#fb-render'));
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.consent == true) {
+                $('#dataConsent_true').addClass('btn-success');
+                $('#dataConsent_false').removeClass('btn-primary');
+                $('#dataConsent').show();
+            }
+            else if (data.consent == false) {
+                $('#dataConsent_true').removeClass('btn-success');
+                $('#dataConsent_false').addClass('btn-primary');
+                $('#dataConsent').hide();
+            }
         }
-    }    
-}
+    });
+});
+$(document).ready(function() {
+    var simplemde = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: true,
+                                spellChecker: false,
+                                autoDownloadFontAwesome: false,
+                                element: $("#sm-editor")[0]
+                             });
+    $("#show-dpl-editor").click(function(){
+        $("#show-dpl-editor").hide()
+        $('#dpl-editor').show(0, function() {
+            simplemde.value($("#sm-editor").val())
+            $('html, body').animate({
+                scrollTop: $("#dpl-editor").offset().top -100
+            }, 250);
+        });
+        return false;
+    });
+    document.getElementById('dpl-editor-form').addEventListener('submit', function(evt){
+        evt.preventDefault();
+        $("#dpl-markdown").val(simplemde.value());
+        $('#dpl-editor-form').submit();
+    });
+    $("#cancel-edit").click(function(){
+        $('#dpl-editor').hide();
+        $("#show-dpl-editor").show()
+    });
+});
+{% endif %}
 </script>
   
 {% endblock %}

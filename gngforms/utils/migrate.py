@@ -32,4 +32,21 @@ def migrateMongoSchema(schemaVersion):
         query.update(set__introductionText={"markdown":"", "html":""})
         schemaVersion = 14
 
+    if schemaVersion == 14:
+        try:
+            # usign raw mongo instead of the engine because "requireDataConsent"
+            # was removed from models.Forms in this version of gngforms.
+            collection = models.Form._get_collection()
+            for f in collection.find():
+                consent=f["requireDataConsent"]
+                collection.update_one(  {"_id": f["_id"]},
+                                        {"$set": { "requireDataConsent": {  "markdown":"",
+                                                                            "html":"",
+                                                                            "required": consent}}})
+                collection.update_one(  {"_id": f["_id"]},
+                                        {"$rename": {"requireDataConsent": "dataConsent"} })
+        except:
+            return schemaVersion
+        schemaVersion = 15
+
     return schemaVersion

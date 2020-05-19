@@ -12,6 +12,10 @@ cp config.example.cfg config.cfg
 
 And edit /opt/GNGforms/config.cfg
 
+You can create a SECRET_KEY like this
+
+openssl rand -base64 32
+
 
 ## Create a python3 venv
 

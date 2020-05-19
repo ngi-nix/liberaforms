@@ -187,11 +187,11 @@ class Form(db.Document):
     entries = db.ListField(required=False)
     sharedEntries = db.DictField(required=False)
     log = db.ListField(required=False)
-    requireDataConsent = db.BooleanField()
     restrictedAccess = db.BooleanField()
     adminPreferences = db.DictField(required=True)
     introductionText = db.DictField(required=True)
     afterSubmitText = db.DictField(required=True)
+    dataConsent = db.DictField(required=True)
     site = None
 
     def __init__(self, *args, **kwargs):
@@ -245,7 +245,7 @@ class Form(db.Document):
                 continue
             item={'label': stripHTMLTags(field['label']), 'name': field['name']}
             result.append(item)
-        if self.isDataConsentEnabled():
+        if self.isDataConsentRequired():
             # insert dynamic DPL field
             result.insert(1, {"name": "DPL", "label": gettext("DPL")})
         return result
@@ -294,14 +294,32 @@ class Form(db.Document):
         return "%sembed/%s" % (self.site.host_url, self.slug)
 
     def isDataConsentEnabled(self):
-        if not self.site.isPersonalDataConsentEnabled():
-            return False
-        else:
-            return self.requireDataConsent
+        return self.isDataConsentRequired()
+
+    def isDataConsentRequired(self):
+        return self.dataConsent["required"]
 
     @property
-    def dataConsent(self):
-        return self.site.personalDataConsent['html']
+    def dataConsentHTML(self):
+        if self.dataConsent['html']:
+            return self.dataConsent['html']
+        if self.site.isPersonalDataConsentEnabled():
+            return self.site.personalDataConsent['html']
+        return Installation.fallbackDPL()["html"]
+
+    @property
+    def dataConsentMarkdown(self):
+        if self.dataConsent['markdown']:
+            return self.dataConsent['markdown']
+        if self.site.isPersonalDataConsentEnabled() and self.site.personalDataConsent['markdown']:
+            return self.site.personalDataConsent['markdown']
+        return Installation.fallbackDPL()["markdown"]
+
+    def saveDataConsentText(self, MDtext):
+        self.dataConsent = {'markdown':escapeMarkdown(MDtext),
+                            'html':markdown2HTML(MDtext),
+                            'required': self.dataConsent['required']}
+        self.save()
 
     @property
     def lastEntryDate(self):
@@ -531,9 +549,9 @@ class Form(db.Document):
         return False
 
     def toggleRequireDataConsent(self):
-        self.requireDataConsent = False if self.requireDataConsent else True
+        self.dataConsent["required"] = False if self.dataConsent["required"] else True
         self.save()
-        return self.requireDataConsent
+        return self.dataConsent["required"]
 
     def addLog(self, message, anonymous=False):
         if anonymous:
@@ -778,16 +796,18 @@ class Installation(db.Document):
 
     def updateSchema(self):
         if not self.isSchemaUpToDate():
-            migratedUpTo=migrateMongoSchema(self.schemaVersion)
-            if migratedUpTo:
-                self.schemaVersion=migratedUpTo
-                self.save()
-                return self.schemaVersion
-            else:
-                return None
+            migrated_up_to=migrateMongoSchema(self.schemaVersion)
+            self.schemaVersion=migrated_up_to
+            self.save()
+            return True if self.isSchemaUpToDate() else False
         else:
-            print('Schema already up to date')
+            True
     
     @staticmethod
     def isUser(email):
         return True if User.objects(email=email).first() else False
+        
+    @staticmethod
+    def fallbackDPL():
+        text=gettext("We take your data protection seriously. Please contact us for any inquiries.")
+        return {"markdown": text, "html": "<p>"+text+"</p>"}

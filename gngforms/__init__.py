@@ -32,8 +32,8 @@ babel = Babel(app)
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = "1.2.5"
-app.config['SCHEMA_VERSION'] = 14
+app.config['APP_VERSION'] = "1.3.0"
+app.config['SCHEMA_VERSION'] = 15
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
                                 'form', 'forms', 'site', 'sites', 'update']
