@@ -74,12 +74,13 @@ def server_error(error):
     return render_template('server-error.html', error=error), 500
 
 @app.errorhandler(CSRFError)
-def handle_csrf_error(e):   
-    if 'current_user' in g:
-        flash(e.description, 'error')
-        return redirect(make_url_for('main_bp.index'))
-    else:
-        return render_template('server-error.html', error=e.description), 500
+def handle_csrf_error(e):
+    flash(e.description, 'error')
+    #if g.current_user: # throw '_AppCtxGlobals' error. need to investigate
+    #    #flash(e.description, 'error')
+    #    return redirect(make_url_for('main_bp.index'))
+    #else:
+    return render_template('server-error.html', error=e.description), 500
 
 
 @main_bp.route('/', methods=['GET'])

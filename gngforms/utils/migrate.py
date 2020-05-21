@@ -34,7 +34,7 @@ def migrateMongoSchema(schemaVersion):
 
     if schemaVersion == 14:
         try:
-            # usign raw mongo instead of the engine because "requireDataConsent"
+            # Using raw mongo instead of the engine because "requireDataConsent"
             # was removed from models.Forms in this version of gngforms.
             collection = models.Form._get_collection()
             for f in collection.find():

@@ -1,4 +1,5 @@
 venv
+flask_session
 config.cfg
 notes.txt
 *.pyc

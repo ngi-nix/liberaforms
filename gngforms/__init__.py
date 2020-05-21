@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from flask import Flask
+from flask_session import Session
 from flask_mongoengine import MongoEngine
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
@@ -29,10 +30,15 @@ app.config.from_pyfile('../config.cfg')
 db = MongoEngine(app)
 babel = Babel(app)
 
+app.secret_key = app.config['SECRET_KEY']
+app.config['SESSION_TYPE'] = "filesystem"
+Session(app)
+
+app.config['WTF_CSRF_TIME_LIMIT']=5400  # 1.5 hours. Time to fill out a form.
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = "1.3.0"
+app.config['APP_VERSION'] = "1.3.1"
 app.config['SCHEMA_VERSION'] = 15
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
