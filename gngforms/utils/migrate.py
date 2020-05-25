@@ -20,10 +20,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gngforms import models
 #from pprint import pprint as pp
 
-"""
-Mirgations previous to schemaVersion 13 used the flask_pymongo library.
-schemaVersion >= 13 uses flask_mongoengine.
-"""
 
 def migrateMongoSchema(schemaVersion):
 

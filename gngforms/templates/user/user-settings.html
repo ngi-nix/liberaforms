@@ -30,20 +30,6 @@
         <p>&nbsp;</p>
         {% endif %}
 
-        {% if g.isRootUser and not installation.isSchemaUpToDate() %}
-        <div class="row">
-            <div class="col title_2">
-                You need to update DB schema
-            </div>
-            <div class="col-auto">
-                <a class="btn btn-sm btn-success" role="button" href="/site/update">
-                    {%trans%}Update{%endtrans%}
-                </a>
-            </div>
-        </div>
-        <p>&nbsp;</p>
-        {% endif %}
-
         <table class="table table-sm sparse-table">
             <tr>
                 <td>{%trans%}Email address{%endtrans%}</td>

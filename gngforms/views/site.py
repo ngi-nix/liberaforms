@@ -127,31 +127,6 @@ def test_smtp():
     return redirect(make_url_for('site_bp.smtp_config'))
 
 
-@site_bp.route('/update', methods=['GET', 'POST'])
-@site_bp.route('/site/update', methods=['GET', 'POST'])
-def schema_update():
-    installation=Installation.get()
-    if installation.isSchemaUpToDate():
-        if g.current_user:
-            flash(gettext("Schema is already up to date. Nothing to do."), 'info')
-            return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-        else:
-            return render_template('page-not-found.html'), 400
-    if request.method == 'POST':
-        if 'secret_key' in request.form and request.form['secret_key'] == app.config['SECRET_KEY']:
-            if installation.updateSchema():
-                flash(gettext("Schema is up to date!"), 'success')
-            else:
-                flash(gettext("Something went wrong"), 'error')
-            if g.current_user:
-                return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-            else:
-                return redirect(make_url_for('main_bp.index'))
-        else:
-            flash("Wrong secret", 'warning')
-    return render_template('schema-upgrade.html', installation=installation)
-    
-
 @site_bp.route('/admin/sites/edit/<string:hostname>', methods=['GET'])
 @rootuser_required
 def edit_site(hostname):

@@ -1,81 +1,29 @@
-Upgrading GNGforms
+# Upgrading GNGforms
 
-PLEASE read this before upgrading.
 
-Most upgrades only require you to do this:
-
+## Pull the new code
+```
 cd GNGforms
 git pull origin master
 source venv/bin/activate
 pip install --upgrade setuptools
 pip install ./requirements.txt
+```
+
+## Restart GNGforms
+```
 supervisorctl restart GNGforms
+```
 
-
+## Permissions
 Make sure the user who runs gngforms has write permission
+```
 chown -R www-data /opt/GNGforms
+```
 
-but...!! Some upgrades may require special attention.
-
-BEFORE upgrading..
-1. Backup your database
-2. Check your current "GNGforms version" and "Mongo schema version".
-
-* You can find these version numbers by navigating to the config page
-
-
-READ BELOW!
-
-
-
-
-#### Your GNGforms version is less than 32
-
-We integrated mongoengine into GNGforms 32, and a lot of code got changed.
-
-1. If your "Schema version" is less than 13, read below FIRST.
-2. Make sure your Schema version is 13.
-3. Change one line in config.cfg
-
-#MONGO_URI = "mongodb://localhost:27017/GNGforms"
-MONGODB_SETTINGS = {'host': 'mongodb://localhost:27017/GNGforms'}
-
-Now continue with normal upgrade.
-
-
-
-
-#### Your Schema version is less than 13
-
-Update to version 13
-
-1. Pull the code
-
-cd GNGforms
-git pull origin pre-mongoengine
-supervisorctl restart GNGforms
-
-2. Navigate to the config page and update the database.
-Now you will be running GNGforms 31 with Schema version 13 
-
-
-
-
-#### Your GNGforms version is less than 46
-
-As GNGforms is getting bigger, we need to restructure the directories.
-This is easy to do.
-
-1. Backup your database
-2. Stop GNGforms ( # supervisorctl stop GNGforms )
-3. Make a copy of any custom css you have
-4. Delete /opt/GNGforms Yes, delete it, or move it somewhere else if you want
-5. Delete /opt/venv
-6. Follow the INSTALL instructions.
-7. Don't forget to change the supervisor config
-8. Change the port in your nginx config (now using port 5000)
-9. Restart the supervisor. ( # systemctl restart supervisor )
-
-
-___
-END
+## Upgrade database schema
+First, backup your database. Then run the mirgate.py script.
+```
+source venv/bin/activate
+python migrate.py
+```
