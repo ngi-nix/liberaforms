@@ -11,6 +11,10 @@ pip install --upgrade setuptools
 pip install ./requirements.txt
 supervisorctl restart GNGforms
 
+
+Make sure the user who runs gngforms has write permission
+chown -R www-data /opt/GNGforms
+
 but...!! Some upgrades may require special attention.
 
 BEFORE upgrading..

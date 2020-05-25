@@ -38,6 +38,11 @@ pip install wheel
 pip install -r /opt/GNGforms/requirements.txt
 pip install gunicorn
 
+### File permissions
+You need to give the user who will run gngforms write permission
+
+chown -R www-data /opt/GNGforms
+
 
 ### Test your installation
 source /opt/GNGforms/venv/bin/activate

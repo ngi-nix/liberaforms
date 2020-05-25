@@ -225,12 +225,17 @@ class Form(db.Document):
 
     def changeAuthor(self, new_author):
         if new_author.enabled:
-            if self.author_id in self.editors:
+            if new_author == self.author:
+                return False
+            if self.isEditor(self.author):
                 del self.editors[self.author_id]
+            else:
+                return False # this should never happen
             self.author_id=str(new_author.id)
-            if self.addEditor(new_author):
-                self.save()
-                return True
+            if not self.isEditor(new_author):
+                self.addEditor(new_author)
+            self.save()
+            return True
         return False
 
     def getFieldIndexForDataDisplay(self, with_deleted_columns=False):
