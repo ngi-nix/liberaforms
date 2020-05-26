@@ -55,6 +55,7 @@ hr { margin-top: 5px }
   font-size: 1em;
   font-style: italic;
   color: grey;
+  margin-top: -0.8em;
 }
 .btn-xs {
   padding: .45rem .45rem;
@@ -65,9 +66,6 @@ hr { margin-top: 5px }
 .btn > i {
   padding-left: 5px;
 }
-label {
-  font-size: 1.1em;
-}
 .author-badge {
   font-size:0.95em;
   font-weight: 400;
@@ -75,6 +73,15 @@ label {
 .sparse-table tr:first-child > td {
     border-top: 0;
     padding-top: 0;
+}
+label {
+  font-size: 1.2em;
+
+}
+.label-description {
+    display: block;
+    font-size: 1rem;
+    margin: 0.5em 0 0.3em 0;
 }
 .custom-radio, .custom-checkbox {
     margin-bottom: 0.4em;
@@ -87,7 +94,6 @@ label {
   font-size: 1em;
   margin-top:-3px;
 }
-
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
 }
@@ -140,7 +146,6 @@ input[type="date"], input[type="number"], input[type="time"] {
 #my_forms a > span {
     padding: 0 0.5em 0 1em;
 }
-
 /* ######### Flash messages ######### */
 
 .flash_message {
@@ -178,7 +183,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 .required {
     font-size: 1.05em;
     color: #c10000;
-    padding: 1em 0 1em 0;
+    padding: 0 0 1em 0;
 }
 
 /* ######### WTForms ######### */
@@ -227,18 +232,31 @@ input[type="date"], input[type="number"], input[type="time"] {
 }
 
 /* ######### formBuilder ######### */
+.form-group {
+  padding-bottom: 1.3em;
+}
 
+.tooltip-element {
+    display: none !important;
+}
 .formbuilder-checkbox label,
 .formbuilder-checkbox-inline label,
 .formbuilder-radio label,
 .formbuilder-radio-inline label {
   font-size: 1rem;
 }
-.formbuilder-checkbox-group input[type="checkbox"] {
+
+.formbuilder-checkbox-group input[type="checkbox"],
+.formbuilder-checkbox input,
+.formbuilder-checkbox-inline input {
   vertical-align:-2px;
+  margin: 0 0.5em 0 0 !important;
 }
-.formbuilder-radio-group input[type="radio"] {
+.formbuilder-radio-group input[type="radio"],
+.formbuilder-radio input,
+.formbuilder-radio-inline input {
   vertical-align:-2px;
+  margin: 0 0.5em 0 0 !important;
 }
 .required-asterisk {
   visibility: hidden;

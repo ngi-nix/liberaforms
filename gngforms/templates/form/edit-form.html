@@ -125,6 +125,17 @@ jQuery(function($) {
             locale: "{{ config['LANGUAGES'][g.current_user.language][1] }}",
             location: "{{host_url}}static/formBuilder-languages/"
         },
+        layoutTemplates: {        
+            default: function(field, label, help, data) {
+                if (help) {
+                    label=$("<span class='label-description'></span>");
+                    label.append(help.attributes.tooltip.textContent)
+                }else{
+                    label=$("<span style='display:none'></span>");
+                }
+                return $('<div/>').append(label, field, help);
+            }
+        },
         formData: {{ session['formStructure'] | tojson }}
     };
     const formBuilder = $(fbEditor).formBuilder(options);

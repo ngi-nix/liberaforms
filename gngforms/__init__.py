@@ -38,7 +38,7 @@ app.config['WTF_CSRF_TIME_LIMIT']=5400  # 1.5 hours. Time to fill out a form.
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = "1.3.3"
+app.config['APP_VERSION'] = "1.3.4"
 app.config['SCHEMA_VERSION'] = 15
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
@@ -46,6 +46,9 @@ app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'u
 # DPL = Data Protection Law
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL']
 app.config['RESERVED_USERNAMES'] = ['system', 'admin']
+
+app.config['FORMBUILDER_DISABLED_ATTRS']=['className','toggle','access']
+app.config['FORMBUILDER_DISABLE_FIELDS']=['autocomplete','hidden', 'button', 'file']
 
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'
 #http://www.lingoes.net/en/translator/langcode.htm

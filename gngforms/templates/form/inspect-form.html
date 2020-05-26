@@ -254,6 +254,18 @@ jQuery(function($) {
     var formRenderOpts = {
         formData,
         dataType: 'json',
+        layoutTemplates: {
+          help: function(helpText) {
+            return $('<span/>')
+              .addClass('label-description')
+              .append(helpText);
+          },
+          label: function(label, data) {
+            return $('<label />')
+              .attr('for', data.id)
+              .append(label);
+          }
+        },
         notify: {
             success: function(message) {
                 addRequiredMsg();
