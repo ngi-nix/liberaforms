@@ -74,13 +74,12 @@ hr { margin-top: 5px }
     border-top: 0;
     padding-top: 0;
 }
-label {
+.gngform label {
   font-size: 1.2em;
-
 }
 .label-description {
     display: block;
-    font-size: 1rem;
+    font-size: 1.08rem;
     margin: 0.5em 0 0.3em 0;
 }
 .custom-radio, .custom-checkbox {
@@ -133,11 +132,14 @@ input[type="date"], input[type="number"], input[type="time"] {
 .highlightedText {
   color: #d9534f;
 }
+.marked-up {
+  font-size: 1.1rem;
+}
 .marked-up h1, .marked-up h2 {
-  margin-bottom: 1rem
+  margin-bottom: 1rem;
 }
 .formIntroduction, .afterSubmitText {
-    padding-bottom: 1em; 
+    padding-bottom: 1em;
 }
 .formIntroduction img, .afterSubmitText img {
   width: 100%;
@@ -232,10 +234,13 @@ input[type="date"], input[type="number"], input[type="time"] {
 }
 
 /* ######### formBuilder ######### */
+#fb-editor .field-label {
+  font-size: 1.2em;
+  color: #333333;
+}
 .form-group {
   padding-bottom: 1.3em;
 }
-
 .tooltip-element {
     display: none !important;
 }
@@ -271,6 +276,10 @@ input[type="date"], input[type="number"], input[type="time"] {
 .formbuilder-required:after {
   content: '●';
   visibility: visible;
+}
+
+.gngform {
+  font-size: 1.1rem;
 }
 .gngform label:empty {
   display: none;

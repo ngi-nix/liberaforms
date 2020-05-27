@@ -7,6 +7,8 @@ v.1.3
  * Fixed Change Author bug.
  * Improved database migration. See UPGRADE
  * Included Formbuilder Label descriptions.
+ * New default index text
+ * CSS changes
  
 v.1.2
  * Added Chartjs for some form stats.
