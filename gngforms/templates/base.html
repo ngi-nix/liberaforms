@@ -10,6 +10,7 @@
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>
   <script src="/static/bootstrap/popper.1.14.3.min.js"></script>
+  <script src="/static/bootstrap/4.1/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/static/bootstrap/4.1/bootstrap.min.css">
     
   <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
@@ -18,6 +19,43 @@
 </head>
 
 <body>
+
+
+{% if 'current_user' in g and g.current_user %}
+
+<nav class="navbar navbar-expand-lg navbar-dark navbar-color">
+    
+<div id="header" class="container">
+    <div class="row">
+        <div id="menu" class="col-md-12">
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+
+        {% if 'site' in g and g.site %}
+          <a class="navbar-brand" href="/"><img src="{{g.site.faviconURL()}}" /></a>
+        {% endif %}        
+        {% if g.current_user.enabled %}
+            {% if g.isAdmin %}
+                <a class="nav-item nav-link" href="/admin/forms">{%trans%}Forms{%endtrans%}</a> 
+                <a class="nav-item nav-link" href="/admin/users">{%trans%}Users{%endtrans%}</a>
+            {% endif %}
+            <a class="nav-item nav-link" href="/forms">{%trans%}My forms{%endtrans%}</a>
+        {% endif %}
+        <a class="nav-item nav-link" href="/user/{{ g.current_user.username }}">{%trans%}Settings{%endtrans%}</a>
+        <a class="nav-item nav-link" href="/user/logout">{%trans%}Logout{%endtrans%}</a>
+    </div>
+  </div>
+</nav>
+
+        </div>
+    </div>
+</div>
+{% endif %}
 
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -29,24 +67,6 @@
     {% endif %}
 {% endwith %}
 
-{% if 'current_user' in g and g.current_user %}
-<div id="header" class="container">
-    <div class="row">
-        <div id="menu" class="col-md-12">
-            <a href="/">{%trans%}Start{%endtrans%}</a> | 
-            {% if g.current_user.enabled %}
-                {% if g.isAdmin %}
-                    <a href="/admin/forms">{%trans%}Forms{%endtrans%}</a> | 
-                    <a href="/admin/users">{%trans%}Users{%endtrans%}</a> | 
-                {% endif %}
-                <a href="/forms">{%trans%}My forms{%endtrans%}</a> |
-            {% endif %}
-            <a href="/user/{{ g.current_user.username }}">{%trans%}Settings{%endtrans%}</a> | 
-            <a href="/user/logout">{%trans%}Logout{%endtrans%}</a>
-        </div>
-    </div>
-</div>
-{% endif %}
 
 <div id="main-content">
 {% block content %}{% endblock %}

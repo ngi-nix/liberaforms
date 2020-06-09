@@ -4,6 +4,10 @@
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<script src="/static/dataTables/extensions/responsive/2.2.4/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
+<script src="/static/dataTables/extensions/scroller/2.0.2/dataTables.scroller.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/scroller/2.0.2/scroller.dataTables.min.css">
 
 {% set fieldIndex=form.getFieldIndexForDataDisplay() %}
 
@@ -25,7 +29,7 @@
     <div class="col-md-12">
     <hr />
 
-    <table id="formEntries" style="display:none" class="table table-bordered table-striped table-sm entries-table">
+    <table id="formEntries" style="display:none" class="table table-bordered table-striped table-sm entries-table nowrap">
     <thead>
         <tr>
         {% for field in fieldIndex %}
@@ -47,11 +51,16 @@
 <script>
 $(document).ready(function() {
     $('#formEntries').DataTable({
+        "responsive": true,
+        "scrollY": "50vh",
+        //"scrollCollapse": true,
+        //"scroller": true,
+        "paging": false,
         "language": {
             "url": "/static/dataTables-languages/{{language}}.js"
         },
         "initComplete": function(settings, json) {
-            $("#formEntries").show();
+            $(".dataTable").show();
         },
         "order": [[0, 'desc']],
     });

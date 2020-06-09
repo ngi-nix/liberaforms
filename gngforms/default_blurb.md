@@ -4,15 +4,14 @@ We have built this software with the hope it will be used by our neighbours, fri
 
 Did you know Google knows:
 
-* Who our family is, who our friends are.
-* Where we are, who we are with.
-* What we're talking about.
+* Who our friends and families are.
+* Where we are, who we are with, and what we're talking about.
 * Our concerns, joys, intereses and plans.
 * Our opinion on all sorts of different topics.
 
-Google knows all these things about you and about all the people you know.
+Google knows all these things about us, and the same about all the other people we know too.
 
-### Please do not feed the dictator!
+## Do not feed the dictator!
 
 What sort of things does Google do with the power we give it?
 
@@ -32,4 +31,4 @@ Gmail and Drive have locked in millions of users around the world and now they "
 
 However, **people are not invested in Google forms** to the same extent.
 
-Sovereign form software can keep a lot of imformation away from those googly eyes.
+Sovereign form software can keep a lot of information away from those googly eyes.

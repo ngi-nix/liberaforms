@@ -11,6 +11,16 @@ body {
 #header{
   font-size: 1.3em;
 }
+.navbar-brand > img {
+  width: 30px;
+  padding-top: 3px;
+}
+.nav-link {
+color: rgb(255, 255, 255, 1) !important;  
+}
+.navbar-color {
+  background-color: #337ab7 !important;  
+}
 
 #main-content {
   margin-top: 1.5em;
@@ -198,6 +208,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 .delete-row-icon {
     font-size: 1.15em !important;
     color: grey;
+    visibility: visible;
 }
 .delete-row-icon.enabled {
     color: #d9534f;
@@ -233,6 +244,13 @@ input[type="date"], input[type="number"], input[type="time"] {
     padding-left: 0.27em;
 }
 
+/* ######### dataTables ######### */
+.dataTables_scrollBody {
+    background: none !important;
+}
+ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
+    white-space: normal !important;
+}
 /* ######### formBuilder ######### */
 #fb-editor .field-label {
   font-size: 1.2em;

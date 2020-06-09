@@ -6,43 +6,7 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
 <div class="container">
-<div class="row">
-    <div class="col-md-6">
-        <div class="title_1 delimited">
-        {{ form.slug }}
-        {% if form.editors[g.current_user.id|string] is defined %}
-        <div style="float:right">
-        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">
-            {%trans%}Edit form{%endtrans%}<i class="fa fa-pencil" aria-hidden="true"></i>
-        </a>
-        </div>
-        {% endif %}
-        </div> 
-
-        <div class="gngform">
-            <div class="formIntroduction marked-up">
-            {{ form.introductionText['html'] | safe }}
-            </div>
-
-            <div id="fb-render"></div>
-
-            <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
-                <div id="dpl-blurb" class="blurb">{{ form.dataConsentHTML|safe }}</div>
-                <div class="consent">
-                    <input type="checkbox" name="DPL" value="ok" required />
-                    &nbsp;{%trans%}I agree{%endtrans%}
-                </div>
-            </div>
-            <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
-        </div>
-        
-        <p>&nbsp;</p>
-        <hr />
-        <div class="afterSubmitText marked-up">
-        {{ form.afterSubmitText['html'] | safe }}
-        </div>
-    </div>
-    
+<div class="row">    
     <div class="col-md-6">
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
@@ -65,6 +29,10 @@
         </div>
         
         <table class="table table-sm sparse-table">
+            <tr>
+                <td>{%trans%}Name{%endtrans%}</td>
+                <td>{{ form.slug }}</td>
+            </tr>
             <tr>
                <td>{%trans%}Last entry{%endtrans%}</td>
                <td>
@@ -241,6 +209,43 @@
             <input class="btn btn-primary" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
             {% endif %}
         {% endif %}
+        <p>&nbsp;</p>
+    </div>
+
+    <div class="col-md-6">
+        <div class="title_1 delimited">
+        {%trans%}Form{%endtrans%}
+        {% if form.editors[g.current_user.id|string] is defined %}
+        <div style="float:right">
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">
+            {%trans%}Edit form{%endtrans%}<i class="fa fa-pencil" aria-hidden="true"></i>
+        </a>
+        </div>
+        {% endif %}
+        </div> 
+
+        <div class="gngform">
+            <div class="formIntroduction marked-up">
+            {{ form.introductionText['html'] | safe }}
+            </div>
+
+            <div id="fb-render"></div>
+
+            <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
+                <div id="dpl-blurb" class="blurb">{{ form.dataConsentHTML|safe }}</div>
+                <div class="consent">
+                    <input type="checkbox" name="DPL" value="ok" required />
+                    &nbsp;{%trans%}I agree{%endtrans%}
+                </div>
+            </div>
+            <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
+        </div>
+        
+        <p>&nbsp;</p>
+        <hr />
+        <div class="afterSubmitText marked-up">
+        {{ form.afterSubmitText['html'] | safe }}
+        </div>
     </div>
 </div>
 </div>

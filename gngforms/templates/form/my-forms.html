@@ -4,6 +4,8 @@
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<script src="/static/dataTables/extensions/responsive/2.2.4/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
 
 <div class="container">
 <div class="row">
@@ -21,7 +23,7 @@
 <div class="col-md-12">
 <hr />
 
-<table id="my_forms" style="display:none" class="table table-sm table-striped">
+<table id="my_forms" style="display:none" class="table table-sm table-striped nowrap">
     <thead>
     <tr>
         <th>{%trans%}Name{%endtrans%}</th>
@@ -53,11 +55,12 @@
 <script>
 $(document).ready(function() {
     $('#my_forms').DataTable({
+        "responsive": true,
         "language": {
             "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
         },
         "initComplete": function(settings, json) {
-            $("#my_forms").show();
+            $(".dataTable").show();
         },
         "order": [[1, 'desc']]
     });

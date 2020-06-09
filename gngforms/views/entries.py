@@ -42,7 +42,8 @@ def list_entries(id):
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('list-entries.html',
                             form=queriedForm,
-                            with_deleted_columns=request.args.get('with_deleted_columns'))
+                            with_deleted_columns=request.args.get('with_deleted_columns'),
+                            edit_mode=request.args.get('edit_mode'))
 
 
 @entries_bp.route('/forms/entries/stats/<string:id>', methods=['GET'])

@@ -10,6 +10,10 @@
 <script src="/static/dataTables/plugins/sum().js"></script>
 {% endif %}
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<script src="/static/dataTables/extensions/responsive/2.2.4/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
+<script src="/static/dataTables/extensions/scroller/2.0.2/dataTables.scroller.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/scroller/2.0.2/scroller.dataTables.min.css">
 
 
 <div class="container">
@@ -28,15 +32,23 @@
     {% else %}
     <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
     {% endif %}
+    
     {% if form.totalEntries %}
-    <input id="editModeButton" class="btn-primary btn btn-sm" type="button" value="{%trans%}Enable edition{%endtrans%}" onClick="js:setEditMode();">
+    
+    {% if edit_mode %}
+    <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Disable edition{%endtrans%}</a>
+    {% else %}
+    <a class="btn btn-primary btn-sm" role="button" href="?edit_mode=true">{%trans%}Enable edition{%endtrans%}</a>
+    {% endif %}
+    
     {% if form.hasRemovedFields() %}
         {% if with_deleted_columns %}
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Hide deleted columns{%endtrans%}</a>
+    <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Hide deleted columns{%endtrans%}</a>
         {% else %}
     <a class="btn btn-primary btn-sm" role="button" href="?with_deleted_columns=true">{%trans%}Show deleted columns{%endtrans%}</a>
         {% endif %}
     {% endif %}
+    
     <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-entries/{{form.id}}">{%trans%}Delete all{%endtrans%}</a>
     {%endif%}
     </div>
@@ -56,25 +68,31 @@
     
     <p>&nbsp;</p>
 
-    <table id="entriesTable" style="display:none" class="table table-bordered table-striped table-sm entries-table">
-    <thead>
-        <tr>
-        <th></th>
-        {% for field in fieldIndex %}
+    <table  id="entriesTable" style="display:none"
+            class="table table-bordered table-striped table-sm entries-table {%if not edit_mode%}nowrap{%endif%}">
+        <thead>
+            <tr>
+            <th></th>
+            {% for field in fieldIndex %}
             <th>{{ field['label'] }}</th>
-        {% endfor %}
+            {% endfor %}
+            </tr>
+        </thead>
+        <tbody {% if edit_mode %}class="entryCellHighlighter"{% endif %} >
+        <!-- Keep the data TD on one line! -->
+        {% for entry in form.entries %}
+        <tr class="td-controls">
+            <td>
+                {% if edit_mode %}
+                <i class="fa fa-exclamation-triangle delete-row-icon enabled" aria-hidden="true"></i>
+                {% endif %}
+            </td>
+            {% for field in fieldIndex %}
+                <td>{{ entry[field['name']] }}</td>
+            {% endfor %}
         </tr>
-    </thead>
-
-    <!-- Keep the data TD on one line! -->
-    {% for entry in form.entries %}
-    <tr class="td-controls">
-        <td><i class="fa fa-minus-circle delete-row-icon" aria-hidden="true"></i></td>
-        {% for field in fieldIndex %}
-            <td>{{ entry[field['name']] }}</td>
         {% endfor %}
-    </tr>
-    {% endfor %}
+        </tbody>
     </table>
     </div>
 </div>
@@ -87,14 +105,6 @@ var fieldIndex={{fieldIndex|tojson}};
 var editMode = false;
 var tallyColumns = {{tallyColumns|tojson}};
 
-function setEditMode(){
-    editMode = true;
-    $('#editModeButton').removeClass('btn-primary');
-    $('#editModeButton').addClass('btn-success');
-    $('#editModeButton').val('{%trans%}Edition enabled{%endtrans%}');
-    $('.delete-row-icon').addClass('enabled');
-    $('#entriesTable tbody').addClass('entryCellHighlighter');
-}
 function getFieldValueInRow(fieldName, $row){
     var arrayLength = fieldIndex.length;
     for (var loop = 0; loop < arrayLength; loop++) {
@@ -114,6 +124,13 @@ function getRowData($row) {
 }
 $(document).ready(function() {
     var table = $('#entriesTable').DataTable({
+        {% if not edit_mode %}
+        "responsive": true,
+        "scrollY": "50vh",
+        //"scrollCollapse": true,
+        //"scroller": true,
+        "paging": false,
+        {% endif %}
         "language": {
             "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
         },
@@ -123,7 +140,7 @@ $(document).ready(function() {
                 sum=table.column( col ).data().sum();
                 $("#entriesTable th:nth-child("+ (col+1) +")").append(" <span class='col_sum'>("+sum+")</span>");
             });
-            $("#entriesTable").show();
+            $(".dataTable").show();
         },
         "order": [[1, 'desc']],
         "columnDefs": [
@@ -133,11 +150,10 @@ $(document).ready(function() {
     });
     $('.delete-row-icon').attr('title', "{%trans%}Delete entry{%endtrans%}");
 });
+
+{% if edit_mode %}
 // Edit cell
 $('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(-n+2)):not(.cellEditionMode)", function () {
-    if(editMode == false){
-        return;
-    }
     $(this).addClass('cellEditionMode');
     var cellValue = $(this).html();
     var $editor = $("<div class='cell-editor' initial_value=\""+ cellValue +"\"></div>");
@@ -183,10 +199,6 @@ $('#entriesTable tbody').on('click', '.saveCellEdition', function () {
     });    
 });
 $('#entriesTable tbody').on('click', '.delete-row-icon', function () {
-    if(editMode == false){
-        console.log(editMode)
-        return;
-    }
     var $row=$(this).parents('tr');
     if ($row.find(".cellEditionMode").length == 1){
         return
@@ -229,11 +241,13 @@ $('#entriesTable tbody').on('click', '.undo-delete-row', function () {
         {
             if (data.undone == true) {
                 $row.children(':not(:first-child)').removeClass('deleted-row');
-                $row.children('td').eq(0).html('<i class="fa fa-minus-circle delete-row-icon enabled" aria-hidden="true"></i>');
+                $row.children('td').eq(0).html('<i class="fa fa-exclamation-triangle delete-row-icon enabled" aria-hidden="true"></i>');
             }
         }
     });
 });
+{% endif %}
+
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-notification/{{ form.id }}",
