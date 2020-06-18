@@ -26,7 +26,7 @@ from unidecode import unidecode
 import json, time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
-import markdown, re, html
+import markdown, re, html, uuid
 from bs4 import BeautifulSoup
 from pprint import pformat
 
@@ -184,3 +184,11 @@ def isFutureDate(date):
     now=time.time()
     future=int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").strftime("%s"))
     return True if future > now else False
+
+
+def isValidUUID(value):
+    try:
+        uuid.UUID(value)
+        return True
+    except ValueError:
+        return False

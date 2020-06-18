@@ -38,13 +38,13 @@ app.config['WTF_CSRF_TIME_LIMIT']=5400  # 1.5 hours. Time to fill out a form.
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = "1.4.0"
-app.config['SCHEMA_VERSION'] = 15
+app.config['APP_VERSION'] = "1.4.1"
+app.config['SCHEMA_VERSION'] = 16
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
                                 'form', 'forms', 'site', 'sites', 'update']
 # DPL = Data Protection Law
-app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL']
+app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL', 'id', 'checked']
 app.config['RESERVED_USERNAMES'] = ['system', 'admin']
 
 app.config['FORMBUILDER_DISABLED_ATTRS']=['className','toggle','access']
@@ -58,6 +58,8 @@ app.config['LANGUAGES'] = {
     'es': ('Castellano', 'es-ES')
 }
 app.config['FAVICON_FOLDER'] = "%s/static/images/favicon/" % os.path.dirname(os.path.abspath(__file__))
+
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 

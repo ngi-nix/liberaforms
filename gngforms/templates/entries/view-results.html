@@ -6,8 +6,6 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
 <script src="/static/dataTables/extensions/responsive/2.2.4/dataTables.responsive.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
-<script src="/static/dataTables/extensions/scroller/2.0.2/dataTables.scroller.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/scroller/2.0.2/scroller.dataTables.min.css">
 
 {% set fieldIndex=form.getFieldIndexForDataDisplay() %}
 
@@ -32,18 +30,22 @@
     <table id="formEntries" style="display:none" class="table table-bordered table-striped table-sm entries-table nowrap">
     <thead>
         <tr>
+        <th></th>
         {% for field in fieldIndex %}
             <th>{{ field['label'] }}</th>
         {% endfor %}
         </tr>
     </thead>
+    <tbody>
     {% for entry in form.entries %}
         <tr>
+            <td></td>
         {% for field in fieldIndex  %}
             <td class="{{ fieldName }}">{{ entry[field['name']] }}</td>
         {% endfor %}
         </tr>
     {% endfor %}
+    </tbody>
     </table>
 </div>
 </div>
@@ -52,17 +54,18 @@
 $(document).ready(function() {
     $('#formEntries').DataTable({
         "responsive": true,
-        "scrollY": "50vh",
+        //"scrollY": "50vh",
         //"scrollCollapse": true,
         //"scroller": true,
-        "paging": false,
+        //"paging": false,
         "language": {
             "url": "/static/dataTables-languages/{{language}}.js"
         },
         "initComplete": function(settings, json) {
             $(".dataTable").show();
         },
-        "order": [[0, 'desc']],
+        "order": [[2, 'desc']],
+        "pageLength": 100
     });
 });
 </script>

@@ -29,6 +29,7 @@ def migrateMongoSchema(schemaVersion):
         schemaVersion = 14
 
     if schemaVersion == 14:
+        print("Upgrading to version 15")
         try:
             # Using raw mongo instead of the engine because "requireDataConsent"
             # was removed from models.Forms in this version of gngforms.
@@ -42,7 +43,30 @@ def migrateMongoSchema(schemaVersion):
                 collection.update_one(  {"_id": f["_id"]},
                                         {"$rename": {"requireDataConsent": "dataConsent"} })
         except:
+            print("Failed")
             return schemaVersion
+        print("OK")
         schemaVersion = 15
+
+    if schemaVersion == 15:
+        print("Upgrading to version 16")
+        import uuid
+        try:
+            for form in models.Form.objects():
+                for entry in form.entries:
+                    if not 'marked' in entry:
+                        entry['marked']=False
+                    if not 'id' in entry:
+                        _id=uuid.uuid4()
+                        entry['id']=str(_id)
+                #form.fieldIndex.insert(0, {'label':"ID", 'name':'id'})
+                form.fieldIndex.insert(0, {'label':"Marked", 'name':'marked'})
+                form.save()
+        except:
+            print("Failed")
+            return schemaVersion
+        print("OK")
+        schemaVersion = 16
+
 
     return schemaVersion

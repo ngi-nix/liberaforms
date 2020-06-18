@@ -109,6 +109,12 @@ input[type="date"], input[type="number"], input[type="time"] {
 .entries-table {
   font-size: 14px;
 }
+/*
+.entries-table td:nth-child(-n+3), .entries-table th:nth-child(-n+3) {
+  max-width: 45px;
+  white-space: nowrap;
+}
+*/
 .td-controls td:first-child {
     text-align: center;
 }
@@ -224,7 +230,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     text-decoration: line-through;
     cursor: auto;
 }
-.entryCellHighlighter td:not(.deleted-row):not(:nth-child(-n+2)):not(.cellEditionMode):hover {
+.entryCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
     background-color: #ffffcc;
     cursor: pointer;
 }

@@ -27,6 +27,7 @@ from gngforms.models import *
 from gngforms.utils.wraps import *
 from gngforms.utils.utils import *
 
+from pprint import pprint as pp
 
 entries_bp = Blueprint('entries_bp', __name__,
                     template_folder='../templates/entries')
@@ -76,14 +77,10 @@ def csv_form(id):
 @enabled_user_required
 def delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not queriedForm:
+    if not (queriedForm and "id" in request.json and isValidUUID(request.json["id"])):
         return json.dumps({'deleted': False})
-    # we going to use the entry's "created" value as a unique value (gulps).
-    if not "created" in request.json:
-        return json.dumps({'deleted': False})
-    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json["created"]]
-    if not foundEntries or len(foundEntries) > 1:
-        """ If there are two entries with the same 'created' value, we don't delete anything """
+    foundEntries = list(filter(lambda _entry: _entry['id'] == request.json['id'], queriedForm.entries))
+    if not foundEntries:
         return json.dumps({'deleted': False})
     queriedForm.entries.remove(foundEntries[0])    
     queriedForm.expired = queriedForm.hasExpired()
@@ -98,13 +95,16 @@ def undo_delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return json.dumps({'undone': False})
-    # check we have a "created" key
-    created_pos=next((i for i,field in enumerate(request.json) if "name" in field and field["name"] == "created"), None)
-    if not isinstance(created_pos, int):
+
+    # check we have a "id" key
+    id_pos=next((   i for i,field in enumerate(request.json)
+                    if "name" in field and field["name"] == "id"), None)
+    if not (isinstance(id_pos, int) and isValidUUID(request.json[id_pos]["value"])):
         return json.dumps({'undone': False})
-    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[created_pos]["value"]]
+
+    foundEntries = [entry for entry in queriedForm.entries if entry['id'] == request.json[id_pos]["value"]]
     if foundEntries:
-        """ There is already an entry in the DB with the same 'created' value, we don't do anything """
+        # There is already an entry in the DB with the same 'id' value, so we don't do anything
         return json.dumps({'undone': False})
     entry={}
     for field in request.json:
@@ -117,6 +117,21 @@ def undo_delete_entry(id):
     queriedForm.save()
     queriedForm.addLog(gettext("Undeleted an entry"))
     return json.dumps({'undone': True})
+
+
+@entries_bp.route('/forms/toggle-marked-entry/<string:id>', methods=['POST'])
+@enabled_user_required
+def toggle_marked_entry(id):
+    queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
+    if not (queriedForm and "id" in request.json and isValidUUID(request.json["id"])):
+        return json.dumps({'marked': False})
+    foundEntries = [entry for entry in queriedForm.entries if entry['id'] == request.json["id"]]
+    if not foundEntries:
+        return json.dumps({'marked': False})
+    entry=foundEntries[0]
+    entry["marked"] = False if entry["marked"] == True else True
+    queriedForm.save()
+    return json.dumps({'marked': entry["marked"]})
 
 
 @entries_bp.route('/forms/change-entry-field-value/<string:id>', methods=['POST'])
@@ -228,4 +243,4 @@ def view_json(slug, key):
         return JsonResponse(json.dumps({}), 404)
     if queriedForm.restrictedAccess and not g.current_user:
         return JsonResponse(json.dumps({}), 404)
-    return JsonResponse(json.dumps(queriedForm.getEntries()))
+    return JsonResponse(json.dumps(queriedForm.getEntriesForJSON()))

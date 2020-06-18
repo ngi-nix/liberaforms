@@ -251,8 +251,8 @@ class Form(db.Document):
             item={'label': stripHTMLTags(field['label']), 'name': field['name']}
             result.append(item)
         if self.isDataConsentRequired():
-            # insert dynamic DPL field
-            result.insert(1, {"name": "DPL", "label": gettext("DPL")})
+            # append dynamic DPL field
+            result.append({"name": "DPL", "label": gettext("DPL")})
         return result
     
     def hasRemovedFields(self):
@@ -451,9 +451,13 @@ class Form(db.Document):
     def getSharedEntriesURL(self, part="results"):
         return "%s/%s/%s" % (self.url, part, self.sharedEntries['key'])
 
-    def getEntries(self):
+    @property
+    def orderedEntries(self):
+        return sorted(self.entries, key=lambda k: k['created'])
+
+    def getEntriesForJSON(self):
         result=[]
-        for saved_entry in self.entries:
+        for saved_entry in self.orderedEntries:
             entry={}
             for field in self.getFieldIndexForDataDisplay():
                 value=saved_entry[field['name']] if field['name'] in saved_entry else ""
@@ -481,7 +485,7 @@ class Form(db.Document):
                 multi_choice_data[field['label']]['axis_1'].append(value['label'])
                 multi_choice_data[field['label']]['axis_2'].append(0)
 
-        for entry in sorted(self.entries, key=lambda k: k['created']):
+        for entry in self.orderedEntries:
             #pp(entry)
             total['entries']+=1
             time_data['entries'].append({   'x': entry['created'],
@@ -577,7 +581,7 @@ class Form(db.Document):
         with open(csv_name, mode='w') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
             writer.writerow(fieldheaders)
-            for entry in self.entries:
+            for entry in self.orderedEntries:
                 writer.writerow(entry)
         return csv_name
         

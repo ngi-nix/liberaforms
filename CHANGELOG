@@ -2,7 +2,8 @@ https://keepachangelog.com/en/1.0.0/
 
 v.1.4
  * Menu and datatables are now responsive
-
+ * Added unique ID to each entry
+ * Added option to 'mark' entries
 
 
 v.1.3

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json
+import json, uuid
 from flask import g, render_template, redirect
 from flask import session, flash, send_file, after_this_request
 from flask import Blueprint
@@ -170,7 +170,8 @@ def save_form(id=None):
     """ We prepend the reserved field 'Created' to the index
         app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
     """
-    session['formFieldIndex'].insert(0, {'label':gettext("Created"), 'name':'created'})
+    session['formFieldIndex'].insert(0, {'label':gettext("Marked"), 'name':'marked'})
+    session['formFieldIndex'].insert(1, {'label':gettext("Created"), 'name':'created'})
     introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
                         'html':markdown2HTML(session['introductionTextMD'])} 
     afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
@@ -548,6 +549,12 @@ def view_form(slug, embedded=False):
         formData=request.form.to_dict(flat=False)
         entry = {}
         entry["created"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        entry["marked"] = False
+        # add a unique id
+        _id=uuid.uuid4()
+        while list(filter(lambda _entry: _entry['id'] == str(_id), queriedForm.entries)):
+            _id=uuid.uuid4()
+        entry['id']=str(_id)
         
         for key in formData:
             if key=='csrf_token':
