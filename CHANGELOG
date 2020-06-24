@@ -4,6 +4,7 @@ v.1.4
  * Menu and datatables are now responsive
  * Added unique ID to each entry
  * Added option to 'mark' entries
+ * 'Confirmation by email' is activated when an input type=email is present
 
 
 v.1.3

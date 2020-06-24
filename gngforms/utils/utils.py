@@ -26,6 +26,7 @@ from unidecode import unidecode
 import json, time, re, string, random, datetime, csv
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
+from validate_email import validate_email
 import markdown, re, html, uuid
 from bs4 import BeautifulSoup
 from pprint import pformat
@@ -119,6 +120,10 @@ def cleanLabel(text):
         style.decompose()
     return html.escape(str(soup))
 
+""" ######## email ######## """
+
+def isValidEmail(email):
+    return validate_email(email)
 
 """ ######## Password ######## """
 

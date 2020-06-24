@@ -18,7 +18,12 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% endif %}
                 <div id="fb-render"></div>
-                
+                {% if form.hasEmailField() %}
+                <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
+                <input type="checkbox" name="sendConfirmation" value="ok" />
+                &nbsp;{%trans%}Do you want to receive confirmation by email?{%endtrans%}
+                </div>
+                {% endif %}                
                 {% if form.isDataConsentRequired() %}
                     <div id="dataConsent" class="dataConsent">
                         <div class="blurb">{{ form.dataConsentHTML|safe }}</div>

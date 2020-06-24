@@ -131,14 +131,14 @@ input[type="date"], input[type="number"], input[type="time"] {
 .formIntroduction {
 
 }
-.dataConsent {
+.dataConsent, .sendConfirmation {
   padding: 1em 0 2em 0;
 }
 .dataConsent > .blurb {
   font-size: 0.85em;
   color: #666;
 }
-.dataConsent input {
+.dataConsent input, .sendConfirmation input {
   vertical-align: -2px;
 }
 #embed_snippet {
@@ -314,4 +314,7 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
 }
 .gngform label > div:last-of-type {
   display: inline-block;
+}
+.gngform input[type=submit] {
+  margin-top: 1em;
 }

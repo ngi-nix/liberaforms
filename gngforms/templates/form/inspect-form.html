@@ -125,6 +125,17 @@
                    {% endif %}
                </td>
             </tr>
+            {% if form.hasEmailField() %}
+            <tr>
+                <td>{%trans%}Confirmation{%endtrans%}</td>
+                <td>
+                   <div id="toggle_sendConfirmation" class="btn-group btn-toggle">
+                    <button id="sendConfirmation_true" class="btn btn-xs btn-default {% if form.sendConfirmation %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="sendConfirmation_false" class="btn btn-xs btn-default {% if not form.sendConfirmation %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                   </div>
+                </td>
+            </tr>
+            {% endif %}
             <tr>
                <td>{%trans%}Require consent{%endtrans%}</td>
                <td>
@@ -230,7 +241,12 @@
             </div>
 
             <div id="fb-render"></div>
-
+            {% if form.hasEmailField() %}
+            <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
+            <input type="checkbox" name="sendConfirmation" value="ok" />
+            &nbsp;{%trans%}Do you want to receive confirmation by email?{%endtrans%}
+            </div>
+            {% endif %}
             <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
                 <div id="dpl-blurb" class="blurb">{{ form.dataConsentHTML|safe }}</div>
                 <div class="consent">
@@ -341,6 +357,34 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
         }
     });
 });
+{% if form.hasEmailField %}
+document.getElementById('toggle_sendConfirmation').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-send-confirmation/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.confirmation == true) {
+                $('#sendConfirmation_true').addClass('btn-success');
+                $('#sendConfirmation_false').removeClass('btn-primary');
+                $('#sendConfirmation').show();
+            }
+            else if (data.confirmation == false) {
+                $('#sendConfirmation_true').removeClass('btn-success');
+                $('#sendConfirmation_false').addClass('btn-primary');
+                $('#sendConfirmation').hide();
+            }
+        }
+    });
+});
+{% endif %}
+
 $(document).ready(function() {
     var simplemde = new SimpleMDE({ 
                                 autosave: {enabled: false},

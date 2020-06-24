@@ -20,6 +20,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import g, flash, request
 from flask_babel import gettext
 import smtplib, ssl, socket
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from threading import Thread
 
 from gngforms import app
@@ -49,20 +51,23 @@ def createSmtpObj():
             flash(str(e), 'error')
         return False        
 
-
 def sendMail(email, message):
     server = createSmtpObj()
     if server:
         try:
-            header='To: ' + email + '\n' + 'From: ' + g.site.smtpConfig["noreplyAddress"] + '\n'
-            message=header + message
-            server.sendmail(g.site.smtpConfig["noreplyAddress"], email, message.encode('utf-8'))         
+            if type(message).__name__ == 'MIMEMultipart':
+                message['To']=email
+                message['From']=g.site.smtpConfig["noreplyAddress"]
+                message=message.as_string()
+            else:
+                header='To: ' + email + '\n' + 'From: ' + g.site.smtpConfig["noreplyAddress"] + '\n'
+                message=header + message                  
+            server.sendmail(g.site.smtpConfig["noreplyAddress"], email, message.encode('utf-8'))
             return True
         except Exception as e:
             if g.isAdmin:
                 flash(str(e) , 'error')
     return False
-
 
 def sendConfirmEmail(user, newEmail=None):
     link="%suser/validate-email/%s" % (g.site.host_url, user.token['token'])
@@ -73,44 +78,35 @@ def sendConfirmEmail(user, newEmail=None):
     else:
         return sendMail(user.email, message)
 
-
 def sendInvite(invite):
     site=Site.find(hostname=invite.hostname)
     link="%suser/new/%s" % (site.host_url, invite.token['token'])
     message="%s\n\n%s" % (invite.message, link)
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % site.hostname), message)
-    
     return sendMail(invite.email, message)
     
-
 def sendRecoverPassword(user):
     link="%ssite/recover-password/%s" % (g.site.host_url, user.token['token'])
     message=gettext("Please use this link to recover your password")
     message="%s\n\n%s" % (message, link)
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. Recover password"), message)
-    
     return sendMail(user.email, message)
-
 
 def sendNewFormEntryNotification(emails, entry, slug):
     message=gettext("New form entry in %s at %s\n" % (slug, g.site.hostname))
     for data in entry:
         message="%s\n%s: %s" % (message, data[0], data[1])
     message="%s\n" % message
-
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form entry"), message)
     for email in emails:
         sendMail(email, message)
 
-
 def sendExpiredFormNotification(editorEmails, form):
     message=gettext("The form '%s' has expired at %s" % (form.slug, g.site.hostname))
     message='Subject: {}\n\n{}'.format(gettext("GNGforms. A form has expired"), message)
-    
     for email in editorEmails:
         sendMail(email, message)
     
-
 def sendNewFormNotification(form):
     emails=[]
     criteria={  'blocked':False,
@@ -154,9 +150,14 @@ def sendNewUserNotification(user):
     for email in emails:
         sendMail(email, message)
 
-
+def sendConfirmation(email, form):
+    message = MIMEMultipart('alternative')
+    html_body=MIMEText(form.afterSubmitText['html'], 'html')
+    message.attach(html_body)
+    message['Subject'] = gettext("Confirmation message")
+    return sendMail(email, message)
+    
 def sendTestEmail(email):
     message=gettext("Congratulations!")
     message='Subject: {}\n\n{}'.format(gettext("SMTP test"), message)
-    
     return sendMail(email, message)

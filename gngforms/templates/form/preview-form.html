@@ -26,6 +26,7 @@
             <div class="afterSubmitText marked-up">
             {{ afterSubmitMsg | safe }}
             </div>
+        </div>
             <hr />
             <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -38,7 +39,6 @@
                     <a class="btn-primary btn" role="button" href="/forms">{%trans%}Cancel{%endtrans%}</a>
                 {% endif %}
             </form>
-        </div>
     </div>
 </div>
 </div>

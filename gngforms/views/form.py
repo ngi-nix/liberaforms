@@ -167,8 +167,8 @@ def preview_form():
 @enabled_user_required
 def save_form(id=None):
     
-    """ We prepend the reserved field 'Created' to the index
-        app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created']
+    """ We prepend the reserved fields to the index
+        app.config['RESERVED_FORM_ELEMENT_NAMES']
     """
     session['formFieldIndex'].insert(0, {'label':gettext("Marked"), 'name':'marked'})
     session['formFieldIndex'].insert(1, {'label':gettext("Created"), 'name':'created'})
@@ -188,7 +188,7 @@ def save_form(id=None):
                 del queriedForm.fieldConditions[field]
         # update form.fieldIndex
         if queriedForm.totalEntries > 0:
-            # We want to remove the fields the editor has deleted,
+            # If the editor has deleted fields we want to remove them
             # but we don't want to remove fields that already contain data in the DB.
             for field in queriedForm.fieldIndex:
                 if not getFieldByNameInIndex(session['formFieldIndex'], field['name']):
@@ -246,6 +246,7 @@ def save_form(id=None):
                                         "expireDate": False},
                     "introductionText": introductionText,
                     "afterSubmitText": afterSubmitText,
+                    "sendConfirmation": Form.structureHasEmailField(session['formStructure']),
                     "dataConsent": {"markdown":"",
                                     "html":"",
                                     "required": g.site.isPersonalDataConsentEnabled()},
@@ -503,6 +504,15 @@ def toggle_form_dataconsent(id):
     queriedForm.addLog(gettext("Data protection consent set to: %s" % dataConsentBool))
     return JsonResponse(json.dumps({'consent':dataConsentBool}))
 
+@form_bp.route('/form/toggle-send-confirmation/<string:id>', methods=['POST'])
+@enabled_user_required
+def toggle_form_sendconfirmation(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        return JsonResponse(json.dumps())
+    sendConfirmationBool=queriedForm.toggleSendConfirmation()
+    queriedForm.addLog(gettext("Send Confirmation set to: %s" % sendConfirmationBool))
+    return JsonResponse(json.dumps({'confirmation':sendConfirmationBool}))
 
 @form_bp.route('/form/toggle-expiration-notification/<string:id>', methods=['POST'])
 @enabled_user_required
@@ -580,7 +590,15 @@ def view_form(slug, embedded=False):
                 thread = Thread(target=sendExpiredFormNotification())
                 thread.start()
         queriedForm.save()
-            
+        
+        if queriedForm.shouldSendConfirmationEmail() and 'sendConfirmation' in formData:
+            confirmationEmail=queriedForm.getConfirmationEmailAddress(entry).strip()
+            if confirmationEmail and isValidEmail(confirmationEmail):
+                def sendConfirmation():
+                    smtp.sendConfirmation(confirmationEmail, queriedForm)
+                thread = Thread(target=sendConfirmation())
+                thread.start()
+
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
             if preferences["notification"]["newEntry"]:
@@ -590,8 +608,10 @@ def view_form(slug, embedded=False):
         if emails:
             def sendEntryNotification():
                 data=[]
-                for field in queriedForm.fieldIndex:
+                for field in queriedForm.getFieldIndexForDataDisplay():
                     if field['name'] in entry:
+                        if field['name']=="marked":
+                            continue
                         data.append( (field['label'], entry[field['name']]) )
                 smtp.sendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())

@@ -59,7 +59,6 @@ def migrateMongoSchema(schemaVersion):
                     if not 'id' in entry:
                         _id=uuid.uuid4()
                         entry['id']=str(_id)
-                #form.fieldIndex.insert(0, {'label':"ID", 'name':'id'})
                 form.fieldIndex.insert(0, {'label':"Marked", 'name':'marked'})
                 form.save()
         except:
@@ -68,5 +67,16 @@ def migrateMongoSchema(schemaVersion):
         print("OK")
         schemaVersion = 16
 
-
+    if schemaVersion == 16:
+        print("Upgrading to version 17")
+        try:
+            for form in models.Form.objects():
+                form.sendConfirmation=False
+                form.save()
+        except:
+            print("Failed")
+            return schemaVersion
+        print("OK")
+        schemaVersion = 17
+        
     return schemaVersion

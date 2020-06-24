@@ -9,7 +9,7 @@ print("Schema version is {}".format(installation.schemaVersion))
 if not installation.isSchemaUpToDate():
     updated=installation.updateSchema()
     if updated:
-        print("Update completed OK")
+        print("Migration completed OK")
     else:
         print("Error")
         print("Current database schema version is {} but should be {}".format(installation.schemaVersion,

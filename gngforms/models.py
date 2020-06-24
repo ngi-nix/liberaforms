@@ -174,6 +174,7 @@ class Form(db.Document):
     postalCode = db.StringField(required=False)
     enabled = db.BooleanField()
     expired = db.BooleanField()
+    sendConfirmation = db.BooleanField()
     expiryConditions = db.DictField(required=True)
     """
     structure: Json dict that is rendered by formbuilder
@@ -257,6 +258,37 @@ class Form(db.Document):
     
     def hasRemovedFields(self):
         return any('removed' in field for field in self.fieldIndex)
+
+    @staticmethod
+    def isEmailField(field):
+        if  "type" in field and field["type"] == "text" and \
+            "subtype" in field and field["subtype"] == "email":
+            return True
+        else:
+            return False
+    
+    @classmethod
+    def structureHasEmailField(cls, structure):
+        for element in json.loads(structure):
+            if cls.isEmailField(element):
+                return True
+        return False
+        
+    def hasEmailField(self):
+        return Form.structureHasEmailField(self.structure)
+
+    def shouldSendConfirmationEmail(self):
+        if self.sendConfirmation and self.hasEmailField():
+            return True
+        else:
+            return False
+    
+    def getConfirmationEmailAddress(self, entry):
+        for element in json.loads(self.structure):
+            if Form.isEmailField(element):
+                if element["name"] in entry:
+                    return entry[element["name"]]
+        return False
 
     @property
     def totalEntries(self):
@@ -562,6 +594,11 @@ class Form(db.Document):
         self.save()
         return self.dataConsent["required"]
 
+    def toggleSendConfirmation(self):
+        self.sendConfirmation = False if self.sendConfirmation else True
+        self.save()
+        return self.sendConfirmation
+        
     def addLog(self, message, anonymous=False):
         if anonymous:
             actor="system"

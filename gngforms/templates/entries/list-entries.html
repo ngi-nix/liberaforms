@@ -72,9 +72,6 @@
             <tr>
             <th></th>            
             {% for field in fieldIndex %}
-                {% if field['name'] == "id" %}
-                    {% continue %}
-                {% endif %}
                 {% if field['name'] == "DPL" %}
                     <th data-priority="10001">{{ field['label'] }}</th>
                     {% continue %}
