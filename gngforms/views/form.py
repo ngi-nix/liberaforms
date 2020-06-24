@@ -591,8 +591,8 @@ def view_form(slug, embedded=False):
                 thread.start()
         queriedForm.save()
         
-        if queriedForm.shouldSendConfirmationEmail() and 'sendConfirmation' in formData:
-            confirmationEmail=queriedForm.getConfirmationEmailAddress(entry).strip()
+        if queriedForm.mightSendConfirmationEmail() and 'sendConfirmation' in formData:
+            confirmationEmail=queriedForm.getConfirmationEmailAddress(entry)
             if confirmationEmail and isValidEmail(confirmationEmail):
                 def sendConfirmation():
                     smtp.sendConfirmation(confirmationEmail, queriedForm)

@@ -8,20 +8,21 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-        <div class="gngform">
+        <div id="gngform" class="gngform">
             <div class="formIntroduction marked-up">
             {{ form.introductionText['html'] | safe }}
             </div>
-            
+            <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <form method="POST">
                 {% if not embedded %}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% endif %}
                 <div id="fb-render"></div>
-                {% if form.hasEmailField() %}
-                <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
-                <input type="checkbox" name="sendConfirmation" value="ok" />
-                &nbsp;{%trans%}Do you want to receive confirmation by email?{%endtrans%}
+                {% if form.mightSendConfirmationEmail() %}
+                <div id="sendConfirmation" class="sendConfirmation" >
+                <input id="confirmation_checkbox" type="checkbox" name="sendConfirmation" value="ok" disabled />
+                &nbsp;
+                {%trans%}Send confirmation by mail{%endtrans%} <span id='confirmation_email'></span>
                 </div>
                 {% endif %}                
                 {% if form.isDataConsentRequired() %}
@@ -29,7 +30,7 @@
                         <div class="blurb">{{ form.dataConsentHTML|safe }}</div>
                         <div class="consent">
                             <input type="checkbox" name="DPL" value="ok" required />
-                            &nbsp;{%trans%}I agree{%endtrans%}
+                            &nbsp;{%trans%}I agree{%endtrans%}<span class="required formbuilder-required " style="font-size:1.2em">●</span>
                         </div>
                     </div>
                 {% endif %}
@@ -63,12 +64,30 @@ jQuery(function($) {
             success: function(message) {
                 setLimits();
                 addRequiredMsg();
+                {% if form.mightSendConfirmationEmail() %}
+                watchEmail();
+                {% endif %}
                 return;
             }
         }
     };
     $(fbRender).formRender(formRenderOpts);
 });
+function watchEmail(){
+    $("input[type='email']").first().on('input', function() {
+        if ($(this).val()) {
+            $("#confirmation_email").html("{%trans%}to{%endtrans%} "+ $(this).val())
+        }else{
+            $("#confirmation_email").html("");
+        }
+        if (isEmailValid($(this).val())) {
+            $("#confirmation_checkbox").prop("disabled", false );
+        }else{
+            $("#confirmation_checkbox").prop("disabled", true );
+            $("#confirmation_checkbox").prop("checked", false );
+        }
+    });    
+}
 function setLimits(){
     {% for field, values in form.fieldConditions.items() %}
         {% if values["type"] == "number" %}
@@ -87,12 +106,12 @@ function setLimits(){
     return;
 }
 function addRequiredMsg(){
-    if ($('#fb-render').find("span.formbuilder-required").length) {
-        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
-        if (firstGroup.length) {
-            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($("#fb-render"));
-        }
+    if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
+        $("#required_message").show()
     }
+}
+function isEmailValid(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 </script>
 

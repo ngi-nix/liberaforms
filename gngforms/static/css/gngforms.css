@@ -151,8 +151,11 @@ input[type="date"], input[type="number"], input[type="time"] {
 .marked-up {
   font-size: 1.1rem;
 }
-.marked-up h1, .marked-up h2 {
-  margin-bottom: 1rem;
+.marked-up h1, .gngform h1 {
+  margin-bottom: 2rem;
+}
+.marked-up h2, .gngform h2 {
+  margin-bottom: 1.2rem;
 }
 .formIntroduction, .afterSubmitText {
     padding-bottom: 1em;

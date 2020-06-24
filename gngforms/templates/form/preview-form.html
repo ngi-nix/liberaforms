@@ -11,11 +11,11 @@
             {%trans%}Preview{%endtrans%}: {{ slug }}
         </div>
 
-        <div class="gngform">
+        <div id="gngform" class="gngform">
             <div class="formIntroduction marked-up">
             {{ introductionText | safe }}
             </div>
-
+            <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <div id="fb-render"></div>
             
             <div class="form-actions">
@@ -42,7 +42,6 @@
     </div>
 </div>
 </div>
-
 
 <script>
 jQuery(function($) {
@@ -73,12 +72,9 @@ jQuery(function($) {
     $(fbRender).formRender(formRenderOpts);
 });
 function addRequiredMsg(){
-    if ($('#fb-render').find("span.formbuilder-required").length) {
-        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
-        if (firstGroup.length) {
-            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($('#fb-render'));
-        }
-    }    
+    if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
+        $("#required_message").show()
+    }
 }
 </script>
   

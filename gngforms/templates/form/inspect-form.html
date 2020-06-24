@@ -11,7 +11,7 @@
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
             <div style="float:right">
-            {% if form.editors[g.current_user.id|string] is defined %}
+            {% if form.isEditor(g.current_user) %}
                 <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
                     {%trans%}View entries{%endtrans%}
                     <span class="badge badge-light">{{form.totalEntries}}</span>
@@ -37,7 +37,7 @@
                <td>{%trans%}Last entry{%endtrans%}</td>
                <td>
                    {% if form.totalEntries %}
-                        {% if form.editors[g.current_user.id|string] is defined %}
+                        {% if form.isEditor(g.current_user) %}
                         <a href="/forms/entries/{{form.id}}">{{ form.lastEntryDate }}</a>
                         {% else %}
                         {{ form.lastEntryDate }}
@@ -65,7 +65,7 @@
             <tr>
                <td>{%trans%}Public{%endtrans%}</td>
                <td>
-               {% if form.editors[g.current_user.id|string] is defined %}
+               {% if form.isEditor(g.current_user) %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
                     <button id="enabled_true" class="btn btn-xs btn-default {% if form.isPublic() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
@@ -78,7 +78,7 @@
             <tr>
                <td>{%trans%}Will expire{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user.id|string] is defined %}
+                   {% if form.isEditor(g.current_user) %}
                         {% if form.expired %}
                             <a class="btn btn-warning btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}Expired{%endtrans%}</a>
                         {% elif form.willExpire() %}
@@ -100,7 +100,7 @@
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user.id|string] is defined %}
+                   {% if form.isEditor(g.current_user) %}
                         {% if form.isShared() %}
                         <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
@@ -114,7 +114,7 @@
             <tr>
                <td>{%trans%}Restricted access{%endtrans%}</td>
                <td>
-                   {% if form.editors[g.current_user.id|string] is defined %}
+                   {% if form.isEditor(g.current_user) %}
                         {% if form.restrictedAccess %}
                         <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}#restricted_access">{%trans%}True{%endtrans%}</a>
                         {% else %}
@@ -129,17 +129,21 @@
             <tr>
                 <td>{%trans%}Confirmation{%endtrans%}</td>
                 <td>
+                {% if form.isEditor(g.current_user) %}
                    <div id="toggle_sendConfirmation" class="btn-group btn-toggle">
                     <button id="sendConfirmation_true" class="btn btn-xs btn-default {% if form.sendConfirmation %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
                     <button id="sendConfirmation_false" class="btn btn-xs btn-default {% if not form.sendConfirmation %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                    </div>
+                {% else %}
+                    {{ form.sendConfirmation }}
+                {% endif %}
                 </td>
             </tr>
             {% endif %}
             <tr>
                <td>{%trans%}Require consent{%endtrans%}</td>
                <td>
-               {% if form.editors[g.current_user.id|string] is defined %}
+               {% if form.isEditor(g.current_user) %}
                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
                     <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentRequired() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
                     <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentRequired() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
@@ -191,7 +195,7 @@
             {% endif %}
             
         </table>
-        {% if form.editors[g.current_user.id|string] is defined %}
+        {% if form.isEditor(g.current_user) %}
 
         <div id="embed_snippet">
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
@@ -226,7 +230,7 @@
     <div class="col-md-6">
         <div class="title_1 delimited">
         {%trans%}Form{%endtrans%}
-        {% if form.editors[g.current_user.id|string] is defined %}
+        {% if form.isEditor(g.current_user) %}
         <div style="float:right">
         <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">
             {%trans%}Edit form{%endtrans%}<i class="fa fa-pencil" aria-hidden="true"></i>
@@ -235,23 +239,24 @@
         {% endif %}
         </div> 
 
-        <div class="gngform">
+        <div id="gngform" class="gngform">
             <div class="formIntroduction marked-up">
             {{ form.introductionText['html'] | safe }}
             </div>
-
+            <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <div id="fb-render"></div>
             {% if form.hasEmailField() %}
             <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
             <input type="checkbox" name="sendConfirmation" value="ok" />
-            &nbsp;{%trans%}Do you want to receive confirmation by email?{%endtrans%}
+            &nbsp;
+            {%trans%}Send confirmation by mail{%endtrans%}
             </div>
             {% endif %}
             <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
                 <div id="dpl-blurb" class="blurb">{{ form.dataConsentHTML|safe }}</div>
                 <div class="consent">
                     <input type="checkbox" name="DPL" value="ok" required />
-                    &nbsp;{%trans%}I agree{%endtrans%}
+                    &nbsp;{%trans%}I agree{%endtrans%}<span class="formbuilder-required required" style="font-size:1.2em">●</span>
                 </div>
             </div>
             <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
@@ -297,14 +302,13 @@ jQuery(function($) {
     $(fbRender).formRender(formRenderOpts);
 });
 function addRequiredMsg(){
-    if ($('#fb-render').find("span.formbuilder-required").length) {
-        var firstGroup = $('#fb-render').find('.form-group').filter(':visible:first');
-        if (firstGroup.length) {
-            $("<div class='required'>● {%trans%}Required fields{%endtrans%}</div>").insertBefore($('#fb-render'));
-        }
-    }    
+    if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
+        $("#required_message").show()
+    } else {
+        $("#required_message").hide()
+    }
 }
-{% if form.editors[g.current_user.id|string] is defined %}
+{% if form.isEditor(g.current_user) %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-enabled/{{ form.id }}",
@@ -348,11 +352,13 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
                 $('#dataConsent_true').addClass('btn-success');
                 $('#dataConsent_false').removeClass('btn-primary');
                 $('#dataConsent').show();
+                addRequiredMsg()
             }
             else if (data.consent == false) {
                 $('#dataConsent_true').removeClass('btn-success');
                 $('#dataConsent_false').addClass('btn-primary');
                 $('#dataConsent').hide();
+                addRequiredMsg()
             }
         }
     });

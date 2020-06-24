@@ -277,7 +277,7 @@ class Form(db.Document):
     def hasEmailField(self):
         return Form.structureHasEmailField(self.structure)
 
-    def shouldSendConfirmationEmail(self):
+    def mightSendConfirmationEmail(self):
         if self.sendConfirmation and self.hasEmailField():
             return True
         else:
@@ -286,8 +286,8 @@ class Form(db.Document):
     def getConfirmationEmailAddress(self, entry):
         for element in json.loads(self.structure):
             if Form.isEmailField(element):
-                if element["name"] in entry:
-                    return entry[element["name"]]
+                if element["name"] in entry and entry[element["name"]]:
+                    return entry[element["name"]].strip()
         return False
 
     @property
