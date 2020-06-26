@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-24 22:22+0200\n"
+"POT-Creation-Date: 2020-06-26 14:31+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,7 +74,7 @@ msgid "Return to form"
 msgstr ""
 
 #: templates/admin/change-author.html:13 templates/admin/change-author.html:39
-#: templates/form/inspect-form.html:220
+#: templates/form/inspect-form.html:221
 msgid "Change author"
 msgstr ""
 
@@ -308,7 +308,7 @@ msgid "Delete entries"
 msgstr ""
 
 #: templates/entries/delete-entries.html:11
-#: templates/form/inspect-form.html:232
+#: templates/form/inspect-form.html:233
 msgid "Form"
 msgstr ""
 
@@ -534,32 +534,36 @@ msgstr ""
 msgid "Admin options"
 msgstr ""
 
-#: templates/form/inspect-form.html:222
+#: templates/form/inspect-form.html:220
+msgid "Duplicate"
+msgstr ""
+
+#: templates/form/inspect-form.html:223
 msgid "Disable form"
 msgstr ""
 
-#: templates/form/inspect-form.html:224
+#: templates/form/inspect-form.html:225
 msgid "Enable form"
 msgstr ""
 
-#: templates/form/inspect-form.html:236
+#: templates/form/inspect-form.html:237
 msgid "Edit form"
 msgstr ""
 
-#: templates/form/inspect-form.html:246 templates/form/preview-form.html:18
+#: templates/form/inspect-form.html:247 templates/form/preview-form.html:18
 #: templates/form/view-form.html:15
 msgid "Required fields"
 msgstr ""
 
-#: templates/form/inspect-form.html:252 templates/form/view-form.html:25
-msgid "Send confirmation by mail"
+#: templates/form/inspect-form.html:253 templates/form/view-form.html:25
+msgid "Send me confirmation by mail"
 msgstr ""
 
-#: templates/form/inspect-form.html:259 templates/form/view-form.html:33
+#: templates/form/inspect-form.html:260 templates/form/view-form.html:33
 msgid "I agree"
 msgstr ""
 
-#: templates/form/inspect-form.html:262 templates/form/preview-form.html:22
+#: templates/form/inspect-form.html:263 templates/form/preview-form.html:22
 #: templates/form/view-form.html:37 templates/site/smtp-config.html:61
 msgid "Send"
 msgstr ""

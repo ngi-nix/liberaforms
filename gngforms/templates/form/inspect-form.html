@@ -201,14 +201,14 @@
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
         <p>
-        <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>
-        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
-        <input class="btn-primary btn btn-sm" type="button" value="{%trans%}Embed form{%endtrans%}" onClick="js:$('#embed_snippet').show();">
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}<i class="fa fa-history" aria-hidden="true"></i></a>
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}<i class="fa fa-files-o" aria-hidden="true"></i></a>
+        <a class="btn-primary btn btn-sm" role="button" href="#!" onClick="js:$('#embed_snippet').show();">{%trans%}Embed form{%endtrans%}<i class="fa fa-anchor" aria-hidden="true"></i></a>
         </p>
             {% if form.totalEntries == 0 %}
-            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}<i class="fa fa-trash-o" aria-hidden="true"></i></a>
             {% else %}
-            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}</a>
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}<i class="fa fa-trash-o" aria-hidden="true"></i></a>
             {% endif %}
         {% endif %}
 
@@ -217,11 +217,12 @@
         <div class="title_1 delimited">
             {%trans%}Admin options{%endtrans%}
         </div>
-        <a class="btn btn-primary" role="button" href="/admin/forms/change-author/{{form.id}}">{%trans%}Change author{%endtrans%}</a>
+        <a class="btn btn-primary" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate{%endtrans%}<i class="fa fa-files-o" aria-hidden="true"></i></a>
+        <a class="btn btn-primary" role="button" href="/admin/forms/change-author/{{form.id}}">{%trans%}Change author{%endtrans%}<i class="fa fa-user" aria-hidden="true"></i></a>
             {% if form.adminPreferences['public'] %}
-            <input class="btn btn-danger" type="button" value="{%trans%}Disable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
+                <a class="btn btn-danger" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Disable form{%endtrans%}</a>
             {% else %}
-            <input class="btn btn-primary" type="button" value="{%trans%}Enable form{%endtrans%}" onClick="location.href='/admin/forms/toggle-public/{{form.id}}'" >
+                <a class="btn btn-success" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Enable form{%endtrans%}</a>
             {% endif %}
         {% endif %}
         <p>&nbsp;</p>
@@ -249,7 +250,7 @@
             <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
             <input type="checkbox" name="sendConfirmation" value="ok" />
             &nbsp;
-            {%trans%}Send confirmation by mail{%endtrans%}
+            {%trans%}Send me confirmation by mail{%endtrans%}
             </div>
             {% endif %}
             <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>

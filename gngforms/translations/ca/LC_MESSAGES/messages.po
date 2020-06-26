@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-24 22:22+0200\n"
-"PO-Revision-Date: 2020-06-24 22:26+0200\n"
+"POT-Creation-Date: 2020-06-26 14:31+0200\n"
+"PO-Revision-Date: 2020-06-26 14:33+0200\n"
 "Last-Translator: \n"
 "Language: ca\n"
 "Language-Team: ca <LL@li.org>\n"
@@ -74,7 +74,7 @@ msgid "Return to form"
 msgstr "Tornar al formulari"
 
 #: templates/admin/change-author.html:13 templates/admin/change-author.html:39
-#: templates/form/inspect-form.html:220
+#: templates/form/inspect-form.html:221
 msgid "Change author"
 msgstr "Canviar l'autor"
 
@@ -308,7 +308,7 @@ msgid "Delete entries"
 msgstr "Esborrar les entrades"
 
 #: templates/entries/delete-entries.html:11
-#: templates/form/inspect-form.html:232
+#: templates/form/inspect-form.html:233
 msgid "Form"
 msgstr "Formulari"
 
@@ -534,32 +534,36 @@ msgstr "Esborrar el formulari i entrades"
 msgid "Admin options"
 msgstr "Opcions d'Admin"
 
-#: templates/form/inspect-form.html:222
+#: templates/form/inspect-form.html:220
+msgid "Duplicate"
+msgstr "Duplicar"
+
+#: templates/form/inspect-form.html:223
 msgid "Disable form"
 msgstr "Deshabilitar el formulari"
 
-#: templates/form/inspect-form.html:224
+#: templates/form/inspect-form.html:225
 msgid "Enable form"
 msgstr "Habilitar el formulari"
 
-#: templates/form/inspect-form.html:236
+#: templates/form/inspect-form.html:237
 msgid "Edit form"
 msgstr "Editar el formulari"
 
-#: templates/form/inspect-form.html:246 templates/form/preview-form.html:18
+#: templates/form/inspect-form.html:247 templates/form/preview-form.html:18
 #: templates/form/view-form.html:15
 msgid "Required fields"
 msgstr "Camps obligatoris"
 
-#: templates/form/inspect-form.html:252 templates/form/view-form.html:25
-msgid "Send confirmation by mail"
-msgstr "Enviar confirmació per correu"
+#: templates/form/inspect-form.html:253 templates/form/view-form.html:25
+msgid "Send me confirmation by mail"
+msgstr "Envia'm confirmació per correu"
 
-#: templates/form/inspect-form.html:259 templates/form/view-form.html:33
+#: templates/form/inspect-form.html:260 templates/form/view-form.html:33
 msgid "I agree"
 msgstr "Estic d'acord"
 
-#: templates/form/inspect-form.html:262 templates/form/preview-form.html:22
+#: templates/form/inspect-form.html:263 templates/form/preview-form.html:22
 #: templates/form/view-form.html:37 templates/site/smtp-config.html:61
 msgid "Send"
 msgstr "Enviar"
@@ -1414,3 +1418,6 @@ msgstr "Els credencials són equivocats"
 
 #~ msgid "We could not send an email to %s"
 #~ msgstr ""
+
+#~ msgid "Send confirmation by mail"
+#~ msgstr "Enviar confirmació per correu"

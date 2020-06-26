@@ -428,8 +428,8 @@ def set_field_condition(id):
 @form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
 @enabled_user_required
 #@queriedForm_editor_required
-def duplicate_form(id): #, queriedForm):
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+def duplicate_form(id):
+    queriedForm = Form.find(id=id)
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
