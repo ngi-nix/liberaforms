@@ -156,8 +156,15 @@
                 </td>
             </tr>
             <tr>
+                <td>{%trans%}Menu color{%endtrans%}</td>
+                <td>{{g.site.menuColor}}</td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/site/change-menu-color">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr>
                 <td>{%trans%}Email server{%endtrans%}</td>
-                <td></td>
+                <td>{{g.site.smtpConfig["host"]}}</td>
                 <td class="text-right">
                 <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Configure{%endtrans%}" onClick="location.href='/site/email/config'">
                 </td>

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from gngforms import models
+from gngforms import app, models
 #from pprint import pprint as pp
 
 
@@ -78,5 +78,19 @@ def migrateMongoSchema(schemaVersion):
             return schemaVersion
         print("OK")
         schemaVersion = 17
-        
+
+    if schemaVersion == 17:
+        print("Upgrading to version 18")
+        try:
+            for site in models.Site.objects():
+                site.menuColor="#802C7D"
+                site.defaultLanguage=app.config['DEFAULT_LANGUAGE']
+                site.save()
+        except:
+            print("Failed")
+            return schemaVersion
+        print("OK")
+        schemaVersion = 18
+
+
     return schemaVersion

@@ -16,12 +16,8 @@ body {
   padding-top: 3px;
 }
 .nav-link {
-color: rgb(255, 255, 255, 1) !important;  
+color: rgb(255, 255, 255, 1) !important;
 }
-.navbar-color {
-  background-color: #337ab7 !important;  
-}
-
 #main-content {
   margin-top: 1.5em;
 }
@@ -320,4 +316,16 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
 }
 .gngform input[type=submit] {
   margin-top: 1em;
+}
+/* ###### Theming ###### */
+.menu-color-options span {
+  display: inline-block;
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+  color: white;
+  font-size: 34px; 
+  text-align: center;
+  vertical-align: middle;
+  margin-bottom: 4px;
 }

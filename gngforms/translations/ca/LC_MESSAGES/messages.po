@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-06-26 14:31+0200\n"
-"PO-Revision-Date: 2020-06-26 14:33+0200\n"
+"POT-Creation-Date: 2020-06-26 23:23+0200\n"
+"PO-Revision-Date: 2020-06-26 23:28+0200\n"
 "Last-Translator: \n"
 "Language: ca\n"
 "Language-Team: ca <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgid " * Describe your form.\n"
 msgstr " * Descriu el formulari.\n"
 " * Afegeix contingut rellevant, imatges, enllaços, etc."
 
-#: models.py:858
+#: models.py:862
 msgid "We take your data protection seriously. Please contact us for any inquiries."
 msgstr ""
 
@@ -157,10 +157,10 @@ msgstr "Esborrar l'usuari i els seus formularis"
 #: templates/form/preview-form.html:36 templates/form/preview-form.html:39
 #: templates/main/index.html:27 templates/site/change-site-favicon.html:28
 #: templates/site/change-sitename.html:23 templates/site/delete-site.html:35
-#: templates/site/smtp-config.html:48 templates/user/change-email.html:24
-#: templates/user/change-language.html:34 templates/user/new-user.html:48
-#: templates/user/recover-password.html:25
-#: templates/user/user-settings.html:192
+#: templates/site/menu-color.html:67 templates/site/smtp-config.html:48
+#: templates/user/change-email.html:24 templates/user/change-language.html:34
+#: templates/user/new-user.html:48 templates/user/recover-password.html:25
+#: templates/user/user-settings.html:199
 msgid "Cancel"
 msgstr "Cancel·lar"
 
@@ -169,7 +169,7 @@ msgid "User details"
 msgstr "Detalls de l'usuari"
 
 #: templates/admin/inspect-user.html:17 templates/admin/list-users.html:17
-#: utils/wtf.py:13 utils/wtf.py:41
+#: utils/wtf.py:14 utils/wtf.py:42
 msgid "Username"
 msgstr "Nom d'usuari"
 
@@ -191,7 +191,7 @@ msgstr "És administrador"
 #: templates/form/inspect-form.html:70 templates/form/inspect-form.html:85
 #: templates/form/inspect-form.html:93 templates/form/inspect-form.html:105
 #: templates/form/inspect-form.html:119 templates/user/user-settings.html:118
-#: templates/user/user-settings.html:127 templates/user/user-settings.html:170
+#: templates/user/user-settings.html:127 templates/user/user-settings.html:177
 msgid "True"
 msgstr "Cert"
 
@@ -203,14 +203,14 @@ msgstr "Cert"
 #: templates/form/inspect-form.html:71 templates/form/inspect-form.html:87
 #: templates/form/inspect-form.html:95 templates/form/inspect-form.html:107
 #: templates/form/inspect-form.html:121 templates/user/user-settings.html:119
-#: templates/user/user-settings.html:128 templates/user/user-settings.html:171
+#: templates/user/user-settings.html:128 templates/user/user-settings.html:178
 msgid "False"
 msgstr "Fals"
 
 #: templates/admin/inspect-user.html:36 templates/admin/inspect-user.html:84
 #: templates/admin/list-forms.html:20 templates/admin/list-users.html:23
 #: templates/form/inspect-form.html:187 templates/form/my-forms.html:30
-#: templates/user/user-settings.html:83 templates/user/user-settings.html:245
+#: templates/user/user-settings.html:83 templates/user/user-settings.html:252
 #: views/form.py:174
 msgid "Created"
 msgstr "Creat"
@@ -220,7 +220,7 @@ msgid "Language"
 msgstr "Idioma"
 
 #: templates/admin/inspect-user.html:44 templates/admin/list-users.html:25
-#: templates/user/user-settings.html:84 utils/wtf.py:14
+#: templates/user/user-settings.html:84 utils/wtf.py:15
 msgid "Email"
 msgstr "Correu electrònic"
 
@@ -251,7 +251,7 @@ msgstr "Tots els formularis"
 
 #: templates/admin/list-users.html:24 templates/form/inspect-form.html:134
 #: templates/form/inspect-form.html:148 templates/form/share-form.html:61
-#: templates/user/user-settings.html:182
+#: templates/user/user-settings.html:189
 msgid "Enabled"
 msgstr "Habilitat"
 
@@ -361,7 +361,7 @@ msgstr "Esborrar el registre"
 
 #: templates/entries/list-entries.html:234 templates/form/inspect-form.html:162
 #: templates/form/preview-form.html:33 templates/main/index.html:26
-#: templates/user/user-settings.html:191
+#: templates/site/menu-color.html:66 templates/user/user-settings.html:198
 msgid "Save"
 msgstr "Desar"
 
@@ -481,7 +481,7 @@ msgstr "URL Públic"
 
 #: templates/form/inspect-form.html:52 templates/form/inspect-form.html:135
 #: templates/form/inspect-form.html:149 templates/form/inspect-form.html:175
-#: templates/form/share-form.html:62 templates/user/user-settings.html:183
+#: templates/form/share-form.html:62 templates/user/user-settings.html:190
 msgid "Disabled"
 msgstr "Deshabilitat"
 
@@ -510,7 +510,7 @@ msgid "Require consent"
 msgstr "Consentiment"
 
 #: templates/form/inspect-form.html:152 templates/main/index.html:20
-#: templates/user/user-settings.html:178
+#: templates/user/user-settings.html:185
 msgid "Edit text"
 msgstr "Editar el text"
 
@@ -576,7 +576,7 @@ msgstr "Registre"
 msgid "Time"
 msgstr "Hora"
 
-#: templates/form/list-log.html:23 utils/wtf.py:78
+#: templates/form/list-log.html:23 utils/wtf.py:79
 msgid "User"
 msgstr "Usuari"
 
@@ -718,7 +718,7 @@ msgstr "Escriu el nom del lloc"
 msgid "Sitename"
 msgstr "Nom del lloc"
 
-#: templates/site/edit-site.html:30 templates/user/user-settings.html:166
+#: templates/site/edit-site.html:30 templates/user/user-settings.html:173
 msgid "Invitation only"
 msgstr "Només invitació"
 
@@ -733,12 +733,17 @@ msgstr "Esquema"
 #: templates/site/edit-site.html:59 templates/user/user-settings.html:40
 #: templates/user/user-settings.html:54 templates/user/user-settings.html:62
 #: templates/user/user-settings.html:146 templates/user/user-settings.html:155
+#: templates/user/user-settings.html:162
 msgid "Change"
 msgstr "Canviar"
 
 #: templates/site/edit-site.html:65
 msgid "Go back"
 msgstr "Tornar enrera"
+
+#: templates/site/menu-color.html:9 templates/user/user-settings.html:159
+msgid "Menu color"
+msgstr "Color de menú"
 
 #: templates/site/schema-upgrade.html:11
 msgid "Schema"
@@ -828,12 +833,12 @@ msgstr "El teu correu no ha sigut validat"
 msgid "Validate my email"
 msgstr "Validar el meu correu"
 
-#: templates/user/user-settings.html:35 utils/wtf.py:49
+#: templates/user/user-settings.html:35 utils/wtf.py:50
 msgid "Email address"
 msgstr "Adreça electrònica"
 
-#: templates/user/user-settings.html:44 utils/wtf.py:15 utils/wtf.py:42
-#: utils/wtf.py:64 utils/wtf.py:79
+#: templates/user/user-settings.html:44 utils/wtf.py:16 utils/wtf.py:43
+#: utils/wtf.py:65 utils/wtf.py:80
 msgid "Password"
 msgstr "Contrasenya"
 
@@ -873,27 +878,27 @@ msgstr "Nom del lloc"
 msgid "Favicon"
 msgstr ""
 
-#: templates/user/user-settings.html:159 utils/wtf.py:73
+#: templates/user/user-settings.html:166 utils/wtf.py:74
 msgid "Email server"
 msgstr "Servidor de correu"
 
-#: templates/user/user-settings.html:162
+#: templates/user/user-settings.html:169
 msgid "Configure"
 msgstr "Configurar"
 
-#: templates/user/user-settings.html:176
+#: templates/user/user-settings.html:183
 msgid "Data protection consent"
 msgstr "Protecció de dades (LOPD)"
 
-#: templates/user/user-settings.html:204
+#: templates/user/user-settings.html:211
 msgid "Root user"
 msgstr "Usuari root"
 
-#: templates/user/user-settings.html:226
+#: templates/user/user-settings.html:233
 msgid "Edit"
 msgstr "Editar"
 
-#: templates/user/user-settings.html:240
+#: templates/user/user-settings.html:247
 msgid "Installation"
 msgstr "Instal·lació"
 
@@ -985,58 +990,66 @@ msgstr "Aquesta clau és errònia!"
 msgid "That's a nasty token!"
 msgstr "Aquesta clau és errònia!"
 
-#: utils/wtf.py:16 utils/wtf.py:65
+#: utils/wtf.py:17 utils/wtf.py:66
 msgid "Password again"
 msgstr "Contrasenya de nou"
 
-#: utils/wtf.py:20
+#: utils/wtf.py:21
 msgid "Username is not valid"
 msgstr "El nom d'usuari no és vàlid"
 
-#: utils/wtf.py:23 utils/wtf.py:26
+#: utils/wtf.py:24 utils/wtf.py:27
 msgid "Please use a different username"
 msgstr "Usa un altre nom s'usuari si us plau"
 
-#: utils/wtf.py:30 utils/wtf.py:33 utils/wtf.py:57 utils/wtf.py:60
-#: utils/wtf.py:91 utils/wtf.py:94
+#: utils/wtf.py:31 utils/wtf.py:34 utils/wtf.py:58 utils/wtf.py:61
+#: utils/wtf.py:92 utils/wtf.py:95
 msgid "Please use a different email address"
 msgstr "Usa una altra adreça de correu-e si us plau"
 
-#: utils/wtf.py:37 utils/wtf.py:69
+#: utils/wtf.py:38 utils/wtf.py:70
 msgid "Your password is weak"
 msgstr "La teva contrasenya és feble"
 
-#: utils/wtf.py:53
+#: utils/wtf.py:54
 msgid "New email address"
 msgstr "Nova adreça de correu"
 
-#: utils/wtf.py:74
+#: utils/wtf.py:75
 msgid "Port"
 msgstr "Port"
 
-#: utils/wtf.py:75
+#: utils/wtf.py:76
 msgid "Encryption"
 msgstr ""
 
-#: utils/wtf.py:80
+#: utils/wtf.py:81
 msgid "Sender address"
 msgstr "Adreça de remitent"
 
-#: utils/wtf.py:84
+#: utils/wtf.py:85
 msgid "New user's email"
 msgstr "Adreça de nou usuari"
 
-#: utils/wtf.py:85
+#: utils/wtf.py:86
 msgid "Include message"
 msgstr "Incloure un missatge"
 
-#: utils/wtf.py:86
+#: utils/wtf.py:87
 msgid "Make the new user an Admin"
 msgstr "Fes que el nou usuari sigui un Admin"
 
-#: utils/wtf.py:87
+#: utils/wtf.py:88
 msgid "hostname"
 msgstr ""
+
+#: utils/wtf.py:98
+msgid "HTML color code"
+msgstr "Codi de color HTML"
+
+#: utils/wtf.py:101
+msgid "Not a valid HTML color code"
+msgstr "No és un codi de color vàlid"
 
 #: views/admin.py:49 views/admin.py:87
 msgid "User not found"
@@ -1292,20 +1305,24 @@ msgstr "S'ha guardat la configuració correctament"
 msgid "SMTP config works!"
 msgstr "La configuració SMTP funciona!"
 
-#: views/site.py:166
+#: views/site.py:145
+msgid "Color changed OK"
+msgstr ""
+
+#: views/site.py:177
 msgid "Site not found"
 msgstr "No es troba el lloc web"
 
-#: views/site.py:171
+#: views/site.py:182
 msgid "Cannot delete current site"
 msgstr "No es pot eliminar el lloc web actual"
 
-#: views/site.py:174
+#: views/site.py:185
 #, python-format
 msgid "Deleted %s"
 msgstr "Eliminiat %s"
 
-#: views/site.py:177
+#: views/site.py:188
 msgid "Site name does not match"
 msgstr "El nom del lloc web no coincideix"
 

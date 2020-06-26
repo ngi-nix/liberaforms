@@ -206,9 +206,9 @@
         <a class="btn-primary btn btn-sm" role="button" href="#!" onClick="js:$('#embed_snippet').show();">{%trans%}Embed form{%endtrans%}<i class="fa fa-anchor" aria-hidden="true"></i></a>
         </p>
             {% if form.totalEntries == 0 %}
-            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}<i class="fa fa-trash-o" aria-hidden="true"></i></a>
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
             {% else %}
-            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}<i class="fa fa-trash-o" aria-hidden="true"></i></a>
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}</a>
             {% endif %}
         {% endif %}
 
@@ -222,7 +222,7 @@
             {% if form.adminPreferences['public'] %}
                 <a class="btn btn-danger" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Disable form{%endtrans%}</a>
             {% else %}
-                <a class="btn btn-success" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Enable form{%endtrans%}</a>
+                <a class="btn btn-primary" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Enable form{%endtrans%}</a>
             {% endif %}
         {% endif %}
         <p>&nbsp;</p>

@@ -7,6 +7,7 @@ from flask_babel import lazy_gettext as _
 from gngforms import app
 from gngforms.models import User, Installation
 from gngforms.utils.utils import sanitizeUsername, pwd_policy
+import re
 
 
 class NewUser(FlaskForm):
@@ -92,3 +93,9 @@ class NewInvite(FlaskForm):
         elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
+            
+class ChangeMenuColor(FlaskForm):
+    hex_color = StringField(_("HTML color code"), validators=[DataRequired()])
+    def validate_hex_color(self, hex_color):
+        if not bool(re.search("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", hex_color.data)):
+            raise ValidationError(_("Not a valid HTML color code"))

@@ -133,6 +133,17 @@ def edit_site(hostname):
     queriedSite=Site.find(hostname=hostname)
     return render_template('edit-site.html', site=queriedSite)
 
+@site_bp.route('/site/change-menu-color', methods=['GET', 'POST'])
+@admin_required
+def menu_color():
+    wtform=wtf.ChangeMenuColor()
+    if request.method == 'GET':
+        wtform.hex_color.data=g.site.menuColor
+    if wtform.validate():
+        g.site.menuColor=wtform.hex_color.data
+        g.site.save()
+        flash(gettext("Color changed OK"), 'success')
+    return render_template('menu-color.html', wtform=wtform)
 
 @site_bp.route('/admin/sites/toggle-scheme/<string:hostname>', methods=['POST'])
 @rootuser_required

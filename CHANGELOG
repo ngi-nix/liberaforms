@@ -6,6 +6,8 @@ v.1.4
  * Added option to 'mark' entries
  * New 'Confirmation by email' option is activated when an input type=email is present
  * Improved 'Required fields' message
+ * Admin can duplicate other users' forms
+ * Admin can configure site's menu background-color
 
 
 v.1.3

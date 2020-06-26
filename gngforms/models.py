@@ -635,6 +635,8 @@ class Site(db.Document):
     hostname = db.StringField(required=True)
     port = db.StringField(required=False)
     siteName = db.StringField(required=True)
+    defaultLanguage=db.StringField(required=True)
+    menuColor=db.StringField(required=True)
     scheme = db.StringField(required=False)
     blurb = db.DictField(required=True)
     invitationOnly = db.BooleanField()
@@ -663,6 +665,8 @@ class Site(db.Document):
             "blurb": blurb,
             "invitationOnly": True,
             "siteName": "gng-forms!",
+            "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
+            "menuColor": "#b71c1c",
             "personalDataConsent": {"markdown": "", "html": "", "enabled": False },
             "smtpConfig": {
                 "host": "smtp.%s" % hostname,
