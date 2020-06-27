@@ -63,6 +63,19 @@ def change_siteName():
     return render_template('change-sitename.html', site=g.site)
 
 
+@site_bp.route('/site/change-default-language', methods=['GET', 'POST'])
+@admin_required
+def change_default_language():
+    if request.method == 'POST':
+        if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
+            g.site.defaultLanguage=request.form['language']
+            g.site.save()
+            flash(gettext("Language updated OK"), 'success')
+            return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+    return render_template('common/change-language.html',
+                            current_language=g.site.defaultLanguage,
+                            site_default=True)
+
 @site_bp.route('/site/change-favicon', methods=['GET', 'POST'])
 @admin_required
 def change_site_favicon():

@@ -201,9 +201,9 @@
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
         <p>
-        <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}<i class="fa fa-history" aria-hidden="true"></i></a>
-        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}<i class="fa fa-files-o" aria-hidden="true"></i></a>
-        <a class="btn-primary btn btn-sm" role="button" href="#!" onClick="js:$('#embed_snippet').show();">{%trans%}Embed form{%endtrans%}<i class="fa fa-anchor" aria-hidden="true"></i></a>
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/log/list/{{form.id}}">{%trans%}View log{%endtrans%}</a>
+        <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
+        <a class="btn-primary btn btn-sm" role="button" href="#!" onClick="js:$('#embed_snippet').show();">{%trans%}Embed form{%endtrans%}</a>
         </p>
             {% if form.totalEntries == 0 %}
             <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
@@ -217,12 +217,12 @@
         <div class="title_1 delimited">
             {%trans%}Admin options{%endtrans%}
         </div>
-        <a class="btn btn-primary" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate{%endtrans%}<i class="fa fa-files-o" aria-hidden="true"></i></a>
-        <a class="btn btn-primary" role="button" href="/admin/forms/change-author/{{form.id}}">{%trans%}Change author{%endtrans%}<i class="fa fa-user" aria-hidden="true"></i></a>
+        <a class="btn btn-primary" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate{%endtrans%}</a>
+        <a class="btn btn-primary" role="button" href="/admin/forms/change-author/{{form.id}}">{%trans%}Change author{%endtrans%}</a>
             {% if form.adminPreferences['public'] %}
-                <a class="btn btn-danger" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Disable form{%endtrans%}</a>
+                <a class="btn btn-danger" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Disable{%endtrans%}</a>
             {% else %}
-                <a class="btn btn-primary" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Enable form{%endtrans%}</a>
+                <a class="btn btn-primary" role="button" href="/admin/forms/toggle-public/{{form.id}}">{%trans%}Enable{%endtrans%}</a>
             {% endif %}
         {% endif %}
         <p>&nbsp;</p>

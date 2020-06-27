@@ -9,6 +9,12 @@
     <div class="col-md-5">
 
         <div class="title_1 delimited">{%trans%}Change language{%endtrans%}</div>
+        
+        {% if site_default %}
+            <div class="title_2">
+            {{trans}}Default language for new users{{endtrans}}
+            </div>
+        {% endif %}
 
         <form method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
@@ -19,7 +25,7 @@
                         id="customRadio{{loop.index}}"
                         class="custom-control-input" 
                         name="language" value="{{ key }}"
-                        {% if key == g.current_user.language %}checked{% endif %}
+                        {% if key == current_language %}checked{% endif %}
                         >
                 <label  class="custom-control-label"
                         for="customRadio{{loop.index}}">
@@ -30,8 +36,12 @@
             </div>
 
             <div class="form-actions">
-            <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
-            <a class="btn btn-primary" role="button" href="/user/{{ g.current_user.username }}">{%trans%}Cancel{%endtrans%}</a>
+            <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
+            {% if site_default %}
+            <a class="btn btn-primary" role="button" href="/user/{{g.current_user.username}}#site_settings">{%trans%}Cancel{%endtrans%}</a>
+            {% else %}
+            <a class="btn btn-primary" role="button" href="/user/{{g.current_user.username}}">{%trans%}Cancel{%endtrans%}</a>
+            {% endif %}
             </div>
         </form>
 

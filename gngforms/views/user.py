@@ -150,7 +150,7 @@ def change_language():
             refresh()
             flash(gettext("Language updated OK"), 'success')
             return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-    return render_template('change-language.html')
+    return render_template('common/change-language.html', current_language=g.current_user.language)
 
 
 @user_bp.route('/user/change-email', methods=['GET', 'POST'])
