@@ -38,7 +38,7 @@ app.config['WTF_CSRF_TIME_LIMIT']=5400  # 1.5 hours. Time to fill out a form.
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = "1.4.6"
+app.config['APP_VERSION'] = "1.4.7"
 app.config['SCHEMA_VERSION'] = 18
 
 app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',

@@ -72,7 +72,7 @@ def new_user(token=None):
             "username": wtform.username.data,
             "email": wtform.email.data,
             "password_hash": hashPassword(wtform.password.data),
-            "language": app.config['DEFAULT_LANGUAGE'],
+            "language": g.site.defaultLanguage,
             "hostname": g.site.hostname,
             "blocked": False,
             "admin": adminSettings,

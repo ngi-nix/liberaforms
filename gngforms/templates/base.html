@@ -75,10 +75,11 @@
 
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
-    GNGforms. AGPLv3
-    {% if not embedded %}
-    <a href="https://gitlab.com/lleialtec/gngforms">{%trans%}Source code{%endtrans%}</a>
-    {% endif %}
+{% if not embedded %}
+    AGPLv3 <a href="https://gitlab.com/lleialtec/gngforms">GNGforms</a>
+{% else %}
+    AGPLv3 GNGforms
+{% endif %}
 </div>
 
 </body>
