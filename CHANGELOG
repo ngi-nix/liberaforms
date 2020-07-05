@@ -9,7 +9,9 @@ v.1.4
  * Admin can duplicate other users' forms
  * Admin can configure site's menu background-color
  * Admin can set site's default language
-
+ * Fixed db migration to avoid errors when object properties are not defined in the class
+ * User can set default setting for Form entry notification
+ * CSS changes
 
 v.1.3
  * Added custom data protection consent text.

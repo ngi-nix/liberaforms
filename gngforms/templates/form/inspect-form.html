@@ -364,7 +364,7 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
         }
     });
 });
-{% if form.hasEmailField %}
+{% if form.hasEmailField() %}
 document.getElementById('toggle_sendConfirmation').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-send-confirmation/{{ form.id }}",
@@ -391,7 +391,6 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
     });
 });
 {% endif %}
-
 $(document).ready(function() {
     var simplemde = new SimpleMDE({ 
                                 autosave: {enabled: false},

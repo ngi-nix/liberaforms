@@ -4,10 +4,8 @@
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
-    <div class="col-md-6 text-center">
-        <h1>{%trans%}This form has expired{%endtrans%}</h1>
-        
-        <h1>:'(</h1>
+    <div class="col-md-6 marked-up">
+        {{ form.expiredTextHTML|safe }}
     </div>
 </div>
 </div>

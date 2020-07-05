@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
+<script src="/static/simplemde/simplemde.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
+
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
@@ -10,12 +13,22 @@
         <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
         {{ form.slug }}
     </div>
-    
-    <div id="toggle_notification" class="btn-group btn-toggle">
-        <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-        <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+
+    <div class="row">
+        <div class="col">
+            <div id="toggle_notification" class="btn-group btn-toggle">
+                <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+            </div>
+            {%trans%}Notify me when this form expires{%endtrans%}
+        </div>
+        <div class="col-auto">
+            <span id="expired_alert" {%if not form.expired%}style="display:none;"{%endif%}>
+            <i class="fa fa-exclamation-circle highlightedText" aria-hidden="true"></i>
+            {%trans%}Expired{%endtrans%}
+            </span>
+        </div>
     </div>
-    {%trans%}Notify me when this form expires{%endtrans%}
     <p>&nbsp;</p>
 
     <div class="title_1">
@@ -36,7 +49,7 @@
         </div>
         <div class="form-group">
         <input  id="date-button"
-                class="btn {%if form.expiryConditions['expireDate']%}btn-success{%else%}btn-primary{%endif%}"
+                class="btn btn-primary"
                 type="submit" value="{%trans%}Save changes{%endtrans%}" />
         </div>
     </form>
@@ -44,44 +57,71 @@
     </div>
 </div>
 {% if form.getAvailableNumberTypeFields() %}
-<p>&nbsp;</p>
-<div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-5">
-    
-    <div class="title_2">
-        {%trans%}Conditionals{%endtrans%}
-    </div>
-    
-    {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
-    
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="addon-{{field_name}}">
-                {{ form.getFieldLabel(field_name)|safe }}
-            </span>
-          </div>
-          <input    id="{{field_name}}" type="number" class="form-control pl-sm-3 condition"
-                    value="{{values.condition|safe}}"
-                    aria-label="{{ form.getFieldLabel(field_name)|safe }}"
-                    aria-describedby="addon-{{field_name}}">
-          <div class="input-group-append">
-            <input  id="button-{{field_name}}"
-                    class="btn {% if values.condition %}btn-success{% else %}btn-primary{% endif %}"
-                    type="button" value="{%trans%}Save max.{%endtrans%}"
-                    onClick="js:setMaxValue('{{field_name}}');" >
-          </div>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-5">
+        <div class="title_2">
+            {%trans%}Conditionals{%endtrans%}
         </div>
-    
-    {%endfor %}        
+        
+        {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
+        
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-{{field_name}}">
+                    {{ form.getFieldLabel(field_name)|safe }}
+                </span>
+              </div>
+              <input    id="{{field_name}}" type="number" class="form-control pl-sm-3 condition"
+                        value="{{values.condition|safe}}"
+                        aria-label="{{ form.getFieldLabel(field_name)|safe }}"
+                        aria-describedby="addon-{{field_name}}">
+              <div class="input-group-append">
+                <input  id="button-{{field_name}}"
+                        class="btn btn-primary"
+                        type="button" value="{%trans%}Save max.{%endtrans%}"
+                        onClick="js:setMaxValue('{{field_name}}');" >
+              </div>
+            </div>
+        
+        {%endfor %}        
+        </div>
+    </div>
+{% endif %}
+    <p>&nbsp;</p>
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+
+        <div class="title_2">
+            {%trans%}When the form has expired{%endtrans%}
+        </div>
+        {%trans%}People will see this text instead of the form.{%endtrans%}
+        
+        <form id="editor-form" method="POST" action="/forms/expiration/save-text/{{form.id}}" >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            <textarea id="expired-text-editor" name="expiredTextMD">{{ form.expiredTextMarkdown }}</textarea>
+            <input class="btn-success btn" type="submit" value="{%trans%}Save text{%endtrans%}">
+        </form>
+        </div>
     </div>
 </div>
-{% endif %}
-</div>
-
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
+jQuery(function($) {
+    var expired_mde = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: false,
+                                spellChecker: false,
+                                autoDownloadFontAwesome: false,
+                                element: $("#expired-text-editor")[0]
+                             });
+});
+$("#expired-text-submit").click(function(){
+    expired_mde.toTextArea();
+    $("#editor-form").submit();
+});
 function dateSet(e){
     if ($('#time').val() == ""){
         $('#time').val("00:00")
@@ -112,12 +152,12 @@ document.getElementById('toggle_notification').addEventListener('click', functio
     });
 });
 $(document).on("change", "#date", function () {
-    $('#date-button').removeClass('btn-success', 'btn-primary');
-    $('#date-button').addClass('btn-warning');
+    $('#date-button').removeClass('btn-primary');
+    $('#date-button').addClass('btn-success');
 });
 $(document).on("change", "#time", function () {
-    $('#date-button').removeClass('btn-success', 'btn-primary');
-    $('#date-button').addClass('btn-warning');
+    $('#date-button').removeClass('btn-primary');
+    $('#date-button').addClass('btn-success');
 });
 jQuery(function($) {
     var savedDate={{form.expiryConditions['expireDate']|tojson}};
@@ -144,26 +184,29 @@ function setMaxValue(id){
         success: function(data, textStatus, jqXHR)
         {
             if (data.condition != false && data.condition == value) {
-                $('#button-'+id).removeClass('btn-primary');
-                $('#button-'+id).removeClass('btn-warning');
-                $('#button-'+id).addClass('btn-success');
+                $('#button-'+id).removeClass('btn-success');
+                $('#button-'+id).addClass('btn-primary');
             }
             else{
                 $('#button-'+id).removeClass('btn-success');
-                $('#button-'+id).removeClass('btn-warning');
                 $('#button-'+id).addClass('btn-primary');
                 $('#'+id).val(null)
+            }
+            if (data.expired == true) {
+                $("#expired_alert").show()
+            }else{
+                $("#expired_alert").hide()
             }
         }
     });
 }
 $(document).on("keyup", ".condition", function () {
-    $('#button-'+this.id).removeClass('btn-success', 'btn-primary');
-    $('#button-'+this.id).addClass('btn-warning');
+    $('#button-'+this.id).removeClass('btn-primary');
+    $('#button-'+this.id).addClass('btn-success');
 });
 $(document).on("change", ".condition", function () {
-    $('#button-'+this.id).removeClass('btn-success', 'btn-primary');
-    $('#button-'+this.id).addClass('btn-warning');
+    $('#button-'+this.id).removeClass('btn-primary');
+    $('#button-'+this.id).addClass('btn-success');
 });
 {% endif %}
 

@@ -14,7 +14,6 @@
         <div class="title_1">
             {%trans%}Hello{%endtrans%} {{ g.current_user.username }} !!
         </div>
-
         
         {% if not g.current_user.validatedEmail %}
         <div class="row">
@@ -62,12 +61,33 @@
                 <a class="btn btn-primary btn-xs" role="button" href="/user/change-language">{%trans%}Change{%endtrans%}</a>
                 </td>
             </tr>
+            <tr>
+            </tr>
+        </table>
+        <div class="title_2 delimited">
+            {%trans%}By default{%endtrans%}
+        </div>
+        <table class="table table-sm sparse-table">
+            <tr>
+                <td>
+                    {%trans%}New entry notification default{%endtrans%}
+                </td>
+                <td class="text-right">
+                    <div id="toggle_new_entry_notification" class="btn-group btn-toggle">
+                    <button id="new_entry_notification_true" class="btn btn-xs btn-default {% if user.newEntryNotificationDefault %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="new_entry_notification_false" class="btn btn-xs btn-default {% if not user.newEntryNotificationDefault %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    </div>
+                </td>
+            </tr>
         </table>
         
     {% if g.isAdmin %}
         <p>&nbsp;</p>
+        <div class="title_1 delimited">
+            {%trans%}Administrator{%endtrans%}
+        </div>
         <div class="row">
-            <div class="col title_1">
+            <div class="col title_2">
                 {%trans%}Invitations{%endtrans%}
             </div>
             <div class="col-auto">
@@ -106,7 +126,7 @@
         {% endif %}
         
         <p>&nbsp;</p>
-        <div id="admin_settings" class="title_1">
+        <div id="admin_settings" class="title_2">
             {%trans%}My admin settings{%endtrans%}
         </div>
 
@@ -132,11 +152,11 @@
         </table>
 
         <p>&nbsp;</p>
-        <div id="site_settings" class="title_1">
+        <div id="site_settings" class="title_2">
             {%trans%}Site settings{%endtrans%}
         </div>
 
-        <table class="table table-sm sparse-table">
+        <table class="table table-sm">
             <tr>
                 <td>{%trans%}Site name{%endtrans%}</td>
                 <td>
@@ -274,9 +294,34 @@
 </div>
 </div>
 
-{% if g.isAdmin %}
+
 <script>
 var csrftoken = "{{ csrf_token() }}";
+document.getElementById('toggle_new_entry_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/user/toggle-new-entry-notification",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.default == true) {
+                $('#new_entry_notification_true').addClass('btn-success');
+                $('#new_entry_notification_false').removeClass('btn-primary');
+            }
+            else if (data.default == false) {
+                $('#new_entry_notification_true').removeClass('btn-success');
+                $('#new_entry_notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+
+{% if g.isAdmin %}
 document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/toggle-newuser-notification",
@@ -346,7 +391,6 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         }
     });
 });
-
 document.getElementById('toggle_dataprotection_enabled').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/toggle-dataprotection",
@@ -398,7 +442,8 @@ $(document).ready(function() {
         $('#editor').hide();
     });
 });
-</script>
 {% endif %}
+</script>
+
 
 {% endblock %}

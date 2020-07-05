@@ -33,7 +33,7 @@ import gngforms.utils.wtf as wtf
 import gngforms.utils.email as smtp
 from form_templates import formTemplates
 
-from pprint import pprint as pp
+#from pprint import pprint as pp
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -162,6 +162,20 @@ def preview_form():
                             afterSubmitMsg=markdown2HTML(session['afterSubmitTextMD']))
 
 
+@form_bp.route('/forms/edit/conditions/<string:id>', methods=['GET'])
+@enabled_user_required
+def conditions_form(id):
+    queriedForm = Form.find(id=id)
+    if not queriedForm:
+        flash(gettext("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    #pp(queriedForm.structure)
+    if not g.current_user.canInspectForm(queriedForm):
+        flash(gettext("Permission needed to view form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    return render_template('conditions.html', form=queriedForm)
+
+
 @form_bp.route('/forms/save', methods=['POST'])
 @form_bp.route('/forms/save/<string:id>', methods=['POST'])
 @enabled_user_required
@@ -230,7 +244,7 @@ def save_form(id=None):
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),
-                    "editors": {str(g.current_user.id): Form.newEditorPreferences()},
+                    "editors": {str(g.current_user.id): Form.newEditorPreferences(g.current_user)},
                     "postalCode": "08014",
                     "enabled": False,
                     "expired": False,
@@ -366,7 +380,7 @@ def remove_editor(form_id, editor_id):
 
 @form_bp.route('/forms/expiration/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
-def set_expiration_date(id):
+def expiration(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
@@ -402,14 +416,14 @@ def set_field_condition(id):
 
     availableFields=queriedForm.getAvailableNumberTypeFields()
     if not request.form['field_name'] in availableFields:
-        return JsonResponse(json.dumps({'condition': False}))
+        return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.expired}))
     
     if not request.form['condition']:
         if request.form['field_name'] in queriedForm.fieldConditions:
             del queriedForm.fieldConditions[request.form['field_name']]
             queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
-        return JsonResponse(json.dumps({'condition': False}))
+        return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.expired}))
     
     fieldType=availableFields[request.form['field_name']]['type']
     if fieldType == "number":
@@ -421,8 +435,22 @@ def set_field_condition(id):
             queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
         except:
-            return JsonResponse(json.dumps({'condition': False}))
-    return JsonResponse(json.dumps({'condition': request.form['condition']}))
+            return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.hasExpired}))
+    return JsonResponse(    json.dumps({'condition': request.form['condition'],
+                            'expired': queriedForm.expired}) )
+
+@form_bp.route('/forms/expiration/save-text/<string:id>', methods=['POST'])
+@enabled_user_required
+def save_expired_text(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        flash(gettext("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    if 'expiredTextMD' in request.form:            
+        queriedForm.saveExpiredText(request.form['expiredTextMD'])
+        flash(gettext("Text saved OK"), 'success')
+        return redirect(make_url_for('form_bp.expiration', id=queriedForm.id))
+    return render_template('expiration.html', form=queriedForm)
 
 
 @form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
@@ -549,7 +577,7 @@ def view_form(slug, embedded=False):
                 flash(gettext("That form is not public"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
         if queriedForm.expired:
-            return render_template('form-has-expired.html'), 400
+            return render_template('form-has-expired.html', form=queriedForm), 400
         else:
             return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:

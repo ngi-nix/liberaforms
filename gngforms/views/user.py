@@ -29,6 +29,8 @@ from gngforms.utils.utils import *
 import gngforms.utils.wtf as wtf
 import gngforms.utils.email as smtp
 
+#from pprint import pprint as pp
+
 user_bp = Blueprint('user_bp', __name__,
                     template_folder='../templates/user')
 
@@ -72,7 +74,7 @@ def new_user(token=None):
             "username": wtform.username.data,
             "email": wtform.email.data,
             "password_hash": hashPassword(wtform.password.data),
-            "language": g.site.defaultLanguage,
+            "preferences": {"language": g.site.defaultLanguage, "newEntryNotification": True},
             "hostname": g.site.hostname,
             "blocked": False,
             "admin": adminSettings,
@@ -145,7 +147,7 @@ def send_validation_email():
 def change_language():
     if request.method == 'POST':
         if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
-            g.current_user.language=request.form['language']
+            g.current_user.preferences["language"]=request.form['language']
             g.current_user.save()
             refresh()
             flash(gettext("Language updated OK"), 'success')
@@ -175,7 +177,6 @@ def reset_password():
         flash(gettext("Password changed OK"), 'success')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('reset-password.html', wtform=wtform)
-
 
 
 @user_bp.route('/site/recover-password', methods=['GET', 'POST'])
@@ -220,6 +221,11 @@ def recover_password(token=None):
         return redirect(make_url_for('main_bp.index'))
     return render_template('recover-password.html', wtform=wtform)
 
+@user_bp.route('/user/toggle-new-entry-notification', methods=['POST'])
+@enabled_user_required
+def toggle_new_entry_notification_default():
+    default=g.current_user.toggleNewEntryNotificationDefault()
+    return JsonResponse(json.dumps({'default': default}))
 
 
 """

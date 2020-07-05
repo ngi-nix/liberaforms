@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -43,8 +43,8 @@ class User(db.Document):
     username = db.StringField(required=True)
     email = db.StringField(required=True)
     password_hash =db.StringField(db_field="password", required=True)
-    language = db.StringField(required=True)
     hostname = db.StringField(required=True)
+    preferences = db.DictField(required=False)
     blocked = db.BooleanField()
     admin = db.DictField(required=True)
     validatedEmail = db.BooleanField()
@@ -89,6 +89,14 @@ class User(db.Document):
     @property
     def authored_forms(self):
         return Form.findAll(author_id=str(self.id))
+        
+    @property
+    def language(self):
+        return self.preferences["language"]
+
+    @property
+    def newEntryNotificationDefault(self):
+        return self.preferences["newEntryNotification"]
 
     def isAdmin(self):
         return True if self.admin['isAdmin']==True else False
@@ -124,7 +132,15 @@ class User(db.Document):
             self.blocked=False if self.blocked else True
         self.save()
         return self.blocked
-            
+
+    def toggleNewEntryNotificationDefault(self):
+        if self.preferences["newEntryNotification"]==True:
+            self.preferences["newEntryNotification"]=False
+        else:
+            self.preferences["newEntryNotification"]=True
+        self.save()
+        return self.preferences["newEntryNotification"]
+
     def toggleAdmin(self):
         if self.isRootUser():
             return self.isAdmin()
@@ -192,6 +208,7 @@ class Form(db.Document):
     adminPreferences = db.DictField(required=True)
     introductionText = db.DictField(required=True)
     afterSubmitText = db.DictField(required=True)
+    expiredText = db.DictField(required=True)
     dataConsent = db.DictField(required=True)
     site = None
 
@@ -300,15 +317,16 @@ class Form(db.Document):
         return self.enabled
 
     @classmethod
-    def newEditorPreferences(cls):
-        return {'notification': {'newEntry': False, 'expiredForm': True}}
+    def newEditorPreferences(cls, editor):
+        return {'notification': {   'newEntry': editor.preferences["newEntryNotification"],
+                                    'expiredForm': True }}
 
     def addEditor(self, editor):
         if not editor.enabled:
             return False
         editor_id=str(editor.id)
         if not editor_id in self.editors:
-            self.editors[editor_id]=Form.newEditorPreferences()
+            self.editors[editor_id]=Form.newEditorPreferences(editor)
             self.save()
             return True
         return False
@@ -356,6 +374,30 @@ class Form(db.Document):
         self.dataConsent = {'markdown':escapeMarkdown(MDtext),
                             'html':markdown2HTML(MDtext),
                             'required': self.dataConsent['required']}
+        self.save()
+
+    @staticmethod
+    def defaultExpiredText():
+        text=gettext("Sorry, this form has expired.")
+        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+
+    @property
+    def expiredTextHTML(self):
+        if self.expiredText['html']:
+            return self.expiredText['html']
+        else:
+            return Form.defaultExpiredText()["html"]
+
+    @property
+    def expiredTextMarkdown(self):
+        if self.expiredText['markdown']:
+            return self.expiredText['markdown']
+        else:
+            return Form.defaultExpiredText()["markdown"]
+
+    def saveExpiredText(self, MDtext):
+        self.expiredText = {'markdown':escapeMarkdown(MDtext),
+                            'html':markdown2HTML(MDtext)}
         self.save()
 
     @property
@@ -518,7 +560,6 @@ class Form(db.Document):
                 multi_choice_data[field['label']]['axis_2'].append(0)
 
         for entry in self.orderedEntries:
-            #pp(entry)
             total['entries']+=1
             time_data['entries'].append({   'x': entry['created'],
                                             'y': total['entries']})
@@ -537,8 +578,6 @@ class Form(db.Document):
                 for idx, field_value in enumerate(field['values']):
                     if field_value['value'] in entry_values:
                         multi_choice_data[field['label']]['axis_2'][idx]+=1
-        #pp(multi_choice_data)
-
         result={}
         result['multi_choice']=multi_choice_data
         result['time_chart']=time_data

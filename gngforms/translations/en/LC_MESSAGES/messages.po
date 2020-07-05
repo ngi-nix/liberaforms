@@ -7,74 +7,76 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-04-08 09:33+0200\n"
+"POT-Creation-Date: 2020-07-05 17:06+0200\n"
 "PO-Revision-Date: 2020-04-08 09:43+0200\n"
 "Last-Translator: \n"
 "Language: en\n"
 "Language-Team: en <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
-"X-Generator: Poedit 1.8.11\n"
+"Generated-By: Babel 2.3.4\n"
 
-#: models.py:243
+#: models.py:273
 msgid "DPL"
 msgstr ""
 
-#: models.py:499
+#: models.py:381
+msgid "Sorry, this form has expired."
+msgstr ""
+
+#: models.py:666
 msgid "Form title"
 msgstr ""
 
-#: models.py:500
+#: models.py:667
 msgid "Context"
 msgstr ""
 
-#: models.py:501
+#: models.py:668
 msgid ""
 " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
 msgstr ""
 
-#: templates/base.html:36
-msgid "Start"
+#: models.py:901
+msgid ""
+"We take your data protection seriously. Please contact us for any "
+"inquiries."
 msgstr ""
 
 #: templates/admin/delete-user.html:21 templates/admin/list-users.html:26
-#: templates/base.html:39 templates/site/edit-site.html:26
+#: templates/base.html:44 templates/site/edit-site.html:26
 msgid "Forms"
 msgstr ""
 
-#: templates/admin/list-users.html:12 templates/base.html:40
+#: templates/admin/list-users.html:12 templates/base.html:45
 #: templates/site/edit-site.html:22
 msgid "Users"
 msgstr ""
 
-#: templates/base.html:42 templates/form/my-forms.html:11
+#: templates/base.html:47 templates/form/my-forms.html:13
 msgid "My forms"
 msgstr ""
 
-#: templates/base.html:44
+#: templates/base.html:49
 msgid "Settings"
 msgstr ""
 
-#: templates/base.html:45
+#: templates/base.html:50
 msgid "Logout"
 msgstr ""
 
-#: templates/base.html:60
-msgid "Source code"
-msgstr ""
-
-#: templates/admin/change-author.html:10 templates/form/delete-form.html:12
-#: templates/form/expiration.html:10 templates/form/list-log.html:14
+#: templates/admin/change-author.html:10 templates/form/conditions.html:12
+#: templates/form/delete-form.html:12 templates/form/edit-form.html:16
+#: templates/form/expiration.html:13 templates/form/list-log.html:14
 #: templates/form/share-form.html:10
 msgid "Return to form"
 msgstr ""
 
 #: templates/admin/change-author.html:13 templates/admin/change-author.html:39
-#: templates/form/inspect-form.html:208
+#: templates/form/inspect-form.html:221
 msgid "Change author"
 msgstr ""
 
@@ -107,17 +109,13 @@ msgstr ""
 msgid "Editors"
 msgstr ""
 
-#: templates/admin/change-author.html:48
-msgid "Users listed here have the <b>same permissions</b> as the author"
-msgstr ""
-
-#: templates/admin/change-author.html:58 templates/admin/inspect-user.html:85
-#: templates/admin/list-forms.html:21 templates/form/inspect-form.html:161
+#: templates/admin/change-author.html:55 templates/admin/inspect-user.html:85
+#: templates/admin/list-forms.html:21 templates/form/inspect-form.html:173
 #: templates/form/share-form.html:31
 msgid "Author"
 msgstr ""
 
-#: templates/admin/change-author.html:60
+#: templates/admin/change-author.html:57
 msgid "Editor"
 msgstr ""
 
@@ -135,12 +133,14 @@ msgid "and their forms"
 msgstr ""
 
 #: templates/admin/delete-user.html:25 templates/admin/inspect-user.html:83
-#: templates/admin/list-forms.html:19 templates/form/my-forms.html:25
+#: templates/admin/list-forms.html:19 templates/form/inspect-form.html:33
+#: templates/form/my-forms.html:29
 msgid "Name"
 msgstr ""
 
 #: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:88
-#: templates/admin/list-forms.html:23 templates/form/my-forms.html:28
+#: templates/admin/list-forms.html:23 templates/entries/chart-entries.html:84
+#: templates/form/my-forms.html:32
 msgid "Entries"
 msgstr ""
 
@@ -153,16 +153,18 @@ msgid "Delete user and forms"
 msgstr ""
 
 #: templates/admin/delete-user.html:56 templates/admin/new-invite.html:58
+#: templates/common/change-language.html:41
+#: templates/common/change-language.html:43
 #: templates/entries/delete-entries.html:27
-#: templates/entries/list-entries.html:144 templates/form/edit-form.html:85
-#: templates/form/edit-form.html:87 templates/form/preview-form.html:35
-#: templates/form/preview-form.html:38 templates/main/index.html:27
-#: templates/site/change-site-favicon.html:28
+#: templates/entries/list-entries.html:235 templates/form/edit-form.html:87
+#: templates/form/edit-form.html:89 templates/form/inspect-form.html:163
+#: templates/form/preview-form.html:36 templates/form/preview-form.html:39
+#: templates/main/index.html:27 templates/site/change-site-favicon.html:28
 #: templates/site/change-sitename.html:23 templates/site/delete-site.html:35
-#: templates/site/smtp-config.html:48 templates/user/change-email.html:24
-#: templates/user/change-language.html:34 templates/user/new-user.html:48
+#: templates/site/menu-color.html:67 templates/site/smtp-config.html:48
+#: templates/user/change-email.html:24 templates/user/new-user.html:48
 #: templates/user/recover-password.html:25
-#: templates/user/user-settings.html:206
+#: templates/user/user-settings.html:226
 msgid "Cancel"
 msgstr ""
 
@@ -171,45 +173,51 @@ msgid "User details"
 msgstr ""
 
 #: templates/admin/inspect-user.html:17 templates/admin/list-users.html:17
-#: utils/wtf.py:13 utils/wtf.py:41
+#: utils/wtf.py:14 utils/wtf.py:42
 msgid "Username"
 msgstr ""
 
 #: templates/admin/inspect-user.html:22 templates/admin/list-forms.html:25
-#: templates/admin/list-users.html:20 templates/form/inspect-form.html:180
+#: templates/admin/list-users.html:20 templates/form/inspect-form.html:192
 #: templates/site/edit-site.html:14
 msgid "Hostname"
 msgstr ""
 
-#: templates/admin/inspect-user.html:27 templates/admin/list-users.html:27
+#: templates/admin/inspect-user.html:27
 msgid "Is Admin"
 msgstr ""
 
 #: templates/admin/inspect-user.html:30 templates/admin/inspect-user.html:50
 #: templates/admin/inspect-user.html:60 templates/admin/inspect-user.html:98
-#: templates/entries/list-entries.html:49 templates/form/expiration.html:15
-#: templates/form/inspect-form.html:69 templates/form/inspect-form.html:84
-#: templates/form/inspect-form.html:92 templates/form/inspect-form.html:121
-#: templates/form/inspect-form.html:135 templates/user/user-settings.html:132
-#: templates/user/user-settings.html:141 templates/user/user-settings.html:184
+#: templates/entries/chart-entries.html:46
+#: templates/entries/list-entries.html:61
+#: templates/entries/list-entries.html:109 templates/form/expiration.html:20
+#: templates/form/inspect-form.html:70 templates/form/inspect-form.html:85
+#: templates/form/inspect-form.html:93 templates/form/inspect-form.html:105
+#: templates/form/inspect-form.html:119 templates/user/user-settings.html:77
+#: templates/user/user-settings.html:138 templates/user/user-settings.html:147
+#: templates/user/user-settings.html:204
 msgid "True"
 msgstr ""
 
 #: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:52
 #: templates/admin/inspect-user.html:61 templates/admin/inspect-user.html:100
-#: templates/entries/list-entries.html:50 templates/form/expiration.html:16
-#: templates/form/inspect-form.html:70 templates/form/inspect-form.html:86
-#: templates/form/inspect-form.html:94 templates/form/inspect-form.html:123
-#: templates/form/inspect-form.html:137 templates/user/user-settings.html:133
-#: templates/user/user-settings.html:142 templates/user/user-settings.html:185
+#: templates/entries/chart-entries.html:47
+#: templates/entries/list-entries.html:62
+#: templates/entries/list-entries.html:111 templates/form/expiration.html:21
+#: templates/form/inspect-form.html:71 templates/form/inspect-form.html:87
+#: templates/form/inspect-form.html:95 templates/form/inspect-form.html:107
+#: templates/form/inspect-form.html:121 templates/user/user-settings.html:78
+#: templates/user/user-settings.html:139 templates/user/user-settings.html:148
+#: templates/user/user-settings.html:205
 msgid "False"
 msgstr ""
 
 #: templates/admin/inspect-user.html:36 templates/admin/inspect-user.html:84
 #: templates/admin/list-forms.html:20 templates/admin/list-users.html:23
-#: templates/form/inspect-form.html:175 templates/form/my-forms.html:26
-#: templates/user/user-settings.html:97 templates/user/user-settings.html:259
-#: views/form.py:184
+#: templates/form/inspect-form.html:187 templates/form/my-forms.html:30
+#: templates/user/user-settings.html:103 templates/user/user-settings.html:279
+#: views/form.py:188
 msgid "Created"
 msgstr ""
 
@@ -218,7 +226,7 @@ msgid "Language"
 msgstr ""
 
 #: templates/admin/inspect-user.html:44 templates/admin/list-users.html:25
-#: templates/user/user-settings.html:98 utils/wtf.py:14
+#: templates/user/user-settings.html:104 utils/wtf.py:15
 msgid "Email"
 msgstr ""
 
@@ -239,7 +247,7 @@ msgid "User's forms"
 msgstr ""
 
 #: templates/admin/inspect-user.html:87 templates/admin/list-forms.html:22
-#: templates/form/inspect-form.html:65 templates/form/my-forms.html:29
+#: templates/form/inspect-form.html:66 templates/form/my-forms.html:33
 msgid "Public"
 msgstr ""
 
@@ -247,9 +255,14 @@ msgstr ""
 msgid "All forms"
 msgstr ""
 
-#: templates/admin/list-users.html:24 templates/form/inspect-form.html:150
-#: templates/form/share-form.html:61 templates/user/user-settings.html:196
+#: templates/admin/list-users.html:24 templates/form/inspect-form.html:134
+#: templates/form/inspect-form.html:148 templates/form/share-form.html:61
+#: templates/user/user-settings.html:216
 msgid "Enabled"
+msgstr ""
+
+#: templates/admin/list-users.html:27 templates/user/user-settings.html:108
+msgid "Admin"
 msgstr ""
 
 #: templates/admin/new-invite.html:11
@@ -268,12 +281,52 @@ msgstr ""
 msgid "Send email"
 msgstr ""
 
+#: templates/common/change-language.html:11
+msgid "Change language"
+msgstr ""
+
+#: templates/common/change-language.html:39
+#: templates/entries/list-entries.html:234 templates/form/conditions.html:183
+#: templates/form/inspect-form.html:162 templates/form/preview-form.html:33
+#: templates/main/index.html:26 templates/site/menu-color.html:66
+#: templates/user/change-email.html:23 templates/user/user-settings.html:225
+msgid "Save"
+msgstr ""
+
+#: templates/entries/chart-entries.html:17
+#: templates/entries/chart-entries.html:31 templates/form/inspect-form.html:16
+msgid "View entries"
+msgstr ""
+
+#: templates/entries/chart-entries.html:21
+#: templates/entries/chart-entries.html:34
+#: templates/entries/list-entries.html:29
+#: templates/entries/list-entries.html:31
+#: templates/entries/view-results.html:22
+msgid "Download CSV"
+msgstr ""
+
+#: templates/entries/chart-entries.html:26
+#: templates/entries/list-entries.html:20
+msgid "Form details"
+msgstr ""
+
+#: templates/entries/chart-entries.html:49
+#: templates/entries/list-entries.html:64
+msgid "Notify me on each new entry"
+msgstr ""
+
+#: templates/entries/chart-entries.html:61
+msgid "Multiple choice"
+msgstr ""
+
 #: templates/entries/delete-entries.html:10
 #: templates/entries/delete-entries.html:26
 msgid "Delete entries"
 msgstr ""
 
 #: templates/entries/delete-entries.html:11
+#: templates/form/inspect-form.html:233
 msgid "Form"
 msgstr ""
 
@@ -290,50 +343,59 @@ msgstr ""
 msgid "Write the total number of entries below"
 msgstr ""
 
-#: templates/entries/list-entries.html:19
-msgid "Form details"
+#: templates/entries/list-entries.html:26
+#: templates/entries/view-results.html:19 templates/form/inspect-form.html:20
+msgid "Graphs"
 msgstr ""
 
-#: templates/entries/list-entries.html:25
-#: templates/entries/list-entries.html:27
-#: templates/entries/view-results.html:16
-msgid "Download CSV"
+#: templates/entries/list-entries.html:37
+msgid "Disable edition"
 msgstr ""
 
-#: templates/entries/list-entries.html:30
+#: templates/entries/list-entries.html:39
 msgid "Enable edition"
 msgstr ""
 
-#: templates/entries/list-entries.html:33
+#: templates/entries/list-entries.html:44
 msgid "Hide deleted columns"
 msgstr ""
 
-#: templates/entries/list-entries.html:35
+#: templates/entries/list-entries.html:46
 msgid "Show deleted columns"
 msgstr ""
 
-#: templates/entries/list-entries.html:38
+#: templates/entries/list-entries.html:50
 msgid "Delete all"
 msgstr ""
 
-#: templates/entries/list-entries.html:52
-msgid "Notify me on each new entry"
+#: templates/entries/list-entries.html:103
+#: templates/entries/list-entries.html:105
+msgid "Mark"
 msgstr ""
 
-#: templates/entries/list-entries.html:92
-msgid "Edition enabled"
-msgstr ""
-
-#: templates/entries/list-entries.html:132
+#: templates/entries/list-entries.html:192
 msgid "Delete entry"
 msgstr ""
 
-#: templates/entries/list-entries.html:143 templates/form/preview-form.html:32
-#: templates/main/index.html:26 templates/user/user-settings.html:205
-msgid "Save"
+#: templates/form/conditions.html:17
+msgid "New condition"
 msgstr ""
 
-#: templates/form/delete-form.html:17 templates/form/inspect-form.html:197
+#: templates/form/conditions.html:28 templates/form/inspect-form.html:237
+msgid "Edit form"
+msgstr ""
+
+#: templates/form/conditions.html:184 templates/user/user-settings.html:260
+msgid "Edit"
+msgstr ""
+
+#: templates/form/conditions.html:185 templates/form/delete-form.html:33
+#: templates/site/delete-site.html:34 templates/site/edit-site.html:64
+#: templates/user/user-settings.html:121
+msgid "Delete"
+msgstr ""
+
+#: templates/form/delete-form.html:17 templates/form/inspect-form.html:209
 msgid "Delete form"
 msgstr ""
 
@@ -345,78 +407,86 @@ msgstr ""
 msgid "Write the name of the form below"
 msgstr ""
 
-#: templates/form/delete-form.html:33 templates/site/delete-site.html:34
-#: templates/site/edit-site.html:64 templates/user/user-settings.html:115
-msgid "Delete"
-msgstr ""
-
-#: templates/form/edit-form.html:16
-msgid "Edit form"
-msgstr ""
-
-#: templates/form/edit-form.html:18
+#: templates/form/edit-form.html:20
 msgid "Build your form here"
 msgstr ""
 
-#: templates/form/edit-form.html:28
+#: templates/form/edit-form.html:30
 msgid "Introduction text"
 msgstr ""
 
-#: templates/form/edit-form.html:31
+#: templates/form/edit-form.html:33
 msgid "This is a markdown editor, an easy way to write HTML."
 msgstr ""
 
-#: templates/form/edit-form.html:32
+#: templates/form/edit-form.html:34
 msgid "Learn more"
 msgstr ""
 
-#: templates/form/edit-form.html:41
+#: templates/form/edit-form.html:43
 msgid "The form"
 msgstr ""
 
-#: templates/form/edit-form.html:52
+#: templates/form/edit-form.html:54
 msgid "Say something to the user after the form has been submitted"
 msgstr ""
 
-#: templates/form/edit-form.html:64
+#: templates/form/edit-form.html:66
 msgid "Your form will have this address"
 msgstr ""
 
-#: templates/form/edit-form.html:78
+#: templates/form/edit-form.html:80
 msgid "This URL is not available. Try another!"
 msgstr ""
 
-#: templates/form/edit-form.html:83 templates/form/edit-form.html:169
+#: templates/form/edit-form.html:85 templates/form/edit-form.html:182
 #: templates/form/preview-form.html:11
 msgid "Preview"
 msgstr ""
 
-#: templates/form/edit-form.html:154
+#: templates/form/edit-form.html:167
 msgid "OK, use this URL"
 msgstr ""
 
-#: templates/form/expiration.html:18
+#: templates/form/expiration.html:23
 msgid "Notify me when this form expires"
 msgstr ""
 
-#: templates/form/expiration.html:22
+#: templates/form/expiration.html:28 templates/form/inspect-form.html:83
+#: templates/form/inspect-form.html:91
+msgid "Expired"
+msgstr ""
+
+#: templates/form/expiration.html:35
 msgid "Expiration conditions"
 msgstr ""
 
-#: templates/form/expiration.html:26
+#: templates/form/expiration.html:39
 msgid "Date / Time"
 msgstr ""
 
-#: templates/form/expiration.html:40 templates/site/smtp-config.html:47
+#: templates/form/expiration.html:53 templates/site/smtp-config.html:47
 msgid "Save changes"
 msgstr ""
 
-#: templates/form/expiration.html:53
+#: templates/form/expiration.html:64
 msgid "Conditionals"
 msgstr ""
 
-#: templates/form/expiration.html:71
+#: templates/form/expiration.html:82
 msgid "Save max."
+msgstr ""
+
+#: templates/form/expiration.html:97
+msgid "When the form has expired"
+msgstr ""
+
+#: templates/form/expiration.html:99
+msgid "People will see this text instead of the form."
+msgstr ""
+
+#: templates/form/expiration.html:104
+msgid "Save text"
 msgstr ""
 
 #: templates/form/form_templates.html:11
@@ -435,96 +505,101 @@ msgstr ""
 msgid "Use this template"
 msgstr ""
 
-#: templates/form/inspect-form.html:12 templates/user/user-settings.html:240
-msgid "Edit"
-msgstr ""
-
-#: templates/form/inspect-form.html:25 templates/form/view-form.html:23
-msgid "I agree"
-msgstr ""
-
-#: templates/form/inspect-form.html:30 templates/form/preview-form.html:20
-#: templates/form/view-form.html:28 templates/site/smtp-config.html:61
-msgid "Send"
-msgstr ""
-
-#: templates/form/inspect-form.html:41
+#: templates/form/inspect-form.html:12
 msgid "Details"
 msgstr ""
 
-#: templates/form/inspect-form.html:44
-msgid "View entries"
-msgstr ""
-
-#: templates/form/inspect-form.html:49
+#: templates/form/inspect-form.html:24
 msgid "Total entries"
 msgstr ""
 
-#: templates/form/inspect-form.html:57 templates/form/my-forms.html:27
+#: templates/form/inspect-form.html:37 templates/form/my-forms.html:31
 msgid "Last entry"
 msgstr ""
 
-#: templates/form/inspect-form.html:78
-msgid "Will expire"
-msgstr ""
-
-#: templates/form/inspect-form.html:82 templates/form/inspect-form.html:90
-msgid "Expired"
-msgstr ""
-
-#: templates/form/inspect-form.html:101
+#: templates/form/inspect-form.html:50
 msgid "Public URL"
 msgstr ""
 
-#: templates/form/inspect-form.html:103 templates/form/inspect-form.html:151
-#: templates/form/inspect-form.html:163 templates/form/share-form.html:62
-#: templates/user/user-settings.html:197
+#: templates/form/inspect-form.html:52 templates/form/inspect-form.html:135
+#: templates/form/inspect-form.html:149 templates/form/inspect-form.html:175
+#: templates/form/share-form.html:62 templates/user/user-settings.html:217
 msgid "Disabled"
 msgstr ""
 
-#: templates/form/inspect-form.html:117 templates/form/my-forms.html:30
+#: templates/form/inspect-form.html:79
+msgid "Will expire"
+msgstr ""
+
+#: templates/form/inspect-form.html:101 templates/form/my-forms.html:34
 msgid "Shared"
 msgstr ""
 
-#: templates/form/inspect-form.html:131 templates/form/share-form.html:92
+#: templates/form/inspect-form.html:115 templates/form/share-form.html:92
 msgid "Restricted access"
 msgstr ""
 
-#: templates/form/inspect-form.html:146
+#: templates/form/inspect-form.html:130
+msgid "Confirmation"
+msgstr ""
+
+#: templates/form/inspect-form.html:144
 msgid "Require consent"
 msgstr ""
 
-#: templates/form/inspect-form.html:192
-msgid "Embed form"
+#: templates/form/inspect-form.html:152 templates/main/index.html:20
+#: templates/user/user-settings.html:212
+msgid "Edit text"
 msgstr ""
 
-#: templates/form/inspect-form.html:193
-msgid "Duplicate form"
-msgstr ""
-
-#: templates/form/inspect-form.html:194
+#: templates/form/inspect-form.html:204
 msgid "View log"
 msgstr ""
 
-#: templates/form/inspect-form.html:199
-msgid "Delete form and entries"
+#: templates/form/inspect-form.html:205
+msgid "Duplicate form"
 msgstr ""
 
 #: templates/form/inspect-form.html:206
+msgid "Embed form"
+msgstr ""
+
+#: templates/form/inspect-form.html:211
+msgid "Delete form and entries"
+msgstr ""
+
+#: templates/form/inspect-form.html:218
 msgid "Admin options"
 msgstr ""
 
-#: templates/form/inspect-form.html:210
-msgid "Disable form"
+#: templates/form/inspect-form.html:220
+msgid "Duplicate"
 msgstr ""
 
-#: templates/form/inspect-form.html:212
-msgid "Enable form"
+#: templates/form/inspect-form.html:223
+msgid "Disable"
 msgstr ""
 
-#: templates/form/inspect-form.html:298 templates/form/preview-form.html:67
-#: templates/form/view-form.html:73
+#: templates/form/inspect-form.html:225
+msgid "Enable"
+msgstr ""
+
+#: templates/form/inspect-form.html:247 templates/form/preview-form.html:18
+#: templates/form/view-form.html:15
 msgid "Required fields"
+msgstr ""
+
+#: templates/form/inspect-form.html:253 templates/form/view-form.html:25
+msgid "Send me confirmation by mail"
+msgstr ""
+
+#: templates/form/inspect-form.html:260 templates/form/view-form.html:33
+msgid "I agree"
+msgstr ""
+
+#: templates/form/inspect-form.html:263 templates/form/preview-form.html:22
+#: templates/form/view-form.html:37 templates/site/smtp-config.html:61
+msgid "Send"
 msgstr ""
 
 #: templates/form/list-log.html:18
@@ -535,7 +610,7 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: templates/form/list-log.html:23 utils/wtf.py:78
+#: templates/form/list-log.html:23 utils/wtf.py:79
 msgid "User"
 msgstr ""
 
@@ -543,11 +618,11 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: templates/form/my-forms.html:14
+#: templates/form/my-forms.html:17
 msgid "New form"
 msgstr ""
 
-#: templates/form/preview-form.html:34 templates/form/preview-form.html:37
+#: templates/form/preview-form.html:35 templates/form/preview-form.html:38
 msgid "Edit again"
 msgstr ""
 
@@ -583,29 +658,25 @@ msgstr ""
 msgid "Public form"
 msgstr ""
 
-#: templates/form/view-form.html:58
+#: templates/form/view-form.html:79
+msgid "to"
+msgstr ""
+
+#: templates/form/view-form.html:97
 #, python-format
 msgid "Note: Maximum is now %(max)s"
-msgstr ""
-
-#: templates/main/form-has-expired.html:8
-msgid "This form has expired"
-msgstr ""
-
-#: templates/main/index.html:20 templates/user/user-settings.html:192
-msgid "Edit text"
 msgstr ""
 
 #: templates/main/index.html:51
 msgid "Login"
 msgstr ""
 
-#: templates/main/index.html:57 templates/main/index.html:59
-msgid "Forgot your password?"
+#: templates/main/index.html:57
+msgid "Publish your own form"
 msgstr ""
 
-#: templates/main/index.html:64
-msgid "Publish your own form"
+#: templates/main/index.html:61 templates/main/index.html:63
+msgid "Forgot your password?"
 msgstr ""
 
 #: templates/main/page-not-found.html:6
@@ -644,8 +715,7 @@ msgstr ""
 msgid "New site name"
 msgstr ""
 
-#: templates/site/change-sitename.html:22 templates/user/change-email.html:23
-#: templates/user/change-language.html:33 templates/user/new-user.html:47
+#: templates/site/change-sitename.html:22 templates/user/new-user.html:47
 msgid "Submit"
 msgstr ""
 
@@ -677,7 +747,7 @@ msgstr ""
 msgid "Sitename"
 msgstr ""
 
-#: templates/site/edit-site.html:30 templates/user/user-settings.html:180
+#: templates/site/edit-site.html:30 templates/user/user-settings.html:200
 msgid "Invitation only"
 msgstr ""
 
@@ -689,14 +759,19 @@ msgstr ""
 msgid "Scheme"
 msgstr ""
 
-#: templates/site/edit-site.html:59 templates/user/user-settings.html:54
-#: templates/user/user-settings.html:68 templates/user/user-settings.html:76
-#: templates/user/user-settings.html:160 templates/user/user-settings.html:169
+#: templates/site/edit-site.html:59 templates/user/user-settings.html:39
+#: templates/user/user-settings.html:53 templates/user/user-settings.html:61
+#: templates/user/user-settings.html:166 templates/user/user-settings.html:173
+#: templates/user/user-settings.html:182 templates/user/user-settings.html:189
 msgid "Change"
 msgstr ""
 
 #: templates/site/edit-site.html:65
 msgid "Go back"
+msgstr ""
+
+#: templates/site/menu-color.html:9 templates/user/user-settings.html:186
+msgid "Menu color"
 msgstr ""
 
 #: templates/site/schema-upgrade.html:11
@@ -729,10 +804,6 @@ msgstr ""
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr ""
-
-#: templates/user/change-language.html:11
-msgid "Change language"
 msgstr ""
 
 #: templates/user/new-user.html:11
@@ -779,88 +850,96 @@ msgstr ""
 msgid "Hello"
 msgstr ""
 
-#: templates/user/user-settings.html:22
+#: templates/user/user-settings.html:21
 msgid "Your email has not been validated"
 msgstr ""
 
-#: templates/user/user-settings.html:26
+#: templates/user/user-settings.html:25
 msgid "Validate my email"
 msgstr ""
 
-#: templates/user/user-settings.html:40
-msgid "Update"
-msgstr ""
-
-#: templates/user/user-settings.html:49 utils/wtf.py:49
+#: templates/user/user-settings.html:34 utils/wtf.py:50
 msgid "Email address"
 msgstr ""
 
-#: templates/user/user-settings.html:58 utils/wtf.py:15 utils/wtf.py:42
-#: utils/wtf.py:64 utils/wtf.py:79
+#: templates/user/user-settings.html:43 utils/wtf.py:16 utils/wtf.py:43
+#: utils/wtf.py:65 utils/wtf.py:80
 msgid "Password"
 msgstr ""
 
-#: templates/user/user-settings.html:73
+#: templates/user/user-settings.html:58
 msgid "Preferred language"
 msgstr ""
 
-#: templates/user/user-settings.html:85
+#: templates/user/user-settings.html:68
+msgid "By default"
+msgstr ""
+
+#: templates/user/user-settings.html:73
+msgid "New entry notification default"
+msgstr ""
+
+#: templates/user/user-settings.html:87
+msgid "Administrator"
+msgstr ""
+
+#: templates/user/user-settings.html:91
 msgid "Invitations"
 msgstr ""
 
-#: templates/user/user-settings.html:89
+#: templates/user/user-settings.html:95
 msgid "Invite a new user"
 msgstr ""
 
-#: templates/user/user-settings.html:102
-msgid "Admin"
-msgstr ""
-
-#: templates/user/user-settings.html:124
+#: templates/user/user-settings.html:130
 msgid "My admin settings"
 msgstr ""
 
-#: templates/user/user-settings.html:129
+#: templates/user/user-settings.html:135
 msgid "Notify me when new user has registered"
 msgstr ""
 
-#: templates/user/user-settings.html:138
+#: templates/user/user-settings.html:144
 msgid "Notify me when new form has been created"
 msgstr ""
 
-#: templates/user/user-settings.html:150
+#: templates/user/user-settings.html:156
 msgid "Site settings"
 msgstr ""
 
-#: templates/user/user-settings.html:155
+#: templates/user/user-settings.html:161
 msgid "Site name"
 msgstr ""
 
-#: templates/user/user-settings.html:164
+#: templates/user/user-settings.html:170
+msgid "Default language"
+msgstr ""
+
+#: templates/user/user-settings.html:177
 msgid "Favicon"
 msgstr ""
 
-#: templates/user/user-settings.html:173 utils/wtf.py:73
+#: templates/user/user-settings.html:193 utils/wtf.py:74
 msgid "Email server"
 msgstr ""
 
-#: templates/user/user-settings.html:176
+#: templates/user/user-settings.html:196
 msgid "Configure"
 msgstr ""
 
-#: templates/user/user-settings.html:190
+#: templates/user/user-settings.html:210
 msgid "Data protection consent"
 msgstr ""
 
-#: templates/user/user-settings.html:218
+#: templates/user/user-settings.html:238
 msgid "Root user"
 msgstr ""
 
-#: templates/user/user-settings.html:254
+#: templates/user/user-settings.html:274
 msgid "Installation"
 msgstr ""
 
-#: utils/email.py:69
+#: utils/email.py:74
 #, python-format
 msgid ""
 "Hello %s\n"
@@ -870,20 +949,20 @@ msgid ""
 "%s"
 msgstr ""
 
-#: utils/email.py:70
+#: utils/email.py:75
 msgid "GNGforms. Confirm email"
 msgstr ""
 
-#: utils/email.py:81
+#: utils/email.py:85
 #, python-format
 msgid "GNGforms. Invitation to %s"
 msgstr ""
 
-#: utils/email.py:88
+#: utils/email.py:90
 msgid "Please use this link to recover your password"
 msgstr ""
 
-#: utils/email.py:90
+#: utils/email.py:92
 msgid "GNGforms. Recover password"
 msgstr ""
 
@@ -892,42 +971,46 @@ msgstr ""
 msgid "New form entry in %s at %s\n"
 msgstr ""
 
-#: utils/email.py:101
+#: utils/email.py:100
 msgid "GNGforms. New form entry"
 msgstr ""
 
-#: utils/email.py:107
+#: utils/email.py:105
 #, python-format
 msgid "The form '%s' has expired at %s"
 msgstr ""
 
-#: utils/email.py:108
+#: utils/email.py:106
 msgid "GNGforms. A form has expired"
 msgstr ""
 
-#: utils/email.py:130
+#: utils/email.py:126
 #, python-format
 msgid "New form '%s' created at %s"
 msgstr ""
 
-#: utils/email.py:131
+#: utils/email.py:127
 msgid "GNGforms. New form notification"
 msgstr ""
 
-#: utils/email.py:152
+#: utils/email.py:148
 #, python-format
 msgid "New user '%s' created at %s"
 msgstr ""
 
-#: utils/email.py:153
+#: utils/email.py:149
 msgid "GNGforms. New user notification"
 msgstr ""
 
-#: utils/email.py:159
+#: utils/email.py:157
+msgid "Confirmation message"
+msgstr ""
+
+#: utils/email.py:161
 msgid "Congratulations!"
 msgstr ""
 
-#: utils/email.py:160
+#: utils/email.py:162
 msgid "SMTP test"
 msgstr ""
 
@@ -939,57 +1022,65 @@ msgstr ""
 msgid "That's a nasty token!"
 msgstr ""
 
-#: utils/wtf.py:16 utils/wtf.py:65
+#: utils/wtf.py:17 utils/wtf.py:66
 msgid "Password again"
 msgstr ""
 
-#: utils/wtf.py:20
+#: utils/wtf.py:21
 msgid "Username is not valid"
 msgstr ""
 
-#: utils/wtf.py:23 utils/wtf.py:26
+#: utils/wtf.py:24 utils/wtf.py:27
 msgid "Please use a different username"
 msgstr ""
 
-#: utils/wtf.py:30 utils/wtf.py:33 utils/wtf.py:57 utils/wtf.py:60
-#: utils/wtf.py:91 utils/wtf.py:94
+#: utils/wtf.py:31 utils/wtf.py:34 utils/wtf.py:58 utils/wtf.py:61
+#: utils/wtf.py:92 utils/wtf.py:95
 msgid "Please use a different email address"
 msgstr ""
 
-#: utils/wtf.py:37 utils/wtf.py:69
+#: utils/wtf.py:38 utils/wtf.py:70
 msgid "Your password is weak"
 msgstr ""
 
-#: utils/wtf.py:53
+#: utils/wtf.py:54
 msgid "New email address"
 msgstr ""
 
-#: utils/wtf.py:74
+#: utils/wtf.py:75
 msgid "Port"
 msgstr ""
 
-#: utils/wtf.py:75
+#: utils/wtf.py:76
 msgid "Encryption"
 msgstr ""
 
-#: utils/wtf.py:80
+#: utils/wtf.py:81
 msgid "Sender address"
 msgstr ""
 
-#: utils/wtf.py:84
+#: utils/wtf.py:85
 msgid "New user's email"
 msgstr ""
 
-#: utils/wtf.py:85
+#: utils/wtf.py:86
 msgid "Include message"
 msgstr ""
 
-#: utils/wtf.py:86
+#: utils/wtf.py:87
 msgid "Make the new user an Admin"
 msgstr ""
 
-#: utils/wtf.py:87
+#: utils/wtf.py:88
 msgid "hostname"
+msgstr ""
+
+#: utils/wtf.py:98
+msgid "HTML color code"
+msgstr ""
+
+#: utils/wtf.py:101
+msgid "Not a valid HTML color code"
 msgstr ""
 
 #: views/admin.py:49 views/admin.py:87
@@ -1013,10 +1104,11 @@ msgstr ""
 msgid "Username does not match"
 msgstr ""
 
-#: views/admin.py:120 views/admin.py:131 views/entries.py:41
-#: views/entries.py:53 views/entries.py:149 views/form.py:281 views/form.py:299
-#: views/form.py:315 views/form.py:325 views/form.py:365 views/form.py:427
-#: views/form.py:441 views/form.py:524
+#: views/admin.py:120 views/admin.py:131 views/entries.py:42
+#: views/entries.py:55 views/entries.py:65 views/entries.py:175
+#: views/form.py:170 views/form.py:288 views/form.py:302 views/form.py:320
+#: views/form.py:336 views/form.py:346 views/form.py:386 views/form.py:447
+#: views/form.py:462 views/form.py:476 views/form.py:568
 msgid "Can't find that form"
 msgstr ""
 
@@ -1057,28 +1149,28 @@ msgstr ""
 msgid "Opps! We can't find that invitation"
 msgstr ""
 
-#: views/entries.py:80
+#: views/entries.py:88
 msgid "Deleted an entry"
 msgstr ""
 
-#: views/entries.py:107
+#: views/entries.py:118
 msgid "Undeleted an entry"
 msgstr ""
 
-#: views/entries.py:140
+#: views/entries.py:166
 msgid "Modified an entry"
 msgstr ""
 
-#: views/entries.py:155
+#: views/entries.py:181
 msgid "We expected a number"
 msgstr ""
 
-#: views/entries.py:162
+#: views/entries.py:188
 #, python-format
 msgid "Deleted %s entries"
 msgstr ""
 
-#: views/entries.py:165
+#: views/entries.py:191
 msgid "Number of entries does not match"
 msgstr ""
 
@@ -1094,222 +1186,258 @@ msgstr ""
 msgid "Something went wrong. No slug!"
 msgstr ""
 
-#: views/form.py:228
+#: views/form.py:174 views/form.py:324
+msgid "Permission needed to view form"
+msgstr ""
+
+#: views/form.py:187
+msgid "Marked"
+msgstr ""
+
+#: views/form.py:232
 msgid "Updated form OK"
 msgstr ""
 
-#: views/form.py:229
+#: views/form.py:233
 msgid "Form edited"
 msgstr ""
 
-#: views/form.py:234
+#: views/form.py:238
 msgid "Slug is missing."
 msgstr ""
 
-#: views/form.py:237
+#: views/form.py:241
 #, python-format
 msgid "Slug is not unique. %s"
 msgstr ""
 
-#: views/form.py:266
+#: views/form.py:273
 msgid "Form created"
 msgstr ""
 
-#: views/form.py:267
+#: views/form.py:274
 msgid "Saved form OK"
 msgstr ""
 
-#: views/form.py:287
+#: views/form.py:293 views/form.py:451 views/site.py:42 views/site.py:51
+msgid "Text saved OK"
+msgstr ""
+
+#: views/form.py:308
 #, python-format
 msgid "Deleted '%s' and %s entries"
 msgstr ""
 
-#: views/form.py:290
+#: views/form.py:311
 msgid "Form name does not match"
 msgstr ""
 
-#: views/form.py:303
-msgid "Permission needed to view form"
-msgstr ""
-
-#: views/form.py:331
+#: views/form.py:352
 msgid "Can't find a user with that email"
 msgstr ""
 
-#: views/form.py:334
+#: views/form.py:355
 #, python-format
 msgid "%s is already an editor"
 msgstr ""
 
-#: views/form.py:338
+#: views/form.py:359
 msgid "New editor added ok"
 msgstr ""
 
-#: views/form.py:339
+#: views/form.py:360
 #, python-format
 msgid "Added editor %s"
 msgstr ""
 
-#: views/form.py:356
+#: views/form.py:377
 #, python-format
 msgid "Removed editor %s"
 msgstr ""
 
-#: views/form.py:372
+#: views/form.py:393
 msgid "Date-time is not valid"
 msgstr ""
 
-#: views/form.py:377
+#: views/form.py:398
 #, python-format
 msgid "Expiry date set to: %s"
 msgstr ""
 
-#: views/form.py:383
+#: views/form.py:404
 msgid "Expiry date cancelled"
 msgstr ""
 
-#: views/form.py:385
+#: views/form.py:406
 msgid "Missing date or time"
 msgstr ""
 
-#: views/form.py:432
+#: views/form.py:467
 msgid "You can edit the duplicate now"
 msgstr ""
 
-#: views/form.py:456
+#: views/form.py:491
 #, python-format
 msgid "Public set to: %s"
 msgstr ""
 
-#: views/form.py:467
+#: views/form.py:502
 #, python-format
 msgid "Shared entries set to: %s"
 msgstr ""
 
-#: views/form.py:478
+#: views/form.py:513
 #, python-format
 msgid "Restricted access set to: %s"
 msgstr ""
 
-#: views/form.py:497
+#: views/form.py:532
 #, python-format
 msgid "Data protection consent set to: %s"
 msgstr ""
 
-#: views/form.py:531
+#: views/form.py:542
+#, python-format
+msgid "Send Confirmation set to: %s"
+msgstr ""
+
+#: views/form.py:575
 msgid "That form has expired"
 msgstr ""
 
-#: views/form.py:533
+#: views/form.py:577
 msgid "That form is not public"
-msgstr ""
-
-#: views/site.py:42 views/site.py:51
-msgid "Text saved OK"
 msgstr ""
 
 #: views/site.py:61
 msgid "Site name changed OK"
 msgstr ""
 
-#: views/site.py:71
+#: views/site.py:73 views/user.py:153
+msgid "Language updated OK"
+msgstr ""
+
+#: views/site.py:84
 msgid "Required file is missing"
 msgstr ""
 
-#: views/site.py:79
+#: views/site.py:92
 msgid "Bad file name. PNG only"
 msgstr ""
 
-#: views/site.py:81
+#: views/site.py:94
 msgid "Favicon changed OK. Refresh with  &lt;F5&gt;"
 msgstr ""
 
-#: views/site.py:90
+#: views/site.py:103
 msgid "Favicon reset OK. Refresh with  &lt;F5&gt;"
 msgstr ""
 
-#: views/site.py:113
+#: views/site.py:126
 msgid "Confguration saved OK"
 msgstr ""
 
-#: views/site.py:124
+#: views/site.py:137
 msgid "SMTP config works!"
 msgstr ""
 
-#: views/site.py:136
-msgid "Schema is already up to date. Nothing to do."
+#: views/site.py:158
+msgid "Color changed OK"
 msgstr ""
 
-#: views/site.py:143
-msgid "Updated schema OK!"
-msgstr ""
-
-#: views/site.py:189
+#: views/site.py:190
 msgid "Site not found"
 msgstr ""
 
-#: views/site.py:194
+#: views/site.py:195
 msgid "Cannot delete current site"
 msgstr ""
 
-#: views/site.py:197
+#: views/site.py:198
 #, python-format
 msgid "Deleted %s"
 msgstr ""
 
-#: views/site.py:200
+#: views/site.py:201
 msgid "Site name does not match"
 msgstr ""
 
-#: views/user.py:47
+#: views/user.py:49
 msgid "Invitation not found"
 msgstr ""
 
-#: views/user.py:50 views/user.py:192 views/user.py:236
+#: views/user.py:52 views/user.py:193 views/user.py:242
 msgid "Your petition has expired"
 msgstr ""
 
-#: views/user.py:85
+#: views/user.py:87
 msgid "Opps! An error ocurred when creating the user"
 msgstr ""
 
-#: views/user.py:96
+#: views/user.py:98
 msgid "Welcome!"
 msgstr ""
 
-#: views/user.py:137 views/user.py:163
+#: views/user.py:139 views/user.py:165
 #, python-format
 msgid "We've sent an email to %s"
 msgstr ""
 
-#: views/user.py:151
-msgid "Language updated OK"
-msgstr ""
-
-#: views/user.py:175
+#: views/user.py:177
 msgid "Password changed OK"
 msgstr ""
 
-#: views/user.py:189
+#: views/user.py:190
 msgid "Couldn't find that token"
 msgstr ""
 
-#: views/user.py:197
+#: views/user.py:198
 msgid "Your account has been blocked"
 msgstr ""
 
-#: views/user.py:219
+#: views/user.py:220
 msgid "We may have sent you an email"
 msgstr ""
 
-#: views/user.py:233
+#: views/user.py:239
 msgid "We couldn't find that petition"
 msgstr ""
 
-#: views/user.py:248
+#: views/user.py:254
 msgid "Your email address is valid"
 msgstr ""
 
-#: views/user.py:268
+#: views/user.py:274
 msgid "Bad credentials"
 msgstr ""
+
+#~ msgid "Start"
+#~ msgstr ""
+
+#~ msgid "Source code"
+#~ msgstr ""
+
+#~ msgid "Users listed here have the <b>same permissions</b> as the author"
+#~ msgstr ""
+
+#~ msgid "Edition enabled"
+#~ msgstr ""
+
+#~ msgid "Disable form"
+#~ msgstr ""
+
+#~ msgid "Enable form"
+#~ msgstr ""
+
+#~ msgid "This form has expired"
+#~ msgstr ""
+
+#~ msgid "Update"
+#~ msgstr ""
+
+#~ msgid "Schema is already up to date. Nothing to do."
+#~ msgstr ""
+
+#~ msgid "Updated schema OK!"
+#~ msgstr ""
+

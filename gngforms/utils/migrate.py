@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -31,8 +31,6 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 14:
         print("Upgrading to version 15")
         try:
-            # Using raw mongo instead of the engine because "requireDataConsent"
-            # was removed from models.Forms in this version of gngforms.
             collection = models.Form._get_collection()
             for f in collection.find():
                 consent=f["requireDataConsent"]
@@ -52,16 +50,26 @@ def migrateMongoSchema(schemaVersion):
         print("Upgrading to version 16")
         import uuid
         try:
-            for form in models.Form.objects():
-                for entry in form.entries:
+            collection = models.Form._get_collection()
+            for form in collection.find():
+                form["fieldIndex"].insert(0, {'label':"Marked", 'name':'marked'})
+                collection.update_one(  {"_id": form["_id"]},
+                                        {"$set": {"fieldIndex": form["fieldIndex"]} })
+                # We found an old form (created from a template) with this key missing. (gulps).
+                if not 'entries' in form:
+                    collection.update_one(  {"_id": form["_id"]},
+                                            {"$set": {"entries": []} })
+                    print("Added missing entries[] to %s %s" % (form['hostname'], form['slug']))
+                    continue
+                for entry in form["entries"]:
                     if not 'marked' in entry:
                         entry['marked']=False
                     if not 'id' in entry:
                         _id=uuid.uuid4()
                         entry['id']=str(_id)
-                form.fieldIndex.insert(0, {'label':"Marked", 'name':'marked'})
-                form.save()
-        except:
+                collection.update_one(  {"_id": form["_id"]},
+                                        {"$set": {"entries": form["entries"]} })                
+        except():
             print("Failed")
             return schemaVersion
         print("OK")
@@ -70,9 +78,8 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 16:
         print("Upgrading to version 17")
         try:
-            for form in models.Form.objects():
-                form.sendConfirmation=False
-                form.save()
+            query = models.Form.objects()
+            query.update(set__sendConfirmation=False)
         except:
             print("Failed")
             return schemaVersion
@@ -82,15 +89,33 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 17:
         print("Upgrading to version 18")
         try:
-            for site in models.Site.objects():
-                site.menuColor="#802C7D"
-                site.defaultLanguage=app.config['DEFAULT_LANGUAGE']
-                site.save()
+            query = models.Site.objects()
+            query.update(   set__menuColor="#802C7D",
+                            set__defaultLanguage=app.config['DEFAULT_LANGUAGE'])
         except:
             print("Failed")
             return schemaVersion
         print("OK")
         schemaVersion = 18
 
+    if schemaVersion == 18:
+        print("Upgrading to version 19")
+        try:
+            collection = models.User._get_collection()
+            for user in collection.find():
+                language=user["language"]
+                collection.update_one(  {"_id": user["_id"]},
+                                        {"$set": { "preferences": { "language": language,
+                                                                    "newEntryNotification": False
+                                                                    }}})
+                collection.update_one(  {"_id": user["_id"]},
+                                        {"$unset": {"language": 1} })
+            query = models.Form.objects()
+            query.update(set__expiredText={"markdown":"", "html":""})
+        except:
+            print("Failed")
+            return schemaVersion
+        print("OK")
+        schemaVersion = 19
 
     return schemaVersion
