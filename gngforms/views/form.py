@@ -260,6 +260,7 @@ def save_form(id=None):
                                         "expireDate": False},
                     "introductionText": introductionText,
                     "afterSubmitText": afterSubmitText,
+                    "expiredText": {"markdown":{}, "html":{}},
                     "sendConfirmation": Form.structureHasEmailField(session['formStructure']),
                     "dataConsent": {"markdown":"",
                                     "html":"",
