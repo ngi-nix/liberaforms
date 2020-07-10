@@ -401,6 +401,19 @@ class Form(db.Document):
         self.save()
 
     @property
+    def afterSubmitTextHTML(self):
+        return self.afterSubmitText['html']
+
+    @property
+    def afterSubmitTextMarkdown(self):
+        return self.afterSubmitText['markdown']
+
+    def saveAfterSubmitText(self, MDtext):
+        self.afterSubmitText = {'markdown':escapeMarkdown(MDtext),
+                                'html':markdown2HTML(MDtext)}
+        self.save()
+
+    @property
     def lastEntryDate(self):
         if self.entries:
             last_entry = self.entries[-1] 
@@ -478,7 +491,7 @@ class Form(db.Document):
                 pass
         return editors
 
-    def willExpire(self):
+    def canExpire(self):
         if self.expiryConditions["expireDate"]:
             return True
         if self.expiryConditions["fields"]:
@@ -486,7 +499,7 @@ class Form(db.Document):
         return False
     
     def hasExpired(self):
-        if not self.willExpire():
+        if not self.canExpire():
             return False
         if self.expiryConditions["expireDate"] and not isFutureDate(self.expiryConditions["expireDate"]):
             return True

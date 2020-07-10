@@ -50,6 +50,18 @@ hr { margin-top: 5px }
   font-size: 1.15em;
   margin-bottom: 0.4em;
 }
+.title_text_subtext {
+   margin: -1.4rem 0 1.2rem 0;
+   font-size: 0.95rem;
+}
+/*
+.subtext-section-title {
+  font-size: 1.15rem;
+  border-top: 1px solid #eee;
+  margin-top: 2rem;
+  padding-bottom: 1rem;
+}
+*/
 .delimited {
   border-bottom: 1px solid #eee;
   padding-bottom: 0.25em;

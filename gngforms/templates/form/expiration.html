@@ -88,16 +88,21 @@
         </div>
     </div>
 {% endif %}
-    <p>&nbsp;</p>
+
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
 
-        <div class="title_1">
+        <div class="title_1 delimited" style="margin-top:2em">
             {%trans%}When the form has expired{%endtrans%}
+            <div style="float:right">
+            <input id="show-expired-editor" class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit{%endtrans%}" />
+            </div>
         </div>
-        {%trans%}People will see this text instead of the form.{%endtrans%}
-        
+        <div class="title_text_subtext">
+        {%trans%}Say something to the user if the form has expired{%endtrans%}
+        </div>
+
         <form id="editor-form" method="POST" action="/forms/expiration/save-text/{{form.id}}" >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <textarea id="expired-text-editor" name="expiredTextMD">{{ form.expiredTextMarkdown }}</textarea>

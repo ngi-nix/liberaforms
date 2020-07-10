@@ -31,6 +31,8 @@ def ensureSessionFormKeys():
         session['introductionTextMD'] = ''
     if not 'afterSubmitTextMD' in session:
         session['afterSubmitTextMD'] = ''
+    if not 'expiredTextMD' in session:
+        session['expiredTextMD'] = ''
         
 def populateSessionFormData(form):
     #session['form_id'] = str(form._id)
@@ -39,6 +41,7 @@ def populateSessionFormData(form):
     session['formStructure'] = form.structure
     session['introductionTextMD'] = form.introductionText['markdown']
     session['afterSubmitTextMD'] = form.afterSubmitText['markdown']
+    session['expiredTextMD'] = form.expiredText['markdown']
 
 def clearSessionFormData():
     session['slug'] = ""
@@ -47,3 +50,4 @@ def clearSessionFormData():
     session['formStructure'] = json.dumps([])
     session['introductionTextMD'] = ''
     session['afterSubmitTextMD'] = ''
+    session['expiredTextMD'] = ''

@@ -11,6 +11,7 @@ v.1.4
  * Admin can set site's default language
  * Fixed db migration to avoid errors when object properties are not defined in the class
  * User can set default setting for Form entry notification
+ * Easier access to edit form texts
  * CSS changes
 
 v.1.3

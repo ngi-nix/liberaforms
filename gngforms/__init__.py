@@ -38,14 +38,14 @@ app.config['WTF_CSRF_TIME_LIMIT']=5400  # 1.5 hours. Time to fill out a form.
 csrf = CSRFProtect()
 csrf.init_app(app)
 
-app.config['APP_VERSION'] = "1.4.9"
+app.config['APP_VERSION'] = "1.4.10"
 app.config['SCHEMA_VERSION'] = 19
 
-app.config['RESERVED_SLUGS'] = ['login', 'static', 'admin', 'admins', 'user', 'users',
+app.config['RESERVED_SLUGS'] = ['static', 'login', 'logout', 'admin', 'admins', 'user', 'users',
                                 'form', 'forms', 'site', 'sites', 'update']
+app.config['RESERVED_USERNAMES'] = ['system', 'admin']
 # DPL = Data Protection Law
 app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL', 'id', 'checked', 'sendConfirmation']
-app.config['RESERVED_USERNAMES'] = ['system', 'admin']
 
 app.config['FORMBUILDER_DISABLED_ATTRS']=['className','toggle','access']
 app.config['FORMBUILDER_DISABLE_FIELDS']=['autocomplete','hidden', 'button', 'file']

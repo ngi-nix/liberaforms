@@ -22,10 +22,6 @@
             <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
             </div>
             <p>&nbsp;</p>
-            
-            <div class="afterSubmitText marked-up">
-            {{ afterSubmitMsg | safe }}
-            </div>
         </div>
             <hr />
             <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">

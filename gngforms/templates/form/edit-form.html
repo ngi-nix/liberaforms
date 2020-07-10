@@ -49,21 +49,15 @@
 
 <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-7">
-        <div class="title_2">
-            3. {%trans%}Say something to the user after the form has been submitted{%endtrans%}
-        </div>
-        <textarea id="after-submit-editor">{{ session['afterSubmitTextMD'] }}</textarea>
-        
+    <div class="col-md-7">        
         <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" id="structure" name="structure" />
             <input id="introduction-text" type="hidden" name="introductionTextMD" />
-            <input id="after-submit-text" type="hidden" name="afterSubmitTextMD" />
-        
+            
         {% if not session['form_id'] %}
             <div class="title_2 delimited">
-                4. {%trans%}Your form will have this address{%endtrans%}
+                3. {%trans%}Your form will have this address{%endtrans%}
             </div>
             
             <div class="input-group mb-3 input-group" style="margin-bottom: 0 !important;">
@@ -79,7 +73,7 @@
             <div id="slug_not_available" class="formError" style="display:none">
                 {%trans%}This URL is not available. Try another!{%endtrans%}
             </div>
-            {% endif %}
+        {% endif %}
 
             <div class="form-actions">
             <input id="form_preview" class="btn-success btn" type="submit" value="{%trans%}Preview{%endtrans%}" />
@@ -104,13 +98,6 @@ jQuery(function($) {
                                 spellChecker: false,
                                 autoDownloadFontAwesome: false,
                                 element: $("#introduction-editor")[0]
-                             });
-    var after_submit_mde = new SimpleMDE({ 
-                                autosave: {enabled: false},
-                                autofocus: false,
-                                spellChecker: false,
-                                autoDownloadFontAwesome: false,
-                                element: $("#after-submit-editor")[0]
                              });
     
     const fbEditor = document.getElementById("fb-editor");
@@ -144,7 +131,6 @@ jQuery(function($) {
         evt.preventDefault();
         $('#structure').val(formBuilder.actions.getData('json', true));
         $("#introduction-text").val(introduction_mde.value());
-        $("#after-submit-text").val(after_submit_mde.value());
         
         if ( {{ session['form_id'] | tojson }} == null ){
             $.ajax({

@@ -76,12 +76,12 @@
                </td>
             </tr>
             <tr>
-               <td>{%trans%}Will expire{%endtrans%}</td>
+               <td>{%trans%}Expiration{%endtrans%}</td>
                <td>
                    {% if form.isEditor(g.current_user) %}
                         {% if form.expired %}
                             <a class="btn btn-warning btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}Expired{%endtrans%}</a>
-                        {% elif form.willExpire() %}
+                        {% elif form.canExpire() %}
                             <a class="btn btn-success btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
                             <a class="btn btn-primary btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}False{%endtrans%}</a>
@@ -89,7 +89,7 @@
                    {% else %}
                         {% if form.expired %}
                             {%trans%}Expired{%endtrans%}
-                        {% elif form.willExpire() %}
+                        {% elif form.canExpire() %}
                             {%trans%}True{%endtrans%}
                         {% else %}
                             {%trans%}False{%endtrans%}
@@ -149,7 +149,9 @@
                     <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentRequired() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                    </div>
                    &nbsp;
-                   <a id="show-dpl-editor" style="white-space: nowrap" href="#">{%trans%}Edit text{%endtrans%}</a>
+                    <a id="show-dpl-editor" class="btn btn-primary btn-xs" role="button" href="#">
+                        {%trans%}Edit text{%endtrans%}
+                    </a>
                {% else %}
                     {{ form.isDataConsentRequired() }}            
                {% endif %}
@@ -195,8 +197,47 @@
             {% endif %}
             
         </table>
-        {% if form.isEditor(g.current_user) %}
 
+        <div class="title_1 delimited" style="margin-top:2.5em">
+            {%trans%}After replying to the form{%endtrans%}
+            <input id="show-after-submit-editor" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
+        </div>
+        <div class="title_text_subtext">
+        {%trans%}Say something to the user after the form has been submitted{%endtrans%}
+        </div>
+        <div id="after-submit-html" class="marked-up">
+            {{ form.afterSubmitTextHTML | safe }}
+        </div>
+        <div id="after-submit-editor" style="display:none">
+            <input id="save-after-submit-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
+            <input id="cancel-after-submit-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+            <p></p>
+            <textarea id="after-submit-mde">{{ form.afterSubmitTextMarkdown }}</textarea>
+        </div>
+        
+        {% if form.canExpire() %}
+        <div class="title_1 delimited" style="margin-top:3em">
+            {%trans%}When the form has expired{%endtrans%}
+            <input id="show-expired-editor" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
+        </div>
+        <div class="title_text_subtext">
+        {%trans%}Say something to the user if the form has expired{%endtrans%}
+        </div>
+        <div id="expired-html" class="marked-up">
+            {{ form.expiredTextHTML | safe }}
+        </div>
+        <div id="expired-editor" style="display:none">
+            <input id="save-expired-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
+            <input id="cancel-expired-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+            <p></p>
+            <textarea id="expired-mde">{{ form.expiredTextMarkdown }}</textarea>
+        </div>
+        {% endif %}
+
+        {% if form.isEditor(g.current_user) %}
+        <div class="title_1 delimited" style="margin-top:3em">
+            {%trans%}Other options{%endtrans%}
+        </div>
         <div id="embed_snippet">
         <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
         </div>
@@ -261,12 +302,6 @@
                 </div>
             </div>
             <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
-        </div>
-        
-        <p>&nbsp;</p>
-        <hr />
-        <div class="afterSubmitText marked-up">
-        {{ form.afterSubmitText['html'] | safe }}
         </div>
     </div>
 </div>
@@ -419,6 +454,91 @@ $(document).ready(function() {
         $("#show-dpl-editor").show()
     });
 });
+// after submit editor
+$(document).ready(function() {
+    var afterSubmitMDE = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: true,
+                                spellChecker: false,
+                                autoDownloadFontAwesome: false,
+                                element: document.getElementById("after-submit-mde")
+                             });
+    $("#show-after-submit-editor").click(function(){
+        $("#after-submit-html").hide();
+        $('#after-submit-editor').show(0, function() {
+            afterSubmitMDE.codemirror.refresh();
+        });
+    });
+    $("#cancel-after-submit-mde").click(function(){
+        $("#after-submit-editor").hide()
+        $("#after-submit-html").show()
+        afterSubmitMDE.value($("#after-submit-mde").val())
+    });
+    $("#save-after-submit-mde").click(function(){
+        var markdown=afterSubmitMDE.value()
+        $.ajax({
+            url : "/forms/save-after-submit-text/{{ form.id }}",
+            type: "POST",
+            dataType: "json",
+            data: {"markdown": markdown},
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                $("#after-submit-html").html(data.html)
+                $("#after-submit-editor").hide()
+                $("#after-submit-html").show()
+                $("#after-submit-mde").val(markdown)
+            }
+        });
+    });
+});
+// expired text editor
+$(document).ready(function() {
+    var expiredMDE = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: true,
+                                spellChecker: false,
+                                autoDownloadFontAwesome: false,
+                                element: document.getElementById("expired-mde")
+                             });
+    $("#show-expired-editor").click(function(){
+        $("#expired-html").hide();
+        $('#expired-editor').show(0, function() {
+            expiredMDE.codemirror.refresh();
+        });
+    });
+    $("#cancel-expired-mde").click(function(){
+        $("#expired-editor").hide()
+        $("#expired-html").show()
+        expiredMDE.value($("#expired-mde").val())
+    });
+    $("#save-expired-mde").click(function(){
+        var markdown=expiredMDE.value()
+        $.ajax({
+            url : "/forms/save-expired-text/{{ form.id }}",
+            type: "POST",
+            dataType: "json",
+            data: {"markdown": markdown},
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                $("#expired-html").html(data.html)
+                $("#expired-editor").hide()
+                $("#expired-html").show()
+                $("#expired-mde").val(markdown)
+            }
+        });
+    });
+});
+
 {% endif %}
 </script>
   

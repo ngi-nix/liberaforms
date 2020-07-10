@@ -126,7 +126,6 @@ def edit_form(id=None):
     
         session['formStructure'] = json.dumps(formStructure)
         session['introductionTextMD'] = escapeMarkdown(request.form['introductionTextMD'])
-        session['afterSubmitTextMD'] = escapeMarkdown(request.form['afterSubmitTextMD'])
         
         return redirect(make_url_for('form_bp.preview_form'))
     return render_template('edit-form.html', host_url=g.site.host_url)
@@ -165,14 +164,11 @@ def preview_form():
 @form_bp.route('/forms/edit/conditions/<string:id>', methods=['GET'])
 @enabled_user_required
 def conditions_form(id):
-    queriedForm = Form.find(id=id)
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     #pp(queriedForm.structure)
-    if not g.current_user.canInspectForm(queriedForm):
-        flash(gettext("Permission needed to view form"), 'warning')
-        return redirect(make_url_for('form_bp.my_forms'))
     return render_template('conditions.html', form=queriedForm)
 
 
@@ -189,7 +185,7 @@ def save_form(id=None):
     introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
                         'html':markdown2HTML(session['introductionTextMD'])} 
     afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
-                        'html':markdown2HTML(session['afterSubmitTextMD'])} 
+                        'html':markdown2HTML(session['afterSubmitTextMD'])}
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
     if queriedForm:
         # update form.fieldConditions
@@ -240,7 +236,12 @@ def save_form(id=None):
         if Form.find(slug=session['slug'], hostname=g.site.hostname):
             flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
-
+        if session['expiredTextMD']:
+            # this new form is a duplicate
+            expiredText={   'markdown':escapeMarkdown(session['expiredTextMD']),
+                            'html':markdown2HTML(session['expiredTextMD'])}
+        else:
+            expiredText=Form.defaultExpiredText()
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),
@@ -260,7 +261,7 @@ def save_form(id=None):
                                         "expireDate": False},
                     "introductionText": introductionText,
                     "afterSubmitText": afterSubmitText,
-                    "expiredText": {"markdown":{}, "html":{}},
+                    "expiredText": expiredText,
                     "sendConfirmation": Form.structureHasEmailField(session['formStructure']),
                     "dataConsent": {"markdown":"",
                                     "html":"",
@@ -294,6 +295,17 @@ def save_data_consent_text(id):
         flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
     
+
+@form_bp.route('/forms/save-after-submit-text/<string:id>', methods=['POST'])
+@enabled_user_required
+def save_after_submit_text(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        return JsonResponse(json.dumps({'html': ""}))
+    if 'markdown' in request.form:
+        queriedForm.saveAfterSubmitText(request.form['markdown'])
+        return JsonResponse(json.dumps({ 'html': queriedForm.afterSubmitTextHTML }))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured")}))
 
 @form_bp.route('/forms/delete/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
@@ -440,9 +452,10 @@ def set_field_condition(id):
     return JsonResponse(    json.dumps({'condition': request.form['condition'],
                             'expired': queriedForm.expired}) )
 
+
 @form_bp.route('/forms/expiration/save-text/<string:id>', methods=['POST'])
 @enabled_user_required
-def save_expired_text(id):
+def save_expiration_text(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
@@ -452,6 +465,18 @@ def save_expired_text(id):
         flash(gettext("Text saved OK"), 'success')
         return redirect(make_url_for('form_bp.expiration', id=queriedForm.id))
     return render_template('expiration.html', form=queriedForm)
+
+
+@form_bp.route('/forms/save-expired-text/<string:id>', methods=['POST'])
+@enabled_user_required
+def save_expired_text(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        return JsonResponse(json.dumps({'html': ""}))
+    if 'markdown' in request.form:
+        queriedForm.saveExpiredText(request.form['markdown'])
+        return JsonResponse(json.dumps({ 'html': queriedForm.expiredTextHTML }))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % _("An error occured")}))
 
 
 @form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
