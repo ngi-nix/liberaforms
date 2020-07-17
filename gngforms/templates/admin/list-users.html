@@ -16,7 +16,7 @@
         <tr>
             <th>{%trans%}Username{%endtrans%}</th>
             
-            {% if g.isRootUser %}
+            {% if g.isRootUserEnabled %}
                 <th>{%trans%}Hostname{%endtrans%}</th>
             {% endif %}
             
@@ -30,7 +30,7 @@
     {% for user in users %}
     <tr>
         <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
-        {% if g.isRootUser %}
+        {% if g.isRootUserEnabled %}
             <td>{{user.hostname}}</td>
         {% endif %}
         <td>{{user.created}}</td>

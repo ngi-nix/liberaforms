@@ -4,6 +4,7 @@ v.1.5
  * Easier access to edit form texts
  * Fixed db migration to avoid errors when object properties are not defined in the class
  * New optional site'Terms and Conditions' text for new users
+ * Added root toggle
 
 v.1.4
  * Menu and datatables are now responsive

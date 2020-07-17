@@ -112,17 +112,14 @@ def new_user(token=None):
 def user_settings(username):
     if username != g.current_user.username:
         return redirect(make_url_for('form_bp.my_forms'))
-    user=g.current_user
-    invites=[]
-    if user.isAdmin():
-        invites=Invite.findAll()
+    invites = Invite.findAll() if g.isAdmin else []
     sites=None
     installation=None
-    if user.isRootUser():
+    if g.isRootUserEnabled:
         sites=Site.findAll()
         installation=Installation.get()
     context = {
-        'user': user,
+        'user': g.current_user,
         'invites': invites,
         'site': g.site,
         'sites': sites,
@@ -227,6 +224,20 @@ def toggle_new_entry_notification_default():
     default=g.current_user.toggleNewEntryNotificationDefault()
     return JsonResponse(json.dumps({'default': default}))
 
+@user_bp.route('/user/toggle-root-enabled', methods=['POST'])
+@admin_required
+def toggle_enable_root():
+    if not g.current_user.isRootUser():
+        session["root_enabled"]=False
+        return JsonResponse(json.dumps({'enabled': False}))
+    if session["root_enabled"] == True:
+        session["root_enabled"]=False
+        flash(gettext("Root disabled"), 'success')
+    else:
+        session["root_enabled"]=True
+        flash(gettext("Root enabled"), 'warning')
+    return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))
+    
 
 """
 This may be used to validate a New user's email, or an existing user's Change email request

@@ -48,8 +48,8 @@ def print_g(string=None):
 def before_request():
     g.site=None
     g.current_user=None
-    g.isRootUser=False
     g.isAdmin=False
+    g.isRootUserEnabled=False
     if request.path[0:7] == '/static':
         return
     g.site=Site.find(hostname=urlparse(request.host_url).hostname)
@@ -58,11 +58,12 @@ def before_request():
         if not g.current_user:
             session.pop("user_id")
             return
-        if g.current_user.isRootUser():
-            g.isRootUser=True
         if g.current_user.isAdmin():
             g.isAdmin=True
-
+        if not "root_enabled" in session:
+            session["root_enabled"]=False
+        if g.current_user.isRootUser() and session["root_enabled"] == True:
+            g.isRootUserEnabled=True
 
 @app.errorhandler(404)
 def page_not_found(error):

@@ -32,7 +32,7 @@ from gngforms.utils.migrate import migrateMongoSchema
 
 class HostnameQuerySet(QuerySet):
     def ensure_hostname(self, **kwargs):
-        if not g.isRootUser and not 'hostname' in kwargs:
+        if not g.isRootUserEnabled and not 'hostname' in kwargs:
             kwargs={'hostname':g.site.hostname, **kwargs}
         #print("ensure_hostname kwargs: %s" % kwargs)
         return self.filter(**kwargs)

@@ -60,18 +60,16 @@ jQuery(function($) {
         },
         notify: {
             success: function(message) {
-                addRequiredMsg();
+                postFormRender();
                 return;
             }
         }
     };
     $(fbRender).formRender(formRenderOpts);
 });
-function addRequiredMsg(){
-    if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
-        $("#required_message").show()
-    }
-}
+{% with form=None %}
+{% include '_post-render-scripts.js' %}
+{% endwith %}
 </script>
   
 {% endblock %}

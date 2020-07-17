@@ -118,7 +118,7 @@ def toggle_form_public_admin_prefs(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
-        return redirect(make_url_for('my_forms'))
+        return redirect(make_url_for('form_bp.my_forms'))
     queriedForm.toggleAdminFormPublic()
     return redirect(make_url_for('form_bp.inspect_form', id=id))
 

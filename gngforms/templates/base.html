@@ -38,7 +38,16 @@
 
         {% if 'site' in g and g.site %}
           <a class="navbar-brand" href="/"><img src="{{g.site.faviconURL()}}" /></a>
-        {% endif %}        
+        {% endif %}
+        {% if g.current_user.isRootUser() %}
+            <a id="toggle_root_enable" class="nav-item nav-link" href="#!">
+            {% if g.isRootUserEnabled %}
+                <i class="fa fa-shield" style="color:red" aria-hidden="true"></i>
+            {% else %}
+                <i class="fa fa-shield" style="color:white" aria-hidden="true"></i>
+            {% endif %}
+            </a>
+        {% endif %}
         {% if g.current_user.enabled %}
             {% if g.isAdmin %}
                 <a class="nav-item nav-link" href="/admin/forms">{%trans%}Forms{%endtrans%}</a> 
@@ -81,6 +90,30 @@
     AGPLv3 GNGforms
 {% endif %}
 </div>
+
+{% if g.current_user and g.current_user.isRootUser() %}
+<script>
+var csrftoken = "{{ csrf_token() }}";
+document.getElementById('toggle_root_enable').addEventListener('click', function(evt){
+    evt.preventDefault();
+    $.ajax({
+        url : "/user/toggle-root-enabled",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            location.reload();
+            return false;
+        }
+    });
+});
+</script>
+{% endif %}
 
 </body>
 </html>

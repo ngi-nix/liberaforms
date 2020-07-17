@@ -193,7 +193,7 @@
                <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ form.created }}</td>
             </tr>
-            {% if g.isRootUser %}
+            {% if g.isRootUserEnabled %}
             <tr>
                 <td>{%trans%}Hostname{%endtrans%}</td>
                 <td>{{ form.hostname }}</td>
@@ -309,7 +309,7 @@
             <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
             <input type="checkbox" name="sendConfirmation" value="ok" />
             &nbsp;
-            {%trans%}Send me confirmation by mail{%endtrans%}
+            {%trans%}Send me confirmation by mail{%endtrans%} <span id='confirmation_email'></span>
             </div>
             {% endif %}
 
@@ -349,20 +349,18 @@ jQuery(function($) {
         },
         notify: {
             success: function(message) {
-                addRequiredMsg();
+                postFormRender();
                 return;
             }
         }
     };
     $(fbRender).formRender(formRenderOpts);
 });
-function addRequiredMsg(){
-    if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
-        $("#required_message").show()
-    } else {
-        $("#required_message").hide()
-    }
-}
+
+{% with form=form %}
+{% include '_post-render-scripts.js' %}
+{% endwith %}
+
 {% if form.isEditor(g.current_user) %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({

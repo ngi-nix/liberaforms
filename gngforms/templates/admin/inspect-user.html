@@ -17,7 +17,7 @@
                <td>{%trans%}Username{%endtrans%}</td>
                <td>{{ user.username }}</td>
             </tr>        
-            {% if g.isRootUser %}
+            {% if g.isRootUserEnabled %}
                 <tr>
                    <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ user.hostname }}</td>

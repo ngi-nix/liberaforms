@@ -103,7 +103,7 @@
             <tr>
             <th>{%trans%}Created{%endtrans%}</th>
             <th>{%trans%}Email{%endtrans%}</th>
-            {% if g.isRootUser %}
+            {% if g.isRootUserEnabled %}
                 <th>Hostname</th>
             {% endif %}
             <th>{%trans%}Admin{%endtrans%}</th>
@@ -114,7 +114,7 @@
             <tr>
                 <td>{{invite.token.created.strftime('%Y-%m-%d') }}</td>
                 <td>{{invite.email}}</td>
-                {% if g.isRootUser %}
+                {% if g.isRootUserEnabled %}
                     <td>{{invite.hostname}}</td>
                 {% endif %}
                 <td>{{invite.admin}}</td>
@@ -260,7 +260,7 @@
         </table>
             
     {% endif %}
-    {% if g.isRootUser %}
+    {% if g.isRootUserEnabled %}
         <p>&nbsp;</p>
         <div id="root_user_settings" class="title_1">
             {%trans%}Root user{%endtrans%}
