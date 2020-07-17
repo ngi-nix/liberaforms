@@ -3,6 +3,7 @@
 
 <script src="/static/formBuilder/form-render.min.js"></script>
 <script src="/static/simplemde/simplemde.min.js"></script>
+<script src="/static/jquery/jquery.color-2.1.2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
 <div class="container">
@@ -141,35 +142,38 @@
             </tr>
             {% endif %}
             <tr>
-               <td>{%trans%}Require consent{%endtrans%}</td>
-               <td>
-               {% if form.isEditor(g.current_user) %}
-                   <div id="toggle_dataConsent" class="btn-group btn-toggle">
+                <td>{%trans%}Require consent{%endtrans%}</td>
+                <td>
+                {% if form.isEditor(g.current_user) %}
+                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
                     <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentRequired() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
                     <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentRequired() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
-                   </div>
-                   &nbsp;
-                    <a id="show-dpl-editor" class="btn btn-primary btn-xs" role="button" href="#">
-                        {%trans%}Edit text{%endtrans%}
-                    </a>
-               {% else %}
+                    </div>
+                    &nbsp;
+                    <button id="show-DPL-text-button" class="btn btn-primary btn-xs">{%trans%}Edit text{%endtrans%}</button>
+                {% else %}
                     {{ form.isDataConsentRequired() }}            
-               {% endif %}
+                {% endif %}
+
                </td>
             </tr>
-            <tr id="dpl-editor" style="display:none">
-                <td colspan="2">
-                <p></p>
-                <form id="dpl-editor-form" action="/forms/save-consent-text/{{form.id}}" method="post">
-                    <input class="btn-success btn btn-sm" type="submit" value="{%trans%}Save{%endtrans%}" />
-                    <input id="cancel-edit" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                    <p></p>
-                    <textarea id="sm-editor" name="editor">{{ form.dataConsentMarkdown }}</textarea>
-                    <input id="dpl-markdown" type="hidden" name="DPLMD" />
-                </form>
+            {% if form.isEditor(g.current_user) %}
+            <tr id="DPL-text-block" style="display:none">
+                <td colspan="3">
+                <div class="title_2">{%trans%}Data protection law{%endtrans%}</div>
+                <div id="DPL-text-editor">
+                    <input id="save-DPL-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
+                    <input id="cancel-DPL-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+                    <div style="margin-top:1em">
+                    <textarea id="DPL-mde">{{ form.dataConsentMarkdown }}</textarea>
+                    </div>
+                </div>
+                <div id="DPL-html" class="DPL-html dataConsentText" style="display:none">
+                    {{ form.dataConsentHTML|safe }}
+                </div>
                 </td>
             </tr>
+            {% endif %}
             <tr>
                <td>
                     {%trans%}Author{%endtrans%}
@@ -195,37 +199,51 @@
                 <td>{{ form.hostname }}</td>
             </tr>
             {% endif %}
-            
         </table>
 
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}After replying to the form{%endtrans%}
-            <input id="show-after-submit-editor" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
+            {% if form.isEditor(g.current_user) %}
+                <div style="float:right">
+                <button id="show-after-submit-editor-button" class="btn btn-primary btn-sm">
+                    {%trans%}Edit text{%endtrans%}
+                </button>
+                </div>
+            {% endif %}
         </div>
         <div class="title_text_subtext">
         {%trans%}Say something to the user after the form has been submitted{%endtrans%}
         </div>
-        <div id="after-submit-html" class="marked-up">
+        <div id="after-submit-html" class="afterSubmitText marked-up">
             {{ form.afterSubmitTextHTML | safe }}
         </div>
+        {% if form.isEditor(g.current_user) %}
         <div id="after-submit-editor" style="display:none">
             <input id="save-after-submit-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
             <input id="cancel-after-submit-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
             <p></p>
             <textarea id="after-submit-mde">{{ form.afterSubmitTextMarkdown }}</textarea>
         </div>
+        {% endif %}
         
         {% if form.canExpire() %}
-        <div class="title_1 delimited" style="margin-top:3em">
+        <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}When the form has expired{%endtrans%}
-            <input id="show-expired-editor" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
+            {% if form.isEditor(g.current_user) %}
+                <div style="float:right">
+                <button id="show-expired-editor-button" class="btn btn-primary btn-sm">
+                    {%trans%}Edit text{%endtrans%}
+                </button>
+                </div>
+            {% endif %}
         </div>
         <div class="title_text_subtext">
         {%trans%}Say something to the user if the form has expired{%endtrans%}
         </div>
-        <div id="expired-html" class="marked-up">
+        <div id="expired-html" class="expiredText marked-up">
             {{ form.expiredTextHTML | safe }}
         </div>
+        {% if form.isEditor(g.current_user) %}
         <div id="expired-editor" style="display:none">
             <input id="save-expired-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
             <input id="cancel-expired-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
@@ -233,9 +251,10 @@
             <textarea id="expired-mde">{{ form.expiredTextMarkdown }}</textarea>
         </div>
         {% endif %}
+        {% endif %}
 
         {% if form.isEditor(g.current_user) %}
-        <div class="title_1 delimited" style="margin-top:3em">
+        <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}Other options{%endtrans%}
         </div>
         <div id="embed_snippet">
@@ -254,8 +273,7 @@
         {% endif %}
 
         {% if g.isAdmin %}
-        <p>&nbsp;</p>
-        <div class="title_1 delimited">
+        <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}Admin options{%endtrans%}
         </div>
         <a class="btn btn-primary" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate{%endtrans%}</a>
@@ -294,8 +312,9 @@
             {%trans%}Send me confirmation by mail{%endtrans%}
             </div>
             {% endif %}
+
             <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
-                <div id="dpl-blurb" class="blurb">{{ form.dataConsentHTML|safe }}</div>
+                <div id="DPL-html-defunct" class="DPL-html dataConsentText">{{ form.dataConsentHTML|safe }}</div>
                 <div class="consent">
                     <input type="checkbox" name="DPL" value="ok" required />
                     &nbsp;{%trans%}I agree{%endtrans%}<span class="formbuilder-required required" style="font-size:1.2em">●</span>
@@ -373,6 +392,7 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
     });
 });
 document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
+    $("#saved-DPL-notification").hide()
     $.ajax({
         url : "/form/toggle-data-consent/{{ form.id }}",
         type: "POST",
@@ -426,32 +446,51 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
     });
 });
 {% endif %}
+// DPL editor
 $(document).ready(function() {
-    var simplemde = new SimpleMDE({ 
+    var dpl_MDE = new SimpleMDE({ 
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
                                 autoDownloadFontAwesome: false,
-                                element: $("#sm-editor")[0]
+                                element: document.getElementById("DPL-mde")
                              });
-    $("#show-dpl-editor").click(function(){
-        $("#show-dpl-editor").hide()
-        $('#dpl-editor').show(0, function() {
-            simplemde.value($("#sm-editor").val())
-            $('html, body').animate({
-                scrollTop: $("#dpl-editor").offset().top -100
-            }, 250);
+    $("#show-DPL-text-button").click(function(){
+        $("#show-DPL-text-button").prop('disabled', true);
+        $("#DPL-html").hide()
+        $("#DPL-text-block").show()
+        $("#DPL-text-editor").show(0, function() {
+            dpl_MDE.codemirror.refresh();
         });
-        return false;
     });
-    document.getElementById('dpl-editor-form').addEventListener('submit', function(evt){
-        evt.preventDefault();
-        $("#dpl-markdown").val(simplemde.value());
-        $('#dpl-editor-form').submit();
+    $("#save-DPL-button").click(function(){
+        $.ajax({
+            url : "/forms/save-consent-text/{{ form.id }}",
+            type: "POST",
+            dataType: "json",
+            data: {"markdown": dpl_MDE.value()},
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                //console.log(data.markdown)
+                $("#show-DPL-text-button").prop('disabled', false);
+                $("#DPL-text-editor").hide()
+                $(".DPL-html").html(data.html)
+                $("#DPL-html").show(0)
+                fadeOutHighlight($("#DPL-html"))
+                $("#DPL-mde").val(data.markdown)
+                dpl_MDE.value($("#DPL-mde").val())
+            }
+        });
     });
-    $("#cancel-edit").click(function(){
-        $('#dpl-editor').hide();
-        $("#show-dpl-editor").show()
+    $("#cancel-DPL-button").click(function(){
+        $("#DPL-text-block").hide()
+        dpl_MDE.value($("#DPL-mde").val())
+        $("#show-DPL-text-button").prop('disabled', false);
     });
 });
 // after submit editor
@@ -463,15 +502,17 @@ $(document).ready(function() {
                                 autoDownloadFontAwesome: false,
                                 element: document.getElementById("after-submit-mde")
                              });
-    $("#show-after-submit-editor").click(function(){
+    $("#show-after-submit-editor-button").click(function(){
         $("#after-submit-html").hide();
         $('#after-submit-editor').show(0, function() {
             afterSubmitMDE.codemirror.refresh();
         });
+        $("#show-after-submit-editor-button").prop('disabled', true);
     });
     $("#cancel-after-submit-mde").click(function(){
         $("#after-submit-editor").hide()
         $("#after-submit-html").show()
+        $("#show-after-submit-editor-button").prop('disabled', false);
         afterSubmitMDE.value($("#after-submit-mde").val())
     });
     $("#save-after-submit-mde").click(function(){
@@ -488,10 +529,14 @@ $(document).ready(function() {
             },
             success: function(data, textStatus, jqXHR)
             {
+                //console.log(data.markdown)
+                $("#show-after-submit-editor-button").prop('disabled', false);
                 $("#after-submit-html").html(data.html)
                 $("#after-submit-editor").hide()
-                $("#after-submit-html").show()
-                $("#after-submit-mde").val(markdown)
+                $("#after-submit-html").show(0)
+                fadeOutHighlight($("#after-submit-html"))
+                $("#after-submit-mde").val(data.markdown)
+                afterSubmitMDE.value($("#after-submit-mde").val())
             }
         });
     });
@@ -505,15 +550,17 @@ $(document).ready(function() {
                                 autoDownloadFontAwesome: false,
                                 element: document.getElementById("expired-mde")
                              });
-    $("#show-expired-editor").click(function(){
+    $("#show-expired-editor-button").click(function(){
         $("#expired-html").hide();
         $('#expired-editor').show(0, function() {
             expiredMDE.codemirror.refresh();
         });
+        $("#show-expired-editor-button").prop('disabled', true);
     });
     $("#cancel-expired-mde").click(function(){
         $("#expired-editor").hide()
         $("#expired-html").show()
+        $("#show-expired-editor-button").prop('disabled', false)
         expiredMDE.value($("#expired-mde").val())
     });
     $("#save-expired-mde").click(function(){
@@ -530,15 +577,21 @@ $(document).ready(function() {
             },
             success: function(data, textStatus, jqXHR)
             {
+                $("#show-expired-editor-button").prop('disabled', false);
                 $("#expired-html").html(data.html)
                 $("#expired-editor").hide()
-                $("#expired-html").show()
-                $("#expired-mde").val(markdown)
+                $("#expired-html").show(0)
+                fadeOutHighlight($("#expired-html"))
+                $("#expired-mde").val(data.markdown)
+                expiredMDE.value($("#expired-mde").val())
             }
         });
     });
 });
-
+function fadeOutHighlight(element){
+    element.css("background-color", "#C3FDB8")
+    element.animate({ backgroundColor: "white" }, 2000)
+}
 {% endif %}
 </script>
   

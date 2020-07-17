@@ -1,5 +1,10 @@
 https://keepachangelog.com/en/1.0.0/
 
+v.1.5
+ * Easier access to edit form texts
+ * Fixed db migration to avoid errors when object properties are not defined in the class
+ * New optional site'Terms and Conditions' text for new users
+
 v.1.4
  * Menu and datatables are now responsive
  * Added unique ID to each entry
@@ -9,9 +14,7 @@ v.1.4
  * Admin can duplicate other users' forms
  * Admin can configure site's menu background-color
  * Admin can set site's default language
- * Fixed db migration to avoid errors when object properties are not defined in the class
  * User can set default setting for Form entry notification
- * Easier access to edit form texts
  * CSS changes
 
 v.1.3

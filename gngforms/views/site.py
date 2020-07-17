@@ -46,10 +46,19 @@ def save_blurb():
 @site_bp.route('/site/save-personal-data-consent-text', methods=['POST'])
 @admin_required
 def save_data_consent():
-    if 'editor' in request.form:            
-        g.site.savePersonalDataConsentText(request.form['editor'])
-        flash(gettext("Text saved OK"), 'success')
-    return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+    if 'markdown' in request.form:
+        g.site.savePersonalDataConsentText(request.form['markdown'])
+        return JsonResponse(json.dumps({ 'html': g.site.personalDataConsentHTML }))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % _("An error occured")}))
+
+
+@site_bp.route('/site/save-terms-and-conditions-text', methods=['POST'])
+@admin_required
+def save_terms_and_condition():
+    if 'markdown' in request.form:
+        g.site.saveTermsAndConditions(request.form['markdown'])
+        return JsonResponse(json.dumps({ 'html': g.site.termsAndConditionsHTML }))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % _("An error occured")}))
 
 
 @site_bp.route('/site/change-sitename', methods=['GET', 'POST'])
@@ -157,6 +166,13 @@ def menu_color():
         g.site.save()
         flash(gettext("Color changed OK"), 'success')
     return render_template('menu-color.html', wtform=wtform)
+
+
+@site_bp.route('/site/toggle-terms-and-conditions', methods=['POST'])
+@admin_required
+def toggle_term_conditions_enabled():
+    return JsonResponse(json.dumps({'enabled': g.site.toggleTermsAndConditions()}))
+
 
 @site_bp.route('/admin/sites/toggle-scheme/<string:hostname>', methods=['POST'])
 @rootuser_required

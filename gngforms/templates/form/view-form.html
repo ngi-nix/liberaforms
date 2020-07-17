@@ -27,10 +27,12 @@
                 {% endif %}                
                 {% if form.isDataConsentRequired() %}
                     <div id="dataConsent" class="dataConsent">
-                        <div class="blurb">{{ form.dataConsentHTML|safe }}</div>
+                        <div class="dataConsentText">{{ form.dataConsentHTML|safe }}</div>
                         <div class="consent">
                             <input type="checkbox" name="DPL" value="ok" required />
-                            &nbsp;{%trans%}I agree{%endtrans%}<span class="required formbuilder-required " style="font-size:1.2em">●</span>
+                            &nbsp;
+                            {%trans%}I agree{%endtrans%}
+                            <span class="required formbuilder-required" style="font-size:1.2em">●</span>
                         </div>
                     </div>
                 {% endif %}

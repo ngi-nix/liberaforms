@@ -2,6 +2,7 @@
 {% block content %}
 
 <script src="/static/simplemde/simplemde.min.js"></script>
+<script src="/static/jquery/jquery.color-2.1.2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
 <div class="container">
@@ -92,37 +93,35 @@
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-
+       
         <div class="title_1 delimited" style="margin-top:2em">
             {%trans%}When the form has expired{%endtrans%}
             <div style="float:right">
-            <input id="show-expired-editor" class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit{%endtrans%}" />
+            <button id="show-expired-editor-button" class="btn btn-primary btn-sm">
+                {%trans%}Edit text{%endtrans%}
+            </button>
             </div>
         </div>
         <div class="title_text_subtext">
         {%trans%}Say something to the user if the form has expired{%endtrans%}
         </div>
+        <div id="expired-html" class="marked-up">
+            {{ form.expiredTextHTML | safe }}
+        </div>
+        <div id="expired-editor" style="display:none">
+            <input id="save-expired-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
+            <input id="cancel-expired-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+            <p></p>
+            <textarea id="expired-mde">{{ form.expiredTextMarkdown }}</textarea>
+        </div>
 
-        <form id="editor-form" method="POST" action="/forms/expiration/save-text/{{form.id}}" >
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <textarea id="expired-text-editor" name="expiredTextMD">{{ form.expiredTextMarkdown }}</textarea>
-            <input class="btn-success btn" type="submit" value="{%trans%}Save text{%endtrans%}">
-        </form>
         </div>
     </div>
 </div>
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
-jQuery(function($) {
-    var expired_mde = new SimpleMDE({ 
-                                autosave: {enabled: false},
-                                autofocus: false,
-                                spellChecker: false,
-                                autoDownloadFontAwesome: false,
-                                element: $("#expired-text-editor")[0]
-                             });
-});
+
 $("#expired-text-submit").click(function(){
     expired_mde.toTextArea();
     $("#editor-form").submit();
@@ -215,6 +214,60 @@ $(document).on("change", ".condition", function () {
 });
 {% endif %}
 
+// expired text editor
+$(document).ready(function() {
+    var expiredMDE = new SimpleMDE({ 
+                                autosave: {enabled: false},
+                                autofocus: true,
+                                spellChecker: false,
+                                autoDownloadFontAwesome: false,
+                                element: document.getElementById("expired-mde")
+                             });
+    $("#show-expired-editor-button").click(function(){
+        $("#expired-html").hide();
+        $('#expired-editor').show(0, function() {
+            expiredMDE.codemirror.refresh();
+            $('html, body').animate({
+                scrollTop: $("#expired-editor").offset().top -200
+            }, 250);
+        });
+        $("#show-expired-editor-button").prop('disabled', true);
+    });
+    $("#cancel-expired-mde").click(function(){
+        $("#expired-editor").hide()
+        $("#expired-html").show()
+        $("#show-expired-editor-button").prop('disabled', false)
+        expiredMDE.value($("#expired-mde").val())
+    });
+    $("#save-expired-mde").click(function(){
+        var markdown=expiredMDE.value()
+        $.ajax({
+            url : "/forms/save-expired-text/{{ form.id }}",
+            type: "POST",
+            dataType: "json",
+            data: {"markdown": markdown},
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                $("#show-expired-editor-button").prop('disabled', false);
+                $("#expired-html").html(data.html)
+                $("#expired-editor").hide()
+                $("#expired-html").show(0)
+                fadeOutHighlight($("#expired-html"))
+                $("#expired-mde").val(data.markdown)
+                expiredMDE.value($("#expired-mde").val())
+            }
+        });
+    });
+});
+function fadeOutHighlight(element){
+    element.css("background-color", "#C3FDB8")
+    element.animate({ backgroundColor: "white" }, 2000)
+}
 </script>
   
 {% endblock %}

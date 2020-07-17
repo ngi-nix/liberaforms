@@ -40,8 +40,8 @@ def migrateMongoSchema(schemaVersion):
                                                                             "required": consent}}})
                 collection.update_one(  {"_id": f["_id"]},
                                         {"$rename": {"requireDataConsent": "dataConsent"} })
-        except:
-            print("Failed")
+        except Exception as e:
+            print(e)
             return schemaVersion
         print("OK")
         schemaVersion = 15
@@ -69,8 +69,8 @@ def migrateMongoSchema(schemaVersion):
                         entry['id']=str(_id)
                 collection.update_one(  {"_id": form["_id"]},
                                         {"$set": {"entries": form["entries"]} })                
-        except():
-            print("Failed")
+        except Exception as e:
+            print(e)
             return schemaVersion
         print("OK")
         schemaVersion = 16
@@ -80,8 +80,8 @@ def migrateMongoSchema(schemaVersion):
         try:
             query = models.Form.objects()
             query.update(set__sendConfirmation=False)
-        except:
-            print("Failed")
+        except Exception as e:
+            print(e)
             return schemaVersion
         print("OK")
         schemaVersion = 17
@@ -92,8 +92,8 @@ def migrateMongoSchema(schemaVersion):
             query = models.Site.objects()
             query.update(   set__menuColor="#802C7D",
                             set__defaultLanguage=app.config['DEFAULT_LANGUAGE'])
-        except:
-            print("Failed")
+        except Exception as e:
+            print(e)
             return schemaVersion
         print("OK")
         schemaVersion = 18
@@ -112,10 +112,21 @@ def migrateMongoSchema(schemaVersion):
                                         {"$unset": {"language": 1} })
             query = models.Form.objects()
             query.update(set__expiredText={"markdown":"", "html":""})
-        except:
-            print("Failed")
+        except Exception as e:
+            print(e)
             return schemaVersion
         print("OK")
         schemaVersion = 19
+
+    if schemaVersion == 19:
+        print("Upgrading to version 20")
+        try:
+            query = models.Site.objects()
+            query.update(set__termsAndConditions={"markdown":"", "html":"", "enabled":False})
+        except Exception as e:
+            print(e)
+            return schemaVersion
+        print("OK")
+        schemaVersion = 20
 
     return schemaVersion

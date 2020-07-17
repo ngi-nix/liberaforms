@@ -15,7 +15,8 @@ class NewUser(FlaskForm):
     email = StringField(_("Email"), validators=[DataRequired(), Email()])
     password = PasswordField(_("Password"), validators=[DataRequired()])
     password2 = PasswordField(_("Password again"), validators=[DataRequired(), EqualTo('password')])
-
+    termsAndConditions = BooleanField(_("I agree"))
+    
     def validate_username(self, username):
         if username.data != sanitizeUsername(username.data):
             raise ValidationError(_("Username is not valid"))
@@ -37,7 +38,10 @@ class NewUser(FlaskForm):
         if pwd_policy.test(password.data):
             raise ValidationError(_("Your password is weak"))
             
-            
+    def validate_termsAndConditions(self, termsAndConditions):
+        if g.site.termsAndConditions["enabled"] and not termsAndConditions.data:
+            raise ValidationError(_("Please accept our terms and conditions"))
+
 class Login(FlaskForm):
     username = StringField(_("Username"), validators=[DataRequired()])
     password = PasswordField(_("Password"), validators=[DataRequired()])

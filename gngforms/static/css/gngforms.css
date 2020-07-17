@@ -142,8 +142,8 @@ input[type="date"], input[type="number"], input[type="time"] {
 .dataConsent, .sendConfirmation {
   padding: 1em 0 2em 0;
 }
-.dataConsent > .blurb {
-  font-size: 0.85em;
+.dataConsentText {
+  font-size: 0.875rem;
   color: #666;
 }
 .dataConsent input, .sendConfirmation input {
@@ -165,10 +165,10 @@ input[type="date"], input[type="number"], input[type="time"] {
 .marked-up h2, .gngform h2 {
   margin-bottom: 1.2rem;
 }
-.formIntroduction, .afterSubmitText {
+.formIntroduction {
     padding-bottom: 1em;
 }
-.formIntroduction img, .afterSubmitText img {
+.formIntroduction img, .afterSubmitText img, .expiredText img {
   width: 100%;
 }
 

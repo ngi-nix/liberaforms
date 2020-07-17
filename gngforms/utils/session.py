@@ -21,33 +21,26 @@ from flask import session
 import json
 
 def ensureSessionFormKeys():
-    if not 'slug' in session:
-        session['slug'] = ""
-    if not 'formFieldIndex' in session:
-        session['formFieldIndex'] = []
-    if not 'formStructure' in session:
-        session['formStructure'] = json.dumps([])
-    if not 'introductionTextMD' in session:
-        session['introductionTextMD'] = ''
-    if not 'afterSubmitTextMD' in session:
-        session['afterSubmitTextMD'] = ''
-    if not 'expiredTextMD' in session:
-        session['expiredTextMD'] = ''
-        
+    clearSessionFormData()
+
 def populateSessionFormData(form):
-    #session['form_id'] = str(form._id)
+    clearSessionFormData()
     session['slug'] = form.slug
+    session['form_id'] = str(form.id)
     session['formFieldIndex'] = form.fieldIndex
     session['formStructure'] = form.structure
     session['introductionTextMD'] = form.introductionText['markdown']
-    session['afterSubmitTextMD'] = form.afterSubmitText['markdown']
-    session['expiredTextMD'] = form.expiredText['markdown']
+    session['dataConsent'] = form.dataConsent
+    session['afterSubmitText'] = form.afterSubmitText
+    session['expiredText'] = form.expiredText
 
 def clearSessionFormData():
+    session['duplication_in_progress'] = False
     session['slug'] = ""
     session['form_id']=None
     session['formFieldIndex'] = []
     session['formStructure'] = json.dumps([])
     session['introductionTextMD'] = ''
-    session['afterSubmitTextMD'] = ''
-    session['expiredTextMD'] = ''
+    session['dataConsent'] = {}
+    session['afterSubmitText']= {}
+    session['expiredText'] = {}

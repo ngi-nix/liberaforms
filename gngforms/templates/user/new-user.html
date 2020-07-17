@@ -42,24 +42,39 @@
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}
         </p>
+        {% if g.site.termsAndConditions["enabled"] and g.site.termsAndConditionsHTML %}
+        <div style="margin-top:2.5em">
+            <div class="title_2 delimited">{%trans%}Terms and conditions{%endtrans%}</div>
+            {{ g.site.termsAndConditionsHTML|safe }}
+            <div>
+                <input id="termsAndConditions" name="termsAndConditions" type="checkbox" value="1" required />
+                &nbsp;
+                <span for="termsAndConditions" class="radio-inline">{{ wtform.termsAndConditions.label }}</span>
+                <span class='required'>●</span><br />
+                {% for error in wtform.termsAndConditions.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
     
-    <div class="form-actions">
-    <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
-    <a class="btn btn-primary" role="button" href="/">{%trans%}Cancel{%endtrans%}</a>
-    </div>
+        <div class="form-actions">
+        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
+        <a class="btn btn-primary" role="button" href="/">{%trans%}Cancel{%endtrans%}</a>
+        </div>
     </form>
     
     </div>
-    
+
 </div>
 </div>
 {% else %}
 <div class="container">
-<div class="row">
-    <div class="col-md-12 text-center">
-        <h1>{%trans%}We sent you an email!{%endtrans%}</h1>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h1 style="margin-top:1em">{%trans%}We sent you an email!{%endtrans%}</h1>
+        </div>
     </div>
-</div>
 </div>
 {% endif %}
 

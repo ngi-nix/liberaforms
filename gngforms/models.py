@@ -353,12 +353,12 @@ class Form(db.Document):
 
     def isDataConsentRequired(self):
         return self.dataConsent["required"]
-
+    
     @property
     def dataConsentHTML(self):
         if self.dataConsent['html']:
             return self.dataConsent['html']
-        if self.site.isPersonalDataConsentEnabled():
+        if self.site.isPersonalDataConsentEnabled() and self.site.personalDataConsent['html']:
             return self.site.personalDataConsent['html']
         return Installation.fallbackDPL()["html"]
 
@@ -368,12 +368,16 @@ class Form(db.Document):
             return self.dataConsent['markdown']
         if self.site.isPersonalDataConsentEnabled() and self.site.personalDataConsent['markdown']:
             return self.site.personalDataConsent['markdown']
-        return Installation.fallbackDPL()["markdown"]
+        return Installation.fallbackDPL()["markdown"]       
 
-    def saveDataConsentText(self, MDtext):
-        self.dataConsent = {'markdown':escapeMarkdown(MDtext),
-                            'html':markdown2HTML(MDtext),
-                            'required': self.dataConsent['required']}
+    def saveDataConsentText(self, markdown):
+        markdown=markdown.strip()
+        if markdown:
+            self.dataConsent = {'markdown':escapeMarkdown(markdown),
+                                'html':markdown2HTML(markdown),
+                                'required': self.dataConsent['required']}
+        else:
+            self.dataConsent = {'html':"", 'markdown':"", 'required':self.dataConsent['required']}
         self.save()
 
     @staticmethod
@@ -395,22 +399,41 @@ class Form(db.Document):
         else:
             return Form.defaultExpiredText()["markdown"]
 
-    def saveExpiredText(self, MDtext):
-        self.expiredText = {'markdown':escapeMarkdown(MDtext),
-                            'html':markdown2HTML(MDtext)}
+    def saveExpiredText(self, markdown):
+        markdown=markdown.strip()
+        if markdown:
+            self.expiredText = {'markdown':escapeMarkdown(markdown),
+                                'html':markdown2HTML(markdown)}
+        else:
+            self.expiredText = {'html':"", 'markdown':""}
         self.save()
+
+    @staticmethod
+    def defaultAfterSubmitText():
+        text=gettext("Thank you!!")
+        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
 
     @property
     def afterSubmitTextHTML(self):
-        return self.afterSubmitText['html']
+        if self.afterSubmitText['html']:
+            return self.afterSubmitText['html']
+        else:
+            return Form.defaultAfterSubmitText()['html']
 
     @property
     def afterSubmitTextMarkdown(self):
-        return self.afterSubmitText['markdown']
+        if self.afterSubmitText['markdown']:
+            return self.afterSubmitText['markdown']
+        else:
+            return Form.defaultAfterSubmitText()['markdown']
 
-    def saveAfterSubmitText(self, MDtext):
-        self.afterSubmitText = {'markdown':escapeMarkdown(MDtext),
-                                'html':markdown2HTML(MDtext)}
+    def saveAfterSubmitText(self, markdown):
+        markdown=markdown.strip()
+        if markdown:
+            self.afterSubmitText = {'markdown':escapeMarkdown(markdown),
+                                    'html':markdown2HTML(markdown)}
+        else:
+            self.afterSubmitText = {'html':"", 'markdown':""}
         self.save()
 
     @property
@@ -569,8 +592,12 @@ class Form(db.Document):
             multi_choice_data[field['label']]['axis_1']=[]
             multi_choice_data[field['label']]['axis_2']=[]
             for value in field['values']:
-                multi_choice_data[field['label']]['axis_1'].append(value['label'])
-                multi_choice_data[field['label']]['axis_2'].append(0)
+                label=value['label']
+                if len(label) > 24:
+                    # a shorter label length to fit inside jcharts multi-option divs
+                    label=label[:22]+'..'
+                multi_choice_data[field['label']]['axis_1'].append(label)
+                multi_choice_data[field['label']]['axis_2'].append(0) #start counting at zero
 
         for entry in self.orderedEntries:
             total['entries']+=1
@@ -691,6 +718,7 @@ class Site(db.Document):
     menuColor=db.StringField(required=True)
     scheme = db.StringField(required=False)
     blurb = db.DictField(required=True)
+    termsAndConditions = db.DictField(required=True)
     invitationOnly = db.BooleanField()
     personalDataConsent = db.DictField(required=False)
     smtpConfig = db.DictField(required=True)
@@ -716,10 +744,11 @@ class Site(db.Document):
             "scheme": urlparse(request.host_url).scheme,
             "blurb": blurb,
             "invitationOnly": True,
-            "siteName": "gng-forms!",
+            "siteName": "GNGforms!",
             "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
             "menuColor": "#b71c1c",
             "personalDataConsent": {"markdown": "", "html": "", "enabled": False },
+            "termsAndConditions": {"markdown": "", "html": "", "enabled": False},
             "smtpConfig": {
                 "host": "smtp.%s" % hostname,
                 "port": 25,
@@ -777,12 +806,50 @@ class Site(db.Document):
                                     'enabled': self.personalDataConsent['enabled']}
         self.save()
 
-    def saveSMTPconfig(self, **kwargs):
-        self.smtpConfig=kwargs
+    @property
+    def termsAndConditionsHTML(self):
+        return self.termsAndConditions['html']
+
+    @property
+    def termsAndConditionsMarkdown(self):
+        return self.termsAndConditions['markdown']
+
+    def saveTermsAndConditions(self, markdown):
+        markdown=markdown.strip()
+        if markdown:
+            self.termsAndConditions = { 'markdown':escapeMarkdown(markdown),
+                                        'html':markdown2HTML(markdown),
+                                        'enabled': self.termsAndConditions['enabled']}
+        else:
+            self.termsAndConditions = { 'markdown': "", 'html': "",
+                                        'enabled': self.termsAndConditions['enabled']}
         self.save()
+
+    def toggleTermsAndConditions(self):
+        self.termsAndConditions['enabled'] = False if self.termsAndConditions['enabled'] else True
+        self.save()
+        return self.termsAndConditions['enabled']
+
 
     def isPersonalDataConsentEnabled(self):
         return self.personalDataConsent["enabled"]
+        
+    @property
+    def personalDataConsentHTML(self):
+        return self.personalDataConsent["html"]
+
+    @property
+    def personalDataConsentMarkdown(self):
+        return self.personalDataConsent["markdown"]
+
+    def togglePersonalDataConsentEnabled(self):
+        self.personalDataConsent["enabled"] = False if self.personalDataConsent["enabled"] else True
+        self.save()
+        return self.personalDataConsent["enabled"]
+
+    def saveSMTPconfig(self, **kwargs):
+        self.smtpConfig=kwargs
+        self.save()
                 
     @property
     def totalUsers(self):
@@ -800,11 +867,6 @@ class Site(db.Document):
         self.invitationOnly = False if self.invitationOnly else True
         self.save()
         return self.invitationOnly
-
-    def togglePersonalDataConsentEnabled(self):
-        self.personalDataConsent["enabled"] = False if self.personalDataConsent["enabled"] else True
-        self.save()
-        return self.personalDataConsent["enabled"]
 
     def toggleScheme(self):
         self.scheme = 'https' if self.scheme=='http' else 'http'
@@ -912,4 +974,4 @@ class Installation(db.Document):
     @staticmethod
     def fallbackDPL():
         text=gettext("We take your data protection seriously. Please contact us for any inquiries.")
-        return {"markdown": text, "html": "<p>"+text+"</p>"}
+        return {"markdown": text, "html": "<p>"+text+"</p>", "enabled": False}

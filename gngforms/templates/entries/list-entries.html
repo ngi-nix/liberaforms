@@ -90,7 +90,7 @@
         <tr _id="{{ entry['id'] }}" class="td-controls">
             <td>
                 {% if edit_mode %}
-                <i class="fa fa-exclamation-triangle delete-row-icon enabled" aria-hidden="true"></i>
+                <i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>
                 {% endif %}
             </td>
             {% for field in fieldIndex %}                
@@ -314,7 +314,7 @@ $('#entriesTable tbody').on('click', '.undo-delete-row', function () {
         {
             if (data.undone == true) {
                 $row.children(':not(:first-child)').removeClass('deleted-row');
-                $row.children('td').eq(0).html('<i class="fa fa-exclamation-triangle delete-row-icon enabled" aria-hidden="true"></i>');
+                $row.children('td').eq(0).html('<i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>');
             }
         }
     });

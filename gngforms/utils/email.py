@@ -152,7 +152,7 @@ def sendNewUserNotification(user):
 
 def sendConfirmation(email, form):
     message = MIMEMultipart('alternative')
-    html_body=MIMEText(form.afterSubmitText['html'], 'html')
+    html_body=MIMEText(form.afterSubmitTextHTML, 'html')
     message.attach(html_body)
     message['Subject'] = gettext("Confirmation message")
     return sendMail(email, message)

@@ -33,7 +33,7 @@ import gngforms.utils.wtf as wtf
 import gngforms.utils.email as smtp
 from form_templates import formTemplates
 
-#from pprint import pprint as pp
+from pprint import pprint as pp
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -64,7 +64,7 @@ def new_form(templateID=None):
         session['introductionTextMD'] = "## {}\n\n{}".format(template['title'], template['introduction'])
     else:
         session['introductionTextMD'] = Form.defaultIntroductionText()
-    session['afterSubmitTextMD'] = "## %s" % gettext("Thank you!!")
+    session['afterSubmitTextMD'] = Form.defaultAfterSubmitText()['markdown']
     return render_template('edit-form.html', host_url=g.site.host_url)
 
 
@@ -72,7 +72,6 @@ def new_form(templateID=None):
 @form_bp.route('/forms/edit/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
 def edit_form(id=None):
-    ensureSessionFormKeys()
     session['form_id']=None
     queriedForm=None
     if id:
@@ -80,8 +79,8 @@ def edit_form(id=None):
         if not queriedForm:
             flash(gettext("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
-        session['form_id'] = str(queriedForm.id)
-
+        populateSessionFormData(queriedForm)
+    
     if request.method == 'POST':
         if queriedForm:
             session['slug'] = queriedForm.slug
@@ -157,8 +156,7 @@ def preview_form():
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template( 'preview-form.html',
                             slug=session['slug'],
-                            introductionText=markdown2HTML(session['introductionTextMD']),
-                            afterSubmitMsg=markdown2HTML(session['afterSubmitTextMD']))
+                            introductionText=markdown2HTML(session['introductionTextMD']))
 
 
 @form_bp.route('/forms/edit/conditions/<string:id>', methods=['GET'])
@@ -184,8 +182,7 @@ def save_form(id=None):
     session['formFieldIndex'].insert(1, {'label':gettext("Created"), 'name':'created'})
     introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
                         'html':markdown2HTML(session['introductionTextMD'])} 
-    afterSubmitText={   'markdown':escapeMarkdown(session['afterSubmitTextMD']),
-                        'html':markdown2HTML(session['afterSubmitTextMD'])}
+
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
     if queriedForm:
         # update form.fieldConditions
@@ -220,9 +217,7 @@ def save_form(id=None):
 
         queriedForm.structure=session["formStructure"]
         queriedForm.fieldIndex=session["formFieldIndex"]
-        
         queriedForm.introductionText=introductionText
-        queriedForm.afterSubmitText=afterSubmitText
         queriedForm.save()
         
         flash(gettext("Updated form OK"), 'success')
@@ -236,12 +231,16 @@ def save_form(id=None):
         if Form.find(slug=session['slug'], hostname=g.site.hostname):
             flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
-        if session['expiredTextMD']:
+        if session['duplication_in_progress']:
             # this new form is a duplicate
-            expiredText={   'markdown':escapeMarkdown(session['expiredTextMD']),
-                            'html':markdown2HTML(session['expiredTextMD'])}
+            dataConsent=session['dataConsent']
+            afterSubmitText=session['afterSubmitText']
+            expiredText=session['expiredText']
         else:
-            expiredText=Form.defaultExpiredText()
+            # this is a new form
+            dataConsent={'html':"", 'markdown':"", 'required': g.site.isPersonalDataConsentEnabled()}
+            afterSubmitText={'html':"", 'markdown':""}
+            expiredText={'html':"", 'markdown':""}
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),
@@ -260,12 +259,10 @@ def save_form(id=None):
                                         "password": False,
                                         "expireDate": False},
                     "introductionText": introductionText,
+                    "dataConsent": dataConsent,
                     "afterSubmitText": afterSubmitText,
                     "expiredText": expiredText,
                     "sendConfirmation": Form.structureHasEmailField(session['formStructure']),
-                    "dataConsent": {"markdown":"",
-                                    "html":"",
-                                    "required": g.site.isPersonalDataConsentEnabled()},
                     "log": [],
                     "restrictedAccess": False,
                     "adminPreferences": { "public": True }
@@ -287,25 +284,39 @@ def save_form(id=None):
 def save_data_consent_text(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
-        return redirect(make_url_for('form_bp.my_forms'))
-    MDtext=request.form['DPLMD'].strip()
-    if MDtext:
-        queriedForm.saveDataConsentText(MDtext)
-        flash(gettext("Text saved OK"), 'success')
-    return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
-    
+        return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
+    if 'markdown' in request.form:
+        queriedForm.saveDataConsentText(request.form['markdown'])
+        return JsonResponse(json.dumps({'html':queriedForm.dataConsentHTML,
+                                        'markdown': queriedForm.dataConsentMarkdown}))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"), 'markdown': ""}))
+
 
 @form_bp.route('/forms/save-after-submit-text/<string:id>', methods=['POST'])
 @enabled_user_required
 def save_after_submit_text(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        return JsonResponse(json.dumps({'html': ""}))
+        return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.saveAfterSubmitText(request.form['markdown'])
-        return JsonResponse(json.dumps({ 'html': queriedForm.afterSubmitTextHTML }))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured")}))
+        return JsonResponse(json.dumps({'html':queriedForm.afterSubmitTextHTML,
+                                        'markdown': queriedForm.afterSubmitTextMarkdown}))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"), 'markdown': ""}))
+
+
+@form_bp.route('/forms/save-expired-text/<string:id>', methods=['POST'])
+@enabled_user_required
+def save_expired_text(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
+    if 'markdown' in request.form:
+        queriedForm.saveExpiredText(request.form['markdown'])
+        return JsonResponse(json.dumps({'html': queriedForm.expiredTextHTML,
+                                        'markdown': queriedForm.expiredTextMarkdown}))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"), 'markdown': ""}))
+
 
 @form_bp.route('/forms/delete/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
@@ -336,8 +347,6 @@ def inspect_form(id):
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    # We populate the 'session' because /forms/edit uses it.
-    populateSessionFormData(queriedForm)
     return render_template('inspect-form.html', form=queriedForm)
 
 
@@ -453,43 +462,18 @@ def set_field_condition(id):
                             'expired': queriedForm.expired}) )
 
 
-@form_bp.route('/forms/expiration/save-text/<string:id>', methods=['POST'])
-@enabled_user_required
-def save_expiration_text(id):
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
-    if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
-        return redirect(make_url_for('form_bp.my_forms'))
-    if 'expiredTextMD' in request.form:            
-        queriedForm.saveExpiredText(request.form['expiredTextMD'])
-        flash(gettext("Text saved OK"), 'success')
-        return redirect(make_url_for('form_bp.expiration', id=queriedForm.id))
-    return render_template('expiration.html', form=queriedForm)
-
-
-@form_bp.route('/forms/save-expired-text/<string:id>', methods=['POST'])
-@enabled_user_required
-def save_expired_text(id):
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
-    if not queriedForm:
-        return JsonResponse(json.dumps({'html': ""}))
-    if 'markdown' in request.form:
-        queriedForm.saveExpiredText(request.form['markdown'])
-        return JsonResponse(json.dumps({ 'html': queriedForm.expiredTextHTML }))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % _("An error occured")}))
-
 
 @form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
 @enabled_user_required
-#@queriedForm_editor_required
 def duplicate_form(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    clearSessionFormData()
     populateSessionFormData(queriedForm)
     session['slug']=""
+    session['form_id']=None
+    session['duplication_in_progress'] = True
     flash(gettext("You can edit the duplicate now"), 'info')
     return render_template('edit-form.html', host_url=g.site.host_url)
 

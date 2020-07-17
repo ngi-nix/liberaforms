@@ -49,7 +49,7 @@ def new_user(token=None):
             flash(gettext("Invitation not found"), 'warning')
             return redirect(make_url_for('main_bp.index'))
         if not isValidToken(invite.token):
-            flash(gettext("Your petition has expired"), 'warning')
+            flash(gettext("This invitation has expired"), 'warning')
             invite.delete()
             return redirect(make_url_for('main_bp.index'))
     

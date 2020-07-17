@@ -3,12 +3,12 @@
 {% block content %}
 
 <div class="container">
-<div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6 afterSubmitText marked-up">
-        {{ form.afterSubmitText['html'] | safe }}
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6 afterSubmitText marked-up">
+            {{ form.afterSubmitTextHTML | safe }}
+        </div>
     </div>
-</div>
 </div>
 
 {% endblock %}
