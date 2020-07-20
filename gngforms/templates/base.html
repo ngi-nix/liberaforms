@@ -91,7 +91,7 @@
 {% endif %}
 </div>
 
-{% if g.current_user and g.current_user.isRootUser() %}
+{% if 'current_user' in g and g.current_user and g.current_user.isRootUser() %}
 <script>
 var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_root_enable').addEventListener('click', function(evt){

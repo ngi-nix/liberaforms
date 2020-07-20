@@ -67,6 +67,12 @@
 </div>
 </div>
 
+<script>
+$(document).ready(function() {
+    $(".marked-up").find("a").prop("target", "_blank")
+});
+</script>
+
 {% if g.isAdmin %}
 <script>
 $(document).ready(function() {

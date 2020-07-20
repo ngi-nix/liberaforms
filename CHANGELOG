@@ -5,6 +5,7 @@ v.1.5
  * Fixed db migration to avoid errors when object properties are not defined in the class
  * New optional site'Terms and Conditions' text for new users
  * Added root toggle
+ * Corrected class propoerty form.structure to be a proper json list.
 
 v.1.4
  * Menu and datatables are now responsive

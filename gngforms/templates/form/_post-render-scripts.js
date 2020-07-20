@@ -2,7 +2,8 @@ function postFormRender(){
     if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
         $("#required_message").show()
     }
-    $("#gngform").find(":checkbox").css("box-shadow", "none");
+    $("#gngform").find(":checkbox").css("box-shadow", "none")
+    $(".marked-up").find("a").prop("target", "_blank")
     {% if form %}
         setLimits();
         {% if form.mightSendConfirmationEmail() %}
@@ -10,6 +11,10 @@ function postFormRender(){
         {% endif %}
     {% endif %}
 }
+$(document).on("wheel", "input[type=number]", function (e) {
+    $(this).blur();
+});
+
 {% if form %}
 function setLimits(){
     {% for field, values in form.fieldConditions.items() %}
@@ -30,8 +35,7 @@ function setLimits(){
     {% endfor %}
     return;
 }
-{% endif %}
-{% if form and form.mightSendConfirmationEmail() %}
+{% if form.mightSendConfirmationEmail() %}
 function watchEmail(){
     $("input[type='email']").first().on('input', function() {
         if ($(this).val()) {
@@ -50,4 +54,5 @@ function watchEmail(){
 function isEmailValid(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
+{% endif %}
 {% endif %}

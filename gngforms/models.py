@@ -193,13 +193,13 @@ class Form(db.Document):
     sendConfirmation = db.BooleanField()
     expiryConditions = db.DictField(required=True)
     """
-    structure: Json dict that is rendered by formbuilder
+    structure: A list of dicts that is rendered by formbuilder
     fieldIndex: List of dictionaries. Each dict contains one field.
                 [{"label": <visible_field_name>, "name": <unique_field_identifier>}]
     entries: List of dictionaries containing the data submitted by visitors.
                 [{unique_field_identifier: value, unique_field_identifier: value}]
     """
-    structure = db.StringField(required=True)
+    structure = db.ListField(required=True)
     fieldIndex = db.ListField(required=True)
     entries = db.ListField(required=False)
     sharedEntries = db.DictField(required=False)
@@ -214,7 +214,7 @@ class Form(db.Document):
 
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
-        self.site=Site.objects(hostname=self.hostname).first()
+        self.site=Site.find(hostname=self.hostname)
    
     def __str__(self):
         return pformat({'Form': get_obj_values_as_dict(self)})
@@ -286,7 +286,7 @@ class Form(db.Document):
     
     @classmethod
     def structureHasEmailField(cls, structure):
-        for element in json.loads(structure):
+        for element in structure:
             if cls.isEmailField(element):
                 return True
         return False
@@ -301,7 +301,7 @@ class Form(db.Document):
             return False
     
     def getConfirmationEmailAddress(self, entry):
-        for element in json.loads(self.structure):
+        for element in self.structure: #json.loads(self.structure):
             if Form.isEmailField(element):
                 if element["name"] in entry and entry[element["name"]]:
                     return entry[element["name"]].strip()
@@ -446,7 +446,7 @@ class Form(db.Document):
 
     def getAvailableNumberTypeFields(self):
         result={}
-        for element in json.loads(self.structure):
+        for element in self.structure: #json.loads(self.structure):
             if "type" in element and element["type"] == "number":
                 if element["name"] in self.fieldConditions:
                     result[element["name"]]=self.fieldConditions[element["name"]]
@@ -456,7 +456,7 @@ class Form(db.Document):
 
     def getMultiChoiceFields(self):
         result=[]
-        for element in json.loads(self.structure):
+        for element in self.structure: #json.loads(self.structure):
             if "type" in element:
                 if  element["type"] == "checkbox-group" or \
                     element["type"] == "radio-group" or \
@@ -465,7 +465,7 @@ class Form(db.Document):
         return result        
 
     def getFieldLabel(self, fieldName):
-        for element in json.loads(self.structure):
+        for element in self.structure: #json.loads(self.structure):
             if 'name' in element and element['name']==fieldName:
                 return element['label']
         return None

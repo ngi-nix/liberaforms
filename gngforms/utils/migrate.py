@@ -129,4 +129,19 @@ def migrateMongoSchema(schemaVersion):
         print("OK")
         schemaVersion = 20
 
+    if schemaVersion == 20:
+        print("Upgrading to version 21")
+        import json
+        try:
+            collection = models.Form._get_collection()
+            for form in collection.find():
+                structure=json.loads(form["structure"])
+                collection.update_one(  {"_id": form["_id"]},
+                                        {"$set": { "structure": structure}})
+        except Exception as e:
+            print(e)
+            return schemaVersion
+        print("OK")
+        schemaVersion = 21
+        
     return schemaVersion

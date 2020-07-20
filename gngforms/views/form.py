@@ -182,14 +182,13 @@ def save_form(id=None):
     session['formFieldIndex'].insert(1, {'label':gettext("Created"), 'name':'created'})
     introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
                         'html':markdown2HTML(session['introductionTextMD'])} 
-
+    formStructure = json.loads(session['formStructure'])
+    
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
     if queriedForm:
         # update form.fieldConditions
         savedConditionalFields = [field for field in queriedForm.fieldConditions]
-        availableConditionalFields=[element["name"] 
-                                    for element in json.loads(session['formStructure'])
-                                    if "name" in element]
+        availableConditionalFields=[element["name"] for element in formStructure if "name" in element]
         for field in savedConditionalFields:
             if not field in availableConditionalFields:
                 del queriedForm.fieldConditions[field]
@@ -215,7 +214,7 @@ def save_form(id=None):
                         field['removed']=True
                         session['formFieldIndex'].append(field)
 
-        queriedForm.structure=session["formStructure"]
+        queriedForm.structure=formStructure
         queriedForm.fieldIndex=session["formFieldIndex"]
         queriedForm.introductionText=introductionText
         queriedForm.save()
@@ -241,6 +240,7 @@ def save_form(id=None):
             dataConsent={'html':"", 'markdown':"", 'required': g.site.isPersonalDataConsentEnabled()}
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
+        pp(session['formStructure'])
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),
@@ -251,7 +251,7 @@ def save_form(id=None):
                     "expiryConditions": {"expireDate": False, "fields": {}},
                     "hostname": g.site.hostname,
                     "slug": session['slug'],
-                    "structure": session['formStructure'],
+                    "structure": formStructure,
                     "fieldIndex": session['formFieldIndex'],
                     "entries": [],
                     "sharedEntries": {  "enabled": False,
