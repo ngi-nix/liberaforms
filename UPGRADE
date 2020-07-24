@@ -22,7 +22,7 @@ supervisorctl restart GNGforms
 ### Pull the new code
 ```
 cd GNGforms
-git pull origin master
+git pull origin main
 source venv/bin/activate
 pip install --upgrade setuptools
 pip install -r ./requirements.txt
@@ -45,4 +45,3 @@ Make sure the user who runs gngforms has write permission
 ```
 chown -R www-data ./gngforms/static/images
 ```
-
