@@ -40,52 +40,54 @@
         {%trans%}Date / Time{%endtrans%}
     </div>
     
-    <form class="form-inline" method="POST">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-        <div class="form-group mr-1">
-        <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
+    <form id="date-form" method="POST" style="padding:0.5em">
+        <div class="row">
+            <div class="col-auto">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
+                <div class="mr-2"></div>
+                
+            </div>
+            <div class="col">
+                <input id="time" name="time" type="time" class="form-control">
+            </div>
+            <div class="col-auto">
+                <input  id="date-button"
+                        class="btn btn-success float-right"
+                        type="submit" value="{%trans%}Save changes{%endtrans%}" />
+            </div>
         </div>
-        <div class="form-group mr-1">
-        <input id="time" name="time" type="time" class="form-control">
-        </div>
-        <div class="form-group">
-        <input  id="date-button"
-                class="btn btn-primary"
-                type="submit" value="{%trans%}Save changes{%endtrans%}" />
-        </div>
+        <span id="date-form-error" class="formError" style="display:none;"></span>
     </form>
-
     </div>
 </div>
 {% if form.getAvailableNumberTypeFields() %}
     <div class="row">
         <div class="col-md-3"></div>
-        <div class="col-md-5">
-        <div class="title_2">
+        <div class="col-md-6">
+        <div class="title_2" style="margin-top:1em">
             {%trans%}Conditionals{%endtrans%}
         </div>
         
-        {% for field_name, values in form.getAvailableNumberTypeFields().items() %}
-        
-            <div class="input-group input-group-sm mb-3">
+        {% for field_name, values in form.getAvailableNumberTypeFields().items() %}        
+            <div class="input-group input-group-sm mb-3 flex-nowrap" style="padding:0.5em;">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="addon-{{field_name}}">
                     {{ form.getFieldLabel(field_name)|safe }}
                 </span>
               </div>
               <input    id="{{field_name}}" type="number" class="form-control pl-sm-3 condition"
-                        value="{{values.condition|safe}}"
-                        aria-label="{{ form.getFieldLabel(field_name)|safe }}"
+                        value="{{values.condition}}"
+                        aria-label="{{ form.getFieldLabel(field_name) }}"
                         aria-describedby="addon-{{field_name}}">
               <div class="input-group-append">
                 <input  id="button-{{field_name}}"
-                        class="btn btn-primary"
+                        class="btn btn-success"
                         type="button" value="{%trans%}Save max.{%endtrans%}"
-                        onClick="js:setMaxValue('{{field_name}}');" >
+                        onClick="js:setMaxValue('{{field_name}}');" />
               </div>
             </div>
-        
-        {%endfor %}        
+        {%endfor %}
         </div>
     </div>
 {% endif %}
@@ -122,16 +124,42 @@
 <script>
 var csrftoken = "{{ csrf_token() }}";
 
-$("#expired-text-submit").click(function(){
-    expired_mde.toTextArea();
-    $("#editor-form").submit();
-});
 function dateSet(e){
     if ($('#time').val() == ""){
         $('#time').val("00:00")
     }
 }
-
+document.getElementById("date-form").addEventListener("submit", function(){
+    event.preventDefault();
+    $(this).find("input[type=submit]").blur()
+    $.ajax({
+        url : "/forms/set-expiration-date/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        data: {"date": $("#date").val(), "time": $("#time").val()},
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            console.log(data.expired)
+            if(data.error){
+                $("#date-form-error").html(data.error)
+                $("#date-form-error").show()
+            }else{
+                $("#date-form-error").hide()
+                fadeOutHighlight($('#date-form'))
+                if (data.expired == true) {
+                    $("#expired_alert").show()
+                }else{
+                    $("#expired_alert").hide()
+                }
+            }
+        }
+    });
+});
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-expiration-notification/{{ form.id }}",
@@ -154,14 +182,6 @@ document.getElementById('toggle_notification').addEventListener('click', functio
             }
         }
     });
-});
-$(document).on("change", "#date", function () {
-    $('#date-button').removeClass('btn-primary');
-    $('#date-button').addClass('btn-success');
-});
-$(document).on("change", "#time", function () {
-    $('#date-button').removeClass('btn-primary');
-    $('#date-button').addClass('btn-success');
 });
 jQuery(function($) {
     var savedDate={{form.expiryConditions['expireDate']|tojson}};
@@ -187,15 +207,9 @@ function setMaxValue(id){
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.condition != false && data.condition == value) {
-                $('#button-'+id).removeClass('btn-success');
-                $('#button-'+id).addClass('btn-primary');
-            }
-            else{
-                $('#button-'+id).removeClass('btn-success');
-                $('#button-'+id).addClass('btn-primary');
-                $('#'+id).val(null)
-            }
+            $('#button-'+id).blur()
+            $('#'+id).val(value)
+            fadeOutHighlight($('#button-'+id).closest(".input-group"))
             if (data.expired == true) {
                 $("#expired_alert").show()
             }else{
@@ -204,16 +218,7 @@ function setMaxValue(id){
         }
     });
 }
-$(document).on("keyup", ".condition", function () {
-    $('#button-'+this.id).removeClass('btn-primary');
-    $('#button-'+this.id).addClass('btn-success');
-});
-$(document).on("change", ".condition", function () {
-    $('#button-'+this.id).removeClass('btn-primary');
-    $('#button-'+this.id).addClass('btn-success');
-});
 {% endif %}
-
 // expired text editor
 $(document).ready(function() {
     var expiredMDE = new SimpleMDE({ 

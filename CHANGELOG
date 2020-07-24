@@ -8,6 +8,7 @@ v.1.5
  * Corrected class property form.structure to be a proper json list.
  * New upgrade.py script
  * Admin can read sent invitation messages
+ * Improved exipry condition forms
 
 v.1.4
  * Menu and datatables are now responsive

@@ -400,33 +400,44 @@ def remove_editor(form_id, editor_id):
     return json.dumps(removedEditor_id)
 
 
-@form_bp.route('/forms/expiration/<string:id>', methods=['GET', 'POST'])
+@form_bp.route('/forms/expiration/<string:id>', methods=['GET'])
 @enabled_user_required
 def expiration(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    if request.method == 'POST':
-        if 'date' in request.form and 'time' in request.form:
-            if request.form['date'] and request.form['time']:
-                expireDate="%s %s:00" % (request.form['date'], request.form['time'])
-                if not isValidExpireDate(expireDate):
-                    flash(gettext("Date-time is not valid"), 'warning')
-                else:
-                    queriedForm.expiryConditions['expireDate']=expireDate
-                    queriedForm.expired=queriedForm.hasExpired()
-                    queriedForm.save()
-                    queriedForm.addLog(gettext("Expiry date set to: %s" % expireDate))
-            elif not request.form['date'] and not request.form['time']:
-                if queriedForm.expiryConditions['expireDate']:
-                    queriedForm.expiryConditions['expireDate']=False
-                    queriedForm.expired=queriedForm.hasExpired()
-                    queriedForm.save()
-                    queriedForm.addLog(gettext("Expiry date cancelled"))
-            else:
-                flash(gettext("Missing date or time"), 'warning')
     return render_template('expiration.html', form=queriedForm)
+
+
+@form_bp.route('/forms/set-expiration-date/<string:id>', methods=['POST'])
+@enabled_user_required
+def set_expiration_date(id):
+    #return JsonResponse(json.dumps({'error': gettext("Date-time is not valid")}))
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        return JsonResponse(json.dumps())
+    if 'date' in request.form and 'time' in request.form:
+        if request.form['date'] and request.form['time']:
+            expireDate="%s %s:00" % (request.form['date'], request.form['time'])
+            if not isValidExpireDate(expireDate):
+                return JsonResponse(json.dumps({'error': gettext("Date-time is not valid"),
+                                                'expired': queriedForm.hasExpired()}))
+            else:
+                queriedForm.expiryConditions['expireDate']=expireDate
+                queriedForm.expired=queriedForm.hasExpired()
+                queriedForm.save()
+                queriedForm.addLog(gettext("Expiry date set to: %s" % expireDate))
+        elif not request.form['date'] and not request.form['time']:
+            if queriedForm.expiryConditions['expireDate']:
+                queriedForm.expiryConditions['expireDate']=False
+                queriedForm.expired=queriedForm.hasExpired()
+                queriedForm.save()
+                queriedForm.addLog(gettext("Expiry date cancelled"))
+        else:
+            return JsonResponse(json.dumps({'error': gettext("Missing date or time"),
+                                            'expired': queriedForm.hasExpired()}))
+        return JsonResponse(json.dumps({'expired': queriedForm.hasExpired()}))
 
 
 @form_bp.route('/forms/set-field-condition/<string:id>', methods=['POST'])
@@ -457,7 +468,7 @@ def set_field_condition(id):
             queriedForm.expired=queriedForm.hasExpired()
             queriedForm.save()
         except:
-            return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.hasExpired}))
+            return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.hasExpired()}))
     return JsonResponse(    json.dumps({'condition': request.form['condition'],
                             'expired': queriedForm.expired}) )
 
