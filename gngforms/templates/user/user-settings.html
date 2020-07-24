@@ -98,7 +98,7 @@
             </div>
         </div>
         {% if invites %}
-        <table class="table table-sm">
+        <table id="invites_table" class="table table-sm">
         <thead>
             <tr>
             <th>{%trans%}Created{%endtrans%}</th>
@@ -112,7 +112,7 @@
         </thead>
         {% for invite in invites %}
             <tr>
-                <td>{{invite.token.created.strftime('%Y-%m-%d') }}</td>
+                <td class="link">{{ invite.token.created.strftime('%Y-%m-%d') }}</td>
                 <td>{{invite.email}}</td>
                 {% if g.isRootUserEnabled %}
                     <td>{{invite.hostname}}</td>
@@ -120,6 +120,12 @@
                 <td>{{invite.admin}}</td>
                 <td class="text-right">
                 <a class="btn btn-xs btn-danger" role="button" href="/admin/invites/delete/{{invite.id}}">{%trans%}Delete{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td colspan="5">
+                    <div class="sentTokenMessage">{%trans%}Invitation message{%endtrans%}</div>
+                    {{ invite.getMessage() | replace("\n", "<br/>") | safe }}
                 </td>
             </tr>
         {% endfor %}
@@ -374,6 +380,13 @@ document.getElementById('toggle_new_entry_notification').addEventListener('click
 });
 
 {% if g.isAdmin %}
+$(document).on('click', '#invites_table td:first-child', function(){
+    if($(this).parent().next('tr').is(":visible")){
+        $(this).parent().next('tr').hide()
+    }else{ 
+        $(this).parent().next('tr').show() // token message
+    }
+});
 document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/toggle-newuser-notification",

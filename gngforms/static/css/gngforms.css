@@ -66,6 +66,9 @@ hr { margin-top: 5px }
   border-bottom: 1px solid #eee;
   padding-bottom: 0.25em;
 }
+.sentTokenMessage {
+  font-weight: bold;
+}
 .form-actions {
   margin-top:2.15em;
 }

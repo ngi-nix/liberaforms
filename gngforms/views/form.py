@@ -240,7 +240,7 @@ def save_form(id=None):
             dataConsent={'html':"", 'markdown':"", 'required': g.site.isPersonalDataConsentEnabled()}
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
-        pp(session['formStructure'])
+        #pp(session['formStructure'])
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),

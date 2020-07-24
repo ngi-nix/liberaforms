@@ -1,29 +1,48 @@
 # Upgrading GNGforms
 
+There are two ways to upgrade GNGforms. Script assisted, and Manual.
 
-## Pull the new code
+## Script assisted upgrade
+
+upgrade.py will first make a rollback copy of your GNGforms installation, then pull the new code and upgrade.
+
+```
+cd GNGforms
+source venv/bin/activate
+python upgrade.py
+```
+
+### Restart GNGforms
+```
+supervisorctl restart GNGforms
+```
+
+## Manual upgrade
+
+### Pull the new code
 ```
 cd GNGforms
 git pull origin master
 source venv/bin/activate
 pip install --upgrade setuptools
-pip install ./requirements.txt
+pip install -r ./requirements.txt
 ```
 
-## Restart GNGforms
+### Upgrade database schema
+First, **backup your database**. Then run the mirgate_db.py script.
+```
+source venv/bin/activate
+python migrate_db.py
+```
+
+### Restart GNGforms
 ```
 supervisorctl restart GNGforms
 ```
 
-## Permissions
+### Permissions
 Make sure the user who runs gngforms has write permission
 ```
-chown -R www-data /opt/GNGforms
+chown -R www-data ./gngforms/static/images
 ```
 
-## Upgrade database schema
-First, backup your database. Then run the mirgate.py script.
-```
-source venv/bin/activate
-python migrate.py
-```

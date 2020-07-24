@@ -39,9 +39,9 @@ pip install -r /opt/GNGforms/requirements.txt
 pip install gunicorn
 
 ### File permissions
-You need to give the user who will run gngforms write permission
+Admins can upload a logo. You need to give the system user who runs gngforms write permission
 
-chown -R www-data /opt/GNGforms
+chown -R www-data /opt/GNGforms/gngforms/static/images
 
 
 ### Test your installation
@@ -106,3 +106,18 @@ server {
     access_log /var/log/nginx/gngforms.access.log;
     error_log /var/log/nginx/gngforms.error.log notice;
 }
+
+## Database backup
+
+Run this and check if a copy is dumped correctly.
+
+```
+/usr/bin/mongodump --db=GNGforms --out="/var/backups/"
+```
+
+Add a line to your crontab to run it every night.
+
+```
+30 3 * * * /usr/bin/mongodump --db=GNGforms --out="/var/backups/"
+```
+Note: This overwites the last copy. You might want to change that.

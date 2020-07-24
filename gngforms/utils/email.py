@@ -79,10 +79,8 @@ def sendConfirmEmail(user, newEmail=None):
         return sendMail(user.email, message)
 
 def sendInvite(invite):
-    site=Site.find(hostname=invite.hostname)
-    link="%suser/new/%s" % (site.host_url, invite.token['token'])
-    message="%s\n\n%s" % (invite.message, link)
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. Invitation to %s" % site.hostname), message)
+    message=invite.getMessage()
+    message='Subject: {}\n\n{}'.format(gettext("Invitation to %s" % invite.hostname), message)
     return sendMail(invite.email, message)
     
 def sendRecoverPassword(user):

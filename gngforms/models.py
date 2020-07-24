@@ -921,6 +921,13 @@ class Invite(db.Document):
     def findAll(cls, **kwargs):
         return cls.objects.ensure_hostname(**kwargs)
     
+    @property
+    def link(self):
+        return "{}user/new/{}".format(Site.find(hostname=self.hostname).host_url, self.token['token'])
+    
+    def getMessage(self):
+        return "{}\n\n{}".format(self.message, self.link)
+
     def setToken(self, **kwargs):
         self.invite['token']=createToken(Invite, **kwargs)
         self.save()
