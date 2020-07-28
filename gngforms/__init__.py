@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
 
 This file is part of GNGforms.
 
@@ -24,44 +24,28 @@ from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 import sys, os
 
+from gngforms import config
 
 app = Flask(__name__)
-app.config.from_pyfile('../config.cfg')
+
+# Load defaults
+app.config.from_object(config.DefaultConfig)
+# User overrides
+app.config.from_pyfile("../config.cfg")
+# Force internal configuration
+app.config.from_object(config.InternalConfig)
+# Merge extra configuration as/if necessary
+for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
+    app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
+
 db = MongoEngine(app)
 babel = Babel(app)
 
-app.secret_key = app.config['SECRET_KEY']
-app.config['SESSION_TYPE'] = "filesystem"
+app.secret_key = app.config["SECRET_KEY"]
 Session(app)
 
-app.config['WTF_CSRF_TIME_LIMIT']=5400  # 1.5 hours. Time to fill out a form.
 csrf = CSRFProtect()
 csrf.init_app(app)
-
-app.config['APP_VERSION'] = "1.5.5"
-app.config['SCHEMA_VERSION'] = 21
-
-app.config['RESERVED_SLUGS'] = ['static', 'login', 'logout', 'admin', 'admins', 'user', 'users',
-                                'form', 'forms', 'site', 'sites', 'update']
-app.config['RESERVED_USERNAMES'] = ['system', 'admin']
-# DPL = Data Protection Law
-app.config['RESERVED_FORM_ELEMENT_NAMES'] = ['created', 'csrf_token', 'DPL', 'id', 'checked', 'sendConfirmation']
-
-app.config['FORMBUILDER_DISABLED_ATTRS']=['className','toggle','access']
-app.config['FORMBUILDER_DISABLE_FIELDS']=['autocomplete','hidden', 'button', 'file']
-
-app.config['CONDITIONAL_FIELD_TYPES']=['select']
-
-app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations;form_templates/translations'
-#http://www.lingoes.net/en/translator/langcode.htm
-app.config['LANGUAGES'] = {
-    'en': ('English', 'en-US'),
-    'ca': ('Català', 'ca-ES'),
-    'es': ('Castellano', 'es-ES')
-}
-app.config['FAVICON_FOLDER'] = "%s/static/images/favicon/" % os.path.dirname(os.path.abspath(__file__))
-
-app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
@@ -80,6 +64,8 @@ app.register_blueprint(site_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(entries_bp)
 
+
+app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
 if __name__ == '__main__':
     app.run()
