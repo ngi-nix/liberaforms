@@ -117,6 +117,14 @@ var time_chart = new Chart(ctx, {
                     precision: 0,
                 }
             }],
+        },
+        legend: {
+            onHover: function (e) {
+                e.target.style.cursor = 'pointer'
+            },
+            onLeave: function (e) {
+                e.target.style.cursor = 'default'
+            }
         }
     }
 });

@@ -277,7 +277,7 @@ class Form(db.Document):
             # If the editor has deleted fields we want to remove them
             # but we don't want to remove fields that already contain data in the DB.
             for field in self.fieldIndex:
-                if not field in newIndex:
+                if not [i for i in newIndex if i['name'] == field['name']]:
                     # This field was removed by the editor. Can we safely delete it?
                     can_delete=True
                     for entry in self.entries:
