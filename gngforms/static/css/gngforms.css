@@ -319,6 +319,13 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   content: '●';
   visibility: visible;
 }
+.form-wrap.form-builder
+.frmb
+.form-elements
+.input-wrap > input[type="checkbox"] {
+  margin-top: 14px !important;
+}
+
 
 .gngform {
   font-size: 1.1rem;

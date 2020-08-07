@@ -256,17 +256,51 @@ class Form(db.Document):
             return True
         return False
 
+    @staticmethod
+    def createFieldIndex(structure):
+        index=[]
+        # Add these RESERVED fields to the index.
+        index.append({'label': gettext("Marked"), 'name': 'marked'})
+        index.append({'label': gettext("Created"), 'name': 'created'})
+        for element in structure:
+            if 'name' in element:
+                if 'label' not in element:
+                    element['label']=gettext("Label")
+                index.append({'name': element['name'], 'label': element['label']})
+        return index
+        
+    def updateFieldIndex(self, newIndex):
+        if self.totalEntries == 0:
+            self.fieldIndex = newIndex
+        else:
+            deletedFieldsWithData=[]
+            # If the editor has deleted fields we want to remove them
+            # but we don't want to remove fields that already contain data in the DB.
+            for field in self.fieldIndex:
+                if not field in newIndex:
+                    # This field was removed by the editor. Can we safely delete it?
+                    can_delete=True
+                    for entry in self.entries:
+                        if field['name'] in entry and entry[field['name']]:
+                            # This field contains data
+                            can_delete=False
+                            break
+                    if can_delete:
+                        # A pseudo delete. We drop the field (it's reference) from the index.
+                        # Note that the empty field in each entry is not deleted from the db.
+                        pass
+                    else:
+                        # We maintain this field in the index because it contains data
+                        field['removed']=True
+                        deletedFieldsWithData.append(field)
+            self.fieldIndex = newIndex + deletedFieldsWithData
+
     def getFieldIndexForDataDisplay(self, with_deleted_columns=False):
-        """
-        formbuilder adds HTML tags to labels like '<br>' or '<div></div>'.
-        We remove all HTML tags from label before the form is saved,
-        but gngform versions before 1.2.1 did not do this.
-        """
         result=[]
         for field in self.fieldIndex:
             if 'removed' in field and not with_deleted_columns:
                 continue
-            item={'label': stripHTMLTags(field['label']), 'name': field['name']}
+            item={'label': field['label'], 'name': field['name']}
             result.append(item)
         if self.isDataConsentRequired():
             # append dynamic DPL field
@@ -446,7 +480,7 @@ class Form(db.Document):
 
     def getAvailableNumberTypeFields(self):
         result={}
-        for element in self.structure: #json.loads(self.structure):
+        for element in self.structure:
             if "type" in element and element["type"] == "number":
                 if element["name"] in self.fieldConditions:
                     result[element["name"]]=self.fieldConditions[element["name"]]
@@ -456,7 +490,7 @@ class Form(db.Document):
 
     def getMultiChoiceFields(self):
         result=[]
-        for element in self.structure: #json.loads(self.structure):
+        for element in self.structure:
             if "type" in element:
                 if  element["type"] == "checkbox-group" or \
                     element["type"] == "radio-group" or \
@@ -465,7 +499,7 @@ class Form(db.Document):
         return result        
 
     def getFieldLabel(self, fieldName):
-        for element in self.structure: #json.loads(self.structure):
+        for element in self.structure:
             if 'name' in element and element['name']==fieldName:
                 return element['label']
         return None
@@ -473,6 +507,13 @@ class Form(db.Document):
     @property
     def fieldConditions(self):
         return self.expiryConditions["fields"]
+
+    def updateExpiryConditions(self):
+        savedConditionalFields = [field for field in self.expiryConditions["fields"]]
+        availableConditionalFields=[element["name"] for element in self.structure if "name" in element]
+        for field in savedConditionalFields:
+            if not field in availableConditionalFields:
+                del self.expiryConditions["fields"][field]
 
     def getConditionalFieldPositions(self):
         conditionalFieldPositions=[]

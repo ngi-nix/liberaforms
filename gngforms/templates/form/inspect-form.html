@@ -406,13 +406,16 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
                 $('#dataConsent_true').addClass('btn-success');
                 $('#dataConsent_false').removeClass('btn-primary');
                 $('#dataConsent').show();
-                addRequiredMsg()
             }
             else if (data.consent == false) {
                 $('#dataConsent_true').removeClass('btn-success');
                 $('#dataConsent_false').addClass('btn-primary');
                 $('#dataConsent').hide();
-                addRequiredMsg()
+            }
+            if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
+                $("#required_message").show()
+            }else{
+                $("#required_message").hide()
             }
         }
     });

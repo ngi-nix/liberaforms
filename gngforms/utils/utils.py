@@ -138,18 +138,8 @@ pwd_policy = PasswordPolicy.from_names(
 def hashPassword(password):
     return pbkdf2_sha256.hash(password, rounds=200000, salt_size=16)
 
-
 def verifyPassword(password, hash):
     return pbkdf2_sha256.verify(password, hash)
-
-
-""" ######## fieldIndex helpers ######## """
-
-def getFieldByNameInIndex(index, name):
-    for field in index:
-        if 'name' in field and field['name'] == name:
-            return field
-    return None
 
 
 """ ######## Tokens ######## """
