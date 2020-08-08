@@ -142,6 +142,8 @@ def save_form(id=None):
         session['introductionTextMD'] = escapeMarkdown(request.form['introductionTextMD'])
     
     formStructure = json.loads(session['formStructure'])
+    if not formStructure:
+        formStructure=[{'label': gettext("Form"), 'subtype': 'h1', 'type': 'header'}]
     introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
                         'html':markdown2HTML(session['introductionTextMD'])}
     
@@ -406,7 +408,6 @@ def set_field_condition(id):
                             'expired': queriedForm.expired}) )
 
 
-
 @form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
 @enabled_user_required
 def duplicate_form(id):
@@ -506,16 +507,16 @@ def toggle_form_expiration_notification(id):
     
 
 @form_bp.route('/embed/<string:slug>', methods=['GET', 'POST'])
-@anon_required
 @csrf.exempt
 @sanitized_slug_required
 def view_embedded_form(slug):
-    return view_form(slug=slug, embedded=True)
-
+    killCurrentUser()
+    g.embedded=True
+    return view_form(slug=slug)
 
 @form_bp.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
-def view_form(slug, embedded=False):
+def view_form(slug):
     queriedForm = Form.find(slug=slug, hostname=g.site.hostname)
     if not queriedForm:
         if g.current_user:
@@ -598,5 +599,5 @@ def view_form(slug, embedded=False):
                 smtp.sendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
-        return render_template('thankyou.html', form=queriedForm, embedded=embedded)
-    return render_template('view-form.html', form=queriedForm, embedded=embedded)
+        return render_template('thankyou.html', form=queriedForm)
+    return render_template('view-form.html', form=queriedForm)

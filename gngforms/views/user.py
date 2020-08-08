@@ -280,8 +280,7 @@ def login():
                 return redirect(make_url_for('user_bp.user_settings', username=user.username))
             else:
                 return redirect(make_url_for('form_bp.my_forms'))
-    if "user_id" in session:
-        session.pop("user_id")
+    killCurrentUser()
     flash(gettext("Bad credentials"), 'warning')
     return redirect(make_url_for('main_bp.index'))
 
@@ -289,5 +288,5 @@ def login():
 @user_bp.route('/user/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    session.pop("user_id")
+    killCurrentUser()
     return redirect(make_url_for('main_bp.index'))

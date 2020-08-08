@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from gngforms import app, babel #, models
 
 from flask import Response, redirect, request, url_for
-from flask import g, flash #, has_app_context
+from flask import g, session, flash #, has_app_context
 from flask_babel import gettext
 from unidecode import unidecode
 import json, time, re, string, random, datetime, csv
@@ -62,6 +62,15 @@ def JsonResponse(json_response="1", status_code=200):
     response.status_code=status_code
     return response
 
+
+""" ######## Session ######## """
+def killCurrentUser():
+    if "user_id" in session:
+        session.pop("user_id")
+    session["root_enabled"]=False
+    g.current_user=None
+    g.isAdmin=False
+    g.isRootUserEnabled=False
 
 
 """ ######## Sanitizers ######## """

@@ -1,4 +1,9 @@
+{% if g.embedded %}
+{% extends "vanilla-base.html" %}
+{% else %}
 {% extends "base.html" %}
+{% endif %}
+
 {% block content %}
 
 <div class="container">

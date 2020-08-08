@@ -9,6 +9,10 @@ v.1.5
  * New upgrade.py script
  * Admin can read sent invitation messages
  * Improved exipry condition forms
+ * Added Save button to form/edit
+ * Improved embedded forms
+ * CSS changes
+ * Bug fixes
 
 v.1.4
  * Menu and datatables are now responsive

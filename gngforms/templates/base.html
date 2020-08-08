@@ -20,7 +20,6 @@
 
 <body>
 
-
 {% if 'current_user' in g and g.current_user %}
 
 <nav class="navbar navbar-expand-lg navbar-dark navbar-full" style="background-color:{{g.site.menuColor}}">
@@ -76,19 +75,13 @@
     {% endif %}
 {% endwith %}
 
-
 <div id="main-content">
 {% block content %}{% endblock %}
 </div>
 
-
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
-{% if not embedded %}
     AGPLv3 <a href="https://gngforms.org">GNGforms</a>
-{% else %}
-    AGPLv3 GNGforms
-{% endif %}
 </div>
 
 {% if 'current_user' in g and g.current_user and g.current_user.isRootUser() %}

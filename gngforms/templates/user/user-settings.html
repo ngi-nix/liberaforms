@@ -332,29 +332,6 @@
 <script>
 var csrftoken = "{{ csrf_token() }}";
 
-document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
-    $.ajax({
-        url : "/admin/toggle-invitation-only",
-        type: "POST",
-        dataType: "json",
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.invite == true) {
-                $('#invitation_only_true').addClass('btn-success');
-                $('#invitation_only_false').removeClass('btn-primary');
-            }
-            else if (data.invite == false) {
-                $('#invitation_only_true').removeClass('btn-success');
-                $('#invitation_only_false').addClass('btn-primary');
-            }
-        }
-    });
-});
 document.getElementById('toggle_new_entry_notification').addEventListener('click', function(evt){
     $.ajax({
         url : "/user/toggle-new-entry-notification",
@@ -378,8 +355,30 @@ document.getElementById('toggle_new_entry_notification').addEventListener('click
         }
     });
 });
-
 {% if g.isAdmin %}
+document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-invitation-only",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.invite == true) {
+                $('#invitation_only_true').addClass('btn-success');
+                $('#invitation_only_false').removeClass('btn-primary');
+            }
+            else if (data.invite == false) {
+                $('#invitation_only_true').removeClass('btn-success');
+                $('#invitation_only_false').addClass('btn-primary');
+            }
+        }
+    });
+});
 $(document).on('click', '#invites_table td:first-child', function(){
     if($(this).parent().next('tr').is(":visible")){
         $(this).parent().next('tr').hide()
@@ -619,6 +618,5 @@ function fadeOutHighlight(element){
 }
 {% endif %}
 </script>
-
 
 {% endblock %}

@@ -50,6 +50,7 @@ def before_request():
     g.current_user=None
     g.isAdmin=False
     g.isRootUserEnabled=False
+    g.embedded=False
     if request.path[0:7] == '/static':
         return
     g.site=Site.find(hostname=urlparse(request.host_url).hostname)
@@ -67,7 +68,6 @@ def before_request():
 
 @app.errorhandler(404)
 def page_not_found(error):
-    #print('404!!!!')
     return render_template('page-not-found.html', error=error), 400
 
 @app.errorhandler(500)

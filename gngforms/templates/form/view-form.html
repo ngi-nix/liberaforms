@@ -1,4 +1,8 @@
+{% if g.embedded %}
+{% extends "vanilla-base.html" %}
+{% else %}
 {% extends "base.html" %}
+{% endif %}
 
 {% block content %}
 
@@ -14,7 +18,7 @@
             </div>
             <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <form method="POST">
-                {% if not embedded %}
+                {% if not g.embedded %}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% endif %}
                 <div id="fb-render"></div>

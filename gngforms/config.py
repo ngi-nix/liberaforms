@@ -51,7 +51,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.5.7"
+    APP_VERSION = "1.5.8"
     SCHEMA_VERSION = 21
 
     RESERVED_SLUGS = [
@@ -66,6 +66,7 @@ class InternalConfig(object):
         "site",
         "sites",
         "update",
+        "embed"
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
