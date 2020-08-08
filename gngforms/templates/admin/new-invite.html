@@ -19,8 +19,11 @@
                 {% endfor %}
             </p>
             <p>
-                {{ wtform.message.label }}<br />
-                {{ wtform.message(class_="form-control") }}
+                {{ wtform.message.label }} <span class='required'>●</span><br />
+                {{ wtform.message(class_="form-control", rows="5") }}
+                <div class="hint">
+                {%trans%}The link to the invitation will be appended to this message{%endtrans%}
+                </div>
             </p>
             <p>
             <div class="custom-control custom-checkbox">

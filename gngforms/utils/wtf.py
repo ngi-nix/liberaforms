@@ -87,7 +87,7 @@ class smtpConfig(FlaskForm):
 
 class NewInvite(FlaskForm):
     email = StringField(_("New user's email"), validators=[DataRequired(), Email()])
-    message = TextAreaField(_("Include message"))
+    message = TextAreaField(_("Include message"), validators=[DataRequired()])
     admin = BooleanField(_("Make the new user an Admin"))
     hostname = StringField(_("hostname"), validators=[DataRequired()])
     
@@ -97,7 +97,8 @@ class NewInvite(FlaskForm):
         elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
-            
+
+
 class ChangeMenuColor(FlaskForm):
     hex_color = StringField(_("HTML color code"), validators=[DataRequired()])
     def validate_hex_color(self, hex_color):

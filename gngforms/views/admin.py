@@ -159,12 +159,11 @@ def new_invite():
     wtform=wtf.NewInvite()
     if wtform.validate_on_submit():  
         message=wtform.message.data
-        if not message:
-            message=gettext("You have been invited to %s." % wtform.hostname.data)
         invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
         smtp.sendInvite(invite)
         flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+    wtform.message.data=Invite.defaultMessage()
     return render_template('new-invite.html', wtform=wtform, sites=Site.findAll())
 
 

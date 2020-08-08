@@ -973,6 +973,10 @@ class Invite(db.Document):
         self.invite['token']=createToken(Invite, **kwargs)
         self.save()
         
+    @staticmethod
+    def defaultMessage():
+        return gettext("Hello,\n\nYou have been invited to GNGforms.\n\nRegards.")
+        
 
 class Installation(db.Document):
     name = db.StringField(required=True)
