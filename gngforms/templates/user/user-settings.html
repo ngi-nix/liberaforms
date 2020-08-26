@@ -83,9 +83,13 @@
         </table>
         
     {% if g.isAdmin %}
-        <p>&nbsp;</p>
-        <div class="title_1 delimited">
+        <div class="title_1 delimited" style="margin-top:2.75em;">
             {%trans%}Administrator{%endtrans%}
+            <div style="float:right">
+                <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
+                    {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
+                </a>
+            </div>
         </div>
         <div class="row">
             <div class="col title_2">

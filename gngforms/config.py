@@ -36,7 +36,7 @@ class DefaultConfig(object):
     # 5400 seconds = 1.5hrs. Time to fill out a form.
     WTF_CSRF_TIME_LIMIT = 5400
     # 86400 seconds = 24h
-    TOKEN_EXPIRATION = 86400
+    TOKEN_EXPIRATION = 604800
     # formbuilder
     FORMBUILDER_CONTROL_ORDER = ["header", "paragraph"]
 
@@ -51,7 +51,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.5.9"
+    APP_VERSION = "1.5.10"
     SCHEMA_VERSION = 21
 
     RESERVED_SLUGS = [

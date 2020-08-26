@@ -168,6 +168,9 @@ input[type="date"], input[type="number"], input[type="time"] {
 .marked-up h2, .gngform h2 {
   margin-bottom: 1.2rem;
 }
+.marked-up h3, .gngform h3 {
+  margin-bottom: 1rem;
+}
 .formIntroduction {
     padding-bottom: 1em;
 }

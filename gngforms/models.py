@@ -923,6 +923,18 @@ class Site(db.Document):
             invite.delete()
         return self.delete()
 
+    def getChartData(self):
+        time_fields={"users": [], "forms": []}
+        user_count=0
+        for user in User.findAll(hostname=self.hostname):
+            user_count += 1
+            time_fields["users"].append({"x": user.created, "y": user_count})
+        form_count=0
+        for form in Form.findAll(hostname=self.hostname):
+            form_count += 1
+            time_fields["forms"].append({"x": form.created, "y": form_count})
+        return time_fields
+
 
 class Invite(db.Document):
     meta = {'collection': 'invites', 'queryset_class': HostnameQuerySet}

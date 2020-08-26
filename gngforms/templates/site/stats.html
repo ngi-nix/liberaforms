@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% set chart_data = site.getChartData() %}
+
+<script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
+
+<div class="container">
+<div class="row">
+    <div class="col">
+        <div class="title_1 delimited">
+            {%trans%}Statistics{%endtrans%}
+        </div>
+
+        <canvas id="time_chart" height="100"></canvas>
+    </div>
+</div>
+
+<script>
+{% set fg_colors = [    "rgba(233, 132, 0, 1)", "rgba(182, 0, 181, 1)", "rgba(255, 228, 0, 1)",
+                        "rgba(255, 0, 0, 1)", "rgba(0, 123 ,255, 1)", "rgba(0, 190, 0, 1)"] %}
+{% set bg_colors = [    "rgba(233, 132, 0, 0.7)", "rgba(182, 0, 181, 0.7)", "rgba(255, 228, 0, 0.7)",
+                        "rgba(255, 0, 0, 0.7)", "rgba(0, 123 ,255, 0.7)", "rgba(0, 190, 0, 0.7)"] %}
+
+var ctx = document.getElementById('time_chart');
+var time_chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        datasets: [
+            {
+                label: "{%trans%}Users{%endtrans%}",
+                data: {{ chart_data['users']|tojson }},
+                borderColor: ["rgba(0, 190, 0)"],                
+                fill: false,
+                borderWidth: 3,
+                lineTension: 0.1,
+            },
+            {
+                label: "{%trans%}Forms{%endtrans%}",
+                data: {{ chart_data['forms']|tojson }},
+                borderColor: ["rgba(233, 132, 0)"],                
+                fill: false,
+                borderWidth: 3,
+                lineTension: 0.1,
+            },            
+        ],
+    },
+    options: {
+        scales: {
+            xAxes: [{
+                type: 'time',
+                precision: 0,
+            }],
+            yAxes: [{
+                ticks: {
+                    precision: 0,
+                }
+            }],
+        },
+        legend: {
+            onHover: function (e) {
+                e.target.style.cursor = 'pointer'
+            },
+            onLeave: function (e) {
+                e.target.style.cursor = 'default'
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

@@ -167,6 +167,10 @@ def menu_color():
         flash(gettext("Color changed OK"), 'success')
     return render_template('menu-color.html', wtform=wtform)
 
+@site_bp.route('/site/stats', methods=['GET'])
+@admin_required
+def stats():
+    return render_template('stats.html', site=g.site)
 
 @site_bp.route('/site/toggle-terms-and-conditions', methods=['POST'])
 @admin_required
