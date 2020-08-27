@@ -170,7 +170,8 @@ def menu_color():
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():
-    return render_template('stats.html', site=g.site)
+    sites = Installation.getSites() if g.isRootUserEnabled else []
+    return render_template('stats.html', site=g.site, sites=sites)
 
 @site_bp.route('/site/toggle-terms-and-conditions', methods=['POST'])
 @admin_required

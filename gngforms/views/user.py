@@ -235,7 +235,7 @@ def toggle_enable_root():
         flash(gettext("Root disabled"), 'success')
     else:
         session["root_enabled"]=True
-        flash(gettext("Root enabled"), 'warning')
+        flash(gettext("Root enabled"), 'success')
     return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))
     
 

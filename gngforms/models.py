@@ -923,14 +923,16 @@ class Site(db.Document):
             invite.delete()
         return self.delete()
 
-    def getChartData(self):
+    def getChartData(self, hostname=None):
         time_fields={"users": [], "forms": []}
         user_count=0
-        for user in User.findAll(hostname=self.hostname):
+        users = User.findAll(hostname=hostname) if hostname else User.findAll()
+        for user in users:
             user_count += 1
             time_fields["users"].append({"x": user.created, "y": user_count})
         form_count=0
-        for form in Form.findAll(hostname=self.hostname):
+        forms = Form.findAll(hostname=hostname) if hostname else Form.findAll()
+        for form in forms:
             form_count += 1
             time_fields["forms"].append({"x": form.created, "y": form_count})
         return time_fields
@@ -1030,6 +1032,10 @@ class Installation(db.Document):
             return True if self.isSchemaUpToDate() else False
         else:
             True
+    
+    @classmethod
+    def getSites(cls):
+        return Site.objects()
     
     @staticmethod
     def isUser(email):

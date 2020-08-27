@@ -39,7 +39,7 @@
           <a class="navbar-brand" href="/"><img src="{{g.site.faviconURL()}}" /></a>
         {% endif %}
         {% if g.current_user.isRootUser() %}
-            <a id="toggle_root_enable" class="nav-item nav-link" href="#!">
+            <a id="toggle_root_enable" class="nav-item nav-link" href="#!" title="{%trans%}Toggle root mode{%endtrans%}">
             {% if g.isRootUserEnabled %}
                 <i class="fa fa-shield" style="color:red" aria-hidden="true"></i>
             {% else %}

@@ -7,6 +7,10 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 {% endif %}
 
+<script>
+var csrftoken = "{{ csrf_token() }}";
+</script>
+
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
@@ -85,11 +89,6 @@
     {% if g.isAdmin %}
         <div class="title_1 delimited" style="margin-top:2.75em;">
             {%trans%}Administrator{%endtrans%}
-            <div style="float:right">
-                <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
-                    {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
-                </a>
-            </div>
         </div>
         <div class="row">
             <div class="col title_2">
@@ -270,9 +269,38 @@
         </table>
             
     {% endif %}
+    {% if g.current_user.isRootUser() and not g.isRootUserEnabled %}
+        <div class="title_1" style="margin-top:2.75em;">
+            {%trans%}Root user{%endtrans%}
+            <i class="fa fa-shield" style="font-size:0.9em" aria-hidden="true"></i>
+            <div style="float:right">
+                <button class="btn btn-primary btn-sm" onclick="js:enableRootMode()">
+                    {%trans%}Enable{%endtrans%} {%trans%}root mode{%endtrans%}
+                </button>
+            </div>
+        </div>
+        <script>
+        function enableRootMode() {
+            $.ajax({
+                url : "/user/toggle-root-enabled",
+                type: "POST",
+                dataType: "json",
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                    }
+                },
+                success: function(data, textStatus, jqXHR)
+                {
+                    location.reload();
+                    return false;
+                }
+            });
+        }
+        </script>
+    {% endif %}
     {% if g.isRootUserEnabled %}
-        <p>&nbsp;</p>
-        <div id="root_user_settings" class="title_1">
+        <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
             {%trans%}Root user{%endtrans%}
         </div>
         <table class="table table-sm">
@@ -334,8 +362,6 @@
 
 
 <script>
-var csrftoken = "{{ csrf_token() }}";
-
 document.getElementById('toggle_new_entry_notification').addEventListener('click', function(evt){
     $.ajax({
         url : "/user/toggle-new-entry-notification",
