@@ -27,8 +27,11 @@ from gngforms import app
 from gngforms.models import *
 from gngforms.utils.wraps import *
 from gngforms.utils.utils import *
+from gngforms.utils.email import EmailServer
 import gngforms.utils.wtf as wtf
-import gngforms.utils.email as smtp
+#import gngforms.utils.email as smtp
+
+
 
 site_bp = Blueprint('site_bp', __name__,
                     template_folder='../templates/site')
@@ -142,7 +145,7 @@ def smtp_config():
 def test_smtp():
     wtform=wtf.GetEmail()
     if wtform.validate():
-        if smtp.sendTestEmail(wtform.email.data):
+        if EmailServer().sendTestEmail(wtform.email.data):
             flash(gettext("SMTP config works!"), 'success')
     else:
         flash("Email not valid", 'warning')

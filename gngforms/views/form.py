@@ -28,9 +28,11 @@ from gngforms import app, csrf
 from gngforms.models import *
 from gngforms.utils.formhelper import *
 from gngforms.utils.wraps import *
+from gngforms.utils.email import EmailServer
 from gngforms.utils.utils import *
+
 import gngforms.utils.wtf as wtf
-import gngforms.utils.email as smtp
+#import gngforms.utils.email as smtp
 from form_templates import formTemplates
 
 from pprint import pprint as pp
@@ -176,7 +178,7 @@ def save_form(id=None):
             dataConsent={'html':"", 'markdown':"", 'required': g.site.isPersonalDataConsentEnabled()}
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
-        #pp(session['formStructure'])
+        #pp(formStructure)
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),
@@ -198,7 +200,7 @@ def save_form(id=None):
                     "dataConsent": dataConsent,
                     "afterSubmitText": afterSubmitText,
                     "expiredText": expiredText,
-                    "sendConfirmation": Form.structureHasEmailField(session['formStructure']),
+                    "sendConfirmation": Form.structureHasEmailField(formStructure),
                     "log": [],
                     "restrictedAccess": False,
                     "adminPreferences": { "public": True }
@@ -208,7 +210,7 @@ def save_form(id=None):
         newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify form.site.admins
-        thread = Thread(target=smtp.sendNewFormNotification(newForm))
+        thread = Thread(target=EmailServer().sendNewFormNotification(newForm))
         thread.start()
         return redirect(make_url_for('form_bp.inspect_form', id=newForm.id))
 
@@ -569,7 +571,7 @@ def view_form(slug):
                         emails.append(user.email)
             if emails:
                 def sendExpiredFormNotification():
-                    smtp.sendExpiredFormNotification(emails, queriedForm)
+                    EmailServer().sendExpiredFormNotification(emails, queriedForm)
                 thread = Thread(target=sendExpiredFormNotification())
                 thread.start()
         queriedForm.save()
@@ -578,7 +580,7 @@ def view_form(slug):
             confirmationEmail=queriedForm.getConfirmationEmailAddress(entry)
             if confirmationEmail and isValidEmail(confirmationEmail):
                 def sendConfirmation():
-                    smtp.sendConfirmation(confirmationEmail, queriedForm)
+                    EmailServer().sendConfirmation(confirmationEmail, queriedForm)
                 thread = Thread(target=sendConfirmation())
                 thread.start()
 
@@ -596,7 +598,7 @@ def view_form(slug):
                         if field['name']=="marked":
                             continue
                         data.append( (field['label'], entry[field['name']]) )
-                smtp.sendNewFormEntryNotification(emails, data, queriedForm.slug)
+                EmailServer().sendNewFormEntryNotification(emails, data, queriedForm.slug)
             thread = Thread(target=sendEntryNotification())
             thread.start()
         return render_template('thankyou.html', form=queriedForm)

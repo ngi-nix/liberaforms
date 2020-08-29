@@ -24,8 +24,8 @@ from flask_babel import gettext
 from gngforms.models import *
 from gngforms.utils.wraps import *
 from gngforms.utils.utils import *
+from gngforms.utils.email import EmailServer
 import gngforms.utils.wtf as wtf
-import gngforms.utils.email as smtp
 
 admin_bp = Blueprint('admin_bp', __name__,
                     template_folder='../templates/admin')
@@ -41,7 +41,6 @@ def list_users():
 
 
 @admin_bp.route('/admin/users/<string:id>', methods=['GET'])
-#@admin_bp.route('/admin/users/id/<string:id>', methods=['GET'])
 @admin_required
 def inspect_user(id):
     user=User.find(id=id)
@@ -160,7 +159,7 @@ def new_invite():
     if wtform.validate_on_submit():  
         message=wtform.message.data
         invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
-        smtp.sendInvite(invite)
+        EmailServer().sendInvite(invite)
         flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     wtform.message.data=Invite.defaultMessage()

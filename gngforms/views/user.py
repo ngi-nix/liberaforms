@@ -19,15 +19,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 from flask import g, render_template, redirect
 from flask import session, flash, Blueprint
-from flask_babel import gettext, refresh
+from flask_babel import gettext
+from flask_babel import refresh as babel_refresh
 from threading import Thread
 
 from gngforms import app
 from gngforms.models import *
 from gngforms.utils.wraps import *
 from gngforms.utils.utils import *
+from gngforms.utils.email import EmailServer
 import gngforms.utils.wtf as wtf
-import gngforms.utils.email as smtp
+#import gngforms.utils.email as smtp
+
 
 #from pprint import pprint as pp
 
@@ -41,7 +44,7 @@ user_bp = Blueprint('user_bp', __name__,
 def new_user(token=None):
     if g.site.invitationOnly and not token:
         return redirect(make_url_for('main_bp.index'))
-
+    killCurrentUser()
     invite=None
     if token:
         invite=Invite.find(token=token)
@@ -89,21 +92,23 @@ def new_user(token=None):
         if invite:
             invite.delete()           
 
-        thread = Thread(target=smtp.sendNewUserNotification(user))
+        thread = Thread(target=EmailServer().sendNewUserNotification(user))
         thread.start()
         
+        session["user_id"]=str(user.id)
+        g.current_user = user
+        babel_refresh()
+        flash(gettext("Welcome!"), 'success')
+        
         if validatedEmail == True:
-            # login an invited user
-            session["user_id"]=str(user.id)
-            flash(gettext("Welcome!"), 'success')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
-            user.setToken()
-            smtp.sendConfirmEmail(user)
-            return render_template('new-user.html', site=g.site, created=True)
+            return redirect(make_url_for('user_bp.user_settings', username=user.username))
 
     if "user_id" in session:
         session.pop("user_id")
+    if not wtform.email.data and invite:
+        wtform.email.data = invite.email
     return render_template('new-user.html', wtform=wtform)
 
 
@@ -132,7 +137,7 @@ def user_settings(username):
 @login_required
 def send_validation_email():   
     g.current_user.setToken(email=g.current_user.email)
-    smtp.sendConfirmEmail(g.current_user, g.current_user.email)
+    EmailServer().sendConfirmEmail(g.current_user, g.current_user.email)
     flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
     return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     
@@ -146,7 +151,7 @@ def change_language():
         if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
             g.current_user.preferences["language"]=request.form['language']
             g.current_user.save()
-            refresh()
+            babel_refresh()
             flash(gettext("Language updated OK"), 'success')
             return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('common/change-language.html', current_language=g.current_user.language)
@@ -158,7 +163,7 @@ def change_email():
     wtform=wtf.ChangeEmail()
     if wtform.validate_on_submit():
         g.current_user.setToken(email=wtform.email.data)
-        smtp.sendConfirmEmail(g.current_user, wtform.email.data)
+        EmailServer().sendConfirmEmail(g.current_user, wtform.email.data)
         flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('change-email.html', wtform=wtform)
@@ -206,7 +211,7 @@ def recover_password(token=None):
         user = User.find(email=wtform.email.data, blocked=False)
         if user:
             user.setToken()
-            smtp.sendRecoverPassword(user)
+            EmailServer().sendRecoverPassword(user)
         if not user and wtform.email.data in app.config['ROOT_USERS']:
             # root_user emails are only good for one account, across all sites.
             if not Installation.isUser(wtform.email.data):
@@ -271,6 +276,7 @@ def validate_email(token):
 @user_bp.route('/user/login', methods=['POST'])
 @anon_required
 def login():
+    killCurrentUser()
     wtform=wtf.Login()
     if wtform.validate():
         user=User.find(hostname=g.site.hostname, username=wtform.username.data, blocked=False)
@@ -280,7 +286,6 @@ def login():
                 return redirect(make_url_for('user_bp.user_settings', username=user.username))
             else:
                 return redirect(make_url_for('form_bp.my_forms'))
-    killCurrentUser()
     flash(gettext("Bad credentials"), 'warning')
     return redirect(make_url_for('main_bp.index'))
 

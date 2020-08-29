@@ -1,5 +1,5 @@
 """
-“Copyright 2019 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 GNGforms.org”
 
 This file is part of GNGforms.
 
@@ -22,140 +22,174 @@ from flask_babel import gettext
 import smtplib, ssl, socket
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formatdate, make_msgid
+from email.header import Header
 from threading import Thread
 
 from gngforms import app
 from gngforms.models import Site, User
 
-def createSmtpObj():
-    config=g.site.smtpConfig
-    try:
-        if config["encryption"] == "SSL":
-            server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
-            server.login(config["user"], config["password"])
-            
-        elif config["encryption"] == "STARTTLS":
-            server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
-            context = ssl.create_default_context()
-            server.starttls(context=context)
-            server.login(config["user"], config["password"])
-            
-        else:
-            server = smtplib.SMTP(config["host"], port=config["port"])
-            if config["user"] and config["password"]:
-                server.login(config["user"], config["password"])
-        
-        return server
-    except socket.error as e:
-        if g.isAdmin:
-            flash(str(e), 'error')
-        return False        
 
-def sendMail(email, message):
-    server = createSmtpObj()
-    if server:
+class EmailServer():
+    server = None
+
+    def __init__(self):    
+        config = g.site.smtpConfig
+        if config["encryption"] == "SSL":
+            self.server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
+            self.server.login(config["user"], config["password"])
+        elif config["encryption"] == "STARTTLS":
+            self.server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
+            context = ssl.create_default_context()
+            self.server.starttls(context=context)
+            self.server.login(config["user"], config["password"])
+        else:
+            self.server = smtplib.SMTP(config["host"], port=config["port"])
+            if config["user"] and config["password"]:
+                self.server.login(config["user"], config["password"])
+
+    def closeConnection(self):
+        if self.server:
+            self.server.quit()
+            
+    def send(self, msg):
+        if not self.server:
+            return False
         try:
-            if type(message).__name__ == 'MIMEMultipart':
-                message['To']=email
-                message['From']=g.site.smtpConfig["noreplyAddress"]
-                message=message.as_string()
-            else:
-                header='To: ' + email + '\n' + 'From: ' + g.site.smtpConfig["noreplyAddress"] + '\n'
-                message=header + message                  
-            server.sendmail(g.site.smtpConfig["noreplyAddress"], email, message.encode('utf-8'))
+            msg['From'] = g.site.smtpConfig["noreplyAddress"]
+            msg['Date'] = formatdate(localtime=True)
+            msg['Message-ID'] = make_msgid()
+            if not msg['Errors-To']:
+                criteria={  'blocked': False,
+                            'hostname': g.site.hostname,
+                            'validatedEmail': True,
+                            'admin__isAdmin': True }
+                admins=User.findAll(**criteria)
+                if admins:
+                    msg['Errors-To'] = g.site.admins[0].email
+            self.server.sendmail(msg['From'], msg['To'], msg.as_string())
             return True
         except Exception as e:
             if g.isAdmin:
                 flash(str(e) , 'error')
-    return False
+        return False
 
-def sendConfirmEmail(user, newEmail=None):
-    link="%suser/validate-email/%s" % (g.site.host_url, user.token['token'])
-    message=gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
-    message = 'Subject: {}\n\n{}'.format(gettext("GNGforms. Confirm email"), message)
-    if newEmail:
-        return sendMail(newEmail, message)
-    else:
-        return sendMail(user.email, message)
+    def sendTestEmail(self, msg_to):
+        msg = MIMEText(gettext("Congratulations!"), _subtype='plain', _charset='UTF-8')
+        msg['Subject'] = Header(gettext("SMTP test")).encode()
+        msg['To'] = msg_to
+        msg['Errors-To'] = g.current_user.email
+        state = self.send(msg)
+        self.closeConnection()
+        return state
+        
+    def sendInvite(self, invite):
+        body = invite.getMessage()
+        msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+        msg['Subject'] = Header(gettext("Invitation to %s" % invite.hostname)).encode()
+        msg['To'] = invite.email
+        state = self.send(msg)
+        self.closeConnection()
+        return state
 
-def sendInvite(invite):
-    message=invite.getMessage()
-    message='Subject: {}\n\n{}'.format(gettext("Invitation to %s" % invite.hostname), message)
-    return sendMail(invite.email, message)
-    
-def sendRecoverPassword(user):
-    link="%ssite/recover-password/%s" % (g.site.host_url, user.token['token'])
-    message=gettext("Please use this link to recover your password")
-    message="%s\n\n%s" % (message, link)
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. Recover password"), message)
-    return sendMail(user.email, message)
+    def sendNewUserNotification(self, user):
+        emails=[]
+        criteria={  'blocked': False,
+                    'hostname': user.hostname,
+                    'validatedEmail': True,
+                    'admin__isAdmin': True,
+                    'admin__notifyNewUser': True}
+        admins=User.findAll(**criteria)
+        for admin in admins:
+            emails.append(admin['email'])
+        rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
+                                        'admin.notifyNewUser':True})
+        for rootUser in rootUsers:
+            if not rootUser['email'] in emails:
+                emails.append(rootUser['email'])
+        body = gettext("New user '%s' created at %s" % (user.username, user.hostname))
+        subject = Header(gettext("GNGforms. New user notification")).encode()
+        for msg_to in emails:
+            msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+            msg['Subject'] = subject
+            msg['To'] = msg_to
+            self.send(msg)
+        self.closeConnection()
 
-def sendNewFormEntryNotification(emails, entry, slug):
-    message=gettext("New form entry in %s at %s\n" % (slug, g.site.hostname))
-    for data in entry:
-        message="%s\n%s: %s" % (message, data[0], data[1])
-    message="%s\n" % message
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form entry"), message)
-    for email in emails:
-        sendMail(email, message)
+    def sendRecoverPassword(self, user):
+        link = "%ssite/recover-password/%s" % (g.site.host_url, user.token['token'])
+        body = "%s\n\n%s" % (gettext("Please use this link to recover your password"), link)
+        msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+        msg['Subject'] = Header(gettext("GNGforms. Recover password")).encode()
+        msg['To'] = user.email
+        state = self.send(msg)
+        self.closeConnection()
+        return state
 
-def sendExpiredFormNotification(editorEmails, form):
-    message=gettext("The form '%s' has expired at %s" % (form.slug, g.site.hostname))
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. A form has expired"), message)
-    for email in editorEmails:
-        sendMail(email, message)
-    
-def sendNewFormNotification(form):
-    emails=[]
-    criteria={  'blocked':False,
-                'hostname': form.hostname,
-                'validatedEmail':True,
-                'admin__isAdmin':True,
-                'admin__notifyNewForm':True}
-    admins=User.findAll(**criteria)
-    for admin in admins:
-        emails.append(admin['email'])
-    rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
-                                    'admin.notifyNewForm':True})
-    for rootUser in rootUsers:
-        if not rootUser['email'] in emails:
-            emails.append(rootUser['email'])
+    def sendConfirmEmail(self, user, newEmail=None):
+        link = "%suser/validate-email/%s" % (g.site.host_url, user.token['token'])
+        body = gettext("Hello %s\n\nPlease confirm your email\n\n%s") % (user.username, link)
+        msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+        msg['Subject'] = Header(gettext("GNGforms. Confirm email")).encode()
+        msg['To'] = newEmail if newEmail else user.email
+        state = self.send(msg)
+        self.closeConnection()
+        return state
 
-    message=gettext("New form '%s' created at %s" % (form.slug, form.hostname))
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New form notification"), message)
-    for email in emails:
-        sendMail(email, message)
+    def sendNewFormNotification(self, form):
+        emails=[]
+        criteria={  'blocked': False,
+                    'hostname': form.hostname,
+                    'validatedEmail': True,
+                    'admin__isAdmin': True,
+                    'admin__notifyNewForm': True}
+        admins=User.findAll(**criteria)
+        for admin in admins:
+            emails.append(admin['email'])
+        rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
+                                        'admin.notifyNewForm':True})
+        for rootUser in rootUsers:
+            if not rootUser['email'] in emails:
+                emails.append(rootUser['email'])
+            
+        body = gettext("New form '%s' created at %s" % (form.slug, form.hostname))
+        subject = Header(gettext("GNGforms. New form notification")).encode()
+        for msg_to in emails:
+            msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+            msg['Subject'] = subject
+            msg['To'] = msg_to
+            self.send(msg)
+        self.closeConnection()
 
+    def sendNewFormEntryNotification(self, emails, entry, slug):
+        body = gettext("New form entry in %s at %s\n" % (slug, g.site.hostname))
+        for data in entry:
+            body = "%s\n%s: %s" % (body, data[0], data[1])
+        body = "%s\n" % body
+        subject = Header(gettext("GNGforms. New form entry")).encode()
+        for msg_to in emails:
+            msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+            msg['Subject'] = subject
+            msg['To'] = msg_to
+            self.send(msg)
+        self.closeConnection()
 
-def sendNewUserNotification(user):
-    emails=[]
-    criteria={  'blocked':False,
-                'hostname': user.hostname,
-                'validatedEmail': True,
-                'admin__isAdmin':True,
-                'admin__notifyNewUser':True}
-    admins=User.findAll(**criteria)
-    for admin in admins:
-        emails.append(admin['email'])
-    rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
-                                    'admin.notifyNewUser':True})
-    for rootUser in rootUsers:
-        if not rootUser['email'] in emails:
-            emails.append(rootUser['email'])
+    def sendConfirmation(self, msg_to, form):
+        msg = MIMEMultipart('alternative')
+        html_body=MIMEText(form.afterSubmitTextHTML, _subtype='html', _charset='UTF-8')
+        msg.attach(html_body)
+        msg['Subject'] = Header(gettext("Confirmation message")).encode()
+        msg['To'] = msg_to
+        state = self.send(msg)
+        self.closeConnection()
+        return state
 
-    message=gettext("New user '%s' created at %s" % (user.username, user.hostname))
-    message='Subject: {}\n\n{}'.format(gettext("GNGforms. New user notification"), message)    
-    for email in emails:
-        sendMail(email, message)
-
-def sendConfirmation(email, form):
-    message = MIMEMultipart('alternative')
-    html_body=MIMEText(form.afterSubmitTextHTML, 'html')
-    message.attach(html_body)
-    message['Subject'] = gettext("Confirmation message")
-    return sendMail(email, message)
-    
-def sendTestEmail(email):
-    message=gettext("Congratulations!")
-    message='Subject: {}\n\n{}'.format(gettext("SMTP test"), message)
-    return sendMail(email, message)
+    def sendExpiredFormNotification(self, editorEmails, form):
+        body = gettext("The form '%s' has expired at %s" % (form.slug, g.site.hostname))
+        subject = Header(gettext("GNGforms. A form has expired")).encode()
+        for msg_to in editorEmails:
+            msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
+            msg['Subject'] = subject
+            msg['To'] = msg_to
+            self.send(msg)
+        self.closeConnection()

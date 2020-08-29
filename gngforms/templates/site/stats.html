@@ -13,7 +13,7 @@
         </div>
         <canvas id="time_chart" height="100"></canvas>
         
-        {% if sites %}
+        {% if sites|length > 1 %}
         {% for site in sites %}
         <div class="title_2 delimited" style="margin-top:2.5em">{{ site.hostname }}</div>
         <canvas id="{{ site.id }}" height="100"></canvas>
