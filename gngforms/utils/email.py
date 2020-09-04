@@ -36,17 +36,26 @@ class EmailServer():
     def __init__(self):    
         config = g.site.smtpConfig
         if config["encryption"] == "SSL":
-            self.server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
-            self.server.login(config["user"], config["password"])
-        elif config["encryption"] == "STARTTLS":
-            self.server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=2)
-            context = ssl.create_default_context()
-            self.server.starttls(context=context)
-            self.server.login(config["user"], config["password"])
-        else:
-            self.server = smtplib.SMTP(config["host"], port=config["port"])
-            if config["user"] and config["password"]:
+            try:
+                self.server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=7)
                 self.server.login(config["user"], config["password"])
+            except:
+                self.server = None
+        elif config["encryption"] == "STARTTLS":
+            try:
+                self.server = smtplib.SMTP_SSL(config["host"], port=config["port"], timeout=7)
+                context = ssl.create_default_context()
+                self.server.starttls(context=context)
+                self.server.login(config["user"], config["password"])
+            except:
+                self.server = None
+        else:
+            try:
+                self.server = smtplib.SMTP(config["host"], port=config["port"])
+                if config["user"] and config["password"]:
+                    self.server.login(config["user"], config["password"])
+            except:
+                self.server = None
 
     def closeConnection(self):
         if self.server:
