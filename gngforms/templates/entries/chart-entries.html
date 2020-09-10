@@ -54,19 +54,19 @@
     <canvas id="time_chart" height="100"></canvas>
     </div>
 </div>
-{% if chart_data['multi_choice']|length %}
 
-<div class="row" style="margin-top:1rem;">
-    <div class="col-md-12">
-    <div class="title_1 delimited">{%trans%}Multiple choice{%endtrans%}</div>
+{% if chart_data['multi_choice']|length %}
+    <div class="row">
+        <div class="col-md-12" style="margin-top:2rem;">
+        <div class="title_1 delimited">{%trans%}Multiple choice{%endtrans%}</div>
+        </div>
+        
+        {% for field in chart_data['multi_choice'] %}
+        <div class="col-md-4" height="100" style="margin-top:2em">
+        <canvas id="{{ loop.index }}_multi_choice_chart"></canvas>
+        </div>
+        {% endfor %}
     </div>
-    
-    {% for field in chart_data['multi_choice'] %}
-    <div class="col-md-4">
-    <canvas id="{{ loop.index }}_multi_choice_chart" height="100"></canvas>
-    </div>
-    {% endfor %}
-</div>
 {% endif %}
 
 
@@ -133,7 +133,12 @@ var time_chart = new Chart(ctx, {
     {% for label, data in chart_data['multi_choice'].items() %}
 
 var ctx = document.getElementById("{{ loop.index }}_multi_choice_chart");
-ctx.height = 275;
+ctx.height = 320;
+
+    {% if data['axis_1']|length > 6 %}
+    $(ctx).closest("div[class=col-md-4]").removeClass("col-md-4").addClass("col-md-8")
+    {% endif %}
+
 new Chart(ctx, {
     type: 'bar',
     data: {
@@ -154,6 +159,8 @@ new Chart(ctx, {
         ]
     },
     options: {
+        maintainAspectRatio: false,
+        responsive: true,
         animation: {
             duration: 0
         },

@@ -14,10 +14,20 @@
         <canvas id="time_chart" height="100"></canvas>
         
         {% if sites|length > 1 %}
-        {% for site in sites %}
-        <div class="title_2 delimited" style="margin-top:2.5em">{{ site.hostname }}</div>
-        <canvas id="{{ site.id }}" height="100"></canvas>
-        {% endfor %}
+            {% for site in sites %}
+            <div class="title_2 delimited" style="margin-top:2.5em">
+                {{ site.hostname }}
+                <span style="color: gray">
+                    {% if site.totalUsers == 0 %}
+                        (0
+                    {% else %}
+                        ({{ (site.totalForms / site.totalUsers)|round(precision=2) }}
+                    {% endif %}
+                    {%trans%}forms per user{%endtrans%})
+                </span>
+            </div>
+            <canvas id="{{ site.id }}" height="100"></canvas>
+            {% endfor %}
         {% endif %}
         
     </div>
@@ -53,6 +63,7 @@ var time_chart = new Chart(ctx, {
         ],
     },
     options: {
+        animation: false,
         scales: {
             xAxes: [{
                 type: 'time',
@@ -102,6 +113,7 @@ var time_chart = new Chart(ctx, {
         ],
     },
     options: {
+        animation: false,
         scales: {
             xAxes: [{
                 type: 'time',
