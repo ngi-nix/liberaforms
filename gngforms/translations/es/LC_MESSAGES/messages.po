@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-08-08 18:13+0200\n"
-"PO-Revision-Date: 2020-09-14 19:28+0200\n"
+"PO-Revision-Date: 2020-09-15 17:01+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
@@ -1344,22 +1344,22 @@ msgstr "Público establecido como: %s"
 #: views/form.py:457
 #, python-format
 msgid "Shared entries set to: %s"
-msgstr ""
+msgstr "Entradas compartidas establecidas como: %s"
 
 #: views/form.py:468
 #, python-format
 msgid "Restricted access set to: %s"
-msgstr ""
+msgstr "Acceso restringido establecido como: %s"
 
 #: views/form.py:487
 #, python-format
 msgid "Data protection consent set to: %s"
-msgstr ""
+msgstr "Consentimiento de protección de datos establecido como: %s"
 
 #: views/form.py:497
 #, python-format
 msgid "Send Confirmation set to: %s"
-msgstr ""
+msgstr "Envío de confirmación por correo establecido como: %s"
 
 #: views/form.py:530
 msgid "That form has expired"
@@ -1383,19 +1383,19 @@ msgstr "Se ha actualizado el idioma correctamente"
 
 #: views/site.py:93
 msgid "Required file is missing"
-msgstr ""
+msgstr "Falta el archivo requerido"
 
 #: views/site.py:101
 msgid "Bad file name. PNG only"
-msgstr ""
+msgstr "Mal nombre de archivo. Solo PNG"
 
 #: views/site.py:103
 msgid "Favicon changed OK. Refresh with  &lt;F5&gt;"
-msgstr ""
+msgstr "Favicon cambiado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:112
 msgid "Favicon reset OK. Refresh with  &lt;F5&gt;"
-msgstr ""
+msgstr "Favicon restaurado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:135
 msgid "Confguration saved OK"
@@ -1407,7 +1407,7 @@ msgstr "¡Funciona la configuración SMTP!"
 
 #: views/site.py:167
 msgid "Color changed OK"
-msgstr ""
+msgstr "Color cambiado correctamente"
 
 #: views/site.py:206
 msgid "Site not found"
@@ -1469,11 +1469,11 @@ msgstr "Puede que te hemos enviado un correo-e"
 
 #: views/user.py:235
 msgid "Root disabled"
-msgstr ""
+msgstr "Root deshabilitado"
 
 #: views/user.py:238
 msgid "Root enabled"
-msgstr ""
+msgstr "Root habilitado"
 
 #: views/user.py:250
 msgid "We couldn't find that petition"
