@@ -232,7 +232,7 @@ $('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(-n+3))
     var $editor = $("<div class='cell-editor' initial_value=\""+ cellValue +"\"></div>");
     $editor.append("<input type='text' value=\""+ cellValue +"\" />");
     $editor.append('<i class="fa fa-check-circle saveCellEdition" aria-hidden="true" title="{%trans%}Save{%endtrans%}"></i>');
-    $editor.append('<i class="fa fa-times-circle cancelCellEdition" aria-hidden="true" title="{%trans%}Cancel{%endtrans%}"></i>');
+    $editor.append('<i class="fa fa-minus-circle cancelCellEdition" aria-hidden="true" title="{%trans%}Cancel{%endtrans%}"></i>');
     $(this).html($editor);
 });
 // Cancel edition

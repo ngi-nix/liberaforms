@@ -262,7 +262,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 }
 .cancelCellEdition {
     font-size: 1.25em !important;
-    color: #d9534f;
+    color: #007bff;
     cursor: pointer;
     padding-left: 0.27em;
 }
