@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-07-22 23:59+0200\n"
-"PO-Revision-Date: 2019-07-22 23:52+0200\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2020-09-15 17:09+0200\n"
+"Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: form_templates/form_templates.py:26 form_templates/form_templates.py:29
 msgid "One day congress"
@@ -24,23 +25,23 @@ msgstr "Congreso de un día"
 
 #: form_templates/form_templates.py:34
 msgid "Room 1. Municipal Strategies"
-msgstr ""
+msgstr "Aula 1. Estrategias municipales"
 
 #: form_templates/form_templates.py:35
 msgid "Room 2. Decentralized tech. Freedom of speech"
-msgstr ""
+msgstr "Aula 2. Tecnología descentralizada. Libertad de expresión"
 
 #: form_templates/form_templates.py:46
 msgid "Vegan"
-msgstr ""
+msgstr "Vegana"
 
 #: form_templates/form_templates.py:47
 msgid "Vegaterian"
-msgstr ""
+msgstr "Vegateriana"
 
 #: form_templates/form_templates.py:48
 msgid "I'm eating else where"
-msgstr ""
+msgstr "Comeré en algún otro lugar"
 
 #: form_templates/form_templates.py:55 form_templates/form_templates.py:58
 msgid "Summer courses"
@@ -51,10 +52,12 @@ msgid ""
 "Students can enroll in a variety of activities spread out across three "
 "days."
 msgstr ""
+"Los estudiantes pueden inscribirse en una variedad de actividades "
+"repartidas a lo largo de tres días."
 
 #: form_templates/form_templates.py:65
 msgid "Tuesday 25th"
-msgstr ""
+msgstr "Martes 25"
 
 #: form_templates/form_templates.py:87 form_templates/form_templates.py:90
 msgid "Save our shelter"
@@ -62,7 +65,7 @@ msgstr "Salvamos el refugio"
 
 #: form_templates/form_templates.py:88
 msgid "Petition citizen support for your local initiative."
-msgstr ""
+msgstr "Pide apoyo popular para tu iniciativa local."
 
 #: form_templates/form_templates.py:92
 msgid "ID number"
@@ -75,4 +78,3 @@ msgstr "Correo-e"
 #: form_templates/form_templates.py:94
 msgid "Comments"
 msgstr "Comentarios"
-

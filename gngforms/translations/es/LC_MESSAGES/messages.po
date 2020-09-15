@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-08-08 18:13+0200\n"
-"PO-Revision-Date: 2020-08-08 18:22+0200\n"
-"Last-Translator: \n"
+"PO-Revision-Date: 2020-09-15 17:01+0200\n"
+"Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: models.py:263
 msgid "Marked"
@@ -33,7 +33,7 @@ msgstr "Creado"
 
 #: models.py:268 utils/formhelper.py:61
 msgid "Label"
-msgstr ""
+msgstr "Etiqueta"
 
 #: models.py:307
 msgid "DPL"
@@ -73,13 +73,13 @@ msgid ""
 msgstr ""
 "Hola,\n"
 "\n"
-"Has estado invitado a GNGform.\n"
+"Has sido invitada a GNGform.\n"
 "\n"
 "Saludos."
 
 #: models.py:1028
 msgid "We take your data protection seriously. Please contact us for any inquiries."
-msgstr ""
+msgstr "Tomamos en serio tu protección de datos. Por favor, contáctanos para cualquier consulta."
 
 #: templates/admin/delete-user.html:21 templates/admin/list-users.html:26
 #: templates/base.html:52 templates/site/edit-site.html:26
@@ -125,7 +125,7 @@ msgstr "Autor actual"
 
 #: templates/admin/change-author.html:28
 msgid "You are going to change the author of this form."
-msgstr "Vas a cambiar el autor de este formulario"
+msgstr "Vas a cambiar el autor de este formulario."
 
 #: templates/admin/change-author.html:29
 msgid "Are you sure?"
@@ -161,7 +161,7 @@ msgstr "Borrar el usuario"
 
 #: templates/admin/delete-user.html:14
 msgid "You are going to delete a user"
-msgstr "Vas a borrar un usuario."
+msgstr "Vas a borrar un usuario"
 
 #: templates/admin/delete-user.html:16
 msgid "and their forms"
@@ -399,11 +399,11 @@ msgstr "Habilitar la edicion"
 
 #: templates/entries/list-entries.html:44
 msgid "Hide deleted columns"
-msgstr ""
+msgstr "Esconder columnas eliminadas"
 
 #: templates/entries/list-entries.html:46
 msgid "Show deleted columns"
-msgstr ""
+msgstr "Mostrar columnas eliminadas"
 
 #: templates/entries/list-entries.html:50
 msgid "Delete all"
@@ -420,7 +420,7 @@ msgstr "Borrar la entrada"
 
 #: templates/form/conditions.html:17
 msgid "New condition"
-msgstr ""
+msgstr "Nueva condición"
 
 #: templates/form/conditions.html:28 templates/form/inspect-form.html:296
 msgid "Edit form"
@@ -449,7 +449,7 @@ msgstr "Vas a borrar este formulario y"
 
 #: templates/form/delete-form.html:23
 msgid "Write the name of the form below"
-msgstr "Escriba el nombre del formulario aquí abajo."
+msgstr "Escriba el nombre del formulario aquí abajo"
 
 #: templates/form/edit-form.html:20
 msgid "Build your form here"
@@ -461,7 +461,7 @@ msgstr "Texto introductorio"
 
 #: templates/form/edit-form.html:33
 msgid "This is a markdown editor, an easy way to write HTML."
-msgstr "Este es un editor markdown, una manera fácil de escribir HTML"
+msgstr "Este es un editor markdown, una manera fácil de escribir HTML."
 
 #: templates/form/edit-form.html:34
 msgid "Learn more"
@@ -526,7 +526,7 @@ msgstr "Cuando el formulario se caduque"
 #: templates/main/index.html:20 templates/user/user-settings.html:196
 #: templates/user/user-settings.html:221
 msgid "Edit text"
-msgstr "Editar el text"
+msgstr "Editar el texto"
 
 #: templates/form/expiration.html:108 templates/form/inspect-form.html:241
 msgid "Say something to the user if the form has expired"
@@ -542,7 +542,7 @@ msgstr "Hemos adjuntado unos formularios para ayudarte."
 
 #: templates/form/form_templates.html:16
 msgid "Choose the template that best suits your needs and edit it to fit."
-msgstr "Elija la plantilla que mejor se adapte a tus necesidades"
+msgstr "Elija la plantilla que mejor se adapte a tus necesidades."
 
 #: templates/form/form_templates.html:33
 msgid "Use this template"
@@ -613,7 +613,7 @@ msgstr "Duplicar el formulario"
 
 #: templates/form/inspect-form.html:266
 msgid "Embed form"
-msgstr ""
+msgstr "Anidar formulario"
 
 #: templates/form/inspect-form.html:271
 msgid "Delete form and entries"
@@ -629,11 +629,11 @@ msgstr "Duplicar"
 
 #: templates/form/inspect-form.html:282
 msgid "Disable"
-msgstr ""
+msgstr "Deshabilitar"
 
 #: templates/form/inspect-form.html:284
 msgid "Enable"
-msgstr ""
+msgstr "Habilitar"
 
 #: templates/form/inspect-form.html:306 templates/form/preview-form.html:18
 #: templates/form/view-form.html:19
@@ -732,23 +732,23 @@ msgstr "Vaya! Error de servidor 500"
 
 #: templates/site/change-site-favicon.html:12
 msgid "Change site favicon"
-msgstr ""
+msgstr "Cambiar el favicon del sitio web"
 
 #: templates/site/change-site-favicon.html:16
 msgid "Upload image"
-msgstr ""
+msgstr "Subir imagen"
 
 #: templates/site/change-site-favicon.html:21
 msgid "A small, square PNG image"
-msgstr ""
+msgstr "Una pequeña y cuadrada imagen PNG"
 
 #: templates/site/change-site-favicon.html:26
 msgid "Upload"
-msgstr ""
+msgstr "Subir"
 
 #: templates/site/change-site-favicon.html:27
 msgid "Use default"
-msgstr ""
+msgstr "Utilizar predeterminado"
 
 #: templates/site/change-sitename.html:11
 msgid "Change site name"
@@ -784,7 +784,7 @@ msgstr "formularios"
 
 #: templates/site/delete-site.html:23
 msgid "Write the name of the site below"
-msgstr "Escriba el nombre del sitio aquí abajo."
+msgstr "Escriba el nombre del sitio aquí abajo"
 
 #: templates/site/edit-site.html:18
 msgid "Sitename"
@@ -819,15 +819,15 @@ msgstr "Color de menú"
 
 #: templates/site/schema-upgrade.html:11
 msgid "Schema"
-msgstr ""
+msgstr "Esquema"
 
 #: templates/site/schema-upgrade.html:16
 msgid "Curreny schema version"
-msgstr ""
+msgstr "Versión del esquema actual"
 
 #: templates/site/schema-upgrade.html:20
 msgid "Required version"
-msgstr ""
+msgstr "Versión requerida"
 
 #: templates/site/schema-upgrade.html:28
 msgid "Your super secret key"
@@ -863,7 +863,7 @@ msgstr "Usa una frase, con espacios"
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:17
 msgid "eg: No holidays this year"
-msgstr ""
+msgstr "ej.: No hay vacaciones este año"
 
 #: templates/user/new-user.html:40 templates/user/reset-password.html:24
 msgid "Another eg: My dog has fleas"
@@ -980,7 +980,7 @@ msgstr "Texto de consentimiento por omisión"
 
 #: templates/user/user-settings.html:244
 msgid "Favicon"
-msgstr ""
+msgstr "Favicon"
 
 #: templates/user/user-settings.html:260 utils/wtf.py:78
 msgid "Email server"
@@ -1046,7 +1046,7 @@ msgstr "El formulario %s ha caducado en %s"
 
 #: utils/email.py:104
 msgid "GNGforms. A form has expired"
-msgstr "GNGforms. Se ha caducado un formulario "
+msgstr "GNGforms. Se ha caducado un formulario"
 
 #: utils/email.py:124
 #, python-format
@@ -1109,7 +1109,7 @@ msgstr "La contraseña es débil"
 
 #: utils/wtf.py:43
 msgid "Please accept our terms and conditions"
-msgstr ""
+msgstr "Por favor, acepta nuestros términos y condiciones"
 
 #: utils/wtf.py:58
 msgid "New email address"
@@ -1121,7 +1121,7 @@ msgstr "Puerto"
 
 #: utils/wtf.py:80
 msgid "Encryption"
-msgstr ""
+msgstr "Encriptación"
 
 #: utils/wtf.py:85
 msgid "Sender address"
@@ -1201,7 +1201,7 @@ msgstr "El usuarios '%s' está deshabilitado"
 #: views/admin.py:149
 #, python-format
 msgid "Can't find username %s"
-msgstr ""
+msgstr "No se puede encontrar el nombre de usuario %s"
 
 #: views/admin.py:164
 #, python-format
@@ -1239,7 +1239,7 @@ msgstr "No coinciden el número de registros"
 
 #: views/form.py:71
 msgid "Something went wrong. id does not match session['form_id']"
-msgstr ""
+msgstr "Algo salió mal. El id no coincide con la sesión['form_id']"
 
 #: views/form.py:75
 msgid "You can't edit that form"
@@ -1247,7 +1247,7 @@ msgstr "No puedes editar ese formulario"
 
 #: views/form.py:83
 msgid "Something went wrong. No slug!"
-msgstr "Algo ha salido mal. No slug."
+msgstr "Algo ha salido mal. No slug!"
 
 #: views/form.py:158
 msgid "Updated form OK"
@@ -1259,12 +1259,12 @@ msgstr "Se editó el formulario"
 
 #: views/form.py:165
 msgid "Slug is missing."
-msgstr "Falta un slug"
+msgstr "Falta un slug."
 
 #: views/form.py:168
 #, python-format
 msgid "Slug is not unique. %s"
-msgstr ""
+msgstr "El slug no es único. %s"
 
 #: views/form.py:208
 msgid "Form created"
@@ -1277,7 +1277,7 @@ msgstr "Se ha guardado el formulario correctamente"
 #: views/form.py:226 views/form.py:239 views/form.py:252 views/site.py:52
 #: views/site.py:61
 msgid "An error occured"
-msgstr ""
+msgstr "Se produjo un error"
 
 #: views/form.py:266
 #, python-format
@@ -1339,27 +1339,27 @@ msgstr "Ya puedes editar el formulario duplicado"
 #: views/form.py:446
 #, python-format
 msgid "Public set to: %s"
-msgstr ""
+msgstr "Público establecido como: %s"
 
 #: views/form.py:457
 #, python-format
 msgid "Shared entries set to: %s"
-msgstr ""
+msgstr "Entradas compartidas establecidas como: %s"
 
 #: views/form.py:468
 #, python-format
 msgid "Restricted access set to: %s"
-msgstr ""
+msgstr "Acceso restringido establecido como: %s"
 
 #: views/form.py:487
 #, python-format
 msgid "Data protection consent set to: %s"
-msgstr ""
+msgstr "Consentimiento de protección de datos establecido como: %s"
 
 #: views/form.py:497
 #, python-format
 msgid "Send Confirmation set to: %s"
-msgstr ""
+msgstr "Envío de confirmación por correo establecido como: %s"
 
 #: views/form.py:530
 msgid "That form has expired"
@@ -1383,19 +1383,19 @@ msgstr "Se ha actualizado el idioma correctamente"
 
 #: views/site.py:93
 msgid "Required file is missing"
-msgstr ""
+msgstr "Falta el archivo requerido"
 
 #: views/site.py:101
 msgid "Bad file name. PNG only"
-msgstr ""
+msgstr "Mal nombre de archivo. Solo PNG"
 
 #: views/site.py:103
 msgid "Favicon changed OK. Refresh with  &lt;F5&gt;"
-msgstr ""
+msgstr "Favicon cambiado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:112
 msgid "Favicon reset OK. Refresh with  &lt;F5&gt;"
-msgstr ""
+msgstr "Favicon restaurado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:135
 msgid "Confguration saved OK"
@@ -1407,7 +1407,7 @@ msgstr "¡Funciona la configuración SMTP!"
 
 #: views/site.py:167
 msgid "Color changed OK"
-msgstr ""
+msgstr "Color cambiado correctamente"
 
 #: views/site.py:206
 msgid "Site not found"
@@ -1469,11 +1469,11 @@ msgstr "Puede que te hemos enviado un correo-e"
 
 #: views/user.py:235
 msgid "Root disabled"
-msgstr ""
+msgstr "Root deshabilitado"
 
 #: views/user.py:238
 msgid "Root enabled"
-msgstr ""
+msgstr "Root habilitado"
 
 #: views/user.py:250
 msgid "We couldn't find that petition"
