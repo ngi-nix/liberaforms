@@ -129,6 +129,10 @@ def cleanLabel(text):
         style.decompose()
     return html.escape(str(soup))
 
+def removeNewLines(string):
+    string = string.replace("\n", "")
+    return string.replace("\r", "")
+
 """ ######## email ######## """
 
 def isValidEmail(email):

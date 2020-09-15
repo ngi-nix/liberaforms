@@ -130,7 +130,14 @@ var time_chart = new Chart(ctx, {
 });
 
 {% if chart_data['multi_choice']|length %}
+    {% set color = namespace(value=0) %}
     {% for label, data in chart_data['multi_choice'].items() %}
+
+        {% if color.value+1 > fg_colors|length %}
+            {% set color.value = 1 %}
+        {% else %}
+            {% set color.value = color.value + 1 %}
+        {% endif %}
 
 var ctx = document.getElementById("{{ loop.index }}_multi_choice_chart");
 ctx.height = 320;
@@ -147,12 +154,7 @@ new Chart(ctx, {
             {
                 label: "{{label}}",
                 data: {{ data['axis_2']|tojson }},
-                {% if loop.index > fg_colors|length %}
-                    {% set color_index=range(0, 3)|random %}
-                    backgroundColor: "{{ bg_colors[color_index] }}",
-                {% else %}
-                    backgroundColor: "{{ bg_colors[loop.index-1] }}",
-                {% endif %}
+                backgroundColor: "{{ bg_colors[color.value-1] }}",
                 fill: true,
                 borderWidth: 0,
             }

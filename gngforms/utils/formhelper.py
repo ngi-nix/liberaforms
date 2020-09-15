@@ -57,6 +57,7 @@ def repairFormStructure(structure):
             # Ensure a label without HTML tags
             if 'label' in element:
                 element['label']=stripHTMLTags(element['label']).strip()
+                element['label'] = removeNewLines(element['label'])
             if not 'label' in element or element['label']=="":
                 element['label']=gettext("Label")                
             # formBuilder does not save select dropdown correctly
@@ -72,4 +73,5 @@ def repairFormStructure(structure):
                     if not input_type["value"] and input_type["label"]:
                         input_type["value"] = input_type["label"]
                     input_type["value"] = sanitizeString(input_type["value"].replace(" ", "-"))
+                    input_type["value"] = removeNewLines(input_type["value"])
     return structure

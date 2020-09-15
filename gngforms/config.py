@@ -33,8 +33,8 @@ class DefaultConfig(object):
     # Optional config:
     DEFAULT_LANGUAGE = "en"
     TMP_DIR = "/tmp"
-    # 5400 seconds = 1.5hrs. Time to fill out a form.
-    WTF_CSRF_TIME_LIMIT = 5400
+     # 3600 seconds = 1hrs. Time to fill out a form.
+    WTF_CSRF_TIME_LIMIT = 21600
     # 86400 seconds = 24h
     TOKEN_EXPIRATION = 604800
     # formbuilder
@@ -51,7 +51,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.5.14"
+    APP_VERSION = "1.5.15"
     SCHEMA_VERSION = 21
 
     RESERVED_SLUGS = [

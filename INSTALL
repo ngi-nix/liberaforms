@@ -6,7 +6,7 @@ apt-get install mongodb
 
 ## Clone gngforms and create config.cfg
 
-git clone https://gitlab.com/lleialtec/gngforms.git /opt/GNGforms
+git clone https://gitlab.com/la-loka/gngforms.git /opt/GNGforms
 cd /opt/GNGforms
 cp config.example.cfg config.cfg
 
