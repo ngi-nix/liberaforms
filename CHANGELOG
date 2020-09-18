@@ -1,5 +1,8 @@
 https://keepachangelog.com/en/1.0.0/
 
+v.1.6
+ * Added Basque translation
+
 v.1.5
  * Easier access to edit form texts
  * Fixed db migration to avoid errors when object properties are not defined in the class
@@ -11,7 +14,10 @@ v.1.5
  * Improved exipry condition forms
  * Added Save button to form/edit
  * Improved embedded forms
+ * Moved email function into a class
  * Added site statistics for Admins
+ * Spanish translation updates
+ * Increased default CSRF_TIME_LIMIT to 6 hours 
  * CSS changes
  * Bug fixes
 

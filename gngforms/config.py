@@ -51,7 +51,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.5.16"
+    APP_VERSION = "1.6.0"
     SCHEMA_VERSION = 21
 
     RESERVED_SLUGS = [
@@ -90,6 +90,7 @@ class InternalConfig(object):
         "en": ("English", "en-US"),
         "ca": ("Català", "ca-ES"),
         "es": ("Castellano", "es-ES"),
+        "eu": ("Euskara ", "eu-ES"),
     }
     FAVICON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                   "static/images/favicon/")
