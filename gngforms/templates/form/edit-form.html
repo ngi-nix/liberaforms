@@ -178,6 +178,17 @@ jQuery(function($) {
         $("#introduction-text").val(introduction_mde.value());
     }
 });
+
+$("#fb-editor").on("click", "input[type=radio]", function (event) {
+    if ($(this).closest(".formbuilder-radio") !== undefined) {
+        var check = $(this).attr('checked')
+        if (check) {
+            $(this).removeAttr('checked').prop('checked',false)
+        } else {
+            $(this).attr('checked', true).prop('checked',true)
+        }
+    }
+});
 </script>
   
 {% endblock %}
