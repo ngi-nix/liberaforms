@@ -34,16 +34,21 @@
   margin: 0 0.5em 0 0 !important;
 }
 .formbuilder-radio input,
-.formbuilder-radio-inline input,
 .formbuilder-radio-group input[type="radio"] {
   /*vertical-align:-2px;*/
   /*margin: 0 0.5em 0 0 !important;*/
   float: left;
   margin: 0.2em 0.5em 0 0 !important
 }
+.formbuilder-radio-inline input {
+  margin-top: 0.3em !important;
+}
 .formbuilder-radio label {
   margin-left: 20px;
   display: block;
+}
+.formbuilder-radio-inline label {
+  padding-right: 0.8em;
 }
 
 /* Mod required asterisk */

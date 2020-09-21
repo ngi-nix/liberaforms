@@ -273,7 +273,7 @@ def validate_email(token):
 
 """ Login / Logout """
 
-@user_bp.route('/user/login', methods=['POST'])
+@user_bp.route('/user/login', methods=['GET', 'POST'])
 @anon_required
 def login():
     killCurrentUser()
@@ -286,8 +286,9 @@ def login():
                 return redirect(make_url_for('user_bp.user_settings', username=user.username))
             else:
                 return redirect(make_url_for('form_bp.my_forms'))
-    flash(gettext("Bad credentials"), 'warning')
-    return redirect(make_url_for('main_bp.index'))
+        else:
+            flash(gettext("Bad credentials"), 'warning')
+    return render_template('login.html', wtform=wtform)
 
 
 @user_bp.route('/user/logout', methods=['GET', 'POST'])

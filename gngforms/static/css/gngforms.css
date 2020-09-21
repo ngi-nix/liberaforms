@@ -8,15 +8,18 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 25px;
 }
-#header{
+.navbar{
   font-size: 1.3em;
 }
 .navbar-brand > img {
   width: 30px;
-  padding-top: 3px;
 }
 .nav-link {
-color: rgb(255, 255, 255, 1) !important;
+  color: rgb(255, 255, 255, 1) !important;
+  opacity: 0.925;
+}
+.nav-link:hover {
+  opacity: 1;
 }
 #main-content {
   margin-top: 1.5em;

@@ -11,7 +11,8 @@
 
 <div class="container">
 <div class="row">
-<div class="col-md-8">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
     <div id="blurb" class="marked-up">
         {{ site.blurb['html']|safe }}
         {% if g.isAdmin %}
@@ -33,37 +34,7 @@
     </div>
     {% endif %}
 
-</div>
-<div class="col-md-1"></div>
-<div class="col-md-3">
-    
-    <form action="/user/login" method="POST" style="margin-top:1.5em">
-        <fieldset {% if g.current_user %}disabled{%endif%}>
-        {{ wtform.csrf_token }}
-        <p>
-            {{ wtform.username.label }}<br />
-            {{ wtform.username(class_="form-control") }}
-        </p>    
-        <p>
-            {{ wtform.password.label }}<br />
-            {{ wtform.password(class_="form-control") }}
-        </p>
-        <input class="btn btn-success btn" type="submit" value="{%trans%}Login{%endtrans%}" />
-        </fieldset>
-    </form>
-
-    {% if not site.invitationOnly %}
-        <br />
-        <a href="/user/new">{%trans%}Create an account{%endtrans%}</a>
-    {% endif %}
-    <br />
-    {% if g.current_user %}
-        <a href="/user/reset-password">{%trans%}Forgot your password?{%endtrans%}</a>
-    {% else %}
-        <a href="/site/recover-password">{%trans%}Forgot your password?{%endtrans%}</a>
-    {% endif %}
-
-</div>
+    </div>
 </div>
 </div>
 
