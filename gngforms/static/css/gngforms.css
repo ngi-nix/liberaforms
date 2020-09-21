@@ -274,60 +274,6 @@ input[type="date"], input[type="number"], input[type="time"] {
 ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
     white-space: normal !important;
 }
-/* ######### formBuilder ######### */
-#fb-editor .field-label {
-  font-size: 1.2em;
-  color: #333333;
-}
-/* This hides textarea tinymce and quill editor type options */
-#fb-editor li.textarea-field div.subtype-wrap {
-  display:none;
-}
-.form-group {
-  padding-bottom: 1.3em;
-}
-.tooltip-element {
-    display: none !important;
-}
-.formbuilder-checkbox label,
-.formbuilder-checkbox-inline label,
-.formbuilder-radio label,
-.formbuilder-radio-inline label {
-  font-size: 1rem;
-}
-
-.formbuilder-checkbox-group input[type="checkbox"],
-.formbuilder-checkbox input,
-.formbuilder-checkbox-inline input {
-  vertical-align:-2px;
-  margin: 0 0.5em 0 0 !important;
-}
-.formbuilder-radio-group input[type="radio"],
-.formbuilder-radio input,
-.formbuilder-radio-inline input {
-  vertical-align:-2px;
-  margin: 0 0.5em 0 0 !important;
-}
-.required-asterisk {
-  visibility: hidden;
-}
-.required-asterisk:after {
-  content: '●';
-  visibility: visible;
-}
-.formbuilder-required {
-  visibility: hidden;
-}
-.formbuilder-required:after {
-  content: '●';
-  visibility: visible;
-}
-.form-wrap.form-builder
-.frmb
-.form-elements
-.input-wrap > input[type="checkbox"] {
-  margin-top: 14px !important;
-}
 
 
 .gngform {

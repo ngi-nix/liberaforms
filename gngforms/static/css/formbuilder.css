@@ -1,0 +1,71 @@
+/* ######### formBuilder ######### */
+
+#fb-editor .field-label {
+  font-size: 1.2em;
+  color: #333333;
+}
+
+/* Hide textarea's tinymce and quill editor type options */
+#fb-editor li.textarea-field div.subtype-wrap {
+  display:none;
+}
+
+/* vertical form rhythm */
+.form-group {
+  padding-bottom: 1.3em;
+}
+
+/* remove tooltip */
+.tooltip-element {
+    display: none !important;
+}
+
+/* Align inputs and labels */
+.formbuilder-checkbox label,
+.formbuilder-checkbox-inline label,
+.formbuilder-radio label,
+.formbuilder-radio-inline label {
+  font-size: 1rem;
+}
+.formbuilder-checkbox-group input[type="checkbox"],
+.formbuilder-checkbox input,
+.formbuilder-checkbox-inline input {
+  vertical-align:-2px;
+  margin: 0 0.5em 0 0 !important;
+}
+.formbuilder-radio input,
+.formbuilder-radio-inline input,
+.formbuilder-radio-group input[type="radio"] {
+  /*vertical-align:-2px;*/
+  /*margin: 0 0.5em 0 0 !important;*/
+  float: left;
+  margin: 0.2em 0.5em 0 0 !important
+}
+.formbuilder-radio label {
+  margin-left: 20px;
+  display: block;
+}
+
+/* Mod required asterisk */
+.required-asterisk {
+  visibility: hidden;
+}
+.required-asterisk:after {
+  content: '●';
+  visibility: visible;
+}
+.formbuilder-required {
+  visibility: hidden;
+}
+.formbuilder-required:after {
+  content: '●';
+  visibility: visible;
+}
+
+
+.form-wrap.form-builder
+.frmb
+.form-elements
+.input-wrap > input[type="checkbox"] {
+  margin-top: 14px !important;
+}
