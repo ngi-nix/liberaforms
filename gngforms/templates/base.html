@@ -20,7 +20,7 @@
 
 <body>
 
-{% if 'current_user' in g and g.current_user %}
+{% if ('current_user' in g and g.current_user) or (navbar != False) %}
 <nav class="navbar navbar-expand-lg navbar-dark navbar-full" style="background-color:{{g.site.menuColor}}">
 <div class="container">
 
