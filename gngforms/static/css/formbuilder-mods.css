@@ -27,28 +27,43 @@
 .formbuilder-radio-inline label {
   font-size: 1rem;
 }
-.formbuilder-checkbox-group input[type="checkbox"],
 .formbuilder-checkbox input,
-.formbuilder-checkbox-inline input {
-  vertical-align:-2px;
-  margin: 0 0.5em 0 0 !important;
+.formbuilder-checkbox-group input {
+  margin: 4px 4px 0 0 !important;
 }
 .formbuilder-radio input,
-.formbuilder-radio-group input[type="radio"] {
-  /*vertical-align:-2px;*/
-  /*margin: 0 0.5em 0 0 !important;*/
-  float: left;
-  margin: 0.2em 0.5em 0 0 !important
+.formbuilder-radio-group input {
+  margin: 4px 4px 0 0 !important
+}
+.formbuilder-checkbox-inline input {
+  margin-top: 0.2em !important;
 }
 .formbuilder-radio-inline input {
-  margin-top: 0.3em !important;
+  margin-top: 0.25em !important;
 }
-.formbuilder-radio label {
-  margin-left: 20px;
+.formbuilder-checkbox input,
+.formbuilder-checkbox-group input,
+.formbuilder-radio input,
+.formbuilder-radio-group input {
+  float: left;
+}
+.formbuilder-checkbox label,
+.formbuilder-checkbox-inline label,
+.formbuilder-radio label,
+.formbuilder-radio-inline label {
+  margin-left: 26px;
+  text-indent: 0px;
   display: block;
 }
+.formbuilder-checkbox-inline label,
 .formbuilder-radio-inline label {
-  padding-right: 0.8em;
+  padding-right: 0.4em;
+}
+#fb-editor .formbuilder-checkbox-inline label,
+#fb-editor .formbuilder-radio-inline label {
+  margin-left: 8px;
+  text-indent: 0px;
+  display: inline;
 }
 
 /* Mod required asterisk */
@@ -66,7 +81,6 @@
   content: '●';
   visibility: visible;
 }
-
 
 .form-wrap.form-builder
 .frmb

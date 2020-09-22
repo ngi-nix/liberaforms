@@ -2,6 +2,8 @@ https://keepachangelog.com/en/1.0.0/
 
 v.1.6
  * Added Basque translation
+ * Moved Login to Navbar
+ * CSS changes
 
 v.1.5
  * Easier access to edit form texts
