@@ -127,8 +127,8 @@ jQuery(function($) {
         },
         formData: {{ session['formStructure'] | tojson }}
     };
-    const formBuilder = $(fbEditor).formBuilder(options);
-    
+    const formBuilder = render_fbEditor(fbEditor, options)
+
     document.getElementById('result').addEventListener('submit', function(evt){
         evt.preventDefault();
         loadFieldsWithValues();        
@@ -180,6 +180,24 @@ jQuery(function($) {
     }
 });
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+function render_fbEditor(fbEditor, options) {
+    var builder = $(fbEditor).formBuilder(options);
+    sleep(1000).then(() => { // give formbuilder time to render
+    {% for field in multichoiceOptionsWithSavedData %}
+        {% for value in multichoiceOptionsWithSavedData[field] %}
+        field = $('input[name="{{field}}-option"]').filter('[value="{{value}}"]')
+        field.prop("disabled", true)
+        field.prop("title", "{%trans%}Cannot modify because an entry with this value exists in the database{%endtrans%}")
+        {% endfor %}
+    {% endfor %}
+    });
+    return builder
+}
+
+// enable the user to uncheck radio buttons
 $("#fb-editor").on("click", "input[type=radio]", function (event) {
     if ($(this).closest(".formbuilder-radio") !== undefined) {
         var check = $(this).attr('checked')

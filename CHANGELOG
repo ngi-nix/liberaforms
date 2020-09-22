@@ -3,6 +3,7 @@ https://keepachangelog.com/en/1.0.0/
 v.1.6
  * Added Basque translation
  * Moved Login to Navbar
+ * Prevented editing field option values if present in the database
  * CSS changes
 
 v.1.5

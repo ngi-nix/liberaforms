@@ -89,7 +89,9 @@ def edit_form(id=None):
         session['formFieldIndex'] = Form.createFieldIndex(structure)
         session['introductionTextMD'] = escapeMarkdown(request.form['introductionTextMD'])
         return redirect(make_url_for('form_bp.preview_form'))
-    return render_template('edit-form.html', host_url=g.site.host_url)
+    optionsWithData = queriedForm.getMultichoiceOptionsWithSavedData() if queriedForm else {}
+    return render_template('edit-form.html',    host_url=g.site.host_url,
+                                                multichoiceOptionsWithSavedData=optionsWithData)
 
 
 @form_bp.route('/forms/check-slug-availability', methods=['POST'])

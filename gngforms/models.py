@@ -602,6 +602,40 @@ class Form(db.Document):
     def getSharedEntriesURL(self, part="results"):
         return "%s/%s/%s" % (self.url, part, self.sharedEntries['key'])
 
+    """
+    Used when editing a form.
+    We don't want the Editor to change the option values if an
+    entry with that value is already present in the database
+    """
+    def getMultichoiceOptionsWithSavedData(self):
+        result = {}
+        if not self.entries:
+            return result
+        multiChoiceFields = {}  # {field.name: [option.value, option.value]}
+        for field in self.structure:
+            if field['type'] == "checkbox-group" or field['type'] == "radio-group":
+                multiChoiceFields[field['name']] = []
+                for value in field['values']:
+                    multiChoiceFields[field['name']].append(value['value'])
+        for entry in self.entries:
+            if multiChoiceFields == {}: # no more fields to check
+                return result
+            removeFieldFromSearch=None
+            for field in multiChoiceFields:
+                if field in entry.keys():
+                    for savedValue in entry[field].split(', '):
+                        if savedValue in multiChoiceFields[field]:
+                            if not field in result:
+                                    result[field]=[]
+                            result[field].append(savedValue)
+                            multiChoiceFields[field].remove(savedValue)
+                            if multiChoiceFields[field] == []:  # all option.values are present in database
+                                removeFieldFromSearch=field
+                                continue
+            if removeFieldFromSearch:
+                multiChoiceFields.pop(removeFieldFromSearch)
+        return result
+
     @property
     def orderedEntries(self):
         return sorted(self.entries, key=lambda k: k['created'])
