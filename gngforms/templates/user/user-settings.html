@@ -1,12 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% if g.isAdmin %}
-<script src="/static/simplemde/simplemde.min.js"></script>
-<script src="/static/jquery/jquery.color-2.1.2.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
-{% endif %}
-
 <script>
 var csrftoken = "{{ csrf_token() }}";
 </script>
@@ -196,7 +190,7 @@ var csrftoken = "{{ csrf_token() }}";
             <tr>
                 <td>{%trans%}Terms and conditions{%endtrans%}</td>
                 <td>
-                <a id="show-terms-text" href="#!">{%trans%}Edit text{%endtrans%}</a>
+                <a href="/site/consent">{%trans%}Edit text{%endtrans%}</a>
                 </td>
                 <td class="text-right">
                     <div id="toggle_terms_conditions_enabled" class="btn-group btn-toggle">
@@ -205,23 +199,10 @@ var csrftoken = "{{ csrf_token() }}";
                     </div>
                </td>
             </tr>
-            <tr id="terms-text-block" style="display:none">
-                <td colspan="3">
-                <div>
-                    <div class="title_2">{%trans%}New users must agree to these terms and conditions{%endtrans%}</div>
-                    <input id="terms-text-function-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit{%endtrans%}" />
-                    <input id="cancel-terms" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
-                    <div id="terms-html" style="margin-top:1rem">{{ site.termsAndConditionsHTML|safe }}</div>
-                    <div style="display:none; margin-top:1em">
-                    <textarea id="terms-mde">{{ site.termsAndConditionsMarkdown }}</textarea>
-                    </div>
-                </div>
-                </td>
-            </tr>
             <tr>
-                <td>{%trans%}Data protection consent{%endtrans%}</td>
+                <td>{%trans%}DPL{%endtrans%}</td>
                 <td>
-                <a id="show-DPL-text" href="#!">{%trans%}Edit text{%endtrans%}</a>
+                <a href="/site/consent">{%trans%}Edit text{%endtrans%}</a>
                 </td>
                 <td class="text-right">
                     <div id="toggle_dataprotection_enabled" class="btn-group btn-toggle">
@@ -229,19 +210,6 @@ var csrftoken = "{{ csrf_token() }}";
                     <button id="dataprotection_enabled_false" class="btn btn-xs btn-default {% if not site.isPersonalDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                     </div>
                </td>
-            </tr>
-            <tr id="DPL-text-block" style="display:none">
-                <td colspan="3">
-                <div>
-                    <div class="title_2">{%trans%}Data protection law{%endtrans%}. {%trans%}Default consent text{%endtrans%}</div>
-                    <input id="DPL-text-function-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Edit{%endtrans%}" />
-                    <input id="cancel-DPL" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
-                    <div id="DPL-html" class="dataConsentText" style="margin-top:1rem">{{ site.personalDataConsentHTML|safe }}</div>
-                    <div style="display:none; margin-top:1em">
-                    <textarea id="DPL-mde">{{ site.personalDataConsentMarkdown }}</textarea>
-                    </div>
-                </div>
-                </td>
             </tr>
             <tr>
                 <td>{%trans%}Favicon{%endtrans%}</td>
@@ -508,145 +476,7 @@ document.getElementById('toggle_dataprotection_enabled').addEventListener('click
         }
     });
 });
-// DPL editor
-$(document).ready(function() {
-    var dpl_MDE = new SimpleMDE({ 
-                                autosave: {enabled: false},
-                                autofocus: true,
-                                spellChecker: false,
-                                autoDownloadFontAwesome: false,
-                                element: document.getElementById("DPL-mde")
-                             });
-    $("#show-DPL-text").click(function(){
-        $("#DPL-html").show()
-        $("#DPL-mde").hide()
-        $("#show-DPL-text").hide()
-        $("#DPL-text-block").show()
-    });
-    $("#DPL-text-function-button").click(function(){
-        if ($("#DPL-html").is(":visible")){
-            $("#DPL-html").hide()
-            $('#DPL-mde').parent('div').show(0, function() {
-                dpl_MDE.codemirror.refresh();
-            });
-            $("#DPL-text-function-button").val("{%trans%}Save{%endtrans%}")
-            $("#DPL-text-function-button").removeClass("btn-primary")
-            $("#DPL-text-function-button").addClass("btn-success")
-        }else{
-            var markdown=dpl_MDE.value()
-            $.ajax({
-                url : "/site/save-personal-data-consent-text",
-                type: "POST",
-                dataType: "json",
-                data: {"markdown": markdown},
-                beforeSend: function(xhr, settings) {
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                    }
-                },
-                success: function(data, textStatus, jqXHR)
-                {
-                    $("#DPL-text-function-button").val("{%trans%}Edit{%endtrans%}")
-                    $("#DPL-text-function-button").removeClass("btn-success")
-                    $("#DPL-text-function-button").addClass("btn-primary")
-                    $("#DPL-html").html(data.html)
-                    $("#DPL-text-block").show()
-                    $("#DPL-html").show()
-                    fadeOutHighlight($("#DPL-html"))
-                    $("#DPL-mde").val(markdown)
-                    $("#DPL-mde").parent('div').hide()
-                }
-            });
-        }
-    });
-    $("#cancel-DPL").click(function(){
-        if ($("#DPL-html").is(":visible")){
-            $("#DPL-text-block").hide()
-            $("#show-DPL-text").show()
-            $("#DPL-text-function-button").removeClass("btn-success")
-            $("#DPL-text-function-button").addClass("btn-primary")
-        } else {
-            $("#DPL-text-function-button").val("{%trans%}Edit{%endtrans%}")
-            $("#DPL-text-function-button").removeClass("btn-success")
-            $("#DPL-text-function-button").addClass("btn-primary")
-            $("#DPL-mde").parent('div').hide()
-            $("#DPL-html").show()
-            dpl_MDE.value($("#DPL-mde").val())
-        }
-    });
-});
-// Terms and conditions editor
-$(document).ready(function() {
-    var terms_MDE = new SimpleMDE({ 
-                                autosave: {enabled: false},
-                                autofocus: true,
-                                spellChecker: false,
-                                autoDownloadFontAwesome: false,
-                                element: document.getElementById("terms-mde")
-                             });
-    $("#show-terms-text").click(function(){
-        $("#terms-html").show()
-        $("#terms-mde").hide()
-        $("#show-terms-text").hide()
-        $("#terms-text-block").show()
-    });
-    $("#terms-text-function-button").click(function(){
-        if ($("#terms-html").is(":visible")){
-            $("#terms-html").hide()
-            $('#terms-mde').parent('div').show(0, function() {
-                terms_MDE.codemirror.refresh();
-            });
-            $("#terms-text-function-button").val("{%trans%}Save{%endtrans%}")
-            $("#terms-text-function-button").removeClass("btn-primary")
-            $("#terms-text-function-button").addClass("btn-success")
-        }else{
-            var markdown=terms_MDE.value()
-            $.ajax({
-                url : "/site/save-terms-and-conditions-text",
-                type: "POST",
-                dataType: "json",
-                data: {"markdown": markdown},
-                beforeSend: function(xhr, settings) {
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                    }
-                },
-                success: function(data, textStatus, jqXHR)
-                {
-                    $("#terms-text-function-button").val("{%trans%}Edit{%endtrans%}")
-                    $("#terms-text-function-button").removeClass("btn-success")
-                    $("#terms-text-function-button").addClass("btn-primary")
-                    $("#terms-html").html(data.html)
-                    $("#terms-text-block").show()
-                    $("#terms-html").show()
-                    fadeOutHighlight($("#terms-html"))
-                    $("#terms-mde").val(markdown)
-                    $("#terms-mde").parent('div').hide()
-                }
-            });
-        }
-    });
-    $("#cancel-terms").click(function(){
-        if ($("#terms-html").is(":visible")){
-            $("#terms-text-block").hide()
-            $("#show-terms-text").show()
-            $("#terms-text-function-button").removeClass("btn-success")
-            $("#terms-text-function-button").addClass("btn-primary")
-        } else {
-            $("#terms-text-function-button").val("{%trans%}Edit{%endtrans%}")
-            $("#terms-text-function-button").removeClass("btn-success")
-            $("#terms-text-function-button").addClass("btn-primary")
-            $("#terms-mde").parent('div').hide()
-            $("#terms-html").show()
-            terms_MDE.value($("#terms-mde").val())
-        }
-    });
-});
-function fadeOutHighlight(element){
-    element.css("background-color", "#C3FDB8")
-    element.animate({ backgroundColor: "white" }, 2000)
-}
-{% endif %}
 </script>
+{% endif %}
 
 {% endblock %}

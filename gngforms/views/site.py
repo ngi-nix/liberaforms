@@ -46,6 +46,12 @@ def save_blurb():
     return redirect(make_url_for('main_bp.index'))
 
 
+@site_bp.route('/site/consent', methods=['GET'])
+@admin_required
+def consent():
+    return render_template('consent.html', site=g.site)
+
+
 @site_bp.route('/site/save-personal-data-consent-text', methods=['POST'])
 @admin_required
 def save_data_consent():
