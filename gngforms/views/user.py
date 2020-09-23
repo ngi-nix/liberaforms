@@ -280,6 +280,8 @@ def login():
     wtform=wtf.Login()
     if wtform.validate():
         user=User.find(hostname=g.site.hostname, username=wtform.username.data, blocked=False)
+        if not user and isValidEmail(wtform.username.data):
+            user=User.find(hostname=g.site.hostname, email=wtform.username.data, blocked=False)
         if user and user.verifyPassword(wtform.password.data):
             session["user_id"]=str(user.id)
             if not user.validatedEmail:

@@ -188,7 +188,7 @@ function render_fbEditor(fbEditor, options) {
     sleep(1000).then(() => { // give formbuilder time to render
     {% for field in multichoiceOptionsWithSavedData %}
         {% for value in multichoiceOptionsWithSavedData[field] %}
-        field = $('input[name="{{field}}-option"]').filter('[value="{{value}}"]')
+        field = $('input[name="{{field}}-option"][class="option-value"][value="{{value}}"]')
         field.prop("disabled", true)
         field.prop("title", "{%trans%}Cannot modify because an entry with this value exists in the database{%endtrans%}")
         {% endfor %}

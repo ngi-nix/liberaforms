@@ -4,6 +4,7 @@ v.1.6
  * Added Basque translation
  * Moved Login to Navbar
  * Prevented editing field option values if present in the database
+ * Login accepts (username or email) + password
  * CSS changes
 
 v.1.5

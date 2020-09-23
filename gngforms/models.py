@@ -631,7 +631,6 @@ class Form(db.Document):
                             multiChoiceFields[field].remove(savedValue)
                             if multiChoiceFields[field] == []:  # all option.values are present in database
                                 removeFieldFromSearch=field
-                                continue
             if removeFieldFromSearch:
                 multiChoiceFields.pop(removeFieldFromSearch)
         return result
