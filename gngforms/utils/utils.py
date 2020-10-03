@@ -194,9 +194,14 @@ def isFutureDate(date):
     return True if future > now else False
 
 
+""" ######## Other ######## """
+
 def isValidUUID(value):
     try:
         uuid.UUID(value)
         return True
     except ValueError:
         return False
+
+def str2bool(v):
+  return v.lower() in ("true", "1", "yes")

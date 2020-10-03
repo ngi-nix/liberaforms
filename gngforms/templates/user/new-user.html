@@ -13,14 +13,14 @@
     <form method="POST">
         {{ wtform.csrf_token }}
         <p>
-            {{ wtform.username.label }} <span class='required'>●</span><br />
+            {{ wtform.username.label }} <span class='required-dot'>●</span><br />
             {{ wtform.username(class_="form-control", placeholder=_('Letters and numbers. No accents.')) }}
             {% for error in wtform.username.errors %}
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}
         </p>
         <p>
-            {{ wtform.email.label }} <span class='required'>●</span><br />
+            {{ wtform.email.label }} <span class='required-dot'>●</span><br />
             <span class="hint"></span>
             {{ wtform.email(class_="form-control") }}
             {% for error in wtform.email.errors %}
@@ -28,7 +28,7 @@
             {% endfor %}
         </p>
         <p>
-            {{ wtform.password.label }} <span class='required'>●</span><br />
+            {{ wtform.password.label }} <span class='required-dot'>●</span><br />
             <span class="hint">{%trans%}Use a passphrase, with spaces{%endtrans%}</span>
             {{ wtform.password(class_="form-control", placeholder=_('eg: No holidays this year')) }}
             {% for error in wtform.password.errors %}
@@ -36,31 +36,61 @@
             {% endfor %}
         </p>
         <p>
-            {{ wtform.password2.label }} <span class='required'>●</span><br />
+            {{ wtform.password2.label }} <span class='required-dot'>●</span><br />
             {{ wtform.password2(class_="form-control", placeholder=_('Another eg: My dog has fleas')) }}
             {% for error in wtform.password2.errors %}
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}
         </p>
-        {% if g.site.termsAndConditions["enabled"] and g.site.termsAndConditionsHTML %}
+    {% for consent_id in g.site.newUserConsentment %}
+        {% set consent = g.site.getConsentForDisplay(consent_id, enabled_only=False) %}
+
         <div style="margin-top:2.5em">
-            <div class="title_2 delimited">{%trans%}Terms and conditions{%endtrans%}</div>
-            {{ g.site.termsAndConditionsHTML|safe }}
-            <div>
-                <input id="termsAndConditions" name="termsAndConditions" type="checkbox" value="1" required />
-                &nbsp;
-                <span for="termsAndConditions" class="radio-inline">{{ wtform.termsAndConditions.label }}</span>
-                <span class='required'>●</span><br />
+            {% if consent.id == g.site.TermsConsentID %}
+            <div class="title_3 delimited">{%trans%}Terms and conditions{%endtrans%}</div>
+            {% endif %}
+            <div class="form-group {{ 'consentText' if consent.id != g.site.TermsConsentID }}">
+                <div>{{ consent['html']|safe }}</div>
+                
+                <div class="form-check">
+                    {% set input_name = consent.name %}
+                    {% if consent.id == g.site.TermsConsentID %}
+                        {% set input_name = "termsAndConditions" %}
+                    {% endif %}
+                    {% if consent.id == g.site.DPLConsentID %}
+                        {% set input_name = "DPLConsent" %}
+                    {% endif %}
+                    <input id="{{input_name}}" name="{{input_name}}" type="checkbox" class="form-check-input consent" value="1" required />
+                    <label for="{{input_name}}" class="form-check-label consent required">
+                    {{ consent['label'] if consent['label'] else _("I agree") }}
+                    {% if consent.required %}
+                    <span class="required-dot">●</span>
+                    {% endif %}
+                    </label>
+                </div>
+                {% if consent.id == g.site.TermsConsentID %}
                 {% for error in wtform.termsAndConditions.errors %}
-                    <span class="formError">{{ error }}</span><br />
+                    <br /><span class="formError">{{ error }}</span>
                 {% endfor %}
+                {% endif %}
+                {% if consent.id == g.site.DPLConsentID %}
+                {% for error in wtform.DPLConsent.errors %}
+                    <br /><span class="formError">{{ error }}</span>
+                {% endfor %}
+                {% endif %}
             </div>
         </div>
-        {% endif %}
+
+    {% endfor %}
     
         <div class="form-actions">
-        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}">
+        {% set disabled = "disabled" if preview_only else "" %}
+        <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}" {{disabled}} />
+        {% if preview_only %}
+        <a class="btn btn-primary" role="button" href="/site/consent-texts">{%trans%}Go back{%endtrans%}</a>
+        {% else %}
         <a class="btn btn-primary" role="button" href="/">{%trans%}Cancel{%endtrans%}</a>
+        {% endif %}
         </div>
     </form>
     

@@ -1,5 +1,5 @@
 function postFormRender(){
-    if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
+    if ($('#gngform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
         $("#required_message").show()
     }
     $("#gngform").find(":checkbox").css("box-shadow", "none")

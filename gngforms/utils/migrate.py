@@ -1,5 +1,5 @@
 """
-“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 GNGforms.org”
 
 This file is part of GNGforms.
 
@@ -121,8 +121,10 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 19:
         print("Upgrading to version 20")
         try:
-            query = models.Site.objects()
-            query.update(set__termsAndConditions={"markdown":"", "html":"", "enabled":False})
+            collection = models.Site._get_collection()
+            collection.update_many({}, {"$set": { "termsAndConditions": {
+                                                    "markdown":"", "html":"", "enabled":False}
+                                                }})
         except Exception as e:
             print(e)
             return schemaVersion
@@ -143,5 +145,62 @@ def migrateMongoSchema(schemaVersion):
             return schemaVersion
         print("OK")
         schemaVersion = 21
-        
+
+    if schemaVersion == 21:
+        print("Upgrading to version 22")
+        from gngforms.utils.consent_texts import ConsentText
+        import uuid
+        try:
+            user_collection = models.User._get_collection()
+            site_collection = models.Site._get_collection()
+            form_collection = models.Form._get_collection()
+            user_collection.update_many({}, {"$set": {"consentTexts": []}})
+            for site in site_collection.find():
+                terms_id = uuid.uuid4().hex
+                new_user_consentment_texts = []
+                if site["termsAndConditions"]['html']:
+                    terms_text = {  **site["termsAndConditions"],
+                                    "id": terms_id,
+                                    "name":"terms",
+                                    "label":"",
+                                    "required":True}
+                    new_user_consentment_texts.append(terms_id)
+                else:
+                    terms_text = ConsentText.getEmptyConsent(id=terms_id, name="terms")
+                DPL_id = uuid.uuid4().hex
+                for form in form_collection.find({"hostname": site["hostname"]}):
+                    DPL_text = {"id": DPL_id,
+                                "name": "DPL",
+                                "label": "",
+                                "enabled": form["dataConsent"]["required"],
+                                "required": True,
+                                "markdown": form["dataConsent"]["markdown"],
+                                "html": form["dataConsent"]["html"]
+                            }                       
+                    form_collection.update_one( {"_id": form["_id"]},
+                                                {"$set": { "consentTexts": [DPL_text]}})
+                    form_collection.update_one( {"_id": form["_id"]},
+                                                {"$unset": {"dataConsent": 1 }})
+                if site["personalDataConsent"]['html']:
+                    DPL_text = {**site["personalDataConsent"],
+                                "id": DPL_id,
+                                "name":"DPL",
+                                "label":"",
+                                "required":True
+                                }
+                else:
+                    DPL_text = ConsentText.getEmptyConsent(id=DPL_id,name="DPL")
+                site_collection.update_one(  {"_id": site["_id"]},
+                                        {"$set": {  "consentTexts": [terms_text, DPL_text],
+                                                    "newUserConsentment": new_user_consentment_texts}})
+                site_collection.update_one(  {"_id": site["_id"]},
+                                        {"$unset": {"personalDataConsent": 1,
+                                                    "termsAndConditions": 1 } })
+        except Exception as e:
+            print(e)
+            return schemaVersion
+        print("OK")
+        schemaVersion = 22
+
+
     return schemaVersion

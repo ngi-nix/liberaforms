@@ -79,6 +79,7 @@
   visibility: hidden;
 }
 .formbuilder-required:after {
+  color: #c10000;
   content: '●';
   visibility: visible;
 }

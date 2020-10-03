@@ -29,13 +29,12 @@ from gngforms.models import *
 from gngforms.utils.formhelper import *
 from gngforms.utils.wraps import *
 from gngforms.utils.email import EmailServer
+from gngforms.utils.consent_texts import ConsentText
 from gngforms.utils.utils import *
-
 import gngforms.utils.wtf as wtf
-#import gngforms.utils.email as smtp
-from form_templates import formTemplates
+#from form_templates import formTemplates
 
-from pprint import pprint as pp
+#from pprint import pprint as pp
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -46,12 +45,12 @@ form_bp = Blueprint('form_bp', __name__,
 def my_forms():
     return render_template('my-forms.html', forms=g.current_user.forms) 
 
-
+"""
 @form_bp.route('/forms/templates', methods=['GET'])
 @login_required
 def list_form_templates():
     return render_template('form_templates.html', templates=formTemplates)
-
+"""
 
 @form_bp.route('/forms/new', methods=['GET'])
 @form_bp.route('/forms/new/<string:templateID>', methods=['GET'])
@@ -173,11 +172,11 @@ def save_form(id=None):
             return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
             # this new form is a duplicate
-            dataConsent=session['dataConsent']
+            consentTexts=session['consentTexts']
             afterSubmitText=session['afterSubmitText']
             expiredText=session['expiredText']
         else:
-            dataConsent={'html':"", 'markdown':"", 'required': g.site.isPersonalDataConsentEnabled()}
+            consentTexts=[Form.newDataConsent()]
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
         #pp(formStructure)
@@ -199,7 +198,7 @@ def save_form(id=None):
                                         "password": False,
                                         "expireDate": False},
                     "introductionText": introductionText,
-                    "dataConsent": dataConsent,
+                    "consentTexts": consentTexts,
                     "afterSubmitText": afterSubmitText,
                     "expiredText": expiredText,
                     "sendConfirmation": Form.structureHasEmailField(formStructure),
@@ -217,17 +216,27 @@ def save_form(id=None):
         return redirect(make_url_for('form_bp.inspect_form', id=newForm.id))
 
 
-@form_bp.route('/forms/save-consent-text/<string:id>', methods=['POST'])
+@form_bp.route('/forms/save-consent/<string:form_id>/<string:consent_id>', methods=['POST'])
 @enabled_user_required
-def save_data_consent_text(id):
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+def save_data_consent(form_id, consent_id):
+    queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
-    if 'markdown' in request.form:
-        queriedForm.saveDataConsentText(request.form['markdown'])
-        return JsonResponse(json.dumps({'html':queriedForm.dataConsentHTML,
-                                        'markdown': queriedForm.dataConsentMarkdown}))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"), 'markdown': ""}))
+        return JsonResponse(json.dumps({'html': "Info: Queried form not found", 'markdown': "", "label": ""}))
+    if 'markdown' in request.form and "label" in request.form and "required" in request.form:
+        consent = queriedForm.saveConsent(consent_id, data=request.form.to_dict(flat=True))
+        if consent:
+            return JsonResponse(json.dumps(consent))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
+
+
+@form_bp.route('/forms/default-consent/<string:form_id>/<string:consent_id>', methods=['GET'])
+@enabled_user_required
+def default_consent_text(form_id, consent_id):
+    print(form_id, consent_id)
+    queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
+    if queriedForm:
+        return JsonResponse(json.dumps(queriedForm.site.getConsentForDisplay(consent_id)))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
 
 
 @form_bp.route('/forms/save-after-submit-text/<string:id>', methods=['POST'])
@@ -472,6 +481,7 @@ def toggle_restricted_access(id):
     queriedForm.addLog(gettext("Restricted access set to: %s" % access))
     return JsonResponse(json.dumps({'restricted':access}))
 
+
 @form_bp.route('/form/toggle-notification/<string:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_notification(id):
@@ -487,9 +497,10 @@ def toggle_form_dataconsent(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps())
-    dataConsentBool=queriedForm.toggleRequireDataConsent()
+    dataConsentBool=queriedForm.toggleDataConsentEnabled()
     queriedForm.addLog(gettext("Data protection consent set to: %s" % dataConsentBool))
-    return JsonResponse(json.dumps({'consent':dataConsentBool}))
+    return JsonResponse(json.dumps({'enabled':dataConsentBool}))
+
 
 @form_bp.route('/form/toggle-send-confirmation/<string:id>', methods=['POST'])
 @enabled_user_required
@@ -500,6 +511,7 @@ def toggle_form_sendconfirmation(id):
     sendConfirmationBool=queriedForm.toggleSendConfirmation()
     queriedForm.addLog(gettext("Send Confirmation set to: %s" % sendConfirmationBool))
     return JsonResponse(json.dumps({'confirmation':sendConfirmationBool}))
+
 
 @form_bp.route('/form/toggle-expiration-notification/<string:id>', methods=['POST'])
 @enabled_user_required
@@ -578,10 +590,11 @@ def view_form(slug):
                 thread.start()
         queriedForm.save()
         
-        if queriedForm.mightSendConfirmationEmail() and 'sendConfirmation' in formData:
+        if queriedForm.mightSendConfirmationEmail() and 'send-confirmation' in formData:
             confirmationEmail=queriedForm.getConfirmationEmailAddress(entry)
             if confirmationEmail and isValidEmail(confirmationEmail):
                 def sendConfirmation():
+                    print("send")
                     EmailServer().sendConfirmation(confirmationEmail, queriedForm)
                 thread = Thread(target=sendConfirmation())
                 thread.start()

@@ -7,6 +7,8 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
+{% set dataConsent = form.getDataConsentForDisplay() %}
+
 <div class="container">
 <div class="row">    
     <div class="col-md-6">
@@ -29,7 +31,6 @@
             {% endif %}
             </div>
         </div>
-        
         <table class="table table-sm sparse-table">
             <tr>
                 <td>{%trans%}Name{%endtrans%}</td>
@@ -143,17 +144,17 @@
             </tr>
             {% endif %}
             <tr>
-                <td>{%trans%}DPL{%endtrans%}</td>
+                <td id="DPL-anchor">{%trans%}DPL{%endtrans%}</td>
                 <td>
                 {% if form.isEditor(g.current_user) %}
                     <div id="toggle_dataConsent" class="btn-group btn-toggle">
-                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if form.isDataConsentRequired() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not form.isDataConsentRequired() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+                    <button id="dataConsent_true" class="btn btn-xs btn-default {% if dataConsent['enabled'] %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+                    <button id="dataConsent_false" class="btn btn-xs btn-default {% if not dataConsent['enabled'] %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
                     </div>
                     &nbsp;
                     <button id="show-DPL-text-button" class="btn btn-primary btn-xs">{%trans%}Edit text{%endtrans%}</button>
                 {% else %}
-                    {{ form.isDataConsentRequired() }}            
+                    {{ dataConsent['enabled'] }}            
                 {% endif %}
 
                </td>
@@ -161,16 +162,27 @@
             {% if form.isEditor(g.current_user) %}
             <tr id="DPL-text-block" style="display:none">
                 <td colspan="3">
-                <div class="title_2">{%trans%}Data protection law{%endtrans%}</div>
+                <div class="title_2">{%trans%}Data protection{%endtrans%}</div>
                 <div id="DPL-text-editor">
                     <input id="save-DPL-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
                     <input id="cancel-DPL-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+                    {% set siteConsent = form.site.getConsentForDisplay(dataConsent['id']) %}
+                    {% set disabled = "disabled" if siteConsent.markdown == dataConsent.markdown else "" %}
+                    <input id="default-DPL-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
+                    
                     <div style="margin-top:1em">
-                    <textarea id="DPL-mde">{{ form.dataConsentMarkdown }}</textarea>
+                    <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
+                        <div id="{{consent_id}}-consent-editor" class="form-row">
+                            <div class="form-group col">
+                            
+                            {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}                  
+                            <input id="dataConsent-label-input" class="form-control form-control-sm" type="text" placeholder="{{placeholder}}" value="{{form.dataConsent['label']}}">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div id="DPL-html" class="DPL-html dataConsentText" style="display:none">
-                    {{ form.dataConsentHTML|safe }}
+                <div id="DPL-html" class="DPL-html consentText" style="display:none">
+                    {{ dataConsent['html']|safe }}
                 </div>
                 </td>
             </tr>
@@ -206,7 +218,7 @@
             {%trans%}After replying to the form{%endtrans%}
             {% if form.isEditor(g.current_user) %}
                 <div style="float:right">
-                <button id="show-after-submit-editor-button" class="btn btn-primary btn-sm">
+                <button id="show-after-submit-editor-button" class="btn btn-primary btn-xs">
                     {%trans%}Edit text{%endtrans%}
                 </button>
                 </div>
@@ -232,7 +244,7 @@
             {%trans%}When the form has expired{%endtrans%}
             {% if form.isEditor(g.current_user) %}
                 <div style="float:right">
-                <button id="show-expired-editor-button" class="btn btn-primary btn-sm">
+                <button id="show-expired-editor-button" class="btn btn-primary btn-xs">
                     {%trans%}Edit text{%endtrans%}
                 </button>
                 </div>
@@ -307,18 +319,21 @@
             <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <div id="fb-render"></div>
             {% if form.hasEmailField() %}
-            <div id="sendConfirmation" class="sendConfirmation" {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
-            <input type="checkbox" name="sendConfirmation" value="ok" />
-            &nbsp;
-            {%trans%}Send me confirmation by mail{%endtrans%} <span id='confirmation_email'></span>
+            <div id="sendConfirmation" class="form-group form-check"  {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
+                <input id="confirmation_checkbox" class="form-check-input send-confirmation" type="checkbox" name="send-confirmation" value="ok" disabled />
+                <label for="confirmation_checkbox" class="form-check-label send-confirmation">
+                {%trans%}Send me confirmation by mail{%endtrans%} <span id='confirmation_email'></span>
+                </label>
             </div>
             {% endif %}
-
-            <div id="dataConsent" class="dataConsent" {% if not form.isDataConsentEnabled() %}style="display:none;"{% endif %}>
-                <div id="DPL-html-defunct" class="DPL-html dataConsentText">{{ form.dataConsentHTML|safe }}</div>
-                <div class="consent">
-                    <input type="checkbox" name="DPL" value="ok" required />
-                    &nbsp;{%trans%}I agree{%endtrans%}<span class="formbuilder-required required" style="font-size:1.2em">●</span>
+            <div id="dataConsent" class="consentText form-group" {% if dataConsent['enabled']==False %}style="display:none;"{% endif %}>
+                <div class="DPL-html">{{ dataConsent['html']|safe }}</div>
+                <div class="form-check">
+                    <input id="dummy-consent-checkbox" type="checkbox" class="form-check-input consent" required />
+                    <label id="DPL-label" for="dummy-consent-checkbox" class="form-check-label consent required">
+                    {{ dataConsent['label'] }}                    
+                    <span class="required-dot">●</span>
+                    </label>
                 </div>
             </div>
             <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
@@ -403,17 +418,17 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.consent == true) {
+            if (data.enabled == true) {
                 $('#dataConsent_true').addClass('btn-success');
                 $('#dataConsent_false').removeClass('btn-primary');
                 $('#dataConsent').show();
             }
-            else if (data.consent == false) {
+            else if (data.enabled == false) {
                 $('#dataConsent_true').removeClass('btn-success');
                 $('#dataConsent_false').addClass('btn-primary');
                 $('#dataConsent').hide();
             }
-            if ($('#gngform').find("span.formbuilder-required").filter(":visible").length) {
+            if ($('#gngform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
                 $("#required_message").show()
             }else{
                 $("#required_message").hide()
@@ -449,10 +464,10 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
 });
 {% endif %}
 // DPL editor
+var consent_cache = {}
 $(document).ready(function() {
     var dpl_MDE = new SimpleMDE({ 
                                 autosave: {enabled: false},
-                                autofocus: true,
                                 spellChecker: false,
                                 autoDownloadFontAwesome: false,
                                 element: document.getElementById("DPL-mde")
@@ -462,15 +477,22 @@ $(document).ready(function() {
         $("#DPL-html").hide()
         $("#DPL-text-block").show()
         $("#DPL-text-editor").show(0, function() {
-            dpl_MDE.codemirror.refresh();
-        });
+                    dpl_MDE.codemirror.refresh();
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#DPL-anchor").offset().top
+                    }, 200);
+                });
     });
     $("#save-DPL-button").click(function(){
+        var markdown = dpl_MDE.value()
+        var label = $("#dataConsent-label-input").val()
+        var required = {{ dataConsent['required']|tojson }}
+        var data = {"markdown": markdown, "label": label, 'required': required}
         $.ajax({
-            url : "/forms/save-consent-text/{{ form.id }}",
+            url : "/forms/save-consent/{{form.id}}/{{dataConsent.id}}",
             type: "POST",
             dataType: "json",
-            data: {"markdown": dpl_MDE.value()},
+            data: data,
             beforeSend: function(xhr, settings) {
                 if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                     xhr.setRequestHeader("X-CSRFToken", csrftoken)
@@ -478,7 +500,7 @@ $(document).ready(function() {
             },
             success: function(data, textStatus, jqXHR)
             {
-                //console.log(data.markdown)
+                //console.log(data)
                 $("#show-DPL-text-button").prop('disabled', false);
                 $("#DPL-text-editor").hide()
                 $(".DPL-html").html(data.html)
@@ -486,13 +508,57 @@ $(document).ready(function() {
                 fadeOutHighlight($("#DPL-html"))
                 $("#DPL-mde").val(data.markdown)
                 dpl_MDE.value($("#DPL-mde").val())
+                if (! data.label ){
+                    data.label="{{_('I agree')}}"
+                }
+                $("#DPL-label").html(data.label).append('<span class="required-dot">●</span>')
+                $("#DPL-label").show()
             }
         });
     });
     $("#cancel-DPL-button").click(function(){
         $("#DPL-text-block").hide()
-        dpl_MDE.value($("#DPL-mde").val())
+        if (consent_cache['markdown'] !== undefined) {
+            $("#DPL-mde").val(consent_cache['markdown'])
+            dpl_MDE.value($("#DPL-mde").val())
+        } else {
+            dpl_MDE.value($("#DPL-mde").val())
+        }
+        if (consent_cache['label'] !== undefined) {
+           $("#dataConsent-label-input").val(consent_cache['label'])
+        } else {
+            $("#dataConsent-label-input").val("")
+        }        
         $("#show-DPL-text-button").prop('disabled', false);
+    });
+    $("#default-DPL-button").click(function(){
+        consent_cache['markdown'] = dpl_MDE.value()
+        consent_cache['label'] = $("#dataConsent-label-input").val()
+        $.ajax({
+            url : "/forms/default-consent/{{form.id}}/{{dataConsent.id}}",
+            type: "GET",
+            dataType: "json",
+            data: {},
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                $("#DPL-mde").val(data.markdown)
+                dpl_MDE.value($("#DPL-mde").val())
+                if (data.label == "{{ _('I agree') }}") {
+                    $("#dataConsent-label-input").val("")
+                } else {
+                    $("#dataConsent-label-input").val(data.label)
+                }
+                $("#default-DPL-button").prop('disabled', true)
+            }
+        });
+    });
+    dpl_MDE.codemirror.on("change", function(){
+        $("#default-DPL-button").prop('disabled', false)
     });
 });
 // after submit editor

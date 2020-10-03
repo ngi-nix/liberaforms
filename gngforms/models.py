@@ -18,16 +18,17 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from flask import flash, request, g
-from flask_babel import gettext 
+from flask_babel import gettext, lazy_gettext
 from urllib.parse import urlparse
 import os, string, random, datetime, json, markdown, csv
 from mongoengine import QuerySet
 
 from gngforms import app, db
 from gngforms.utils.utils import *
+from gngforms.utils.consent_texts import ConsentText
 from gngforms.utils.migrate import migrateMongoSchema
 
-#from pprint import pprint as pp
+from pprint import pprint as pp
 
 
 class HostnameQuerySet(QuerySet):
@@ -50,9 +51,12 @@ class User(db.Document):
     validatedEmail = db.BooleanField()
     created = db.StringField(required=True)
     token = db.DictField(required=False)
-    
+    consentTexts = db.ListField(required=False)
+    site=None
+
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
+        self.site=Site.find(hostname=self.hostname)
 
     def __str__(self):
         return pformat({'User': get_obj_values_as_dict(self)})
@@ -209,7 +213,7 @@ class Form(db.Document):
     introductionText = db.DictField(required=True)
     afterSubmitText = db.DictField(required=True)
     expiredText = db.DictField(required=True)
-    dataConsent = db.DictField(required=True)
+    consentTexts = db.ListField(required=False)
     site = None
 
     def __init__(self, *args, **kwargs):
@@ -302,7 +306,7 @@ class Form(db.Document):
                 continue
             item={'label': field['label'], 'name': field['name']}
             result.append(item)
-        if self.isDataConsentRequired():
+        if self.dataConsent["enabled"]:
             # append dynamic DPL field
             result.append({"name": "DPL", "label": gettext("DPL")})
         return result
@@ -382,37 +386,31 @@ class Form(db.Document):
     def embed_url(self):
         return "%sembed/%s" % (self.site.host_url, self.slug)
 
-    def isDataConsentEnabled(self):
-        return self.isDataConsentRequired()
-
-    def isDataConsentRequired(self):
-        return self.dataConsent["required"]
+    @property
+    def dataConsent(self):
+        return self.consentTexts[0]
     
-    @property
-    def dataConsentHTML(self):
-        if self.dataConsent['html']:
-            return self.dataConsent['html']
-        if self.site.isPersonalDataConsentEnabled() and self.site.personalDataConsent['html']:
-            return self.site.personalDataConsent['html']
-        return Installation.fallbackDPL()["html"]
+    def getConsentForDisplay(self, id):
+        return ConsentText.getConsentForDisplay(id, self)
 
-    @property
-    def dataConsentMarkdown(self):
-        if self.dataConsent['markdown']:
-            return self.dataConsent['markdown']
-        if self.site.isPersonalDataConsentEnabled() and self.site.personalDataConsent['markdown']:
-            return self.site.personalDataConsent['markdown']
-        return Installation.fallbackDPL()["markdown"]       
+    def saveConsent(self, id, data):
+        return ConsentText.save(id, self, data)
 
-    def saveDataConsentText(self, markdown):
-        markdown=markdown.strip()
-        if markdown:
-            self.dataConsent = {'markdown':escapeMarkdown(markdown),
-                                'html':markdown2HTML(markdown),
-                                'required': self.dataConsent['required']}
-        else:
-            self.dataConsent = {'html':"", 'markdown':"", 'required':self.dataConsent['required']}
-        self.save()
+    def getDataConsentForDisplay(self):
+        return self.getConsentForDisplay(self.dataConsent['id'])
+        
+    def getDefaultDataConsentForDisplay(self):
+        return ConsentText.getConsentForDisplay(g.site.DPLConsentID, self.author)
+
+    def toggleDataConsentEnabled(self):
+        return ConsentText.toggleEnabled(self.dataConsent['id'], self)
+
+    @staticmethod
+    def newDataConsent():
+        consent = ConsentText.getEmptyConsent(  g.site.DPLConsentID,
+                                                name="DPL",
+                                                enabled=g.site.dataConsent['enabled'])
+        return consent
 
     @staticmethod
     def defaultExpiredText():
@@ -741,12 +739,7 @@ class Form(db.Document):
             self.save()
             return self.editors[editor_id]['notification']['expiredForm']
         return False
-
-    def toggleRequireDataConsent(self):
-        self.dataConsent["required"] = False if self.dataConsent["required"] else True
-        self.save()
-        return self.dataConsent["required"]
-
+    
     def toggleSendConfirmation(self):
         self.sendConfirmation = False if self.sendConfirmation else True
         self.save()
@@ -792,9 +785,9 @@ class Site(db.Document):
     menuColor=db.StringField(required=True)
     scheme = db.StringField(required=False)
     blurb = db.DictField(required=True)
-    termsAndConditions = db.DictField(required=True)
     invitationOnly = db.BooleanField()
-    personalDataConsent = db.DictField(required=False)
+    consentTexts = db.ListField(required=True)
+    newUserConsentment = db.ListField(required=False)
     smtpConfig = db.DictField(required=True)
 
     def __init__(self, *args, **kwargs):        
@@ -821,8 +814,9 @@ class Site(db.Document):
             "siteName": "GNGforms!",
             "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
             "menuColor": "#b71c1c",
-            "personalDataConsent": {"markdown": "", "html": "", "enabled": False },
-            "termsAndConditions": {"markdown": "", "html": "", "enabled": False},
+            "consentTexts": [   ConsentText.getEmptyConsent(id=uuid.uuid4().hex, name="terms"),
+                                ConsentText.getEmptyConsent(id=uuid.uuid4().hex, name="DPL") ],
+            "newUserConsentment": [],
             "smtpConfig": {
                 "host": "smtp.%s" % hostname,
                 "port": 25,
@@ -874,57 +868,102 @@ class Site(db.Document):
         self.blurb = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
         self.save()
 
-    def savePersonalDataConsentText(self, MDtext):
-        self.personalDataConsent = {'markdown':escapeMarkdown(MDtext),
-                                    'html':markdown2HTML(MDtext),
-                                    'enabled': self.personalDataConsent['enabled']}
-        self.save()
+    @property
+    def TermsConsentID(self):
+        return self.consentTexts[0]['id']
 
     @property
-    def termsAndConditionsHTML(self):
-        return self.termsAndConditions['html']
-
+    def DPLConsentID(self):
+        return self.consentTexts[1]['id']
+    
     @property
-    def termsAndConditionsMarkdown(self):
-        return self.termsAndConditions['markdown']
-
-    def saveTermsAndConditions(self, markdown):
-        markdown=markdown.strip()
-        if markdown:
-            self.termsAndConditions = { 'markdown':escapeMarkdown(markdown),
-                                        'html':markdown2HTML(markdown),
-                                        'enabled': self.termsAndConditions['enabled']}
-        else:
-            self.termsAndConditions = { 'markdown': "", 'html': "",
-                                        'enabled': self.termsAndConditions['enabled']}
-        self.save()
-
-    def toggleTermsAndConditions(self):
-        self.termsAndConditions['enabled'] = False if self.termsAndConditions['enabled'] else True
-        self.save()
-        return self.termsAndConditions['enabled']
-
-
-    def isPersonalDataConsentEnabled(self):
-        return self.personalDataConsent["enabled"]
+    def termsAndConditions(self):
+        return self.consentTexts[0]
+    
+    @property
+    def dataConsent(self):
+        return self.consentTexts[1]
+    
+    def getConsentForDisplay(self, id, enabled_only=True):
+        if id == self.TermsConsentID:
+            return self.getTermsAndConditionsForDisplay(enabled_only=enabled_only)
+        if id == self.DPLConsentID:
+            return self.getDataConsentForDisplay(enabled_only=enabled_only)
+        consent = ConsentText.getConsentByID(id, self)
+        if consent and (enabled_only and not consent['enabled']):
+            return ConsentText.getEmptyConsent(id=consent['id'])
+        return ConsentText.getConsentForDisplay(id, self)
         
-    @property
-    def personalDataConsentHTML(self):
-        return self.personalDataConsent["html"]
+    def getTermsAndConditionsForDisplay(self, enabled_only=True):
+        consent=self.termsAndConditions
+        if (enabled_only and not consent['enabled']):
+            consent = ConsentText.defaultTerms(id=self.TermsConsentID)
+            consent['label'] = ""
+            return consent
+        if not consent['markdown']:
+            consent = ConsentText.defaultTerms(id=consent['id'], enabled=consent['enabled'])
+        consent['label'] = consent['label'] if consent['label'] else ""
+        return consent
 
-    @property
-    def personalDataConsentMarkdown(self):
-        return self.personalDataConsent["markdown"]
+    def getDataConsentForDisplay(self, enabled_only=True):
+        consent=self.dataConsent
+        if (enabled_only and not consent['enabled']):
+            consent = ConsentText.defaultDPL(id=self.DPLConsentID)
+            consent['label'] = ""
+            return consent
+        if not consent['markdown']:
+            consent = ConsentText.defaultDPL(id=consent['id'], enabled=consent['enabled'])
+        consent['label'] = consent['label'] if consent['label'] else ""
+        return consent
 
-    def togglePersonalDataConsentEnabled(self):
-        self.personalDataConsent["enabled"] = False if self.personalDataConsent["enabled"] else True
+    def updateIncludedNewUserConsentmentTexts(self, id):
+        if id in self.newUserConsentment:
+            self.newUserConsentment.remove(id)
+            self.save()
+            return False
+        else:
+            if id == self.TermsConsentID:
+                self.newUserConsentment.insert(0, id)
+            elif id == self.DPLConsentID:
+                self.newUserConsentment.append(id)
+            else:
+                self.newUserConsentment.insert(-1, id)
+            self.save()
+            return True
+    
+    def toggleConsentEnabled(self, id):
+        #if id == self.TermsConsentID:
+        #    return self.updateNewUserConsentmentTexts(id)
+        #else:
+        return ConsentText.toggleEnabled(id, self)
+        
+    def saveConsent(self, id, data):
+        consent = [item for item in self.consentTexts if item["id"]==id]
+        consent = consent[0] if consent else None
+        if not consent:
+            return None
+        consent['markdown'] = escapeMarkdown(data['markdown'].strip())
+        consent['html'] = markdown2HTML(consent['markdown'])
+        consent['label'] = stripHTMLTags(data['label']).strip()
+        consent['required'] = str2bool(data['required'])
+        if id == self.TermsConsentID:
+            consent['required'] = True
+            if not consent['markdown']:
+                consent['markdown'] = ConsentText.defaultTerms()['markdown']
+                consent['html'] = ConsentText.defaultTerms()['html']
+        if id == self.DPLConsentID:
+            print(0)
+            consent['required'] = True
+            if not consent['markdown']:
+                consent['markdown'] = ConsentText.defaultDPL()['markdown']
+                consent['html'] = ConsentText.defaultDPL()['html']
         self.save()
-        return self.personalDataConsent["enabled"]
+        return consent
 
     def saveSMTPconfig(self, **kwargs):
         self.smtpConfig=kwargs
         self.save()
-                
+    
     @property
     def totalUsers(self):
         return User.findAll(hostname=self.hostname).count()
@@ -1073,8 +1112,3 @@ class Installation(db.Document):
     @staticmethod
     def isUser(email):
         return True if User.objects(email=email).first() else False
-        
-    @staticmethod
-    def fallbackDPL():
-        text=gettext("We take your data protection seriously. Please contact us for any inquiries.")
-        return {"markdown": text, "html": "<p>"+text+"</p>", "enabled": False}

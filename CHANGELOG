@@ -2,6 +2,7 @@ https://keepachangelog.com/en/1.0.0/
 
 v.1.6
  * Added Basque translation
+ * Reworked Consentment texts
  * Moved Login to Navbar
  * Prevented editing field option values if present in the database
  * Login accepts (username or email) + password

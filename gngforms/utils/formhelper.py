@@ -28,7 +28,7 @@ def clearSessionFormData():
     session['formFieldIndex'] = []
     session['formStructure'] = json.dumps([])
     session['introductionTextMD'] = ''
-    session['dataConsent'] = {}
+    session['consentTexts'] = []
     session['afterSubmitText']= {}
     session['expiredText'] = {}
     
@@ -39,7 +39,7 @@ def populateSessionWithForm(form):
     session['formFieldIndex'] = form.fieldIndex
     session['formStructure'] = form.structure
     session['introductionTextMD'] = form.introductionText['markdown']
-    session['dataConsent'] = form.dataConsent
+    session['consentTexts'] = form.consentTexts
     session['afterSubmitText'] = form.afterSubmitText
     session['expiredText'] = form.expiredText
 

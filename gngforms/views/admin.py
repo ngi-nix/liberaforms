@@ -27,6 +27,8 @@ from gngforms.utils.utils import *
 from gngforms.utils.email import EmailServer
 import gngforms.utils.wtf as wtf
 
+#from pprint import pprint as pp
+
 admin_bp = Blueprint('admin_bp', __name__,
                     template_folder='../templates/admin')
 
@@ -190,9 +192,3 @@ def toggle_newUser_notification():
 @admin_required
 def toggle_newForm_notification(): 
     return json.dumps({'notify': g.current_user.toggleNewFormNotification()})
-
-
-@admin_bp.route('/admin/toggle-dataprotection', methods=['POST'])
-@admin_required
-def toggle_site_data_consent(): 
-    return json.dumps({'dataprotection_enabled': g.site.togglePersonalDataConsentEnabled()})

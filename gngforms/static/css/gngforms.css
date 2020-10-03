@@ -145,16 +145,6 @@ input[type="date"], input[type="number"], input[type="time"] {
 .formIntroduction {
 
 }
-.dataConsent, .sendConfirmation {
-  padding: 1em 0 2em 0;
-}
-.dataConsentText {
-  font-size: 0.875rem;
-  color: #666;
-}
-.dataConsent input, .sendConfirmation input {
-  vertical-align: -2px;
-}
 #embed_snippet {
   display:none;
   padding-bottom: 1.5em;
@@ -218,15 +208,11 @@ input[type="date"], input[type="number"], input[type="time"] {
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
 
-.required {
-    font-size: 1.05em;
-    color: #c10000;
-    padding: 0 0 1em 0;
-}
 
 /* ######### WTForms ######### */
 .formError {
     color: #d9534f;
+    font-size: 1rem;
 }
 
 /* ######### Entries table ######### */
@@ -285,12 +271,12 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
 .gngform label:empty {
   display: none;
 }
-.gngform label > div:last-of-type {
-  display: inline-block;
-}
+
 .gngform input[type=submit] {
   margin-top: 1em;
 }
+
+
 /* ###### Theming ###### */
 .menu-color-options span {
   display: inline-block;
@@ -323,4 +309,44 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
 }
 .activeConditionGroup {
   background-color: #C3FDB8;
+}
+
+/* ######### Consent texts ######### */
+div.required {
+    /* font-size: 1.05em; */
+    color: #c10000;
+    padding: 0 0 1em 0;
+}
+div.consentText {
+  font-size: 0.85rem;
+  color: #666;
+}
+label.consent {
+  font-size: 1rem;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+label.send-confirmation {
+  font-size: 1.2rem;
+  margin-left: 0.5em;
+  cursor: pointer;
+}
+label.consent {
+  color: #333;
+}
+label.required {
+  margin-top: -0.1em;
+}
+span.required,
+span.required-dot {
+  font-size: 1.2rem;
+  color: #c10000;
+  padding-left: 0.25em;
+}
+button.newUserConsentTextToggle {
+  padding-top: 0.32em;
+  padding-bottom: 0.29em;
+}
+button.newUserConsentTextToggle > i {
+  padding: 0;
 }

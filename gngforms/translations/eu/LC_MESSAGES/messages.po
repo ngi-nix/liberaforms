@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-09-23 13:12+0200\n"
+"POT-Creation-Date: 2020-09-30 00:31+0200\n"
 "PO-Revision-Date: 2020-09-17 18:31+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
@@ -18,43 +18,45 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: models.py:263
+#: models.py:267
 msgid "Marked"
 msgstr "Markatuta"
 
-#: models.py:264 templates/admin/inspect-user.html:36
-#: templates/admin/inspect-user.html:84 templates/admin/list-forms.html:25
-#: templates/admin/list-users.html:29 templates/form/inspect-form.html:194
-#: templates/form/my-forms.html:30 templates/user/user-settings.html:107
-#: templates/user/user-settings.html:345
+#: models.py:268 templates/admin/inspect-user.html:35
+#: templates/admin/inspect-user.html:83 templates/admin/list-forms.html:25
+#: templates/admin/list-users.html:29 templates/form/inspect-form.html:202
+#: templates/form/my-forms.html:30 templates/user/user-settings.html:109
+#: templates/user/user-settings.html:307
 msgid "Created"
 msgstr "Sortuta"
 
-#: models.py:268 utils/formhelper.py:62
+#: models.py:272 utils/formhelper.py:62
 msgid "Label"
 msgstr "Etiketa"
 
-#: models.py:307
+#: models.py:311 templates/form/inspect-form.html:147
+#: templates/user/consent.html:24 templates/user/user-settings.html:202
+#: utils/consent_texts.py:94
 msgid "DPL"
 msgstr "DPBLO"
 
-#: models.py:419
+#: models.py:413
 msgid "Sorry, this form has expired."
 msgstr "Sentitzen dugu, formulario hau iraungi egin da."
 
-#: models.py:447
+#: models.py:441
 msgid "Thank you!!"
 msgstr "Eskerrik asko!"
 
-#: models.py:780
+#: models.py:769
 msgid "Form title"
 msgstr "Galdetegiaren izenburua"
 
-#: models.py:781
+#: models.py:770
 msgid "Context"
 msgstr "Testuingurua"
 
-#: models.py:782
+#: models.py:771
 msgid ""
 " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
@@ -62,7 +64,7 @@ msgstr ""
 " * Deskribatu zure galdetegia.\n"
 " * Gehitu beharrezko edukia, estekak, irudiak etab."
 
-#: models.py:1025
+#: models.py:994
 msgid ""
 "Hello,\n"
 "\n"
@@ -75,14 +77,6 @@ msgstr ""
 "GNGForms-era gonbidatu zaituzte.\n"
 "\n"
 "Ondo segi."
-
-#: models.py:1079
-msgid ""
-"We take your data protection seriously. Please contact us for any "
-"inquiries."
-msgstr ""
-"Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
-"harremanetan edozein kontsultatarako."
 
 #: templates/base.html:40
 msgid "Toggle root mode"
@@ -104,20 +98,20 @@ msgstr "Erabiltzaileak"
 msgid "My forms"
 msgstr "Nire galdetegiak"
 
-#: templates/base.html:65
+#: templates/base.html:69
 msgid "Settings"
 msgstr "Ezarpenak"
 
-#: templates/base.html:68
+#: templates/base.html:72
 msgid "Logout"
 msgstr "Irten"
 
-#: templates/base.html:80 templates/base.html:84 templates/user/login.html:10
+#: templates/base.html:84 templates/base.html:88 templates/user/login.html:10
 #: templates/user/login.html:23
 msgid "Login"
 msgstr "Hasi saioa"
 
-#: templates/base.html:87
+#: templates/base.html:91
 msgid "Create an account"
 msgstr "Sortu kontua"
 
@@ -128,7 +122,7 @@ msgid "Return to form"
 msgstr "Itzuli galdetegira"
 
 #: templates/admin/change-author.html:13 templates/admin/change-author.html:39
-#: templates/form/inspect-form.html:281
+#: templates/form/inspect-form.html:289
 msgid "Change author"
 msgstr "Aldatu egilea"
 
@@ -157,12 +151,12 @@ msgid "New author's username"
 msgstr "Egile berriaren erabiltzaile-izena"
 
 #: templates/admin/change-author.html:46 templates/admin/delete-user.html:26
-#: templates/admin/inspect-user.html:86 templates/form/share-form.html:19
+#: templates/admin/inspect-user.html:85 templates/form/share-form.html:19
 msgid "Editors"
 msgstr "Editoreak"
 
-#: templates/admin/change-author.html:55 templates/admin/inspect-user.html:85
-#: templates/admin/list-forms.html:26 templates/form/inspect-form.html:180
+#: templates/admin/change-author.html:55 templates/admin/inspect-user.html:84
+#: templates/admin/list-forms.html:26 templates/form/inspect-form.html:188
 #: templates/form/share-form.html:31
 msgid "Author"
 msgstr "Egileak"
@@ -172,7 +166,7 @@ msgid "Editor"
 msgstr "Editorea"
 
 #: templates/admin/delete-user.html:10 templates/admin/delete-user.html:54
-#: templates/admin/inspect-user.html:70
+#: templates/admin/inspect-user.html:69
 msgid "Delete user"
 msgstr "Ezabatu erabiltzailea"
 
@@ -184,13 +178,13 @@ msgstr "Erabiltzaile bat ezabatzera zoaz"
 msgid "and their forms"
 msgstr "eta bere galdetegiak"
 
-#: templates/admin/delete-user.html:25 templates/admin/inspect-user.html:83
-#: templates/admin/list-forms.html:24 templates/form/inspect-form.html:35
+#: templates/admin/delete-user.html:25 templates/admin/inspect-user.html:82
+#: templates/admin/list-forms.html:24 templates/form/inspect-form.html:36
 #: templates/form/my-forms.html:29
 msgid "Name"
 msgstr "Izena"
 
-#: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:88
+#: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:87
 #: templates/admin/list-forms.html:28 templates/form/my-forms.html:32
 msgid "Entries"
 msgstr "Erantzunak"
@@ -209,15 +203,15 @@ msgstr "Ezabatu erabiltzailea eta galdetegiak"
 #: templates/entries/delete-entries.html:27
 #: templates/entries/list-entries.html:235 templates/form/edit-form.html:83
 #: templates/form/edit-form.html:85 templates/form/expiration.html:115
-#: templates/form/inspect-form.html:167 templates/form/inspect-form.html:224
-#: templates/form/inspect-form.html:250 templates/form/preview-form.html:33
+#: templates/form/inspect-form.html:168 templates/form/inspect-form.html:232
+#: templates/form/inspect-form.html:258 templates/form/preview-form.html:33
 #: templates/form/preview-form.html:36 templates/main/index.html:28
 #: templates/site/change-site-favicon.html:28
-#: templates/site/change-sitename.html:23 templates/site/delete-site.html:35
-#: templates/site/menu-color.html:67 templates/site/smtp-config.html:48
-#: templates/user/change-email.html:24 templates/user/new-user.html:63
+#: templates/site/change-sitename.html:23 templates/site/consent.html:70
+#: templates/site/delete-site.html:35 templates/site/menu-color.html:67
+#: templates/site/smtp-config.html:48 templates/user/change-email.html:24
+#: templates/user/consent.html:40 templates/user/new-user.html:66
 #: templates/user/recover-password.html:25
-#: templates/user/user-settings.html:213 templates/user/user-settings.html:238
 msgid "Cancel"
 msgstr "Utzi"
 
@@ -225,72 +219,72 @@ msgstr "Utzi"
 msgid "User details"
 msgstr "Erabiltzailearen xehetasunak"
 
-#: templates/admin/inspect-user.html:17 templates/admin/list-users.html:23
+#: templates/admin/inspect-user.html:16 templates/admin/list-users.html:23
 #: utils/wtf.py:14 utils/wtf.py:46
 msgid "Username"
 msgstr "Erabiltzaile-izena"
 
-#: templates/admin/inspect-user.html:22 templates/admin/list-forms.html:31
-#: templates/admin/list-users.html:26 templates/form/inspect-form.html:199
+#: templates/admin/inspect-user.html:21 templates/admin/list-forms.html:31
+#: templates/admin/list-users.html:26 templates/form/inspect-form.html:207
 #: templates/site/edit-site.html:14
 msgid "Hostname"
 msgstr "Ostalari-izena"
 
-#: templates/admin/inspect-user.html:27
+#: templates/admin/inspect-user.html:26
 msgid "Is Admin"
 msgstr "Administratzailea da"
 
-#: templates/admin/inspect-user.html:30 templates/admin/inspect-user.html:50
-#: templates/admin/inspect-user.html:60 templates/admin/inspect-user.html:98
+#: templates/admin/inspect-user.html:29 templates/admin/inspect-user.html:49
+#: templates/admin/inspect-user.html:59 templates/admin/inspect-user.html:97
 #: templates/entries/list-entries.html:61
 #: templates/entries/list-entries.html:109 templates/form/expiration.html:21
-#: templates/form/inspect-form.html:72 templates/form/inspect-form.html:87
-#: templates/form/inspect-form.html:95 templates/form/inspect-form.html:107
-#: templates/form/inspect-form.html:121 templates/user/user-settings.html:82
-#: templates/user/user-settings.html:148 templates/user/user-settings.html:157
-#: templates/user/user-settings.html:191
+#: templates/form/inspect-form.html:73 templates/form/inspect-form.html:88
+#: templates/form/inspect-form.html:96 templates/form/inspect-form.html:108
+#: templates/form/inspect-form.html:122 templates/user/user-settings.html:76
+#: templates/user/user-settings.html:150 templates/user/user-settings.html:159
+#: templates/user/user-settings.html:193
 msgid "True"
 msgstr "Egia"
 
-#: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:52
-#: templates/admin/inspect-user.html:61 templates/admin/inspect-user.html:100
+#: templates/admin/inspect-user.html:30 templates/admin/inspect-user.html:51
+#: templates/admin/inspect-user.html:60 templates/admin/inspect-user.html:99
 #: templates/entries/list-entries.html:62
 #: templates/entries/list-entries.html:111 templates/form/expiration.html:22
-#: templates/form/inspect-form.html:73 templates/form/inspect-form.html:89
-#: templates/form/inspect-form.html:97 templates/form/inspect-form.html:109
-#: templates/form/inspect-form.html:123 templates/user/user-settings.html:83
-#: templates/user/user-settings.html:149 templates/user/user-settings.html:158
-#: templates/user/user-settings.html:192
+#: templates/form/inspect-form.html:74 templates/form/inspect-form.html:90
+#: templates/form/inspect-form.html:98 templates/form/inspect-form.html:110
+#: templates/form/inspect-form.html:124 templates/user/user-settings.html:77
+#: templates/user/user-settings.html:151 templates/user/user-settings.html:160
+#: templates/user/user-settings.html:194
 msgid "False"
 msgstr "Gezurra"
 
-#: templates/admin/inspect-user.html:40
+#: templates/admin/inspect-user.html:39
 msgid "Language"
 msgstr "Hizkuntza"
 
-#: templates/admin/inspect-user.html:44 templates/admin/list-users.html:31
-#: templates/user/user-settings.html:108 utils/wtf.py:15
+#: templates/admin/inspect-user.html:43 templates/admin/list-users.html:31
+#: templates/user/user-settings.html:110 utils/wtf.py:15
 msgid "Email"
 msgstr "E-posta"
 
-#: templates/admin/inspect-user.html:48
+#: templates/admin/inspect-user.html:47
 msgid "Validated email"
 msgstr "Balioztatutako e-posta"
 
-#: templates/admin/inspect-user.html:57
+#: templates/admin/inspect-user.html:56
 msgid "Blocked by admin"
 msgstr "Administratzaileak blokeatuta"
 
-#: templates/admin/inspect-user.html:68
+#: templates/admin/inspect-user.html:67
 msgid "Delete user and authored forms"
 msgstr "Ezabatu erabiltzailea eta bere galdetegiak"
 
-#: templates/admin/inspect-user.html:77
+#: templates/admin/inspect-user.html:76
 msgid "User's forms"
 msgstr "Erabiltzailearen galdetegiak"
 
-#: templates/admin/inspect-user.html:87 templates/admin/list-forms.html:27
-#: templates/form/inspect-form.html:68 templates/form/my-forms.html:33
+#: templates/admin/inspect-user.html:86 templates/admin/list-forms.html:27
+#: templates/form/inspect-form.html:69 templates/form/my-forms.html:33
 msgid "Public"
 msgstr "Publikoa"
 
@@ -300,22 +294,22 @@ msgstr "Galdetegi guztiak"
 
 #: templates/admin/list-forms.html:16 templates/admin/list-users.html:15
 #: templates/entries/list-entries.html:26
-#: templates/entries/view-results.html:19 templates/form/inspect-form.html:22
+#: templates/entries/view-results.html:19 templates/form/inspect-form.html:24
 msgid "Graphs"
 msgstr "Grafikoak"
 
-#: templates/admin/list-forms.html:29 templates/form/inspect-form.html:39
+#: templates/admin/list-forms.html:29 templates/form/inspect-form.html:40
 #: templates/form/my-forms.html:31
 msgid "Last entry"
 msgstr "Azken erantzuna"
 
-#: templates/admin/list-users.html:30 templates/form/inspect-form.html:136
-#: templates/form/inspect-form.html:150 templates/form/share-form.html:61
-#: templates/user/user-settings.html:203 templates/user/user-settings.html:228
+#: templates/admin/list-users.html:30 templates/form/inspect-form.html:137
+#: templates/form/inspect-form.html:151 templates/form/share-form.html:61
+#: templates/site/consent.html:31
 msgid "Enabled"
 msgstr "Gaituta"
 
-#: templates/admin/list-users.html:33 templates/user/user-settings.html:112
+#: templates/admin/list-users.html:33 templates/user/user-settings.html:114
 msgid "Admin"
 msgstr "Administratzailea"
 
@@ -345,11 +339,11 @@ msgstr "Aldatu hizkuntza"
 
 #: templates/common/change-language.html:39
 #: templates/entries/list-entries.html:234 templates/form/edit-form.html:82
-#: templates/form/expiration.html:114 templates/form/inspect-form.html:166
-#: templates/form/inspect-form.html:223 templates/form/inspect-form.html:249
+#: templates/form/expiration.html:114 templates/form/inspect-form.html:167
+#: templates/form/inspect-form.html:231 templates/form/inspect-form.html:257
 #: templates/form/preview-form.html:30 templates/main/index.html:27
-#: templates/site/menu-color.html:66 templates/user/change-email.html:23
-#: templates/user/user-settings.html:532 templates/user/user-settings.html:599
+#: templates/site/consent.html:69 templates/site/menu-color.html:66
+#: templates/user/change-email.html:23 templates/user/consent.html:39
 msgid "Save"
 msgstr "Gorde"
 
@@ -359,7 +353,7 @@ msgid "Delete entries"
 msgstr "Ezabatu erantzunak"
 
 #: templates/entries/delete-entries.html:11
-#: templates/form/inspect-form.html:293 views/form.py:150
+#: templates/form/inspect-form.html:301 views/form.py:151
 msgid "Form"
 msgstr "Galdetegia"
 
@@ -419,7 +413,7 @@ msgstr "Markatu"
 msgid "Delete entry"
 msgstr "Ezabatu erantzuna"
 
-#: templates/form/delete-form.html:17 templates/form/inspect-form.html:270
+#: templates/form/delete-form.html:17 templates/form/inspect-form.html:278
 msgid "Delete form"
 msgstr "Ezabatu galdetegia"
 
@@ -432,7 +426,7 @@ msgid "Write the name of the form below"
 msgstr "Idatzi azpian galdetegiaren izena"
 
 #: templates/form/delete-form.html:33 templates/site/delete-site.html:34
-#: templates/site/edit-site.html:64 templates/user/user-settings.html:125
+#: templates/site/edit-site.html:64 templates/user/user-settings.html:127
 msgid "Delete"
 msgstr "Ezabatu"
 
@@ -481,8 +475,8 @@ msgstr ""
 msgid "Notify me when this form expires"
 msgstr "Jakinarazi galdetegi hau iraungitzean"
 
-#: templates/form/expiration.html:29 templates/form/inspect-form.html:85
-#: templates/form/inspect-form.html:93
+#: templates/form/expiration.html:29 templates/form/inspect-form.html:86
+#: templates/form/inspect-form.html:94
 msgid "Expired"
 msgstr "Iraungitua"
 
@@ -506,18 +500,17 @@ msgstr "Baldintzak"
 msgid "Save max."
 msgstr "Gorde gehiengoa"
 
-#: templates/form/expiration.html:100 templates/form/inspect-form.html:232
+#: templates/form/expiration.html:100 templates/form/inspect-form.html:240
 msgid "When the form has expired"
 msgstr "Galdetegia iraungitzean"
 
-#: templates/form/expiration.html:103 templates/form/inspect-form.html:154
-#: templates/form/inspect-form.html:210 templates/form/inspect-form.html:236
-#: templates/main/index.html:21 templates/user/user-settings.html:199
-#: templates/user/user-settings.html:224
+#: templates/form/expiration.html:103 templates/form/inspect-form.html:155
+#: templates/form/inspect-form.html:218 templates/form/inspect-form.html:244
+#: templates/main/index.html:21
 msgid "Edit text"
 msgstr "Editatu testua"
 
-#: templates/form/expiration.html:108 templates/form/inspect-form.html:242
+#: templates/form/expiration.html:108 templates/form/inspect-form.html:250
 msgid "Say something to the user if the form has expired"
 msgstr "Esan zerbait erabiltzaileari galdetegia iraungitu bada"
 
@@ -539,117 +532,115 @@ msgstr ""
 msgid "Use this template"
 msgstr "Erabili txantiloi hau"
 
-#: templates/form/inspect-form.html:14
+#: templates/form/inspect-form.html:16
 msgid "Details"
 msgstr "Xehetasunak"
 
-#: templates/form/inspect-form.html:18
+#: templates/form/inspect-form.html:20
 msgid "View entries"
 msgstr "Ikusi erantzunak"
 
-#: templates/form/inspect-form.html:26
+#: templates/form/inspect-form.html:28
 msgid "Total entries"
 msgstr "Guztirazko erantzunak"
 
-#: templates/form/inspect-form.html:52
+#: templates/form/inspect-form.html:53
 msgid "Public URL"
 msgstr "URL publikoa"
 
-#: templates/form/inspect-form.html:54 templates/form/inspect-form.html:137
-#: templates/form/inspect-form.html:151 templates/form/inspect-form.html:182
-#: templates/form/share-form.html:62 templates/user/user-settings.html:204
-#: templates/user/user-settings.html:229
+#: templates/form/inspect-form.html:55 templates/form/inspect-form.html:138
+#: templates/form/inspect-form.html:152 templates/form/inspect-form.html:190
+#: templates/form/share-form.html:62 templates/site/consent.html:35
 msgid "Disabled"
 msgstr "Desgaituta"
 
-#: templates/form/inspect-form.html:81
+#: templates/form/inspect-form.html:82
 msgid "Expiration"
 msgstr "Iraungitzea"
 
-#: templates/form/inspect-form.html:103 templates/form/my-forms.html:34
+#: templates/form/inspect-form.html:104 templates/form/my-forms.html:34
+#: templates/site/consent.html:33
 msgid "Shared"
 msgstr "Partekatua"
 
-#: templates/form/inspect-form.html:117 templates/form/share-form.html:92
+#: templates/form/inspect-form.html:118 templates/form/share-form.html:92
 msgid "Restricted access"
 msgstr "Sarbide mugatua"
 
-#: templates/form/inspect-form.html:132
+#: templates/form/inspect-form.html:133
 msgid "Confirmation"
 msgstr "Egiaztapena"
 
-#: templates/form/inspect-form.html:146
-msgid "Require consent"
-msgstr "Baimena eskatu"
+#: templates/form/inspect-form.html:165 templates/site/consent.html:23
+msgid "Data protection"
+msgstr ""
 
-#: templates/form/inspect-form.html:164 templates/user/user-settings.html:236
-msgid "Data protection law"
-msgstr "Datuak babesteko legea"
-
-#: templates/form/inspect-form.html:206
-msgid "After replying to the form"
-msgstr "Galdetegia erantzun ostean"
-
-#: templates/form/inspect-form.html:216
-msgid "Say something to the user after the form has been submitted"
-msgstr "Esan zerbait erabiltzaileari galdetegia bidali ondoren"
-
-#: templates/form/inspect-form.html:259
-msgid "Other options"
-msgstr "Beste aukerak"
-
-#: templates/form/inspect-form.html:265
-msgid "View log"
-msgstr "Ikusi erregistroa"
-
-#: templates/form/inspect-form.html:266
-msgid "Duplicate form"
-msgstr "Bikoiztu galdetegia"
-
-#: templates/form/inspect-form.html:267
-msgid "Embed form"
-msgstr "Txertatu galdetegia"
-
-#: templates/form/inspect-form.html:272
-msgid "Delete form and entries"
-msgstr "Ezabatu galdetegia eta erantzunak"
-
-#: templates/form/inspect-form.html:278
-msgid "Admin options"
-msgstr "Administratzaile-aukerak"
-
-#: templates/form/inspect-form.html:280
-msgid "Duplicate"
-msgstr "Bikoiztu"
-
-#: templates/form/inspect-form.html:283
-msgid "Disable"
-msgstr "Desgaitu"
-
-#: templates/form/inspect-form.html:285 templates/user/user-settings.html:278
-msgid "Enable"
-msgstr "Gaitu"
-
-#: templates/form/inspect-form.html:297
-msgid "Edit form"
-msgstr "Editatu galdetegia"
-
-#: templates/form/inspect-form.html:307 templates/form/preview-form.html:19
-#: templates/form/view-form.html:20
-msgid "Required fields"
-msgstr "Nahitaezko eremuak"
-
-#: templates/form/inspect-form.html:313 templates/form/view-form.html:30
-msgid "Send me confirmation by mail"
-msgstr "Bidali berrespena e-postaz"
-
-#: templates/form/inspect-form.html:321 templates/form/view-form.html:39
-#: utils/wtf.py:18
+#: templates/form/inspect-form.html:174 templates/form/inspect-form.html:330
+#: templates/form/inspect-form.html:505 templates/form/view-form.html:42
+#: templates/site/consent.html:57 templates/site/consent.html:76
+#: templates/user/new-user.html:54
 msgid "I agree"
 msgstr "Ados nago"
 
-#: templates/form/inspect-form.html:324 templates/form/preview-form.html:23
-#: templates/form/view-form.html:44 templates/site/smtp-config.html:61
+#: templates/form/inspect-form.html:214
+msgid "After replying to the form"
+msgstr "Galdetegia erantzun ostean"
+
+#: templates/form/inspect-form.html:224
+msgid "Say something to the user after the form has been submitted"
+msgstr "Esan zerbait erabiltzaileari galdetegia bidali ondoren"
+
+#: templates/form/inspect-form.html:267
+msgid "Other options"
+msgstr "Beste aukerak"
+
+#: templates/form/inspect-form.html:273
+msgid "View log"
+msgstr "Ikusi erregistroa"
+
+#: templates/form/inspect-form.html:274
+msgid "Duplicate form"
+msgstr "Bikoiztu galdetegia"
+
+#: templates/form/inspect-form.html:275
+msgid "Embed form"
+msgstr "Txertatu galdetegia"
+
+#: templates/form/inspect-form.html:280
+msgid "Delete form and entries"
+msgstr "Ezabatu galdetegia eta erantzunak"
+
+#: templates/form/inspect-form.html:286
+msgid "Admin options"
+msgstr "Administratzaile-aukerak"
+
+#: templates/form/inspect-form.html:288
+msgid "Duplicate"
+msgstr "Bikoiztu"
+
+#: templates/form/inspect-form.html:291
+msgid "Disable"
+msgstr "Desgaitu"
+
+#: templates/form/inspect-form.html:293 templates/user/user-settings.html:240
+msgid "Enable"
+msgstr "Gaitu"
+
+#: templates/form/inspect-form.html:305
+msgid "Edit form"
+msgstr "Editatu galdetegia"
+
+#: templates/form/inspect-form.html:315 templates/form/preview-form.html:19
+#: templates/form/view-form.html:22
+msgid "Required fields"
+msgstr "Nahitaezko eremuak"
+
+#: templates/form/inspect-form.html:321 templates/form/view-form.html:32
+msgid "Send me confirmation by mail"
+msgstr "Bidali berrespena e-postaz"
+
+#: templates/form/inspect-form.html:335 templates/form/preview-form.html:23
+#: templates/form/view-form.html:48 templates/site/smtp-config.html:61
 msgid "Send"
 msgstr "Bidali"
 
@@ -749,9 +740,36 @@ msgstr "Aldatu webgunearen izena"
 msgid "New site name"
 msgstr "Webgune-izen berria"
 
-#: templates/site/change-sitename.html:22 templates/user/new-user.html:62
+#: templates/site/change-sitename.html:22 templates/user/new-user.html:65
 msgid "Submit"
 msgstr "Bidali"
+
+#: templates/site/consent.html:14
+msgid "Default consent text"
+msgstr "Baimentze-testu lehenetsia"
+
+#: templates/site/consent.html:21 templates/user/new-user.html:48
+#: templates/user/user-settings.html:201
+msgid "Terms and conditions"
+msgstr "Erabilera-baldintzak"
+
+#: templates/site/consent.html:38 templates/user/consent.html:27
+#: templates/user/user-settings.html:86 templates/user/user-settings.html:205
+#: templates/user/user-settings.html:288
+msgid "Edit"
+msgstr "Editatu"
+
+#: templates/site/consent.html:43
+msgid "New users must agree to these terms and conditions"
+msgstr "Erabiltzaile berriek erabilera-baldintza hauek onartu behar dituzte"
+
+#: templates/site/consent.html:81
+msgid "Required"
+msgstr ""
+
+#: templates/site/consent.html:89
+msgid "Users may include the following texts in their forms"
+msgstr ""
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
@@ -781,7 +799,7 @@ msgstr "Idatzi azpian webgunearen izena"
 msgid "Sitename"
 msgstr "Webgunearen izena"
 
-#: templates/site/edit-site.html:30 templates/user/user-settings.html:187
+#: templates/site/edit-site.html:30 templates/user/user-settings.html:189
 msgid "Invitation only"
 msgstr "Gonbidapena soilik"
 
@@ -793,10 +811,10 @@ msgstr "Esteka publikoak sortzea"
 msgid "Scheme"
 msgstr "Egitasmoa"
 
-#: templates/site/edit-site.html:59 templates/user/user-settings.html:44
-#: templates/user/user-settings.html:58 templates/user/user-settings.html:66
-#: templates/user/user-settings.html:176 templates/user/user-settings.html:183
-#: templates/user/user-settings.html:252 templates/user/user-settings.html:259
+#: templates/site/edit-site.html:59 templates/user/user-settings.html:38
+#: templates/user/user-settings.html:52 templates/user/user-settings.html:60
+#: templates/user/user-settings.html:178 templates/user/user-settings.html:185
+#: templates/user/user-settings.html:214 templates/user/user-settings.html:221
 msgid "Change"
 msgstr "Aldatu"
 
@@ -804,7 +822,7 @@ msgstr "Aldatu"
 msgid "Go back"
 msgstr "Itzuli"
 
-#: templates/site/menu-color.html:9 templates/user/user-settings.html:256
+#: templates/site/menu-color.html:9 templates/user/user-settings.html:218
 msgid "Menu color"
 msgstr "Menuaren kolorea"
 
@@ -848,6 +866,18 @@ msgstr ""
 msgid "Change email address"
 msgstr "Aldatu e-posta helbidea"
 
+#: templates/user/consent.html:14 templates/user/user-settings.html:83
+msgid "Consentment texts"
+msgstr ""
+
+#: templates/user/consent.html:17
+msgid "You can include these texts in your forms"
+msgstr ""
+
+#: templates/user/consent.html:32
+msgid "Data protection law"
+msgstr "Datuak babesteko legea"
+
 #: templates/user/login.html:24
 msgid "Forgot your password?"
 msgstr "Pasahitza ahaztu duzu?"
@@ -872,11 +902,7 @@ msgstr "adib.: Oporrik ez aurten"
 msgid "Another eg: My dog has fleas"
 msgstr "Beste adibide bat: Nirekin bizi den zakurrak arkakusoak ditu"
 
-#: templates/user/new-user.html:47 templates/user/user-settings.html:197
-msgid "Terms and conditions"
-msgstr "Erabilera-baldintzak"
-
-#: templates/user/new-user.html:75
+#: templates/user/new-user.html:78
 msgid "We sent you an email!"
 msgstr "E-posta mezu bat bidali dizugu!"
 
@@ -896,121 +922,122 @@ msgstr "Aldatu pasahitza"
 msgid "Reset password"
 msgstr "Berrezarri pasahitza"
 
-#: templates/user/user-settings.html:20
+#: templates/user/user-settings.html:14
 msgid "Hello"
 msgstr "Kaixo"
 
-#: templates/user/user-settings.html:26
+#: templates/user/user-settings.html:20
 msgid "Your email has not been validated"
 msgstr "Zure eposta helbidea ez da egiaztatu"
 
-#: templates/user/user-settings.html:30
+#: templates/user/user-settings.html:24
 msgid "Validate my email"
 msgstr "Egiaztatu nire e-posta helbidea"
 
-#: templates/user/user-settings.html:39 utils/wtf.py:54
+#: templates/user/user-settings.html:33 utils/wtf.py:54
 msgid "Email address"
 msgstr "E-posta helbidea"
 
-#: templates/user/user-settings.html:48 utils/wtf.py:16 utils/wtf.py:47
+#: templates/user/user-settings.html:42 utils/wtf.py:16 utils/wtf.py:47
 #: utils/wtf.py:69 utils/wtf.py:84
 msgid "Password"
 msgstr "Pasahitza"
 
-#: templates/user/user-settings.html:63
+#: templates/user/user-settings.html:57
 msgid "Preferred language"
 msgstr "Hobetsitako hizkuntza"
 
-#: templates/user/user-settings.html:73
+#: templates/user/user-settings.html:67
 msgid "By default"
 msgstr "Lehenetsia"
 
-#: templates/user/user-settings.html:78
+#: templates/user/user-settings.html:72
 msgid "New entry notification default"
 msgstr "Jakinarazi erantzun berria jasotzean"
 
-#: templates/user/user-settings.html:91
+#: templates/user/user-settings.html:93
 msgid "Administrator"
 msgstr "Administratzailea"
 
-#: templates/user/user-settings.html:95
+#: templates/user/user-settings.html:97
 msgid "Invitations"
 msgstr "Gonbidapenak"
 
-#: templates/user/user-settings.html:99
+#: templates/user/user-settings.html:101
 msgid "Invite a new user"
 msgstr "Gonbidatu erabiltzaile berria"
 
-#: templates/user/user-settings.html:130
+#: templates/user/user-settings.html:132
 msgid "Invitation message"
 msgstr "Gonbidapen mezua"
 
-#: templates/user/user-settings.html:140
+#: templates/user/user-settings.html:142
 msgid "My admin settings"
 msgstr "Nire administratzaile-ezarpenak"
 
-#: templates/user/user-settings.html:145
+#: templates/user/user-settings.html:147
 msgid "Notify me when new user has registered"
 msgstr "Jakinarazi erabiltzaile berriak izena ematean"
 
-#: templates/user/user-settings.html:154
+#: templates/user/user-settings.html:156
 msgid "Notify me when new form has been created"
 msgstr "Jakinarazi galdetegi berria sortzean"
 
-#: templates/user/user-settings.html:166
+#: templates/user/user-settings.html:168
 msgid "Site settings"
 msgstr "Webgunearen ezarpenak"
 
-#: templates/user/user-settings.html:171
+#: templates/user/user-settings.html:173
 msgid "Site name"
 msgstr "Webgune-izena"
 
-#: templates/user/user-settings.html:180
+#: templates/user/user-settings.html:182
 msgid "Default language"
 msgstr "Hizkuntza lehenetsia"
 
-#: templates/user/user-settings.html:211
-msgid "New users must agree to these terms and conditions"
-msgstr "Erabiltzaile berriek erabilera-baldintza hauek onartu behar dituzte"
+#: templates/user/user-settings.html:199
+msgid "Consent"
+msgstr ""
 
-#: templates/user/user-settings.html:212 templates/user/user-settings.html:237
-#: templates/user/user-settings.html:326 templates/user/user-settings.html:549
-#: templates/user/user-settings.html:569 templates/user/user-settings.html:616
-#: templates/user/user-settings.html:636
-msgid "Edit"
-msgstr "Editatu"
+#: templates/user/user-settings.html:202
+msgid "etc"
+msgstr ""
 
-#: templates/user/user-settings.html:222
-msgid "Data protection consent"
-msgstr "Datuak babesteko baimena"
-
-#: templates/user/user-settings.html:236
-msgid "Default consent text"
-msgstr "Baimentze-testu lehenetsia"
-
-#: templates/user/user-settings.html:247
+#: templates/user/user-settings.html:209
 msgid "Favicon"
 msgstr "Favicona"
 
-#: templates/user/user-settings.html:263 utils/wtf.py:78
+#: templates/user/user-settings.html:225 utils/wtf.py:78
 msgid "Email server"
 msgstr "E-posta zerbitzaria"
 
-#: templates/user/user-settings.html:266
+#: templates/user/user-settings.html:228
 msgid "Configure"
 msgstr "Konfiguratu"
 
-#: templates/user/user-settings.html:274 templates/user/user-settings.html:304
+#: templates/user/user-settings.html:236 templates/user/user-settings.html:266
 msgid "Root user"
 msgstr "Root erabiltzailea"
 
-#: templates/user/user-settings.html:278
+#: templates/user/user-settings.html:240
 msgid "root mode"
 msgstr ""
 
-#: templates/user/user-settings.html:340
+#: templates/user/user-settings.html:302
 msgid "Installation"
 msgstr "Instalazioa"
+
+#: utils/consent_texts.py:89
+msgid "Please accept our terms and conditions."
+msgstr ""
+
+#: utils/consent_texts.py:95
+msgid ""
+"We take your data protection seriously. Please contact us for any "
+"inquiries."
+msgstr ""
+"Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
+"harremanetan edozein kontsultatarako."
 
 #: utils/email.py:87
 msgid "Congratulations!"
@@ -1165,64 +1192,64 @@ msgstr "HTML kolore kodea"
 msgid "Not a valid HTML color code"
 msgstr "Ez da baliozko HTML kolore kodea"
 
-#: views/admin.py:48 views/admin.py:86
+#: views/admin.py:50 views/admin.py:88
 msgid "User not found"
 msgstr "Ez da aurkitu erabiltzailea"
 
-#: views/admin.py:91
+#: views/admin.py:93
 msgid "Cannot delete root user"
 msgstr "Ezin da ezabatu root erabiltzailea"
 
-#: views/admin.py:94
+#: views/admin.py:96
 msgid "Cannot delete yourself"
 msgstr "Ezin duzu ezabatu zure burua"
 
-#: views/admin.py:98
+#: views/admin.py:100
 #, python-format
 msgid "Deleted user '%s'"
 msgstr "'%s' ezabatutako erabiltzailea"
 
-#: views/admin.py:101
+#: views/admin.py:103
 msgid "Username does not match"
 msgstr "Erabiltzaile-izena ez dator bat"
 
-#: views/admin.py:119 views/admin.py:130 views/entries.py:42
+#: views/admin.py:121 views/admin.py:132 views/entries.py:42
 #: views/entries.py:55 views/entries.py:65 views/entries.py:175
-#: views/form.py:131 views/form.py:264 views/form.py:282 views/form.py:297
-#: views/form.py:307 views/form.py:347 views/form.py:420 views/form.py:435
-#: views/form.py:527
+#: views/form.py:132 views/form.py:265 views/form.py:283 views/form.py:298
+#: views/form.py:308 views/form.py:348 views/form.py:421 views/form.py:436
+#: views/form.py:531
 msgid "Can't find that form"
 msgstr "Ezin da galdetegi hori aurkitu"
 
-#: views/admin.py:134
+#: views/admin.py:136
 msgid "Current author incorrect"
 msgstr "Uneko egilea ez da zuzena"
 
-#: views/admin.py:142
+#: views/admin.py:144
 #, python-format
 msgid "Changed author from %s to %s"
 msgstr "Egilea %s(e)tik %s(e)ra aldatu da"
 
-#: views/admin.py:143
+#: views/admin.py:145
 msgid "Changed author OK"
 msgstr "Egilea ongi aldatu da"
 
-#: views/admin.py:146
+#: views/admin.py:148
 #, python-format
 msgid "Cannot use %s. The user is not enabled"
 msgstr "Ezin da %s erabili. Erabiltzailea ez dago gaituta"
 
-#: views/admin.py:148
+#: views/admin.py:150
 #, python-format
 msgid "Can't find username %s"
 msgstr "Ezin da aurkitu %s erabiltzailea"
 
-#: views/admin.py:163
+#: views/admin.py:165
 #, python-format
 msgid "We've sent an invitation to %s"
 msgstr "Gonbidapena bidali diogu %s(r)i"
 
-#: views/admin.py:176
+#: views/admin.py:178
 msgid "Opps! We can't find that invitation"
 msgstr "Hara! Ezin dugu gonbidapen hori aurkitu"
 
@@ -1251,192 +1278,191 @@ msgstr "%s erantzun ezabatu dira"
 msgid "Number of entries does not match"
 msgstr "Erantzun kopurua ez dator bat"
 
-#: views/form.py:73
+#: views/form.py:74
 msgid "Something went wrong. id does not match session['form_id']"
 msgstr "Zerbait gaizki atera da. id-a ez dator bat saioarekin ['form_id']"
 
-#: views/form.py:77
+#: views/form.py:78
 msgid "You can't edit that form"
 msgstr "Ezin duzu editatu galdetegi hori"
 
-#: views/form.py:85
+#: views/form.py:86
 msgid "Something went wrong. No slug!"
 msgstr "Zerbait gaizki atera da. Slug-ik ez!"
 
-#: views/form.py:162
+#: views/form.py:163
 msgid "Updated form OK"
 msgstr "Galdetegia ongi eguneratu da"
 
-#: views/form.py:163
+#: views/form.py:164
 msgid "Form edited"
 msgstr "Galdetegia editatu da"
 
-#: views/form.py:169
+#: views/form.py:170
 msgid "Slug is missing."
 msgstr "Slug-a falta da."
 
-#: views/form.py:172
+#: views/form.py:173
 #, python-format
 msgid "Slug is not unique. %s"
 msgstr "Slug-a ez da bakarra. %s"
 
-#: views/form.py:212
+#: views/form.py:213
 msgid "Form created"
 msgstr "Galdetegia sortu da"
 
-#: views/form.py:213
+#: views/form.py:214
 msgid "Saved form OK"
 msgstr "Galdetegia ongi gorde da"
 
-#: views/form.py:230 views/form.py:243 views/form.py:256 views/site.py:55
-#: views/site.py:64
+#: views/form.py:231 views/form.py:244 views/form.py:257 views/site.py:61
 msgid "An error occured"
 msgstr "Errorea gertatu da"
 
-#: views/form.py:270
+#: views/form.py:271
 #, python-format
 msgid "Deleted '%s' and %s entries"
 msgstr "'%s' eta %s erantzun ezabatu dira"
 
-#: views/form.py:273
+#: views/form.py:274
 msgid "Form name does not match"
 msgstr "Galdetegiaren izena ez dator bat"
 
-#: views/form.py:286
+#: views/form.py:287
 msgid "Permission needed to view form"
 msgstr "Baimena behar da galdetegia ikusteko"
 
-#: views/form.py:313
+#: views/form.py:314
 msgid "Can't find a user with that email"
 msgstr "Ez da aurkitu e-posta helbide hori duen erabiltzailerik"
 
-#: views/form.py:316
+#: views/form.py:317
 #, python-format
 msgid "%s is already an editor"
 msgstr "%s editorea da dagoeneko"
 
-#: views/form.py:320
+#: views/form.py:321
 msgid "New editor added ok"
 msgstr "Editore berria ongi gehitu da"
 
-#: views/form.py:321
+#: views/form.py:322
 #, python-format
 msgid "Added editor %s"
 msgstr "%s editorea gehitu da"
 
-#: views/form.py:338
+#: views/form.py:339
 #, python-format
 msgid "Removed editor %s"
 msgstr "%s editorea kendu da"
 
-#: views/form.py:363
+#: views/form.py:364
 msgid "Date-time is not valid"
 msgstr "Data-ordua ez da baliozkoa"
 
-#: views/form.py:369
+#: views/form.py:370
 #, python-format
 msgid "Expiry date set to: %s"
 msgstr "Iraungitze-data zehaztuta: %s"
 
-#: views/form.py:375
+#: views/form.py:376
 msgid "Expiry date cancelled"
 msgstr "Iraungitze-data ezeztatuta"
 
-#: views/form.py:377
+#: views/form.py:378
 msgid "Missing date or time"
 msgstr "Data edo ordua falta da"
 
-#: views/form.py:426
+#: views/form.py:427
 msgid "You can edit the duplicate now"
 msgstr "Kopia editatu dezakezu orain"
 
-#: views/form.py:450
+#: views/form.py:451
 #, python-format
 msgid "Public set to: %s"
 msgstr "Publikotasuna zehaztuta: %s"
 
-#: views/form.py:461
+#: views/form.py:462
 #, python-format
 msgid "Shared entries set to: %s"
 msgstr "Partekatutako erantzunak zehaztuta: %s"
 
-#: views/form.py:472
+#: views/form.py:473
 #, python-format
 msgid "Restricted access set to: %s"
 msgstr "Sarbide mugatua zehaztuta: %s"
 
-#: views/form.py:491
+#: views/form.py:493
 #, python-format
 msgid "Data protection consent set to: %s"
 msgstr "Datuak babesteko baimena zehaztuta: %s"
 
-#: views/form.py:501
+#: views/form.py:504
 #, python-format
 msgid "Send Confirmation set to: %s"
 msgstr "Bidali berrespena e-postaz zehaztuta: %s"
 
-#: views/form.py:534
+#: views/form.py:538
 msgid "That form has expired"
 msgstr "Galdetegi hori iraungitu egin da"
 
-#: views/form.py:536
+#: views/form.py:540
 msgid "That form is not public"
 msgstr "Galdetegi hori ez da publikoa"
 
-#: views/site.py:45
+#: views/site.py:44
 msgid "Text saved OK"
 msgstr "Testua ongi gorde da"
 
-#: views/site.py:73
+#: views/site.py:76
 msgid "Site name changed OK"
 msgstr "Webgune-izena ongi aldatu da"
 
-#: views/site.py:85 views/user.py:155
+#: views/site.py:88 views/user.py:156
 msgid "Language updated OK"
 msgstr "Hizkuntza ongi eguneratu da"
 
-#: views/site.py:96
+#: views/site.py:99
 msgid "Required file is missing"
 msgstr "Behar den fitxategia falta da"
 
-#: views/site.py:104
+#: views/site.py:107
 msgid "Bad file name. PNG only"
 msgstr "Fitxategi izen okerra. PNG soilik"
 
-#: views/site.py:106
+#: views/site.py:109
 msgid "Favicon changed OK. Refresh with  &lt;F5&gt;"
 msgstr "Favicona ongi aldatu da. Freskatu  &lt;F5&gt; sakatuta"
 
-#: views/site.py:115
+#: views/site.py:118
 msgid "Favicon reset OK. Refresh with  &lt;F5&gt;"
 msgstr "Favicona ongi berrezarri da. Freskatu  &lt;F5&gt; sakatuta"
 
-#: views/site.py:138
+#: views/site.py:141
 msgid "Confguration saved OK"
 msgstr "Konfigurazioa ongi gorde da"
 
-#: views/site.py:149
+#: views/site.py:152
 msgid "SMTP config works!"
 msgstr "SMTP konfigurazioa badabil!"
 
-#: views/site.py:170
+#: views/site.py:173
 msgid "Color changed OK"
 msgstr "Kolorea ongi aldatuta"
 
-#: views/site.py:214
+#: views/site.py:212
 msgid "Site not found"
 msgstr "Ez da aurkitu webgunea"
 
-#: views/site.py:219
+#: views/site.py:217
 msgid "Cannot delete current site"
 msgstr "Ezin da uneko webgunea ezabatu"
 
-#: views/site.py:222
+#: views/site.py:220
 #, python-format
 msgid "Deleted %s"
 msgstr "%s ezabatu da"
 
-#: views/site.py:225
+#: views/site.py:223
 msgid "Site name does not match"
 msgstr "Webgune izena ez dator bat"
 
@@ -1448,56 +1474,56 @@ msgstr "Ez da aurkitu gonbidapena"
 msgid "This invitation has expired"
 msgstr "Gonbidapen hau iraungitu egin da"
 
-#: views/user.py:90
+#: views/user.py:91
 msgid "Opps! An error ocurred when creating the user"
 msgstr "Hara! Errorea gertatu da erabiltzailea sortzean"
 
-#: views/user.py:101
+#: views/user.py:102
 msgid "Welcome!"
 msgstr "Ongi etorri!"
 
-#: views/user.py:141 views/user.py:167
+#: views/user.py:142 views/user.py:168
 #, python-format
 msgid "We've sent an email to %s"
 msgstr "E-posta mezu bat bidali dugu %s(e)ra"
 
-#: views/user.py:179
+#: views/user.py:180
 msgid "Password changed OK"
 msgstr "Pasahitza ongi aldatu da"
 
-#: views/user.py:192
+#: views/user.py:193
 msgid "Couldn't find that token"
 msgstr "Ezin izan da token hori aurkitu"
 
-#: views/user.py:195 views/user.py:258
+#: views/user.py:196 views/user.py:259
 msgid "Your petition has expired"
 msgstr "Zure eskaera iraungitu egin da"
 
-#: views/user.py:200
+#: views/user.py:201
 msgid "Your account has been blocked"
 msgstr "Zure kontua blokeatua izan da"
 
-#: views/user.py:222
+#: views/user.py:223
 msgid "We may have sent you an email"
 msgstr "E-posta mezu bat bidali behar izan dizugu"
 
-#: views/user.py:240
+#: views/user.py:241
 msgid "Root disabled"
 msgstr "Root desgaituta"
 
-#: views/user.py:243
+#: views/user.py:244
 msgid "Root enabled"
 msgstr "Root gaituta"
 
-#: views/user.py:255
+#: views/user.py:256
 msgid "We couldn't find that petition"
 msgstr "Ezin izan dugu eskaera aurkitu"
 
-#: views/user.py:270
+#: views/user.py:271
 msgid "Your email address is valid"
 msgstr "Zure e-posta helbidea baliozkoa da"
 
-#: views/user.py:292
+#: views/user.py:301
 msgid "Bad credentials"
 msgstr "Kredentzial okerrak"
 
@@ -1506,4 +1532,10 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "New condition"
 #~ msgstr "Baldintza berria"
+
+#~ msgid "Require consent"
+#~ msgstr "Baimena eskatu"
+
+#~ msgid "Data protection consent"
+#~ msgstr "Datuak babesteko baimena"
 

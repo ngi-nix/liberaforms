@@ -58,6 +58,10 @@
                 <li class="nav-item">
                 <a class="nav-link" href="/forms">{%trans%}My forms{%endtrans%}</a>
                 </li>
+            {% else %}
+                <li class="nav-item">
+                <a class="nav-link" href="/">{{g.site.siteName}}</a>
+                </li>
             {% endif %}
         </ul>
         <ul class="navbar-nav" style="margin-left: auto;">
@@ -71,7 +75,7 @@
         {% else %}
         <ul class="navbar-nav">
             <li class="nav-item">
-            <a class="nav-item nav-link" href="/">{{g.site.siteName}}</a>
+            <a class="nav-link" href="/">{{g.site.siteName}}</a>
             </li>
         </ul>
         <ul class="navbar-nav" style="margin-left: auto;">

@@ -78,6 +78,14 @@ var csrftoken = "{{ csrf_token() }}";
                     </div>
                 </td>
             </tr>
+            <tr style="display:none">
+                <td>
+                    {%trans%}Consentment texts{%endtrans%}
+                </td>
+                <td class="text-right">
+                    <a href="/user/{{g.current_user.username}}/consent" class="btn btn-xs btn-primary">{%trans%}Edit{%endtrans%}</a>
+                </td>
+            </tr>
         </table>
         
     {% if g.isAdmin %}
@@ -188,27 +196,13 @@ var csrftoken = "{{ csrf_token() }}";
                </td>
             </tr>
             <tr>
-                <td>{%trans%}Terms and conditions{%endtrans%}</td>
+                <td>{%trans%}Consent{%endtrans%}</td>
                 <td>
-                <a href="/site/consent">{%trans%}Edit text{%endtrans%}</a>
+                    {%trans%}Terms and conditions{%endtrans%},
+                    {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
                 </td>
                 <td class="text-right">
-                    <div id="toggle_terms_conditions_enabled" class="btn-group btn-toggle">
-                    <button id="terms_conditions_enabled_true" class="btn btn-xs btn-default {% if site.termsAndConditions['enabled'] %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                    <button id="terms_conditions_enabled_false" class="btn btn-xs btn-default {% if not site.termsAndConditions['enabled'] %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
-                    </div>
-               </td>
-            </tr>
-            <tr>
-                <td>{%trans%}DPL{%endtrans%}</td>
-                <td>
-                <a href="/site/consent">{%trans%}Edit text{%endtrans%}</a>
-                </td>
-                <td class="text-right">
-                    <div id="toggle_dataprotection_enabled" class="btn-group btn-toggle">
-                    <button id="dataprotection_enabled_true" class="btn btn-xs btn-default {% if site.isPersonalDataConsentEnabled() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                    <button id="dataprotection_enabled_false" class="btn btn-xs btn-default {% if not site.isPersonalDataConsentEnabled() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
-                    </div>
+                <a class="btn btn-primary btn-xs" role="button" href="/site/consent-texts">{%trans%}Edit{%endtrans%}</a>
                </td>
             </tr>
             <tr>
@@ -430,53 +424,7 @@ document.getElementById('toggle_notify_newform').addEventListener('click', funct
         }
     });
 });
-document.getElementById('toggle_terms_conditions_enabled').addEventListener('click', function(evt){
-    $.ajax({
-        url : "/site/toggle-terms-and-conditions",
-        type: "POST",
-        dataType: "json",
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.enabled == true) {
-                $('#terms_conditions_enabled_true').addClass('btn-success');
-                $('#terms_conditions_enabled_false').removeClass('btn-primary');
-            }
-            else if (data.enabled == false) {
-                $('#terms_conditions_enabled_true').removeClass('btn-success');
-                $('#terms_conditions_enabled_false').addClass('btn-primary');
-            }
-        }
-    });
-});
-document.getElementById('toggle_dataprotection_enabled').addEventListener('click', function(evt){
-    $.ajax({
-        url : "/admin/toggle-dataprotection",
-        type: "POST",
-        dataType: "json",
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.dataprotection_enabled == true) {
-                $('#dataprotection_enabled_true').addClass('btn-success');
-                $('#dataprotection_enabled_false').removeClass('btn-primary');
-            }
-            else if (data.dataprotection_enabled == false) {
-                $('#dataprotection_enabled_true').removeClass('btn-success');
-                $('#dataprotection_enabled_false').addClass('btn-primary');
-            }
-        }
-    });
-});
-</script>
 {% endif %}
+</script>
 
 {% endblock %}

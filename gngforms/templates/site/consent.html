@@ -9,87 +9,135 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-
-        <div class="title_1 delimited">
-            {%trans%}Default consent text{%endtrans%}
+    
+    <div class="title_1 delimited">
+        {%trans%}Default texts{%endtrans%}
+        <div style="float:right">
+            <a class="btn btn-sm btn-primary" role="button" href="/site/preview-new-user-form">
+                {%trans%}Preview New user form{%endtrans%}
+                <i class="fa fa-eye" aria-hidden="true"></i>
+            </a>
         </div>
-        <div style="margin-top: -1rem">
-            {%trans%}Users will have the option to include these texts in their forms{%endtrans%}
+    </div>
+
+    {% for consent in site.consentTexts %}
+        {% set consent = site.getConsentForDisplay(consent.id, enabled_only=False) %}
+
+        <div anchor="{{consent.name}}" class="title_3 delimited" style="margin-top:2em">
+            {% if consent.id == site.TermsConsentID %}
+            {%trans%}Terms and conditions{%endtrans%}
+            {% elif consent.id == site.DPLConsentID %}
+            {%trans%}Data protection{%endtrans%}
+            {% else %}
+            {{ gettext(consent.name) }}
+            {% endif %}
+            <div style="float:right">
+            <input id="{{consent.id}}-edit-button" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
+            {% if loop.index != 1 %}
+            <div id="toggle_enabled_{{consent.id}}" class="btn-group btn-toggle">
+                <button id="enabled_true_{{consent.id}}" class="btn btn-xs btn-default {% if consent.enabled %}btn-success{% endif %}">{%trans%}Shared{%endtrans%}</button>
+                <button id="enabled_false_{{consent.id}}" class="btn btn-xs btn-default {% if not consent.enabled %}btn-primary{% endif %}">{%trans%}No{%endtrans%}</button>
+            </div>
+            {% endif %}
+
+            <button id="{{consent.id}}-toggle-new-user-consent-button" class="btn btn-xs newUserConsentTextToggle {%for var in site.newUserConsentment%}{{'btn-success'if var==consent.id}}{%endfor%}">
+                {% if loop.index == 1 %}{%trans%}Add to New user form{%endtrans%}&nbsp;{% endif %}
+                <i class="fa fa-user-circle" aria-hidden="true"></i>
+            </button>
+            </div>
         </div>
         
-        <div class="title_2 delimited" style="margin-top:2em">
-            {%trans%}DPL{%endtrans%}
-            <div style="float:right">
-            <input id="DPL-edit-button" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
-            </div>
-        </div>
-        <div style="margin-top: -0.5rem">
-            {%trans%}Data protection law{%endtrans%}
-        </div>
-        <div style="margin-top:1rem">
-            <div id="DPL-html" class="dataConsentText">{{ site.personalDataConsentHTML|safe }}</div>
-            <div id="DPL-text-editor" style="display:none;">
-                <div style="margin-bottom: 0.5em">
-                <input id="DPL-save-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
-                <input id="DPL-cancel-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
-                </div>
-                <textarea id="DPL-mde">{{ site.personalDataConsentMarkdown }}</textarea>
-            </div>
-        </div>
-
-        <div class="title_2 delimited" style="margin-top:2em">
-            {%trans%}Terms and conditions{%endtrans%}
-            <div style="float:right">
-            <input id="terms-edit-button" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
-            </div>
-        </div>
-        <div style="margin-top: -0.5rem">
+        {% if loop.index == 1 %}
+        <div style="font-size: 0.9em; margin-top: -0.5rem">
             {%trans%}New users must agree to these terms and conditions{%endtrans%}
         </div>
-        <div style="margin-top:1rem">
-            <div id="terms-html" class="dataConsentText">{{ site.termsAndConditionsHTML|safe }}</div>
-            <div id="terms-text-editor" style="display:none;">
-                <div style="margin-bottom: 0.5em">
-                <input id="terms-save-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
-                <input id="terms-cancel-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+        {% endif %}
+        
+        <div style="margin:1em 0 1em 0">
+            <div id="{{consent.id}}-display-block" class="{%if loop.index != 1%}consentText{%endif%} form-group">
+                <div id="{{consent.id}}-html">
+                    {{consent['html']|safe}}
                 </div>
-                <textarea id="terms-mde">{{ site.termsAndConditionsMarkdown }}</textarea>
+                <div class="form-group form-check">
+                    <input id="{{consent.id}}-dummy-input" type="checkbox" class="form-check-input {%if consent.id != 1%}consent{%endif%}">
+                    <label id="{{consent.id}}-label" for="{{consent.id}}-dummy-input" class="form-check-label consent {%if consent.required%}required{%endif%}">
+                    {{ consent['label'] if consent['label'] else _("I agree") }}
+                    {% if consent.required %}
+                        <span class="required-dot">●</span>
+                    {% endif %}
+                    </label>
+                </div>
             </div>
         </div>
-
-
+        <div id="{{consent.id}}-edit-block" style="display:none;">
+            <div id="{{consent.id}}-text-editor">
+                <div style="margin-bottom: 0.5em">
+                <input id="{{consent.id}}-save-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
+                <input id="{{consent.id}}-cancel-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+                </div>
+                <textarea id="{{consent.id}}-mde">{{ consent.markdown }}</textarea>
+                
+                <div id="{{consent.id}}-consent-editor" class="form-row">
+                    <div class="form-group col">
+                    {% set I_agree = consent['label'] if consent['label'] else "" %}
+                    <input id="{{consent.id}}-label-input" class="form-control form-control-sm" type="text" placeholder="{{_('I agree')}}" value="{{I_agree}}">
+                    </div>
+                    <div class="form-check ml-auto" {% if loop.index < 3 %}style="display:none"{% endif %}>
+                        <div class="form-check mb-2">
+                    <input id="{{consent.id}}-consent-required" class="form-check-input" type="checkbox" {%if consent.required%}checked{%endif%}>
+                    <label class="form-check-label form-control-sm" for="{{consent.id}}-consent-required">{%trans%}Required{%endtrans%}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% if loop.index == 1 %}
+        <div class="title_2 delimited" style="margin-top:2em">
+            {%trans%}Consentment texts{%endtrans%}
+        </div>
+        <div style="font-size: 0.9em; margin-top: -0.7rem">
+            {%trans%}Shared texts can be used by other users in their forms as templates{%endtrans%}
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
 </div>
 </div>
 
 <script>
-// DPL editor
+var csrftoken = "{{ csrf_token() }}";
+
+{% for consent in site.consentTexts %}
 $(document).ready(function() {
-    var dpl_MDE = new SimpleMDE({ 
+    var MDE_{{consent.id}} = new SimpleMDE({ 
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
                                 autoDownloadFontAwesome: false,
-                                element: document.getElementById("DPL-mde")
+                                element: document.getElementById("{{consent.id}}-mde")
                              });
-    $("#DPL-edit-button").click(function(){
-        $("#DPL-edit-button").prop("disabled", true)
-        $("#DPL-html").hide()
-        $('#DPL-text-editor').show(0, function() {
-            dpl_MDE.codemirror.refresh();
+    $("#{{consent.id}}-edit-button").click(function(){
+        $("#{{consent.id}}-edit-button").prop("disabled", true)
+        $("#{{consent.id}}-display-block").hide()
+        $('#{{consent.id}}-edit-block').show(0, function() {
+            MDE_{{consent.id}}.codemirror.refresh();
+            scrollEditor($("div[anchor={{consent.name}}]"))
         });
     });
-    $("#DPL-cancel-button").click(function(){
-        $("#DPL-edit-button").prop("disabled", false)
-        $("#DPL-html").show()
-        $('#DPL-text-editor').hide()
+    $("#{{consent.id}}-cancel-button").click(function(){
+        $("#{{consent.id}}-edit-button").prop("disabled", false)
+        $("#{{consent.id}}-display-block").show()
+        $('#{{consent.id}}-edit-block').hide()
     });
-    $("#DPL-save-button").click(function(){
-        var markdown=dpl_MDE.value()
+    $("#{{consent.id}}-save-button").click(function(){
+        var markdown = MDE_{{consent.id}}.value()
+        var label = $("#{{consent.id}}-label-input").val()
+        var required = $("#{{consent.id}}-consent-required").is(':checked')
         $.ajax({
-            url : "/site/save-personal-data-consent-text",
+            url : "/site/save-consent/{{consent.id}}",
             type: "POST",
             dataType: "json",
-            data: {"markdown": markdown},
+            data: {"markdown": markdown, "label": label, "required": required},
             beforeSend: function(xhr, settings) {
                 if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                     xhr.setRequestHeader("X-CSRFToken", csrftoken)
@@ -97,68 +145,88 @@ $(document).ready(function() {
             },
             success: function(data, textStatus, jqXHR)
             {
-                $("#DPL-edit-button").prop("disabled", false)
-                $("#DPL-html").html(data.html)
-                //$("#DPL-text-block").show()
-                $("#DPL-html").show()
-                fadeOutHighlight($("#DPL-html"))
-                $("#DPL-mde").val(markdown)
-                $("#DPL-text-editor").hide()
-            }
-        });
-    });
-});
-
-
-// Terms and conditions editor
-$(document).ready(function() {
-    var terms_MDE = new SimpleMDE({ 
-                                autosave: {enabled: false},
-                                autofocus: true,
-                                spellChecker: false,
-                                autoDownloadFontAwesome: false,
-                                element: document.getElementById("terms-mde")
-                             });
-    $("#terms-edit-button").click(function(){
-        $("#terms-edit-button").prop("disabled", true)
-        $("#terms-html").hide()
-        $('#terms-text-editor').show(0, function() {
-            terms_MDE.codemirror.refresh();
-        });
-    });
-    $("#terms-cancel-button").click(function(){
-        $("#terms-edit-button").prop("disabled", false)
-        $("#terms-html").show()
-        $('#terms-text-editor').hide()
-    });
-    $("#terms-save-button").click(function(){
-        var markdown=terms_MDE.value()
-        $.ajax({
-            url : "/site/save-terms-and-conditions-text",
-            type: "POST",
-            dataType: "json",
-            data: {"markdown": markdown},
-            beforeSend: function(xhr, settings) {
-                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                $("#{{consent.id}}-html").html(data.html)
+                if (! data.label) {
+                    data.label = $("#{{consent.id}}-label-input").prop("placeholder")
                 }
-            },
-            success: function(data, textStatus, jqXHR)
-            {
-                $("#terms-edit-button").prop("disabled", false)
-                $("#terms-html").html(data.html)
-                //$("#DPL-text-block").show()
-                $("#terms-html").show()
-                fadeOutHighlight($("#terms-html"))
-                $("#terms-mde").val(markdown)
-                $("#terms-text-editor").hide()
+                $("#{{consent.id}}-label").html(data.label)
+                if (required) {
+                    $("#{{consent.id}}-label").append('<span class="required-dot">●</span>')
+                    $("#{{consent.id}}-label").addClass("required")
+                    
+                }else{
+                    $("#{{consent.id}}-label").find('span[class=required]').remove()
+                    $("#{{consent.id}}-label").removeClass("required")
+                }
+                $("#{{consent.id}}-edit-button").prop("disabled", false)
+                $("#{{consent.id}}-edit-block").hide()
+                $("#{{consent.id}}-display-block").show()
+                fadeOutHighlight($("#{{consent.id}}-display-block"))
+                $("#{{consent.id}}-mde").val(data.markdown)
+                MDE_{{consent.id}}.value($("#{{consent.id}}-mde").val())
             }
         });
     });
 });
 
 
+document.getElementById('{{consent.id}}-toggle-new-user-consent-button').addEventListener('click', function(evt){
+    $.ajax({
+        url: "/site/update-enabled-new-user-consentment-texts/{{consent.id}}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.included == true) {
+                $('#{{consent.id}}-toggle-new-user-consent-button').addClass('btn-success');
+                $('#{{consent.id}}-toggle-new-user-consent-button').removeClass('btn-primary');
+            }
+            if (data.included == false) {
+                $('#{{consent.id}}-toggle-new-user-consent-button').removeClass('btn-success');
+                $('#{{consent.id}}-toggle-new-user-consent-button}').addClass('btn-primary');
+            }
+        }
+    });
+});
 
+
+{% if loop.index != 1 %}
+document.getElementById('toggle_enabled_{{consent.id}}').addEventListener('click', function(evt){
+    $.ajax({
+        url: "/site/toggle-consent-enabled/{{consent.id}}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.enabled == true) {
+                $('#enabled_true_{{consent.id}}').addClass('btn-success');
+                $('#enabled_false_{{consent.id}}').removeClass('btn-primary');
+            }
+            if (data.enabled == false) {
+                $('#enabled_true_{{consent.id}}').removeClass('btn-success');
+                $('#enabled_false_{{consent.id}}').addClass('btn-primary');
+            }
+        }
+    });
+});
+{% endif %}
+{% endfor %}
+
+function scrollEditor(editor){
+    $('html, body').animate({
+        scrollTop: $(editor).offset().top -20
+    }, 250);
+}
 function fadeOutHighlight(element){
     element.css("background-color", "#C3FDB8")
     element.animate({ backgroundColor: "white" }, 2000)

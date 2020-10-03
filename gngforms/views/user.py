@@ -83,7 +83,8 @@ def new_user(token=None):
             "admin": adminSettings,
             "validatedEmail": validatedEmail,
             "created": datetime.date.today().strftime("%Y-%m-%d"),
-            "token": {}
+            "token": {},
+            "consentTexts": []
         }
         user = User.create(newUserData)
         if not user:
@@ -269,6 +270,14 @@ def validate_email(token):
     session['user_id']=str(user.id)
     flash(gettext("Your email address is valid"), 'success')
     return redirect(make_url_for('user_bp.user_settings', username=user.username))
+
+
+@user_bp.route('/user/<string:username>/consent', methods=['GET'])
+@enabled_user_required
+def consent(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.consent', username=g.current_user.username))
+    return render_template('user/consent.html')
 
 
 """ Login / Logout """

@@ -1,5 +1,5 @@
 """
-“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 GNGforms.org”
 
 This file is part of GNGforms.
 
@@ -29,9 +29,8 @@ from gngforms.utils.wraps import *
 from gngforms.utils.utils import *
 from gngforms.utils.email import EmailServer
 import gngforms.utils.wtf as wtf
-#import gngforms.utils.email as smtp
 
-
+#from pprint import pprint as pp
 
 site_bp = Blueprint('site_bp', __name__,
                     template_folder='../templates/site')
@@ -46,28 +45,39 @@ def save_blurb():
     return redirect(make_url_for('main_bp.index'))
 
 
-@site_bp.route('/site/consent', methods=['GET'])
+@site_bp.route('/site/consent-texts', methods=['GET'])
 @admin_required
 def consent():
-    return render_template('consent.html', site=g.site)
+    return render_template('site/consent.html', site=g.site)
 
 
-@site_bp.route('/site/save-personal-data-consent-text', methods=['POST'])
+@site_bp.route('/site/save-consent/<string:id>', methods=['POST'])
 @admin_required
-def save_data_consent():
-    if 'markdown' in request.form:
-        g.site.savePersonalDataConsentText(request.form['markdown'])
-        return JsonResponse(json.dumps({ 'html': g.site.personalDataConsentHTML }))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % _("An error occured")}))
+def save_consent(id):
+    if 'markdown' in request.form and "label" in request.form and "required" in request.form:
+        consent = g.site.saveConsent(id, data=request.form.to_dict(flat=True))
+        if consent:
+            return JsonResponse(json.dumps(consent))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
 
 
-@site_bp.route('/site/save-terms-and-conditions-text', methods=['POST'])
+
+@site_bp.route('/site/update-enabled-new-user-consentment-texts/<string:id>', methods=['POST'])
 @admin_required
-def save_terms_and_condition():
-    if 'markdown' in request.form:
-        g.site.saveTermsAndConditions(request.form['markdown'])
-        return JsonResponse(json.dumps({ 'html': g.site.termsAndConditionsHTML }))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % _("An error occured")}))
+def updateEnabledNewUserConsentmentTexts(id):
+    return JsonResponse(json.dumps({'included': g.site.updateIncludedNewUserConsentmentTexts(id)}))
+
+
+@site_bp.route('/site/toggle-consent-enabled/<string:id>', methods=['POST'])
+@admin_required
+def toggle_consent_text(id):
+    return JsonResponse(json.dumps({'enabled': g.site.toggleConsentEnabled(id)}))
+
+
+@site_bp.route('/site/preview-new-user-form', methods=['GET'])
+@admin_required
+def preview_new_user_form():
+    return render_template('new-user.html', wtform=wtf.NewUser(), preview_only=True)
 
 
 @site_bp.route('/site/change-sitename', methods=['GET', 'POST'])
@@ -181,11 +191,6 @@ def menu_color():
 def stats():
     sites = Installation.getSites() if g.isRootUserEnabled else []
     return render_template('stats.html', site=g.site, sites=sites)
-
-@site_bp.route('/site/toggle-terms-and-conditions', methods=['POST'])
-@admin_required
-def toggle_term_conditions_enabled():
-    return JsonResponse(json.dumps({'enabled': g.site.toggleTermsAndConditions()}))
 
 
 @site_bp.route('/admin/sites/toggle-scheme/<string:hostname>', methods=['POST'])
