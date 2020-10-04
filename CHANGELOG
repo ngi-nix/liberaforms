@@ -5,6 +5,7 @@ v.1.6
  * Reworked Consentment texts
  * Moved Login to Navbar
  * Prevented editing field option values if present in the database
+ * Graph fields are displayed in order. Fixed graph titles 
  * Login accepts (username or email) + password
  * CSS changes
 

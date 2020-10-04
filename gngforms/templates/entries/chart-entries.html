@@ -131,8 +131,7 @@ var time_chart = new Chart(ctx, {
 
 {% if chart_data['multi_choice']|length %}
     {% set color = namespace(value=0) %}
-    {% for label, data in chart_data['multi_choice'].items() %}
-
+    {% for field in chart_data['multi_choice'] %}
         {% if color.value+1 > fg_colors|length %}
             {% set color.value = 1 %}
         {% else %}
@@ -142,18 +141,19 @@ var time_chart = new Chart(ctx, {
 var ctx = document.getElementById("{{ loop.index }}_multi_choice_chart");
 ctx.height = 320;
 
-    {% if data['axis_1']|length > 6 %}
+    {% set title_max_length = 115 if field['axis_1']|length > 6 else 45 %}
+    {% if field['axis_1']|length > 6 %}
     $(ctx).closest("div[class=col-md-4]").removeClass("col-md-4").addClass("col-md-8")
     {% endif %}
 
 new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: {{data['axis_1']|tojson}},
+        labels:  {{field['axis_1']|tojson}}.map(str => shortenString(str, 24)),
         datasets: [
             {
-                label: "{{label}}",
-                data: {{ data['axis_2']|tojson }},
+                label: ["{{field.title}}"].map(str => shortenString(str,{{title_max_length}}))[0],
+                data: {{ field['axis_2']|tojson }},
                 backgroundColor: "{{ bg_colors[color.value-1] }}",
                 fill: true,
                 borderWidth: 0,
@@ -209,6 +209,13 @@ document.getElementById('toggle_notification').addEventListener('click', functio
     });
 });
 {% endif %}
+function shortenString(str, max_length) {
+    if ( str.length > max_length ) {
+        str = str.slice(0, max_length -2)
+        return str+'..'
+    }
+    return str
+}
 </script>
 
 

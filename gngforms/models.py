@@ -610,11 +610,10 @@ class Form(db.Document):
         if not self.entries:
             return result
         multiChoiceFields = {}  # {field.name: [option.value, option.value]}
-        for field in self.structure:
-            if field['type'] == "checkbox-group" or field['type'] == "radio-group":
-                multiChoiceFields[field['name']] = []
-                for value in field['values']:
-                    multiChoiceFields[field['name']].append(value['value'])
+        for field in self.getMultiChoiceFields():
+            multiChoiceFields[field['name']] = []
+            for value in field['values']:
+                multiChoiceFields[field['name']].append(value['value'])
         for entry in self.entries:
             if multiChoiceFields == {}: # no more fields to check
                 return result
@@ -658,19 +657,15 @@ class Form(db.Document):
             chartable_time_fields.append({'name':field, 'label':label})
             
         multichoice_fields=self.getMultiChoiceFields()
-        multi_choice_data={}
+        multi_choice_for_chart=[]
         for field in multichoice_fields:
-            multi_choice_data[field['label']]={}
-            multi_choice_data[field['label']]['axis_1']=[]
-            multi_choice_data[field['label']]['axis_2']=[]
+            field_for_chart={   "name":field['name'], "title":field['label'],
+                                "axis_1":[], "axis_2":[]}
+            multi_choice_for_chart.append(field_for_chart)
+            
             for value in field['values']:
-                label=value['label']
-                if len(label) > 24:
-                    # a shorter label length to fit inside jcharts multi-option divs
-                    label=label[:22]+'..'
-                multi_choice_data[field['label']]['axis_1'].append(label)
-                multi_choice_data[field['label']]['axis_2'].append(0) #start counting at zero
-
+                field_for_chart['axis_1'].append(value['label'])
+                field_for_chart['axis_2'].append(0) #start counting at zero
         for entry in self.orderedEntries:
             total['entries']+=1
             time_data['entries'].append({   'x': entry['created'],
@@ -682,18 +677,16 @@ class Form(db.Document):
                                                         'y': total[field['label']]})
                 except:
                     continue
-
             for field in multichoice_fields:
                 if not (field['name'] in entry and entry[field['name']]):
                     continue
+                field_for_chart=[item for item in multi_choice_for_chart if item["name"]==field['name']][0]
                 entry_values=entry[field['name']].split(', ')
                 for idx, field_value in enumerate(field['values']):
                     if field_value['value'] in entry_values:
-                        multi_choice_data[field['label']]['axis_2'][idx]+=1
-        result={}
-        result['multi_choice']=multi_choice_data
-        result['time_chart']=time_data
-        return result
+                        field_for_chart['axis_2'][idx]+=1
+        return {'multi_choice':multi_choice_for_chart,
+                'time_chart':time_data}
 
     def toggleEnabled(self):
         if self.expired or self.adminPreferences['public']==False:
@@ -952,7 +945,6 @@ class Site(db.Document):
                 consent['markdown'] = ConsentText.defaultTerms()['markdown']
                 consent['html'] = ConsentText.defaultTerms()['html']
         if id == self.DPLConsentID:
-            print(0)
             consent['required'] = True
             if not consent['markdown']:
                 consent['markdown'] = ConsentText.defaultDPL()['markdown']

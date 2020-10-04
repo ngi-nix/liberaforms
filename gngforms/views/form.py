@@ -232,7 +232,6 @@ def save_data_consent(form_id, consent_id):
 @form_bp.route('/forms/default-consent/<string:form_id>/<string:consent_id>', methods=['GET'])
 @enabled_user_required
 def default_consent_text(form_id, consent_id):
-    print(form_id, consent_id)
     queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
     if queriedForm:
         return JsonResponse(json.dumps(queriedForm.site.getConsentForDisplay(consent_id)))

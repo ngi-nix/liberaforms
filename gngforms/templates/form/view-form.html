@@ -37,7 +37,7 @@
                 <div class="consentText form-group">
                     <div id="dataConsentText" >{{dataConsent['html']|safe}}</div>
                     <div class="form-check">
-                        <input id="I_agree" type="checkbox" class="form-check-input consent" name="DPL" value="ok">
+                        <input id="I_agree" type="checkbox" class="form-check-input consent" name="DPL" value="ok" required />
                         <label for="I_agree" class="form-check-label consent required">
                         {{ dataConsent['label'] }}
                         <span class="required-dot">●</span>
