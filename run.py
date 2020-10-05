@@ -1,9 +1,9 @@
 """
-“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 LiberaForms.org”
 
-This file is part of GNGforms.
+This file is part of LiberaForms.
 
-GNGforms is free software: you can redistribute it and/or modify
+LiberaForms is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -19,5 +19,5 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # use for development only
 
-from gngforms import app
+from liberaforms import app
 app.run(host='127.0.0.1', port=5000, debug=True)

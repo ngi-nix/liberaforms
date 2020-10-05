@@ -1,0 +1,430 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script>
+var csrftoken = "{{ csrf_token() }}";
+</script>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+        
+        <div class="title_1">
+            {%trans%}Hello{%endtrans%} {{ g.current_user.username }} !!
+        </div>
+        
+        {% if not g.current_user.validatedEmail %}
+        <div class="row">
+            <div class="col title_2">
+                {%trans%}Your email has not been validated{%endtrans%}
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-sm btn-success" role="button" href="/user/send-validation">
+                    {%trans%}Validate my email{%endtrans%}
+                </a>
+            </div>
+        </div>
+        <p>&nbsp;</p>
+        {% endif %}
+
+        <table class="table table-sm sparse-table">
+            <tr>
+                <td>{%trans%}Email address{%endtrans%}</td>
+                <td>
+                {{ g.current_user.email }}
+                </td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/user/change-email">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Password{%endtrans%}</td>
+                <td>
+                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                </td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/user/reset-password">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            </tr>
+            <tr>
+                <td>{%trans%}Preferred language{%endtrans%}</td>
+                <td>{{ config['LANGUAGES'][g.current_user.language][0] }}</td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/user/change-language">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr>
+            </tr>
+        </table>
+        <div class="title_2 delimited">
+            {%trans%}By default{%endtrans%}
+        </div>
+        <table class="table table-sm sparse-table">
+            <tr>
+                <td>
+                    {%trans%}New entry notification default{%endtrans%}
+                </td>
+                <td class="text-right">
+                    <div id="toggle_new_entry_notification" class="btn-group btn-toggle">
+                    <button id="new_entry_notification_true" class="btn btn-xs btn-default {% if user.newEntryNotificationDefault %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="new_entry_notification_false" class="btn btn-xs btn-default {% if not user.newEntryNotificationDefault %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    </div>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td>
+                    {%trans%}Consentment texts{%endtrans%}
+                </td>
+                <td class="text-right">
+                    <a href="/user/{{g.current_user.username}}/consent" class="btn btn-xs btn-primary">{%trans%}Edit{%endtrans%}</a>
+                </td>
+            </tr>
+        </table>
+        
+    {% if g.isAdmin %}
+        <div class="title_1 delimited" style="margin-top:2.75em;">
+            {%trans%}Administrator{%endtrans%}
+        </div>
+        <div class="row">
+            <div class="col title_2">
+                {%trans%}Invitations{%endtrans%}
+            </div>
+            <div class="col-auto">
+                <a class="btn btn-sm btn-success" role="button" href="/admin/invites/new">
+                    {%trans%}Invite a new user{%endtrans%}
+                </a>
+            </div>
+        </div>
+        {% if invites %}
+        <table id="invites_table" class="table table-sm">
+        <thead>
+            <tr>
+            <th>{%trans%}Created{%endtrans%}</th>
+            <th>{%trans%}Email{%endtrans%}</th>
+            {% if g.isRootUserEnabled %}
+                <th>Hostname</th>
+            {% endif %}
+            <th>{%trans%}Admin{%endtrans%}</th>
+            <th></th>
+            </tr>
+        </thead>
+        {% for invite in invites %}
+            <tr>
+                <td class="link">{{ invite.token.created.strftime('%Y-%m-%d') }}</td>
+                <td>{{invite.email}}</td>
+                {% if g.isRootUserEnabled %}
+                    <td>{{invite.hostname}}</td>
+                {% endif %}
+                <td>{{invite.admin}}</td>
+                <td class="text-right">
+                <a class="btn btn-xs btn-danger" role="button" href="/admin/invites/delete/{{invite.id}}">{%trans%}Delete{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td colspan="5">
+                    <div class="sentTokenMessage">{%trans%}Invitation message{%endtrans%}</div>
+                    {{ invite.getMessage() | replace("\n", "<br/>") | safe }}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        {% endif %}
+        
+        <p>&nbsp;</p>
+        <div id="admin_settings" class="title_2">
+            {%trans%}My admin settings{%endtrans%}
+        </div>
+
+        <table class="table table-sm">
+            <tr>
+                <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
+                <td class="text-right">
+                    <div id="toggle_notify_newuser" class="btn-group btn-toggle">
+                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.admin['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    </div>
+               </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
+                <td class="text-right">
+                    <div id="toggle_notify_newform" class="btn-group btn-toggle">
+                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.admin['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    </div>
+               </td>
+            </tr>
+        </table>
+
+        <p>&nbsp;</p>
+        <div id="site_settings" class="title_2">
+            {%trans%}Site settings{%endtrans%}
+        </div>
+
+        <table class="table table-sm">
+            <tr>
+                <td>{%trans%}Site name{%endtrans%}</td>
+                <td>
+                {{ site.siteName }}
+                </td>
+                <td class="text-right">
+                <a class="btn-primary btn btn-xs" role="button" href="/site/change-sitename">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Default language{%endtrans%}</td>
+                <td>{{config['LANGUAGES'][g.site.defaultLanguage][0]}}</td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/site/change-default-language">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Invitation only{%endtrans%}</td>
+                <td></td>
+                <td class="text-right">
+                    <div id="toggle_invitation_only" class="btn-group btn-toggle">
+                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    </div>
+               </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Consent{%endtrans%}</td>
+                <td>
+                    {%trans%}Terms and conditions{%endtrans%},
+                    {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
+                </td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/site/consent-texts">{%trans%}Edit{%endtrans%}</a>
+               </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Favicon{%endtrans%}</td>
+                <td>
+                <img src="{{g.site.faviconURL()}}" width=18 height=18 />
+                </td>
+                <td class="text-right">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/change-favicon'">
+                </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Menu color{%endtrans%}</td>
+                <td>{{g.site.menuColor}}</td>
+                <td class="text-right">
+                <a class="btn btn-primary btn-xs" role="button" href="/site/change-menu-color">{%trans%}Change{%endtrans%}</a>
+                </td>
+            </tr>
+            <tr>
+                <td>{%trans%}Email server{%endtrans%}</td>
+                <td>{{g.site.smtpConfig["host"]}}</td>
+                <td class="text-right">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Configure{%endtrans%}" onClick="location.href='/site/email/config'">
+                </td>
+            </tr>
+        </table>
+            
+    {% endif %}
+    {% if g.current_user.isRootUser() and not g.isRootUserEnabled %}
+        <div class="title_1" style="margin-top:2.75em;">
+            {%trans%}Root user{%endtrans%}
+            <i class="fa fa-shield" style="font-size:0.9em" aria-hidden="true"></i>
+            <div style="float:right">
+                <button class="btn btn-primary btn-sm" onclick="js:enableRootMode()">
+                    {%trans%}Enable{%endtrans%} {%trans%}root mode{%endtrans%}
+                </button>
+            </div>
+        </div>
+        <script>
+        function enableRootMode() {
+            $.ajax({
+                url : "/user/toggle-root-enabled",
+                type: "POST",
+                dataType: "json",
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                    }
+                },
+                success: function(data, textStatus, jqXHR)
+                {
+                    location.reload();
+                    return false;
+                }
+            });
+        }
+        </script>
+    {% endif %}
+    {% if g.isRootUserEnabled %}
+        <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
+            {%trans%}Root user{%endtrans%}
+        </div>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                <th>Site</th>
+                <th>Users</th>
+                <th>Forms</th>
+                <th></th>
+                </tr>
+            </thead>
+
+        {% set total_forms = [0] %}
+        {% set total_users = [0] %}        
+        {% for site in sites %}
+            <tr>
+                <td>{{ site.host_url }}</td>
+                <td>{{ site.totalUsers }}</td>
+                {% if total_users.append(total_users.pop() + site.totalUsers) %}{% endif %}
+                <td>{{ site.totalForms }}</td>
+                {% if total_forms.append(total_forms.pop() + site.totalForms) %}{% endif %}
+                <td class="text-right">
+                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/admin/sites/edit/{{site.hostname}}'">
+                </td>
+            </tr>
+        {% endfor %}
+            <tr style="font-weight:bold">
+                <td>Total</td>
+                <td>{{ total_users.pop() }}</td>
+                <td>{{ total_forms.pop() }}</td>
+                <td></td>
+            </tr>        
+        </table>
+        
+        <p>&nbsp;</p>
+        <div class="title_2">
+            {%trans%}Installation{%endtrans%}
+        </div>
+
+        <table class="table table-sm">
+        <tr>
+            <td>{%trans%}Created{%endtrans%}</td>
+            <td>{{installation.created}}</td>
+        </tr>
+        <tr>
+            <td>LiberaForms version</td>
+            <td>{{config['APP_VERSION']}}</td>
+        </tr>
+        <tr>
+            <td>Mongo schema version</td>
+            <td>{{installation.schemaVersion}}</td>
+        </tr>
+        </table>
+    {% endif %}
+    </div>
+
+</div>
+</div>
+
+
+<script>
+document.getElementById('toggle_new_entry_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/user/toggle-new-entry-notification",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.default == true) {
+                $('#new_entry_notification_true').addClass('btn-success');
+                $('#new_entry_notification_false').removeClass('btn-primary');
+            }
+            else if (data.default == false) {
+                $('#new_entry_notification_true').removeClass('btn-success');
+                $('#new_entry_notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+{% if g.isAdmin %}
+document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-invitation-only",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.invite == true) {
+                $('#invitation_only_true').addClass('btn-success');
+                $('#invitation_only_false').removeClass('btn-primary');
+            }
+            else if (data.invite == false) {
+                $('#invitation_only_true').removeClass('btn-success');
+                $('#invitation_only_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+$(document).on('click', '#invites_table td:first-child', function(){
+    if($(this).parent().next('tr').is(":visible")){
+        $(this).parent().next('tr').hide()
+    }else{ 
+        $(this).parent().next('tr').show() // token message
+    }
+});
+document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-newuser-notification",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notify == true) {
+                $('#notify_newuser_true').addClass('btn-success');
+                $('#notify_newuser_false').removeClass('btn-primary');
+            }
+            else if (data.notify == false) {
+                $('#notify_newuser_true').removeClass('btn-success');
+                $('#notify_newuser_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+document.getElementById('toggle_notify_newform').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/toggle-newform-notification",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notify == true) {
+                $('#notify_newform_true').addClass('btn-success');
+                $('#notify_newform_false').removeClass('btn-primary');
+            }
+            else if (data.notify == false) {
+                $('#notify_newform_true').removeClass('btn-success');
+                $('#notify_newform_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+{% endif %}
+</script>
+
+{% endblock %}

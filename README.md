@@ -1,6 +1,6 @@
-# **G**NGforms is **N**ot **G**oogle forms
+# Libera forms
 
-Project page [https://gngforms.org](https://gngforms.org)
+Project page [https://liberaforms.org](https://liberaforms.org)
 
 We have built this software with the hope it will be used by our neighbours, friends, and anyone else who feels GAFAM already has way to much data on **all** of us.
 
@@ -8,10 +8,10 @@ Don't feed the Dictator!
 
 Please read INSTALL.txt for installation instructions.
 
-At the center of GNGforms is the WYSIWYG web form creator [formbuilder](https://formbuilder.online/). Users build a form, choose a URL slug, and publish it.
+At the center of LiberaForms is the WYSIWYG web form creator [formbuilder](https://formbuilder.online/). Users build a form, choose a URL slug, and publish it.
 
 ## Resources
-We'd like to think that sharing resources makes things easier, so GNGforms has been built to share server infraestructure with others. One server can serve multiple domains. An nginx proxy in front of GNGforms routes the domains you choose to the gunicorn process.
+We'd like to think that sharing resources makes things easier, so LiberaForms has been built to share server infraestructure with others. One server can serve multiple domains. An nginx proxy in front of LiberaForms routes the domains you choose to the gunicorn process.
 
 One installation, one database, one monitoring and one backup system mean less work for sysadmins too!
 
@@ -42,7 +42,7 @@ ROOT_USERS is a list of emails. Users with these emails are "Root users".
  * Site configuration. Invite only, Data protection text, smtp config, etc.
  * Admins **cannot** read collected data of other users' forms
 
-GNGforms can serve multiple sites.
+LiberaForms can serve multiple sites.
 
 **Root users:**
  * Bootstrap the first Admin of a new site
@@ -61,4 +61,3 @@ GNGforms can serve multiple sites.
 4. Tell them to go to the configuration page and get the SMTP config working first.
 
 New user invitations, and password restore emails, expire in 24 hours. You can change that in the config.cfg
-

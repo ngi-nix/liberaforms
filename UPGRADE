@@ -1,27 +1,27 @@
-# Upgrading GNGforms
+# Upgrading LiberaForms
 
-There are two ways to upgrade GNGforms. Script assisted, and Manual.
+There are two ways to upgrade LiberaForms. Script assisted, and Manual.
 
 ## Script assisted upgrade
 
-upgrade.py will first make a rollback copy of your GNGforms installation, then pull the new code and upgrade.
+upgrade.py will first make a rollback copy of your LiberaForms installation, then pull the new code and upgrade.
 
 ```
-cd GNGforms
+cd LiberaForms
 source venv/bin/activate
 python upgrade.py
 ```
 
-### Restart GNGforms
+### Restart LiberaForms
 ```
-supervisorctl restart GNGforms
+supervisorctl restart LiberaForms
 ```
 
 ## Manual upgrade
 
 ### Pull the new code
 ```
-cd GNGforms
+cd LiberaForms
 git pull origin main
 source venv/bin/activate
 pip install --upgrade setuptools
@@ -35,13 +35,13 @@ source venv/bin/activate
 python migrate_db.py
 ```
 
-### Restart GNGforms
+### Restart LiberaForms
 ```
-supervisorctl restart GNGforms
+supervisorctl restart LiberaForms
 ```
 
 ### Permissions
-Make sure the user who runs gngforms has write permission
+Make sure the user who runs LiberaForms has write permission
 ```
-chown -R www-data ./gngforms/static/images
+chown -R www-data ./liberaforms/static/images
 ```

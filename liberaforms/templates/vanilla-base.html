@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/static/jquery/jquery.min.js"></script>
+  <link rel="stylesheet" href="/static/css/liberaforms.css">
+</head>
+
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="{{ category }} flash_message">
+                {{ message | safe }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div id="main-content">
+{% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

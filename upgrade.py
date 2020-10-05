@@ -1,9 +1,9 @@
 """
-“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 LiberaForms.org”
 
-This file is part of GNGforms.
+This file is part of LiberaForms.
 
-GNGforms is free software: you can redistribute it and/or modify
+LiberaForms is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from gngforms import app
+from liberaforms import app
 from migrate_db import migrate_db
 import sys, os, shutil, subprocess
 
@@ -32,14 +32,14 @@ pip_upgraded=False
 db_up_to_date=False
 
 # create a rollback directory
-gngforms_dir=os.path.dirname(os.path.abspath(__file__))
-rollback_dir=os.path.join(gngforms_dir, 'rollback')
+liberaforms_dir=os.path.dirname(os.path.abspath(__file__))
+rollback_dir=os.path.join(liberaforms_dir, 'rollback')
 dest_dir=os.path.join(rollback_dir, app.config['APP_VERSION'])
 
-print("Creating rollback of GNGforms version {} at {}".format(app.config['APP_VERSION'], dest_dir))
+print("Creating rollback of LiberaForms version {} at {}".format(app.config['APP_VERSION'], dest_dir))
 if not os.path.isdir(dest_dir):
     try:
-        shutil.copytree(gngforms_dir, dest_dir, ignore=shutil.ignore_patterns("rollback", "flask_session"))
+        shutil.copytree(liberaforms_dir, dest_dir, ignore=shutil.ignore_patterns("rollback", "flask_session"))
         rolled_back=True
         print("OK")
     except Exception as e:
@@ -64,7 +64,7 @@ if git_pulled:
     print("Updating python libraries with pip..")
     try:
         pip_setuptools = subprocess.run(["pip", "install", "--upgrade", "setuptools"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        pip_install = subprocess.run(["pip", "install", "-r", os.path.join(gngforms_dir, 'requirements.txt')], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pip_install = subprocess.run(["pip", "install", "-r", os.path.join(liberaforms_dir, 'requirements.txt')], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if pip_setuptools.stderr or pip_install.stderr:
             if pip_setuptools.stderr:
                 print(pip_setuptools.stderr.decode())

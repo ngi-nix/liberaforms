@@ -1,9 +1,9 @@
 """
-“Copyright 2020 La Coordinadora d’Entitats per la Lleialtat Santsenca”
+“Copyright 2020 LiberaForms.org”
 
-This file is part of GNGforms.
+This file is part of LiberaForms.
 
-GNGforms is free software: you can redistribute it and/or modify
+LiberaForms is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from gngforms import app
-from gngforms.models import Installation
+from liberaforms import app
+from liberaforms.models import Installation
 
 def migrate_db():
     installation=Installation.get()
