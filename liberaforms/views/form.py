@@ -616,4 +616,4 @@ def view_form(slug):
             thread = Thread(target=sendEntryNotification())
             thread.start()
         return render_template('thankyou.html', form=queriedForm, navbar=False)
-    return render_template('view-form.html', form=queriedForm, navbar=False)
+    return render_template('view-form.html', form=queriedForm, navbar=False, no_bot=True)
