@@ -186,7 +186,7 @@ msgstr "Nombre"
 #: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:87
 #: templates/admin/list-forms.html:28 templates/form/my-forms.html:32
 msgid "Entries"
-msgstr "Entradas"
+msgstr "Respuestas"
 
 #: templates/admin/delete-user.html:40
 msgid "Write the name of the user below"
@@ -300,7 +300,7 @@ msgstr "Gráficos"
 #: templates/admin/list-forms.html:29 templates/form/inspect-form.html:40
 #: templates/form/my-forms.html:31
 msgid "Last entry"
-msgstr "Última entrada"
+msgstr "Última respuesta"
 
 #: templates/admin/list-users.html:30 templates/form/inspect-form.html:137
 #: templates/form/inspect-form.html:151 templates/form/share-form.html:61
@@ -349,7 +349,7 @@ msgstr "Guardar"
 #: templates/entries/delete-entries.html:10
 #: templates/entries/delete-entries.html:26
 msgid "Delete entries"
-msgstr "Borrar las entradas"
+msgstr "Borrar las respuestas"
 
 #: templates/entries/delete-entries.html:11
 #: templates/form/inspect-form.html:305 views/form.py:149
@@ -363,7 +363,7 @@ msgstr "Vas a borrar"
 #: templates/entries/delete-entries.html:14 templates/form/delete-form.html:21
 #: templates/site/delete-site.html:20
 msgid "entries"
-msgstr "entradas"
+msgstr "respuestas"
 
 #: templates/entries/delete-entries.html:17
 msgid "Write the total number of entries below"
@@ -401,7 +401,7 @@ msgstr "Bórralo todo"
 
 #: templates/entries/list-entries.html:64
 msgid "Notify me on each new entry"
-msgstr "Notifíqueme cuando haya una nueva entrada"
+msgstr "Notifíqueme cuando haya una nueva respuesta"
 
 #: templates/entries/list-entries.html:103
 #: templates/entries/list-entries.html:105
@@ -410,7 +410,7 @@ msgstr "Anotar"
 
 #: templates/entries/list-entries.html:192
 msgid "Delete entry"
-msgstr "Borrar la entrada"
+msgstr "Borrar la respuesta"
 
 #: templates/form/delete-form.html:17 templates/form/inspect-form.html:282
 msgid "Delete form"
@@ -535,11 +535,11 @@ msgstr "Detalles"
 
 #: templates/form/inspect-form.html:20
 msgid "View entries"
-msgstr "Ver las entradas"
+msgstr "Ver las respuestas"
 
 #: templates/form/inspect-form.html:28
 msgid "Total entries"
-msgstr "Suma de entradas"
+msgstr "Suma de respuestas"
 
 #: templates/form/inspect-form.html:53
 msgid "Public URL"
@@ -966,7 +966,7 @@ msgstr "Por omisión"
 
 #: templates/user/user-settings.html:72
 msgid "New entry notification default"
-msgstr "Avísame cuando hayan nuevas entradas"
+msgstr "Avísame cuando hayan nuevas respuestas"
 
 #: templates/user/user-settings.html:93
 msgid "Administrator"
@@ -1113,11 +1113,11 @@ msgstr "LiberaForms. Notificación de nuevo formulario"
 #: utils/email.py:174
 #, python-format
 msgid "New form entry in %s at %s\n"
-msgstr "Nueva entrada para %s en %s\n"
+msgstr "Nueva respuesta para %s en %s\n"
 
 #: utils/email.py:178
 msgid "LiberaForms. New form entry"
-msgstr "LiberaForms. Nueva entrada"
+msgstr "LiberaForms. Nueva respuesta"
 
 #: utils/email.py:190
 msgid "Confirmation message"
@@ -1272,15 +1272,15 @@ msgstr "Vaya! No se encuentra esa invitación"
 
 #: views/entries.py:88
 msgid "Deleted an entry"
-msgstr "Se eliminó una entrada"
+msgstr "Se eliminó una respuesta"
 
 #: views/entries.py:118
 msgid "Undeleted an entry"
-msgstr "Se recuperó una entrada"
+msgstr "Se recuperó una respuesta"
 
 #: views/entries.py:166
 msgid "Modified an entry"
-msgstr "Se modificó una entrada"
+msgstr "Se modificó una respuesta"
 
 #: views/entries.py:181
 msgid "We expected a number"
@@ -1340,7 +1340,7 @@ msgstr "Se produjo un error"
 #: views/form.py:278
 #, python-format
 msgid "Deleted '%s' and %s entries"
-msgstr "Se ha borrado %s y %s entradas"
+msgstr "Se ha borrado %s y %s respuestas"
 
 #: views/form.py:281
 msgid "Form name does not match"
@@ -1402,7 +1402,7 @@ msgstr "Público establecido como: %s"
 #: views/form.py:469
 #, python-format
 msgid "Shared entries set to: %s"
-msgstr "Entradas compartidas establecidas como: %s"
+msgstr "Respuestas compartidas establecidas como: %s"
 
 #: views/form.py:480
 #, python-format

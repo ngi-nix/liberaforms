@@ -3,6 +3,7 @@ https://keepachangelog.com/en/1.0.0/
 v.1.7
  * Changed project name GNGforms -> LiberaForms
  * Added norobot meta to forms
+ * Fixed unexpected session timeouts
 
 v.1.6
  * Added Basque translation

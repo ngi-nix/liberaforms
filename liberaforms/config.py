@@ -33,10 +33,17 @@ class DefaultConfig(object):
     # Optional config:
     DEFAULT_LANGUAGE = "en"
     TMP_DIR = "/tmp"
-     # 3600 seconds = 1hrs. Time to fill out a form.
+    
+    # 3600 seconds = 1hrs. Time to fill out a form.
+    # This number must be less than PERMANENT_SESSION_LIFETIME (see below)
     WTF_CSRF_TIME_LIMIT = 21600
-    # 86400 seconds = 24h
+    
+    # User sessions last 8h (refreshed on every request)
+    PERMANENT_SESSION_LIFETIME = 28800
+    
+    # 86400 seconds = 24h ( token are used for password resets, invitations, ..)
     TOKEN_EXPIRATION = 604800
+    
     # formbuilder
     FORMBUILDER_CONTROL_ORDER = ["header", "paragraph"]
 
@@ -51,7 +58,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.7.0"
+    APP_VERSION = "1.7.1"
     SCHEMA_VERSION = 22
 
     RESERVED_SLUGS = [
@@ -91,6 +98,6 @@ class InternalConfig(object):
         "ca": ("Català", "ca-ES"),
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
-    }
+    }    
     FAVICON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                   "static/images/favicon/")

@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-10-05 13:34+0200\n"
-"PO-Revision-Date: 2020-09-30 01:01+0200\n"
+"PO-Revision-Date: 2020-10-05 21:52+0200\n"
 "Last-Translator: \n"
 "Language: ca\n"
 "Language-Team: ca <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: models.py:267
 msgid "Marked"
@@ -56,22 +57,18 @@ msgid "Context"
 msgstr "Context"
 
 #: models.py:768
-msgid ""
-" * Describe your form.\n"
+msgid " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
-msgstr ""
-" * Descriu el formulari.\n"
+msgstr " * Descriu el formulari.\n"
 " * Afegeix contingut rellevant, imatges, enllaços, etc."
 
 #: models.py:1056
-msgid ""
-"Hello,\n"
+msgid "Hello,\n"
 "\n"
 "You have been invited to LiberaForms.\n"
 "\n"
 "Regards."
-msgstr ""
-"Hola,\n"
+msgstr "Hola,\n"
 "\n"
 "Has estat convidat a LiberaForms.\n"
 "\n"
@@ -108,7 +105,7 @@ msgstr "Sortir"
 #: templates/base.html:84 templates/base.html:88 templates/user/login.html:10
 #: templates/user/login.html:23
 msgid "Login"
-msgstr "Registrar-se"
+msgstr "Entra"
 
 #: templates/base.html:91
 msgid "Create an account"
@@ -186,7 +183,7 @@ msgstr "Nom"
 #: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:87
 #: templates/admin/list-forms.html:28 templates/form/my-forms.html:32
 msgid "Entries"
-msgstr "Entrades"
+msgstr "Respostes"
 
 #: templates/admin/delete-user.html:40
 msgid "Write the name of the user below"
@@ -300,7 +297,7 @@ msgstr "Gràfics"
 #: templates/admin/list-forms.html:29 templates/form/inspect-form.html:40
 #: templates/form/my-forms.html:31
 msgid "Last entry"
-msgstr "Darrera entrada"
+msgstr "Darrera resposta"
 
 #: templates/admin/list-users.html:30 templates/form/inspect-form.html:137
 #: templates/form/inspect-form.html:151 templates/form/share-form.html:61
@@ -349,7 +346,7 @@ msgstr "Desar"
 #: templates/entries/delete-entries.html:10
 #: templates/entries/delete-entries.html:26
 msgid "Delete entries"
-msgstr "Esborrar les entrades"
+msgstr "Esborrar les respostes"
 
 #: templates/entries/delete-entries.html:11
 #: templates/form/inspect-form.html:305 views/form.py:149
@@ -363,11 +360,11 @@ msgstr "Eliminaras"
 #: templates/entries/delete-entries.html:14 templates/form/delete-form.html:21
 #: templates/site/delete-site.html:20
 msgid "entries"
-msgstr "entrades"
+msgstr "respostes"
 
 #: templates/entries/delete-entries.html:17
 msgid "Write the total number of entries below"
-msgstr "Escriu el nombre total d'entrades "
+msgstr "Escriu el nombre total de respostes "
 
 #: templates/entries/list-entries.html:20
 msgid "Form details"
@@ -401,7 +398,7 @@ msgstr "Esborra-ho tot"
 
 #: templates/entries/list-entries.html:64
 msgid "Notify me on each new entry"
-msgstr "Avisa'm quan hi hagi una entrada nova"
+msgstr "Avisa'm quan hi hagi una resposta nova"
 
 #: templates/entries/list-entries.html:103
 #: templates/entries/list-entries.html:105
@@ -523,9 +520,7 @@ msgstr "Hem creat alguns formularis que pots fer servir per començar."
 
 #: templates/form/form_templates.html:16
 msgid "Choose the template that best suits your needs and edit it to fit."
-msgstr ""
-"Tria la plantilla que s’adapta més a les teves necessitats i edita-la per"
-" adaptar-la."
+msgstr "Tria la plantilla que s’adapta més a les teves necessitats i edita-la per adaptar-la."
 
 #: templates/form/form_templates.html:33
 msgid "Use this template"
@@ -537,11 +532,11 @@ msgstr "Detalls"
 
 #: templates/form/inspect-form.html:20
 msgid "View entries"
-msgstr "Veure les entrades"
+msgstr "Veure les respostes"
 
 #: templates/form/inspect-form.html:28
 msgid "Total entries"
-msgstr "Suma de registres"
+msgstr "Suma de respostes"
 
 #: templates/form/inspect-form.html:53
 msgid "Public URL"
@@ -613,7 +608,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:284
 msgid "Delete form and entries"
-msgstr "Esborrar el formulari i entrades"
+msgstr "Esborrar el formulari i respostes"
 
 #: templates/form/inspect-form.html:290
 msgid "Admin options"
@@ -966,7 +961,7 @@ msgstr "Per omissió"
 
 #: templates/user/user-settings.html:72
 msgid "New entry notification default"
-msgstr "Avisa'm quan hagin noves entrades"
+msgstr "Avisa'm quan hagin noves respostes"
 
 #: templates/user/user-settings.html:93
 msgid "Administrator"
@@ -1045,12 +1040,8 @@ msgid "Please accept our terms and conditions."
 msgstr "Si us plau, accepta els nostres termes i condicions."
 
 #: utils/consent_texts.py:127
-msgid ""
-"We take your data protection seriously. Please contact us for any "
-"inquiries."
-msgstr ""
-"Prenem de debò la protecció de les teves dades. Si us plau, contacta'ns "
-"per qualsevol consulta."
+msgid "We take your data protection seriously. Please contact us for any inquiries."
+msgstr "Prenem de debò la protecció de les teves dades. Si us plau, contacta'ns per qualsevol consulta."
 
 #: utils/email.py:87
 msgid "Congratulations!"
@@ -1084,14 +1075,12 @@ msgstr "LiberaForms. Recupera contrasenya"
 
 #: utils/email.py:140
 #, python-format
-msgid ""
-"Hello %s\n"
+msgid "Hello %s\n"
 "\n"
 "Please confirm your email\n"
 "\n"
 "%s"
-msgstr ""
-"Hola %s\n"
+msgstr "Hola %s\n"
 "\n"
 "Si us plau, confirma el teu correu electrònic.\n"
 "\n"
@@ -1113,11 +1102,13 @@ msgstr "LiberaForms. Nova notificació de formulari"
 #: utils/email.py:174
 #, python-format
 msgid "New form entry in %s at %s\n"
-msgstr "Nova entrada de formulari a %s en %s\n"
+""
+msgstr "Nova resposta de formulari a %s en %s\n"
+""
 
 #: utils/email.py:178
 msgid "LiberaForms. New form entry"
-msgstr "LiberaForms. Nova entrada de formulari"
+msgstr "LiberaForms. Nova resposta de formulari"
 
 #: utils/email.py:190
 msgid "Confirmation message"
@@ -1272,15 +1263,15 @@ msgstr "Vaja! No podem trobar aquesta invitació"
 
 #: views/entries.py:88
 msgid "Deleted an entry"
-msgstr "Es va esborra una entrada"
+msgstr "Es va esborra una resposta"
 
 #: views/entries.py:118
 msgid "Undeleted an entry"
-msgstr "Es va recuperar una entrada"
+msgstr "Es va recuperar una resposta"
 
 #: views/entries.py:166
 msgid "Modified an entry"
-msgstr "Es va modificar una entrada"
+msgstr "Es va modificar una resposta"
 
 #: views/entries.py:181
 msgid "We expected a number"
@@ -1289,11 +1280,11 @@ msgstr "Esperàvem un número"
 #: views/entries.py:188
 #, python-format
 msgid "Deleted %s entries"
-msgstr "S'ha eliminat %s entrades"
+msgstr "S'ha eliminat %s respostes"
 
 #: views/entries.py:191
 msgid "Number of entries does not match"
-msgstr "El nombre d'entrades no coincideix"
+msgstr "El nombre de respostes no coincideix"
 
 #: views/form.py:72
 msgid "Something went wrong. id does not match session['form_id']"
@@ -1340,7 +1331,7 @@ msgstr ""
 #: views/form.py:278
 #, python-format
 msgid "Deleted '%s' and %s entries"
-msgstr "S'ha eliminat \"%s\" i %s entrades"
+msgstr "S'ha eliminat \"%s\" i %s respostes"
 
 #: views/form.py:281
 msgid "Form name does not match"
@@ -1664,4 +1655,3 @@ msgstr "Els credencials són equivocats"
 
 #~ msgid "Data protection law"
 #~ msgstr "Llei de protecció de dades"
-
