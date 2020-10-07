@@ -20,7 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 from flask import flash, request, g
 from flask_babel import gettext, lazy_gettext
 from urllib.parse import urlparse
-import os, string, random, datetime, json, markdown, csv
+import os, string, random, datetime, json, markdown, unicodecsv as csv
 from mongoengine import QuerySet
 
 from liberaforms import app, db
@@ -753,8 +753,8 @@ class Form(db.Document):
         for field in self.getFieldIndexForDataDisplay(with_deleted_columns):
             fieldnames.append(field['name'])
             fieldheaders[field['name']]=field['label']
-        csv_name='%s/%s.csv' % (app.config['TMP_DIR'], self.slug)
-        with open(csv_name, mode='w') as csv_file:
+        csv_name = os.path.join(app.config['TMP_DIR'], "{}.csv".format(self.slug))
+        with open(csv_name, mode='wb') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
             writer.writerow(fieldheaders)
             for entry in self.orderedEntries:

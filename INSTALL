@@ -30,6 +30,7 @@ apt-get install virtualenv
 virtualenv /opt/LiberaForms/venv --python=python3
 
 
+
 ## Install python packages
 
 source /opt/LiberaForms/venv/bin/activate
@@ -42,6 +43,10 @@ pip install gunicorn
 Admins can upload a logo. You need to give the system user who runs LiberaForms write permission
 
 chown -R www-data /opt/LiberaForms/liberaforms/static/images
+
+LiberaForms saves session data in files. www-data needs to write there too. 
+
+chown -R www-data /opt/LiberaForms/flask_session
 
 
 ### Test your installation

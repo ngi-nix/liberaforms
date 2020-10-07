@@ -23,11 +23,11 @@ from flask import Response, redirect, request, url_for
 from flask import g, session, flash #, has_app_context
 from flask_babel import gettext
 from unidecode import unidecode
-import json, time, re, string, random, datetime, csv
+import json, time, re, string, random, datetime
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
-import markdown, re, html, uuid
+import markdown, html, uuid
 from bs4 import BeautifulSoup
 from pprint import pformat
 
@@ -165,9 +165,9 @@ Create a unique token.
 persistentClass may be a User class, or an Invite class, ..
 """
 def createToken(persistentClass, **kwargs):
-    tokenString = getRandomString(length=48)
+    tokenString = uuid.uuid4().hex
     while persistentClass.find(token=tokenString):
-        tokenString = getRandomString(length=48)
+        tokenString = uuid.uuid4().hex
     result={'token': tokenString, 'created': datetime.datetime.now()}
     return {**result, **kwargs} 
 
