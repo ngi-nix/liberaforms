@@ -203,4 +203,33 @@ def migrateMongoSchema(schemaVersion):
         schemaVersion = 22
 
 
+    # https://api.mongodb.com/python/current/tutorial.html#range-queries
+    if schemaVersion == 22:
+        print("Upgrading to version 23")
+        try:
+            form_collection = models.Form._get_collection()
+            for form in form_collection.find():
+                for entry in form['entries']:
+                    created=entry['created']
+                    marked=entry['marked']
+                    del entry['id']
+                    del entry['created']
+                    del entry['marked']
+                    new_data = {
+                            "created": created,
+                            "hostname": form['hostname'],
+                            "author_id": str(form['author']),
+                            "form_id": str(form["_id"]),
+                            "marked": marked,
+                            "data": entry}
+                    response = models.Response(**new_data)
+                    response.save()
+            form_collection.update_many( {}, {"$unset": {"entries": 1} })
+    
+        except Exception as e:
+            print(e)
+            return schemaVersion
+        print("OK")
+        schemaVersion == 23
+        
     return schemaVersion

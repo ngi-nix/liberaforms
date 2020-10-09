@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% set total_entries = form.getTotalEntries() %}
+
 <div class="container">
 <div class="row">
 <div class="col-md-3"></div>
@@ -11,13 +13,13 @@
     <div class="title_2">{%trans%}Form{%endtrans%}: {{ form.slug }}</div>
 
     {%trans%}You are going to delete{%endtrans%}
-    {{form.totalEntries}} {%trans%}entries{%endtrans%}.
-    <br />
+    {{total_entries}} {%trans%}entries{%endtrans%}.
+    <p></p>
     
     {%trans%}Write the total number of entries below{%endtrans%}.
     <p></p>
     
-    <div class="title_3">{{form.totalEntries}}</div>  
+    <div class="title_3">{{total_entries}}</div>  
     
     <form method="POST">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />

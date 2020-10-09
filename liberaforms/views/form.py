@@ -192,7 +192,6 @@ def save_form(id=None):
                     "slug": session['slug'],
                     "structure": formStructure,
                     "fieldIndex": session['formFieldIndex'],
-                    "entries": [],
                     "sharedEntries": {  "enabled": False,
                                         "key": getRandomString(32),
                                         "password": False,
@@ -556,14 +555,14 @@ def view_form(slug):
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
         entry = {}
-        entry["created"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        entry["marked"] = False
+        entry['marked'] = False
+        """
         # add a unique id
         _id=uuid.uuid4()
         while list(filter(lambda _entry: _entry['id'] == str(_id), queriedForm.entries)):
             _id=uuid.uuid4()
         entry['id']=str(_id)
-        
+        """
         for key in formData:
             if key=='csrf_token':
                 continue
@@ -572,7 +571,7 @@ def view_form(slug):
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             entry[key]=value
-        queriedForm.entries.append(entry)
+        queriedForm.addEntry(entry)
         
         if not queriedForm.expired and queriedForm.hasExpired():
             queriedForm.expired=True

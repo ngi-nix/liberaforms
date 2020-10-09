@@ -190,7 +190,7 @@ function render_fbEditor(fbEditor, options) {
         {% for value in multichoiceOptionsWithSavedData[field] %}
         field = $('input[name="{{field}}-option"][class="option-value"][value="{{value}}"]')
         field.prop("disabled", true)
-        field.prop("title", "{%trans%}Cannot modify because an entry with this value exists in the database{%endtrans%}")
+        field.prop("title", "{%trans%}Cannot modify because a response with this value exists in the database{%endtrans%}")
         {% endfor %}
     {% endfor %}
     });

@@ -133,6 +133,15 @@ def user_settings(username):
     return render_template('user-settings.html', **context)
  
 
+@user_bp.route('/user/<string:username>/statistics', methods=['GET'])
+@enabled_user_required
+def statistics(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.statistics', username=g.current_user.username))
+    pp(g.current_user.getStatistics())
+    return render_template('user/statistics.html', user=g.current_user)
+
+
 @user_bp.route('/user/send-validation', methods=['GET'])
 @login_required
 def send_validation_email():   

@@ -4,6 +4,7 @@
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
 <div class="container">
 <div class="row">
@@ -72,9 +73,15 @@
 
     </div>
     <div class="col-md-8">
-        <div class="title_1 delimited">
-        {%trans%}User's forms{%endtrans%}
-        </div>
+
+    <div class="title_1 delimited">
+        {%trans%}Statistics{%endtrans%}
+    </div>
+    <canvas id="usage_chart" height="100"></canvas>
+
+    <div class="title_1 delimited" style="margin-top:2em">
+        {%trans%}Forms{%endtrans%}
+    </div>
         
     <table id="forms" style="display:none" class="table table-sm table-striped">
         <thead>
@@ -169,6 +176,50 @@ document.getElementById('toggle_admin').addEventListener('click', function(evt){
             }
         }
     });
+});
+{% set stats = user.getStatistics() %}
+var ctx = document.getElementById('usage_chart');
+var time_chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels:  {{ stats['labels']|tojson }},
+        beginAtZero: true,
+        datasets: [
+            {
+                label: ["{{ _('Entries')}}"],
+                data: {{ stats['entries']|tojson }},
+                fill: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(233, 132, 0, 1",
+                
+            },
+            {
+                label: ["{{ _('Forms')}}"],
+                data: {{ stats['forms']|tojson }},
+                fill: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(182, 0, 181, 0.7)",
+            }
+        ],
+    },
+    options: {
+        animation: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        },
+        legend: {
+            onHover: function (e) {
+                e.target.style.cursor = 'pointer'
+            },
+            onLeave: function (e) {
+                e.target.style.cursor = 'default'
+            }
+        }
+    }
 });
 </script>
   

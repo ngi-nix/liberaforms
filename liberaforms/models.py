@@ -39,6 +39,40 @@ class HostnameQuerySet(QuerySet):
         return self.filter(**kwargs)
 
 
+class AuthorQuerySet(QuerySet):
+    def ensure_author(self, **kwargs):            
+        if not g.isRootUserEnabled and not 'author_id' in kwargs:
+            kwargs={'author_id': str(g.current_user.id), **kwargs}
+        return self.filter(**kwargs)
+
+class Response(db.Document):
+    meta = {'collection': 'responses', 'queryset_class': AuthorQuerySet}
+    created = db.StringField(required=True)
+    hostname = db.StringField(required=True)
+    author_id = db.StringField(required=True)
+    form_id = db.StringField(required=True)
+    marked = db.BooleanField(default=False)
+    data = db.DictField(required=True)
+    
+    def __init__(self, *args, **kwargs):
+        #print('Response.__init__()')
+        db.Document.__init__(self, *args, **kwargs)
+
+    def __str__(self):
+        return pformat({'Response': get_obj_values_as_dict(self)})
+
+    @classmethod
+    def find(cls, **kwargs):
+        return cls.findAll(**kwargs).first()
+
+    @classmethod
+    def findAll(cls, **kwargs):
+        order = 'created' if 'oldest_first' in kwargs and kwargs['oldest_first'] else '-created'
+        if 'oldest_first' in kwargs:
+            kwargs.pop('oldest_first')
+        return cls.objects.ensure_author(**kwargs).order_by(order)
+
+
 class User(db.Document):
     meta = {'collection': 'users', 'queryset_class': HostnameQuerySet}
     username = db.StringField(required=True)
@@ -180,6 +214,32 @@ class User(db.Document):
         self.save()
         return self.admin['notifyNewForm']    
 
+    def getForms(self, **kwargs):
+        #print("querying forms for author: "+self.username)
+        kwargs['editor_id']=str(self.id)
+        return Form.findAll(**kwargs)
+
+    def getEntries(self, **kwargs):
+        #print("querying entries for author: "+self.username)
+        kwargs['author_id']=str(self.id)
+        return Response.findAll(**kwargs)
+
+    def getStatistics(self, year="2020"):
+        data_labels = []
+        result={"entries": [], "forms": []}
+        month_cnt = 1
+        while month_cnt <= 12:
+            two_digit_month="{0:0=2d}".format(month_cnt)
+            year_month = "{}-{}".format(year, two_digit_month)
+            data_labels.append(year_month)
+            month_cnt = month_cnt+1
+        result['labels']=data_labels
+        
+        for year_month in data_labels:
+            result['entries'].append(self.getEntries(created__startswith=year_month).count())
+            result['forms'].append(self.getForms(created__startswith=year_month).count())
+        return result
+
     def canInspectForm(self, form):
         return True if (str(self.id) in form.editors or self.isAdmin()) else False
     
@@ -205,7 +265,6 @@ class Form(db.Document):
     """
     structure = db.ListField(required=True)
     fieldIndex = db.ListField(required=True)
-    entries = db.ListField(required=False)
     sharedEntries = db.DictField(required=False)
     log = db.ListField(required=False)
     restrictedAccess = db.BooleanField()
@@ -274,7 +333,7 @@ class Form(db.Document):
         return index
         
     def updateFieldIndex(self, newIndex):
-        if self.totalEntries == 0:
+        if self.getTotalEntries() == 0:
             self.fieldIndex = newIndex
         else:
             deletedFieldsWithData=[]
@@ -284,8 +343,10 @@ class Form(db.Document):
                 if not [i for i in newIndex if i['name'] == field['name']]:
                     # This field was removed by the editor. Can we safely delete it?
                     can_delete=True
-                    for entry in self.entries:
-                        if field['name'] in entry and entry[field['name']]:
+                    entries = self.getEntries()
+                    for entry in entries:
+                        entry_data = entry['data']
+                        if field['name'] in entry_data and entry_data[field['name']]:
                             # This field contains data
                             can_delete=False
                             break
@@ -345,9 +406,51 @@ class Form(db.Document):
                     return entry[element["name"]].strip()
         return False
 
-    @property
-    def totalEntries(self):
-        return len(self.entries)
+    def getEntries(self, oldest_first=False):
+        print("querying entries for form: "+self.slug)
+        return Response.findAll(form_id=str(self.id), oldest_first=oldest_first)
+
+    def findEntry(self, entry_id):
+        return Response.find(id=entry_id, form_id=str(self.id))
+
+    def addEntry(self, data):
+        if 'created'in data: # data comes from 'undo delete'
+            created = data['created']
+            data.pop('created')
+        else:
+            created = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if 'marked'in data: # data comes from 'undo delete'
+            marked = data['marked']
+            data.pop('marked')
+        else:
+            marked = False
+        response={  'hostname': self.hostname,
+                    'form_id': str(self.id),
+                    'author_id': self.author_id,
+                    'created': created,
+                    'marked': marked,
+                    'data': data }
+        new_response = Response(**response)
+        new_response.save()
+        return new_response
+        
+    def getEntriesForDisplay(self, oldest_first=False):
+        entries = self.getEntries(oldest_first=oldest_first)
+        result = []
+        for entry in entries:
+            result.append({ 'id': entry.id,
+                            'created': entry.created,
+                            'marked': entry.marked,
+                            **entry.data})
+        return result
+
+    def getTotalEntries(self):
+        print("getTotal")
+        return Response.findAll(form_id=str(self.id)).count()
+
+    def getLastEntryDate(self):
+        last_entry = Response.find(form_id=str(self.id))
+        return last_entry.created if last_entry else "" 
 
     def isEnabled(self):
         if not (self.author.enabled and self.adminPreferences['public']):
@@ -468,14 +571,6 @@ class Form(db.Document):
             self.afterSubmitText = {'html':"", 'markdown':""}
         self.save()
 
-    @property
-    def lastEntryDate(self):
-        if self.entries:
-            last_entry = self.entries[-1] 
-            return last_entry["created"]
-        else:
-            return ""
-
     def getAvailableNumberTypeFields(self):
         result={}
         for element in self.structure:
@@ -532,8 +627,7 @@ class Form(db.Document):
         return new_form
 
     def deleteEntries(self):
-        self.entries=[]
-        self.save()
+        Response.findAll(form_id=str(self.id)).delete()
     
     def isAuthor(self, user):
         return True if self.author_id == user.id else False
@@ -574,7 +668,7 @@ class Form(db.Document):
 
     def tallyNumberField(self, fieldName):
         total=0
-        for entry in self.entries:
+        for entry in self.getEntries():
             try:
                 total = total + int(entry[fieldName])
             except:
@@ -607,38 +701,41 @@ class Form(db.Document):
     """
     def getMultichoiceOptionsWithSavedData(self):
         result = {}
-        if not self.entries:
+        entries = self.getEntries()
+        if not entries:
             return result
         multiChoiceFields = {}  # {field.name: [option.value, option.value]}
         for field in self.getMultiChoiceFields():
             multiChoiceFields[field['name']] = []
             for value in field['values']:
                 multiChoiceFields[field['name']].append(value['value'])
-        for entry in self.entries:
-            if multiChoiceFields == {}: # no more fields to check
-                return result
-            removeFieldFromSearch=None
+        for entry in entries:
+            entry_data = entry['data']
+            removeFieldsFromSearch=[]
             for field in multiChoiceFields:
-                if field in entry.keys():
-                    for savedValue in entry[field].split(', '):
+                if field in entry_data.keys():
+                    for savedValue in entry_data[field].split(', '):
                         if savedValue in multiChoiceFields[field]:
                             if not field in result:
                                     result[field]=[]
                             result[field].append(savedValue)
                             multiChoiceFields[field].remove(savedValue)
                             if multiChoiceFields[field] == []:  # all option.values are present in database
-                                removeFieldFromSearch=field
-            if removeFieldFromSearch:
-                multiChoiceFields.pop(removeFieldFromSearch)
+                                removeFieldsFromSearch.append(field)
+            for field_to_remove in removeFieldsFromSearch:
+                del(multiChoiceFields[field_to_remove])
+                if multiChoiceFields == {}: # no more fields to check
+                    return result
         return result
 
-    @property
-    def orderedEntries(self):
-        return sorted(self.entries, key=lambda k: k['created'])
+    #@property
+    #def orderedEntries(self):
+    #    return sorted(self.entries, key=lambda k: k['created'])
 
     def getEntriesForJSON(self):
         result=[]
-        for saved_entry in self.orderedEntries:
+        entries = self.getEntriesForDisplay(oldest_first=True)
+        for saved_entry in entries:
             entry={}
             for field in self.getFieldIndexForDataDisplay():
                 value=saved_entry[field['name']] if field['name'] in saved_entry else ""
@@ -666,7 +763,7 @@ class Form(db.Document):
             for value in field['values']:
                 field_for_chart['axis_1'].append(value['label'])
                 field_for_chart['axis_2'].append(0) #start counting at zero
-        for entry in self.orderedEntries:
+        for entry in self.getEntriesForDisplay(oldest_first=True):
             total['entries']+=1
             time_data['entries'].append({   'x': entry['created'],
                                             'y': total['entries']})
@@ -757,7 +854,8 @@ class Form(db.Document):
         with open(csv_name, mode='wb') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
             writer.writerow(fieldheaders)
-            for entry in self.orderedEntries:
+            entries = self.getEntriesForDisplay(oldest_first=True)
+            for entry in entries:
                 writer.writerow(entry)
         return csv_name
         

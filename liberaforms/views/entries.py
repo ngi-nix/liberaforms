@@ -77,12 +77,14 @@ def csv_form(id):
 @enabled_user_required
 def delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not (queriedForm and "id" in request.json and isValidUUID(request.json["id"])):
+    if not (queriedForm and "id" in request.json):
         return json.dumps({'deleted': False})
-    foundEntries = list(filter(lambda _entry: _entry['id'] == request.json['id'], queriedForm.entries))
-    if not foundEntries:
+    print(request.json["id"])
+    response = queriedForm.findEntry(request.json["id"])
+    if not response:
         return json.dumps({'deleted': False})
-    queriedForm.entries.remove(foundEntries[0])    
+    response.delete()
+    
     queriedForm.expired = queriedForm.hasExpired()
     queriedForm.save()
     queriedForm.addLog(gettext("Deleted an entry"))
@@ -94,44 +96,35 @@ def delete_entry(id):
 def undo_delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        return json.dumps({'undone': False})
-
-    # check we have a "id" key
-    id_pos=next((   i for i,field in enumerate(request.json)
-                    if "name" in field and field["name"] == "id"), None)
-    if not (isinstance(id_pos, int) and isValidUUID(request.json[id_pos]["value"])):
-        return json.dumps({'undone': False})
-
-    foundEntries = [entry for entry in queriedForm.entries if entry['id'] == request.json[id_pos]["value"]]
-    if foundEntries:
-        # There is already an entry in the DB with the same 'id' value, so we don't do anything
-        return json.dumps({'undone': False})
-    entry={}
+        return json.dumps({'undone': False, 'new_id': None})
+    entry_data={}
     for field in request.json:
         try:
-            entry[field["name"]]=field["value"]
+            entry_data[field["name"]]=field["value"]
         except:
-            return json.dumps({'undone': False})
-    queriedForm.entries.append(entry)
+            return json.dumps({'undone': False, 'new_id': None})
+    entry = queriedForm.addEntry(entry_data)
+    
     queriedForm.expired = queriedForm.hasExpired()
     queriedForm.save()
     queriedForm.addLog(gettext("Undeleted an entry"))
-    return json.dumps({'undone': True})
+    return json.dumps({'undone': True, 'new_id': str(entry.id)})
 
 
 @entries_bp.route('/forms/toggle-marked-entry/<string:id>', methods=['POST'])
 @enabled_user_required
 def toggle_marked_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not (queriedForm and "id" in request.json and isValidUUID(request.json["id"])):
+    if not (queriedForm and "id" in request.json):
         return json.dumps({'marked': False})
-    foundEntries = [entry for entry in queriedForm.entries if entry['id'] == request.json["id"]]
-    if not foundEntries:
+    print(request.json["id"])
+    response = queriedForm.findEntry(request.json["id"])
+    if not response:
+        print("not founbd")
         return json.dumps({'marked': False})
-    entry=foundEntries[0]
-    entry["marked"] = False if entry["marked"] == True else True
-    queriedForm.save()
-    return json.dumps({'marked': entry["marked"]})
+    response.marked = False if response.marked == True else True
+    response.save()
+    return json.dumps({'marked': response.marked})
 
 
 @entries_bp.route('/forms/change-entry-field-value/<string:id>', methods=['POST'])
@@ -180,7 +173,7 @@ def delete_entries(id):
         except:
             flash(gettext("We expected a number"), 'warning')
             return render_template('delete-entries.html', form=queriedForm)
-        if queriedForm.totalEntries == totalEntries:
+        if queriedForm.getTotalEntries() == totalEntries:
             queriedForm.deleteEntries()
             if not queriedForm.hasExpired() and queriedForm.expired:
                 queriedForm.expired=False

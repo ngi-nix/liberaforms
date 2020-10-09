@@ -2,6 +2,8 @@
 {% block content %}
 
 {% set fieldIndex = form.getFieldIndexForDataDisplay(with_deleted_columns=with_deleted_columns) %}
+{% set responses = form.getEntriesForDisplay() %}
+{% set total_entries = responses|length %}
 {% set tallyColumns = form.getConditionalFieldPositions() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
@@ -31,7 +33,7 @@
     <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
     {% endif %}
     
-    {% if form.totalEntries %}
+    {% if total_entries %}
     
     {% if edit_mode %}
     <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Disable edition{%endtrans%}</a>
@@ -86,8 +88,8 @@
         </thead>
         <tbody {% if edit_mode %}class="entryCellHighlighter"{% endif %} >
         <!-- Keep the data TD on one line! -->
-        {% for entry in form.orderedEntries %}
-        <tr _id="{{ entry['id'] }}" class="td-controls">
+        {% for response in responses %}
+        <tr _id="{{ response['id'] }}" class="td-controls">
             <td>
                 {% if edit_mode %}
                 <i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>
@@ -99,20 +101,20 @@
                 {% endif %}
                 {% if field['name'] == "marked" %}
                     {% if not edit_mode %}
-                        {% if entry[field['name']] == True %}
+                        {% if response[field['name']] == True %}
                         <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_entry">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                         {% else %}
                         <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_entry">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                         {% endif %}
                     {% else %}
-                        {% if entry[field['name']] == True %}
+                        {% if response[field['name']] == True %}
                         <td marked="1">{%trans%}True{%endtrans%}</td>
                         {% else %}
                         <td marked="0">{%trans%}False{%endtrans%}</td>
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    <td>{{ entry[field['name']] }}</td>
+                    <td>{{ response[field['name']] }}</td>
                 {% endif %}
             {% endfor %}
         </tr>
@@ -147,6 +149,7 @@ function getRowData($row) {
     var arrayLength = fieldIndex.length;
     for (var loop = 0; loop < arrayLength; loop++) {  
         if ( fieldIndex[loop]["name"] == "id") {
+            console.log("there' and id")
             continue
         }
         if ( fieldIndex[loop]["name"] == "marked") {
@@ -159,7 +162,7 @@ function getRowData($row) {
         }        
         rowData.push({"name": fieldIndex[loop]["name"], "value": $row.children('td').eq(loop+1).html()})
     }
-    rowData.push({"name":"id", "value":getEntryID($row)})
+    //rowData.push({"name":"id", "value":getEntryID($row)})
     return rowData;
 }
 $(document).ready(function() {
@@ -313,6 +316,7 @@ $('#entriesTable tbody').on('click', '.undo-delete-row', function () {
         success: function(data, textStatus, jqXHR)
         {
             if (data.undone == true) {
+                $row.attr("_id", data.new_id)
                 $row.children(':not(:first-child)').removeClass('deleted-row');
                 $row.children('td').eq(0).html('<i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>');
             }
