@@ -54,7 +54,7 @@ class Response(db.Document):
     author_id = db.StringField(required=True)
     form_id = db.StringField(required=True)
     marked = db.BooleanField(default=False)
-    data = db.DictField(required=True)
+    data = db.DictField(required=False)
     
     def __init__(self, *args, **kwargs):
         #print('Response.__init__()')
