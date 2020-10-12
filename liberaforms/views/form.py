@@ -43,7 +43,7 @@ form_bp = Blueprint('form_bp', __name__,
 @form_bp.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    return render_template('my-forms.html', forms=g.current_user.forms) 
+    return render_template('my-forms.html', forms=g.current_user.forms, user=g.current_user) 
 
 """
 @form_bp.route('/forms/templates', methods=['GET'])
@@ -272,9 +272,9 @@ def delete_form(id):
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
-            entries = queriedForm.totalEntries
-            queriedForm.delete()
-            flash(gettext("Deleted '%s' and %s entries" % (queriedForm.slug, entries)), 'success')
+            entry_cnt = queriedForm.getEntries().count()
+            queriedForm.deleteForm()
+            flash(gettext("Deleted '%s' and %s entries" % (queriedForm.slug, entry_cnt)), 'success')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
             flash(gettext("Form name does not match"), 'warning')

@@ -4,6 +4,8 @@ v.1.7
  * Changed project name GNGforms -> LiberaForms
  * Added norobot meta to forms
  * Fixed unexpected session timeouts
+ * New stats charts
+ * Improved performance when there are many responses
 
 v.1.6
  * Added Basque translation

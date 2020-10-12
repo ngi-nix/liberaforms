@@ -138,7 +138,7 @@ def user_settings(username):
 def statistics(username):
     if username != g.current_user.username:
         return redirect(make_url_for('user_bp.statistics', username=g.current_user.username))
-    pp(g.current_user.getStatistics())
+    #pp(g.current_user.getStatistics())
     return render_template('user/statistics.html', user=g.current_user)
 
 

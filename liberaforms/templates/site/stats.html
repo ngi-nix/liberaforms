@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set chart_data = site.getChartData() %}
+{% set stats = site.getStatistics() %}
 
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
@@ -9,24 +9,16 @@
 <div class="row">
     <div class="col">
         <div class="title_1 delimited">
-            {%trans%}Statistics{%endtrans%}
+            {%trans%}Site statistics{%endtrans%}
         </div>
-        <canvas id="time_chart" height="100"></canvas>
+        <canvas id="site-usage-chart" height="100"></canvas>
         
         {% if sites|length > 1 %}
             {% for site in sites %}
             <div class="title_2 delimited" style="margin-top:2.5em">
                 {{ site.hostname }}
-                <span style="color: gray">
-                    {% if site.totalUsers == 0 %}
-                        (0
-                    {% else %}
-                        ({{ (site.totalForms / site.totalUsers)|round(precision=2) }}
-                    {% endif %}
-                    {%trans%}forms per user{%endtrans%})
-                </span>
             </div>
-            <canvas id="{{ site.id }}" height="100"></canvas>
+            <canvas id="{{site.id}}-usage-chart" height="100"></canvas>
             {% endfor %}
         {% endif %}
         
@@ -39,104 +31,160 @@
 {% set bg_colors = [    "rgba(233, 132, 0, 0.7)", "rgba(182, 0, 181, 0.7)", "rgba(255, 228, 0, 0.7)",
                         "rgba(255, 0, 0, 0.7)", "rgba(0, 123 ,255, 0.7)", "rgba(0, 190, 0, 0.7)"] %}
 
-var ctx = document.getElementById('time_chart');
+
+{% set stats = site.getStatistics() %}
+var ctx = document.getElementById('site-usage-chart');
 var time_chart = new Chart(ctx, {
-    type: 'line',
+    type: 'bar',
     data: {
+        labels:  {{ stats['labels']|tojson }},
+        beginAtZero: true,
         datasets: [
             {
-                label: "{%trans%}Users{%endtrans%}",
-                data: {{ chart_data['users']|tojson }},
-                borderColor: ["rgba(0, 190, 0)"],                
-                fill: false,
-                borderWidth: 3,
-                steppedLine: true,
+                label: ["{{ _('Entries')}}"],
+                data: {{ stats['entries']|tojson }},
+                fill: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(182, 0, 181, 1)",
+
+                
             },
             {
-                label: "{%trans%}Forms{%endtrans%}",
-                data: {{ chart_data['forms']|tojson }},
-                borderColor: ["rgba(233, 132, 0)"],                
-                fill: false,
-                borderWidth: 3,
-                steppedLine: true,
-            },            
+                label: ["{{ _('Total entries')}}"],
+                data: {{ stats['total_entries']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(0, 190, 0, 0.7)",
+            },
+            {
+                label: ["{{ _('New forms')}}"],
+                data: {{ stats['forms']|tojson }},
+                fill: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(233, 132, 0, 1)",
+            },
+            {
+                label: ["{{ _('Total forms')}}"],
+                data: {{ stats['total_forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                hidden: true,
+                backgroundColor: "rgba(255, 228, 0, 1)",
+            },
+            {
+                label: ["{{ _('New users')}}"],
+                data: {{ stats['users']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(0, 123 ,255, 1)",
+            },
+            {
+                label: ["{{ _('Total users')}}"],
+                data: {{ stats['total_users']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(255, 0, 0, 1)",
+            },
         ],
     },
     options: {
-        animation: false,
-        scales: {
-            xAxes: [{
-                type: 'time',
-                precision: 0,
-            }],
-            yAxes: [{
-                ticks: {
-                    precision: 0,
-                }
-            }],
+        maintainAspectRatio: true,
+        responsive: true,
+        scales: { yAxes: [{
+                    ticks: { beginAtZero: true, precision: 0 }
+                }]
         },
         legend: {
-            onHover: function (e) {
-                e.target.style.cursor = 'pointer'
-            },
-            onLeave: function (e) {
-                e.target.style.cursor = 'default'
-            }
+            onHover: function (e) { e.target.style.cursor = 'pointer' },
+            onLeave: function (e) { e.target.style.cursor = 'default' }
         }
     }
 });
+
+
 {% if sites|length > 1 %}
 {% for site in sites %}
-{% set chart_data = site.getChartData(hostname=site.hostname) %}
 
-var ctx = document.getElementById('{{site.id}}');
+{% set stats = site.getStatistics(hostname=site.hostname) %}
+
+var ctx = document.getElementById('{{site.id}}-usage-chart');
 var time_chart = new Chart(ctx, {
-    type: 'line',
+    type: 'bar',
     data: {
+        labels:  {{ stats['labels']|tojson }},
+        beginAtZero: true,
         datasets: [
             {
-                label: "{%trans%}Users{%endtrans%}",
-                data: {{ chart_data['users']|tojson }},
-                borderColor: ["rgba(0, 190, 0)"],                
-                fill: false,
-                borderWidth: 3,
-                steppedLine: true,
+                label: ["{{ _('Entries')}}"],
+                data: {{ stats['entries']|tojson }},
+                fill: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(182, 0, 181, 1)",
+
+                
             },
             {
-                label: "{%trans%}Forms{%endtrans%}",
-                data: {{ chart_data['forms']|tojson }},
-                borderColor: ["rgba(233, 132, 0)"],                
-                fill: false,
-                borderWidth: 3,
-                steppedLine: true,
-            },            
+                label: ["{{ _('Total entries')}}"],
+                data: {{ stats['total_entries']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(0, 190, 0, 0.7)",
+            },
+            {
+                label: ["{{ _('New forms')}}"],
+                data: {{ stats['forms']|tojson }},
+                fill: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(233, 132, 0, 1)",
+            },
+            {
+                label: ["{{ _('Total forms')}}"],
+                data: {{ stats['total_forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                hidden: true,
+                backgroundColor: "rgba(255, 228, 0, 1)",
+            },
+            {
+                label: ["{{ _('New users')}}"],
+                data: {{ stats['users']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(0, 123 ,255, 1)",
+            },
+            {
+                label: ["{{ _('Total users')}}"],
+                data: {{ stats['total_users']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(255, 0, 0, 1)",
+            },
         ],
     },
     options: {
         animation: false,
-        scales: {
-            xAxes: [{
-                type: 'time',
-                precision: 0,
-            }],
-            yAxes: [{
-                ticks: {
-                    precision: 0,
-                }
-            }],
+        scales: { yAxes: [{
+                    ticks: { beginAtZero: true, precision: 0 }
+                }]
         },
         legend: {
-            onHover: function (e) {
-                e.target.style.cursor = 'pointer'
-            },
-            onLeave: function (e) {
-                e.target.style.cursor = 'default'
-            }
+            onHover: function (e) { e.target.style.cursor = 'pointer' },
+            onLeave: function (e) { e.target.style.cursor = 'default' }
         }
     }
 });
+
 {% endfor %}
 {% endif %}
+
 </script>
 
 {% endblock %}

@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col">
         <div class="title_1 delimited">
-            {%trans%}Statistics{%endtrans%}
+            {%trans%}My statistics{%endtrans%}
         </div>
         <canvas id="usage_chart" height="100"></canvas>
     </div>
@@ -17,7 +17,6 @@
 </div>
 
 {% set stats = user.getStatistics() %}
-
 
 <script>
 
@@ -33,15 +32,33 @@ var time_chart = new Chart(ctx, {
                 data: {{ stats['entries']|tojson }},
                 fill: true,
                 borderWidth: 0,
-                backgroundColor: "rgba(233, 132, 0, 1)",
+                backgroundColor: "rgba(182, 0, 181, 1)",
+
                 
             },
             {
-                label: ["{{ _('Forms')}}"],
+                label: ["{{ _('Total entries')}}"],
+                data: {{ stats['total_entries']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(0, 190, 0, 0.7)",
+            },
+            {
+                label: ["{{ _('New forms')}}"],
                 data: {{ stats['forms']|tojson }},
                 fill: true,
                 borderWidth: 0,
-                backgroundColor: "rgba(182, 0, 181, 0.7)",
+                backgroundColor: "rgba(233, 132, 0, 1)",
+            },
+            {
+                label: ["{{ _('Total forms')}}"],
+                data: {{ stats['total_forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                hidden: true,
+                backgroundColor: "rgba(255, 228, 0, 1)",
             }
         ],
     },
@@ -54,12 +71,8 @@ var time_chart = new Chart(ctx, {
             }]
         },
         legend: {
-            onHover: function (e) {
-                e.target.style.cursor = 'pointer'
-            },
-            onLeave: function (e) {
-                e.target.style.cursor = 'default'
-            }
+            onHover: function (e) { e.target.style.cursor = 'pointer' },
+            onLeave: function (e) { e.target.style.cursor = 'default' }
         }
     }
 });

@@ -22,6 +22,8 @@ from flask_babel import gettext, lazy_gettext
 from urllib.parse import urlparse
 import os, string, random, datetime, json, markdown, unicodecsv as csv
 from mongoengine import QuerySet
+#from datetime import timedelta
+
 
 from liberaforms import app, db
 from liberaforms.utils.utils import *
@@ -148,7 +150,7 @@ class User(db.Document):
     def deleteUser(self):
         forms = Form.findAll(author_id=str(self.id))
         for form in forms:
-            form.delete()
+            form.deleteForm()
         forms = Form.findAll(editor_id=str(self.id))
         for form in forms:
             del form.editors[str(self.id)]
@@ -215,29 +217,45 @@ class User(db.Document):
         return self.admin['notifyNewForm']    
 
     def getForms(self, **kwargs):
-        #print("querying forms for author: "+self.username)
-        kwargs['editor_id']=str(self.id)
+        kwargs['author_id']=str(self.id)
         return Form.findAll(**kwargs)
 
     def getEntries(self, **kwargs):
-        #print("querying entries for author: "+self.username)
         kwargs['author_id']=str(self.id)
         return Response.findAll(**kwargs)
 
     def getStatistics(self, year="2020"):
-        data_labels = []
-        result={"entries": [], "forms": []}
-        month_cnt = 1
-        while month_cnt <= 12:
-            two_digit_month="{0:0=2d}".format(month_cnt)
+        today = datetime.date.today().strftime("%Y-%m")
+        one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
+        year, month = one_year_ago.strftime("%Y-%m").split("-")
+        month = int(month)
+        year = int(year)
+        result={    "labels":[], "entries":[], "forms":[],
+                    "total_entries":[], "total_forms": []}
+        while 1:
+            month = month +1
+            if month == 13:
+                month = 1
+                year = year +1
+            two_digit_month="{0:0=2d}".format(month)
             year_month = "{}-{}".format(year, two_digit_month)
-            data_labels.append(year_month)
-            month_cnt = month_cnt+1
-        result['labels']=data_labels
+            result['labels'].append(year_month)
+            if year_month == today:
+                break
         
-        for year_month in data_labels:
-            result['entries'].append(self.getEntries(created__startswith=year_month).count())
-            result['forms'].append(self.getForms(created__startswith=year_month).count())
+        query={}
+        total_entries=0
+        total_forms=0
+        for year_month in result['labels']:
+            query['created__startswith'] = year_month
+            monthy_entries = self.getEntries(**query).count()
+            monthy_forms = self.getForms(**query).count()
+            total_entries= total_entries + monthy_entries
+            total_forms= total_forms + monthy_forms
+            result['entries'].append(monthy_entries)
+            result['forms'].append(monthy_forms)
+            result['total_entries'].append(total_entries)
+            result['total_forms'].append(total_forms)
         return result
 
     def canInspectForm(self, form):
@@ -407,7 +425,7 @@ class Form(db.Document):
         return False
 
     def getEntries(self, oldest_first=False):
-        print("querying entries for form: "+self.slug)
+        #print("querying entries for form: "+self.slug)
         return Response.findAll(form_id=str(self.id), oldest_first=oldest_first)
 
     def findEntry(self, entry_id):
@@ -445,7 +463,6 @@ class Form(db.Document):
         return result
 
     def getTotalEntries(self):
-        print("getTotal")
         return Response.findAll(form_id=str(self.id)).count()
 
     def getLastEntryDate(self):
@@ -625,6 +642,10 @@ class Form(db.Document):
         new_form=Form(**formData)
         new_form.save()
         return new_form
+
+    def deleteForm(self):
+        self.deleteEntries()
+        self.delete()
 
     def deleteEntries(self):
         Response.findAll(form_id=str(self.id)).delete()
@@ -1098,6 +1119,53 @@ class Site(db.Document):
             form_count += 1
             time_fields["forms"].append({"x": form.created, "y": form_count})
         return time_fields
+
+    def getForms(self, **kwargs):
+        #print("querying forms for site: "+self.hostname)
+        return Form.findAll(**kwargs)
+
+    def getEntries(self, **kwargs):
+        #print("querying entries for site: "+self.hostname)
+        return Response.findAll(**kwargs)
+        
+    def getStatistics(self, hostname=None):
+        today = datetime.date.today().strftime("%Y-%m")
+        one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
+        year, month = one_year_ago.strftime("%Y-%m").split("-")
+        month = int(month)
+        year = int(year)
+        result={    "labels":[], "entries":[], "forms":[], 'users':[],
+                    "total_entries":[], "total_forms": [], "total_users":[]}
+        while 1:
+            month = month +1
+            if month == 13:
+                month = 1
+                year = year +1
+            two_digit_month="{0:0=2d}".format(month)
+            year_month = "{}-{}".format(year, two_digit_month)
+            result['labels'].append(year_month)
+            if year_month == today:
+                break
+        
+        query = {'hostname': hostname} if hostname else {}
+        total_entries=0
+        total_forms=0
+        total_users=0
+        for year_month in result['labels']:
+            query['created__startswith'] = year_month
+            monthy_entries = self.getEntries(**query).count()
+            monthy_forms = self.getForms(**query).count()
+            monthy_users = User.findAll(**query).count()
+            total_entries= total_entries + monthy_entries
+            total_forms= total_forms + monthy_forms
+            total_users = total_users + monthy_users
+            result['entries'].append(monthy_entries)
+            result['forms'].append(monthy_forms)
+            result['users'].append(monthy_users)
+            result['total_entries'].append(total_entries)
+            result['total_forms'].append(total_forms)
+            result['total_users'].append(total_users)
+        return result
 
 
 class Invite(db.Document):

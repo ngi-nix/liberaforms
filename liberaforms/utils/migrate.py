@@ -202,7 +202,6 @@ def migrateMongoSchema(schemaVersion):
         print("OK")
         schemaVersion = 22
 
-
     # https://api.mongodb.com/python/current/tutorial.html#range-queries
     if schemaVersion == 22:
         print("Upgrading to version 23")
@@ -230,6 +229,6 @@ def migrateMongoSchema(schemaVersion):
             print(e)
             return schemaVersion
         print("OK")
-        schemaVersion == 23
+        schemaVersion = 23
         
     return schemaVersion

@@ -108,23 +108,16 @@ var time_chart = new Chart(ctx, {
     },
     options: {
         scales: {
-            xAxes: [{
-                type: 'time',
-                precision: 0,
-            }],
-            yAxes: [{
-                ticks: {
-                    precision: 0,
-                }
-            }],
+                xAxes: [{
+                    type: 'time', precision: 0,
+                }],
+                yAxes: [{
+                    ticks: { beginAtZero: true, precision: 0 }
+                }]
         },
         legend: {
-            onHover: function (e) {
-                e.target.style.cursor = 'pointer'
-            },
-            onLeave: function (e) {
-                e.target.style.cursor = 'default'
-            }
+            onHover: function (e) { e.target.style.cursor = 'pointer' },
+            onLeave: function (e) { e.target.style.cursor = 'default' }
         }
     }
 });
@@ -163,20 +156,16 @@ new Chart(ctx, {
     options: {
         maintainAspectRatio: false,
         responsive: true,
-        animation: {
-            duration: 0
-        },
-        hover: {
-            animationDuration: 0
-        },
+        animation: { duration: 0 },
+        hover: { animationDuration: 0 },
         responsiveAnimationDuration: 0,
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    precision: 0,
-                }
-            }]
+        scales: { yAxes: [{
+                    ticks: { beginAtZero: true, precision: 0 }
+                }]
+        },
+        legend: {
+            onHover: function (e) { e.target.style.cursor = 'pointer' },
+            onLeave: function (e) { e.target.style.cursor = 'default' }
         }
     }
 });

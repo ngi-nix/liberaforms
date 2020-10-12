@@ -13,7 +13,7 @@
         {%trans%}All forms{%endtrans%}
         <div style="float:right">
             <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
-                {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
+                {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
             </a>
         </div>
     </div>
@@ -22,11 +22,12 @@
         <thead>
         <tr>
             <th>{%trans%}Name{%endtrans%}</th>
+            <th>{%trans%}Entries{%endtrans%}</th>
+            <th>{%trans%}Last entry{%endtrans%}</th>
             <th>{%trans%}Created{%endtrans%}</th>
             <th>{%trans%}Author{%endtrans%}</th>
             <th>{%trans%}Public{%endtrans%}</th>
-            <th>{%trans%}Entries{%endtrans%}</th>
-            <th>{%trans%}Last entry{%endtrans%}</th>
+            
             {% if g.isRootUserEnabled %}
                 <th>{%trans%}Hostname{%endtrans%}</th>
             {% endif %}
@@ -35,11 +36,11 @@
     {% for form in forms %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
+            <td>{{form.getEntries().count()}}</td>
+            <td>{{form.getLastEntryDate()}}</td>
             <td>{{form.created}}</td>
             <td><a href="/admin/users/{{form.user.id}}">{{form.user.username}}</a></td>
             <td>{{form.isPublic()}}</td>
-            <td>{{form.entries|length}}</td>
-            <td>{{form.lastEntryDate}}</td>
             {% if g.isRootUserEnabled %}
                 <td>{{form.hostname}}</td>
             {% endif %}

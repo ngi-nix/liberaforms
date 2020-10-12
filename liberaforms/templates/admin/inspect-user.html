@@ -6,6 +6,8 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
+{% set stats = user.getStatistics() %}
+
 <div class="container">
 <div class="row">
     <div class="col-md-4">
@@ -77,7 +79,7 @@
     <div class="title_1 delimited">
         {%trans%}Statistics{%endtrans%}
     </div>
-    <canvas id="usage_chart" height="100"></canvas>
+    <canvas id="usage_chart" height="125"></canvas>
 
     <div class="title_1 delimited" style="margin-top:2em">
         {%trans%}Forms{%endtrans%}
@@ -108,7 +110,7 @@
             </td>
            <td>{{form.editors|length}}</td>
            <td>{{form.isPublic()}}</td>
-           <td>{{form.entries|length}}</td>
+           <td>{{form.getEntries().count()}}</td>
         </tr>
         {% endfor %}
     </table>
@@ -177,7 +179,6 @@ document.getElementById('toggle_admin').addEventListener('click', function(evt){
         }
     });
 });
-{% set stats = user.getStatistics() %}
 var ctx = document.getElementById('usage_chart');
 var time_chart = new Chart(ctx, {
     type: 'bar',
@@ -190,7 +191,7 @@ var time_chart = new Chart(ctx, {
                 data: {{ stats['entries']|tojson }},
                 fill: true,
                 borderWidth: 0,
-                backgroundColor: "rgba(233, 132, 0, 1",
+                backgroundColor: "rgba(182, 0, 181, 0.7)",
                 
             },
             {
@@ -198,26 +199,19 @@ var time_chart = new Chart(ctx, {
                 data: {{ stats['forms']|tojson }},
                 fill: true,
                 borderWidth: 0,
-                backgroundColor: "rgba(182, 0, 181, 0.7)",
+                backgroundColor: "rgba(233, 132, 0, 1)",
             }
         ],
     },
     options: {
         animation: false,
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+        scales: { yAxes: [{
+                    ticks: { beginAtZero: true, precision: 0 }
+                }]
         },
         legend: {
-            onHover: function (e) {
-                e.target.style.cursor = 'pointer'
-            },
-            onLeave: function (e) {
-                e.target.style.cursor = 'default'
-            }
+            onHover: function (e) { e.target.style.cursor = 'pointer' },
+            onLeave: function (e) { e.target.style.cursor = 'default' }
         }
     }
 });
