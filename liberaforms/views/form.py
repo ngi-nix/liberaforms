@@ -554,15 +554,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        entry = {}
-        entry['marked'] = False
-        """
-        # add a unique id
-        _id=uuid.uuid4()
-        while list(filter(lambda _entry: _entry['id'] == str(_id), queriedForm.entries)):
-            _id=uuid.uuid4()
-        entry['id']=str(_id)
-        """
+        entry = {'marked': False}
         for key in formData:
             if key=='csrf_token':
                 continue

@@ -280,7 +280,7 @@
         <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
         <a class="btn-primary btn btn-sm" role="button" href="#!" onClick="js:$('#embed_snippet').show();">{%trans%}Embed form{%endtrans%}</a>
         </p>
-            {% if form.totalEntries == 0 %}
+            {% if total_entries == 0 %}
             <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
             {% else %}
             <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}</a>
