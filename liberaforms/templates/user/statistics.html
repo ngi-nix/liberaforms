@@ -32,7 +32,7 @@ var time_chart = new Chart(ctx, {
                 data: {{ stats['entries']|tojson }},
                 fill: true,
                 borderWidth: 0,
-                backgroundColor: "rgba(182, 0, 181, 1)",
+                backgroundColor: "rgba(182, 0, 181, 0.7)",
 
                 
             },
@@ -49,7 +49,7 @@ var time_chart = new Chart(ctx, {
                 data: {{ stats['forms']|tojson }},
                 fill: true,
                 borderWidth: 0,
-                backgroundColor: "rgba(233, 132, 0, 1)",
+                backgroundColor: "rgba(233, 132, 0, 0.7)",
             },
             {
                 label: ["{{ _('Total forms')}}"],
@@ -58,7 +58,7 @@ var time_chart = new Chart(ctx, {
                 hidden: true,
                 borderWidth: 0,
                 hidden: true,
-                backgroundColor: "rgba(255, 228, 0, 1)",
+                backgroundColor: "rgba(255, 228, 0, 0.7)",
             }
         ],
     },

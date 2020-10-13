@@ -1074,17 +1074,15 @@ class Site(db.Document):
     def saveSMTPconfig(self, **kwargs):
         self.smtpConfig=kwargs
         self.save()
-    
-    @property
-    def totalUsers(self):
+
+    def getTotalUsers(self):
         return User.findAll(hostname=self.hostname).count()
 
     @property
     def admins(self):
         return User.findAll(admin__isAdmin=True, hostname=self.hostname)
-    
-    @property
-    def totalForms(self):
+
+    def getTotalForms(self):
         return Form.findAll(hostname=self.hostname).count()
     
     def toggleInvitationOnly(self):

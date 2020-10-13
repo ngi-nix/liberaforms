@@ -116,7 +116,7 @@ def new_user(token=None):
 @login_required
 def user_settings(username):
     if username != g.current_user.username:
-        return redirect(make_url_for('form_bp.my_forms'))
+        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     invites = Invite.findAll() if g.isAdmin else []
     sites=None
     installation=None
@@ -138,7 +138,6 @@ def user_settings(username):
 def statistics(username):
     if username != g.current_user.username:
         return redirect(make_url_for('user_bp.statistics', username=g.current_user.username))
-    #pp(g.current_user.getStatistics())
     return render_template('user/statistics.html', user=g.current_user)
 
 

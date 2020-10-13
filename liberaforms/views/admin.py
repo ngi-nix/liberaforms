@@ -152,34 +152,6 @@ def change_author(id):
 
 
 
-""" Invitations """
-
-@admin_bp.route('/admin/invites/new', methods=['GET', 'POST'])
-@admin_required
-def new_invite():
-    wtform=wtf.NewInvite()
-    if wtform.validate_on_submit():  
-        message=wtform.message.data
-        invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
-        EmailServer().sendInvite(invite)
-        flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
-        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-    wtform.message.data=Invite.defaultMessage()
-    return render_template('new-invite.html', wtform=wtform, sites=Site.findAll())
-
-
-@admin_bp.route('/admin/invites/delete/<string:id>', methods=['GET'])
-@admin_required
-def delete_invite(id):
-    invite=Invite.find(id=id)
-    if invite:
-        invite.delete()
-    else:
-        flash(gettext("Opps! We can't find that invitation"), 'error')
-    return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-
-
-
 """ Personal Admin preferences """
 
 @admin_bp.route('/admin/toggle-newuser-notification', methods=['POST'])

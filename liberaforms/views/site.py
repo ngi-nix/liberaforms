@@ -87,7 +87,7 @@ def change_siteName():
         g.site.siteName=request.form['sitename']
         g.site.save()
         flash(gettext("Site name changed OK"), 'success')
-        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+        return redirect(make_url_for('site_bp.site_admin'))
     return render_template('change-sitename.html', site=g.site)
 
 
@@ -99,10 +99,10 @@ def change_default_language():
             g.site.defaultLanguage=request.form['language']
             g.site.save()
             flash(gettext("Language updated OK"), 'success')
-            return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+            return redirect(make_url_for('site_bp.site_admin'))
     return render_template('common/change-language.html',
                             current_language=g.site.defaultLanguage,
-                            site_default=True)
+                            go_back_to_site_admin=True)
 
 @site_bp.route('/site/change-favicon', methods=['GET', 'POST'])
 @admin_required
@@ -120,7 +120,7 @@ def change_site_favicon():
             flash(gettext("Bad file name. PNG only"), 'warning')
             return render_template('change-site-favicon.html')
         flash(gettext("Favicon changed OK. Refresh with  &lt;F5&gt;"), 'success')
-        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+        return redirect(make_url_for('site_bp.site_admin'))
     return render_template('change-site-favicon.html')
 
 
@@ -129,10 +129,10 @@ def change_site_favicon():
 def reset_site_favicon():
     if g.site.deleteFavicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
-    return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+    return redirect(make_url_for('site_bp.site_admin'))
 
 
-@site_bp.route('/admin/toggle-invitation-only', methods=['POST'])
+@site_bp.route('/site/toggle-invitation-only', methods=['POST'])
 @admin_required
 def toggle_invitation_only(): 
     return json.dumps({'invite': g.site.toggleInvitationOnly()})
@@ -168,7 +168,25 @@ def test_smtp():
     return redirect(make_url_for('site_bp.smtp_config'))
 
 
-@site_bp.route('/admin/sites/edit/<string:hostname>', methods=['GET'])
+@site_bp.route('/site/admin', methods=['GET'])
+@admin_required
+def site_admin():
+    invites = Invite.findAll()
+    sites=None
+    installation=None
+    if g.isRootUserEnabled:
+        sites=Site.findAll()
+        installation=Installation.get()
+    context = {
+        'invites': invites,
+        'site': g.site,
+        'sites': sites,
+        'installation': installation
+    }
+    return render_template('admin-panel.html', user=g.current_user, **context)
+
+
+@site_bp.route('/site/edit/<string:hostname>', methods=['GET'])
 @rootuser_required
 def edit_site(hostname):
     queriedSite=Site.find(hostname=hostname)
@@ -193,15 +211,15 @@ def stats():
     return render_template('stats.html', site=g.site, sites=sites)
 
 
-@site_bp.route('/admin/sites/toggle-scheme/<string:hostname>', methods=['POST'])
+@site_bp.route('/site/toggle-scheme/<string:hostname>', methods=['POST'])
 @rootuser_required
 def toggle_site_scheme(hostname): 
     queriedSite=Site.find(hostname=hostname)
     return json.dumps({'scheme': queriedSite.toggleScheme()})
 
 
-@site_bp.route('/admin/sites/change-port/<string:hostname>/', methods=['POST'])
-@site_bp.route('/admin/sites/change-port/<string:hostname>/<string:port>', methods=['POST'])
+@site_bp.route('/site/change-port/<string:hostname>/', methods=['POST'])
+@site_bp.route('/site/change-port/<string:hostname>/<string:port>', methods=['POST'])
 @rootuser_required
 def change_site_port(hostname, port=None):
     queriedSite=Site.find(hostname=hostname)
@@ -217,21 +235,48 @@ def change_site_port(hostname, port=None):
     return json.dumps({'port': queriedSite.port})
     
 
-@site_bp.route('/admin/sites/delete/<string:hostname>', methods=['GET', 'POST'])
+@site_bp.route('/site/delete/<string:hostname>', methods=['GET', 'POST'])
 @rootuser_required
 def delete_site(hostname):
     queriedSite=Site.find(hostname=hostname)
     if not queriedSite:
         flash(gettext("Site not found"), 'warning')
-        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+        return redirect(make_url_for('site_bp.site_admin'))
     if request.method == 'POST' and 'hostname' in request.form:
         if queriedSite.hostname == request.form['hostname']:
             if g.site.hostname == queriedSite.hostname:
                 flash(gettext("Cannot delete current site"), 'warning')
-                return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+                return redirect(make_url_for('site_bp.site_admin'))
             queriedSite.deleteSite()
-            flash(gettext("Deleted %s" % (queriedSite.host_url)), 'success')
-            return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))       
+            flash(gettext("Deleted %s" % queriedSite.host_url), 'success')
+            return redirect(make_url_for('site_bp.site_admin'))
         else:
             flash(gettext("Site name does not match"), 'warning')
     return render_template('delete-site.html', site=queriedSite)
+
+
+""" Invitations """
+
+@site_bp.route('/site/invites/new', methods=['GET', 'POST'])
+@admin_required
+def new_invite():
+    wtform=wtf.NewInvite()
+    if wtform.validate_on_submit():  
+        message=wtform.message.data
+        invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
+        EmailServer().sendInvite(invite)
+        flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
+        return redirect(make_url_for('site_bp.site_admin'))
+    wtform.message.data=Invite.defaultMessage()
+    return render_template('new-invite.html', wtform=wtform, sites=Site.findAll())
+
+
+@site_bp.route('/site/invites/delete/<string:id>', methods=['GET'])
+@admin_required
+def delete_invite(id):
+    invite=Invite.find(id=id)
+    if invite:
+        invite.delete()
+    else:
+        flash(gettext("Opps! We can't find that invitation"), 'error')
+    return redirect(make_url_for('site_bp.site_admin'))

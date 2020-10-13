@@ -20,11 +20,11 @@
         </tr>
         <tr>
             <td>{%trans%}Users{%endtrans%}</td>
-            <td>{{ site.totalUsers }}</td>
+            <td>{{ site.getTotalUsers() }}</td>
         </tr>
         <tr>
             <td>{%trans%}Forms{%endtrans%}</td>
-            <td>{{ site.totalForms }}</td>
+            <td>{{ site.getTotalForms() }}</td>
         </tr>
         <tr>
             <td>{%trans%}Invitation only{%endtrans%}</td>
@@ -61,12 +61,11 @@
     </div>
 
     <div class="form-actions">
-    <a class="btn btn-warning" role="button" href="/admin/sites/delete/{{ site.hostname }}">{%trans%}Delete{%endtrans%}</a>
-    <a class="btn btn-primary" role="button" href="/user/{{ g.current_user.username }}#root_user_settings">{%trans%}Go back{%endtrans%}</a>
-    </div>
-    
-    </div>
+    <a class="btn btn-warning" role="button" href="/site/delete/{{ site.hostname }}">{%trans%}Delete{%endtrans%}</a>
+    <a class="btn btn-primary" role="button" href="/site/admin#root_user_settings">{%trans%}Go back{%endtrans%}</a>
 
+    </div>
+    </div>
 </div>
 </div>
 
@@ -74,7 +73,7 @@
 var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_scheme').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/sites/toggle-scheme/{{site.hostname}}",
+        url : "/site/toggle-scheme/{{site.hostname}}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -98,7 +97,7 @@ document.getElementById('toggle_scheme').addEventListener('click', function(evt)
 });
 document.getElementById('port_button').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/sites/change-port/{{site.hostname}}/"+$('#port').val(),
+        url : "/site/change-port/{{site.hostname}}/"+$('#port').val(),
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {

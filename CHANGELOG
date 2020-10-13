@@ -6,6 +6,7 @@ v.1.7
  * Fixed unexpected session timeouts
  * New stats charts
  * Improved performance when there are many responses
+ * Moved Site config to new Admin page
 
 v.1.6
  * Added Basque translation

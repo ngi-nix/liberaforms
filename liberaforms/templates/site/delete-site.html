@@ -15,9 +15,11 @@
         <p>
             {%trans%}Including{%endtrans%} ...
             <br />
-            {{ site.totalUsers }} {%trans%}users{%endtrans%}
-            <br />
-            {{ site.totalForms }} {%trans%}forms{%endtrans%} + {%trans%}entries{%endtrans%}
+            {{ site.getTotalUsers() }} {%trans%}users{%endtrans%}
+            +
+            {{ site.getTotalForms() }} {%trans%}forms{%endtrans%}
+            +
+            {{ site.getEntries().count() }} {%trans%}entries{%endtrans%}
         </p>
         <p>
             {%trans%}Write the name of the site below{%endtrans%}.
@@ -32,7 +34,7 @@
             
             <div class="form-actions">
             <input class="btn-danger btn" type="submit" value="{%trans%}Delete{%endtrans%}">
-            <a class="btn btn-primary" role="button" href="/admin/sites/edit/{{site.hostname}}">{%trans%}Cancel{%endtrans%}</a>
+            <a class="btn btn-primary" role="button" href="/site/edit/{{site.hostname}}">{%trans%}Cancel{%endtrans%}</a>
             </div>
         </form>
     </div>
