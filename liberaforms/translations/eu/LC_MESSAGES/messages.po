@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-10-05 13:34+0200\n"
-"PO-Revision-Date: 2020-09-17 18:31+0200\n"
+"PO-Revision-Date: 2020-10-13 17:15+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: models.py:267
 msgid "Marked"
@@ -79,7 +80,7 @@ msgstr ""
 
 #: templates/base.html:40
 msgid "Toggle root mode"
-msgstr ""
+msgstr "Gaitu/Desgaitu root modua"
 
 #: templates/admin/delete-user.html:21 templates/admin/list-users.html:32
 #: templates/base.html:52 templates/site/edit-site.html:26
@@ -292,8 +293,8 @@ msgid "All forms"
 msgstr "Galdetegi guztiak"
 
 #: templates/admin/list-forms.html:16 templates/admin/list-users.html:15
-#: templates/entries/list-entries.html:26
-#: templates/entries/view-results.html:19 templates/form/inspect-form.html:24
+#: templates/entries/list-entries.html:26 templates/entries/view-results.html:19
+#: templates/form/inspect-form.html:24
 msgid "Graphs"
 msgstr "Grafikoak"
 
@@ -351,8 +352,8 @@ msgstr "Gorde"
 msgid "Delete entries"
 msgstr "Ezabatu erantzunak"
 
-#: templates/entries/delete-entries.html:11
-#: templates/form/inspect-form.html:305 views/form.py:149
+#: templates/entries/delete-entries.html:11 templates/form/inspect-form.html:305
+#: views/form.py:149
 msgid "Form"
 msgstr "Galdetegia"
 
@@ -373,8 +374,7 @@ msgstr "Idatzi azpian guztirazko erantzunen kopurua"
 msgid "Form details"
 msgstr "Galdetegiaren xehetasunak"
 
-#: templates/entries/list-entries.html:29
-#: templates/entries/list-entries.html:31
+#: templates/entries/list-entries.html:29 templates/entries/list-entries.html:31
 #: templates/entries/view-results.html:22
 msgid "Download CSV"
 msgstr "Deskargatu CSVa"
@@ -469,6 +469,7 @@ msgstr "Ados, erabili URL hau"
 #: templates/form/edit-form.html:193
 msgid "Cannot modify because an entry with this value exists in the database"
 msgstr ""
+"Ezin da aldatu, jada badagoelako balio hau duen erantzun bat datu-basean"
 
 #: templates/form/expiration.html:24
 msgid "Notify me when this form expires"
@@ -573,11 +574,11 @@ msgstr "Egiaztapena"
 #: templates/form/inspect-form.html:165 templates/site/consent.html:30
 #: templates/user/consent.html:22
 msgid "Data protection"
-msgstr ""
+msgstr "Datuen babesa"
 
 #: templates/form/inspect-form.html:171
 msgid "Use the template"
-msgstr ""
+msgstr "Erabili txantiloia"
 
 #: templates/form/inspect-form.html:178 templates/form/inspect-form.html:512
 #: templates/form/inspect-form.html:551 templates/site/consent.html:64
@@ -698,8 +699,8 @@ msgstr ""
 #: templates/form/share-form.html:93
 msgid "Only visible to people with a user account (login required)"
 msgstr ""
-"Erabiltzaile-kontu bat duten pertsonentzat bakarrik ikusgai (saioa hasi "
-"behar da)"
+"Erabiltzaile-kontu bat duten pertsonentzat bakarrik ikusgai (saioa hasi behar "
+"da)"
 
 #: templates/form/share-form.html:96
 msgid "Restricted"
@@ -751,11 +752,11 @@ msgstr "Bidali"
 
 #: templates/site/consent.html:14
 msgid "Default texts"
-msgstr ""
+msgstr "Lehenetsitako testuak"
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
-msgstr ""
+msgstr "Aurreikusi Erabiltzaile berriaren galdetegia"
 
 #: templates/site/consent.html:28 templates/user/new-user.html:50
 #: templates/user/user-settings.html:201
@@ -770,11 +771,11 @@ msgstr "Editatu"
 
 #: templates/site/consent.html:39
 msgid "No"
-msgstr ""
+msgstr "Ez"
 
 #: templates/site/consent.html:44
 msgid "Add to New user form"
-msgstr ""
+msgstr "Gehitu Erabiltzaile berriaren galdetegian"
 
 #: templates/site/consent.html:52
 msgid "New users must agree to these terms and conditions"
@@ -782,15 +783,17 @@ msgstr "Erabiltzaile berriek erabilera-baldintza hauek onartu behar dituzte"
 
 #: templates/site/consent.html:88 templates/user/consent.html:72
 msgid "Required"
-msgstr ""
+msgstr "Nahitaezkoa"
 
 #: templates/site/consent.html:96 templates/user/user-settings.html:83
 msgid "Consentment texts"
-msgstr ""
+msgstr "Baldintza-onarpen testuak"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
 msgstr ""
+"Partekatutako testuak beste erabiltzaile batzuk erabili ditzakete bere "
+"galdetegietan, txantiloi gisa"
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
@@ -877,11 +880,11 @@ msgstr "Probatu konfigurazioa"
 
 #: templates/site/stats.html:12
 msgid "Statistics"
-msgstr ""
+msgstr "Estatistikak"
 
 #: templates/site/stats.html:26
 msgid "forms per user"
-msgstr ""
+msgstr "galdetegiak erabiltzaileko"
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
@@ -894,6 +897,7 @@ msgstr "Baimentze-testu lehenetsia"
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
 msgstr ""
+"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien galdetegietan"
 
 #: templates/user/login.html:24
 msgid "Forgot your password?"
@@ -1014,11 +1018,11 @@ msgstr "Hizkuntza lehenetsia"
 
 #: templates/user/user-settings.html:199
 msgid "Consent"
-msgstr ""
+msgstr "Baldintza-onarpena"
 
 #: templates/user/user-settings.html:202
 msgid "etc"
-msgstr ""
+msgstr "etab."
 
 #: templates/user/user-settings.html:209
 msgid "Favicon"
@@ -1038,7 +1042,7 @@ msgstr "Root erabiltzailea"
 
 #: templates/user/user-settings.html:240
 msgid "root mode"
-msgstr ""
+msgstr "root modua"
 
 #: templates/user/user-settings.html:302
 msgid "Installation"
@@ -1046,15 +1050,14 @@ msgstr "Instalazioa"
 
 #: utils/consent_texts.py:121
 msgid "Please accept our terms and conditions."
-msgstr ""
+msgstr "Onartu gure erabilera-baldintzak."
 
 #: utils/consent_texts.py:127
 msgid ""
-"We take your data protection seriously. Please contact us for any "
-"inquiries."
+"We take your data protection seriously. Please contact us for any inquiries."
 msgstr ""
-"Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
-"harremanetan edozein kontsultatarako."
+"Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin harremanetan "
+"edozein kontsultatarako."
 
 #: utils/email.py:87
 msgid "Congratulations!"
@@ -1171,7 +1174,7 @@ msgstr "Onartu gure erabilera-baldintzak"
 
 #: utils/wtf.py:67
 msgid "Please accept our data protection policy"
-msgstr ""
+msgstr "Onartu gure datu datuen babeserako gidalerroak"
 
 #: utils/wtf.py:82
 msgid "New email address"
@@ -1234,11 +1237,10 @@ msgstr "'%s' ezabatutako erabiltzailea"
 msgid "Username does not match"
 msgstr "Erabiltzaile-izena ez dator bat"
 
-#: views/admin.py:121 views/admin.py:132 views/entries.py:42
-#: views/entries.py:55 views/entries.py:65 views/entries.py:175
-#: views/form.py:130 views/form.py:272 views/form.py:290 views/form.py:305
-#: views/form.py:315 views/form.py:355 views/form.py:428 views/form.py:443
-#: views/form.py:538
+#: views/admin.py:121 views/admin.py:132 views/entries.py:42 views/entries.py:55
+#: views/entries.py:65 views/entries.py:175 views/form.py:130 views/form.py:272
+#: views/form.py:290 views/form.py:305 views/form.py:315 views/form.py:355
+#: views/form.py:428 views/form.py:443 views/form.py:538
 msgid "Can't find that form"
 msgstr "Ezin da galdetegi hori aurkitu"
 
@@ -1561,9 +1563,5 @@ msgstr "Kredentzial okerrak"
 #~ msgid "Data protection consent"
 #~ msgstr "Datuak babesteko baimena"
 
-#~ msgid "You can include these texts in your forms"
-#~ msgstr ""
-
 #~ msgid "Data protection law"
 #~ msgstr "Datuak babesteko legea"
-
