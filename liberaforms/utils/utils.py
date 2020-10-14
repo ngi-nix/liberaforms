@@ -57,10 +57,11 @@ def get_locale():
 Used to respond to Ajax requests
 """
 def JsonResponse(json_response="1", status_code=200):
-    response = Response(json_response, 'application/json; charset=utf-8')
-    response.headers.add('content-length', len(json_response))
-    response.status_code=status_code
-    return response
+    return Response(
+        json_response, 
+        status_code, 
+        {'Content-Type':'application/json; charset=utf-8'}
+    )
 
 
 """ ######## Session ######## """
