@@ -562,6 +562,8 @@ def view_form(slug):
             if isinstance(value, list): # A checkboxes-group contains multiple values 
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
+            value=value.strip()
+            value=removeFirstAndLastNewLines(value)
             entry[key]=value
         queriedForm.addEntry(entry)
         

@@ -40,16 +40,9 @@ class HostnameQuerySet(QuerySet):
         #print("ensure_hostname kwargs: %s" % kwargs)
         return self.filter(**kwargs)
 
-"""
-class AuthorQuerySet(QuerySet):
-    def ensure_author(self, **kwargs):            
-        if not g.isRootUserEnabled and not 'author_id' in kwargs:
-            kwargs={'author_id': str(g.current_user.id), **kwargs}
-        return self.filter(**kwargs)
-"""
 
 class Response(db.Document):
-    meta = {'collection': 'responses'} #, 'queryset_class': AuthorQuerySet}
+    meta = {'collection': 'responses', 'queryset_class': HostnameQuerySet}
     created = db.StringField(required=True)
     hostname = db.StringField(required=True)
     author_id = db.StringField(required=True)
@@ -72,7 +65,8 @@ class Response(db.Document):
         order = 'created' if 'oldest_first' in kwargs and kwargs['oldest_first'] else '-created'
         if 'oldest_first' in kwargs:
             kwargs.pop('oldest_first')
-        return cls.objects(**kwargs).order_by(order)
+        #return cls.objects(**kwargs).order_by(order)
+        return cls.objects.ensure_hostname(**kwargs).order_by(order)
 
 
 class User(db.Document):
@@ -278,8 +272,6 @@ class Form(db.Document):
     structure: A list of dicts that is rendered by formbuilder
     fieldIndex: List of dictionaries. Each dict contains one field.
                 [{"label": <visible_field_name>, "name": <unique_field_identifier>}]
-    entries: List of dictionaries containing the data submitted by visitors.
-                [{unique_field_identifier: value, unique_field_identifier: value}]
     """
     structure = db.ListField(required=True)
     fieldIndex = db.ListField(required=True)
@@ -1073,15 +1065,9 @@ class Site(db.Document):
         self.smtpConfig=kwargs
         self.save()
 
-    def getTotalUsers(self):
-        return User.findAll(hostname=self.hostname).count()
-
     @property
     def admins(self):
         return User.findAll(admin__isAdmin=True, hostname=self.hostname)
-
-    def getTotalForms(self):
-        return Form.findAll(hostname=self.hostname).count()
     
     def toggleInvitationOnly(self):
         self.invitationOnly = False if self.invitationOnly else True
@@ -1116,17 +1102,22 @@ class Site(db.Document):
             time_fields["forms"].append({"x": form.created, "y": form_count})
         return time_fields
 
+
     def getForms(self, **kwargs):
-        #if not 'hostname' in kwargs:
-        kwargs['hostname']=self.hostname
+        kwargs['hostname'] = self.hostname
         return Form.findAll(**kwargs)
 
+    def getTotalForms(self):
+        return Form.findAll(hostname=self.hostname).count()
+
     def getEntries(self, **kwargs):
-        #if not 'hostname' in kwargs:
-        kwargs['hostname']=self.hostname
+        kwargs['hostname'] = self.hostname
         return Response.findAll(**kwargs)
         
-    def getStatistics(self, **kwargs): #, hostname=None):
+    def getTotalUsers(self):
+        return User.findAll(hostname=self.hostname).count()
+    
+    def getStatistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
         one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
@@ -1145,16 +1136,17 @@ class Site(db.Document):
             if year_month == today:
                 break
         
-        kwargs['hostname']=self.hostname
         total_entries=0
         total_forms=0
         total_users=0
+        if not g.isRootUserEnabled and not 'hostname' in kwargs:
+            kwargs['hostname'] = self.hostname
         for year_month in result['labels']:
             kwargs['created__startswith'] = year_month
-            monthy_entries = self.getEntries(**kwargs).count()
-            monthy_forms = self.getForms(**kwargs).count()
+            monthy_entries = Response.findAll(**kwargs).count()
+            monthy_forms = Form.findAll(**kwargs).count()
             monthy_users = User.findAll(**kwargs).count()
-            total_entries= total_entries + monthy_entries
+            total_entries = total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             total_users = total_users + monthy_users
             result['entries'].append(monthy_entries)

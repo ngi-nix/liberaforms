@@ -133,6 +133,10 @@ def cleanLabel(text):
 def removeNewLines(string):
     string = string.replace("\n", "")
     return string.replace("\r", "")
+    
+def removeFirstAndLastNewLines(string):
+    RE="^[\r\n]+|[\r\n]+$"
+    return re.sub(RE, '', string)
 
 """ ######## email ######## """
 

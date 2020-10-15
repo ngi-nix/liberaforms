@@ -1,8 +1,8 @@
 function postFormRender(){
-    if ($('#gngform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
+    if ($('#liberaform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
         $("#required_message").show()
     }
-    $("#gngform").find(":checkbox").css("box-shadow", "none")
+    $("#liberaform").find(":checkbox").css("box-shadow", "none")
     $(".marked-up").find("a").prop("target", "_blank")
     {% if form %}
         setLimits();
