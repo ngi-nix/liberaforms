@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
@@ -34,12 +35,13 @@
         </tr>
     </thead>
     {% for form in forms %}
+    {% set author = form.getAuthor() %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
             <td>{{form.getEntries().count()}}</td>
             <td>{{form.getLastEntryDate()}}</td>
             <td>{{form.created}}</td>
-            <td><a href="/admin/users/{{form.user.id}}">{{form.user.username}}</a></td>
+            <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
             <td>{{form.isPublic()}}</td>
             {% if g.isRootUserEnabled %}
                 <td>{{form.hostname}}</td>

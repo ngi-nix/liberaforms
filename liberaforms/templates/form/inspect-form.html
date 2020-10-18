@@ -9,6 +9,8 @@
 
 {% set dataConsent = form.getDataConsentForDisplay() %}
 {% set total_entries = form.getTotalEntries() %}
+{% set author = form.getAuthor() %}
+{% set current_user_is_editor = form.isEditor(g.current_user) %}
 
 <div class="container">
 <div class="row">    
@@ -17,7 +19,7 @@
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
             <div style="float:right">
-            {% if form.isEditor(g.current_user) %}
+            {% if current_user_is_editor %}
                 <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
                     {%trans%}View entries{%endtrans%}
                     <span class="badge badge-light">{{total_entries}}</span>
@@ -42,7 +44,7 @@
                <td>{%trans%}Last entry{%endtrans%}</td>
                <td>
                    {% if total_entries %}
-                        {% if form.isEditor(g.current_user) %}
+                        {% if current_user_is_editor %}
                         <a href="/forms/entries/{{form.id}}">{{ form.getLastEntryDate() }}</a>
                         {% else %}
                         {{ form.getLastEntryDate() }}
@@ -70,7 +72,7 @@
             <tr>
                <td>{%trans%}Public{%endtrans%}</td>
                <td>
-               {% if form.isEditor(g.current_user) %}
+               {% if current_user_is_editor %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
                     <button id="enabled_true" class="btn btn-xs btn-default {% if form.isPublic() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
@@ -83,7 +85,7 @@
             <tr>
                <td>{%trans%}Expiration{%endtrans%}</td>
                <td>
-                   {% if form.isEditor(g.current_user) %}
+                   {% if current_user_is_editor %}
                         {% if form.expired %}
                             <a class="btn btn-warning btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}Expired{%endtrans%}</a>
                         {% elif form.canExpire() %}
@@ -105,7 +107,7 @@
             <tr>
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
-                   {% if form.isEditor(g.current_user) %}
+                   {% if current_user_is_editor %}
                         {% if form.isShared() %}
                         <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
@@ -119,7 +121,7 @@
             <tr>
                <td>{%trans%}Restricted access{%endtrans%}</td>
                <td>
-                   {% if form.isEditor(g.current_user) %}
+                   {% if current_user_is_editor %}
                         {% if form.restrictedAccess %}
                         <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}#restricted_access">{%trans%}True{%endtrans%}</a>
                         {% else %}
@@ -134,7 +136,7 @@
             <tr>
                 <td>{%trans%}Confirmation{%endtrans%}</td>
                 <td>
-                {% if form.isEditor(g.current_user) %}
+                {% if current_user_is_editor %}
                    <div id="toggle_sendConfirmation" class="btn-group btn-toggle">
                     <button id="sendConfirmation_true" class="btn btn-xs btn-default {% if form.sendConfirmation %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
                     <button id="sendConfirmation_false" class="btn btn-xs btn-default {% if not form.sendConfirmation %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
@@ -148,7 +150,7 @@
             <tr>
                 <td id="DPL-anchor">{%trans%}DPL{%endtrans%}</td>
                 <td>
-                {% if form.isEditor(g.current_user) %}
+                {% if current_user_is_editor %}
                     <div id="toggle_dataConsent" class="btn-group btn-toggle">
                     <button id="dataConsent_true" class="btn btn-xs btn-default {% if dataConsent['enabled'] %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
                     <button id="dataConsent_false" class="btn btn-xs btn-default {% if not dataConsent['enabled'] %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
@@ -161,7 +163,7 @@
 
                </td>
             </tr>
-            {% if form.isEditor(g.current_user) %}
+            {% if current_user_is_editor %}
             <tr id="DPL-text-block" style="display:none">
                 <td colspan="3">
                 <div class="title_2">{%trans%}Data protection{%endtrans%}</div>
@@ -192,15 +194,15 @@
             <tr>
                <td>
                     {%trans%}Author{%endtrans%}
-                    {% if not form.author.enabled %}
+                    {% if not author.enabled %}
                         <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>            
                     {% endif %} 
                </td>
                <td>
                {% if g.isAdmin %}
-                    <a href="/admin/users/{{ form.author.id }}">{{ form.author.username }}</a>
+                    <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
                {% else %}
-                    {{ form.author.username }}
+                    {{ author.username }}
                 {% endif %}
                 </td>
             </tr>
@@ -218,7 +220,7 @@
 
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}After replying to the form{%endtrans%}
-            {% if form.isEditor(g.current_user) %}
+            {% if current_user_is_editor %}
                 <div style="float:right">
                 <button id="show-after-submit-editor-button" class="btn btn-primary btn-xs">
                     {%trans%}Edit text{%endtrans%}
@@ -232,7 +234,7 @@
         <div id="after-submit-html" class="afterSubmitText marked-up">
             {{ form.afterSubmitTextHTML | safe }}
         </div>
-        {% if form.isEditor(g.current_user) %}
+        {% if current_user_is_editor %}
         <div id="after-submit-editor" style="display:none">
             <input id="save-after-submit-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
             <input id="cancel-after-submit-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
@@ -244,7 +246,7 @@
         {% if form.canExpire() %}
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}When the form has expired{%endtrans%}
-            {% if form.isEditor(g.current_user) %}
+            {% if current_user_is_editor %}
                 <div style="float:right">
                 <button id="show-expired-editor-button" class="btn btn-primary btn-xs">
                     {%trans%}Edit text{%endtrans%}
@@ -258,7 +260,7 @@
         <div id="expired-html" class="expiredText marked-up">
             {{ form.expiredTextHTML | safe }}
         </div>
-        {% if form.isEditor(g.current_user) %}
+        {% if current_user_is_editor %}
         <div id="expired-editor" style="display:none">
             <input id="save-expired-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
             <input id="cancel-expired-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
@@ -268,7 +270,7 @@
         {% endif %}
         {% endif %}
 
-        {% if form.isEditor(g.current_user) %}
+        {% if current_user_is_editor %}
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}Other options{%endtrans%}
         </div>
@@ -305,7 +307,7 @@
     <div class="col-md-6">
         <div class="title_1 delimited">
         {%trans%}Form{%endtrans%}
-        {% if form.isEditor(g.current_user) %}
+        {% if current_user_is_editor %}
         <div style="float:right">
         <a class="btn-primary btn btn-sm" role="button" href="/forms/edit/{{form.id}}">
             {%trans%}Edit form{%endtrans%}<i class="fa fa-pencil" aria-hidden="true"></i>
@@ -379,7 +381,7 @@ jQuery(function($) {
 {% include '_post-render-scripts.js' %}
 {% endwith %}
 
-{% if form.isEditor(g.current_user) %}
+{% if current_user_is_editor %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-enabled/{{ form.id }}",

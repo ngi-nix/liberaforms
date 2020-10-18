@@ -7,6 +7,7 @@
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
 {% set stats = user.getStatistics() %}
+{% set forms = user.getForms() %}
 
 <div class="container">
 <div class="row">
@@ -66,7 +67,7 @@
             </tr>
         </table>
         {% if not user.id == g.current_user.id %}
-            {% if user.forms|length %}
+            {% if forms|length %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
@@ -97,12 +98,12 @@
             </tr>
         </thead>
         
-        {% for form in user.forms %}
+        {% for form in forms %}
         <tr>
            <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
            <td>{{form.created}}</td>
            <td>
-                {% if user == form.author %}
+                {% if form.isAuthor(user) %}
                     {%trans%}True{%endtrans%}
                 {% else %}
                     {%trans%}False{%endtrans%}

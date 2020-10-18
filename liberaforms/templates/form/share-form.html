@@ -26,7 +26,7 @@
                     {{ editor.email }}
                 </td>
                 <td class="text-right">
-                {% if editor == form.author %}
+                {% if form.isAuthor(editor) %}
                     <span class="badge badge-pill badge-light author-badge">
                         {%trans%}Author{%endtrans%}
                     </span>

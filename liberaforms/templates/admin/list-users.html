@@ -42,7 +42,7 @@
         <td>{{user.created}}</td>
         <td>{{user.enabled}}</td>
         <td>{{user.email}}</td>
-        <td>{{user.forms|length}}</td>
+        <td>{{user.getForms()|length}}</td>
         <td>{{user.isAdmin()}}</td>
     </tr>
     {% endfor %}

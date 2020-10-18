@@ -21,7 +21,7 @@
         {% endif %}
             <tr>
                <td>{%trans%}Current author{%endtrans%}</td>
-               <td>{{ form.author.username }}</td>
+               <td>{{ form.getAuthor().username }}</td>
             </tr>
         </table>
 
@@ -51,7 +51,7 @@
                 <td>{{ editor.username }}</td>
                 <td>{{ editor.email }}</td>
                 <td class="text-right">
-                {% if editor == form.author %}
+                {% if form.isAuthor(editor) %}
                     {%trans%}Author{%endtrans%}
                 {% else %}
                     {%trans%}Editor{%endtrans%}

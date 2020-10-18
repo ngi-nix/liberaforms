@@ -43,7 +43,7 @@ form_bp = Blueprint('form_bp', __name__,
 @form_bp.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    return render_template('my-forms.html', forms=g.current_user.forms, user=g.current_user) 
+    return render_template( 'my-forms.html', user=g.current_user) 
 
 """
 @form_bp.route('/forms/templates', methods=['GET'])
@@ -335,7 +335,7 @@ def remove_editor(form_id, editor_id):
     queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return json.dumps(False)
-    if editor_id == queriedForm.author_id:
+    if queriedForm.isAuthor(editor):
         return json.dumps(False)
     removedEditor_id=queriedForm.removeEditor(editor_id)
     try:

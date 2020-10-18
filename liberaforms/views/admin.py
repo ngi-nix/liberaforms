@@ -132,14 +132,16 @@ def change_author(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
     if request.method == 'POST':
-        if not ('old_author_username' in request.form and request.form['old_author_username']==queriedForm.author.username):
+        author = queriedForm.getAuthor()
+        if not ('old_author_username' in request.form and \
+                request.form['old_author_username']==author.username):
             flash(gettext("Current author incorrect"), 'warning')
             return render_template('change-author.html', form=queriedForm)
         if 'new_author_username' in request.form:
             new_author=User.find(username=request.form['new_author_username'], hostname=queriedForm.hostname)
             if new_author:
                 if new_author.enabled:
-                    old_author=queriedForm.author
+                    old_author=author
                     if queriedForm.changeAuthor(new_author):
                         queriedForm.addLog(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
                         flash(gettext("Changed author OK"), 'success')

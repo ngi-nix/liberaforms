@@ -46,12 +46,12 @@ class ConsentText():
             return None
 
         if scope.__class__.__name__=="Form":
-            user_consent=cls.getConsentByID(id, scope.author)
+            user_consent=cls.getConsentByID(id, scope.getAuthor())
             if user_consent:
                 consent['markdown'] = consent['markdown'] if consent['markdown'] else user_consent['markdown']
                 consent['html'] = consent['html'] if consent['html'] else user_consent['html']
                 consent['label'] = consent['label'] if consent['label'] else user_consent['label']
-            scope = scope.author
+            scope = scope.getAuthor()
         
         if scope.__class__.__name__=="User":
             scope=scope.site
@@ -84,7 +84,7 @@ class ConsentText():
         
         default_consent=None        
         if scope.__class__.__name__ == "Form":
-            default_consent = cls.getConsentByID(id, scope.author)
+            default_consent = cls.getConsentByID(id, scope.getAuthor())
         if not default_consent:
             site_scope = scope if scope.__class__.__name__ == "Site" else scope.site
             default_consent = site_scope.getConsentForDisplay(consent['id'], enabled_only=True)

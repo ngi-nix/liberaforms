@@ -116,13 +116,13 @@ class User(db.Document):
             return False
         return True
 
-    @property
-    def forms(self):
-        return Form.findAll(editor_id=str(self.id))
+    def getForms(self, **kwargs):
+        kwargs['editor_id']=str(self.id)
+        return Form.findAll(**kwargs)
 
-    @property
-    def authored_forms(self):
-        return Form.findAll(author_id=str(self.id))
+    def getAuthoredForms(self, **kwargs):
+        kwargs['author_id']=str(self.id)
+        return Form.findAll(**kwargs)
         
     @property
     def language(self):
@@ -210,10 +210,6 @@ class User(db.Document):
         self.save()
         return self.admin['notifyNewForm']    
 
-    def getForms(self, **kwargs):
-        kwargs['author_id']=str(self.id)
-        return Form.findAll(**kwargs)
-
     def getEntries(self, **kwargs):
         kwargs['author_id']=str(self.id)
         return Response.findAll(**kwargs)
@@ -243,7 +239,7 @@ class User(db.Document):
         for year_month in result['labels']:
             query['created__startswith'] = year_month
             monthy_entries = self.getEntries(**query).count()
-            monthy_forms = self.getForms(**query).count()
+            monthy_forms = self.getAuthoredForms(**query).count()
             total_entries= total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             result['entries'].append(monthy_entries)
@@ -306,22 +302,22 @@ class Form(db.Document):
             kwargs.pop('key')
         return cls.objects.ensure_hostname(**kwargs)
 
-    @property
-    def user(self):
-        return self.author
+    #@property
+    #def user(self):
+    #    return self.author
         
-    @property
-    def author(self):
+    #@property
+    def getAuthor(self):
         return User.find(id=self.author_id)
 
     def changeAuthor(self, new_author):
         if new_author.enabled:
-            if new_author == self.author:
+            if new_author == self.getAuthor():
                 return False
-            if self.isEditor(self.author):
+            try:
                 del self.editors[self.author_id]
-            else:
-                return False # this should never happen
+            except:
+                return False
             self.author_id=str(new_author.id)
             if not self.isEditor(new_author):
                 self.addEditor(new_author)
@@ -463,7 +459,7 @@ class Form(db.Document):
         return last_entry.created if last_entry else "" 
 
     def isEnabled(self):
-        if not (self.author.enabled and self.adminPreferences['public']):
+        if not (self.getAuthor().enabled and self.adminPreferences['public']):
             return False
         return self.enabled
 
@@ -644,7 +640,7 @@ class Form(db.Document):
         Response.findAll(form_id=str(self.id)).delete()
     
     def isAuthor(self, user):
-        return True if self.author_id == user.id else False
+        return True if self.author_id == str(user.id) else False
         
     def isEditor(self, user):
         return True if str(user.id) in self.editors else False
