@@ -17,14 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+from threading import Thread
 from flask import g, render_template, redirect
 from flask import session, flash, Blueprint
 from flask_babel import gettext
 from flask_babel import refresh as babel_refresh
-from threading import Thread
 
 from liberaforms import app
-from liberaforms.models import *
+from liberaforms.models.site import Invite, Site, Installation
+from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import *
 from liberaforms.utils.email import EmailServer
@@ -66,7 +67,7 @@ def new_user(token=None):
                 adminSettings['isAdmin']=True
                 # the first admin of a new Site needs to config. SMTP before we can send emails.
                 # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
-                if not g.site.admins:
+                if not g.site.getAdmins():
                     validatedEmail=True
         if wtform.email.data in app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True

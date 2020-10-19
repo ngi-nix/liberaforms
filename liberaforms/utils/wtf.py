@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import re
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SelectField, PasswordField, BooleanField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
@@ -24,9 +25,9 @@ from flask import g
 from flask_babel import lazy_gettext as _
 
 from liberaforms import app
-from liberaforms.models import User, Installation
+from liberaforms.models.user import User
+from liberaforms.models.site import Installation
 from liberaforms.utils.utils import sanitizeUsername, pwd_policy
-import re
 
 
 class NewUser(FlaskForm):

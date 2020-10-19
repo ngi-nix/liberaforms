@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from liberaforms import app
-from liberaforms.models import Installation
+from liberaforms.models.site import Installation
 
 def migrate_db():
     installation=Installation.get()

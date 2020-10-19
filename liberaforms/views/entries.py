@@ -23,11 +23,11 @@ from flask import session, flash
 from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
-from liberaforms.models import *
+from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for
 
-from pprint import pprint as pp
+#from pprint import pprint as pp
 
 entries_bp = Blueprint('entries_bp', __name__,
                     template_folder='../templates/entries')
@@ -117,10 +117,9 @@ def toggle_marked_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and "id" in request.json):
         return json.dumps({'marked': False})
-    print(request.json["id"])
+    #print(request.json["id"])
     response = queriedForm.findEntry(request.json["id"])
     if not response:
-        print("not founbd")
         return json.dumps({'marked': False})
     response.marked = False if response.marked == True else True
     response.save()

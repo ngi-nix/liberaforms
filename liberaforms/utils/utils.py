@@ -17,28 +17,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from liberaforms import app, babel #, models
-
-from flask import Response, redirect, request, url_for
-from flask import g, session, flash #, has_app_context
-from flask_babel import gettext
-from unidecode import unidecode
 import json, time, re, string, random, datetime
+import markdown, html, uuid
+from unidecode import unidecode
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 from validate_email import validate_email
-import markdown, html, uuid
 from bs4 import BeautifulSoup
 from pprint import pformat
 
+from flask import Response, redirect, request, url_for
+from flask import g, session #, has_app_context
+from flask_babel import gettext
 
-def get_obj_values_as_dict(obj):
+from liberaforms import app, babel
+
+
+def print_obj_values(obj):
     values = {}
     fields = type(obj).__dict__['_fields']
     for key, _ in fields.items():
         value = getattr(obj, key, None)
         values[key] = value
-    return values
+    return pformat({obj.__class__.__name__: values})
 
 def make_url_for(function, **kwargs):
     kwargs["_external"]=True

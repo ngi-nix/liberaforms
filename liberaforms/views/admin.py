@@ -21,9 +21,10 @@ from flask import g, render_template, redirect
 from flask import session, flash, Blueprint
 from flask_babel import gettext
 
-from liberaforms.models import *
+from liberaforms.models.user import User
+from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 

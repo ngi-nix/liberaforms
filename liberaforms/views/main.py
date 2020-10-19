@@ -26,7 +26,8 @@ from flask_wtf.csrf import CSRFError
 #from flask import ctx, current_app, has_app_context, app_ctx_globals_class
 
 from liberaforms import app
-from liberaforms.models import Site, User
+from liberaforms.models.site import Site
+from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import *
 import liberaforms.utils.wtf as wtf

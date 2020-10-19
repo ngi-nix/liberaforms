@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json, uuid
+import json
 from flask import g, render_template, redirect
 from flask import session, flash, send_file, after_this_request
 from flask import Blueprint
@@ -25,14 +25,14 @@ from flask_babel import gettext
 from threading import Thread
 
 from liberaforms import app, csrf
-from liberaforms.models import *
+from liberaforms.models.form import Form
+from liberaforms.models.user import User
 from liberaforms.utils.formhelper import *
 from liberaforms.utils.wraps import *
 from liberaforms.utils.email import EmailServer
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import *
 import liberaforms.utils.wtf as wtf
-#from form_templates import formTemplates
 
 #from pprint import pprint as pp
 
@@ -288,7 +288,7 @@ def inspect_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #pp(queriedForm)
+    #print(queriedForm)
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -333,17 +333,12 @@ def add_editor(id):
 @enabled_user_required
 def remove_editor(form_id, editor_id):
     queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
-    if not queriedForm:
-        return json.dumps(False)
-    if queriedForm.isAuthor(editor):
-        return json.dumps(False)
-    removedEditor_id=queriedForm.removeEditor(editor_id)
-    try:
-        editor=User.find(id=removedEditor_id).email
-    except:
-        editor=removedEditor_id
-    queriedForm.addLog(gettext("Removed editor %s" % editor))
-    return json.dumps(removedEditor_id)
+    editor = User.find(id=editor_id)
+    if queriedForm and editor and not queriedForm.isAuthor(editor):
+        queriedForm.removeEditor(editor)
+        queriedForm.addLog(gettext("Removed editor %s" % editor.email))
+        return json.dumps(str(editor.id))
+    return json.dumps(False)
 
 
 @form_bp.route('/forms/expiration/<string:id>', methods=['GET'])
@@ -359,7 +354,6 @@ def expiration(id):
 @form_bp.route('/forms/set-expiration-date/<string:id>', methods=['POST'])
 @enabled_user_required
 def set_expiration_date(id):
-    #return JsonResponse(json.dumps({'error': gettext("Date-time is not valid")}))
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps())
@@ -483,10 +477,11 @@ def toggle_restricted_access(id):
 @form_bp.route('/form/toggle-notification/<string:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_notification(id):
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    editor_id=str(g.current_user.id)
+    queriedForm = Form.find(id=id, editor_id=editor_id)
     if not queriedForm:
         return JsonResponse(json.dumps())
-    return JsonResponse(json.dumps({'notification':queriedForm.toggleNotification()}))
+    return JsonResponse(json.dumps({'notification':queriedForm.toggleNotification(editor_id)}))
 
 
 @form_bp.route('/form/toggle-data-consent/<string:id>', methods=['POST'])
@@ -514,10 +509,12 @@ def toggle_form_sendconfirmation(id):
 @form_bp.route('/form/toggle-expiration-notification/<string:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_expiration_notification(id):
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    editor_id=str(g.current_user.id)
+    queriedForm = Form.find(id=id, editor_id=editor_id)
     if not queriedForm:
         return JsonResponse(json.dumps())
-    return JsonResponse(json.dumps({'notification':queriedForm.toggleExpirationNotification()}))
+    return JsonResponse(json.dumps({
+            'notification':queriedForm.toggleExpirationNotification(editor_id) }))
     
 
 @form_bp.route('/embed/<string:slug>', methods=['GET', 'POST'])

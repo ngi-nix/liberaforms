@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import g, flash, request
-from flask_babel import gettext
 import smtplib, ssl, socket
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -26,9 +24,11 @@ from email.utils import formatdate, make_msgid
 from email.header import Header
 from threading import Thread
 
-from liberaforms import app
-from liberaforms.models import Site, User
+from flask import g, flash, request
+from flask_babel import gettext
 
+from liberaforms import app
+from liberaforms.models.user import User
 
 class EmailServer():
     server = None
@@ -75,7 +75,7 @@ class EmailServer():
                             'admin__isAdmin': True }
                 admins=User.findAll(**criteria)
                 if admins:
-                    msg['Errors-To'] = g.site.admins[0].email
+                    msg['Errors-To'] = g.site.getAdmins()[0].email
             self.server.sendmail(msg['From'], msg['To'], msg.as_string())
             return True
         except Exception as e:

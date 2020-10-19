@@ -24,7 +24,7 @@ from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms import app
-from liberaforms.models import *
+from liberaforms.models.site import Site, Invite, Installation
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import *
 from liberaforms.utils.email import EmailServer

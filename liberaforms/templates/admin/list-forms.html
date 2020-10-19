@@ -35,7 +35,7 @@
         </tr>
     </thead>
     {% for form in forms %}
-    {% set author = form.getAuthor() %}
+        {% set author = form.getAuthor() %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
             <td>{{form.getEntries().count()}}</td>
