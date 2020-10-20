@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os, json
-from flask import g, render_template, redirect
+from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext

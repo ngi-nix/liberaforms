@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os
-from flask import g, render_template, redirect, request
+from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
@@ -26,7 +26,7 @@ from flask_babel import gettext
 from liberaforms import app
 from liberaforms.models.site import Site, Invite, Installation
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 

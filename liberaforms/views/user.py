@@ -17,8 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import datetime, json
 from threading import Thread
-from flask import g, render_template, redirect
+from flask import g, request, render_template, redirect
 from flask import session, flash, Blueprint
 from flask_babel import gettext
 from flask_babel import refresh as babel_refresh
@@ -27,8 +28,9 @@ from liberaforms import app
 from liberaforms.models.site import Invite, Site, Installation
 from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
 from liberaforms.utils.email import EmailServer
+from liberaforms.utils import validators
 import liberaforms.utils.wtf as wtf
 
 
@@ -44,14 +46,14 @@ user_bp = Blueprint('user_bp', __name__,
 def new_user(token=None):
     if g.site.invitationOnly and not token:
         return redirect(make_url_for('main_bp.index'))
-    killCurrentUser()
+    logout_user()
     invite=None
     if token:
         invite=Invite.find(token=token)
         if not invite:
             flash(gettext("Invitation not found"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        if not isValidToken(invite.token):
+        if not validators.isValidToken(invite.token):
             flash(gettext("This invitation has expired"), 'warning')
             invite.delete()
             return redirect(make_url_for('main_bp.index'))
@@ -65,7 +67,7 @@ def new_user(token=None):
                 validatedEmail=True
             if invite.admin == True:
                 adminSettings['isAdmin']=True
-                # the first admin of a new Site needs to config. SMTP before we can send emails.
+                # the first admin of a new Site needs to config. SMTP before we can send emails, but
                 # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.getAdmins():
                     validatedEmail=True
@@ -76,7 +78,7 @@ def new_user(token=None):
         newUserData = {
             "username": wtform.username.data,
             "email": wtform.email.data,
-            "password_hash": hashPassword(wtform.password.data),
+            "password_hash": validators.hashPassword(wtform.password.data),
             "preferences": {"language": g.site.defaultLanguage, "newEntryNotification": True},
             "hostname": g.site.hostname,
             "blocked": False,
@@ -118,20 +120,7 @@ def new_user(token=None):
 def user_settings(username):
     if username != g.current_user.username:
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-    invites = Invite.findAll() if g.isAdmin else []
-    sites=None
-    installation=None
-    if g.isRootUserEnabled:
-        sites=Site.findAll()
-        installation=Installation.get()
-    context = {
-        'user': g.current_user,
-        'invites': invites,
-        'site': g.site,
-        'sites': sites,
-        'installation': installation
-    }
-    return render_template('user-settings.html', **context)
+    return render_template('user-settings.html', user=g.current_user)
  
 
 @user_bp.route('/user/<string:username>/statistics', methods=['GET'])
@@ -183,7 +172,7 @@ def change_email():
 def reset_password():
     wtform=wtf.ResetPassword()
     if wtform.validate_on_submit():
-        g.current_user.password_hash=hashPassword(wtform.password.data)
+        g.current_user.password_hash=validators.hashPassword(wtform.password.data)
         g.current_user.save()
         flash(gettext("Password changed OK"), 'success')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
@@ -200,7 +189,7 @@ def recover_password(token=None):
         if not user:
             flash(gettext("Couldn't find that token"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        if not isValidToken(user.token):
+        if not validators.isValidToken(user.token):
             flash(gettext("Your petition has expired"), 'warning')
             user.deleteToken()
             return redirect(make_url_for('main_bp.index'))
@@ -263,7 +252,7 @@ def validate_email(token):
     if not user:
         flash(gettext("We couldn't find that petition"), 'warning')
         return redirect(make_url_for('main_bp.index'))
-    if not isValidToken(user.token):
+    if not validators.isValidToken(user.token):
         flash(gettext("Your petition has expired"), 'warning')
         user.deleteToken()
         return redirect(make_url_for('main_bp.index'))
@@ -293,11 +282,11 @@ def consent(username):
 @user_bp.route('/user/login', methods=['GET', 'POST'])
 @anon_required
 def login():
-    killCurrentUser()
+    logout_user()
     wtform=wtf.Login()
     if wtform.validate():
         user=User.find(hostname=g.site.hostname, username=wtform.username.data, blocked=False)
-        if not user and isValidEmail(wtform.username.data):
+        if not user and validators.isValidEmail(wtform.username.data):
             user=User.find(hostname=g.site.hostname, email=wtform.username.data, blocked=False)
         if user and user.verifyPassword(wtform.password.data):
             session["user_id"]=str(user.id)
@@ -313,5 +302,5 @@ def login():
 @user_bp.route('/user/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    killCurrentUser()
+    logout_user()
     return redirect(make_url_for('main_bp.index'))

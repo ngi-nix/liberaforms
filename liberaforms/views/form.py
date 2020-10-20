@@ -17,21 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json
-from flask import g, render_template, redirect
+import json, datetime
+from threading import Thread
+from flask import g, request, render_template, redirect
 from flask import session, flash, send_file, after_this_request
 from flask import Blueprint
 from flask_babel import gettext
-from threading import Thread
 
 from liberaforms import app, csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
-from liberaforms.utils.formhelper import *
 from liberaforms.utils.wraps import *
+from liberaforms.utils import form_helper
+from liberaforms.utils import sanitizers
 from liberaforms.utils.email import EmailServer
+from liberaforms.utils.validators import isValidEmail
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for, JsonResponse, gen_random_string, logout_user
 import liberaforms.utils.wtf as wtf
 
 #from pprint import pprint as pp
@@ -56,9 +58,8 @@ def list_form_templates():
 @form_bp.route('/forms/new/<string:templateID>', methods=['GET'])
 @enabled_user_required
 def new_form(templateID=None):
-    clearSessionFormData()
+    form_helper.clearSessionFormData()
     session['introductionTextMD'] = Form.defaultIntroductionText()
-    session['afterSubmitTextMD'] = Form.defaultAfterSubmitText()['markdown']
     return render_template('edit-form.html', host_url=g.site.host_url)
 
 
@@ -79,14 +80,15 @@ def edit_form(id=None):
         if queriedForm:
             session['slug'] = queriedForm.slug
         elif 'slug' in request.form:
-            session['slug'] = sanitizeSlug(request.form['slug'])
+            session['slug'] = sanitizers.sanitizeSlug(request.form['slug'])
         if not session['slug']:
             flash(gettext("Something went wrong. No slug!"), 'error')
             return redirect(make_url_for('form_bp.my_forms'))
-        structure = repairFormStructure(json.loads(request.form['structure']))
+        structure = form_helper.repairFormStructure(json.loads(request.form['structure']))
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.createFieldIndex(structure)
-        session['introductionTextMD'] = escapeMarkdown(request.form['introductionTextMD'])
+        session['introductionTextMD'] = sanitizers.escapeMarkdown(
+                                                request.form['introductionTextMD'])
         return redirect(make_url_for('form_bp.preview_form'))
     optionsWithData = queriedForm.getMultichoiceOptionsWithSavedData() if queriedForm else {}
     return render_template('edit-form.html',    host_url=g.site.host_url,
@@ -101,7 +103,7 @@ def is_slug_available():
     else:
         return JsonResponse(json.dumps({'slug':"", 'available':False}))
     available = True
-    slug=sanitizeSlug(slug)
+    slug=sanitizers.sanitizeSlug(slug)
     if not slug:
         available = False
     elif Form.find(slug=slug, hostname=g.site.hostname):
@@ -119,7 +121,8 @@ def preview_form():
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template( 'preview-form.html',
                             slug=session['slug'],
-                            introductionText=markdown2HTML(session['introductionTextMD']))
+                            introductionText=sanitizers.markdown2HTML(
+                                                            session['introductionTextMD']))
 
 
 @form_bp.route('/forms/edit/conditions/<string:id>', methods=['GET'])
@@ -138,17 +141,18 @@ def conditions_form(id):
 @enabled_user_required
 def save_form(id=None):    
     if 'structure' in request.form:
-        structure = repairFormStructure(json.loads(request.form['structure']))
+        structure = form_helper.repairFormStructure(json.loads(request.form['structure']))
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.createFieldIndex(structure)
     if 'introductionTextMD' in request.form:
-        session['introductionTextMD'] = escapeMarkdown(request.form['introductionTextMD'])
+        session['introductionTextMD'] = sanitizers.escapeMarkdown(
+                                                        request.form['introductionTextMD'])
     
     formStructure = json.loads(session['formStructure'])
     if not formStructure:
         formStructure=[{'label': gettext("Form"), 'subtype': 'h1', 'type': 'header'}]
-    introductionText={  'markdown':escapeMarkdown(session['introductionTextMD']),
-                        'html':markdown2HTML(session['introductionTextMD'])}
+    introductionText={  'markdown':sanitizers.escapeMarkdown(session['introductionTextMD']),
+                        'html':sanitizers.markdown2HTML(session['introductionTextMD'])}
     
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
     if queriedForm:
@@ -157,7 +161,7 @@ def save_form(id=None):
         queriedForm.updateExpiryConditions()
         queriedForm.introductionText=introductionText
         queriedForm.save()
-        clearSessionFormData()
+        form_helper.clearSessionFormData()
         flash(gettext("Updated form OK"), 'success')
         queriedForm.addLog(gettext("Form edited"))
         return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
@@ -180,6 +184,7 @@ def save_form(id=None):
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
         #pp(formStructure)
+        
         newFormData={
                     "created": datetime.date.today().strftime("%Y-%m-%d"),
                     "author_id": str(g.current_user.id),
@@ -193,7 +198,7 @@ def save_form(id=None):
                     "structure": formStructure,
                     "fieldIndex": session['formFieldIndex'],
                     "sharedEntries": {  "enabled": False,
-                                        "key": getRandomString(32),
+                                        "key": gen_random_string(),
                                         "password": False,
                                         "expireDate": False},
                     "introductionText": introductionText,
@@ -206,7 +211,7 @@ def save_form(id=None):
                     "adminPreferences": { "public": True }
                 }
         newForm=Form.saveNewForm(newFormData)
-        clearSessionFormData()
+        form_helper.clearSessionFormData()
         newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify form.site.admins
@@ -292,7 +297,7 @@ def inspect_form(id):
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    populateSessionWithForm(queriedForm) # prepare the session for possible form edit.
+    form_helper.populateSessionWithForm(queriedForm) # prepare the session for possible form edit.
     return render_template('inspect-form.html', form=queriedForm)
 
 
@@ -420,7 +425,7 @@ def duplicate_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    populateSessionWithForm(queriedForm)
+    form_helper.populateSessionWithForm(queriedForm)
     session['slug']=""
     session['form_id']=None
     session['duplication_in_progress'] = True
@@ -521,7 +526,7 @@ def toggle_form_expiration_notification(id):
 @csrf.exempt
 @sanitized_slug_required
 def view_embedded_form(slug):
-    killCurrentUser()
+    logout_user()
     g.embedded=True
     return view_form(slug=slug)
 
@@ -560,7 +565,7 @@ def view_form(slug):
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             value=value.strip()
-            value=removeFirstAndLastNewLines(value)
+            value=sanitizers.removeFirstAndLastNewLines(value)
             entry[key]=value
         queriedForm.addEntry(entry)
         

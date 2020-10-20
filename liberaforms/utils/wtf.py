@@ -27,7 +27,8 @@ from flask_babel import lazy_gettext as _
 from liberaforms import app
 from liberaforms.models.user import User
 from liberaforms.models.site import Installation
-from liberaforms.utils.utils import sanitizeUsername, pwd_policy
+from liberaforms.utils.sanitizers import sanitizeUsername
+from liberaforms.utils.validators import pwd_policy
 
 
 class NewUser(FlaskForm):

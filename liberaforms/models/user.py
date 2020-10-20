@@ -22,7 +22,8 @@ from liberaforms import app, db
 from liberaforms.models.form import Form, FormResponse
 from liberaforms.utils.queryset import HostnameQuerySet
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import verifyPassword, createToken
+from liberaforms.utils import validators
+from liberaforms.utils.utils import createToken
 
 #from pprint import pprint as pp
 
@@ -98,7 +99,7 @@ class User(db.Document):
         return True if self.email in app.config['ROOT_USERS'] else False
     
     def verifyPassword(self, password):
-        return verifyPassword(password, self.password_hash)
+        return validators.verifyPassword(password, self.password_hash)
         
     def deleteUser(self):
         forms = Form.findAll(author_id=str(self.id))

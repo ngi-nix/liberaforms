@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from liberaforms.utils.utils import *
+from liberaforms.utils.sanitizers import stripHTMLTags, escapeMarkdown, markdown2HTML
 from flask_babel import gettext as _
 from copy import copy
 #from pprint import pprint as pp

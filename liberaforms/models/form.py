@@ -26,7 +26,8 @@ from flask_babel import gettext
 from liberaforms import app, db
 from liberaforms.utils.queryset import HostnameQuerySet
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import escapeMarkdown, markdown2HTML, isFutureDate
+from liberaforms.utils import sanitizers
+from liberaforms.utils.utils import isFutureDate
 
 #from pprint import pprint as pp
 
@@ -321,8 +322,8 @@ class Form(db.Document):
     def saveExpiredText(self, markdown):
         markdown=markdown.strip()
         if markdown:
-            self.expiredText = {'markdown':escapeMarkdown(markdown),
-                                'html':markdown2HTML(markdown)}
+            self.expiredText = {'markdown': sanitizers.escapeMarkdown(markdown),
+                                'html': sanitizers.markdown2HTML(markdown)}
         else:
             self.expiredText = {'html':"", 'markdown':""}
         self.save()
@@ -349,8 +350,8 @@ class Form(db.Document):
     def saveAfterSubmitText(self, markdown):
         markdown=markdown.strip()
         if markdown:
-            self.afterSubmitText = {'markdown':escapeMarkdown(markdown),
-                                    'html':markdown2HTML(markdown)}
+            self.afterSubmitText = {'markdown': sanitizers.escapeMarkdown(markdown),
+                                    'html': sanitizers.markdown2HTML(markdown)}
         else:
             self.afterSubmitText = {'html':"", 'markdown':""}
         self.save()

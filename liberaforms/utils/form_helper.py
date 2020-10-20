@@ -19,7 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 from flask import session
-from liberaforms.utils.utils import *
+from liberaforms.utils import sanitizers
+
 
 def clearSessionFormData():
     session['duplication_in_progress'] = False
@@ -52,12 +53,12 @@ def repairFormStructure(structure):
         if "type" in element:
             if element['type'] == 'paragraph':
                 # remove unwanted HTML from paragraph text (not really a bug)
-                element["label"]=cleanLabel(element["label"])
+                element["label"]=sanitizers.cleanLabel(element["label"])
                 continue
             # Ensure a label without HTML tags
             if 'label' in element:
-                element['label']=stripHTMLTags(element['label']).strip()
-                element['label'] = removeNewLines(element['label'])
+                element['label'] = sanitizers.stripHTMLTags(element['label']).strip()
+                element['label'] = sanitizers.removeNewLines(element['label'])
             if not 'label' in element or element['label']=="":
                 element['label']=gettext("Label")                
             # formBuilder does not save select dropdown correctly
@@ -72,6 +73,6 @@ def repairFormStructure(structure):
                 for input_type in element["values"]:
                     if not input_type["value"] and input_type["label"]:
                         input_type["value"] = input_type["label"]
-                    input_type["value"] = sanitizeString(input_type["value"].replace(" ", "-"))
-                    input_type["value"] = removeNewLines(input_type["value"])
+                    input_type["value"] = sanitizers.sanitizeString(input_type["value"].replace(" ", "-"))
+                    input_type["value"] = sanitizers.removeNewLines(input_type["value"])
     return structure

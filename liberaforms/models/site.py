@@ -28,9 +28,8 @@ from liberaforms.models.user import User
 
 from liberaforms.utils.queryset import HostnameQuerySet
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.migrate import migrateMongoSchema
-from liberaforms.utils.utils import escapeMarkdown, markdown2HTML, stripHTMLTags
-from liberaforms.utils.utils import createToken, str2bool
+from liberaforms.utils import sanitizers
+from liberaforms.utils import utils
 
 #from pprint import pprint as pp
 
@@ -87,8 +86,7 @@ class Site(db.Document):
         }
         new_site=Site(**newSiteData)
         new_site.save()
-        #create the Installation if it doesn't exist
-        Installation.get()
+        Installation.get() #create the Installation if it doesn't exist
         return new_site
 
     @classmethod
@@ -124,7 +122,8 @@ class Site(db.Document):
         return False
 
     def saveBlurb(self, MDtext):
-        self.blurb = {'markdown':escapeMarkdown(MDtext), 'html':markdown2HTML(MDtext)}
+        self.blurb = {  'markdown': sanitizers.escapeMarkdown(MDtext),
+                        'html': sanitizers.markdown2HTML(MDtext)}
         self.save()
 
     @property
@@ -198,10 +197,10 @@ class Site(db.Document):
         consent = consent[0] if consent else None
         if not consent:
             return None
-        consent['markdown'] = escapeMarkdown(data['markdown'].strip())
-        consent['html'] = markdown2HTML(consent['markdown'])
-        consent['label'] = stripHTMLTags(data['label']).strip()
-        consent['required'] = str2bool(data['required'])
+        consent['markdown'] = sanitizers.escapeMarkdown(data['markdown'].strip())
+        consent['html'] = sanitizers.markdown2HTML(consent['markdown'])
+        consent['label'] = sanitizers.stripHTMLTags(data['label']).strip()
+        consent['required'] = utils.str2bool(data['required'])
         if id == self.TermsConsentID:
             consent['required'] = True
             if not consent['markdown']:
@@ -331,7 +330,7 @@ class Invite(db.Document):
             "hostname": hostname,
             "email": email,
             "message": message,
-            "token": createToken(Invite),
+            "token": utils.createToken(Invite),
             "admin": admin
         }
         newInvite=Invite(**data)
@@ -357,7 +356,7 @@ class Invite(db.Document):
         return "{}\n\n{}".format(self.message, self.getLink())
 
     def setToken(self, **kwargs):
-        self.invite['token']=createToken(Invite, **kwargs)
+        self.invite['token']=utils.createToken(Invite, **kwargs)
         self.save()
         
     @staticmethod
@@ -399,6 +398,7 @@ class Installation(db.Document):
         return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
 
     def updateSchema(self):
+        from liberaforms.utils.migrate import migrateMongoSchema
         if not self.isSchemaUpToDate():
             migrated_up_to=migrateMongoSchema(self.schemaVersion)
             self.schemaVersion=migrated_up_to

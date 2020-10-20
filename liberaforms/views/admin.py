@@ -17,14 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import g, render_template, redirect
+import json
+from flask import g, request, render_template, redirect
 from flask import session, flash, Blueprint
 from flask_babel import gettext
 
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import make_url_for
+from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 
