@@ -30,8 +30,8 @@ from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
+from liberaforms.utils import validators
 from liberaforms.utils.email import EmailServer
-from liberaforms.utils.validators import isValidEmail
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import make_url_for, JsonResponse, gen_random_string, logout_user
 import liberaforms.utils.wtf as wtf
@@ -58,7 +58,7 @@ def list_form_templates():
 @form_bp.route('/forms/new/<string:templateID>', methods=['GET'])
 @enabled_user_required
 def new_form(templateID=None):
-    form_helper.clearSessionFormData()
+    form_helper.clear_session_form_data()
     session['introductionTextMD'] = Form.defaultIntroductionText()
     return render_template('edit-form.html', host_url=g.site.host_url)
 
@@ -80,14 +80,14 @@ def edit_form(id=None):
         if queriedForm:
             session['slug'] = queriedForm.slug
         elif 'slug' in request.form:
-            session['slug'] = sanitizers.sanitizeSlug(request.form['slug'])
+            session['slug'] = sanitizers.sanitize_slug(request.form['slug'])
         if not session['slug']:
             flash(gettext("Something went wrong. No slug!"), 'error')
             return redirect(make_url_for('form_bp.my_forms'))
-        structure = form_helper.repairFormStructure(json.loads(request.form['structure']))
+        structure = form_helper.repair_form_structure(json.loads(request.form['structure']))
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.createFieldIndex(structure)
-        session['introductionTextMD'] = sanitizers.escapeMarkdown(
+        session['introductionTextMD'] = sanitizers.escape_markdown(
                                                 request.form['introductionTextMD'])
         return redirect(make_url_for('form_bp.preview_form'))
     optionsWithData = queriedForm.getMultichoiceOptionsWithSavedData() if queriedForm else {}
@@ -103,7 +103,7 @@ def is_slug_available():
     else:
         return JsonResponse(json.dumps({'slug':"", 'available':False}))
     available = True
-    slug=sanitizers.sanitizeSlug(slug)
+    slug=sanitizers.sanitize_slug(slug)
     if not slug:
         available = False
     elif Form.find(slug=slug, hostname=g.site.hostname):
@@ -141,17 +141,17 @@ def conditions_form(id):
 @enabled_user_required
 def save_form(id=None):    
     if 'structure' in request.form:
-        structure = form_helper.repairFormStructure(json.loads(request.form['structure']))
+        structure = form_helper.repair_form_structure(json.loads(request.form['structure']))
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.createFieldIndex(structure)
     if 'introductionTextMD' in request.form:
-        session['introductionTextMD'] = sanitizers.escapeMarkdown(
+        session['introductionTextMD'] = sanitizers.escape_markdown(
                                                         request.form['introductionTextMD'])
     
     formStructure = json.loads(session['formStructure'])
     if not formStructure:
         formStructure=[{'label': gettext("Form"), 'subtype': 'h1', 'type': 'header'}]
-    introductionText={  'markdown':sanitizers.escapeMarkdown(session['introductionTextMD']),
+    introductionText={  'markdown':sanitizers.escape_markdown(session['introductionTextMD']),
                         'html':sanitizers.markdown2HTML(session['introductionTextMD'])}
     
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
@@ -161,7 +161,7 @@ def save_form(id=None):
         queriedForm.updateExpiryConditions()
         queriedForm.introductionText=introductionText
         queriedForm.save()
-        form_helper.clearSessionFormData()
+        form_helper.clear_session_form_data()
         flash(gettext("Updated form OK"), 'success')
         queriedForm.addLog(gettext("Form edited"))
         return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
@@ -211,7 +211,7 @@ def save_form(id=None):
                     "adminPreferences": { "public": True }
                 }
         newForm=Form.saveNewForm(newFormData)
-        form_helper.clearSessionFormData()
+        form_helper.clear_session_form_data()
         newForm.addLog(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify form.site.admins
@@ -297,7 +297,7 @@ def inspect_form(id):
     if not g.current_user.canInspectForm(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    form_helper.populateSessionWithForm(queriedForm) # prepare the session for possible form edit.
+    form_helper.populate_session_with_form(queriedForm) # prepare the session for possible form edit.
     return render_template('inspect-form.html', form=queriedForm)
 
 
@@ -365,7 +365,7 @@ def set_expiration_date(id):
     if 'date' in request.form and 'time' in request.form:
         if request.form['date'] and request.form['time']:
             expireDate="%s %s:00" % (request.form['date'], request.form['time'])
-            if not isValidExpireDate(expireDate):
+            if not validators.is_valid_date(expireDate):
                 return JsonResponse(json.dumps({'error': gettext("Date-time is not valid"),
                                                 'expired': queriedForm.hasExpired()}))
             else:
@@ -425,7 +425,7 @@ def duplicate_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    form_helper.populateSessionWithForm(queriedForm)
+    form_helper.populate_session_with_form(queriedForm)
     session['slug']=""
     session['form_id']=None
     session['duplication_in_progress'] = True
@@ -564,8 +564,7 @@ def view_form(slug):
             if isinstance(value, list): # A checkboxes-group contains multiple values 
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
-            value=value.strip()
-            value=sanitizers.removeFirstAndLastNewLines(value)
+            value=sanitizers.remove_first_and_last_newlines(value.strip())
             entry[key]=value
         queriedForm.addEntry(entry)
         
@@ -586,7 +585,7 @@ def view_form(slug):
         
         if queriedForm.mightSendConfirmationEmail() and 'send-confirmation' in formData:
             confirmationEmail=queriedForm.getConfirmationEmailAddress(entry)
-            if confirmationEmail and isValidEmail(confirmationEmail):
+            if confirmationEmail and validators.is_valid_email(confirmationEmail):
                 def sendConfirmation():
                     print("send")
                     EmailServer().sendConfirmation(confirmationEmail, queriedForm)

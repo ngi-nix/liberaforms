@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from liberaforms.utils.sanitizers import stripHTMLTags, escapeMarkdown, markdown2HTML
+from liberaforms.utils.sanitizers import strip_html_tags, escape_markdown, markdown2HTML
 from flask_babel import gettext as _
 from copy import copy
 #from pprint import pprint as pp
@@ -77,9 +77,9 @@ class ConsentText():
         consent = cls.getConsentByID(id, scope)
         if not consent:
             return None
-        consent['markdown'] = escapeMarkdown(data['markdown'].strip())
+        consent['markdown'] = escape_markdown(data['markdown'].strip())
         consent['html'] = markdown2HTML(consent['markdown'])
-        consent['label'] = stripHTMLTags(data['label']).strip()
+        consent['label'] = strip_html_tags(data['label']).strip()
         consent['required'] = str2bool(data['required'])
         
         default_consent=None        

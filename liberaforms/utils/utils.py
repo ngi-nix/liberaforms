@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json, time, string, random, datetime, uuid
+import json, string, random, datetime, uuid
 from pprint import pformat
 
 from flask import Response, redirect, request, url_for
@@ -73,27 +73,12 @@ def logout_user():
 Create a unique token.
 persistentClass may be a User class or an Invite class
 """
-def createToken(persistentClass, **kwargs):
-    tokenString = gen_random_string()
-    while persistentClass.find(token=tokenString):
-        tokenString = gen_random_string()
-    result={'token': tokenString, 'created': datetime.datetime.now()}
+def create_token(persistentClass, **kwargs):
+    token_string = gen_random_string()
+    while persistentClass.find(token=token_string):
+        token_string = gen_random_string()
+    result={'token': token_string, 'created': datetime.datetime.now()}
     return {**result, **kwargs} 
-
-
-""" ######## Dates ######## """
-
-def isValidExpireDate(date):
-    try:
-        datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-        return True
-    except:
-        return False
-
-def isFutureDate(date):
-    now=time.time()
-    future=int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").strftime("%s"))
-    return True if future > now else False
 
 
 """ ######## Other ######## """

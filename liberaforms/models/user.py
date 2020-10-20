@@ -23,7 +23,7 @@ from liberaforms.models.form import Form, FormResponse
 from liberaforms.utils.queryset import HostnameQuerySet
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
-from liberaforms.utils.utils import createToken
+from liberaforms.utils.utils import create_token
 
 #from pprint import pprint as pp
 
@@ -98,8 +98,8 @@ class User(db.Document):
     def isRootUser(self):
         return True if self.email in app.config['ROOT_USERS'] else False
     
-    def verifyPassword(self, password):
-        return validators.verifyPassword(password, self.password_hash)
+    def verify_password(self, password):
+        return validators.verify_password(password, self.password_hash)
         
     def deleteUser(self):
         forms = Form.findAll(author_id=str(self.id))
@@ -112,7 +112,7 @@ class User(db.Document):
         self.delete()
     
     def setToken(self, **kwargs):
-        self.token=createToken(User, **kwargs)
+        self.token=create_token(User, **kwargs)
         self.save()
 
     def deleteToken(self):

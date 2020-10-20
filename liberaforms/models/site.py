@@ -122,7 +122,7 @@ class Site(db.Document):
         return False
 
     def saveBlurb(self, MDtext):
-        self.blurb = {  'markdown': sanitizers.escapeMarkdown(MDtext),
+        self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
                         'html': sanitizers.markdown2HTML(MDtext)}
         self.save()
 
@@ -197,9 +197,9 @@ class Site(db.Document):
         consent = consent[0] if consent else None
         if not consent:
             return None
-        consent['markdown'] = sanitizers.escapeMarkdown(data['markdown'].strip())
+        consent['markdown'] = sanitizers.escape_markdown(data['markdown'].strip())
         consent['html'] = sanitizers.markdown2HTML(consent['markdown'])
-        consent['label'] = sanitizers.stripHTMLTags(data['label']).strip()
+        consent['label'] = sanitizers.strip_html_tags(data['label']).strip()
         consent['required'] = utils.str2bool(data['required'])
         if id == self.TermsConsentID:
             consent['required'] = True
@@ -330,7 +330,7 @@ class Invite(db.Document):
             "hostname": hostname,
             "email": email,
             "message": message,
-            "token": utils.createToken(Invite),
+            "token": utils.create_token(Invite),
             "admin": admin
         }
         newInvite=Invite(**data)
@@ -356,7 +356,7 @@ class Invite(db.Document):
         return "{}\n\n{}".format(self.message, self.getLink())
 
     def setToken(self, **kwargs):
-        self.invite['token']=utils.createToken(Invite, **kwargs)
+        self.invite['token']=utils.create_token(Invite, **kwargs)
         self.save()
         
     @staticmethod

@@ -27,7 +27,7 @@ from liberaforms import app, db
 from liberaforms.utils.queryset import HostnameQuerySet
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
-from liberaforms.utils.utils import isFutureDate
+from liberaforms.utils import validators
 
 #from pprint import pprint as pp
 
@@ -322,7 +322,7 @@ class Form(db.Document):
     def saveExpiredText(self, markdown):
         markdown=markdown.strip()
         if markdown:
-            self.expiredText = {'markdown': sanitizers.escapeMarkdown(markdown),
+            self.expiredText = {'markdown': sanitizers.escape_markdown(markdown),
                                 'html': sanitizers.markdown2HTML(markdown)}
         else:
             self.expiredText = {'html':"", 'markdown':""}
@@ -350,7 +350,7 @@ class Form(db.Document):
     def saveAfterSubmitText(self, markdown):
         markdown=markdown.strip()
         if markdown:
-            self.afterSubmitText = {'markdown': sanitizers.escapeMarkdown(markdown),
+            self.afterSubmitText = {'markdown': sanitizers.escape_markdown(markdown),
                                     'html': sanitizers.markdown2HTML(markdown)}
         else:
             self.afterSubmitText = {'html':"", 'markdown':""}
@@ -447,7 +447,8 @@ class Form(db.Document):
     def hasExpired(self):
         if not self.canExpire():
             return False
-        if self.expiryConditions["expireDate"] and not isFutureDate(self.expiryConditions["expireDate"]):
+        if self.expiryConditions["expireDate"] and not \
+            validators.is_future_date(self.expiryConditions["expireDate"]):
             return True
         for fieldName, value in self.fieldConditions.items():
             if value['type'] == 'number':

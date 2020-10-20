@@ -53,7 +53,7 @@ def new_user(token=None):
         if not invite:
             flash(gettext("Invitation not found"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        if not validators.isValidToken(invite.token):
+        if not validators.is_valid_token(invite.token):
             flash(gettext("This invitation has expired"), 'warning')
             invite.delete()
             return redirect(make_url_for('main_bp.index'))
@@ -78,7 +78,7 @@ def new_user(token=None):
         newUserData = {
             "username": wtform.username.data,
             "email": wtform.email.data,
-            "password_hash": validators.hashPassword(wtform.password.data),
+            "password_hash": validators.hash_password(wtform.password.data),
             "preferences": {"language": g.site.defaultLanguage, "newEntryNotification": True},
             "hostname": g.site.hostname,
             "blocked": False,
@@ -172,7 +172,7 @@ def change_email():
 def reset_password():
     wtform=wtf.ResetPassword()
     if wtform.validate_on_submit():
-        g.current_user.password_hash=validators.hashPassword(wtform.password.data)
+        g.current_user.password_hash=validators.hash_password(wtform.password.data)
         g.current_user.save()
         flash(gettext("Password changed OK"), 'success')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
@@ -189,7 +189,7 @@ def recover_password(token=None):
         if not user:
             flash(gettext("Couldn't find that token"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        if not validators.isValidToken(user.token):
+        if not validators.is_valid_token(user.token):
             flash(gettext("Your petition has expired"), 'warning')
             user.deleteToken()
             return redirect(make_url_for('main_bp.index'))
@@ -252,7 +252,7 @@ def validate_email(token):
     if not user:
         flash(gettext("We couldn't find that petition"), 'warning')
         return redirect(make_url_for('main_bp.index'))
-    if not validators.isValidToken(user.token):
+    if not validators.is_valid_token(user.token):
         flash(gettext("Your petition has expired"), 'warning')
         user.deleteToken()
         return redirect(make_url_for('main_bp.index'))
@@ -286,9 +286,9 @@ def login():
     wtform=wtf.Login()
     if wtform.validate():
         user=User.find(hostname=g.site.hostname, username=wtform.username.data, blocked=False)
-        if not user and validators.isValidEmail(wtform.username.data):
+        if not user and validators.is_valid_email(wtform.username.data):
             user=User.find(hostname=g.site.hostname, email=wtform.username.data, blocked=False)
-        if user and user.verifyPassword(wtform.password.data):
+        if user and user.verify_password(wtform.password.data):
             session["user_id"]=str(user.id)
             if not user.validatedEmail:
                 return redirect(make_url_for('user_bp.user_settings', username=user.username))

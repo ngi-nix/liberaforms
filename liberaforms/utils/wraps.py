@@ -93,7 +93,7 @@ def sanitized_slug_required(f):
             if g.current_user:
                 flash("Reserved slug!", 'warning')
             return render_template('page-not-found.html'), 404
-        if kwargs['slug'] != sanitizers.sanitizeSlug(kwargs['slug']):
+        if kwargs['slug'] != sanitizers.sanitize_slug(kwargs['slug']):
             if g.current_user:
                 flash("That's a nasty slug!", 'warning')
             return render_template('page-not-found.html'), 404
@@ -103,7 +103,7 @@ def sanitized_slug_required(f):
 def sanitized_key_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if not ('key' in kwargs and kwargs['key'] == sanitizers.sanitizeString(kwargs['key'])):
+        if not ('key' in kwargs and kwargs['key'] == sanitizers.sanitize_string(kwargs['key'])):
             if g.current_user:
                 flash(gettext("That's a nasty key!"), 'warning')
             return render_template('page-not-found.html'), 404
@@ -114,7 +114,7 @@ def sanitized_key_required(f):
 def sanitized_token(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if not ('token' in kwargs and validators.isValidUUID(kwargs['token'])):
+        if not ('token' in kwargs and validators.is_valid_UUID(kwargs['token'])):
             if g.current_user:
                 flash(gettext("That's a nasty token!"), 'warning')
             return render_template('page-not-found.html'), 404
