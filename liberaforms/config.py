@@ -58,7 +58,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.7.14"
+    APP_VERSION = "1.7.15"
     SCHEMA_VERSION = 23
 
     RESERVED_SLUGS = [

@@ -16,7 +16,7 @@
 
 
 {% for consent in g.site.consentTexts %}
-        {% set consent = site.getConsentForDisplay(consent.id) %}
+        {% set consent = site.get_consent_for_display(consent.id) %}
         <div class="title_3 delimited" style="margin-top:2em">
             {% if consent.name=="DPL" %}
             {%trans%}Data protection{%endtrans%}

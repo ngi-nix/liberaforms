@@ -69,7 +69,7 @@ def new_user(token=None):
                 adminSettings['isAdmin']=True
                 # the first admin of a new Site needs to config. SMTP before we can send emails, but
                 # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
-                if not g.site.getAdmins():
+                if not g.site.get_admins():
                     validatedEmail=True
         if wtform.email.data in app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True

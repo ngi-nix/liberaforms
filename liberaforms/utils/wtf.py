@@ -61,11 +61,11 @@ class NewUser(FlaskForm):
             raise ValidationError(_("Your password is weak"))
             
     def validate_termsAndConditions(self, termsAndConditions):
-        if g.site.TermsConsentID in g.site.newUserConsentment and not termsAndConditions.data:
+        if g.site.terms_consent_id in g.site.newUserConsentment and not termsAndConditions.data:
             raise ValidationError(_("Please accept our terms and conditions"))
 
     def validate_DPLConsent(self, DPLConsent):
-        if g.site.DPLConsentID in g.site.newUserConsentment and not DPLConsent.data:
+        if g.site.DPL_consent_id in g.site.newUserConsentment and not DPLConsent.data:
             raise ValidationError(_("Please accept our data protection policy"))
 
 class Login(FlaskForm):

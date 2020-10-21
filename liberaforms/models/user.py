@@ -172,7 +172,7 @@ class User(db.Document):
 
     def get_entries(self, **kwargs):
         kwargs['author_id']=str(self.id)
-        return FormResponse.findAll(**kwargs)
+        return FormResponse.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
         today = datetime.date.today().strftime("%Y-%m")

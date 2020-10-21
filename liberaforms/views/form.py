@@ -238,7 +238,7 @@ def save_data_consent(form_id, consent_id):
 def default_consent_text(form_id, consent_id):
     queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
     if queriedForm:
-        return JsonResponse(json.dumps(queriedForm.site.getConsentForDisplay(consent_id)))
+        return JsonResponse(json.dumps(queriedForm.site.get_consent_for_display(consent_id)))
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
 
 

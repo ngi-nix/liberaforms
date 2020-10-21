@@ -170,7 +170,7 @@
                 <div id="DPL-text-editor">
                     <input id="save-DPL-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
                     <input id="cancel-DPL-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
-                    {% set siteConsent = form.site.getConsentForDisplay(dataConsent['id']) %}
+                    {% set siteConsent = form.site.get_consent_for_display(dataConsent['id']) %}
                     {% set disabled = "disabled" if siteConsent.markdown == dataConsent.markdown else "" %}
                     <input id="default-DPL-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
                     
@@ -180,7 +180,7 @@
                             <div class="form-group col">
                             
                             {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}                  
-                            <input id="dataConsent-label-input" class="form-control form-control-sm" type="text" placeholder="{{placeholder}}" value="{{form.dataConsent['label']}}">
+                            <input id="dataConsent-label-input" class="form-control form-control-sm" type="text" placeholder="{{placeholder}}" value="{{form.data_consent['label']}}">
                             </div>
                         </div>
                     </div>

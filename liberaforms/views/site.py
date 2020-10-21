@@ -40,7 +40,7 @@ site_bp = Blueprint('site_bp', __name__,
 @admin_required
 def save_blurb():
     if 'editor' in request.form:            
-        g.site.saveBlurb(request.form['editor'])
+        g.site.save_blurb(request.form['editor'])
         flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('main_bp.index'))
 
@@ -55,7 +55,7 @@ def consent():
 @admin_required
 def save_consent(id):
     if 'markdown' in request.form and "label" in request.form and "required" in request.form:
-        consent = g.site.saveConsent(id, data=request.form.to_dict(flat=True))
+        consent = g.site.save_consent(id, data=request.form.to_dict(flat=True))
         if consent:
             return JsonResponse(json.dumps(consent))
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
@@ -65,13 +65,13 @@ def save_consent(id):
 @site_bp.route('/site/update-enabled-new-user-consentment-texts/<string:id>', methods=['POST'])
 @admin_required
 def updateEnabledNewUserConsentmentTexts(id):
-    return JsonResponse(json.dumps({'included': g.site.updateIncludedNewUserConsentmentTexts(id)}))
+    return JsonResponse(json.dumps({'included': g.site.update_included_new_user_consentment_texts(id)}))
 
 
 @site_bp.route('/site/toggle-consent-enabled/<string:id>', methods=['POST'])
 @admin_required
 def toggle_consent_text(id):
-    return JsonResponse(json.dumps({'enabled': g.site.toggleConsentEnabled(id)}))
+    return JsonResponse(json.dumps({'enabled': g.site.toggle_consent_enabled(id)}))
 
 
 @site_bp.route('/site/preview-new-user-form', methods=['GET'])
@@ -127,7 +127,7 @@ def change_site_favicon():
 @site_bp.route('/site/reset-favicon', methods=['GET'])
 @admin_required
 def reset_site_favicon():
-    if g.site.deleteFavicon():
+    if g.site.delete_favicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('site_bp.site_admin'))
 
@@ -135,7 +135,7 @@ def reset_site_favicon():
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
 @admin_required
 def toggle_invitation_only(): 
-    return json.dumps({'invite': g.site.toggleInvitationOnly()})
+    return json.dumps({'invite': g.site.toggle_invitation_only()})
 
 
 @site_bp.route('/site/email/config', methods=['GET', 'POST'])
@@ -150,7 +150,7 @@ def smtp_config():
         config['user'] = wtf_smtp.user.data
         config['password'] = wtf_smtp.password.data
         config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
-        g.site.saveSMTPconfig(**config)
+        g.site.save_smtp_config(**config)
         flash(gettext("Confguration saved OK"), 'success')
     wtf_email=wtf.GetEmail()
     return render_template('smtp-config.html', wtf_smtp=wtf_smtp, wtf_email=wtf_email)
@@ -215,7 +215,7 @@ def stats():
 @rootuser_required
 def toggle_site_scheme(hostname): 
     queriedSite=Site.find(hostname=hostname)
-    return json.dumps({'scheme': queriedSite.toggleScheme()})
+    return json.dumps({'scheme': queriedSite.toggle_scheme()})
 
 
 @site_bp.route('/site/change-port/<string:hostname>/', methods=['POST'])
@@ -247,7 +247,7 @@ def delete_site(hostname):
             if g.site.hostname == queriedSite.hostname:
                 flash(gettext("Cannot delete current site"), 'warning')
                 return redirect(make_url_for('site_bp.site_admin'))
-            queriedSite.deleteSite()
+            queriedSite.delete_site()
             flash(gettext("Deleted %s" % queriedSite.host_url), 'success')
             return redirect(make_url_for('site_bp.site_admin'))
         else:

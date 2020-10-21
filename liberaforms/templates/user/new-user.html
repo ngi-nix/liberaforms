@@ -43,21 +43,21 @@
             {% endfor %}
         </p>
     {% for consent_id in g.site.newUserConsentment %}
-        {% set consent = g.site.getConsentForDisplay(consent_id, enabled_only=False) %}
+        {% set consent = g.site.get_consent_for_display(consent_id, enabled_only=False) %}
 
         <div style="margin-top:2.5em">
-            {% if consent.id == g.site.TermsConsentID %}
+            {% if consent.id == g.site.terms_consent_id %}
             <div class="title_3 delimited">{%trans%}Terms and conditions{%endtrans%}</div>
             {% endif %}
-            <div class="form-group {{ 'consentText' if consent.id != g.site.TermsConsentID }}">
+            <div class="form-group {{ 'consentText' if consent.id != g.site.terms_consent_id }}">
                 <div>{{ consent['html']|safe }}</div>
                 
                 <div class="form-check">
                     {% set input_name = consent.name %}
-                    {% if consent.id == g.site.TermsConsentID %}
+                    {% if consent.id == g.site.terms_consent_id %}
                         {% set input_name = "termsAndConditions" %}
                     {% endif %}
-                    {% if consent.id == g.site.DPLConsentID %}
+                    {% if consent.id == g.site.DPL_consent_id %}
                         {% set input_name = "DPLConsent" %}
                     {% endif %}
                     <input id="{{input_name}}" name="{{input_name}}" type="checkbox" class="form-check-input consent" value="1" required />
@@ -68,12 +68,12 @@
                     {% endif %}
                     </label>
                 </div>
-                {% if consent.id == g.site.TermsConsentID %}
+                {% if consent.id == g.site.terms_consent_id %}
                 {% for error in wtform.termsAndConditions.errors %}
                     <br /><span class="formError">{{ error }}</span>
                 {% endfor %}
                 {% endif %}
-                {% if consent.id == g.site.DPLConsentID %}
+                {% if consent.id == g.site.DPL_consent_id %}
                 {% for error in wtform.DPLConsent.errors %}
                     <br /><span class="formError">{{ error }}</span>
                 {% endfor %}

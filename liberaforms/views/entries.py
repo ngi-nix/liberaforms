@@ -25,7 +25,7 @@ from flask_babel import gettext
 
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import make_url_for
+from liberaforms.utils.utils import make_url_for, JsonResponse
 
 #from pprint import pprint as pp
 

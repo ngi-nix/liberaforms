@@ -107,31 +107,31 @@ class Site(db.Document):
             url = "%s:%s" % (url, self.port)
         return url+'/'
 
-    def faviconURL(self):
+    def favicon_url(self):
         path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
         if os.path.exists(path):
             return "/static/images/favicon/%s_favicon.png" % self.hostname
         else:
             return "/static/images/favicon/default-favicon.png"
 
-    def deleteFavicon(self):
+    def delete_favicon(self):
         path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
         if os.path.exists(path):
             os.remove(path)
             return True
         return False
 
-    def saveBlurb(self, MDtext):
+    def save_blurb(self, MDtext):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
                         'html': sanitizers.markdown2HTML(MDtext)}
         self.save()
 
     @property
-    def TermsConsentID(self):
+    def terms_consent_id(self):
         return self.consentTexts[0]['id']
 
     @property
-    def DPLConsentID(self):
+    def DPL_consent_id(self):
         return self.consentTexts[1]['id']
     
     @property
@@ -139,23 +139,23 @@ class Site(db.Document):
         return self.consentTexts[0]
     
     @property
-    def dataConsent(self):
+    def data_consent(self):
         return self.consentTexts[1]
     
-    def getConsentForDisplay(self, id, enabled_only=True):
-        if id == self.TermsConsentID:
-            return self.getTermsAndConditionsForDisplay(enabled_only=enabled_only)
-        if id == self.DPLConsentID:
-            return self.getDataConsentForDisplay(enabled_only=enabled_only)
+    def get_consent_for_display(self, id, enabled_only=True):
+        if id == self.terms_consent_id:
+            return self.get_terms_and_conditions_for_display(enabled_only=enabled_only)
+        if id == self.DPL_consent_id:
+            return self.get_data_consent_for_display(enabled_only=enabled_only)
         consent = ConsentText.getConsentByID(id, self)
         if consent and (enabled_only and not consent['enabled']):
             return ConsentText.getEmptyConsent(id=consent['id'])
         return ConsentText.getConsentForDisplay(id, self)
         
-    def getTermsAndConditionsForDisplay(self, enabled_only=True):
+    def get_terms_and_conditions_for_display(self, enabled_only=True):
         consent=self.termsAndConditions
         if (enabled_only and not consent['enabled']):
-            consent = ConsentText.defaultTerms(id=self.TermsConsentID)
+            consent = ConsentText.defaultTerms(id=self.terms_consent_id)
             consent['label'] = ""
             return consent
         if not consent['markdown']:
@@ -163,10 +163,10 @@ class Site(db.Document):
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
-    def getDataConsentForDisplay(self, enabled_only=True):
-        consent=self.dataConsent
+    def get_data_consent_for_display(self, enabled_only=True):
+        consent=self.data_consent
         if (enabled_only and not consent['enabled']):
-            consent = ConsentText.defaultDPL(id=self.DPLConsentID)
+            consent = ConsentText.defaultDPL(id=self.DPL_consent_id)
             consent['label'] = ""
             return consent
         if not consent['markdown']:
@@ -174,25 +174,25 @@ class Site(db.Document):
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
-    def updateIncludedNewUserConsentmentTexts(self, id):
+    def update_included_new_user_consentment_texts(self, id):
         if id in self.newUserConsentment:
             self.newUserConsentment.remove(id)
             self.save()
             return False
         else:
-            if id == self.TermsConsentID:
+            if id == self.terms_consent_id:
                 self.newUserConsentment.insert(0, id)
-            elif id == self.DPLConsentID:
+            elif id == self.DPL_consent_id:
                 self.newUserConsentment.append(id)
             else:
                 self.newUserConsentment.insert(-1, id)
             self.save()
             return True
     
-    def toggleConsentEnabled(self, id):
+    def toggle_consent_enabled(self, id):
         return ConsentText.toggleEnabled(id, self)
         
-    def saveConsent(self, id, data):
+    def save_consent(self, id, data):
         consent = [item for item in self.consentTexts if item["id"]==id]
         consent = consent[0] if consent else None
         if not consent:
@@ -201,12 +201,12 @@ class Site(db.Document):
         consent['html'] = sanitizers.markdown2HTML(consent['markdown'])
         consent['label'] = sanitizers.strip_html_tags(data['label']).strip()
         consent['required'] = utils.str2bool(data['required'])
-        if id == self.TermsConsentID:
+        if id == self.terms_consent_id:
             consent['required'] = True
             if not consent['markdown']:
                 consent['markdown'] = ConsentText.defaultTerms()['markdown']
                 consent['html'] = ConsentText.defaultTerms()['html']
-        if id == self.DPLConsentID:
+        if id == self.DPL_consent_id:
             consent['required'] = True
             if not consent['markdown']:
                 consent['markdown'] = ConsentText.defaultDPL()['markdown']
@@ -214,24 +214,24 @@ class Site(db.Document):
         self.save()
         return consent
 
-    def saveSMTPconfig(self, **kwargs):
+    def save_smtp_config(self, **kwargs):
         self.smtpConfig=kwargs
         self.save()
 
-    def getAdmins(self):
+    def get_admins(self):
         return User.find_all(admin__isAdmin=True, hostname=self.hostname)
     
-    def toggleInvitationOnly(self):
+    def toggle_invitation_only(self):
         self.invitationOnly = False if self.invitationOnly else True
         self.save()
         return self.invitationOnly
 
-    def toggleScheme(self):
+    def toggle_scheme(self):
         self.scheme = 'https' if self.scheme=='http' else 'http'
         self.save()
         return self.scheme
 
-    def deleteSite(self):
+    def delete_site(self):
         users=User.find_all(hostname=self.hostname)
         for user in users:
             user.delete_user()
@@ -240,7 +240,8 @@ class Site(db.Document):
             invite.delete()
         return self.delete()
 
-    def getChartData(self, hostname=None):
+    """
+    def get_chart_data(self, hostname=None):
         time_fields={"users": [], "forms": []}
         user_count=0
         users = User.find_all(hostname=hostname) if hostname else User.find_all()
@@ -253,23 +254,23 @@ class Site(db.Document):
             form_count += 1
             time_fields["forms"].append({"x": form.created, "y": form_count})
         return time_fields
-
-
-    def getForms(self, **kwargs):
+    """
+    
+    def get_forms(self, **kwargs):
         kwargs['hostname'] = self.hostname
         return Form.find_all(**kwargs)
 
-    def getTotalForms(self):
+    def get_total_forms(self):
         return Form.find_all(hostname=self.hostname).count()
 
-    def getEntries(self, **kwargs):
+    def get_entries(self, **kwargs):
         kwargs['hostname'] = self.hostname
-        return FormResponse.findAll(**kwargs)
+        return FormResponse.find_all(**kwargs)
         
-    def getTotalUsers(self):
+    def get_total_users(self):
         return User.find_all(hostname=self.hostname).count()
     
-    def getStatistics(self, **kwargs):
+    def get_statistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
         one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
@@ -294,7 +295,7 @@ class Site(db.Document):
             kwargs['hostname'] = self.hostname
         for year_month in result['labels']:
             kwargs['created__startswith'] = year_month
-            monthy_entries = FormResponse.findAll(**kwargs).count()
+            monthy_entries = FormResponse.find_all(**kwargs).count()
             monthy_forms = Form.find_all(**kwargs).count()
             monthy_users = User.find_all(**kwargs).count()
             total_entries = total_entries + monthy_entries

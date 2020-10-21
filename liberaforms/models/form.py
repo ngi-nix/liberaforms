@@ -193,7 +193,7 @@ class Form(db.Document):
     def get_entries(self, oldest_first=False, **kwargs):
         kwargs['oldest_first'] = oldest_first
         kwargs['form_id'] = str(self.id)
-        return FormResponse.findAll(**kwargs)
+        return FormResponse.find_all(**kwargs)
 
     def find_entry(self, entry_id):
         return FormResponse.find(id=entry_id, form_id=str(self.id))
@@ -230,7 +230,7 @@ class Form(db.Document):
         return result
 
     def get_total_entries(self):
-        return FormResponse.findAll(form_id=str(self.id)).count()
+        return FormResponse.find_all(form_id=str(self.id)).count()
 
     def get_last_entry_date(self):
         last_entry = FormResponse.find(form_id=str(self.id))
@@ -288,16 +288,16 @@ class Form(db.Document):
         return self.get_consent_for_display(self.data_consent['id'])
         
     def get_default_data_consent_for_display(self):
-        return ConsentText.getConsentForDisplay(g.site.DPLConsentID, self.author)
+        return ConsentText.getConsentForDisplay(g.site.DPL_consent_id, self.author)
 
     def toggleDataConsentEnabled(self):
         return ConsentText.toggleEnabled(self.data_consent['id'], self)
 
     @staticmethod
     def new_data_consent():
-        consent = ConsentText.getEmptyConsent(  g.site.DPLConsentID,
+        consent = ConsentText.getEmptyConsent(  g.site.DPL_consent_id,
                                                 name="DPL",
-                                                enabled=g.site.dataConsent['enabled'])
+                                                enabled=g.site.data_consent['enabled'])
         return consent
 
     @staticmethod
@@ -366,7 +366,7 @@ class Form(db.Document):
                     result[element["name"]]={"type":"number", "condition": None}
         return result
 
-    def get_multi_choice_fields(self):
+    def get_multichoice_fields(self):
         result=[]
         for element in self.structure:
             if "type" in element:
@@ -416,7 +416,7 @@ class Form(db.Document):
         self.delete()
 
     def delete_entries(self):
-        FormResponse.findAll(form_id=str(self.id)).delete()
+        FormResponse.find_all(form_id=str(self.id)).delete()
     
     def is_author(self, user):
         return True if self.author_id == str(user.id) else False
@@ -496,7 +496,7 @@ class Form(db.Document):
         if not entries:
             return result
         multiChoiceFields = {}  # {field.name: [option.value, option.value]}
-        for field in self.get_multi_choice_fields():
+        for field in self.get_multichoice_fields():
             multiChoiceFields[field['name']] = []
             for value in field['values']:
                 multiChoiceFields[field['name']].append(value['value'])
@@ -528,7 +528,7 @@ class Form(db.Document):
         entries = self.get_entries_for_display(oldest_first=True)
         for saved_entry in entries:
             entry={}
-            for field in self.getFieldIndexForDataDisplay():
+            for field in self.get_field_index_for_data_display():
                 value=saved_entry[field['name']] if field['name'] in saved_entry else ""
                 entry[field['label']]=value
             result.append(entry)
@@ -538,13 +538,13 @@ class Form(db.Document):
         chartable_time_fields=[]
         total={'entries':0}
         time_data={'entries':[]}
-        for field in self.getAvailableNumberTypeFields():
+        for field in self.get_available_number_type_fields():
             label=self.get_field_label(field)
             total[label]=0
             time_data[label]=[]
             chartable_time_fields.append({'name':field, 'label':label})
             
-        multichoice_fields=self.get_multi_choice_fields()
+        multichoice_fields=self.get_multichoice_fields()
         multi_choice_for_chart=[]
         for field in multichoice_fields:
             field_for_chart={   "name":field['name'], "title":field['label'],
@@ -674,10 +674,10 @@ class FormResponse(db.Document):
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.findAll(**kwargs).first()
+        return cls.find_all(**kwargs).first()
 
     @classmethod
-    def findAll(cls, **kwargs):
+    def find_all(cls, **kwargs):
         order = 'created' if 'oldest_first' in kwargs and kwargs['oldest_first'] else '-created'
         if 'oldest_first' in kwargs:
             kwargs.pop('oldest_first')

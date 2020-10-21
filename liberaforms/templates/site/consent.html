@@ -21,12 +21,12 @@
     </div>
 
     {% for consent in site.consentTexts %}
-        {% set consent = site.getConsentForDisplay(consent.id, enabled_only=False) %}
+        {% set consent = site.get_consent_for_display(consent.id, enabled_only=False) %}
 
         <div anchor="{{consent.name}}" class="title_3 delimited" style="margin-top:2em">
-            {% if consent.id == site.TermsConsentID %}
+            {% if consent.id == site.terms_consent_id %}
             {%trans%}Terms and conditions{%endtrans%}
-            {% elif consent.id == site.DPLConsentID %}
+            {% elif consent.id == site.DPL_consent_id %}
             {%trans%}Data protection{%endtrans%}
             {% else %}
             {{ gettext(consent.name) }}

@@ -75,7 +75,7 @@ class EmailServer():
                             'admin__isAdmin': True }
                 admins=User.find_all(**criteria)
                 if admins:
-                    msg['Errors-To'] = g.site.getAdmins()[0].email
+                    msg['Errors-To'] = g.site.get_admins()[0].email
             self.server.sendmail(msg['From'], msg['To'], msg.as_string())
             return True
         except Exception as e:
