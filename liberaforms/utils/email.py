@@ -73,13 +73,13 @@ class EmailServer():
                             'hostname': g.site.hostname,
                             'validatedEmail': True,
                             'admin__isAdmin': True }
-                admins=User.findAll(**criteria)
+                admins=User.find_all(**criteria)
                 if admins:
                     msg['Errors-To'] = g.site.getAdmins()[0].email
             self.server.sendmail(msg['From'], msg['To'], msg.as_string())
             return True
         except Exception as e:
-            if g.isAdmin:
+            if g.is_admin:
                 flash(str(e) , 'error')
         return False
 
@@ -108,7 +108,7 @@ class EmailServer():
                     'validatedEmail': True,
                     'admin__isAdmin': True,
                     'admin__notifyNewUser': True}
-        admins=User.findAll(**criteria)
+        admins=User.find_all(**criteria)
         for admin in admins:
             emails.append(admin['email'])
         rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
@@ -152,7 +152,7 @@ class EmailServer():
                     'validatedEmail': True,
                     'admin__isAdmin': True,
                     'admin__notifyNewForm': True}
-        admins=User.findAll(**criteria)
+        admins=User.find_all(**criteria)
         for admin in admins:
             emails.append(admin['email'])
         rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},

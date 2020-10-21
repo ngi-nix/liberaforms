@@ -13,7 +13,7 @@
         <div class="title_1">{%trans%}Change author{%endtrans%}</div>
         
         <table class="table table-sm">
-        {% if g.isRootUserEnabled %}
+        {% if g.is_root_user_enabled %}
             <tr>
                <td>{%trans%}Form site{%endtrans%}</td>
                <td>{{ form.hostname }}</td>
@@ -21,7 +21,7 @@
         {% endif %}
             <tr>
                <td>{%trans%}Current author{%endtrans%}</td>
-               <td>{{ form.getAuthor().username }}</td>
+               <td>{{ form.get_author().username }}</td>
             </tr>
         </table>
 

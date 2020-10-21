@@ -61,7 +61,7 @@ def new_user(token=None):
     wtform=wtf.NewUser()
     if wtform.validate_on_submit():
         validatedEmail=False
-        adminSettings=User.defaultAdminSettings()        
+        adminSettings=User.default_admin_settings()        
         if invite:
             if invite.email == wtform.email.data:
                 validatedEmail=True
@@ -134,7 +134,7 @@ def statistics(username):
 @user_bp.route('/user/send-validation', methods=['GET'])
 @login_required
 def send_validation_email():   
-    g.current_user.setToken(email=g.current_user.email)
+    g.current_user.set_token(email=g.current_user.email)
     EmailServer().sendConfirmEmail(g.current_user, g.current_user.email)
     flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
     return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
@@ -160,7 +160,7 @@ def change_language():
 def change_email():
     wtform=wtf.ChangeEmail()
     if wtform.validate_on_submit():
-        g.current_user.setToken(email=wtform.email.data)
+        g.current_user.set_token(email=wtform.email.data)
         EmailServer().sendConfirmEmail(g.current_user, wtform.email.data)
         flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
@@ -191,13 +191,13 @@ def recover_password(token=None):
             return redirect(make_url_for('main_bp.index'))
         if not validators.is_valid_token(user.token):
             flash(gettext("Your petition has expired"), 'warning')
-            user.deleteToken()
+            user.delete_token()
             return redirect(make_url_for('main_bp.index'))
         if user.blocked:
-            user.deleteToken()
+            user.delete_token()
             flash(gettext("Your account has been blocked"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        user.deleteToken()
+        user.delete_token()
         user.validatedEmail=True
         user.save()
         # login the user
@@ -208,7 +208,7 @@ def recover_password(token=None):
     if wtform.validate_on_submit():
         user = User.find(email=wtform.email.data, blocked=False)
         if user:
-            user.setToken()
+            user.set_token()
             EmailServer().sendRecoverPassword(user)
         if not user and wtform.email.data in app.config['ROOT_USERS']:
             # root_user emails are only good for one account, across all sites.
@@ -224,13 +224,13 @@ def recover_password(token=None):
 @user_bp.route('/user/toggle-new-entry-notification', methods=['POST'])
 @enabled_user_required
 def toggle_new_entry_notification_default():
-    default=g.current_user.toggleNewEntryNotificationDefault()
+    default=g.current_user.toggle_new_entry_notification_default()
     return JsonResponse(json.dumps({'default': default}))
 
 @user_bp.route('/user/toggle-root-enabled', methods=['POST'])
 @admin_required
 def toggle_enable_root():
-    if not g.current_user.isRootUser():
+    if not g.current_user.is_root_user():
         session["root_enabled"]=False
         return JsonResponse(json.dumps({'enabled': False}))
     if session["root_enabled"] == True:
@@ -254,13 +254,13 @@ def validate_email(token):
         return redirect(make_url_for('main_bp.index'))
     if not validators.is_valid_token(user.token):
         flash(gettext("Your petition has expired"), 'warning')
-        user.deleteToken()
+        user.delete_token()
         return redirect(make_url_for('main_bp.index'))
     # On a Change email request, the new email address is saved in the token.
     if 'email' in user.token:
         user.email = user.token['email']
     
-    user.deleteToken()
+    user.delete_token()
     user.validatedEmail=True
     user.save()
     #login the user

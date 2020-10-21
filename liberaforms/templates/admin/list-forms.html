@@ -29,13 +29,13 @@
             <th>{%trans%}Author{%endtrans%}</th>
             <th>{%trans%}Public{%endtrans%}</th>
             
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <th>{%trans%}Hostname{%endtrans%}</th>
             {% endif %}
         </tr>
     </thead>
     {% for form in forms %}
-        {% set author = form.getAuthor() %}
+        {% set author = form.get_author() %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
             <td>{{form.getEntries().count()}}</td>
@@ -43,7 +43,7 @@
             <td>{{form.created}}</td>
             <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
             <td>{{form.isPublic()}}</td>
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <td>{{form.hostname}}</td>
             {% endif %}
         </tr>

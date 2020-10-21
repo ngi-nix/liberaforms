@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set authored_forms = user.getAuthoredForms() %}
+{% set authored_forms = user.get_authored_forms() %}
 {% set form_count = authored_forms|length %}
 
 <div class="container">

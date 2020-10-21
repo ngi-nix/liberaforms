@@ -48,8 +48,8 @@ def print_g(string=None):
 def before_request():
     g.site=None
     g.current_user=None
-    g.isAdmin=False
-    g.isRootUserEnabled=False
+    g.is_admin=False
+    g.is_root_user_enabled=False
     g.embedded=False
     if request.path[0:7] == '/static':
         return
@@ -59,12 +59,12 @@ def before_request():
         if not g.current_user:
             logout_user()
             return
-        if g.current_user.isAdmin():
-            g.isAdmin=True
+        if g.current_user.is_admin():
+            g.is_admin=True
         if not "root_enabled" in session:
             session["root_enabled"]=False
-        if g.current_user.isRootUser() and session["root_enabled"] == True:
-            g.isRootUserEnabled=True
+        if g.current_user.is_root_user() and session["root_enabled"] == True:
+            g.is_root_user_enabled=True
 
 @app.errorhandler(404)
 def page_not_found(error):

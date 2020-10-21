@@ -37,7 +37,7 @@
         <th>{%trans%}Shared{%endtrans%}</th>
     </tr>
     </thead>
-    {% for form in user.getForms() %}
+    {% for form in user.get_forms() %}
     <tr>
        <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
        <td>

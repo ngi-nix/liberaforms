@@ -9,7 +9,7 @@
 
 {% set dataConsent = form.getDataConsentForDisplay() %}
 {% set total_entries = form.getTotalEntries() %}
-{% set author = form.getAuthor() %}
+{% set author = form.get_author() %}
 {% set current_user_is_editor = form.isEditor(g.current_user) %}
 
 <div class="container">
@@ -199,7 +199,7 @@
                     {% endif %} 
                </td>
                <td>
-               {% if g.isAdmin %}
+               {% if g.is_admin %}
                     <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
                {% else %}
                     {{ author.username }}
@@ -210,7 +210,7 @@
                <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ form.created }}</td>
             </tr>
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
             <tr>
                 <td>{%trans%}Hostname{%endtrans%}</td>
                 <td>{{ form.hostname }}</td>
@@ -289,7 +289,7 @@
             {% endif %}
         {% endif %}
 
-        {% if g.isAdmin %}
+        {% if g.is_admin %}
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}Admin options{%endtrans%}
         </div>

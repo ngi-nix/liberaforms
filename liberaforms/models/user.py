@@ -59,10 +59,10 @@ class User(db.Document):
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.findAll(**kwargs).first()
+        return cls.find_all(**kwargs).first()
 
     @classmethod
-    def findAll(cls, *args, **kwargs):
+    def find_all(cls, *args, **kwargs):
         if 'token' in kwargs:
             kwargs={"token__token": kwargs['token'], **kwargs}
             kwargs.pop('token')
@@ -76,11 +76,11 @@ class User(db.Document):
             return False
         return True
 
-    def getForms(self, **kwargs):
+    def get_forms(self, **kwargs):
         kwargs['editor_id']=str(self.id)
         return Form.findAll(**kwargs)
 
-    def getAuthoredForms(self, **kwargs):
+    def get_authored_forms(self, **kwargs):
         kwargs['author_id']=str(self.id)
         return Form.findAll(**kwargs)
         
@@ -89,19 +89,19 @@ class User(db.Document):
         return self.preferences["language"]
 
     @property
-    def newEntryNotificationDefault(self):
+    def new_entry_notification_default(self):
         return self.preferences["newEntryNotification"]
 
-    def isAdmin(self):
+    def is_admin(self):
         return True if self.admin['isAdmin']==True else False
 
-    def isRootUser(self):
+    def is_root_user(self):
         return True if self.email in app.config['ROOT_USERS'] else False
     
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
         
-    def deleteUser(self):
+    def delete_user(self):
         forms = Form.findAll(author_id=str(self.id))
         for form in forms:
             form.deleteForm()
@@ -111,23 +111,23 @@ class User(db.Document):
             form.save()
         self.delete()
     
-    def setToken(self, **kwargs):
+    def set_token(self, **kwargs):
         self.token=create_token(User, **kwargs)
         self.save()
 
-    def deleteToken(self):
+    def delete_token(self):
         self.token={}
         self.save()
 
-    def toggleBlocked(self):
-        if self.isRootUser():
+    def toggle_blocked(self):
+        if self.is_root_user():
             self.blocked=False
         else:
             self.blocked=False if self.blocked else True
         self.save()
         return self.blocked
 
-    def toggleNewEntryNotificationDefault(self):
+    def toggle_new_entry_notification_default(self):
         if self.preferences["newEntryNotification"]==True:
             self.preferences["newEntryNotification"]=False
         else:
@@ -135,15 +135,15 @@ class User(db.Document):
         self.save()
         return self.preferences["newEntryNotification"]
 
-    def toggleAdmin(self):
-        if self.isRootUser():
-            return self.isAdmin()
-        self.admin['isAdmin']=False if self.isAdmin() else True
+    def toggle_admin(self):
+        if self.is_root_user():
+            return self.is_admin()
+        self.admin['isAdmin']=False if self.is_admin() else True
         self.save()
-        return self.isAdmin()
+        return self.is_admin()
 
     @staticmethod
-    def defaultAdminSettings():
+    def default_admin_settings():
         return {
             "isAdmin": False,
             "notifyNewUser": False,
@@ -153,8 +153,8 @@ class User(db.Document):
     """
     send this admin an email when a new user registers at the site
     """
-    def toggleNewUserNotification(self):
-        if not self.isAdmin():
+    def toggle_new_user_notification(self):
+        if not self.is_admin():
             return False
         self.admin['notifyNewUser']=False if self.admin['notifyNewUser'] else True
         self.save()
@@ -163,18 +163,18 @@ class User(db.Document):
     """
     send this admin an email when a new form is created
     """
-    def toggleNewFormNotification(self):
-        if not self.isAdmin():
+    def toggle_new_form_notification(self):
+        if not self.is_admin():
             return False
         self.admin['notifyNewForm']=False if self.admin['notifyNewForm'] else True
         self.save()
         return self.admin['notifyNewForm']    
 
-    def getEntries(self, **kwargs):
+    def get_entries(self, **kwargs):
         kwargs['author_id']=str(self.id)
         return FormResponse.findAll(**kwargs)
 
-    def getStatistics(self, year="2020"):
+    def get_statistics(self, year="2020"):
         today = datetime.date.today().strftime("%Y-%m")
         one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
@@ -196,8 +196,8 @@ class User(db.Document):
         total_forms=0
         for year_month in result['labels']:
             query = {'created__startswith': year_month}
-            monthy_entries = self.getEntries(**query).count()
-            monthy_forms = self.getAuthoredForms(**query).count()
+            monthy_entries = self.get_entries(**query).count()
+            monthy_forms = self.get_authored_forms(**query).count()
             total_entries= total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             result['entries'].append(monthy_entries)
@@ -206,5 +206,5 @@ class User(db.Document):
             result['total_forms'].append(total_forms)
         return result
 
-    def canInspectForm(self, form):
-        return True if (str(self.id) in form.editors or self.isAdmin()) else False
+    def can_inspect_form(self, form):
+        return True if (str(self.id) in form.editors or self.is_admin()) else False

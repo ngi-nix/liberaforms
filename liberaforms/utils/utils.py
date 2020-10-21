@@ -65,8 +65,8 @@ def logout_user():
         session.pop("user_id")
     session["root_enabled"]=False
     g.current_user=None
-    g.isAdmin=False
-    g.isRootUserEnabled=False
+    g.is_admin=False
+    g.is_root_user_enabled=False
 
 
 """

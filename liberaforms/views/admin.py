@@ -41,7 +41,7 @@ admin_bp = Blueprint('admin_bp', __name__,
 @admin_bp.route('/admin/users', methods=['GET'])
 @admin_required
 def list_users():
-    return render_template('list-users.html', users=User.findAll()) 
+    return render_template('list-users.html', users=User.find_all()) 
 
 
 @admin_bp.route('/admin/users/<string:id>', methods=['GET'])
@@ -64,7 +64,7 @@ def toggle_user_blocked(id):
         # current_user cannot disable themself
         blocked=user.blocked
     else:
-        blocked=user.toggleBlocked()
+        blocked=user.toggle_blocked()
     return JsonResponse(json.dumps({'blocked':blocked}))
 
 
@@ -76,10 +76,10 @@ def toggle_admin(id):
         return JsonResponse(json.dumps())
     if user.username == g.current_user.username:
         # current_user cannot remove their own admin permission
-        isAdmin=True
+        is_admin=True
     else:
-        isAdmin=user.toggleAdmin()
-    return JsonResponse(json.dumps({'admin':isAdmin}))
+        is_admin=user.toggle_admin()
+    return JsonResponse(json.dumps({'admin':is_admin}))
 
 
 @admin_bp.route('/admin/users/delete/<string:id>', methods=['GET', 'POST'])
@@ -91,14 +91,14 @@ def delete_user(id):
         return redirect(make_url_for('admin_bp.list_users'))
   
     if request.method == 'POST' and 'username' in request.form:
-        if user.isRootUser():
+        if user.is_root_user():
             flash(gettext("Cannot delete root user"), 'warning')
             return redirect(make_url_for('admin_bp.inspect_user', id=user.id)) 
         if user.id == g.current_user.id:
             flash(gettext("Cannot delete yourself"), 'warning')
             return redirect(make_url_for('admin_bp.inspect_user', username=user.username)) 
         if user.username == request.form['username']:
-            user.deleteUser()
+            user.delete_user()
             flash(gettext("Deleted user '%s'" % (user.username)), 'success')
             return redirect(make_url_for('admin_bp.list_users'))
         else:
@@ -122,7 +122,7 @@ def toggle_form_public_admin_prefs(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    queriedForm.toggleAdminFormPublic()
+    queriedForm.toggle_adminFormPublic()
     return redirect(make_url_for('form_bp.inspect_form', id=id))
 
 
@@ -134,7 +134,7 @@ def change_author(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
     if request.method == 'POST':
-        author = queriedForm.getAuthor()
+        author = queriedForm.get_author()
         if not ('old_author_username' in request.form and \
                 request.form['old_author_username']==author.username):
             flash(gettext("Current author incorrect"), 'warning')
@@ -161,10 +161,10 @@ def change_author(id):
 @admin_bp.route('/admin/toggle-newuser-notification', methods=['POST'])
 @admin_required
 def toggle_newUser_notification(): 
-    return json.dumps({'notify': g.current_user.toggleNewUserNotification()})
+    return json.dumps({'notify': g.current_user.toggle_new_user_notification()})
 
 
 @admin_bp.route('/admin/toggle-newform-notification', methods=['POST'])
 @admin_required
 def toggle_newForm_notification(): 
-    return json.dumps({'notify': g.current_user.toggleNewFormNotification()})
+    return json.dumps({'notify': g.current_user.toggle_new_form_notification()})

@@ -22,7 +22,7 @@
         <tr>
             <th>{%trans%}Username{%endtrans%}</th>
             
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <th>{%trans%}Hostname{%endtrans%}</th>
             {% endif %}
             
@@ -36,14 +36,14 @@
     {% for user in users %}
     <tr>
         <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
-        {% if g.isRootUserEnabled %}
+        {% if g.is_root_user_enabled %}
             <td>{{user.hostname}}</td>
         {% endif %}
         <td>{{user.created}}</td>
         <td>{{user.enabled}}</td>
         <td>{{user.email}}</td>
-        <td>{{user.getForms()|length}}</td>
-        <td>{{user.isAdmin()}}</td>
+        <td>{{user.get_forms()|length}}</td>
+        <td>{{user.is_admin()}}</td>
     </tr>
     {% endfor %}
     </table>

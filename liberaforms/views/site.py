@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
+import os, json
 from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, after_this_request
@@ -26,7 +26,7 @@ from flask_babel import gettext
 from liberaforms import app
 from liberaforms.models.site import Site, Invite, Installation
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import make_url_for
+from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 
@@ -174,7 +174,7 @@ def site_admin():
     invites = Invite.findAll()
     sites=None
     installation=None
-    if g.isRootUserEnabled:
+    if g.is_root_user_enabled:
         sites=Site.findAll()
         installation=Installation.get()
     context = {
@@ -207,7 +207,7 @@ def menu_color():
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():
-    sites = Installation.getSites() if g.isRootUserEnabled else []
+    sites = Installation.getSites() if g.is_root_user_enabled else []
     return render_template('stats.html', site=g.site, sites=sites)
 
 

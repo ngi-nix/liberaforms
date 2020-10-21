@@ -294,7 +294,7 @@ def inspect_form(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     #print(queriedForm)
-    if not g.current_user.canInspectForm(queriedForm):
+    if not g.current_user.can_inspect_form(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     form_helper.populate_session_with_form(queriedForm) # prepare the session for possible form edit.

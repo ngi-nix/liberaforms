@@ -219,7 +219,7 @@ class Site(db.Document):
         self.save()
 
     def getAdmins(self):
-        return User.findAll(admin__isAdmin=True, hostname=self.hostname)
+        return User.find_all(admin__isAdmin=True, hostname=self.hostname)
     
     def toggleInvitationOnly(self):
         self.invitationOnly = False if self.invitationOnly else True
@@ -232,9 +232,9 @@ class Site(db.Document):
         return self.scheme
 
     def deleteSite(self):
-        users=User.findAll(hostname=self.hostname)
+        users=User.find_all(hostname=self.hostname)
         for user in users:
-            user.deleteUser()
+            user.delete_user()
         invites = Invite.findAll(hostname=self.hostname)
         for invite in invites:
             invite.delete()
@@ -243,7 +243,7 @@ class Site(db.Document):
     def getChartData(self, hostname=None):
         time_fields={"users": [], "forms": []}
         user_count=0
-        users = User.findAll(hostname=hostname) if hostname else User.findAll()
+        users = User.find_all(hostname=hostname) if hostname else User.find_all()
         for user in users:
             user_count += 1
             time_fields["users"].append({"x": user.created, "y": user_count})
@@ -267,7 +267,7 @@ class Site(db.Document):
         return FormResponse.findAll(**kwargs)
         
     def getTotalUsers(self):
-        return User.findAll(hostname=self.hostname).count()
+        return User.find_all(hostname=self.hostname).count()
     
     def getStatistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
@@ -290,13 +290,13 @@ class Site(db.Document):
         total_entries=0
         total_forms=0
         total_users=0
-        if not g.isRootUserEnabled and not 'hostname' in kwargs:
+        if not g.is_root_user_enabled and not 'hostname' in kwargs:
             kwargs['hostname'] = self.hostname
         for year_month in result['labels']:
             kwargs['created__startswith'] = year_month
             monthy_entries = FormResponse.findAll(**kwargs).count()
             monthy_forms = Form.findAll(**kwargs).count()
-            monthy_users = User.findAll(**kwargs).count()
+            monthy_users = User.find_all(**kwargs).count()
             total_entries = total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             total_users = total_users + monthy_users
@@ -355,7 +355,7 @@ class Invite(db.Document):
     def getMessage(self):
         return "{}\n\n{}".format(self.message, self.getLink())
 
-    def setToken(self, **kwargs):
+    def set_token(self, **kwargs):
         self.invite['token']=utils.create_token(Invite, **kwargs)
         self.save()
         

@@ -30,7 +30,7 @@ var csrftoken = "{{ csrf_token() }}";
             <tr>
             <th>{%trans%}Created{%endtrans%}</th>
             <th>{%trans%}Email{%endtrans%}</th>
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <th>Hostname</th>
             {% endif %}
             <th>{%trans%}Admin{%endtrans%}</th>
@@ -41,7 +41,7 @@ var csrftoken = "{{ csrf_token() }}";
         <tr>
             <td class="link">{{ invite.token.created.strftime('%Y-%m-%d') }}</td>
             <td>{{invite.email}}</td>
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <td>{{invite.hostname}}</td>
             {% endif %}
             <td>{{invite.admin}}</td>
@@ -126,7 +126,7 @@ var csrftoken = "{{ csrf_token() }}";
             </tr>
         </table>
     
-    {% if g.current_user.isRootUser() and not g.isRootUserEnabled %}
+    {% if g.current_user.is_root_user() and not g.is_root_user_enabled %}
         <div class="title_1" style="margin-top:2.75em;">
             {%trans%}Root user{%endtrans%}
             <i class="fa fa-shield" style="font-size:0.9em" aria-hidden="true"></i>
@@ -156,7 +156,7 @@ var csrftoken = "{{ csrf_token() }}";
         }
         </script>
     {% endif %}
-    {% if g.isRootUserEnabled %}
+    {% if g.is_root_user_enabled %}
         <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
             {%trans%}Root user{%endtrans%}
         </div>

@@ -84,7 +84,7 @@ class Form(db.Document):
             kwargs.pop('key')
         return cls.objects.ensure_hostname(**kwargs)
    
-    def getAuthor(self):
+    def get_author(self):
         from liberaforms.models.user import User
         return User.find(id=self.author_id)
 
@@ -237,7 +237,7 @@ class Form(db.Document):
         return last_entry.created if last_entry else "" 
 
     def isEnabled(self):
-        if not (self.getAuthor().enabled and self.adminPreferences['public']):
+        if not (self.get_author().enabled and self.adminPreferences['public']):
             return False
         return self.enabled
 
@@ -584,7 +584,7 @@ class Form(db.Document):
             self.save()
             return self.enabled
             
-    def toggleAdminFormPublic(self):
+    def toggle_adminFormPublic(self):
         self.adminPreferences['public'] = False if self.adminPreferences['public'] else True
         self.save()
         return self.adminPreferences['public']
