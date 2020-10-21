@@ -279,7 +279,7 @@ class Form(db.Document):
         return self.consentTexts[0]
     
     def get_consent_for_display(self, id):
-        return ConsentText.getConsentForDisplay(id, self)
+        return ConsentText.get_consent_for_display(id, self)
 
     def save_consent(self, id, data):
         return ConsentText.save(id, self, data)
@@ -288,14 +288,14 @@ class Form(db.Document):
         return self.get_consent_for_display(self.data_consent['id'])
         
     def get_default_data_consent_for_display(self):
-        return ConsentText.getConsentForDisplay(g.site.DPL_consent_id, self.author)
+        return ConsentText.get_consent_for_display(g.site.DPL_consent_id, self.author)
 
     def toggleDataConsentEnabled(self):
-        return ConsentText.toggleEnabled(self.data_consent['id'], self)
+        return ConsentText.toggle_enabled(self.data_consent['id'], self)
 
     @staticmethod
     def new_data_consent():
-        consent = ConsentText.getEmptyConsent(  g.site.DPL_consent_id,
+        consent = ConsentText.get_empty_consent(  g.site.DPL_consent_id,
                                                 name="DPL",
                                                 enabled=g.site.data_consent['enabled'])
         return consent

@@ -170,7 +170,7 @@ def migrateMongoSchema(schemaVersion):
                                     "required":True}
                     new_user_consentment_texts.append(terms_id)
                 else:
-                    terms_text = ConsentText.getEmptyConsent(id=terms_id, name="terms")
+                    terms_text = ConsentText.get_empty_consent(id=terms_id, name="terms")
                 DPL_id = uuid.uuid4().hex
                 for form in form_collection.find({"hostname": site["hostname"]}):
                     DPL_text = {"id": DPL_id,
@@ -193,7 +193,7 @@ def migrateMongoSchema(schemaVersion):
                                 "required":True
                                 }
                 else:
-                    DPL_text = ConsentText.getEmptyConsent(id=DPL_id,name="DPL")
+                    DPL_text = ConsentText.get_empty_consent(id=DPL_id,name="DPL")
                 site_collection.update_one(  {"_id": site["_id"]},
                                         {"$set": {  "consentTexts": [terms_text, DPL_text],
                                                     "newUserConsentment": new_user_consentment_texts}})

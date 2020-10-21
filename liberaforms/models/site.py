@@ -72,8 +72,8 @@ class Site(db.Document):
             "siteName": "LiberaForms!",
             "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
             "menuColor": "#b71c1c",
-            "consentTexts": [   ConsentText.getEmptyConsent(id=uuid.uuid4().hex, name="terms"),
-                                ConsentText.getEmptyConsent(id=uuid.uuid4().hex, name="DPL") ],
+            "consentTexts": [   ConsentText.get_empty_consent(id=uuid.uuid4().hex, name="terms"),
+                                ConsentText.get_empty_consent(id=uuid.uuid4().hex, name="DPL") ],
             "newUserConsentment": [],
             "smtpConfig": {
                 "host": "smtp.%s" % hostname,
@@ -149,28 +149,28 @@ class Site(db.Document):
             return self.get_data_consent_for_display(enabled_only=enabled_only)
         consent = ConsentText.getConsentByID(id, self)
         if consent and (enabled_only and not consent['enabled']):
-            return ConsentText.getEmptyConsent(id=consent['id'])
-        return ConsentText.getConsentForDisplay(id, self)
+            return ConsentText.get_empty_consent(id=consent['id'])
+        return ConsentText.get_consent_for_display(id, self)
         
     def get_terms_and_conditions_for_display(self, enabled_only=True):
         consent=self.termsAndConditions
         if (enabled_only and not consent['enabled']):
-            consent = ConsentText.defaultTerms(id=self.terms_consent_id)
+            consent = ConsentText.default_terms(id=self.terms_consent_id)
             consent['label'] = ""
             return consent
         if not consent['markdown']:
-            consent = ConsentText.defaultTerms(id=consent['id'], enabled=consent['enabled'])
+            consent = ConsentText.default_terms(id=consent['id'], enabled=consent['enabled'])
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
     def get_data_consent_for_display(self, enabled_only=True):
         consent=self.data_consent
         if (enabled_only and not consent['enabled']):
-            consent = ConsentText.defaultDPL(id=self.DPL_consent_id)
+            consent = ConsentText.default_DPL(id=self.DPL_consent_id)
             consent['label'] = ""
             return consent
         if not consent['markdown']:
-            consent = ConsentText.defaultDPL(id=consent['id'], enabled=consent['enabled'])
+            consent = ConsentText.default_DPL(id=consent['id'], enabled=consent['enabled'])
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
@@ -190,7 +190,7 @@ class Site(db.Document):
             return True
     
     def toggle_consent_enabled(self, id):
-        return ConsentText.toggleEnabled(id, self)
+        return ConsentText.toggle_enabled(id, self)
         
     def save_consent(self, id, data):
         consent = [item for item in self.consentTexts if item["id"]==id]
@@ -204,13 +204,13 @@ class Site(db.Document):
         if id == self.terms_consent_id:
             consent['required'] = True
             if not consent['markdown']:
-                consent['markdown'] = ConsentText.defaultTerms()['markdown']
-                consent['html'] = ConsentText.defaultTerms()['html']
+                consent['markdown'] = ConsentText.default_terms()['markdown']
+                consent['html'] = ConsentText.default_terms()['html']
         if id == self.DPL_consent_id:
             consent['required'] = True
             if not consent['markdown']:
-                consent['markdown'] = ConsentText.defaultDPL()['markdown']
-                consent['html'] = ConsentText.defaultDPL()['html']
+                consent['markdown'] = ConsentText.default_DPL()['markdown']
+                consent['html'] = ConsentText.default_DPL()['html']
         self.save()
         return consent
 
