@@ -171,11 +171,11 @@ def test_smtp():
 @site_bp.route('/site/admin', methods=['GET'])
 @admin_required
 def site_admin():
-    invites = Invite.findAll()
+    invites = Invite.find_all()
     sites=None
     installation=None
     if g.is_root_user_enabled:
-        sites=Site.findAll()
+        sites=Site.find_all()
         installation=Installation.get()
     context = {
         'invites': invites,
@@ -207,7 +207,7 @@ def menu_color():
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():
-    sites = Installation.getSites() if g.is_root_user_enabled else []
+    sites = Installation.get_sites() if g.is_root_user_enabled else []
     return render_template('stats.html', site=g.site, sites=sites)
 
 
@@ -267,8 +267,8 @@ def new_invite():
         EmailServer().sendInvite(invite)
         flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
         return redirect(make_url_for('site_bp.site_admin'))
-    wtform.message.data=Invite.defaultMessage()
-    return render_template('new-invite.html', wtform=wtform, sites=Site.findAll())
+    wtform.message.data=Invite.default_message()
+    return render_template('new-invite.html', wtform=wtform, sites=Site.find_all())
 
 
 @site_bp.route('/site/invites/delete/<string:id>', methods=['GET'])

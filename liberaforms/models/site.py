@@ -91,13 +91,13 @@ class Site(db.Document):
 
     @classmethod
     def find(cls, *args, **kwargs):
-        site = cls.findAll(*args, **kwargs).first()
+        site = cls.find_all(*args, **kwargs).first()
         if not site:
             site=Site.create()
         return site
 
     @classmethod
-    def findAll(cls, *args, **kwargs):
+    def find_all(cls, *args, **kwargs):
         return cls.objects.ensure_hostname(**kwargs)
 
     @property
@@ -235,7 +235,7 @@ class Site(db.Document):
         users=User.find_all(hostname=self.hostname)
         for user in users:
             user.delete_user()
-        invites = Invite.findAll(hostname=self.hostname)
+        invites = Invite.find_all(hostname=self.hostname)
         for invite in invites:
             invite.delete()
         return self.delete()
@@ -343,17 +343,17 @@ class Invite(db.Document):
         if 'token' in kwargs:
             kwargs={"token__token": kwargs['token'], **kwargs}
             kwargs.pop('token')
-        return cls.findAll(**kwargs).first()
+        return cls.find_all(**kwargs).first()
 
     @classmethod
-    def findAll(cls, **kwargs):
+    def find_all(cls, **kwargs):
         return cls.objects.ensure_hostname(**kwargs)
     
-    def getLink(self):
+    def get_link(self):
         return "{}user/new/{}".format(  Site.find(hostname=self.hostname).host_url,
                                         self.token['token'])
     
-    def getMessage(self):
+    def get_message(self):
         return "{}\n\n{}".format(self.message, self.getLink())
 
     def set_token(self, **kwargs):
@@ -361,7 +361,7 @@ class Invite(db.Document):
         self.save()
         
     @staticmethod
-    def defaultMessage():
+    def default_message():
         return gettext("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")
         
 
@@ -395,23 +395,23 @@ class Installation(db.Document):
         new_installation.save()
         return new_installation
     
-    def isSchemaUpToDate(self):
+    def is_schema_up_to_date(self):
         return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
 
-    def updateSchema(self):
+    def update_schema(self):
         from liberaforms.utils.migrate import migrateMongoSchema
-        if not self.isSchemaUpToDate():
+        if not self.is_schema_up_to_date():
             migrated_up_to=migrateMongoSchema(self.schemaVersion)
             self.schemaVersion=migrated_up_to
             self.save()
-            return True if self.isSchemaUpToDate() else False
+            return True if self.is_schema_up_to_date() else False
         else:
             True
     
     @classmethod
-    def getSites(cls):
+    def get_sites(cls):
         return Site.objects()
     
     @staticmethod
-    def isUser(email):
+    def is_user(email):
         return True if User.objects(email=email).first() else False

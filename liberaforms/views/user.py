@@ -212,7 +212,7 @@ def recover_password(token=None):
             EmailServer().sendRecoverPassword(user)
         if not user and wtform.email.data in app.config['ROOT_USERS']:
             # root_user emails are only good for one account, across all sites.
-            if not Installation.isUser(wtform.email.data):
+            if not Installation.is_user(wtform.email.data):
                 # auto invite root users
                 message="New root user at %s." % g.site.hostname
                 invite=Invite.create(g.site.hostname, wtform.email.data, message, True)

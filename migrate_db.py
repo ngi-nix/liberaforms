@@ -24,7 +24,7 @@ def migrate_db():
     installation=Installation.get()
     print("Schema version is {}".format(installation.schemaVersion))
     if not installation.isSchemaUpToDate():
-        updated=installation.updateSchema()
+        updated=installation.update_schema()
         if updated:
             print("Migration completed OK")
             return True

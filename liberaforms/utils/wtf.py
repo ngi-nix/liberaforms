@@ -52,7 +52,7 @@ class NewUser(FlaskForm):
     def validate_email(self, email):
         if User.find(email=email.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
+        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
             
@@ -86,7 +86,7 @@ class ChangeEmail(FlaskForm):
     def validate_email(self, email):
         if User.find(email=email.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
+        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
 
@@ -120,7 +120,7 @@ class NewInvite(FlaskForm):
     def validate_email(self, email):
         if User.find(email=email.data, hostname=self.hostname.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
+        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
 

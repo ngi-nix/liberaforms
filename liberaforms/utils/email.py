@@ -93,7 +93,7 @@ class EmailServer():
         return state
         
     def sendInvite(self, invite):
-        body = invite.getMessage()
+        body = invite.get_message()
         msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
         msg['Subject'] = Header(gettext("Invitation to %s" % invite.hostname)).encode()
         msg['To'] = invite.email

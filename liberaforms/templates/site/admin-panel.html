@@ -52,7 +52,7 @@ var csrftoken = "{{ csrf_token() }}";
         <tr style="display:none">
             <td colspan="5">
                 <div class="sentTokenMessage">{%trans%}Invitation message{%endtrans%}</div>
-                {{ invite.getMessage() | replace("\n", "<br/>") | safe }}
+                {{ invite.get_message() | replace("\n", "<br/>") | safe }}
             </td>
         </tr>
         {% endfor %}
