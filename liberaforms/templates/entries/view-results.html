@@ -7,8 +7,8 @@
 <script src="/static/dataTables/extensions/responsive/2.2.4/dataTables.responsive.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
 
-{% set fieldIndex=form.getFieldIndexForDataDisplay() %}
-{% set responses = form.getEntriesForDisplay() %}
+{% set fieldIndex=form.get_field_index_for_data_display() %}
+{% set responses = form.get_entries_for_display() %}
 
 <div class="container">
 <div class="row" style="font-size:1.5em">
@@ -16,10 +16,10 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('stats')}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_entries_url('stats')}}">
         {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
     </a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL('csv')}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_entries_url('csv')}}">
         {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
     </a>
     </div>

@@ -112,7 +112,7 @@ def delete_user(id):
 @admin_bp.route('/admin/forms', methods=['GET'])
 @admin_required
 def list_forms():
-    return render_template('list-forms.html', forms=Form.findAll()) 
+    return render_template('list-forms.html', forms=Form.find_all()) 
 
 
 @admin_bp.route('/admin/forms/toggle-public/<string:id>', methods=['GET'])
@@ -122,7 +122,7 @@ def toggle_form_public_admin_prefs(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    queriedForm.toggle_adminFormPublic()
+    queriedForm.toggle_admin_form_public()
     return redirect(make_url_for('form_bp.inspect_form', id=id))
 
 
@@ -144,8 +144,8 @@ def change_author(id):
             if new_author:
                 if new_author.enabled:
                     old_author=author
-                    if queriedForm.changeAuthor(new_author):
-                        queriedForm.addLog(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
+                    if queriedForm.change_author(new_author):
+                        queriedForm.add_log(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
                         flash(gettext("Changed author OK"), 'success')
                         return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
                 else:

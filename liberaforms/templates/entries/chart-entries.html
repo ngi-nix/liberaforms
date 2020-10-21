@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set chart_data = form.getChartData() %}
-{% set total_entries = form.getTotalEntries() %}
+{% set chart_data = form.get_chart_data() %}
+{% set total_entries = form.get_total_entries() %}
 
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
@@ -14,11 +14,11 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.getSharedEntriesURL()}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_entries_url()}}">
         {%trans%}View entries{%endtrans%}
         <span class="badge badge-light">{{total_entries}}</span>
     </a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{ form.getSharedEntriesURL('csv')}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{ form.get_shared_entries_url('csv')}}">
         {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
     </a>
     </div>

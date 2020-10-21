@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set fieldIndex = form.getFieldIndexForDataDisplay(with_deleted_columns=with_deleted_columns) %}
-{% set responses = form.getEntriesForDisplay() %}
+{% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
+{% set responses = form.get_entries_for_display() %}
 {% set total_entries = responses|length %}
-{% set tallyColumns = form.getConditionalFieldPositions() %}
+{% set tallyColumns = form.get_conditional_field_positions() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
@@ -41,7 +41,7 @@
     <a class="btn btn-primary btn-sm" role="button" href="?edit_mode=true">{%trans%}Enable edition{%endtrans%}</a>
     {% endif %}
     
-    {% if form.hasRemovedFields() %}
+    {% if form.has_removed_fields() %}
         {% if with_deleted_columns %}
     <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Hide deleted columns{%endtrans%}</a>
         {% else %}

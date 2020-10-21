@@ -38,11 +38,11 @@
         {% set author = form.get_author() %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-            <td>{{form.getEntries().count()}}</td>
-            <td>{{form.getLastEntryDate()}}</td>
+            <td>{{form.get_entries().count()}}</td>
+            <td>{{form.get_last_entry_date()}}</td>
             <td>{{form.created}}</td>
             <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
-            <td>{{form.isPublic()}}</td>
+            <td>{{form.is_public()}}</td>
             {% if g.is_root_user_enabled %}
                 <td>{{form.hostname}}</td>
             {% endif %}

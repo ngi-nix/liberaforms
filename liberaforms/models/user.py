@@ -78,11 +78,11 @@ class User(db.Document):
 
     def get_forms(self, **kwargs):
         kwargs['editor_id']=str(self.id)
-        return Form.findAll(**kwargs)
+        return Form.find_all(**kwargs)
 
     def get_authored_forms(self, **kwargs):
         kwargs['author_id']=str(self.id)
-        return Form.findAll(**kwargs)
+        return Form.find_all(**kwargs)
         
     @property
     def language(self):
@@ -102,10 +102,10 @@ class User(db.Document):
         return validators.verify_password(password, self.password_hash)
         
     def delete_user(self):
-        forms = Form.findAll(author_id=str(self.id))
+        forms = Form.find_all(author_id=str(self.id))
         for form in forms:
-            form.deleteForm()
-        forms = Form.findAll(editor_id=str(self.id))
+            form.delete_form()
+        forms = Form.find_all(editor_id=str(self.id))
         for form in forms:
             del form.editors[str(self.id)]
             form.save()

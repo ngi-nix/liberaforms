@@ -185,7 +185,7 @@ class EmailServer():
 
     def sendConfirmation(self, msg_to, form):
         msg = MIMEMultipart('alternative')
-        html_body=MIMEText(form.afterSubmitTextHTML, _subtype='html', _charset='UTF-8')
+        html_body=MIMEText(form.after_submit_text_html, _subtype='html', _charset='UTF-8')
         msg.attach(html_body)
         msg['Subject'] = Header(gettext("Confirmation message")).encode()
         msg['To'] = msg_to

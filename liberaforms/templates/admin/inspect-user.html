@@ -103,15 +103,15 @@
            <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
            <td>{{form.created}}</td>
            <td>
-                {% if form.isAuthor(user) %}
+                {% if form.is_author(user) %}
                     {%trans%}True{%endtrans%}
                 {% else %}
                     {%trans%}False{%endtrans%}
                 {% endif %}
             </td>
            <td>{{form.editors|length}}</td>
-           <td>{{form.isPublic()}}</td>
-           <td>{{form.getEntries().count()}}</td>
+           <td>{{form.is_public()}}</td>
+           <td>{{form.get_entries().count()}}</td>
         </tr>
         {% endfor %}
     </table>

@@ -6,7 +6,7 @@ function postFormRender(){
     $(".marked-up").find("a").prop("target", "_blank")
     {% if form %}
         setLimits();
-        {% if form.mightSendConfirmationEmail() %}
+        {% if form.might_send_confirmation_email() %}
         watchEmail();
         {% endif %}
     {% endif %}
@@ -17,9 +17,9 @@ $(document).on("wheel", "input[type=number]", function (e) {
 
 {% if form %}
 function setLimits(){
-    {% for field, values in form.fieldConditions.items() %}
+    {% for field, values in form.field_conditions.items() %}
         {% if values["type"] == "number" %}
-            {% set available = values["condition"] - form.tallyNumberField(field) %}
+            {% set available = values["condition"] - form.tally_number_field(field) %}
             if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
                     if ({{available}} > 0){
                         var hint=$("<div class='hint'></div>")
@@ -35,7 +35,7 @@ function setLimits(){
     {% endfor %}
     return;
 }
-{% if form.mightSendConfirmationEmail() %}
+{% if form.might_send_confirmation_email() %}
 function watchEmail(){
     $("input[type='email']").first().on('input', function() {
         if ($(this).val()) {

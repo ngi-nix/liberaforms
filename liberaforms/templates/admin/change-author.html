@@ -40,7 +40,7 @@
             </div>
         </form>
         
-    {% set editors=form.getEditors() %}
+    {% set editors=form.get_editors() %}
     {% if editors|length > 1 %}
         <p>&nbsp;</p>
         <div class="title_2">{%trans%}Editors{%endtrans%}</div>
@@ -51,7 +51,7 @@
                 <td>{{ editor.username }}</td>
                 <td>{{ editor.email }}</td>
                 <td class="text-right">
-                {% if form.isAuthor(editor) %}
+                {% if form.is_author(editor) %}
                     {%trans%}Author{%endtrans%}
                 {% else %}
                     {%trans%}Editor{%endtrans%}

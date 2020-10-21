@@ -42,12 +42,12 @@
        <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
        <td>
            <a href="/forms/entries/stats/{{form.id}}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>
-           <a href="/forms/entries/{{form.id}}"><span>{{form.getTotalEntries()}}</span></a>
+           <a href="/forms/entries/{{form.id}}"><span>{{form.get_total_entries()}}</span></a>
        </td>
-        <td>{{form.getLastEntryDate()}}</td>
+        <td>{{form.get_last_entry_date()}}</td>
         <td>{{form.created}}</td>
-        <td>{{form.isPublic()}}</td>
-        <td>{{form.isShared()}}</td>
+        <td>{{form.is_public()}}</td>
+        <td>{{form.is_shared()}}</td>
     </tr>
     {% endfor %}
 </table>

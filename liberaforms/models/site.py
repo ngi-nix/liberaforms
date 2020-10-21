@@ -248,7 +248,7 @@ class Site(db.Document):
             user_count += 1
             time_fields["users"].append({"x": user.created, "y": user_count})
         form_count=0
-        forms = Form.findAll(hostname=hostname) if hostname else Form.findAll()
+        forms = Form.find_all(hostname=hostname) if hostname else Form.find_all()
         for form in forms:
             form_count += 1
             time_fields["forms"].append({"x": form.created, "y": form_count})
@@ -257,10 +257,10 @@ class Site(db.Document):
 
     def getForms(self, **kwargs):
         kwargs['hostname'] = self.hostname
-        return Form.findAll(**kwargs)
+        return Form.find_all(**kwargs)
 
     def getTotalForms(self):
-        return Form.findAll(hostname=self.hostname).count()
+        return Form.find_all(hostname=self.hostname).count()
 
     def getEntries(self, **kwargs):
         kwargs['hostname'] = self.hostname
@@ -295,7 +295,7 @@ class Site(db.Document):
         for year_month in result['labels']:
             kwargs['created__startswith'] = year_month
             monthy_entries = FormResponse.findAll(**kwargs).count()
-            monthy_forms = Form.findAll(**kwargs).count()
+            monthy_forms = Form.find_all(**kwargs).count()
             monthy_users = User.find_all(**kwargs).count()
             total_entries = total_entries + monthy_entries
             total_forms= total_forms + monthy_forms

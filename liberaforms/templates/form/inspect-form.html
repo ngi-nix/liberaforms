@@ -7,10 +7,10 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
-{% set dataConsent = form.getDataConsentForDisplay() %}
-{% set total_entries = form.getTotalEntries() %}
+{% set dataConsent = form.get_data_consent_for_display() %}
+{% set total_entries = form.get_total_entries() %}
 {% set author = form.get_author() %}
-{% set current_user_is_editor = form.isEditor(g.current_user) %}
+{% set current_user_is_editor = form.is_editor(g.current_user) %}
 
 <div class="container">
 <div class="row">    
@@ -45,9 +45,9 @@
                <td>
                    {% if total_entries %}
                         {% if current_user_is_editor %}
-                        <a href="/forms/entries/{{form.id}}">{{ form.getLastEntryDate() }}</a>
+                        <a href="/forms/entries/{{form.id}}">{{ form.get_last_entry_date() }}</a>
                         {% else %}
-                        {{ form.getLastEntryDate() }}
+                        {{ form.get_last_entry_date() }}
                         {% endif %}
                    {% endif %}
                </td>
@@ -60,7 +60,7 @@
                     {% endif %}
                </td>
                <td>
-                   {% if form.isPublic() %}
+                   {% if form.is_public() %}
                    <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
                    <span id="formURL" style="display:none">{{ form.url }}</span>
                    {% else %}
@@ -74,11 +74,11 @@
                <td>
                {% if current_user_is_editor %}
                    <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.isPublic() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.isPublic() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="enabled_true" class="btn btn-xs btn-default {% if form.is_public() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="enabled_false" class="btn btn-xs btn-default {% if not form.is_public() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                {% else %}
-                    {{ form.isPublic() }}              
+                    {{ form.is_public() }}              
                {% endif %}
                </td>
             </tr>
@@ -88,7 +88,7 @@
                    {% if current_user_is_editor %}
                         {% if form.expired %}
                             <a class="btn btn-warning btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}Expired{%endtrans%}</a>
-                        {% elif form.canExpire() %}
+                        {% elif form.can_expire() %}
                             <a class="btn btn-success btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
                             <a class="btn btn-primary btn-xs" role="button" href="/forms/expiration/{{form.id}}">{%trans%}False{%endtrans%}</a>
@@ -96,7 +96,7 @@
                    {% else %}
                         {% if form.expired %}
                             {%trans%}Expired{%endtrans%}
-                        {% elif form.canExpire() %}
+                        {% elif form.can_expire() %}
                             {%trans%}True{%endtrans%}
                         {% else %}
                             {%trans%}False{%endtrans%}
@@ -108,13 +108,13 @@
                <td>{%trans%}Shared{%endtrans%}</td>
                <td>
                    {% if current_user_is_editor %}
-                        {% if form.isShared() %}
+                        {% if form.is_shared() %}
                         <a class="btn btn-success btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}True{%endtrans%}</a>
                         {% else %}
                         <a class="btn btn-primary btn-xs" role="button" href="/forms/share/{{form.id}}">{%trans%}False{%endtrans%}</a>
                         {% endif %}
                    {% else %}
-                        {{ form.isShared() }}
+                        {{ form.is_shared() }}
                    {% endif %}
                </td>
             </tr>
@@ -132,7 +132,7 @@
                    {% endif %}
                </td>
             </tr>
-            {% if form.hasEmailField() %}
+            {% if form.has_email_field() %}
             <tr>
                 <td>{%trans%}Confirmation{%endtrans%}</td>
                 <td>
@@ -232,18 +232,18 @@
         {%trans%}Say something to the user after the form has been submitted{%endtrans%}
         </div>
         <div id="after-submit-html" class="afterSubmitText marked-up">
-            {{ form.afterSubmitTextHTML | safe }}
+            {{ form.after_submit_text_html | safe }}
         </div>
         {% if current_user_is_editor %}
         <div id="after-submit-editor" style="display:none">
             <input id="save-after-submit-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
             <input id="cancel-after-submit-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
             <p></p>
-            <textarea id="after-submit-mde">{{ form.afterSubmitTextMarkdown }}</textarea>
+            <textarea id="after-submit-mde">{{ form.after_submit_text_markdown }}</textarea>
         </div>
         {% endif %}
         
-        {% if form.canExpire() %}
+        {% if form.can_expire() %}
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}When the form has expired{%endtrans%}
             {% if current_user_is_editor %}
@@ -258,14 +258,14 @@
         {%trans%}Say something to the user if the form has expired{%endtrans%}
         </div>
         <div id="expired-html" class="expiredText marked-up">
-            {{ form.expiredTextHTML | safe }}
+            {{ form.expired_text_html | safe }}
         </div>
         {% if current_user_is_editor %}
         <div id="expired-editor" style="display:none">
             <input id="save-expired-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
             <input id="cancel-expired-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
             <p></p>
-            <textarea id="expired-mde">{{ form.expiredTextMarkdown }}</textarea>
+            <textarea id="expired-mde">{{ form.expired_text_markdown }}</textarea>
         </div>
         {% endif %}
         {% endif %}
@@ -322,7 +322,7 @@
             </div>
             <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <div id="fb-render"></div>
-            {% if form.hasEmailField() %}
+            {% if form.has_email_field() %}
             <div id="sendConfirmation" class="form-group form-check"  {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
                 <input id="confirmation_checkbox" class="form-check-input send-confirmation" type="checkbox" name="send-confirmation" value="ok" disabled />
                 <label for="confirmation_checkbox" class="form-check-label send-confirmation">
@@ -440,7 +440,7 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
         }
     });
 });
-{% if form.hasEmailField() %}
+{% if form.has_email_field() %}
 document.getElementById('toggle_sendConfirmation').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-send-confirmation/{{ form.id }}",
