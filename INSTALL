@@ -46,6 +46,7 @@ chown -R www-data /opt/LiberaForms/liberaforms/static/images
 
 LiberaForms saves session data in files. www-data needs to write there too. 
 
+mkdir /opt/LiberaForms/flask_session
 chown -R www-data /opt/LiberaForms/flask_session
 
 
