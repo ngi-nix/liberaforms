@@ -1,0 +1,37 @@
+
+Start with empty database
+
+## Empty database
+
+1. Create first root user
+
+2. Config site
+  * config SMTP
+    * test SMTP
+  * set favicon
+  * change colour
+  * change site name
+  * change default language
+  * change 'only invitations'
+  * change port
+  * change scheme
+  * edit frontpage
+3. Create new user with new user form
+4. Invite new user
+  * with admin permission
+  * respond to invitation
+
+5. Create form
+
+6. Responses
+  * make a response
+  * delete/undo response
+  * edit a response
+  * delete all responses
+
+7. CSV
+  * export
+  * export with deleted columns
+
+
+6. Duplicate form

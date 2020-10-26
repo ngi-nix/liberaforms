@@ -114,7 +114,7 @@ def sanitized_key_required(f):
 def sanitized_token(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if not ('token' in kwargs and validators.is_valid_UUID(kwargs['token'])):
+        if 'token' in kwargs and not validators.is_valid_UUID(kwargs['token']):
             if g.current_user:
                 flash(gettext("That's a nasty token!"), 'warning')
             return render_template('page-not-found.html'), 404

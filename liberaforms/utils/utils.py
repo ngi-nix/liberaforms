@@ -78,8 +78,7 @@ def create_token(persistentClass, **kwargs):
     while persistentClass.find(token=token_string):
         token_string = gen_random_string()
     result={'token': token_string, 'created': datetime.datetime.now()}
-    return {**result, **kwargs} 
-
+    return {**result, **kwargs}
 
 """ ######## Other ######## """
 

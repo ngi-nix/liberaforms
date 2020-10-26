@@ -72,8 +72,8 @@ class Site(db.Document):
             "siteName": "LiberaForms!",
             "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
             "menuColor": "#b71c1c",
-            "consentTexts": [   ConsentText.get_empty_consent(id=uuid.uuid4().hex, name="terms"),
-                                ConsentText.get_empty_consent(id=uuid.uuid4().hex, name="DPL") ],
+            "consentTexts": [   ConsentText.get_empty_consent(id=utils.gen_random_string(), name="terms"),
+                                ConsentText.get_empty_consent(id=utils.gen_random_string(), name="DPL") ],
             "newUserConsentment": [],
             "smtpConfig": {
                 "host": "smtp.%s" % hostname,

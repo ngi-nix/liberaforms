@@ -178,49 +178,6 @@ def reset_password():
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('reset-password.html', wtform=wtform)
 
-
-@user_bp.route('/site/recover-password', methods=['GET', 'POST'])
-@user_bp.route('/site/recover-password/<string:token>', methods=['GET'])
-@anon_required
-@sanitized_token
-def recover_password(token=None):
-    if token:
-        user = User.find(token=token)
-        if not user:
-            flash(gettext("Couldn't find that token"), 'warning')
-            return redirect(make_url_for('main_bp.index'))
-        if not validators.is_valid_token(user.token):
-            flash(gettext("Your petition has expired"), 'warning')
-            user.delete_token()
-            return redirect(make_url_for('main_bp.index'))
-        if user.blocked:
-            user.delete_token()
-            flash(gettext("Your account has been blocked"), 'warning')
-            return redirect(make_url_for('main_bp.index'))
-        user.delete_token()
-        user.validatedEmail=True
-        user.save()
-        # login the user
-        session['user_id']=str(user.id)
-        return redirect(make_url_for('user_bp.reset_password'))
-    
-    wtform=wtf.GetEmail()
-    if wtform.validate_on_submit():
-        user = User.find(email=wtform.email.data, blocked=False)
-        if user:
-            user.set_token()
-            EmailServer().sendRecoverPassword(user)
-        if not user and wtform.email.data in app.config['ROOT_USERS']:
-            # root_user emails are only good for one account, across all sites.
-            if not Installation.is_user(wtform.email.data):
-                # auto invite root users
-                message="New root user at %s." % g.site.hostname
-                invite=Invite.create(g.site.hostname, wtform.email.data, message, True)
-                return redirect(make_url_for('user_bp.new_user', token=invite.token['token']))
-        flash(gettext("We may have sent you an email"), 'info')
-        return redirect(make_url_for('main_bp.index'))
-    return render_template('recover-password.html', wtform=wtform)
-
 @user_bp.route('/user/toggle-new-entry-notification', methods=['POST'])
 @enabled_user_required
 def toggle_new_entry_notification_default():
