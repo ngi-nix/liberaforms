@@ -2,9 +2,10 @@
 # Install LiberaForms
 
 ## Install mongodb
-apt-get install mongodb
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
 
 ## Clone LiberaForms and create config.cfg
+apt-get install git
 
 git clone https://gitlab.com/la-loka/liberaforms.git /opt/LiberaForms
 cd /opt/LiberaForms
@@ -46,7 +47,6 @@ chown -R www-data /opt/LiberaForms/liberaforms/static/images
 
 LiberaForms saves session data in files. www-data needs to write there too. 
 
-mkdir /opt/LiberaForms/flask_session
 chown -R www-data /opt/LiberaForms/flask_session
 
 
@@ -77,7 +77,7 @@ supervisorctl status LiberaForms
 supervisorctl stop LiberaForms
 cd /opt/LiberaForms
 source /opt/LiberaForms/venv/bin/activate
-python run
+python run.py
 
 
 # Configure nginx proxy
