@@ -495,7 +495,7 @@ def toggle_form_dataconsent(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps())
-    dataConsentBool=queriedForm.toggleDataConsentEnabled()
+    dataConsentBool=queriedForm.toggle_data_consent_enabled()
     queriedForm.add_log(gettext("Data protection consent set to: %s" % dataConsentBool))
     return JsonResponse(json.dumps({'enabled':dataConsentBool}))
 
@@ -548,7 +548,8 @@ def view_form(slug):
                 flash(gettext("That form is not public"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
         if queriedForm.expired:
-            return render_template('form-has-expired.html', form=queriedForm), 400
+            return render_template('form-has-expired.html',
+                                    form=queriedForm, navbar=False, no_bot=True), 400
         else:
             return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:

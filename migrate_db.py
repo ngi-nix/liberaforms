@@ -23,7 +23,7 @@ from liberaforms.models.site import Installation
 def migrate_db():
     installation=Installation.get()
     print("Schema version is {}".format(installation.schemaVersion))
-    if not installation.isSchemaUpToDate():
+    if not installation.is_schema_up_to_date():
         updated=installation.update_schema()
         if updated:
             print("Migration completed OK")

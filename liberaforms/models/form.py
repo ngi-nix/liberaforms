@@ -97,8 +97,8 @@ class Form(db.Document):
             except:
                 return False
             self.author_id=str(new_author.id)
-            if not self.isEditor(new_author):
-                self.addEditor(new_author)
+            if not self.is_editor(new_author):
+                self.add_editor(new_author)
             self.save()
             return True
         return False
@@ -290,12 +290,12 @@ class Form(db.Document):
     def get_default_data_consent_for_display(self):
         return ConsentText.get_consent_for_display(g.site.DPL_consent_id, self.author)
 
-    def toggleDataConsentEnabled(self):
+    def toggle_data_consent_enabled(self):
         return ConsentText.toggle_enabled(self.data_consent['id'], self)
 
     @staticmethod
     def new_data_consent():
-        consent = ConsentText.get_empty_consent(  g.site.DPL_consent_id,
+        consent = ConsentText.get_empty_consent(g.site.DPL_consent_id,
                                                 name="DPL",
                                                 enabled=g.site.data_consent['enabled'])
         return consent
@@ -445,7 +445,7 @@ class Form(db.Document):
         return False
     
     def has_expired(self):
-        if not self.canExpire():
+        if not self.can_expire():
             return False
         if self.expiryConditions["expireDate"] and not \
             validators.is_future_date(self.expiryConditions["expireDate"]):
@@ -461,7 +461,7 @@ class Form(db.Document):
         total=0
         for entry in self.get_entries():
             try:
-                total = total + int(entry[fieldName])
+                total = total + int(entry.data[fieldName])
             except:
                 continue
         return total
@@ -636,7 +636,7 @@ class Form(db.Document):
     def write_csv(self, with_deleted_columns=False):
         fieldnames=[]
         fieldheaders={}
-        for field in self.getFieldIndexForDataDisplay(with_deleted_columns):
+        for field in self.get_field_index_for_data_display(with_deleted_columns):
             fieldnames.append(field['name'])
             fieldheaders[field['name']]=field['label']
         csv_name = os.path.join(app.config['TMP_DIR'], "{}.csv".format(self.slug))

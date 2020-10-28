@@ -354,7 +354,7 @@ class Invite(db.Document):
                                         self.token['token'])
     
     def get_message(self):
-        return "{}\n\n{}".format(self.message, self.getLink())
+        return "{}\n\n{}".format(self.message, self.get_link())
 
     def set_token(self, **kwargs):
         self.invite['token']=utils.create_token(Invite, **kwargs)

@@ -119,7 +119,13 @@ class ConsentText():
     @staticmethod
     def default_terms(id=None, enabled=False):
         text=_("Please accept our terms and conditions.")
-        return {"id":id, "name":"terms", "markdown":text, "html":"<p>"+text+"</p>", "label":"", "required":True, "enabled": enabled}
+        return {"id":id,
+                "name":"terms",
+                "markdown":text,
+                "html":"<p>"+text+"</p>",
+                "label":"",
+                "required":True,
+                "enabled": enabled}
 
     @staticmethod
     def default_DPL(id=None, enabled=False):
@@ -127,4 +133,10 @@ class ConsentText():
         text=_("We take your data protection seriously. Please contact us for any inquiries.")
         markdown="###### {}\n\n{}".format(title, text)
         html = "<h6>{}</h6><p>{}</p>".format(title, text)
-        return {"id":id, "name":"DPL", "markdown":markdown, "html": html, "label":"", "required":True, "enabled": enabled}
+        return {"id":id,
+                "name":"DPL",
+                "markdown":markdown,
+                "html": html,
+                "label":"",
+                "required":True,
+                "enabled": enabled}
