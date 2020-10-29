@@ -3,7 +3,7 @@
 
 This file is part of LiberaForms.
 
-Libera forms is free software: you can redistribute it and/or modify
+LiberaForms is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -58,7 +58,7 @@ class InternalConfig(object):
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.7.9"
+    APP_VERSION = "1.8.0"
     SCHEMA_VERSION = 23
 
     RESERVED_SLUGS = [

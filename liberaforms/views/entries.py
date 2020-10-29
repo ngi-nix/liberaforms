@@ -18,16 +18,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os, json
-from flask import g, render_template, redirect
+from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
-from liberaforms.models import *
+from liberaforms.models.form import Form, FormResponse
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for, get_locale, JsonResponse
 
-from pprint import pprint as pp
+#from pprint import pprint as pp
 
 entries_bp = Blueprint('entries_bp', __name__,
                     template_folder='../templates/entries')
@@ -64,7 +64,7 @@ def csv_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    csv_file=queriedForm.writeCSV(with_deleted_columns=request.args.get('with_deleted_columns'))
+    csv_file=queriedForm.write_csv(with_deleted_columns=request.args.get('with_deleted_columns'))
     
     @after_this_request 
     def remove_file(response): 
@@ -79,15 +79,14 @@ def delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and "id" in request.json):
         return json.dumps({'deleted': False})
-    print(request.json["id"])
-    response = queriedForm.findEntry(request.json["id"])
+    response = queriedForm.find_entry(request.json["id"])
     if not response:
         return json.dumps({'deleted': False})
     response.delete()
     
-    queriedForm.expired = queriedForm.hasExpired()
+    queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.addLog(gettext("Deleted an entry"))
+    queriedForm.add_log(gettext("Deleted an entry"))
     return json.dumps({'deleted': True})
 
 
@@ -99,15 +98,11 @@ def undo_delete_entry(id):
         return json.dumps({'undone': False, 'new_id': None})
     entry_data={}
     for field in request.json:
-        try:
-            entry_data[field["name"]]=field["value"]
-        except:
-            return json.dumps({'undone': False, 'new_id': None})
-    entry = queriedForm.addEntry(entry_data)
-    
-    queriedForm.expired = queriedForm.hasExpired()
+        entry_data[field["name"]]=field["value"]
+    entry = queriedForm.add_entry(entry_data)
+    queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.addLog(gettext("Undeleted an entry"))
+    queriedForm.add_log(gettext("Undeleted an entry"))
     return json.dumps({'undone': True, 'new_id': str(entry.id)})
 
 
@@ -115,12 +110,10 @@ def undo_delete_entry(id):
 @enabled_user_required
 def toggle_marked_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not (queriedForm and "id" in request.json):
+    if not (queriedForm and 'id' in request.json):
         return json.dumps({'marked': False})
-    print(request.json["id"])
-    response = queriedForm.findEntry(request.json["id"])
+    response = queriedForm.find_entry(request.json["id"])
     if not response:
-        print("not founbd")
         return json.dumps({'marked': False})
     response.marked = False if response.marked == True else True
     response.save()
@@ -131,34 +124,22 @@ def toggle_marked_entry(id):
 @enabled_user_required
 def change_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not queriedForm:
+    if not (queriedForm and 'id' in request.json):
         return json.dumps({'saved': False})
-        
-    # get the 'created' field position
-    created_pos=next((i for i,field in enumerate(request.json) if "name" in field and field["name"] == "created"), None)
-    if not isinstance(created_pos, int):
+    response = queriedForm.find_entry(request.json['id'])
+    if not response:
         return json.dumps({'saved': False})
-    foundEntries = [entry for entry in queriedForm.entries if entry['created'] == request.json[created_pos]["value"]]
-    if not foundEntries or len(foundEntries) > 1:
-        """ If there are two entries with the same 'created' value, we don't change anything """
-        return json.dumps({'saved': False})
-    try:
-        entry_pos = [pos for pos, entry in enumerate(queriedForm.entries) if entry == foundEntries[0]][0]
-    except:
-        return json.dumps({'saved': False})
-    modifiedEntry={}
-    for field in request.json:
-        try:
-            modifiedEntry[field["name"]]=field["value"]
-        except:
-            return json.dumps({'saved': False})
-    del queriedForm.entries[entry_pos]
-    queriedForm.entries.insert(entry_pos, modifiedEntry)
-    queriedForm.expired = queriedForm.hasExpired()
+    response.data = {}
+    for field in request.json['data']:
+        if field['name'] == 'marked' or field['name'] == 'created':
+            continue
+        response.data[field['name']] = field['value']
+    response.save()
+    queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.addLog(gettext("Modified an entry"))
-    return json.dumps({'saved': True})
-
+    queriedForm.add_log(gettext("Modified an entry"))
+    return json.dumps({'saved': True})    
+    
 
 @entries_bp.route('/forms/delete-entries/<string:id>', methods=['GET', 'POST'])
 @enabled_user_required
@@ -173,9 +154,9 @@ def delete_entries(id):
         except:
             flash(gettext("We expected a number"), 'warning')
             return render_template('delete-entries.html', form=queriedForm)
-        if queriedForm.getTotalEntries() == totalEntries:
-            queriedForm.deleteEntries()
-            if not queriedForm.hasExpired() and queriedForm.expired:
+        if queriedForm.get_total_entries() == totalEntries:
+            queriedForm.delete_entries()
+            if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
                 queriedForm.save()
             flash(gettext("Deleted %s entries" % totalEntries), 'success')
@@ -190,7 +171,7 @@ def delete_entries(id):
 @sanitized_key_required
 def view_entries(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.areEntriesShared():
+    if not queriedForm or not queriedForm.are_entries_shared():
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -202,7 +183,7 @@ def view_entries(slug, key):
 @sanitized_key_required
 def view_stats(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.areEntriesShared():
+    if not queriedForm or not queriedForm.are_entries_shared():
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -214,11 +195,11 @@ def view_stats(slug, key):
 @sanitized_key_required
 def view_csv(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.areEntriesShared():
+    if not queriedForm or not queriedForm.are_entries_shared():
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
-    csv_file = queriedForm.writeCSV()
+    csv_file = queriedForm.write_csv()
     
     @after_this_request 
     def remove_file(response): 
@@ -232,8 +213,8 @@ def view_csv(slug, key):
 @sanitized_key_required
 def view_json(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.areEntriesShared():
+    if not queriedForm or not queriedForm.are_entries_shared():
         return JsonResponse(json.dumps({}), 404)
     if queriedForm.restrictedAccess and not g.current_user:
         return JsonResponse(json.dumps({}), 404)
-    return JsonResponse(json.dumps(queriedForm.getEntriesForJSON()))
+    return JsonResponse(json.dumps(queriedForm.get_entries_for_json()))

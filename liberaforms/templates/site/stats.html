@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set stats = site.getStatistics() %}
+{% set stats = site.get_statistics() %}
 
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
@@ -107,7 +107,7 @@ var time_chart = new Chart(ctx, {
 {% if sites|length > 1 %}
 {% for site in sites %}
 
-{% set stats = site.getStatistics(hostname=site.hostname) %}
+{% set stats = site.get_statistics(hostname=site.hostname) %}
 
 var ctx = document.getElementById('{{site.id}}-usage-chart');
 var time_chart = new Chart(ctx, {

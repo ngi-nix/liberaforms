@@ -20,13 +20,13 @@
         <p>{%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}</p>
 
         <table class="table table-sm">
-        {% for editor in form.getEditors() %}
+        {% for editor in form.get_editors() %}
             <tr id="editor_{{editor.id}}">
                 <td>
                     {{ editor.email }}
                 </td>
                 <td class="text-right">
-                {% if editor == form.author %}
+                {% if form.is_author(editor) %}
                     <span class="badge badge-pill badge-light author-badge">
                         {%trans%}Author{%endtrans%}
                     </span>
@@ -58,29 +58,29 @@
         <p>{%trans%}Readonly access for <b>anyone</b> with a copy of these links{%endtrans%}</p>
 
         <div id="toggle_sharedEntries" class="btn-group btn-toggle">
-            <button id="sharedEntries_true" class="btn btn-sm btn-default {% if form.areEntriesShared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-            <button id="sharedEntries_false" class="btn btn-sm btn-default {% if not form.areEntriesShared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+            <button id="sharedEntries_true" class="btn btn-sm btn-default {% if form.are_entries_shared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
+            <button id="sharedEntries_false" class="btn btn-sm btn-default {% if not form.are_entries_shared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
         </div>
         <p></p>
-        <div id="disabled_links" {%if form.areEntriesShared()%}style="display:None"{%endif%}>
+        <div id="disabled_links" {%if form.are_entries_shared()%}style="display:None"{%endif%}>
             <span class="badge badge-secondary">CSV</span>
-            <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL('csv') }}</span>
+            <span style="text-decoration:line-through;">{{ form.get_shared_entries_url('csv') }}</span>
             <br />
             <span class="badge badge-secondary">JSON</span>
-            <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL('json') }}</span>
+            <span style="text-decoration:line-through;">{{ form.get_shared_entries_url('json') }}</span>
             <br />
             <span class="badge badge-secondary">WEB</span>
-            <span style="text-decoration:line-through;">{{ form.getSharedEntriesURL() }}</span>
+            <span style="text-decoration:line-through;">{{ form.get_shared_entries_url() }}</span>
         </div>
-        <div id="enabled_links" {%if not form.areEntriesShared()%}style="display:None"{%endif%}>
+        <div id="enabled_links" {%if not form.are_entries_shared()%}style="display:None"{%endif%}>
             <span class="badge badge-secondary">CSV</span>
-            <a href="{{ form.getSharedEntriesURL('csv') }}">{{ form.getSharedEntriesURL('csv') }}</a>
+            <a href="{{ form.get_shared_entries_url('csv') }}">{{ form.get_shared_entries_url('csv') }}</a>
             <br />
             <span class="badge badge-secondary">JSON</span>
-            <a href="{{ form.getSharedEntriesURL('json') }}">{{ form.getSharedEntriesURL('json') }}</a>
+            <a href="{{ form.get_shared_entries_url('json') }}">{{ form.get_shared_entries_url('json') }}</a>
             <br />
             <span class="badge badge-secondary">WEB</span>
-            <a href="{{ form.getSharedEntriesURL() }}">{{ form.getSharedEntriesURL() }}</a>
+            <a href="{{ form.get_shared_entries_url() }}">{{ form.get_shared_entries_url() }}</a>
         </div>        
     </div>
 </div>

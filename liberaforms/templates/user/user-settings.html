@@ -69,8 +69,8 @@
                 </td>
                 <td class="text-right">
                     <div id="toggle_new_entry_notification" class="btn-group btn-toggle">
-                    <button id="new_entry_notification_true" class="btn btn-xs btn-default {% if user.newEntryNotificationDefault %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="new_entry_notification_false" class="btn btn-xs btn-default {% if not user.newEntryNotificationDefault %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="new_entry_notification_true" class="btn btn-xs btn-default {% if user.new_entry_notification_default %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="new_entry_notification_false" class="btn btn-xs btn-default {% if not user.new_entry_notification_default %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                     </div>
                 </td>
             </tr>
@@ -84,7 +84,7 @@
             </tr>
         </table>
         
-{% if g.isAdmin %}
+{% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">
             {%trans%}My admin settings{%endtrans%}
         </div>
@@ -140,7 +140,7 @@ document.getElementById('toggle_new_entry_notification').addEventListener('click
         }
     });
 });
-{% if g.isAdmin %}
+{% if g.is_admin %}
 document.getElementById('toggle_notify_newuser').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/toggle-newuser-notification",

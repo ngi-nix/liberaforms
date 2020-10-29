@@ -1,0 +1,67 @@
+
+These are notes of things to test.
+
+Start with empty database
+
+## Empty database
+
+1. Create first root user
+
+2. Config site
+  * config SMTP
+    * test SMTP
+  * set favicon
+  * change colour
+  * change site name
+  * change default language
+  * change 'only invitations'
+  * change port
+  * change scheme
+  * edit frontpage
+
+3. Create new user with new user form
+
+4. Invite new user
+  * with admin permission
+  * respond to invitation
+
+5. Create a new site
+  * Invite a new admin to the new site
+
+6. Create form
+
+7. Responses
+  * make a response
+  * delete/undo response
+  * edit a response
+  * delete all responses
+  
+8. Exipry conditions
+  * Set date expiry in past
+  * set number field max total
+
+9. Share a form
+  * add an editor
+
+10. Shared results.
+  * share the results and check the links
+
+11. Post subit text
+  * Modify  the text
+  * Check if user receives confirmation email.
+
+7. CSV
+  * export
+  * export with deleted columns
+
+8. Activate GDPR and try to submit a form with out checkbox.
+9. Test embedded form
+10. Duplicate form
+11. Change author
+
+12. Check Consent texts
+
+13. Delete form and entries
+
+14. Drop database and restore copy
+   * run migrate_db.py

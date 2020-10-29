@@ -17,21 +17,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from liberaforms import app, models
+from liberaforms import app
+
 #from pprint import pprint as pp
 
 
 def migrateMongoSchema(schemaVersion):
+    from liberaforms.models.site import Site
+    from liberaforms.models.form import Form, FormResponse
+    from liberaforms.models.user import User
 
     if schemaVersion == 13:
-        query = models.Form.objects()
+        query = Form.objects()
         query.update(set__introductionText={"markdown":"", "html":""})
         schemaVersion = 14
 
     if schemaVersion == 14:
         print("Upgrading to version 15")
         try:
-            collection = models.Form._get_collection()
+            collection = Form._get_collection()
             for f in collection.find():
                 consent=f["requireDataConsent"]
                 collection.update_one(  {"_id": f["_id"]},
@@ -50,7 +54,7 @@ def migrateMongoSchema(schemaVersion):
         print("Upgrading to version 16")
         import uuid
         try:
-            collection = models.Form._get_collection()
+            collection = Form._get_collection()
             for form in collection.find():
                 form["fieldIndex"].insert(0, {'label':"Marked", 'name':'marked'})
                 collection.update_one(  {"_id": form["_id"]},
@@ -78,7 +82,7 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 16:
         print("Upgrading to version 17")
         try:
-            query = models.Form.objects()
+            query = Form.objects()
             query.update(set__sendConfirmation=False)
         except Exception as e:
             print(e)
@@ -89,7 +93,7 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 17:
         print("Upgrading to version 18")
         try:
-            query = models.Site.objects()
+            query = Site.objects()
             query.update(   set__menuColor="#802C7D",
                             set__defaultLanguage=app.config['DEFAULT_LANGUAGE'])
         except Exception as e:
@@ -101,7 +105,7 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 18:
         print("Upgrading to version 19")
         try:
-            collection = models.User._get_collection()
+            collection = User._get_collection()
             for user in collection.find():
                 language=user["language"]
                 collection.update_one(  {"_id": user["_id"]},
@@ -110,7 +114,7 @@ def migrateMongoSchema(schemaVersion):
                                                                     }}})
                 collection.update_one(  {"_id": user["_id"]},
                                         {"$unset": {"language": 1} })
-            query = models.Form.objects()
+            query = Form.objects()
             query.update(set__expiredText={"markdown":"", "html":""})
         except Exception as e:
             print(e)
@@ -121,7 +125,7 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 19:
         print("Upgrading to version 20")
         try:
-            collection = models.Site._get_collection()
+            collection = Site._get_collection()
             collection.update_many({}, {"$set": { "termsAndConditions": {
                                                     "markdown":"", "html":"", "enabled":False}
                                                 }})
@@ -135,7 +139,7 @@ def migrateMongoSchema(schemaVersion):
         print("Upgrading to version 21")
         import json
         try:
-            collection = models.Form._get_collection()
+            collection = Form._get_collection()
             for form in collection.find():
                 structure=json.loads(form["structure"])
                 collection.update_one(  {"_id": form["_id"]},
@@ -151,9 +155,9 @@ def migrateMongoSchema(schemaVersion):
         from liberaforms.utils.consent_texts import ConsentText
         import uuid
         try:
-            user_collection = models.User._get_collection()
-            site_collection = models.Site._get_collection()
-            form_collection = models.Form._get_collection()
+            user_collection = User._get_collection()
+            site_collection = Site._get_collection()
+            form_collection = Form._get_collection()
             user_collection.update_many({}, {"$set": {"consentTexts": []}})
             for site in site_collection.find():
                 terms_id = uuid.uuid4().hex
@@ -166,7 +170,7 @@ def migrateMongoSchema(schemaVersion):
                                     "required":True}
                     new_user_consentment_texts.append(terms_id)
                 else:
-                    terms_text = ConsentText.getEmptyConsent(id=terms_id, name="terms")
+                    terms_text = ConsentText.get_empty_consent(id=terms_id, name="terms")
                 DPL_id = uuid.uuid4().hex
                 for form in form_collection.find({"hostname": site["hostname"]}):
                     DPL_text = {"id": DPL_id,
@@ -189,7 +193,7 @@ def migrateMongoSchema(schemaVersion):
                                 "required":True
                                 }
                 else:
-                    DPL_text = ConsentText.getEmptyConsent(id=DPL_id,name="DPL")
+                    DPL_text = ConsentText.get_empty_consent(id=DPL_id,name="DPL")
                 site_collection.update_one(  {"_id": site["_id"]},
                                         {"$set": {  "consentTexts": [terms_text, DPL_text],
                                                     "newUserConsentment": new_user_consentment_texts}})
@@ -206,7 +210,7 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 22:
         print("Upgrading to version 23")
         try:
-            form_collection = models.Form._get_collection()
+            form_collection = Form._get_collection()
             for form in form_collection.find():
                 for entry in form['entries']:
                     created=entry['created']
@@ -221,7 +225,7 @@ def migrateMongoSchema(schemaVersion):
                             "form_id": str(form["_id"]),
                             "marked": marked,
                             "data": entry}
-                    response = models.Response(**new_data)
+                    response = FormResponse(**new_data)
                     response.save()
             form_collection.update_many( {}, {"$unset": {"entries": 1} })
     

@@ -17,16 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os
-from flask import g, render_template, redirect, request
+import os, json
+from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms import app
-from liberaforms.models import *
+from liberaforms.models.site import Site, Invite, Installation
+from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 
@@ -40,9 +41,52 @@ site_bp = Blueprint('site_bp', __name__,
 @admin_required
 def save_blurb():
     if 'editor' in request.form:            
-        g.site.saveBlurb(request.form['editor'])
+        g.site.save_blurb(request.form['editor'])
         flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('main_bp.index'))
+
+
+@site_bp.route('/site/recover-password', methods=['GET', 'POST'])
+@site_bp.route('/site/recover-password/<string:token>', methods=['GET'])
+@anon_required
+@sanitized_token
+def recover_password(token=None):
+    if token:
+        user = User.find(token=token)
+        if not user:
+            flash(gettext("Couldn't find that token"), 'warning')
+            return redirect(make_url_for('main_bp.index'))
+        if not validators.is_valid_token(user.token):
+            flash(gettext("Your petition has expired"), 'warning')
+            user.delete_token()
+            return redirect(make_url_for('main_bp.index'))
+        if user.blocked:
+            user.delete_token()
+            flash(gettext("Your account has been blocked"), 'warning')
+            return redirect(make_url_for('main_bp.index'))
+        user.delete_token()
+        user.validatedEmail=True
+        user.save()
+        # login the user
+        session['user_id']=str(user.id)
+        return redirect(make_url_for('user_bp.reset_password'))
+    
+    wtform=wtf.GetEmail()
+    if wtform.validate_on_submit():
+        user = User.find(email=wtform.email.data, blocked=False)
+        if user:
+            user.set_token()
+            EmailServer().sendRecoverPassword(user)
+        if not user and wtform.email.data in app.config['ROOT_USERS']:
+            # root_user emails are only good for one account, across all sites.
+            if not Installation.is_user(wtform.email.data):
+                # auto invite root users
+                message="New root user at %s." % g.site.hostname
+                invite=Invite.create(g.site.hostname, wtform.email.data, message, True)
+                return redirect(make_url_for('user_bp.new_user', token=invite.token['token']))
+        flash(gettext("We may have sent you an email"), 'info')
+        return redirect(make_url_for('main_bp.index'))
+    return render_template('recover-password.html', wtform=wtform)
 
 
 @site_bp.route('/site/consent-texts', methods=['GET'])
@@ -55,7 +99,7 @@ def consent():
 @admin_required
 def save_consent(id):
     if 'markdown' in request.form and "label" in request.form and "required" in request.form:
-        consent = g.site.saveConsent(id, data=request.form.to_dict(flat=True))
+        consent = g.site.save_consent(id, data=request.form.to_dict(flat=True))
         if consent:
             return JsonResponse(json.dumps(consent))
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
@@ -65,13 +109,13 @@ def save_consent(id):
 @site_bp.route('/site/update-enabled-new-user-consentment-texts/<string:id>', methods=['POST'])
 @admin_required
 def updateEnabledNewUserConsentmentTexts(id):
-    return JsonResponse(json.dumps({'included': g.site.updateIncludedNewUserConsentmentTexts(id)}))
+    return JsonResponse(json.dumps({'included': g.site.update_included_new_user_consentment_texts(id)}))
 
 
 @site_bp.route('/site/toggle-consent-enabled/<string:id>', methods=['POST'])
 @admin_required
 def toggle_consent_text(id):
-    return JsonResponse(json.dumps({'enabled': g.site.toggleConsentEnabled(id)}))
+    return JsonResponse(json.dumps({'enabled': g.site.toggle_consent_enabled(id)}))
 
 
 @site_bp.route('/site/preview-new-user-form', methods=['GET'])
@@ -127,7 +171,7 @@ def change_site_favicon():
 @site_bp.route('/site/reset-favicon', methods=['GET'])
 @admin_required
 def reset_site_favicon():
-    if g.site.deleteFavicon():
+    if g.site.delete_favicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('site_bp.site_admin'))
 
@@ -135,7 +179,7 @@ def reset_site_favicon():
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
 @admin_required
 def toggle_invitation_only(): 
-    return json.dumps({'invite': g.site.toggleInvitationOnly()})
+    return json.dumps({'invite': g.site.toggle_invitation_only()})
 
 
 @site_bp.route('/site/email/config', methods=['GET', 'POST'])
@@ -150,7 +194,7 @@ def smtp_config():
         config['user'] = wtf_smtp.user.data
         config['password'] = wtf_smtp.password.data
         config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
-        g.site.saveSMTPconfig(**config)
+        g.site.save_smtp_config(**config)
         flash(gettext("Confguration saved OK"), 'success')
     wtf_email=wtf.GetEmail()
     return render_template('smtp-config.html', wtf_smtp=wtf_smtp, wtf_email=wtf_email)
@@ -171,11 +215,11 @@ def test_smtp():
 @site_bp.route('/site/admin', methods=['GET'])
 @admin_required
 def site_admin():
-    invites = Invite.findAll()
+    invites = Invite.find_all()
     sites=None
     installation=None
-    if g.isRootUserEnabled:
-        sites=Site.findAll()
+    if g.is_root_user_enabled:
+        sites=Site.find_all()
         installation=Installation.get()
     context = {
         'invites': invites,
@@ -207,7 +251,7 @@ def menu_color():
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():
-    sites = Installation.getSites() if g.isRootUserEnabled else []
+    sites = Installation.get_sites() if g.is_root_user_enabled else []
     return render_template('stats.html', site=g.site, sites=sites)
 
 
@@ -215,7 +259,7 @@ def stats():
 @rootuser_required
 def toggle_site_scheme(hostname): 
     queriedSite=Site.find(hostname=hostname)
-    return json.dumps({'scheme': queriedSite.toggleScheme()})
+    return json.dumps({'scheme': queriedSite.toggle_scheme()})
 
 
 @site_bp.route('/site/change-port/<string:hostname>/', methods=['POST'])
@@ -247,7 +291,7 @@ def delete_site(hostname):
             if g.site.hostname == queriedSite.hostname:
                 flash(gettext("Cannot delete current site"), 'warning')
                 return redirect(make_url_for('site_bp.site_admin'))
-            queriedSite.deleteSite()
+            queriedSite.delete_site()
             flash(gettext("Deleted %s" % queriedSite.host_url), 'success')
             return redirect(make_url_for('site_bp.site_admin'))
         else:
@@ -267,8 +311,8 @@ def new_invite():
         EmailServer().sendInvite(invite)
         flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
         return redirect(make_url_for('site_bp.site_admin'))
-    wtform.message.data=Invite.defaultMessage()
-    return render_template('new-invite.html', wtform=wtform, sites=Site.findAll())
+    wtform.message.data=Invite.default_message()
+    return render_template('new-invite.html', wtform=wtform, sites=Site.find_all())
 
 
 @site_bp.route('/site/invites/delete/<string:id>', methods=['GET'])

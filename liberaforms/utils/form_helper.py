@@ -19,9 +19,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import json
 from flask import session
-from liberaforms.utils.utils import *
+from liberaforms.utils import sanitizers
 
-def clearSessionFormData():
+
+def clear_session_form_data():
     session['duplication_in_progress'] = False
     session['slug'] = ""
     session['form_id']=None
@@ -32,8 +33,8 @@ def clearSessionFormData():
     session['afterSubmitText']= {}
     session['expiredText'] = {}
     
-def populateSessionWithForm(form):
-    clearSessionFormData()
+def populate_session_with_form(form):
+    clear_session_form_data()
     session['slug'] = form.slug
     session['form_id'] = str(form.id)
     session['formFieldIndex'] = form.fieldIndex
@@ -47,17 +48,17 @@ def populateSessionWithForm(form):
 formbuilder has some bugs.
 Repair if needed.
 """
-def repairFormStructure(structure):
+def repair_form_structure(structure):
     for element in structure:
         if "type" in element:
             if element['type'] == 'paragraph':
                 # remove unwanted HTML from paragraph text (not really a bug)
-                element["label"]=cleanLabel(element["label"])
+                element["label"]=sanitizers.clean_label(element["label"])
                 continue
             # Ensure a label without HTML tags
             if 'label' in element:
-                element['label']=stripHTMLTags(element['label']).strip()
-                element['label'] = removeNewLines(element['label'])
+                element['label'] = sanitizers.strip_html_tags(element['label']).strip()
+                element['label'] = sanitizers.remove_newlines(element['label'])
             if not 'label' in element or element['label']=="":
                 element['label']=gettext("Label")                
             # formBuilder does not save select dropdown correctly
@@ -72,6 +73,7 @@ def repairFormStructure(structure):
                 for input_type in element["values"]:
                     if not input_type["value"] and input_type["label"]:
                         input_type["value"] = input_type["label"]
-                    input_type["value"] = sanitizeString(input_type["value"].replace(" ", "-"))
-                    input_type["value"] = removeNewLines(input_type["value"])
+                    input_type["value"] = input_type["value"].replace(" ", "-")
+                    input_type["value"] = sanitizers.sanitize_string(input_type["value"])
+                    input_type["value"] = sanitizers.remove_newlines(input_type["value"])
     return structure

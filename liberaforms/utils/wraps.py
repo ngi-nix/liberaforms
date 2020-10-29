@@ -17,9 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import g, render_template
-from liberaforms.utils.utils import *
 from functools import wraps
+from flask import g, redirect, url_for, render_template
+from liberaforms import app
+from liberaforms.utils import sanitizers
+from liberaforms.utils import validators
+
 
 def login_required(f):
     @wraps(f)
@@ -42,7 +45,7 @@ def enabled_user_required(f):
 def admin_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if g.isAdmin:
+        if g.is_admin:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('main_bp.index'))
@@ -51,7 +54,7 @@ def admin_required(f):
 def rootuser_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if g.isRootUserEnabled:
+        if g.is_root_user_enabled:
             return f(*args, **kwargs)
         else:
             return redirect(url_for('main_bp.index'))
@@ -90,7 +93,7 @@ def sanitized_slug_required(f):
             if g.current_user:
                 flash("Reserved slug!", 'warning')
             return render_template('page-not-found.html'), 404
-        if kwargs['slug'] != sanitizeSlug(kwargs['slug']):
+        if kwargs['slug'] != sanitizers.sanitize_slug(kwargs['slug']):
             if g.current_user:
                 flash("That's a nasty slug!", 'warning')
             return render_template('page-not-found.html'), 404
@@ -100,7 +103,7 @@ def sanitized_slug_required(f):
 def sanitized_key_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if not ('key' in kwargs and kwargs['key'] == sanitizeString(kwargs['key'])):
+        if not ('key' in kwargs and kwargs['key'] == sanitizers.sanitize_string(kwargs['key'])):
             if g.current_user:
                 flash(gettext("That's a nasty key!"), 'warning')
             return render_template('page-not-found.html'), 404
@@ -111,10 +114,10 @@ def sanitized_key_required(f):
 def sanitized_token(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if 'token' in kwargs and kwargs['token'] != sanitizeTokenString(kwargs['token']):
+        if 'token' in kwargs and not validators.is_valid_UUID(kwargs['token']):
             if g.current_user:
                 flash(gettext("That's a nasty token!"), 'warning')
-            return render_template('page_not_found.html'), 404
+            return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)
     return wrap

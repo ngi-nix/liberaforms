@@ -6,7 +6,8 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
-{% set stats = user.getStatistics() %}
+{% set stats = user.get_statistics() %}
+{% set forms = user.get_forms() %}
 
 <div class="container">
 <div class="row">
@@ -19,7 +20,7 @@
                <td>{%trans%}Username{%endtrans%}</td>
                <td>{{ user.username }}</td>
             </tr>        
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <tr>
                    <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ user.hostname }}</td>
@@ -29,8 +30,8 @@
                <td>{%trans%}Is Admin{%endtrans%}</td>
                <td>
                    <div id="toggle_admin" class="btn-group btn-toggle">
-                    <button id="admin_true" class="btn btn-xs btn-default {% if user.isAdmin() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.isAdmin() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <button id="admin_true" class="btn btn-xs btn-default {% if user.is_admin() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.is_admin() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                 </td>
             </tr>            
@@ -66,7 +67,7 @@
             </tr>
         </table>
         {% if not user.id == g.current_user.id %}
-            {% if user.forms|length %}
+            {% if forms|length %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
@@ -97,20 +98,20 @@
             </tr>
         </thead>
         
-        {% for form in user.forms %}
+        {% for form in forms %}
         <tr>
            <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
            <td>{{form.created}}</td>
            <td>
-                {% if user == form.author %}
+                {% if form.is_author(user) %}
                     {%trans%}True{%endtrans%}
                 {% else %}
                     {%trans%}False{%endtrans%}
                 {% endif %}
             </td>
            <td>{{form.editors|length}}</td>
-           <td>{{form.isPublic()}}</td>
-           <td>{{form.getEntries().count()}}</td>
+           <td>{{form.is_public()}}</td>
+           <td>{{form.get_entries().count()}}</td>
         </tr>
         {% endfor %}
     </table>

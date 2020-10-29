@@ -17,28 +17,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from liberaforms import app, babel #, models
-
-from flask import Response, redirect, request, url_for
-from flask import g, session, flash #, has_app_context
-from flask_babel import gettext
-from unidecode import unidecode
-import json, time, re, string, random, datetime
-from passlib.hash import pbkdf2_sha256
-from password_strength import PasswordPolicy
-from validate_email import validate_email
-import markdown, html, uuid
-from bs4 import BeautifulSoup
+import json, string, random, datetime, uuid
 from pprint import pformat
 
+from flask import Response, redirect, request, url_for
+from flask import g, session #, has_app_context
+from flask_babel import gettext
 
-def get_obj_values_as_dict(obj):
+from liberaforms import app, babel
+
+
+def print_obj_values(obj):
     values = {}
     fields = type(obj).__dict__['_fields']
     for key, _ in fields.items():
         value = getattr(obj, key, None)
         values[key] = value
-    return values
+    return pformat({obj.__class__.__name__: values})
 
 def make_url_for(function, **kwargs):
     kwargs["_external"]=True
@@ -65,150 +60,30 @@ def JsonResponse(json_response="1", status_code=200):
 
 
 """ ######## Session ######## """
-def killCurrentUser():
+def logout_user():
     if "user_id" in session:
         session.pop("user_id")
     session["root_enabled"]=False
     g.current_user=None
-    g.isAdmin=False
-    g.isRootUserEnabled=False
+    g.is_admin=False
+    g.is_root_user_enabled=False
 
-
-""" ######## Sanitizers ######## """
-
-def sanitizeString(string):
-    string = unidecode(string)
-    string = string.replace(" ", "") 
-    return re.sub('[^A-Za-z0-9\-]', '', string)
-
-def sanitizeSlug(slug):
-    slug = slug.lower()
-    slug = slug.replace(" ", "-")
-    return sanitizeString(slug)
-
-def sanitizeHexidecimal(string): 
-    return re.sub('[^A-Fa-f0-9]', '', string)
-
-def isSaneSlug(slug):
-    if slug and slug == sanitizeSlug(slug):
-        return True
-    return False
-
-def sanitizeUsername(username):
-    return sanitizeString(username)
-    
-def isSaneUsername(username):
-    if username and username == sanitizeUsername(username):
-        return True
-    return False
-
-def sanitizeTokenString(string):
-    return re.sub('[^a-z0-9]', '', string)
-
-TAG_RE = re.compile(r'<[^>]+>')
-
-def escapeMarkdown(MDtext):
-    return TAG_RE.sub('', MDtext)
-
-def markdown2HTML(MDtext):
-    MDtext=escapeMarkdown(MDtext)
-    return markdown.markdown(MDtext, extensions=['nl2br'])
-
-def stripHTMLTags(text):
-    #return TAG_RE.sub(' ', text).strip(' ')
-    text=html.unescape(text) 
-    soup=BeautifulSoup(text, features="html.parser")
-    return soup.get_text()
-    
-def cleanLabel(text):
-    # We should change this to use a whitelist
-    text=html.unescape(text) 
-    soup=BeautifulSoup(text, features="html.parser")
-    for script in soup.find_all("script"):
-        script.decompose()
-    for style in soup.find_all("style"):
-        style.decompose()
-    return html.escape(str(soup))
-
-def removeNewLines(string):
-    string = string.replace("\n", "")
-    return string.replace("\r", "")
-    
-def removeFirstAndLastNewLines(string):
-    RE="^[\r\n]+|[\r\n]+$"
-    return re.sub(RE, '', string)
-
-""" ######## email ######## """
-
-def isValidEmail(email):
-    return validate_email(email)
-
-""" ######## Password ######## """
-
-pwd_policy = PasswordPolicy.from_names(
-    length=8,  # min length: 8
-    uppercase=0,  # need min. 2 uppercase letters
-    numbers=0,  # need min. 2 digits
-    special=0,  # need min. 2 special characters
-    nonletters=1,  # need min. 2 non-letter characters (digits, specials, anything)
-)
-
-def hashPassword(password):
-    return pbkdf2_sha256.hash(password, rounds=200000, salt_size=16)
-
-def verifyPassword(password, hash):
-    return pbkdf2_sha256.verify(password, hash)
-
-
-""" ######## Tokens ######## """
-
-def getRandomString(length=32):
-    return ''.join(random.choice(string.ascii_lowercase + string.digits) for _ in range(length))
 
 """
 Create a unique token.
-persistentClass may be a User class, or an Invite class, ..
+persistentClass may be a User class or an Invite class
 """
-def createToken(persistentClass, **kwargs):
-    tokenString = uuid.uuid4().hex
-    while persistentClass.find(token=tokenString):
-        tokenString = uuid.uuid4().hex
-    result={'token': tokenString, 'created': datetime.datetime.now()}
-    return {**result, **kwargs} 
-
-
-def isValidToken(tokenData):
-    token_age = datetime.datetime.now() - tokenData['created']
-    if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
-        return False
-    return True
-
-
-
-
-""" ######## Dates ######## """
-
-def isValidExpireDate(date):
-    try:
-        datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-        return True
-    except:
-        return False
-
-def isFutureDate(date):
-    now=time.time()
-    future=int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").strftime("%s"))
-    return True if future > now else False
-
+def create_token(persistentClass, **kwargs):
+    token_string = gen_random_string()
+    while persistentClass.find(token=token_string):
+        token_string = gen_random_string()
+    result={'token': token_string, 'created': datetime.datetime.now()}
+    return {**result, **kwargs}
 
 """ ######## Other ######## """
 
-def isValidUUID(value):
-    try:
-        uuid.UUID(value)
-        return True
-    except ValueError:
-        return False
+def gen_random_string():
+    return uuid.uuid4().hex
 
 def str2bool(v):
   return v.lower() in ("true", "1", "yes")

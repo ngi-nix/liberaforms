@@ -7,7 +7,7 @@
   {% endif %}
   {% if 'site' in g and g.site %}
   <title>{{ g.site.siteName }}</title>
-  <link rel="shortcut icon" type="image/png" href="{{g.site.faviconURL()}}"/>
+  <link rel="shortcut icon" type="image/png" href="{{g.site.favicon_url()}}"/>
   {% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
@@ -28,7 +28,7 @@
 <div class="container">
 
     {% if 'site' in g and g.site %}
-    <a class="navbar-brand" href="/"><img src="{{g.site.faviconURL()}}" /></a>
+    <a class="navbar-brand" href="/"><img src="{{g.site.favicon_url()}}" /></a>
     {% endif %}
 
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,10 +38,10 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         {% if 'current_user' in g and g.current_user %}
         <ul class="navbar-nav">
-            {% if g.current_user.isRootUser() %}
+            {% if g.current_user.is_root_user() %}
             <li class="nav-item">
                 <a id="toggle_root_enable" class="nav-link" href="#!" title="{%trans%}Toggle root mode{%endtrans%}">
-                {% if g.isRootUserEnabled %}
+                {% if g.is_root_user_enabled %}
                 <i class="fa fa-shield" style="color:red" aria-hidden="true"></i>
                 {% else %}
                 <i class="fa fa-shield" style="color:white" aria-hidden="true"></i>
@@ -50,7 +50,7 @@
             </li>
             {% endif %}
             {% if g.current_user.enabled %}
-                {% if g.isAdmin %}
+                {% if g.is_admin %}
                 <li class="nav-item">
                 <a class="nav-link" href="/admin/forms">{%trans%}Forms{%endtrans%}</a> 
                 </li>
@@ -68,7 +68,7 @@
             {% endif %}
         </ul>
         <ul class="navbar-nav" style="margin-left: auto;">
-            {% if g.isAdmin %}
+            {% if g.is_admin %}
                 <li class="nav-item">
                 <a class="nav-link" href="/site/admin">{%trans%}Admin{%endtrans%}</a>
                 </li>
@@ -126,7 +126,7 @@
     AGPLv3 <a href="https://liberaforms.org">LiberaForms</a>
 </div>
 
-{% if 'current_user' in g and g.current_user and g.current_user.isRootUser() %}
+{% if 'current_user' in g and g.current_user and g.current_user.is_root_user() %}
 <script>
 var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_root_enable').addEventListener('click', function(evt){

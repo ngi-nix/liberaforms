@@ -13,7 +13,7 @@
         <div class="title_1">{%trans%}Change author{%endtrans%}</div>
         
         <table class="table table-sm">
-        {% if g.isRootUserEnabled %}
+        {% if g.is_root_user_enabled %}
             <tr>
                <td>{%trans%}Form site{%endtrans%}</td>
                <td>{{ form.hostname }}</td>
@@ -21,7 +21,7 @@
         {% endif %}
             <tr>
                <td>{%trans%}Current author{%endtrans%}</td>
-               <td>{{ form.author.username }}</td>
+               <td>{{ form.get_author().username }}</td>
             </tr>
         </table>
 
@@ -40,7 +40,7 @@
             </div>
         </form>
         
-    {% set editors=form.getEditors() %}
+    {% set editors=form.get_editors() %}
     {% if editors|length > 1 %}
         <p>&nbsp;</p>
         <div class="title_2">{%trans%}Editors{%endtrans%}</div>
@@ -51,7 +51,7 @@
                 <td>{{ editor.username }}</td>
                 <td>{{ editor.email }}</td>
                 <td class="text-right">
-                {% if editor == form.author %}
+                {% if form.is_author(editor) %}
                     {%trans%}Author{%endtrans%}
                 {% else %}
                     {%trans%}Editor{%endtrans%}

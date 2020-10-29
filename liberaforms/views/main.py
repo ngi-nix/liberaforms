@@ -26,30 +26,30 @@ from flask_wtf.csrf import CSRFError
 #from flask import ctx, current_app, has_app_context, app_ctx_globals_class
 
 from liberaforms import app
-from liberaforms.models import Site, User
+from liberaforms.models.site import Site
+from liberaforms.models.user import User
+from liberaforms.utils.utils import logout_user
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
-import liberaforms.utils.wtf as wtf
 
-#app = current_app
 
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='../templates/main')
 #main_bp.before_request(shared_functions.before_request)
 
-
+"""
 def print_g(string=None):
     if string:
         print("printing from: %s" % string)
     for e in iter(g):
         print(e)
+"""
 
 @app.before_request
 def before_request():
     g.site=None
     g.current_user=None
-    g.isAdmin=False
-    g.isRootUserEnabled=False
+    g.is_admin=False
+    g.is_root_user_enabled=False
     g.embedded=False
     if request.path[0:7] == '/static':
         return
@@ -57,14 +57,14 @@ def before_request():
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
-            session.pop("user_id")
+            logout_user()
             return
-        if g.current_user.isAdmin():
-            g.isAdmin=True
+        if g.current_user.is_admin():
+            g.is_admin=True
         if not "root_enabled" in session:
             session["root_enabled"]=False
-        if g.current_user.isRootUser() and session["root_enabled"] == True:
-            g.isRootUserEnabled=True
+        if g.current_user.is_root_user() and session["root_enabled"] == True:
+            g.is_root_user_enabled=True
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -77,18 +77,16 @@ def server_error(error):
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):
     flash(e.description, 'error')
-    #if g.current_user: # throw '_AppCtxGlobals' error. need to investigate
-    #    #flash(e.description, 'error')
-    #    return redirect(make_url_for('main_bp.index'))
-    #else:
     return render_template('server-error.html', error=e.description), 500
-
 
 @main_bp.route('/', methods=['GET'])
 def index():
-    return render_template('index.html', site=g.site, wtform=wtf.Login())
+    return render_template('index.html', site=g.site)
 
+
+"""
 @enabled_user_required
 @main_bp.route('/test', methods=['GET'])
 def test():
     return render_template('test.html', sites=[])
+"""

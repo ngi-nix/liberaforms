@@ -17,13 +17,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import g, render_template, redirect
+import json
+from flask import g, request, render_template, redirect
 from flask import session, flash, Blueprint
 from flask_babel import gettext
 
-from liberaforms.models import *
+from liberaforms.models.user import User
+from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import *
+from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 
@@ -39,7 +41,7 @@ admin_bp = Blueprint('admin_bp', __name__,
 @admin_bp.route('/admin/users', methods=['GET'])
 @admin_required
 def list_users():
-    return render_template('list-users.html', users=User.findAll()) 
+    return render_template('list-users.html', users=User.find_all()) 
 
 
 @admin_bp.route('/admin/users/<string:id>', methods=['GET'])
@@ -62,7 +64,7 @@ def toggle_user_blocked(id):
         # current_user cannot disable themself
         blocked=user.blocked
     else:
-        blocked=user.toggleBlocked()
+        blocked=user.toggle_blocked()
     return JsonResponse(json.dumps({'blocked':blocked}))
 
 
@@ -74,10 +76,10 @@ def toggle_admin(id):
         return JsonResponse(json.dumps())
     if user.username == g.current_user.username:
         # current_user cannot remove their own admin permission
-        isAdmin=True
+        is_admin=True
     else:
-        isAdmin=user.toggleAdmin()
-    return JsonResponse(json.dumps({'admin':isAdmin}))
+        is_admin=user.toggle_admin()
+    return JsonResponse(json.dumps({'admin':is_admin}))
 
 
 @admin_bp.route('/admin/users/delete/<string:id>', methods=['GET', 'POST'])
@@ -89,14 +91,14 @@ def delete_user(id):
         return redirect(make_url_for('admin_bp.list_users'))
   
     if request.method == 'POST' and 'username' in request.form:
-        if user.isRootUser():
+        if user.is_root_user():
             flash(gettext("Cannot delete root user"), 'warning')
             return redirect(make_url_for('admin_bp.inspect_user', id=user.id)) 
         if user.id == g.current_user.id:
             flash(gettext("Cannot delete yourself"), 'warning')
             return redirect(make_url_for('admin_bp.inspect_user', username=user.username)) 
         if user.username == request.form['username']:
-            user.deleteUser()
+            user.delete_user()
             flash(gettext("Deleted user '%s'" % (user.username)), 'success')
             return redirect(make_url_for('admin_bp.list_users'))
         else:
@@ -110,7 +112,7 @@ def delete_user(id):
 @admin_bp.route('/admin/forms', methods=['GET'])
 @admin_required
 def list_forms():
-    return render_template('list-forms.html', forms=Form.findAll()) 
+    return render_template('list-forms.html', forms=Form.find_all()) 
 
 
 @admin_bp.route('/admin/forms/toggle-public/<string:id>', methods=['GET'])
@@ -120,7 +122,7 @@ def toggle_form_public_admin_prefs(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    queriedForm.toggleAdminFormPublic()
+    queriedForm.toggle_admin_form_public()
     return redirect(make_url_for('form_bp.inspect_form', id=id))
 
 
@@ -132,16 +134,18 @@ def change_author(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
     if request.method == 'POST':
-        if not ('old_author_username' in request.form and request.form['old_author_username']==queriedForm.author.username):
+        author = queriedForm.get_author()
+        if not ('old_author_username' in request.form and \
+                request.form['old_author_username']==author.username):
             flash(gettext("Current author incorrect"), 'warning')
             return render_template('change-author.html', form=queriedForm)
         if 'new_author_username' in request.form:
             new_author=User.find(username=request.form['new_author_username'], hostname=queriedForm.hostname)
             if new_author:
                 if new_author.enabled:
-                    old_author=queriedForm.author
-                    if queriedForm.changeAuthor(new_author):
-                        queriedForm.addLog(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
+                    old_author=author
+                    if queriedForm.change_author(new_author):
+                        queriedForm.add_log(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
                         flash(gettext("Changed author OK"), 'success')
                         return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
                 else:
@@ -157,10 +161,10 @@ def change_author(id):
 @admin_bp.route('/admin/toggle-newuser-notification', methods=['POST'])
 @admin_required
 def toggle_newUser_notification(): 
-    return json.dumps({'notify': g.current_user.toggleNewUserNotification()})
+    return json.dumps({'notify': g.current_user.toggle_new_user_notification()})
 
 
 @admin_bp.route('/admin/toggle-newform-notification', methods=['POST'])
 @admin_required
 def toggle_newForm_notification(): 
-    return json.dumps({'notify': g.current_user.toggleNewFormNotification()})
+    return json.dumps({'notify': g.current_user.toggle_new_form_notification()})

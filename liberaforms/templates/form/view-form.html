@@ -9,7 +9,7 @@
 <script src="/static/formBuilder/form-render.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
-{% set dataConsent = form.getDataConsentForDisplay() %}
+{% set dataConsent = form.get_data_consent_for_display() %}
 
 <div class="container">
 <div class="row">
@@ -25,7 +25,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 {% endif %}
                 <div id="fb-render"></div>
-                {% if form.mightSendConfirmationEmail() %}
+                {% if form.might_send_confirmation_email() %}
                 <div class="form-group form-check" >
                     <input id="confirmation_checkbox" class="form-check-input send-confirmation" type="checkbox" name="send-confirmation" value="ok" disabled />
                     <label for="confirmation_checkbox" class="form-check-label send-confirmation">

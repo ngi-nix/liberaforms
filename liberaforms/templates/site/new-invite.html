@@ -31,7 +31,7 @@
                 <label class="custom-control-label" for="adminCheck">{{ wtform.admin.label }}</label>
             </div>
             </p>
-            {% if g.isRootUserEnabled %}
+            {% if g.is_root_user_enabled %}
                 <div class="title_2 delimited">{%trans%}Root user options{%endtrans%}</div>
 
                 <label>{%trans%}Invite to one of these sites{%endtrans%}</label>

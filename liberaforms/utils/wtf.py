@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import re
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SelectField, PasswordField, BooleanField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
@@ -24,9 +25,10 @@ from flask import g
 from flask_babel import lazy_gettext as _
 
 from liberaforms import app
-from liberaforms.models import User, Installation
-from liberaforms.utils.utils import sanitizeUsername, pwd_policy
-import re
+from liberaforms.models.user import User
+from liberaforms.models.site import Installation
+from liberaforms.utils.sanitizers import sanitize_username
+from liberaforms.utils import validators
 
 
 class NewUser(FlaskForm):
@@ -38,7 +40,7 @@ class NewUser(FlaskForm):
     DPLConsent = BooleanField()
     
     def validate_username(self, username):
-        if username.data != sanitizeUsername(username.data):
+        if username.data != sanitize_username(username.data):
             raise ValidationError(_("Username is not valid"))
             return False
         if username.data in app.config['RESERVED_USERNAMES']:
@@ -48,22 +50,22 @@ class NewUser(FlaskForm):
             raise ValidationError(_("Please use a different username"))
 
     def validate_email(self, email):
-        if User.find(email=email.data):
+        if (email.data) and User.find(email=email.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
+        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
             
     def validate_password(self, password):
-        if pwd_policy.test(password.data):
+        if validators.pwd_policy.test(password.data):
             raise ValidationError(_("Your password is weak"))
             
     def validate_termsAndConditions(self, termsAndConditions):
-        if g.site.TermsConsentID in g.site.newUserConsentment and not termsAndConditions.data:
+        if g.site.terms_consent_id in g.site.newUserConsentment and not termsAndConditions.data:
             raise ValidationError(_("Please accept our terms and conditions"))
 
     def validate_DPLConsent(self, DPLConsent):
-        if g.site.DPLConsentID in g.site.newUserConsentment and not DPLConsent.data:
+        if g.site.DPL_consent_id in g.site.newUserConsentment and not DPLConsent.data:
             raise ValidationError(_("Please accept our data protection policy"))
 
 class Login(FlaskForm):
@@ -71,7 +73,7 @@ class Login(FlaskForm):
     password = PasswordField(_("Password"), validators=[DataRequired()])
     
     def validate_username(self, username):
-        if username.data != sanitizeUsername(username.data):
+        if username.data != sanitize_username(username.data):
             return False
 
 class GetEmail(FlaskForm):
@@ -84,7 +86,7 @@ class ChangeEmail(FlaskForm):
     def validate_email(self, email):
         if User.find(email=email.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
+        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
 
@@ -94,7 +96,7 @@ class ResetPassword(FlaskForm):
     password2 = PasswordField(_("Password again"), validators=[DataRequired(), EqualTo('password')])
 
     def validate_password(self, password):
-        if pwd_policy.test(password.data):
+        if validators.pwd_policy.test(password.data):
             raise ValidationError(_("Your password is weak"))
 
 
@@ -118,7 +120,7 @@ class NewInvite(FlaskForm):
     def validate_email(self, email):
         if User.find(email=email.data, hostname=self.hostname.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.isUser(email.data):
+        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
             # a root_user email can only be used once across all sites.
             raise ValidationError(_("Please use a different email address"))
 
@@ -126,5 +128,5 @@ class NewInvite(FlaskForm):
 class ChangeMenuColor(FlaskForm):
     hex_color = StringField(_("HTML color code"), validators=[DataRequired()])
     def validate_hex_color(self, hex_color):
-        if not bool(re.search("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", hex_color.data)):
+        if not validators.is_hex_color(hex_color.data):
             raise ValidationError(_("Not a valid HTML color code"))

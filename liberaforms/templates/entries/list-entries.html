@@ -1,10 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set fieldIndex = form.getFieldIndexForDataDisplay(with_deleted_columns=with_deleted_columns) %}
-{% set responses = form.getEntriesForDisplay() %}
-{% set total_entries = responses|length %}
-{% set tallyColumns = form.getConditionalFieldPositions() %}
+{% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
+{% set responses = form.get_entries_for_display() %}
+{% set tallyColumns = form.get_conditional_field_positions() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
@@ -28,28 +27,39 @@
         {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
     </a>
     {% if with_deleted_columns %}
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}?with_deleted_columns=true">{%trans%}Download CSV{%endtrans%}</a>
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}?with_deleted_columns=true">
+            {%trans%}Download CSV{%endtrans%}
+        </a>
     {% else %}
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">
+            {%trans%}Download CSV{%endtrans%}
+        </a>
     {% endif %}
     
-    {% if total_entries %}
-    
-    {% if edit_mode %}
-    <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Disable edition{%endtrans%}</a>
-    {% else %}
-    <a class="btn btn-primary btn-sm" role="button" href="?edit_mode=true">{%trans%}Enable edition{%endtrans%}</a>
-    {% endif %}
-    
-    {% if form.hasRemovedFields() %}
-        {% if with_deleted_columns %}
-    <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">{%trans%}Hide deleted columns{%endtrans%}</a>
+    {% if responses|length %}
+        {% if edit_mode %}
+            <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">
+                {%trans%}Disable edition{%endtrans%}
+            </a>
         {% else %}
-    <a class="btn btn-primary btn-sm" role="button" href="?with_deleted_columns=true">{%trans%}Show deleted columns{%endtrans%}</a>
+            <a class="btn btn-primary btn-sm" role="button" href="?edit_mode=true">
+                {%trans%}Enable edition{%endtrans%}
+            </a>
         {% endif %}
-    {% endif %}
-    
-    <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-entries/{{form.id}}">{%trans%}Delete all{%endtrans%}</a>
+        {% if form.has_removed_fields() %}
+            {% if with_deleted_columns %}
+                <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">
+                    {%trans%}Hide deleted columns{%endtrans%}
+                </a>
+            {% else %}
+                <a class="btn btn-primary btn-sm" role="button" href="?with_deleted_columns=true">
+                    {%trans%}Show deleted columns{%endtrans%}
+                </a>
+            {% endif %}
+        {% endif %}
+        <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-entries/{{form.id}}">
+            {%trans%}Delete all{%endtrans%}
+        </a>
     {%endif%}
     </div>
 </div>
@@ -147,11 +157,7 @@ function getFieldValueInRow(fieldName, $row){
 function getRowData($row) {
     var rowData = new Array();
     var arrayLength = fieldIndex.length;
-    for (var loop = 0; loop < arrayLength; loop++) {  
-        if ( fieldIndex[loop]["name"] == "id") {
-            console.log("there' and id")
-            continue
-        }
+    for (var loop = 0; loop < arrayLength; loop++) {
         if ( fieldIndex[loop]["name"] == "marked") {
             if ($row.children('td').eq(loop+1).attr('marked') == 0) {
                 rowData.push({"name":"marked", "value":false})
@@ -256,7 +262,7 @@ $('#entriesTable tbody').on('click', '.saveCellEdition', function () {
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify(getRowData($row)),
+        data: JSON.stringify({'id': getEntryID($row), 'data':getRowData($row)}),
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken)
