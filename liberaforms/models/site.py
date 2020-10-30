@@ -143,11 +143,20 @@ class Site(db.Document):
         return self.consentTexts[1]
     
     def get_consent_for_display(self, id, enabled_only=True):
+        #print("id to find: "+id)
+        #print("site.terms_consent_id: "+self.terms_consent_id)
+        #print("site.DPL_consent_id: "+self.DPL_consent_id)
         if id == self.terms_consent_id:
             return self.get_terms_and_conditions_for_display(enabled_only=enabled_only)
         if id == self.DPL_consent_id:
             return self.get_data_consent_for_display(enabled_only=enabled_only)
-        consent = ConsentText.getConsentByID(id, self)
+        
+        # this method should return before this.
+        print("ERROR")
+        return ConsentText.get_empty_consent()
+        
+        # need to test this
+        consent = ConsentText._get_consent_by_id(id, self)
         if consent and (enabled_only and not consent['enabled']):
             return ConsentText.get_empty_consent(id=consent['id'])
         return ConsentText.get_consent_for_display(id, self)

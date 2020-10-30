@@ -18,46 +18,51 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from liberaforms.utils import sanitizers
-from liberaforms.utils.utils import str2bool
+from liberaforms.utils import utils
 from flask_babel import gettext as _
 from copy import copy
 #from pprint import pprint as pp
 
+
+"""
+variable obj is a Form or User or Site object.
+"""
 
 class ConsentText():
     def __init__(self, *args, **kwargs):        
         pass
     
     @staticmethod
-    def _get_consent_by_id(id, scope):           
-        consent = [item for item in scope.consentTexts if item["id"]==id]
-        #pp({"scope": scope.__class__.__name__, "consents on getByID" :scope.consentTexts})
+    def _get_consent_by_id(id, obj):           
+        consent = [item for item in obj.consentTexts if item["id"]==id]
+        #pp({"obj": obj.__class__.__name__, "consents on getByID" :obj.consentTexts})
         return consent[0] if consent else None
 
-    @classmethod
-    def _save(cls, consent, scope):
-        scope.consentTexts = [consent if item["id"]==consent["id"] else item for item in scope.consentTexts]
-        scope.save()
+    @staticmethod
+    def _save(consent, obj):
+        obj.consentTexts = [consent if item["id"]==consent["id"] else item for item in obj.consentTexts]
+        obj.save()
 
     @classmethod
-    def get_consent_for_display(cls, id, scope):
-        consent = copy(cls._get_consent_by_id(id, scope))
+    def get_consent_for_display(cls, id, obj):
+        consent = copy(cls._get_consent_by_id(id, obj))
         if not consent:
             return None
 
-        if scope.__class__.__name__=="Form":
-            user_consent=cls._get_consent_by_id(id, scope.get_author())
+        if obj.__class__.__name__=="Form":
+            user_consent=cls._get_consent_by_id(id, obj.get_author())
             if user_consent:
                 consent['markdown'] = consent['markdown'] if consent['markdown'] else user_consent['markdown']
                 consent['html'] = consent['html'] if consent['html'] else user_consent['html']
                 consent['label'] = consent['label'] if consent['label'] else user_consent['label']
-            scope = scope.get_author()
+            obj = obj.get_author()
         
-        if scope.__class__.__name__=="User":
-            scope=scope.site
+        if obj.__class__.__name__=="User":
+            # we will add code here when user defined ConsentTexts are enabled (future)
+            obj=obj.site
         
-        if scope.__class__.__name__=="Site":
-            site_consent=scope.get_consent_for_display(consent['id'], enabled_only=True)
+        if obj.__class__.__name__=="Site":
+            site_consent=obj.get_consent_for_display(consent['id'], enabled_only=True)
             if site_consent:
                 if site_consent['markdown'] and not consent['markdown']:
                     consent['markdown'] = site_consent['markdown']
@@ -71,38 +76,38 @@ class ConsentText():
     Saves Form and User consentTexts
     """
     @classmethod
-    def save(cls, id, scope, data):
-        if scope.__class__.__name__ == "Site":
+    def save(cls, id, obj, data):
+        if obj.__class__.__name__ == "Site":
             return None
-        consent = cls._get_consent_by_id(id, scope)
+        consent = cls._get_consent_by_id(id, obj)
         if not consent:
             return None
         consent['markdown'] = sanitizers.escape_markdown(data['markdown'].strip())
         consent['html'] = sanitizers.markdown2HTML(consent['markdown'])
         consent['label'] = sanitizers.strip_html_tags(data['label']).strip()
-        consent['required'] = str2bool(data['required'])
+        consent['required'] = utils.str2bool(data['required'])
         
         default_consent=None        
-        if scope.__class__.__name__ == "Form":
-            default_consent = cls._get_consent_by_id(id, scope.get_author())
+        if obj.__class__.__name__ == "Form":
+            default_consent = cls._get_consent_by_id(id, obj.get_author())
         if not default_consent:
-            site_scope = scope if scope.__class__.__name__ == "Site" else scope.site
-            default_consent = site_scope.get_consent_for_display(consent['id'], enabled_only=True)
+            site_obj = obj if obj.__class__.__name__ == "Site" else obj.site
+            default_consent = site_obj.get_consent_for_display(consent['id'], enabled_only=True)
         if default_consent:
             if consent['markdown'] == default_consent['markdown']:
                 consent['markdown'] = ""
                 consent['html'] = ""
             if consent['label'] == default_consent['label']:
                 consent['label'] = ""
-        cls._save(consent, scope)
-        return cls.get_consent_for_display(consent['id'], scope)
+        cls._save(consent, obj)
+        return cls.get_consent_for_display(consent['id'], obj)
 
     @classmethod
-    def toggle_enabled(cls, id, scope):
-        consent = cls._get_consent_by_id(id, scope)
+    def toggle_enabled(cls, id, obj):
+        consent = cls._get_consent_by_id(id, obj)
         if consent:
             consent['enabled'] = False if consent['enabled'] else True
-            cls._save(consent, scope)
+            cls._save(consent, obj)
             return consent['enabled']
         return False
 

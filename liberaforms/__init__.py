@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from flask import Flask
+from flask import Flask, session
 from flask_session import Session
 from flask_mongoengine import MongoEngine
 from flask_babel import Babel

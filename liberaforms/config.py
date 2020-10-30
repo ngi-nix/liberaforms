@@ -54,11 +54,11 @@ class DefaultConfig(object):
 
 class InternalConfig(object):
     """
-    Internal settings that cannot be overridden.
+    Internal settings that CANNOT be overridden.
     """
     SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.8.0"
+    APP_VERSION = "1.8.1"
     SCHEMA_VERSION = 23
 
     RESERVED_SLUGS = [

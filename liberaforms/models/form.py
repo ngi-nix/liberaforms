@@ -279,6 +279,7 @@ class Form(db.Document):
         return self.consentTexts[0]
     
     def get_consent_for_display(self, id):
+        #print(self.consentTexts)
         return ConsentText.get_consent_for_display(id, self)
 
     def save_consent(self, id, data):
