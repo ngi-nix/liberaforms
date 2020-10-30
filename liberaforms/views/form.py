@@ -192,7 +192,7 @@ def save_form(id=None):
                     "postalCode": "08014",
                     "enabled": False,
                     "expired": False,
-                    "expiryConditions": {"expireDate": False, "fields": {}},
+                    "expiryConditions": {"totalEntries": 0, "expireDate": False, "fields": {}},
                     "hostname": g.site.hostname,
                     "slug": session['slug'],
                     "structure": formStructure,
@@ -385,9 +385,9 @@ def set_expiration_date(id):
         return JsonResponse(json.dumps({'expired': queriedForm.has_expired()}))
 
 
-@form_bp.route('/forms/set-field-condition/<string:id>', methods=['POST'])
+@form_bp.route('/forms/set-expiry-field-condition/<string:id>', methods=['POST'])
 @enabled_user_required
-def set_field_condition(id):
+def set_expiry_field_condition(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps({'condition': False}))
@@ -397,8 +397,8 @@ def set_field_condition(id):
         return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.expired}))
     
     if not request.form['condition']:
-        if request.form['field_name'] in queriedForm.field_conditions:
-            del queriedForm.field_conditions[request.form['field_name']]
+        if request.form['field_name'] in queriedForm.expiry_conditions:
+            del queriedForm.expiry_conditions[request.form['field_name']]
             queriedForm.expired=queriedForm.has_expired()
             queriedForm.save()
         return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.expired}))
@@ -406,10 +406,10 @@ def set_field_condition(id):
     fieldType=availableFields[request.form['field_name']]['type']
     if fieldType == "number":
         try:
-            queriedForm.field_conditions[request.form['field_name']]={
-                                                            "type": fieldType,
-                                                            "condition": int(request.form['condition'])
-                                                            }
+            queriedForm.expiry_conditions[request.form['field_name']]={
+                                                        "type": fieldType,
+                                                        "condition": int(request.form['condition'])
+                                                        }
             queriedForm.expired=queriedForm.has_expired()
             queriedForm.save()
         except:

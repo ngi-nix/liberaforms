@@ -17,7 +17,7 @@ $(document).on("wheel", "input[type=number]", function (e) {
 
 {% if form %}
 function setLimits(){
-    {% for field, values in form.field_conditions.items() %}
+    {% for field, values in form.expiry_conditions.items() %}
         {% if values["type"] == "number" %}
             {% set available = values["condition"] - form.tally_number_field(field) %}
             if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){

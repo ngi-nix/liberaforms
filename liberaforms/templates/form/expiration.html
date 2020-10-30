@@ -196,7 +196,7 @@ jQuery(function($) {
 function setMaxValue(id){
     var value=$('#'+id).val();
     $.ajax({
-        url : "/forms/set-field-condition/{{ form.id }}",
+        url : "/forms/set-expiry-field-condition/{{ form.id }}",
         type: "POST",
         dataType: "json",
         data: {"field_name": id, "condition": value},

@@ -234,5 +234,23 @@ def migrateMongoSchema(schemaVersion):
             return schemaVersion
         print("OK")
         schemaVersion = 23
-        
+
+    if schemaVersion == 23:
+        print("Upgrading to version 24")
+        try:
+            import datetime
+            collection = Form._get_collection()
+            for form in collection.find():
+                form["expiryConditions"]["totalEntries"] = 0
+                form.save()
+            collection = Site._get_collection()
+            for site in collection.find():
+                site["created"] = datetime.date.today().strftime("%Y-%m-%d")
+                site.save()
+        except Exception as e:
+            print(e)
+            return schemaVersion
+        print("OK")
+        schemaVersion = 24
+
     return schemaVersion

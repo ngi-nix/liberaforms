@@ -3,7 +3,7 @@
 
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
 {% set responses = form.get_entries_for_display() %}
-{% set tallyColumns = form.get_conditional_field_positions() %}
+{% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>

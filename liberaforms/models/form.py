@@ -360,8 +360,8 @@ class Form(db.Document):
         result={}
         for element in self.structure:
             if "type" in element and element["type"] == "number":
-                if element["name"] in self.field_conditions:
-                    result[element["name"]]=self.field_conditions[element["name"]]
+                if element["name"] in self.expiry_conditions:
+                    result[element["name"]]=self.expiry_conditions[element["name"]]
                 else:
                     result[element["name"]]={"type":"number", "condition": None}
         return result
@@ -383,25 +383,25 @@ class Form(db.Document):
         return None
 
     @property
-    def field_conditions(self):
+    def expiry_conditions(self):
         return self.expiryConditions["fields"]
 
     def update_expiry_conditions(self):
-        savedConditionalFields = [field for field in self.expiryConditions["fields"]]
+        savedConditionalFields = [field for field in self.expiry_conditions["fields"]]
         availableConditionalFields=[element["name"] for element in self.structure if "name" in element]
         for field in savedConditionalFields:
             if not field in availableConditionalFields:
                 del self.expiryConditions["fields"][field]
 
-    def get_conditional_field_positions(self):
-        conditionalFieldPositions=[]
-        for fieldName, condition in self.field_conditions.items():
+    def get_expiry_numberfield_positions_in_field_index(self):
+        field_positions=[]
+        for fieldName, condition in self.expiry_conditions.items():
             if condition['type'] == 'number':
                 for position, field in enumerate(self.fieldIndex):
                     if field['name'] == fieldName:
-                        conditionalFieldPositions.append(position)
+                        field_positions.append(position)
                         break
-        return conditionalFieldPositions
+        return field_positions
 
     @classmethod
     def save_new_form(cls, formData):
@@ -438,19 +438,24 @@ class Form(db.Document):
         return editors
 
     def can_expire(self):
-        if self.expiryConditions["expireDate"]:
+        if self.expiry_conditions["totalEntries"]:
             return True
-        if self.expiryConditions["fields"]:
+        if self.expiry_conditions["expireDate"]:
+            return True
+        if self.expiry_conditions["fields"]:
             return True
         return False
     
     def has_expired(self):
         if not self.can_expire():
             return False
-        if self.expiryConditions["expireDate"] and not \
-            validators.is_future_date(self.expiryConditions["expireDate"]):
+        if self.expiry_conditions["totalEntries"] and \
+            self.expiry_conditions["totalEntries"] >= self.get_entries().count():
             return True
-        for fieldName, value in self.field_conditions.items():
+        if self.expiry_conditions["expireDate"] and not \
+            validators.is_future_date(self.expiry_conditions["expireDate"]):
+            return True
+        for fieldName, value in self.expiry_conditions.items():
             if value['type'] == 'number':
                 total=self.tally_number_field(fieldName)
                 if total >= int(value['condition']):
