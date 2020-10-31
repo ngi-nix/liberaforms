@@ -23,7 +23,7 @@ from liberaforms import app
 
 
 def migrateMongoSchema(schemaVersion):
-    from liberaforms.models.site import Site
+    from liberaforms.models.site import Site, Installation
     from liberaforms.models.form import Form, FormResponse
     from liberaforms.models.user import User
 
@@ -238,15 +238,11 @@ def migrateMongoSchema(schemaVersion):
     if schemaVersion == 23:
         print("Upgrading to version 24")
         try:
-            import datetime
             collection = Form._get_collection()
-            for form in collection.find():
-                form["expiryConditions"]["totalEntries"] = 0
-                form.save()
+            collection.update_many({}, {"$set": {"expiryConditions.totalEntries": 0} })
+            created_date = Installation.get().created
             collection = Site._get_collection()
-            for site in collection.find():
-                site["created"] = datetime.date.today().strftime("%Y-%m-%d")
-                site.save()
+            collection.update_many({}, {"$set": {"created": created_date} })
         except Exception as e:
             print(e)
             return schemaVersion

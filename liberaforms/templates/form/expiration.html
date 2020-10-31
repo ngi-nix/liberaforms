@@ -66,7 +66,7 @@
         <div class="col-md-3"></div>
         <div class="col-md-6">
         <div class="title_2" style="margin-top:1em">
-            {%trans%}Conditionals{%endtrans%}
+            {%trans%}Fields{%endtrans%}
         </div>
         
         {% for field_name, values in form.get_available_number_type_fields().items() %}        
@@ -88,6 +88,31 @@
               </div>
             </div>
         {%endfor %}
+
+        <div class="title_2" style="margin-top:1em">
+            {%trans%}Maximum responses{%endtrans%}
+        </div>
+            <div class="input-group input-group-sm mb-3 flex-nowrap" style="padding:0.5em;">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="addon-total-entries">
+                    {%trans%}The form will expire after{%endtrans%}
+                </span>
+              </div>
+              {% set total_entries = form.expiry_conditions['totalEntries'] %}
+              {% if total_entries == 0 %}
+                    {% set total_entries = "" %}
+              {% endif %}
+              <input    id="total_entries" type="number" class="form-control pl-sm-3 condition"
+                        value="{{ total_entries }}"
+                        aria-label="{{ form.get_field_label(field_name) }}"
+                        aria-describedby="addon-total-entries">
+              <div class="input-group-append">
+                <input  id="button-total_entries"
+                        class="btn btn-success"
+                        type="button" value="{%trans%}Total responses{%endtrans%}"
+                        onClick="js:setTotalEntries();" />
+              </div>
+            </div>
         </div>
     </div>
 {% endif %}
@@ -219,6 +244,39 @@ function setMaxValue(id){
     });
 }
 {% endif %}
+function setTotalEntries(id){
+    var value = $('#total_entries').val();
+    if (value == "") {
+        value = 0;
+    }
+    $.ajax({
+        url : "/forms/set-expiry-total-entries/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        data: {"total_entries": value},
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.total_entries == 0){
+                data.total_entries = ""
+            }
+            $('#total_entries').val(data.total_entries);
+            $('#button-total_entries').blur()
+            if (data.error === undefined) {
+                fadeOutHighlight($('#button-total_entries').closest(".input-group"))
+            }
+            if (data.expired == true) {
+                $("#expired_alert").show()
+            }else{
+                $("#expired_alert").hide()
+            }
+        }
+    });
+}
 // expired text editor
 $(document).ready(function() {
     var expiredMDE = new SimpleMDE({ 
