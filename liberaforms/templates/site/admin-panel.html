@@ -164,8 +164,9 @@ var csrftoken = "{{ csrf_token() }}";
             <thead>
                 <tr>
                 <th>Site</th>
-                <th>Users</th>
-                <th>Forms</th>
+                <th>{%trans%}Created{%endtrans%}</th>
+                <th>{%trans%}Users{%endtrans%}</th>
+                <th>{%trans%}Forms{%endtrans%}</th>
                 <th></th>
                 </tr>
             </thead>
@@ -178,6 +179,7 @@ var csrftoken = "{{ csrf_token() }}";
             {% set total.forms = total.forms + site_forms %}
             <tr>
                 <td>{{ site.host_url }}</td>
+                <td>{{ site.created }}</td>
                 <td>{{ site_users }}</td>
                 <td>{{ site_forms }}</td>
                 <td class="text-right">

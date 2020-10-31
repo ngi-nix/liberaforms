@@ -59,8 +59,8 @@ class InternalConfig(object):
     SESSION_TYPE = "memcached"
     #SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.8.2"
-    SCHEMA_VERSION = 23
+    APP_VERSION = "1.8.3"
+    SCHEMA_VERSION = 24
 
     RESERVED_SLUGS = [
         "login",

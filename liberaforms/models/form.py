@@ -361,8 +361,8 @@ class Form(db.Document):
         result={}
         for element in self.structure:
             if "type" in element and element["type"] == "number":
-                if element["name"] in self.field_conditions:
-                    result[element["name"]]=self.field_conditions[element["name"]]
+                if element["name"] in self.expiry_conditions['fields']:
+                    result[element["name"]]=self.expiry_conditions['fields'][element["name"]]
                 else:
                     result[element["name"]]={"type":"number", "condition": None}
         return result
@@ -384,25 +384,47 @@ class Form(db.Document):
         return None
 
     @property
-    def field_conditions(self):
-        return self.expiryConditions["fields"]
+    def expiry_conditions(self):
+        return self.expiryConditions
+
+    def set_expiry_field_condition(self, field_name, condition):
+        available_fields=self.get_available_number_type_fields()
+        if not field_name in available_fields:
+            return False
+        if not condition:
+            if field_name in self.expiry_conditions['fields']:
+                del self.expiry_conditions['fields'][field_name]
+                self.expired=self.has_expired()
+                self.save()
+            return False
+        field_type = available_fields[field_name]['type']
+        if field_type == "number":
+            try:
+                self.expiry_conditions['fields'][field_name]={  "type": field_type,
+                                                                "condition": int(condition)}
+                self.expired=self.has_expired()
+                self.save()
+                return condition
+            except:
+                return False
+        return False
 
     def update_expiry_conditions(self):
-        savedConditionalFields = [field for field in self.expiryConditions["fields"]]
-        availableConditionalFields=[element["name"] for element in self.structure if "name" in element]
-        for field in savedConditionalFields:
-            if not field in availableConditionalFields:
-                del self.expiryConditions["fields"][field]
+        saved_expiry_fields = [field for field in self.expiry_conditions['fields']]
+        available_expiry_fields=[element["name"] for element in self.structure if "name" in element]
+        for field in saved_expiry_fields:
+            if not field in available_expiry_fields:
+                del self.expiry_conditions['fields'][field]
 
-    def get_conditional_field_positions(self):
-        conditionalFieldPositions=[]
-        for fieldName, condition in self.field_conditions.items():
+    def get_expiry_numberfield_positions_in_field_index(self):
+        field_positions=[]
+        for fieldName, condition in self.expiry_conditions['fields'].items():
             if condition['type'] == 'number':
                 for position, field in enumerate(self.fieldIndex):
                     if field['name'] == fieldName:
-                        conditionalFieldPositions.append(position)
+                        field_positions.append(position)
                         break
-        return conditionalFieldPositions
+        return field_positions
 
     @classmethod
     def save_new_form(cls, formData):
@@ -439,19 +461,24 @@ class Form(db.Document):
         return editors
 
     def can_expire(self):
-        if self.expiryConditions["expireDate"]:
+        if self.expiry_conditions["totalEntries"]:
             return True
-        if self.expiryConditions["fields"]:
+        if self.expiry_conditions["expireDate"]:
+            return True
+        if self.expiry_conditions["fields"]:
             return True
         return False
     
     def has_expired(self):
         if not self.can_expire():
             return False
-        if self.expiryConditions["expireDate"] and not \
-            validators.is_future_date(self.expiryConditions["expireDate"]):
+        if self.expiry_conditions["totalEntries"] and \
+            self.get_entries().count() >= self.expiry_conditions["totalEntries"]:
             return True
-        for fieldName, value in self.field_conditions.items():
+        if self.expiry_conditions["expireDate"] and not \
+            validators.is_future_date(self.expiry_conditions["expireDate"]):
+            return True
+        for fieldName, value in self.expiry_conditions['fields'].items():
             if value['type'] == 'number':
                 total=self.tally_number_field(fieldName)
                 if total >= int(value['condition']):

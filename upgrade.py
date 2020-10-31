@@ -51,7 +51,8 @@ else:
 if rolled_back:
     print("\nPulling code from git repository..")
     try:
-        process = subprocess.run(["git", "pull"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.run(   ["git", "pull", "origin", "main"],
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if process.stderr:
             print(process.stderr.decode())
         else:
@@ -63,8 +64,10 @@ if rolled_back:
 if git_pulled:
     print("Updating python libraries with pip..")
     try:
-        pip_setuptools = subprocess.run(["pip", "install", "--upgrade", "setuptools"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        pip_install = subprocess.run(["pip", "install", "-r", os.path.join(liberaforms_dir, 'requirements.txt')], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pip_setuptools = subprocess.run(["pip", "install", "--upgrade", "setuptools"],
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        pip_install = subprocess.run(["pip", "install", "-r", os.path.join(liberaforms_dir, 'requirements.txt')],
+                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if pip_setuptools.stderr or pip_install.stderr:
             if pip_setuptools.stderr:
                 print(pip_setuptools.stderr.decode())

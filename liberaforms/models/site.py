@@ -35,6 +35,7 @@ from liberaforms.utils import utils
 
 class Site(db.Document):
     meta = {'collection': 'sites', 'queryset_class': HostnameQuerySet}
+    created = db.StringField(required=True)
     hostname = db.StringField(required=True)
     port = db.StringField(required=False)
     siteName = db.StringField(required=True)
@@ -64,6 +65,7 @@ class Site(db.Document):
             'html': markdown.markdown(defaultMD)
         }
         newSiteData={
+            "created": datetime.date.today().strftime("%Y-%m-%d"),
             "hostname": hostname,
             "port": None,
             "scheme": urlparse(request.host_url).scheme,

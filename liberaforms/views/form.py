@@ -192,7 +192,7 @@ def save_form(id=None):
                     "postalCode": "08014",
                     "enabled": False,
                     "expired": False,
-                    "expiryConditions": {"expireDate": False, "fields": {}},
+                    "expiryConditions": {"totalEntries": 0, "expireDate": False, "fields": {}},
                     "hostname": g.site.hostname,
                     "slug": session['slug'],
                     "structure": formStructure,
@@ -293,7 +293,7 @@ def inspect_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #print(queriedForm)
+    #print(queriedForm.expiry_conditions)
     if not g.current_user.can_inspect_form(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -385,37 +385,40 @@ def set_expiration_date(id):
         return JsonResponse(json.dumps({'expired': queriedForm.has_expired()}))
 
 
-@form_bp.route('/forms/set-field-condition/<string:id>', methods=['POST'])
+@form_bp.route('/forms/set-expiry-field-condition/<string:id>', methods=['POST'])
 @enabled_user_required
-def set_field_condition(id):
+def set_expiry_field_condition(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps({'condition': False}))
+    if 'field_name' in request.form and 'condition' in request.form:
+        condition=queriedForm.set_expiry_field_condition(   request.form['field_name'],
+                                                            request.form['condition'])
+        return JsonResponse(json.dumps({'condition': condition, 'expired': queriedForm.expired}))
+    return JsonResponse(json.dumps({'condition': False}))
 
-    availableFields=queriedForm.get_available_number_type_fields()
-    if not request.form['field_name'] in availableFields:
-        return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.expired}))
-    
-    if not request.form['condition']:
-        if request.form['field_name'] in queriedForm.field_conditions:
-            del queriedForm.field_conditions[request.form['field_name']]
-            queriedForm.expired=queriedForm.has_expired()
-            queriedForm.save()
-        return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.expired}))
-    
-    fieldType=availableFields[request.form['field_name']]['type']
-    if fieldType == "number":
+
+@form_bp.route('/forms/set-expiry-total-entries/<string:id>', methods=['POST'])
+@enabled_user_required
+def set_expiry_total_entries(id):
+    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
+    if not queriedForm:
+        return JsonResponse(json.dumps({'expired': False, 'total_entries':0}))
+    if 'total_entries' in request.form:
         try:
-            queriedForm.field_conditions[request.form['field_name']]={
-                                                            "type": fieldType,
-                                                            "condition": int(request.form['condition'])
-                                                            }
-            queriedForm.expired=queriedForm.has_expired()
+            total_entries = int(request.form['total_entries'])
+            if total_entries < 0:
+                total_entries = 0
+            queriedForm.expiry_conditions['totalEntries']=total_entries
+            queriedForm.expired = queriedForm.has_expired()
             queriedForm.save()
         except:
-            return JsonResponse(json.dumps({'condition': False, 'expired': queriedForm.has_expired()}))
-    return JsonResponse(    json.dumps({'condition': request.form['condition'],
-                            'expired': queriedForm.expired}) )
+            total_entries = queriedForm.expiry_conditions['totalEntries']
+            return JsonResponse(json.dumps({'expired': False,
+                                            'total_entries': total_entries,
+                                            "error": True}))
+    total_entries = queriedForm.expiry_conditions['totalEntries']
+    return JsonResponse(json.dumps({'expired': queriedForm.expired, 'total_entries':total_entries}))
 
 
 @form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
