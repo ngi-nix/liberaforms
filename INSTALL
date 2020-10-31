@@ -17,6 +17,10 @@ You can create a SECRET_KEY like this
 
 openssl rand -base64 32
 
+Protect the config file
+
+chown www-data /opt/LiberaForms/config.cfg
+chmod go-rw /opt/LiberaForms/config.cfg
 
 ## Create a python3 venv
 
@@ -31,7 +35,6 @@ apt-get install virtualenv
 virtualenv /opt/LiberaForms/venv --python=python3
 
 
-
 ## Install python packages
 
 source /opt/LiberaForms/venv/bin/activate
@@ -39,15 +42,15 @@ pip install --upgrade setuptools
 pip install wheel
 pip install -r /opt/LiberaForms/requirements.txt
 pip install gunicorn
+pip install pylibmc
 
 ### File permissions
 Admins can upload a logo. You need to give the system user who runs LiberaForms write permission
 
 chown -R www-data /opt/LiberaForms/liberaforms/static/images
 
-LiberaForms saves session data in files. www-data needs to write there too. 
-
-chown -R www-data /opt/LiberaForms/flask_session
+### Session management
+apt-get install memcached
 
 
 ### Test your installation
