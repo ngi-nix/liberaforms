@@ -50,13 +50,12 @@ class ConsentText():
             return None
 
         if obj.__class__.__name__=="Form":
-            user_consent=cls._get_consent_by_id(id, obj.get_author())
+            obj = obj.get_author()
+            user_consent = cls._get_consent_by_id(id, obj)
             if user_consent:
                 consent['markdown'] = consent['markdown'] if consent['markdown'] else user_consent['markdown']
                 consent['html'] = consent['html'] if consent['html'] else user_consent['html']
                 consent['label'] = consent['label'] if consent['label'] else user_consent['label']
-            obj = obj.get_author()
-        
         if obj.__class__.__name__=="User":
             # we will add code here when user defined ConsentTexts are enabled (future)
             obj=obj.site

@@ -59,17 +59,25 @@ class Form(db.Document):
     afterSubmitText = db.DictField(required=True)
     expiredText = db.DictField(required=True)
     consentTexts = db.ListField(required=False)
-    site = None
+    _site=None
 
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
-        from liberaforms.models.site import Site
-        self.site=Site.find(hostname=self.hostname)
-   
+        #print("Form.__init__ {}".format(self.slug))
+    
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
         return print_obj_values(self)
         
+    @property
+    def site(self):
+        from liberaforms.models.site import Site
+        if self._site:
+            return self._site
+        #print("form.site")
+        self._site = Site.find(hostname=self.hostname)
+        return self._site
+    
     @classmethod
     def find(cls, **kwargs):
         return cls.find_all(**kwargs).first()

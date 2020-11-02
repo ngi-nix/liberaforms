@@ -40,16 +40,20 @@ class User(db.Document):
     created = db.StringField(required=True)
     token = db.DictField(required=False)
     consentTexts = db.ListField(required=False)
-    site=None
 
     def __init__(self, *args, **kwargs):
-        from liberaforms.models.site import Site
         db.Document.__init__(self, *args, **kwargs)
-        self.site=Site.find(hostname=self.hostname)
+        #print("User.__init__ {}".format(self.username))
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
         return print_obj_values(self)
+    
+    @property
+    def site(self):
+        #print("user.site")
+        from liberaforms.models.site import Site
+        return Site.find(hostname=self.hostname)
     
     @classmethod
     def create(cls, newUserData):

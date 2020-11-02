@@ -50,6 +50,7 @@ class Site(db.Document):
 
     def __init__(self, *args, **kwargs):        
         db.Document.__init__(self, *args, **kwargs)
+        #print("Site.__init__ {}".format(self.hostname))
     
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -250,22 +251,6 @@ class Site(db.Document):
         for invite in invites:
             invite.delete()
         return self.delete()
-
-    """
-    def get_chart_data(self, hostname=None):
-        time_fields={"users": [], "forms": []}
-        user_count=0
-        users = User.find_all(hostname=hostname) if hostname else User.find_all()
-        for user in users:
-            user_count += 1
-            time_fields["users"].append({"x": user.created, "y": user_count})
-        form_count=0
-        forms = Form.find_all(hostname=hostname) if hostname else Form.find_all()
-        for form in forms:
-            form_count += 1
-            time_fields["forms"].append({"x": form.created, "y": form_count})
-        return time_fields
-    """
     
     def get_forms(self, **kwargs):
         kwargs['hostname'] = self.hostname
@@ -329,7 +314,7 @@ class Invite(db.Document):
     token = db.DictField(required=True)
     admin = db.BooleanField()
    
-    def __init__(self, *args, **kwargs):        
+    def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
 
     def __str__(self):
