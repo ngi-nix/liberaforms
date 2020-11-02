@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-31 21:03+0100\n"
+"POT-Creation-Date: 2020-11-02 15:14+0100\n"
 "PO-Revision-Date: 2020-10-13 17:15+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
@@ -17,6 +17,57 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+
+#: models/form.py:118
+msgid "Marked"
+msgstr ""
+
+#: models/form.py:119 templates/admin/inspect-user.html:39
+#: templates/admin/inspect-user.html:93 templates/admin/list-forms.html:28
+#: templates/admin/list-users.html:29 templates/form/inspect-form.html:210
+#: templates/form/my-forms.html:35
+msgid "Created"
+msgstr "Sortuta"
+
+#: models/form.py:123 utils/form_helper.py:63
+msgid "Label"
+msgstr "Etiketa"
+
+#: models/form.py:164 templates/form/inspect-form.html:151
+#: utils/consent_texts.py:136
+msgid "DPL"
+msgstr "DPBLO"
+
+#: models/form.py:314
+msgid "Sorry, this form has expired."
+msgstr ""
+
+#: models/form.py:342
+msgid "Thank you!!"
+msgstr ""
+
+#: models/form.py:689
+msgid "Form title"
+msgstr ""
+
+#: models/form.py:690
+msgid "Context"
+msgstr ""
+
+#: models/form.py:691
+msgid ""
+" * Describe your form.\n"
+" * Add relevant content, links, images, etc."
+msgstr ""
+
+#: models/site.py:361
+msgid ""
+"Hello,\n"
+"\n"
+"You have been invited to LiberaForms.\n"
+"\n"
+"Regards."
+msgstr ""
 
 #: templates/base.html:43
 msgid "Toggle root mode"
@@ -199,12 +250,6 @@ msgstr "Egia"
 #: templates/user/user-settings.html:98 templates/user/user-settings.html:107
 msgid "False"
 msgstr "Gezurra"
-
-#: templates/admin/inspect-user.html:39 templates/admin/inspect-user.html:93
-#: templates/admin/list-forms.html:28 templates/admin/list-users.html:29
-#: templates/form/inspect-form.html:210 templates/form/my-forms.html:35
-msgid "Created"
-msgstr "Sortuta"
 
 #: templates/admin/inspect-user.html:43
 msgid "Language"
@@ -508,10 +553,6 @@ msgstr "Sarbide mugatua"
 msgid "Confirmation"
 msgstr "Egiaztapena"
 
-#: templates/form/inspect-form.html:151 utils/consent_texts.py:137
-msgid "DPL"
-msgstr "DPBLO"
-
 #: templates/form/inspect-form.html:169 templates/site/consent.html:30
 #: templates/user/consent.html:22
 msgid "Data protection"
@@ -525,7 +566,7 @@ msgstr "Erabili txantiloia"
 #: templates/form/inspect-form.html:555 templates/site/consent.html:64
 #: templates/site/consent.html:83 templates/user/consent.html:48
 #: templates/user/consent.html:67 templates/user/new-user.html:65
-#: utils/consent_texts.py:72
+#: utils/consent_texts.py:71
 msgid "I agree"
 msgstr "Ados nago"
 
@@ -944,11 +985,11 @@ msgstr "Jakinarazi erabiltzaile berriak izena ematean"
 msgid "Notify me when new form has been created"
 msgstr "Jakinarazi galdetegi berria sortzean"
 
-#: utils/consent_texts.py:126
+#: utils/consent_texts.py:125
 msgid "Please accept our terms and conditions."
 msgstr "Onartu gure erabilera-baldintzak."
 
-#: utils/consent_texts.py:138
+#: utils/consent_texts.py:137
 msgid ""
 "We take your data protection seriously. Please contact us for any "
 "inquiries."
@@ -1035,10 +1076,6 @@ msgstr "'%s' galdetegia iraungitu da, %s zerbitzarian"
 #: utils/email.py:198
 msgid "LiberaForms. A form has expired"
 msgstr "LiberaForms. Galdetegi bat iraungitu zaizu"
-
-#: utils/form_helper.py:63
-msgid "Label"
-msgstr "Etiketa"
 
 #: utils/wraps.py:108
 msgid "That's a nasty key!"
