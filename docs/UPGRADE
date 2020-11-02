@@ -1,12 +1,3 @@
-# Breaking changes
-
-Version 1.8.3
-Flask sessions are now stored in memcached. You must install it.
-
-apt-get install memcached
-source /opt/LiberaForms/venv/bin/activate
-pip install pylibmc
-
 # Upgrading LiberaForms
 
 There are two ways to upgrade LiberaForms. Script assisted, and Manual.
