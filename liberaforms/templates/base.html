@@ -70,14 +70,23 @@
         <ul class="navbar-nav" style="margin-left: auto;">
             {% if g.is_admin %}
                 <li class="nav-item">
-                <a class="nav-link" href="/site/admin">{%trans%}Admin{%endtrans%}</a>
+                <a class="nav-link" href="/admin">
+                    {%trans%}Config{%endtrans%}
+                    <i class="fa fa-cogs" aria-hidden="true"></i>
+                </a>
                 </li>
-            {% endif %}          
+            {% endif %}
             <li class="nav-item">
-            <a class="nav-link" href="/user/{{ g.current_user.username }}">{%trans%}Settings{%endtrans%}</a>
+            <a class="nav-link" href="/user/{{ g.current_user.username }}">
+                {%trans%}Profile{%endtrans%}
+                <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+            </a>
             </li>
             <li class="nav-item">
-            <a class="nav-link" href="/user/logout">{%trans%}Logout{%endtrans%} <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+            <a class="nav-link" href="/user/logout">
+                {%trans%}Logout{%endtrans%}
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+            </a>
             </li>
         </ul>
         {% else %}
@@ -131,8 +140,11 @@
 var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_root_enable').addEventListener('click', function(evt){
     evt.preventDefault();
+    toggleRootMode();
+});
+function toggleRootMode() {
     $.ajax({
-        url : "/user/toggle-root-enabled",
+        url : "/site/toggle-root-mode-enabled",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -145,8 +157,8 @@ document.getElementById('toggle_root_enable').addEventListener('click', function
             location.reload();
             return false;
         }
-    });
-});
+    });    
+}
 </script>
 {% endif %}
 

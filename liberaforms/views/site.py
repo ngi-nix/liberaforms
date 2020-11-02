@@ -212,24 +212,6 @@ def test_smtp():
     return redirect(make_url_for('site_bp.smtp_config'))
 
 
-@site_bp.route('/site/admin', methods=['GET'])
-@admin_required
-def site_admin():
-    invites = Invite.find_all()
-    sites=None
-    installation=None
-    if g.is_root_user_enabled:
-        sites=Site.find_all()
-        installation=Installation.get()
-    context = {
-        'invites': invites,
-        'site': g.site,
-        'sites': sites,
-        'installation': installation
-    }
-    return render_template('admin-panel.html', user=g.current_user, **context)
-
-
 @site_bp.route('/site/edit/<string:hostname>', methods=['GET'])
 @rootuser_required
 def edit_site(hostname):
@@ -324,3 +306,18 @@ def delete_invite(id):
     else:
         flash(gettext("Opps! We can't find that invitation"), 'error')
     return redirect(make_url_for('site_bp.site_admin'))
+
+
+@site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])
+@admin_required
+def toggle_enable_root():
+    if not g.current_user.is_root_user():
+        session["root_enabled"]=False
+        return JsonResponse(json.dumps({'enabled': False}))
+    if session["root_enabled"] == True:
+        session["root_enabled"]=False
+        flash(gettext("Root disabled"), 'success')
+    else:
+        session["root_enabled"]=True
+        flash(gettext("Root enabled"), 'success')
+    return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))

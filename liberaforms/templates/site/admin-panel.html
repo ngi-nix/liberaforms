@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script>
-var csrftoken = "{{ csrf_token() }}";
-</script>
 
 <div class="container">
 <div class="row">
@@ -46,7 +43,9 @@ var csrftoken = "{{ csrf_token() }}";
             {% endif %}
             <td>{{invite.admin}}</td>
             <td class="text-right">
-            <a class="btn btn-xs btn-danger" role="button" href="/site/invites/delete/{{invite.id}}">{%trans%}Delete{%endtrans%}</a>
+                <a class="btn btn-xs btn-danger" role="button" href="/site/invites/delete/{{invite.id}}">
+                    {%trans%}Delete{%endtrans%}
+                </a>
             </td>
         </tr>
         <tr style="display:none">
@@ -126,40 +125,21 @@ var csrftoken = "{{ csrf_token() }}";
             </tr>
         </table>
     
-    {% if g.current_user.is_root_user() and not g.is_root_user_enabled %}
-        <div class="title_1" style="margin-top:2.75em;">
+    {% if g.current_user.is_root_user() %}
+        <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
             {%trans%}Root user{%endtrans%}
-            <i class="fa fa-shield" style="font-size:0.9em" aria-hidden="true"></i>
+            {% if g.is_root_user_enabled %}
+                <i class="fa fa-shield" style="font-size:0.9em; color:red" aria-hidden="true"></i>
+            {% else %}
+                <i class="fa fa-shield" style="font-size:0.9em" aria-hidden="true"></i>
+            {% endif %}
             <div style="float:right">
-                <button class="btn btn-primary btn-sm" onclick="js:enableRootMode()">
-                    {%trans%}Enable{%endtrans%} {%trans%}root mode{%endtrans%}
+                <button class="btn btn-primary btn-sm" onclick="js:toggleRootMode()">
+                    {%trans%}Toggle root mode{%endtrans%}
                 </button>
             </div>
         </div>
-        <script>
-        function enableRootMode() {
-            $.ajax({
-                url : "/user/toggle-root-enabled",
-                type: "POST",
-                dataType: "json",
-                beforeSend: function(xhr, settings) {
-                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                        xhr.setRequestHeader("X-CSRFToken", csrftoken)
-                    }
-                },
-                success: function(data, textStatus, jqXHR)
-                {
-                    location.reload();
-                    return false;
-                }
-            });
-        }
-        </script>
-    {% endif %}
-    {% if g.is_root_user_enabled %}
-        <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
-            {%trans%}Root user{%endtrans%}
-        </div>
+        
         <table class="table table-sm">
             <thead>
                 <tr>
@@ -171,40 +151,46 @@ var csrftoken = "{{ csrf_token() }}";
                 </tr>
             </thead>
 
-        {% set total = namespace(forms=0, users=0) %}      
+        {% set total = { 'forms': 0, 'users': 0} %}    
         {% for site in sites %}
             {% set site_users = site.get_total_users() %}
             {% set site_forms = site.get_total_forms() %}
-            {% set total.users = total.users + site_users %}
-            {% set total.forms = total.forms + site_forms %}
+            {% if total.update({'users': total.users + site_users }) %}{% endif %}
+            {% if total.update({'forms': total.forms + site_forms }) %}{% endif %}
             <tr>
                 <td>{{ site.host_url }}</td>
                 <td>{{ site.created }}</td>
                 <td>{{ site_users }}</td>
                 <td>{{ site_forms }}</td>
                 <td class="text-right">
-                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" onClick="location.href='/site/edit/{{site.hostname}}'">
+                <input  class="btn-primary btn btn-xs"
+                        type="button" value="{%trans%}Edit{%endtrans%}"
+                        {% if not g.is_root_user_enabled %}disabled=""{% endif %}
+                        onClick="location.href='/site/edit/{{site.hostname}}'">
                 </td>
             </tr>
         {% endfor %}
             <tr style="font-weight:bold">
                 <td>Total</td>
+                <td></td>
                 <td>{{ total.users }}</td>
                 <td>{{ total.forms }}</td>
                 <td></td>
             </tr>        
         </table>
-        
+    {% endif %}
         <p>&nbsp;</p>
         <div class="title_2">
             {%trans%}Installation{%endtrans%}
         </div>
 
         <table class="table table-sm">
+        {% if g.current_user.is_root_user() %}
         <tr>
             <td>{%trans%}Created{%endtrans%}</td>
             <td>{{installation.created}}</td>
         </tr>
+        {% endif %}
         <tr>
             <td>LiberaForms version</td>
             <td>{{config['APP_VERSION']}}</td>
@@ -214,12 +200,12 @@ var csrftoken = "{{ csrf_token() }}";
             <td>{{installation.schemaVersion}}</td>
         </tr>
         </table>
-    {% endif %}
     </div>
 </div>
 </div>
 
 <script>
+var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
     $.ajax({
         url : "/site/toggle-invitation-only",

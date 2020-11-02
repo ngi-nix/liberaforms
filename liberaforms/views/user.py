@@ -184,20 +184,6 @@ def toggle_new_entry_notification_default():
     default=g.current_user.toggle_new_entry_notification_default()
     return JsonResponse(json.dumps({'default': default}))
 
-@user_bp.route('/user/toggle-root-enabled', methods=['POST'])
-@admin_required
-def toggle_enable_root():
-    if not g.current_user.is_root_user():
-        session["root_enabled"]=False
-        return JsonResponse(json.dumps({'enabled': False}))
-    if session["root_enabled"] == True:
-        session["root_enabled"]=False
-        flash(gettext("Root disabled"), 'success')
-    else:
-        session["root_enabled"]=True
-        flash(gettext("Root enabled"), 'success')
-    return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))
-    
 
 """
 This may be used to validate a New user's email, or an existing user's Change email request

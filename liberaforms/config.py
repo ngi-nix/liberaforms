@@ -57,7 +57,7 @@ class InternalConfig(object):
     Internal settings that CANNOT be overridden.
     """
 
-    APP_VERSION = "1.8.6"
+    APP_VERSION = "1.8.7"
     SCHEMA_VERSION = 24
 
     RESERVED_SLUGS = [
@@ -67,6 +67,8 @@ class InternalConfig(object):
         "admins",
         "user",
         "users",
+        "profile",
+        "root",
         "form",
         "forms",
         "site",

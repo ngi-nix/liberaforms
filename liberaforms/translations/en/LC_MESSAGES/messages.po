@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-11-02 15:14+0100\n"
+"POT-Creation-Date: 2020-11-02 20:52+0100\n"
 "PO-Revision-Date: 2020-09-23 13:09+0200\n"
 "Last-Translator: \n"
 "Language: en\n"
@@ -25,7 +25,8 @@ msgstr ""
 #: models/form.py:119 templates/admin/inspect-user.html:39
 #: templates/admin/inspect-user.html:93 templates/admin/list-forms.html:28
 #: templates/admin/list-users.html:29 templates/form/inspect-form.html:210
-#: templates/form/my-forms.html:35
+#: templates/form/my-forms.html:35 templates/site/admin-panel.html:28
+#: templates/site/admin-panel.html:147 templates/site/admin-panel.html:190
 msgid "Created"
 msgstr ""
 
@@ -34,7 +35,7 @@ msgid "Label"
 msgstr ""
 
 #: models/form.py:164 templates/form/inspect-form.html:151
-#: utils/consent_texts.py:136
+#: templates/site/admin-panel.html:97 utils/consent_texts.py:136
 msgid "DPL"
 msgstr "GDPR"
 
@@ -69,18 +70,19 @@ msgid ""
 "Regards."
 msgstr ""
 
-#: templates/base.html:43
+#: templates/base.html:43 templates/site/admin-panel.html:138
 msgid "Toggle root mode"
 msgstr ""
 
 #: templates/admin/delete-user.html:21 templates/admin/inspect-user.html:86
 #: templates/admin/inspect-user.html:199 templates/admin/list-users.html:32
-#: templates/base.html:55 templates/site/edit-site.html:26
+#: templates/base.html:55 templates/site/admin-panel.html:149
+#: templates/site/edit-site.html:26
 msgid "Forms"
 msgstr ""
 
 #: templates/admin/list-users.html:12 templates/base.html:58
-#: templates/site/edit-site.html:22
+#: templates/site/admin-panel.html:148 templates/site/edit-site.html:22
 msgid "Users"
 msgstr ""
 
@@ -88,24 +90,24 @@ msgstr ""
 msgid "My forms"
 msgstr ""
 
-#: templates/admin/list-users.html:33 templates/base.html:73
-msgid "Admin"
+#: templates/base.html:74
+msgid "Config"
 msgstr ""
 
-#: templates/base.html:77
-msgid "Settings"
+#: templates/base.html:82
+msgid "Profile"
 msgstr ""
 
-#: templates/base.html:80
+#: templates/base.html:88
 msgid "Logout"
 msgstr ""
 
-#: templates/base.html:92 templates/base.html:96 templates/user/login.html:10
+#: templates/base.html:102 templates/base.html:106 templates/user/login.html:10
 #: templates/user/login.html:23
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:99
+#: templates/base.html:109
 msgid "Create an account"
 msgstr ""
 
@@ -235,8 +237,9 @@ msgstr ""
 #: templates/entries/list-entries.html:121 templates/form/expiration.html:21
 #: templates/form/inspect-form.html:77 templates/form/inspect-form.html:92
 #: templates/form/inspect-form.html:100 templates/form/inspect-form.html:112
-#: templates/form/inspect-form.html:126 templates/user/user-settings.html:72
-#: templates/user/user-settings.html:97 templates/user/user-settings.html:106
+#: templates/form/inspect-form.html:126 templates/site/admin-panel.html:88
+#: templates/user/user-settings.html:72 templates/user/user-settings.html:97
+#: templates/user/user-settings.html:106
 msgid "True"
 msgstr ""
 
@@ -246,8 +249,9 @@ msgstr ""
 #: templates/entries/list-entries.html:123 templates/form/expiration.html:22
 #: templates/form/inspect-form.html:78 templates/form/inspect-form.html:94
 #: templates/form/inspect-form.html:102 templates/form/inspect-form.html:114
-#: templates/form/inspect-form.html:128 templates/user/user-settings.html:73
-#: templates/user/user-settings.html:98 templates/user/user-settings.html:107
+#: templates/form/inspect-form.html:128 templates/site/admin-panel.html:89
+#: templates/user/user-settings.html:73 templates/user/user-settings.html:98
+#: templates/user/user-settings.html:107
 msgid "False"
 msgstr ""
 
@@ -256,7 +260,7 @@ msgid "Language"
 msgstr ""
 
 #: templates/admin/inspect-user.html:47 templates/admin/list-users.html:31
-#: utils/wtf.py:36
+#: templates/site/admin-panel.html:29 utils/wtf.py:36
 msgid "Email"
 msgstr ""
 
@@ -295,6 +299,10 @@ msgstr ""
 #: templates/form/inspect-form.html:155 templates/form/share-form.html:61
 #: templates/user/consent.html:29
 msgid "Enabled"
+msgstr ""
+
+#: templates/admin/list-users.html:33 templates/site/admin-panel.html:33
+msgid "Admin"
 msgstr ""
 
 #: templates/common/change-language.html:11
@@ -394,8 +402,8 @@ msgstr ""
 msgid "Write the name of the form below"
 msgstr ""
 
-#: templates/form/delete-form.html:33 templates/site/delete-site.html:36
-#: templates/site/edit-site.html:64
+#: templates/form/delete-form.html:33 templates/site/admin-panel.html:47
+#: templates/site/delete-site.html:36 templates/site/edit-site.html:64
 msgid "Delete"
 msgstr ""
 
@@ -694,6 +702,88 @@ msgstr ""
 msgid "Opps! 500 server error"
 msgstr ""
 
+#: templates/site/admin-panel.html:11
+msgid "Administrator"
+msgstr ""
+
+#: templates/site/admin-panel.html:16
+msgid "Invitations"
+msgstr ""
+
+#: templates/site/admin-panel.html:20
+msgid "Invite a new user"
+msgstr ""
+
+#: templates/site/admin-panel.html:53
+msgid "Invitation message"
+msgstr ""
+
+#: templates/site/admin-panel.html:63
+msgid "Site settings"
+msgstr ""
+
+#: templates/site/admin-panel.html:68
+msgid "Site name"
+msgstr ""
+
+#: templates/site/admin-panel.html:73 templates/site/admin-panel.html:80
+#: templates/site/admin-panel.html:109 templates/site/admin-panel.html:116
+#: templates/site/edit-site.html:59 templates/user/user-settings.html:34
+#: templates/user/user-settings.html:48 templates/user/user-settings.html:56
+msgid "Change"
+msgstr ""
+
+#: templates/site/admin-panel.html:77
+msgid "Default language"
+msgstr ""
+
+#: templates/site/admin-panel.html:84 templates/site/edit-site.html:30
+msgid "Invitation only"
+msgstr ""
+
+#: templates/site/admin-panel.html:94
+msgid "Consent"
+msgstr ""
+
+#: templates/site/admin-panel.html:96 templates/site/consent.html:28
+#: templates/user/new-user.html:50
+msgid "Terms and conditions"
+msgstr ""
+
+#: templates/site/admin-panel.html:97
+msgid "etc"
+msgstr ""
+
+#: templates/site/admin-panel.html:100 templates/site/admin-panel.html:167
+#: templates/site/consent.html:35 templates/user/consent.html:33
+#: templates/user/user-settings.html:82
+msgid "Edit"
+msgstr ""
+
+#: templates/site/admin-panel.html:104
+msgid "Favicon"
+msgstr ""
+
+#: templates/site/admin-panel.html:113 templates/site/menu-color.html:9
+msgid "Menu color"
+msgstr ""
+
+#: templates/site/admin-panel.html:120 utils/wtf.py:104
+msgid "Email server"
+msgstr ""
+
+#: templates/site/admin-panel.html:123
+msgid "Configure"
+msgstr ""
+
+#: templates/site/admin-panel.html:130
+msgid "Root user"
+msgstr ""
+
+#: templates/site/admin-panel.html:184
+msgid "Installation"
+msgstr ""
+
 #: templates/site/change-site-favicon.html:12
 msgid "Change site favicon"
 msgstr ""
@@ -732,15 +822,6 @@ msgstr ""
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
-msgstr ""
-
-#: templates/site/consent.html:28 templates/user/new-user.html:50
-msgid "Terms and conditions"
-msgstr ""
-
-#: templates/site/consent.html:35 templates/user/consent.html:33
-#: templates/user/user-settings.html:82
-msgid "Edit"
 msgstr ""
 
 #: templates/site/consent.html:39
@@ -795,10 +876,6 @@ msgstr ""
 msgid "Sitename"
 msgstr ""
 
-#: templates/site/edit-site.html:30
-msgid "Invitation only"
-msgstr ""
-
 #: templates/site/edit-site.html:35
 msgid "Public link creation"
 msgstr ""
@@ -807,17 +884,8 @@ msgstr ""
 msgid "Scheme"
 msgstr ""
 
-#: templates/site/edit-site.html:59 templates/user/user-settings.html:34
-#: templates/user/user-settings.html:48 templates/user/user-settings.html:56
-msgid "Change"
-msgstr ""
-
 #: templates/site/edit-site.html:65 templates/user/new-user.html:90
 msgid "Go back"
-msgstr ""
-
-#: templates/site/menu-color.html:9
-msgid "Menu color"
 msgstr ""
 
 #: templates/site/new-invite.html:11
@@ -1101,10 +1169,6 @@ msgstr ""
 msgid "New email address"
 msgstr ""
 
-#: utils/wtf.py:104
-msgid "Email server"
-msgstr ""
-
 #: utils/wtf.py:105
 msgid "Port"
 msgstr ""
@@ -1141,28 +1205,28 @@ msgstr ""
 msgid "Not a valid HTML color code"
 msgstr ""
 
-#: views/admin.py:52 views/admin.py:90
+#: views/admin.py:64 views/admin.py:102
 msgid "User not found"
 msgstr ""
 
-#: views/admin.py:95
+#: views/admin.py:107
 msgid "Cannot delete root user"
 msgstr ""
 
-#: views/admin.py:98
+#: views/admin.py:110
 msgid "Cannot delete yourself"
 msgstr ""
 
-#: views/admin.py:102
+#: views/admin.py:114
 #, python-format
 msgid "Deleted user '%s'"
 msgstr ""
 
-#: views/admin.py:105
+#: views/admin.py:117
 msgid "Username does not match"
 msgstr ""
 
-#: views/admin.py:123 views/admin.py:134 views/entries.py:42
+#: views/admin.py:135 views/admin.py:146 views/entries.py:42
 #: views/entries.py:55 views/entries.py:65 views/entries.py:149
 #: views/form.py:133 views/form.py:276 views/form.py:294 views/form.py:309
 #: views/form.py:319 views/form.py:354 views/form.py:429 views/form.py:444
@@ -1170,25 +1234,25 @@ msgstr ""
 msgid "Can't find that form"
 msgstr ""
 
-#: views/admin.py:140
+#: views/admin.py:152
 msgid "Current author incorrect"
 msgstr ""
 
-#: views/admin.py:148
+#: views/admin.py:160
 #, python-format
 msgid "Changed author from %s to %s"
 msgstr ""
 
-#: views/admin.py:149
+#: views/admin.py:161
 msgid "Changed author OK"
 msgstr ""
 
-#: views/admin.py:152
+#: views/admin.py:164
 #, python-format
 msgid "Cannot use %s. The user is not enabled"
 msgstr ""
 
-#: views/admin.py:154
+#: views/admin.py:166
 #, python-format
 msgid "Can't find username %s"
 msgstr ""
@@ -1358,7 +1422,7 @@ msgstr ""
 msgid "Couldn't find that token"
 msgstr ""
 
-#: views/site.py:60 views/user.py:213
+#: views/site.py:60 views/user.py:199
 msgid "Your petition has expired"
 msgstr ""
 
@@ -1402,34 +1466,42 @@ msgstr ""
 msgid "SMTP config works!"
 msgstr ""
 
-#: views/site.py:248
+#: views/site.py:230
 msgid "Color changed OK"
 msgstr ""
 
-#: views/site.py:287
+#: views/site.py:269
 msgid "Site not found"
 msgstr ""
 
-#: views/site.py:292
+#: views/site.py:274
 msgid "Cannot delete current site"
 msgstr ""
 
-#: views/site.py:295
+#: views/site.py:277
 #, python-format
 msgid "Deleted %s"
 msgstr ""
 
-#: views/site.py:298
+#: views/site.py:280
 msgid "Site name does not match"
 msgstr ""
 
-#: views/site.py:312
+#: views/site.py:294
 #, python-format
 msgid "We've sent an invitation to %s"
 msgstr ""
 
-#: views/site.py:325
+#: views/site.py:307
 msgid "Opps! We can't find that invitation"
+msgstr ""
+
+#: views/site.py:319
+msgid "Root disabled"
+msgstr ""
+
+#: views/site.py:322
+msgid "Root enabled"
 msgstr ""
 
 #: views/user.py:54
@@ -1457,23 +1529,15 @@ msgstr ""
 msgid "Password changed OK"
 msgstr ""
 
-#: views/user.py:195
-msgid "Root disabled"
-msgstr ""
-
-#: views/user.py:198
-msgid "Root enabled"
-msgstr ""
-
-#: views/user.py:210
+#: views/user.py:196
 msgid "We couldn't find that petition"
 msgstr ""
 
-#: views/user.py:225
+#: views/user.py:211
 msgid "Your email address is valid"
 msgstr ""
 
-#: views/user.py:255
+#: views/user.py:241
 msgid "Bad credentials"
 msgstr ""
 
@@ -1583,5 +1647,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Total responses"
+#~ msgstr ""
+
+#~ msgid "Settings"
 #~ msgstr ""
 

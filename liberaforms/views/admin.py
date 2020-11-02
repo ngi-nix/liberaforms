@@ -24,6 +24,7 @@ from flask_babel import gettext
 
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
+from liberaforms.models.site import Site, Invite, Installation
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
@@ -35,9 +36,20 @@ admin_bp = Blueprint('admin_bp', __name__,
                     template_folder='../templates/admin')
 
 
+@admin_bp.route('/admin', methods=['GET'])
+@admin_required
+def site_admin():
+    sites = Site.objects() if g.current_user.is_root_user() else None
+    context = {
+        'site': g.site,
+        'sites': sites,
+        'invites': Invite.find_all(),
+        'installation': Installation.get()
+    }
+    return render_template('admin-panel.html', user=g.current_user, **context)
+
 """ User management """
 
-@admin_bp.route('/admin', methods=['GET'])
 @admin_bp.route('/admin/users', methods=['GET'])
 @admin_required
 def list_users():
