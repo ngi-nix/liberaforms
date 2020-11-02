@@ -37,8 +37,8 @@
 
             <div class="form-actions">
             <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
-            {% if go_back_to_site_config %}
-            <a class="btn btn-primary" role="button" href="/site/admin">{%trans%}Cancel{%endtrans%}</a>
+            {% if go_back_to_admin_panel %}
+            <a class="btn btn-primary" role="button" href="/admin">{%trans%}Cancel{%endtrans%}</a>
             {% else %}
             <a class="btn btn-primary" role="button" href="/user/{{g.current_user.username}}">{%trans%}Cancel{%endtrans%}</a>
             {% endif %}

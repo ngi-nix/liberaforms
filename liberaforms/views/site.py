@@ -143,10 +143,10 @@ def change_default_language():
             g.site.defaultLanguage=request.form['language']
             g.site.save()
             flash(gettext("Language updated OK"), 'success')
-            return redirect(make_url_for('site_bp.site_admin'))
+            return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('common/change-language.html',
                             current_language=g.site.defaultLanguage,
-                            go_back_to_site_admin=True)
+                            go_back_to_admin_panel=True)
 
 @site_bp.route('/site/change-favicon', methods=['GET', 'POST'])
 @admin_required
