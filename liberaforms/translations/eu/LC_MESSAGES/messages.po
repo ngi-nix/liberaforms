@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-31 19:27+0100\n"
+"POT-Creation-Date: 2020-10-31 21:03+0100\n"
 "PO-Revision-Date: 2020-10-13 17:15+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
@@ -433,7 +433,7 @@ msgid "The form will expire after"
 msgstr ""
 
 #: templates/form/expiration.html:118
-msgid "Total responses"
+msgid "responses"
 msgstr ""
 
 #: templates/form/expiration.html:130 templates/form/inspect-form.html:248
@@ -1488,32 +1488,13 @@ msgstr "Kredentzial okerrak"
 #~ msgstr "Testuingurua"
 
 #~ msgid ""
-#~ " * Describe your form.\n"
-#~ " * Add relevant content, links, images, etc."
 #~ msgstr ""
-#~ " * Deskribatu zure galdetegia.\n"
-#~ " * Gehitu beharrezko edukia, estekak, irudiak etab."
-
-#~ msgid ""
-#~ "Hello,\n"
-#~ "\n"
-#~ "You have been invited to LiberaForms.\n"
-#~ "\n"
-#~ "Regards."
-#~ msgstr ""
-#~ "Kaixo!\n"
-#~ "\n"
-#~ "LiberaForms-era gonbidatu zaituzte.\n"
-#~ "\n"
-#~ "Ondo segi."
 
 #~ msgid "User's forms"
 #~ msgstr "Erabiltzailearen galdetegiak"
 
 #~ msgid "Cannot modify because an entry with this value exists in the database"
 #~ msgstr ""
-#~ "Ezin da aldatu, jada badagoelako balio"
-#~ " hau duen erantzun bat datu-basean"
 
 #~ msgid "Conditionals"
 #~ msgstr "Baldintzak"
@@ -1577,4 +1558,7 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Installation"
 #~ msgstr "Instalazioa"
+
+#~ msgid "Total responses"
+#~ msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-31 19:27+0100\n"
+"POT-Creation-Date: 2020-10-31 21:03+0100\n"
 "PO-Revision-Date: 2020-09-23 13:09+0200\n"
 "Last-Translator: \n"
 "Language: en\n"
@@ -433,7 +433,7 @@ msgid "The form will expire after"
 msgstr ""
 
 #: templates/form/expiration.html:118
-msgid "Total responses"
+msgid "responses"
 msgstr ""
 
 #: templates/form/expiration.html:130 templates/form/inspect-form.html:248
@@ -1474,16 +1474,6 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ""
-#~ " * Describe your form.\n"
-#~ " * Add relevant content, links, images, etc."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Hello,\n"
-#~ "\n"
-#~ "You have been invited to LiberaForms.\n"
-#~ "\n"
-#~ "Regards."
 #~ msgstr ""
 
 #~ msgid "User's forms"
@@ -1553,5 +1543,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Installation"
+#~ msgstr ""
+
+#~ msgid "Total responses"
 #~ msgstr ""
 

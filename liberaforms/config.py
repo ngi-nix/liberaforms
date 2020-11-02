@@ -56,10 +56,8 @@ class InternalConfig(object):
     """
     Internal settings that CANNOT be overridden.
     """
-    SESSION_TYPE = "memcached"
-    #SESSION_TYPE = "filesystem"
 
-    APP_VERSION = "1.8.3"
+    APP_VERSION = "1.8.4"
     SCHEMA_VERSION = 24
 
     RESERVED_SLUGS = [

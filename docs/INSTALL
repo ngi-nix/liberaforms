@@ -4,26 +4,13 @@
 ## Install mongodb
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
 
-## Clone LiberaForms and create config.cfg
+
+## Clone LiberaForms
 apt-get install git
+git clone https://gitlab.com/liberaforms/liberaforms.git /opt/LiberaForms
 
-git clone https://gitlab.com/la-loka/liberaforms.git /opt/LiberaForms
-cd /opt/LiberaForms
-cp config.example.cfg config.cfg
-
-And edit /opt/LiberaForms/config.cfg
-
-You can create a SECRET_KEY like this
-
-openssl rand -base64 32
-
-Protect the config file
-
-chown www-data /opt/LiberaForms/config.cfg
-chmod go-rw /opt/LiberaForms/config.cfg
 
 ## Create a python3 venv
-
 If you have Python3 on your host
 
 apt-get install python3-venv
@@ -35,33 +22,65 @@ apt-get install virtualenv
 virtualenv /opt/LiberaForms/venv --python=python3
 
 
-## Install python packages
+### Install python packages
 
 source /opt/LiberaForms/venv/bin/activate
 pip install --upgrade setuptools
 pip install wheel
 pip install -r /opt/LiberaForms/requirements.txt
 pip install gunicorn
+
+## Configure
+
+### Session management
+Before editing config.cfg, decide if you want session data saved on the filesystem or in memory
+
+#### Filesystem
+If you use the filesystem, session data will be saved in this directory
+
+mkdir /opt/LiberaForms/liberaforms/flask_session
+chown www-data /opt/LiberaForms/liberaforms/flask_session
+
+#### Memory
+If you use memcached, session data will be saved in memory
+
+apt-get install memcached
+source /opt/LiberaForms/venv/bin/activate
 pip install pylibmc
 
-### File permissions
+
+### Create and edit /opt/LiberaForms/config.cfg
+
+cd /opt/LiberaForms
+cp config.example.cfg config.cfg
+
+You can create a SECRET_KEY like this
+
+openssl rand -base64 32
+
+And protect the config file
+
+chown www-data /opt/LiberaForms/config.cfg
+chmod go-rw /opt/LiberaForms/config.cfg
+
+
+## File permissions
 Admins can upload a logo. You need to give the system user who runs LiberaForms write permission
 
 chown -R www-data /opt/LiberaForms/liberaforms/static/images
 
-### Session management
-apt-get install memcached
 
+## Test your installation
 
-### Test your installation
 source /opt/LiberaForms/venv/bin/activate
 gunicorn -c /opt/LiberaForms/gunicorn.py liberaforms:app
 
 
 ## Install Supervisor to keep LiberaForms running
+
 apt-get install supervisor
 
-Edit /etc/supervisor/conf.d/LiberaForms.conf
+### Edit /etc/supervisor/conf.d/LiberaForms.conf
 
 [program:LiberaForms]
 command = /opt/LiberaForms/venv/bin/gunicorn -c /opt/LiberaForms/gunicorn.py liberaforms:app
@@ -83,38 +102,9 @@ source /opt/LiberaForms/venv/bin/activate
 python run.py
 
 
-# Configure nginx proxy
+## Configure nginx proxy
+See docs/nginx.example
 
-## edit /etc/hosts and add an entry to point to your gunicorn process ip
-
-127.0.0.1	liberaforms
-
-
-## edit a new nginx hosts file
-
-server {
-    listen         80;
-    server_name    my_domain.com;
-    return         301 https://$server_name$request_uri;
-}
-server {
-    listen 443 ssl;    
-    server_name my_domain.com;
-
-    ssl_certificate           /etc/letsencrypt/live/my_domain.com/fullchain.pem;
-    ssl_certificate_key       /etc/letsencrypt/live/my_domain.com/privkey.pem;
-    ssl_dhparam               /etc/letsencrypt/ssl-dhparams.pem;
-
-    location / {
-        proxy_pass          http://liberaforms:5000;
-        proxy_set_header    Host    $host;
-        proxy_set_header    X-Forwarded-For $remote_addr;
-        proxy_set_header    X-Real-IP   $remote_addr;
-        proxy_pass_header   server;        
-    }
-    access_log /var/log/nginx/liberaforms.access.log;
-    error_log /var/log/nginx/liberaforms.error.log notice;
-}
 
 ## Database backup
 

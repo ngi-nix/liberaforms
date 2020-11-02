@@ -42,6 +42,7 @@ db = MongoEngine(app)
 babel = Babel(app)
 
 app.secret_key = app.config["SECRET_KEY"]
+app.session_type = app.config["SESSION_TYPE"]
 Session(app)
 
 csrf = CSRFProtect()

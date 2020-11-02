@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-10-31 19:27+0100\n"
-"PO-Revision-Date: 2020-10-31 20:46+0100\n"
+"POT-Creation-Date: 2020-10-31 21:03+0100\n"
+"PO-Revision-Date: 2020-10-31 21:05+0100\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
@@ -272,8 +272,8 @@ msgstr "Guardar"
 msgid "Delete entries"
 msgstr "Borrar las respuestas"
 
-#: templates/entries/delete-entries.html:13 templates/form/inspect-form.html:309
-#: views/form.py:153
+#: templates/entries/delete-entries.html:13
+#: templates/form/inspect-form.html:309 views/form.py:153
 msgid "Form"
 msgstr "Formulario"
 
@@ -294,12 +294,13 @@ msgstr "Escribe el total de registros aquí abajo"
 msgid "Form details"
 msgstr "Detalles del formulario"
 
-#: templates/entries/list-entries.html:27 templates/entries/view-results.html:20
-#: templates/form/inspect-form.html:28
+#: templates/entries/list-entries.html:27
+#: templates/entries/view-results.html:20 templates/form/inspect-form.html:28
 msgid "Graphs"
 msgstr "Gráficos"
 
-#: templates/entries/list-entries.html:31 templates/entries/list-entries.html:35
+#: templates/entries/list-entries.html:31
+#: templates/entries/list-entries.html:35
 #: templates/entries/view-results.html:23
 msgid "Download CSV"
 msgstr "Bajar el CSV"
@@ -430,11 +431,11 @@ msgstr "Repuestas máximas"
 
 #: templates/form/expiration.html:104
 msgid "The form will expire after"
-msgstr "Este formulario se caduca después de"
+msgstr "Este formulario caduca después de"
 
 #: templates/form/expiration.html:118
-msgid "Total responses"
-msgstr "Total de respuestas"
+msgid "responses"
+msgstr "respuestas"
 
 #: templates/form/expiration.html:130 templates/form/inspect-form.html:248
 msgid "When the form has expired"
@@ -631,8 +632,7 @@ msgstr "Compartir los resultados"
 
 #: templates/form/share-form.html:58
 msgid "Readonly access for <b>anyone</b> with a copy of these links"
-msgstr ""
-"Acceso de solo lectura para <b>cualquiera</b> con una copia de estos enlaces"
+msgstr "Acceso de solo lectura para <b>cualquiera</b> con una copia de estos enlaces"
 
 #: templates/form/share-form.html:93
 msgid "Only visible to people with a user account (login required)"
@@ -940,11 +940,8 @@ msgid "Please accept our terms and conditions."
 msgstr "Por favor, acepta nuestros términos y condiciones"
 
 #: utils/consent_texts.py:138
-msgid ""
-"We take your data protection seriously. Please contact us for any inquiries."
-msgstr ""
-"Tomamos en serio la protección de tus datos. Por favor, contáctanos para "
-"cualquier consulta."
+msgid "We take your data protection seriously. Please contact us for any inquiries."
+msgstr "Tomamos en serio la protección de tus datos. Por favor, contáctanos para cualquier consulta."
 
 #: utils/email.py:87
 msgid "Congratulations!"
@@ -978,14 +975,12 @@ msgstr "LiberaForms. Recupera tu contraseña"
 
 #: utils/email.py:140
 #, python-format
-msgid ""
-"Hello %s\n"
+msgid "Hello %s\n"
 "\n"
 "Please confirm your email\n"
 "\n"
 "%s"
-msgstr ""
-"Hola %s\n"
+msgstr "Hola %s\n"
 "\n"
 "Por favor, confirma tu dirección de correo\n"
 "\n"
@@ -1007,7 +1002,9 @@ msgstr "LiberaForms. Notificación de nuevo formulario"
 #: utils/email.py:174
 #, python-format
 msgid "New form entry in %s at %s\n"
+""
 msgstr "Nueva respuesta para %s en %s\n"
+""
 
 #: utils/email.py:178
 msgid "LiberaForms. New form entry"
@@ -1132,10 +1129,11 @@ msgstr "Se ha borrado el usuario '%s'"
 msgid "Username does not match"
 msgstr "El nombre de usuario no coincide"
 
-#: views/admin.py:123 views/admin.py:134 views/entries.py:42 views/entries.py:55
-#: views/entries.py:65 views/entries.py:149 views/form.py:133 views/form.py:276
-#: views/form.py:294 views/form.py:309 views/form.py:319 views/form.py:354
-#: views/form.py:429 views/form.py:444 views/form.py:542
+#: views/admin.py:123 views/admin.py:134 views/entries.py:42
+#: views/entries.py:55 views/entries.py:65 views/entries.py:149
+#: views/form.py:133 views/form.py:276 views/form.py:294 views/form.py:309
+#: views/form.py:319 views/form.py:354 views/form.py:429 views/form.py:444
+#: views/form.py:542
 msgid "Can't find that form"
 msgstr "No se encuentra ese formulario"
 
@@ -1555,24 +1553,7 @@ msgstr "Los credenciales no son correctos"
 #~ msgstr "Contexto"
 
 #~ msgid ""
-#~ " * Describe your form.\n"
-#~ " * Add relevant content, links, images, etc."
 #~ msgstr ""
-#~ " * Describe el formulario.\n"
-#~ " * Añade contenido relevante, imágenes, enlaces, etc."
-
-#~ msgid ""
-#~ "Hello,\n"
-#~ "\n"
-#~ "You have been invited to LiberaForms.\n"
-#~ "\n"
-#~ "Regards."
-#~ msgstr ""
-#~ "Hola,\n"
-#~ "\n"
-#~ "Has sido invitada a LiberaForms.\n"
-#~ "\n"
-#~ "Saludos."
 
 #~ msgid "User's forms"
 #~ msgstr "Formularios del usuario"
@@ -1633,3 +1614,6 @@ msgstr "Los credenciales no son correctos"
 
 #~ msgid "Installation"
 #~ msgstr "Instalación"
+
+#~ msgid "Total responses"
+#~ msgstr "Total de respuestas"

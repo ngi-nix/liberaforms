@@ -1,9 +1,10 @@
 https://keepachangelog.com/en/1.0.0/
 
 v.1.8
- * Changed flask_session type from filesystem to memcached (see UPGRADE)
+ * Added the option to use filesystem or memcached for flask_session (see docs/INSTALL)
  * Added 'Total entries' as a form expiry condition
  * Added Site creation date
+ * Moved INSTALL UPGRADE CHANGELOG to docs/
 
 v.1.7
  * Changed project name GNGforms -> LiberaForms
