@@ -35,17 +35,19 @@ pip install gunicorn
 ## Configure
 
 ### Session management
-Before editing config.cfg, decide if you want session data saved on the filesystem or in memory
+Before editing config.cfg, decide if you want session data saved on the filesystem or in memory.
+
+The default configuration is `filesystem`
 
 #### Filesystem
-If you use the filesystem, session data will be saved in this directory
+Create this directory. session data will be saved there.
 ```
 mkdir /opt/LiberaForms/liberaforms/flask_session
 chown www-data /opt/LiberaForms/liberaforms/flask_session
 ```
 
 #### Memory
-If you use memcached, session data will be saved in memory
+If you prefer to use memcached, you need to do this.
 ```
 apt-get install memcached
 source /opt/LiberaForms/venv/bin/activate
@@ -81,7 +83,7 @@ source /opt/LiberaForms/venv/bin/activate
 gunicorn -c /opt/LiberaForms/gunicorn.py liberaforms:app
 ```
 
-## Install Supervisor to keep LiberaForms running
+## Install Supervisor to manage the LiberaForms process.
 ```
 apt-get install supervisor
 ```
@@ -94,13 +96,16 @@ directory = /opt/LiberaForms
 user = www-data
 ```
 
-### Restart supervisor and check if LiberaForms is running
+### Restart supervisor and check if LiberaForms is running.
 ```
 systemctl restart supervisor
 supervisorctl status LiberaForms
 ```
 
 ## Debug LiberaForms
+You can check supervisor's log at `/var/log/supervisor/...`
+
+You can also run LiberaFroms in degug mode.
 ```
 supervisorctl stop LiberaForms
 cd /opt/LiberaForms

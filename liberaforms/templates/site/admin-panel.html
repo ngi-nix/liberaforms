@@ -151,14 +151,14 @@
                 </tr>
             </thead>
 
-        {% set total = { 'forms': 0, 'users': 0} %}    
+        {% set total = {'forms': 0, 'users': 0} %}    
         {% for site in sites %}
             {% set site_users = site.get_total_users() %}
             {% set site_forms = site.get_total_forms() %}
             {% if total.update({'users': total.users + site_users }) %}{% endif %}
             {% if total.update({'forms': total.forms + site_forms }) %}{% endif %}
             <tr>
-                <td>{{ site.host_url }}</td>
+                <td>{{ site.hostname }}</td>
                 <td>{{ site.created }}</td>
                 <td>{{ site_users }}</td>
                 <td>{{ site_forms }}</td>
