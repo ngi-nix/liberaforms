@@ -281,33 +281,6 @@ def delete_site(hostname):
     return render_template('delete-site.html', site=queriedSite)
 
 
-""" Invitations """
-
-@site_bp.route('/site/invites/new', methods=['GET', 'POST'])
-@admin_required
-def new_invite():
-    wtform=wtf.NewInvite()
-    if wtform.validate_on_submit():  
-        message=wtform.message.data
-        invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
-        EmailServer().sendInvite(invite)
-        flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
-        return redirect(make_url_for('admin_bp.site_admin'))
-    wtform.message.data=Invite.default_message()
-    return render_template('new-invite.html', wtform=wtform, sites=Site.find_all())
-
-
-@site_bp.route('/site/invites/delete/<string:id>', methods=['GET'])
-@admin_required
-def delete_invite(id):
-    invite=Invite.find(id=id)
-    if invite:
-        invite.delete()
-    else:
-        flash(gettext("Opps! We can't find that invitation"), 'error')
-    return redirect(make_url_for('admin_bp.site_admin'))
-
-
 @site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])
 @admin_required
 def toggle_enable_root():

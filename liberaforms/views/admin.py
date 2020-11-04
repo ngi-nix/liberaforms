@@ -54,8 +54,9 @@ def site_admin():
 @admin_bp.route('/admin/users', methods=['GET'])
 @admin_required
 def list_users():
-    return render_template('list-users.html', users=User.find_all()) 
-
+    return render_template('list-users.html',
+                            users=User.find_all(),
+                            invites=Invite.find_all()) 
 
 @admin_bp.route('/admin/users/<string:id>', methods=['GET'])
 @admin_required
@@ -177,6 +178,42 @@ def change_author(id):
                 flash(gettext("Can't find username %s" % (request.form['new_author_username'])), 'warning')
     return render_template('change-author.html', form=queriedForm)
 
+
+""" Invitations """
+
+@admin_bp.route('/admin/invites', methods=['GET'])
+@admin_required
+def list_invites():
+    return render_template('list-invites.html', invites=Invite.find_all())
+
+
+@admin_bp.route('/admin/invites/new', methods=['GET', 'POST'])
+@admin_required
+def new_invite():
+    wtform=wtf.NewInvite()
+    if wtform.validate_on_submit():  
+        message=wtform.message.data
+        invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
+        EmailServer().sendInvite(invite)
+        flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
+        return redirect(make_url_for('admin_bp.list_invites'))
+    wtform.message.data=Invite.default_message()
+    return render_template('new-invite.html',
+                            wtform=wtform,
+                            total_invites=Invite.find_all().count(),
+                            sites=Site.find_all())
+
+
+@admin_bp.route('/admin/invites/delete/<string:id>', methods=['GET'])
+@admin_required
+def delete_invite(id):
+    invite=Invite.find(id=id)
+    if invite:
+        invite.delete()
+        flash(gettext("Invitation to {} deleted OK".format(invite.email)), 'success')
+    else:
+        flash(gettext("Opps! We can't find that invitation"), 'error')
+    return redirect(make_url_for('admin_bp.list_invites'))
 
 
 """ Personal Admin preferences """

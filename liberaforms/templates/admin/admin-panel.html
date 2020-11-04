@@ -10,55 +10,7 @@
         <div class="title_1 delimited">
             {%trans%}Administrator{%endtrans%}
         </div>
-        
-        <div class="row">
-            <div class="col title_2">
-                {%trans%}Invitations{%endtrans%}
-            </div>
-            <div class="col-auto">
-                <a class="btn btn-sm btn-success" role="button" href="/site/invites/new">
-                    {%trans%}Invite a new user{%endtrans%}
-                </a>
-            </div>
-        </div>
-        {% if invites %}
-        <table id="invites_table" class="table table-sm">
-        <thead>
-            <tr>
-            <th>{%trans%}Created{%endtrans%}</th>
-            <th>{%trans%}Email{%endtrans%}</th>
-            {% if g.is_root_user_enabled %}
-                <th>Hostname</th>
-            {% endif %}
-            <th>{%trans%}Admin{%endtrans%}</th>
-            <th></th>
-            </tr>
-        </thead>
-        {% for invite in invites %}
-        <tr>
-            <td class="link">{{ invite.token.created.strftime('%Y-%m-%d') }}</td>
-            <td>{{invite.email}}</td>
-            {% if g.is_root_user_enabled %}
-                <td>{{invite.hostname}}</td>
-            {% endif %}
-            <td>{{invite.admin}}</td>
-            <td class="text-right">
-                <a class="btn btn-xs btn-danger" role="button" href="/site/invites/delete/{{invite.id}}">
-                    {%trans%}Delete{%endtrans%}
-                </a>
-            </td>
-        </tr>
-        <tr style="display:none">
-            <td colspan="5">
-                <div class="sentTokenMessage">{%trans%}Invitation message{%endtrans%}</div>
-                {{ invite.get_message() | replace("\n", "<br/>") | safe }}
-            </td>
-        </tr>
-        {% endfor %}
-        </table>
-        {% endif %}
-        
-        <p>&nbsp;</p>
+
         <div id="site_settings" class="title_2">
             {%trans%}Site settings{%endtrans%}
         </div>

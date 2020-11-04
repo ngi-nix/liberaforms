@@ -14,6 +14,18 @@
             <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
                 {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
             </a>
+            {% set total_invites = invites.count() %}
+            {% if total_invites == 0 %}
+                <a class="btn btn-primary btn-sm" role="button" href="/admin/invites/new">
+                    {%trans%}Invite a new user{%endtrans%}
+                    <span class="badge badge-light">{{ total_invites }}</span>
+                </a>
+            {% else %}
+                <a class="btn btn-primary btn-sm" role="button" href="/admin/invites">
+                    {%trans%}Invitations{%endtrans%}
+                    <span class="badge badge-light">{{ total_invites }}</span>
+                </a>
+            {% endif %}
             <a class="btn btn-primary btn-sm" role="button" href="/admin/users/csv">
                 {%trans%}Download CSV{%endtrans%}
                 <i class="fa fa-download" aria-hidden="true"></i>

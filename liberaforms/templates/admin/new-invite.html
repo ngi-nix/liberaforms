@@ -5,7 +5,6 @@
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
-        
     <div class="col-md-5">
 
         <div class="title_1 delimited">{%trans%}Send a new user invitation{%endtrans%}</div>
@@ -51,18 +50,24 @@
                     </div>
                 {% endfor %}
                 </div>
-
             {% else %}
                 <input type="hidden" name="hostname" value="{{ g.site.hostname }}" />
             {% endif %}
             
             <div class="form-actions">
-            <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
-            <a class="btn btn-primary" role="button" href="/admin">{%trans%}Cancel{%endtrans%}</a>
+                <input class="btn-success btn" type="submit" value="{%trans%}Send email{%endtrans%}">
+                {% if total_invites == 0 %}
+                <a class="btn btn-primary" role="button" href="/admin/users">
+                    {%trans%}Cancel{%endtrans%}
+                </a>
+                {% else %}
+                <a class="btn btn-primary" role="button" href="/admin/invites">
+                    {%trans%}Cancel{%endtrans%}
+                </a>                
+                {% endif %}
             </div>
         </form>
     </div>
-
 </div>    
 </div>
   

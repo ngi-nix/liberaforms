@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+
+        <div class="row ">
+            <div class="col title_1">
+                {%trans%}Invitations{%endtrans%}
+            </div>
+            <div class="col-auto" style="padding-top: 0.25em">
+                <a class="btn btn-sm btn-success" role="button" href="/admin/invites/new">
+                    {%trans%}Invite a new user{%endtrans%}
+                </a>
+            </div>
+        </div>
+        <table id="invites_table" class="table table-sm">
+            <thead>
+                <tr>
+                <th>{%trans%}Created{%endtrans%}</th>
+                <th>{%trans%}Email{%endtrans%}</th>
+                {% if g.is_root_user_enabled %}
+                    <th>Hostname</th>
+                {% endif %}
+                <th>{%trans%}Admin{%endtrans%}</th>
+                <th></th>
+                </tr>
+            </thead>
+            {% for invite in invites %}
+            <tr>
+                <td class="link">{{ invite.token.created.strftime('%Y-%m-%d') }}</td>
+                <td>{{ invite.email }}</td>
+                {% if g.is_root_user_enabled %}
+                    <td>{{ invite.hostname }}</td>
+                {% endif %}
+                <td>{{ invite.admin }}</td>
+                <td class="text-right">
+                    <a  class="btn btn-xs btn-danger"
+                        role="button"
+                        href="/admin/invites/delete/{{invite.id}}">
+                        {%trans%}Delete{%endtrans%}
+                    </a>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td colspan="5">
+                    <div class="sentTokenMessage">
+                        {%trans%}Invitation message{%endtrans%}
+                    </div>
+                    {{ invite.get_message() | replace("\n", "<br/>") | safe }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if not invites %}
+            0 {%trans%}Invitations{%endtrans%}.
+        {% endif %}
+    </div>
+</div>
+</div>        
+
+<script>
+$(document).on('click', '#invites_table td:first-child', function(){
+    if($(this).parent().next('tr').is(":visible")){
+        $(this).parent().next('tr').hide()
+    }else{ 
+        $(this).parent().next('tr').show() // show the sent message
+    }
+});
+</script>
+{% endblock %}
