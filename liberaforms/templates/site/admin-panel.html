@@ -153,8 +153,8 @@
 
         {% set total = {'forms': 0, 'users': 0} %}    
         {% for site in sites %}
-            {% set site_users = site.get_total_users() %}
-            {% set site_forms = site.get_total_forms() %}
+            {% set site_users = site.get_users(hostname=site.hostname).count() %}
+            {% set site_forms = site.get_forms(hostname=site.hostname).count() %}
             {% if total.update({'users': total.users + site_users }) %}{% endif %}
             {% if total.update({'forms': total.forms + site_forms }) %}{% endif %}
             <tr>

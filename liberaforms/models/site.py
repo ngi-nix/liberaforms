@@ -17,10 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os, datetime, markdown
+import unicodecsv as csv
 from flask import request, g
 from flask_babel import gettext
 from urllib.parse import urlparse
-import os, datetime, markdown
 
 from liberaforms import app, db
 from liberaforms.models.form import Form, FormResponse
@@ -253,22 +254,17 @@ class Site(db.Document):
         return self.delete()
     
     def get_forms(self, **kwargs):
-        kwargs['hostname'] = self.hostname
         return Form.find_all(**kwargs)
 
-    def get_total_forms(self):
-        return Form.find_all(hostname=self.hostname).count()
-
     def get_entries(self, **kwargs):
-        kwargs['hostname'] = self.hostname
         return FormResponse.find_all(**kwargs)
-        
-    def get_total_users(self):
-        return User.find_all(hostname=self.hostname).count()
+    
+    def get_users(self, **kwargs):
+        return User.find_all(**kwargs)
     
     def get_statistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
-        one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
+        one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
@@ -287,8 +283,6 @@ class Site(db.Document):
         total_entries=0
         total_forms=0
         total_users=0
-        if not g.is_root_user_enabled and not 'hostname' in kwargs:
-            kwargs['hostname'] = self.hostname
         for year_month in result['labels']:
             kwargs['created__startswith'] = year_month
             monthy_entries = FormResponse.find_all(**kwargs).count()
@@ -304,6 +298,33 @@ class Site(db.Document):
             result['total_forms'].append(total_forms)
             result['total_users'].append(total_users)
         return result
+
+    def write_users_csv(self):
+        fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
+        if g.is_root_user_enabled:
+            fieldnames.insert(0, "hostname")
+        fieldheaders={  "username": gettext("Username"),
+                        "created": gettext("Created"),
+                        "enabled": gettext("Enabled"),
+                        "email": gettext("Email"),
+                        "forms": gettext("Forms"),
+                        "admin": gettext("Admin")
+                        }
+        csv_name = os.path.join(app.config['TMP_DIR'], "{}.users.csv".format(self.hostname))
+        with open(csv_name, mode='wb') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer.writerow(fieldheaders)
+            for user in self.get_users():
+                row = { "username": user.username,
+                        "created": user.created,
+                        "enabled": gettext("True") if user.enabled else gettext("False"),
+                        "email": user.email,
+                        "forms": user.get_forms().count(),
+                        "admin": gettext("True") if user.is_admin() else gettext("False"),
+                        "hostname": user.hostname
+                        }
+                writer.writerow(row)
+        return csv_name
 
 
 class Invite(db.Document):
@@ -404,9 +425,14 @@ class Installation(db.Document):
         else:
             True
     
-    @classmethod
-    def get_sites(cls):
-        return Site.objects()
+    @staticmethod
+    def get_sites(**kwargs):
+        return Site.find_all(**kwargs)
+    
+    @staticmethod
+    def get_admins(**kwargs):
+        kwargs={"admin__isAdmin": True, **kwargs}
+        return User.find_all(**kwargs)
     
     @staticmethod
     def is_user(email):

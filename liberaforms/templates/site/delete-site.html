@@ -15,11 +15,11 @@
         <p>
             {%trans%}Including{%endtrans%} ...
             <br />
-            {{ site.get_total_users() }} {%trans%}users{%endtrans%}
+            {{ site.get_users(hostname=site.hostname).count() }} {%trans%}users{%endtrans%}
             +
-            {{ site.get_total_forms() }} {%trans%}forms{%endtrans%}
+            {{ site.get_forms(hostname=site.hostname).count() }} {%trans%}forms{%endtrans%}
             +
-            {{ site.get_entries().count() }} {%trans%}entries{%endtrans%}
+            {{ site.get_entries(hostname=site.hostname).count() }} {%trans%}entries{%endtrans%}
         </p>
         <p>
             {%trans%}Write the name of the site below{%endtrans%}.

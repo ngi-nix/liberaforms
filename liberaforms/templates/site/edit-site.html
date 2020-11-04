@@ -20,11 +20,11 @@
         </tr>
         <tr>
             <td>{%trans%}Users{%endtrans%}</td>
-            <td>{{ site.get_total_users() }}</td>
+            <td>{{ site.get_users(hostname=site.hostname).count() }}</td>
         </tr>
         <tr>
             <td>{%trans%}Forms{%endtrans%}</td>
-            <td>{{ site.get_total_forms() }}</td>
+            <td>{{ site.get_forms(hostname=site.hostname).count() }}</td>
         </tr>
         <tr>
             <td>{%trans%}Invitation only{%endtrans%}</td>

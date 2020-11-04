@@ -66,7 +66,7 @@ class InternalConfig(object):
     Internal settings that cannot be overridden.
     """
 
-    APP_VERSION = "1.8.8"
+    APP_VERSION = "1.8.9"
     SCHEMA_VERSION = 24
 
     RESERVED_SLUGS = [

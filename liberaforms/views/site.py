@@ -179,7 +179,7 @@ def reset_site_favicon():
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
 @admin_required
 def toggle_invitation_only(): 
-    return json.dumps({'invite': g.site.toggle_invitation_only()})
+    return JsonResponse(json.dumps({'invite': g.site.toggle_invitation_only()}))
 
 
 @site_bp.route('/site/email/config', methods=['GET', 'POST'])
@@ -267,15 +267,15 @@ def delete_site(hostname):
     queriedSite=Site.find(hostname=hostname)
     if not queriedSite:
         flash(gettext("Site not found"), 'warning')
-        return redirect(make_url_for('site_bp.site_admin'))
+        return redirect(make_url_for('admin_bp.site_admin'))
     if request.method == 'POST' and 'hostname' in request.form:
         if queriedSite.hostname == request.form['hostname']:
             if g.site.hostname == queriedSite.hostname:
                 flash(gettext("Cannot delete current site"), 'warning')
-                return redirect(make_url_for('site_bp.site_admin'))
+                return redirect(make_url_for('admin_bp.site_admin'))
             queriedSite.delete_site()
             flash(gettext("Deleted %s" % queriedSite.host_url), 'success')
-            return redirect(make_url_for('site_bp.site_admin'))
+            return redirect(make_url_for('admin_bp.site_admin'))
         else:
             flash(gettext("Site name does not match"), 'warning')
     return render_template('delete-site.html', site=queriedSite)
@@ -292,7 +292,7 @@ def new_invite():
         invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
         EmailServer().sendInvite(invite)
         flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
-        return redirect(make_url_for('site_bp.site_admin'))
+        return redirect(make_url_for('admin_bp.site_admin'))
     wtform.message.data=Invite.default_message()
     return render_template('new-invite.html', wtform=wtform, sites=Site.find_all())
 
@@ -305,7 +305,7 @@ def delete_invite(id):
         invite.delete()
     else:
         flash(gettext("Opps! We can't find that invitation"), 'error')
-    return redirect(make_url_for('site_bp.site_admin'))
+    return redirect(make_url_for('admin_bp.site_admin'))
 
 
 @site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])

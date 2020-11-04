@@ -17,9 +17,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import json
+import os, json
 from flask import g, request, render_template, redirect
 from flask import session, flash, Blueprint
+from flask import send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms.models.user import User
@@ -118,6 +119,16 @@ def delete_user(id):
     return render_template('delete-user.html', user=user)
 
 
+@admin_bp.route('/admin/users/csv', methods=['GET'])
+@admin_required
+def csv_users():
+    csv_file = g.site.write_users_csv()
+    @after_this_request 
+    def remove_file(response): 
+        os.remove(csv_file) 
+        return response
+    return send_file(csv_file, mimetype="text/csv", as_attachment=True)
+    
 
 """ Form management """
 
