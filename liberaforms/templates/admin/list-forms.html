@@ -23,12 +23,11 @@
         <thead>
         <tr>
             <th>{%trans%}Name{%endtrans%}</th>
-            <th>{%trans%}Entries{%endtrans%}</th>
-            <th>{%trans%}Last entry{%endtrans%}</th>
             <th>{%trans%}Created{%endtrans%}</th>
             <th>{%trans%}Author{%endtrans%}</th>
             <th>{%trans%}Public{%endtrans%}</th>
-            
+            <th>{%trans%}Last entry{%endtrans%}</th>
+            <th>{%trans%}Entries{%endtrans%}</th>
             {% if g.is_root_user_enabled %}
                 <th>{%trans%}Hostname{%endtrans%}</th>
             {% endif %}
@@ -38,11 +37,11 @@
         {% set author = form.get_author() %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-            <td>{{form.get_entries().count()}}</td>
-            <td>{{form.get_last_entry_date()}}</td>
             <td>{{form.created}}</td>
             <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
             <td>{{form.is_public()}}</td>
+            <td>{{form.get_last_entry_date()}}</td>
+            <td>{{form.get_entries().count()}}</td>
             {% if g.is_root_user_enabled %}
                 <td>{{form.hostname}}</td>
             {% endif %}
@@ -63,7 +62,7 @@ $(document).ready(function() {
         "initComplete": function(settings, json) {
             $("#forms").show();
         },
-        "order": [[2, 'desc']]
+        "order": [[4, 'desc']]
     });
 } );
 </script>

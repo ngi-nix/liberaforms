@@ -1,6 +1,9 @@
 https://keepachangelog.com/en/1.0.0/
 
 v.1.8
+ * Admins can export users in a CSV
+ * Root_user can export admins in a CSV
+ * Moved Invitation pages to /admin/invites 
  * Added the option to use filesystem or memcached for flask_session (see docs/INSTALL)
  * Added 'Total entries' as a form expiry condition
  * Added Site creation date

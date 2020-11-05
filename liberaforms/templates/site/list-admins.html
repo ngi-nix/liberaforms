@@ -9,24 +9,9 @@
 <div class="row">
     <div class="col-md-12">
 
-    <div class="title_1 delimited">{%trans%}Users{%endtrans%}
+    <div class="title_1 delimited">{%trans%}Admins{%endtrans%}
         <div style="float:right">
-            <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
-                {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
-            </a>
-            {% set total_invites = invites.count() %}
-            {% if total_invites == 0 %}
-                <a class="btn btn-primary btn-sm" role="button" href="/admin/invites/new">
-                    {%trans%}Invite a new user{%endtrans%}
-                    <span class="badge badge-light">{{ total_invites }}</span>
-                </a>
-            {% else %}
-                <a class="btn btn-primary btn-sm" role="button" href="/admin/invites">
-                    {%trans%}Invitations{%endtrans%}
-                    <span class="badge badge-light">{{ total_invites }}</span>
-                </a>
-            {% endif %}
-            <a class="btn btn-primary btn-sm" role="button" href="/admin/users/csv">
+            <a class="btn btn-primary btn-sm" role="button" href="/site/admins/csv">
                 {%trans%}Download CSV{%endtrans%}
                 <i class="fa fa-download" aria-hidden="true"></i>
             </a>
@@ -36,28 +21,22 @@
     <table id="users" style="display:none" class="table table-sm table-striped">
     <thead>
         <tr>
+            <th>{%trans%}Hostname{%endtrans%}</th>
             <th>{%trans%}Username{%endtrans%}</th>
             <th>{%trans%}Created{%endtrans%}</th>
-            {% if g.is_root_user_enabled %}
-                <th>{%trans%}Hostname{%endtrans%}</th>
-            {% endif %}
             <th>{%trans%}Enabled{%endtrans%}</th>
             <th>{%trans%}Email{%endtrans%}</th>
             <th>{%trans%}Forms{%endtrans%}</th>
-            <th>{%trans%}Admin{%endtrans%}</th>
         </tr>
     </thead>
-    {% for user in users %}
+    {% for user in admins %}
     <tr>
+        <td>{{user.hostname}}</td>
         <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
         <td>{{user.created}}</td>
-        {% if g.is_root_user_enabled %}
-            <td>{{user.hostname}}</td>
-        {% endif %}
         <td>{{user.enabled}}</td>
         <td>{{user.email}}</td>
         <td>{{user.get_forms()|length}}</td>
-        <td>{{user.is_admin()}}</td>
     </tr>
     {% endfor %}
     </table>
@@ -75,7 +54,7 @@ $(document).ready(function() {
         "initComplete": function(settings, json) {
             $("#users").show();
         },
-        "order": [[1, 'desc']],
+        "order": [[2, 'desc']],
     });
 } );
 </script>

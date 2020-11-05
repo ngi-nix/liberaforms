@@ -432,8 +432,33 @@ class Installation(db.Document):
     @staticmethod
     def get_admins(**kwargs):
         kwargs={"admin__isAdmin": True, **kwargs}
-        return User.find_all(**kwargs)
-    
+        return User.objects(**kwargs)
+
+    @classmethod
+    def write_admins_csv(cls):
+        fieldnames=["hostname", "username", "created", "enabled", "email", "forms"]
+        fieldheaders={  "username": gettext("Username"),
+                        "created": gettext("Created"),
+                        "enabled": gettext("Enabled"),
+                        "email": gettext("Email"),
+                        "forms": gettext("Forms")
+                        }
+        csv_name = os.path.join(app.config['TMP_DIR'], "LiberaForms.admin.csv")
+        with open(csv_name, mode='wb') as csv_file:
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer.writerow(fieldheaders)
+            for user in cls.get_admins():
+                row = { "username": user.username,
+                        "created": user.created,
+                        "enabled": gettext("True") if user.enabled else gettext("False"),
+                        "email": user.email,
+                        "forms": user.get_forms().count(),
+                        "admin": gettext("True") if user.is_admin() else gettext("False"),
+                        "hostname": user.hostname
+                        }
+                writer.writerow(row)
+        return csv_name
+
     @staticmethod
     def is_user(email):
         return True if User.objects(email=email).first() else False

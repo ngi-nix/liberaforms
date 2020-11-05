@@ -164,7 +164,7 @@ def change_site_favicon():
             flash(gettext("Bad file name. PNG only"), 'warning')
             return render_template('change-site-favicon.html')
         flash(gettext("Favicon changed OK. Refresh with  &lt;F5&gt;"), 'success')
-        return redirect(make_url_for('site_bp.site_admin'))
+        return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('change-site-favicon.html')
 
 
@@ -173,7 +173,7 @@ def change_site_favicon():
 def reset_site_favicon():
     if g.site.delete_favicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
-    return redirect(make_url_for('site_bp.site_admin'))
+    return redirect(make_url_for('admin_bp.site_admin'))
 
 
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
@@ -281,6 +281,23 @@ def delete_site(hostname):
     return render_template('delete-site.html', site=queriedSite)
 
 
+@site_bp.route('/site/admins', methods=['GET'])
+@rootuser_required
+def list_admins():
+    return render_template('list-admins.html', admins=Installation.get_admins())
+
+
+@site_bp.route('/site/admins/csv', methods=['GET'])
+@rootuser_required
+def csv_admin():
+    csv_file = Installation.write_admins_csv()
+    @after_this_request 
+    def remove_file(response): 
+        os.remove(csv_file) 
+        return response
+    return send_file(csv_file, mimetype="text/csv", as_attachment=True)
+
+
 @site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])
 @admin_required
 def toggle_enable_root():
@@ -289,8 +306,8 @@ def toggle_enable_root():
         return JsonResponse(json.dumps({'enabled': False}))
     if session["root_enabled"] == True:
         session["root_enabled"]=False
-        flash(gettext("Root disabled"), 'success')
+        flash(gettext("Root mode disabled"), 'success')
     else:
         session["root_enabled"]=True
-        flash(gettext("Root enabled"), 'success')
+        flash(gettext("Root mode enabled"), 'success')
     return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))

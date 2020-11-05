@@ -54,7 +54,7 @@ def admin_required(f):
 def rootuser_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if g.is_root_user_enabled:
+        if g.current_user.is_root_user():
             return f(*args, **kwargs)
         else:
             return redirect(url_for('main_bp.index'))

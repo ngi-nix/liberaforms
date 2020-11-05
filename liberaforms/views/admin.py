@@ -44,7 +44,6 @@ def site_admin():
     context = {
         'site': g.site,
         'sites': sites,
-        'invites': Invite.find_all(),
         'installation': Installation.get()
     }
     return render_template('admin-panel.html', user=g.current_user, **context)

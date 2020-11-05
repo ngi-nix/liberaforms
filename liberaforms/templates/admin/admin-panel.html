@@ -80,15 +80,12 @@
     {% if g.current_user.is_root_user() %}
         <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
             {%trans%}Root user{%endtrans%}
-            {% if g.is_root_user_enabled %}
-                <i class="fa fa-shield" style="font-size:0.9em; color:red" aria-hidden="true"></i>
-            {% else %}
-                <i class="fa fa-shield" style="font-size:0.9em" aria-hidden="true"></i>
-            {% endif %}
+            <i class="fa fa-shield" style="font-size: 0.9em" aria-hidden="true"></i>
             <div style="float:right">
-                <button class="btn btn-primary btn-sm" onclick="js:toggleRootMode()">
-                    {%trans%}Toggle root mode{%endtrans%}
-                </button>
+                <a class="btn btn-primary btn-sm" role="button" href="/site/admins">
+                    {%trans%}Admins{%endtrans%}
+                    <i class="fa fa-users" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
         
@@ -117,7 +114,6 @@
                 <td class="text-right">
                 <input  class="btn-primary btn btn-xs"
                         type="button" value="{%trans%}Edit{%endtrans%}"
-                        {% if not g.is_root_user_enabled %}disabled=""{% endif %}
                         onClick="location.href='/site/edit/{{site.hostname}}'">
                 </td>
             </tr>
