@@ -212,21 +212,22 @@ def migrateMongoSchema(schemaVersion):
         try:
             form_collection = Form._get_collection()
             for form in form_collection.find():
-                for entry in form['entries']:
-                    created=entry['created']
-                    marked=entry['marked']
-                    del entry['id']
-                    del entry['created']
-                    del entry['marked']
-                    new_data = {
-                            "created": created,
-                            "hostname": form['hostname'],
-                            "author_id": str(form['author']),
-                            "form_id": str(form["_id"]),
-                            "marked": marked,
-                            "data": entry}
-                    response = FormResponse(**new_data)
-                    response.save()
+                if hasattr(form, 'entries'):
+                    for entry in form['entries']:
+                        created=entry['created']
+                        marked=entry['marked']
+                        del entry['id']
+                        del entry['created']
+                        del entry['marked']
+                        new_data = {
+                                "created": created,
+                                "hostname": form['hostname'],
+                                "author_id": str(form['author']),
+                                "form_id": str(form["_id"]),
+                                "marked": marked,
+                                "data": entry}
+                        response = FormResponse(**new_data)
+                        response.save()
             form_collection.update_many( {}, {"$unset": {"entries": 1} })
     
         except Exception as e:
