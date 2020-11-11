@@ -76,6 +76,21 @@ class Login(FlaskForm):
         if username.data != sanitize_username(username.data):
             return False
 
+
+class DeleteAccount(FlaskForm):
+    username = StringField(_("Your username"), validators=[DataRequired()])
+    password = PasswordField(_("Your password"), validators=[DataRequired()])
+
+    def validate_username(self, username):
+        if username.data != g.current_user.username:
+            raise ValidationError(_("That is not your username"))
+            return False
+    
+    def validate_password(self, password):
+        if not validators.verify_password(password.data, g.current_user.password_hash):
+            raise ValidationError(_("That is not your password"))    
+
+
 class GetEmail(FlaskForm):
     email = StringField(_("Email address"), validators=[DataRequired(), Email()])
     

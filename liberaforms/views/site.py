@@ -282,9 +282,9 @@ def delete_site(hostname):
 
 
 @site_bp.route('/site/admins', methods=['GET'])
-@rootuser_required
+@admin_required
 def list_admins():
-    return render_template('list-admins.html', admins=Installation.get_admins())
+    return render_template('list-admins.html', admins=g.site.get_admins())
 
 
 @site_bp.route('/site/admins/csv', methods=['GET'])

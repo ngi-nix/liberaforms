@@ -261,7 +261,11 @@ class Site(db.Document):
     
     def get_users(self, **kwargs):
         return User.find_all(**kwargs)
-    
+
+    def get_admins(self, **kwargs):
+        kwargs={"admin__isAdmin": True, **kwargs}
+        return User.find_all(**kwargs)
+
     def get_statistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
         one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
