@@ -27,6 +27,7 @@ from flask_babel import refresh as babel_refresh
 from liberaforms import app
 from liberaforms.models.site import Invite, Site, Installation
 from liberaforms.models.user import User
+from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
 from liberaforms.utils.email import EmailServer
@@ -177,6 +178,25 @@ def reset_password():
         flash(gettext("Password changed OK"), 'success')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('reset-password.html', wtform=wtform)
+
+
+@user_bp.route('/user/delete-account/<string:user_id>', methods=['GET', 'POST'])
+@enabled_user_required
+def delete_account(user_id):
+    user = User.find(id=user_id)
+    if not user or user.id != g.current_user.id:
+        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+    if g.current_user.is_admin() and g.site.get_admins().count() == 1:
+        flash(gettext("Cannot delete. You are the only Admin on this site"), 'warning')
+        return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
+    wtform=wtf.DeleteAccount()
+    if wtform.validate_on_submit():
+        g.current_user.delete_user()
+        logout_user()
+        flash(gettext("Thank you for using LiberaForms"), 'success')
+        return redirect(make_url_for('main_bp.index'))
+    return render_template( 'delete-account.html', wtform=wtform, user=g.current_user)
+
 
 @user_bp.route('/user/toggle-new-entry-notification', methods=['POST'])
 @enabled_user_required

@@ -1,13 +1,14 @@
 https://keepachangelog.com/en/1.0.0/
 
 v.1.8
- * Admins can export users in a CSV
- * Root_user can export admins in a CSV
+ * Admins can export users and admins in CSV
+ * Root_user can export all admins in CSV
  * Moved Invitation pages to /admin/invites 
  * Added the option to use filesystem or memcached for flask_session (see docs/INSTALL)
  * Added 'Total entries' as a form expiry condition
  * Added Site creation date
  * Moved INSTALL UPGRADE CHANGELOG to docs/
+ * User can delete account
 
 v.1.7
  * Changed project name GNGforms -> LiberaForms
