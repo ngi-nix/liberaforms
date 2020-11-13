@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os, datetime, markdown
 import unicodecsv as csv
-from flask import request, g
+from flask import g
 from flask_babel import gettext
 from urllib.parse import urlparse
 
@@ -58,8 +58,7 @@ class Site(db.Document):
         return print_obj_values(self)
     
     @classmethod
-    def create(cls):
-        hostname=urlparse(request.host_url).hostname
+    def create(cls, hostname, scheme):
         with open('%s/../default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
             defaultMD=defaultBlurb.read()
         blurb = {
@@ -70,7 +69,7 @@ class Site(db.Document):
             "created": datetime.date.today().strftime("%Y-%m-%d"),
             "hostname": hostname,
             "port": None,
-            "scheme": urlparse(request.host_url).scheme,
+            "scheme": scheme,
             "blurb": blurb,
             "invitationOnly": True,
             "siteName": "LiberaForms!",
@@ -97,7 +96,7 @@ class Site(db.Document):
     def find(cls, *args, **kwargs):
         site = cls.find_all(*args, **kwargs).first()
         if not site:
-            site=Site.create()
+            site=cls.create(**kwargs)
         return site
 
     @classmethod
@@ -366,9 +365,9 @@ class Invite(db.Document):
     def find_all(cls, **kwargs):
         return cls.objects.ensure_hostname(**kwargs)
     
-    def get_link(self):
-        return "{}user/new/{}".format(  Site.find(hostname=self.hostname).host_url,
-                                        self.token['token'])
+    def get_link(self, **kwargs):
+        site = Site.find(**kwargs)
+        return "{}user/new/{}".format(site.host_url, self.token['token'])
     
     def get_message(self):
         return "{}\n\n{}".format(self.message, self.get_link())

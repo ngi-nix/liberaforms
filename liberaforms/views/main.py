@@ -53,7 +53,8 @@ def before_request():
     g.embedded=False
     if request.path[0:7] == '/static':
         return
-    g.site=Site.find(hostname=urlparse(request.host_url).hostname)
+    uri = urlparse(request.host_url)
+    g.site=Site.find(hostname=uri.hostname, scheme=uri.scheme)
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
