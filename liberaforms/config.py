@@ -66,11 +66,12 @@ class InternalConfig(object):
     Internal settings that cannot be overridden.
     """
 
-    APP_VERSION = "1.8.12"
+    APP_VERSION = "1.8.13"
     SCHEMA_VERSION = 24
 
     RESERVED_SLUGS = [
         "login",
+        "logout",
         "static",
         "admin",
         "admins",
@@ -83,7 +84,8 @@ class InternalConfig(object):
         "site",
         "sites",
         "update",
-        "embed"
+        "embed",
+        "api"
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
