@@ -131,7 +131,7 @@ def change_siteName():
         g.site.siteName=request.form['sitename']
         g.site.save()
         flash(gettext("Site name changed OK"), 'success')
-        return redirect(make_url_for('site_bp.site_admin'))
+        return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('change-sitename.html', site=g.site)
 
 
