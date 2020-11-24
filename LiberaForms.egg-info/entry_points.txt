@@ -1,5 +1,0 @@
-[console_scripts]
-liberaforms-init-cfg = scripts.init_config:init_config
-liberaforms-migrate-db = scripts.migrate_db:migrate_db
-liberaforms-server = scripts.run:run
-

@@ -20,11 +20,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import os
 from setuptools import setup, find_packages
 
-
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-    
 setup(
     name = "LiberaForms",
     version = "1.8.13",
@@ -62,7 +60,6 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'liberaforms-server = scripts.run:run',
             'liberaforms-migrate-db = liberaforms.scripts.migrate_db:migrate_db',
             'liberaforms-init-cfg = liberaforms.scripts.init_config:init_config',
         ],
