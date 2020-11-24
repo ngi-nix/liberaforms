@@ -51,7 +51,6 @@ csrf.init_app(app)
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
-
 from liberaforms.views.main import main_bp
 from liberaforms.views.user import user_bp
 from liberaforms.views.form import form_bp
@@ -66,6 +65,7 @@ app.register_blueprint(site_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(entries_bp)
 
+import liberaforms.cli.custom_commands
 
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 

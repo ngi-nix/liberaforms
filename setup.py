@@ -61,7 +61,11 @@ setup(
     entry_points={
         'console_scripts': [
             'liberaforms-migrate-db = liberaforms.scripts.migrate_db:migrate_db',
-            'liberaforms-init-cfg = liberaforms.scripts.init_config:init_config',
+        ],
+        'flask.commands': [
+            'config_init = liberaforms.cli.custom_commands:config_init',
+            'config_show = liberaforms.cli.custom_commands:config_show',
+            'db_migrate = liberaforms.cli.custom_commands:db_migrate',
         ],
     },
 )

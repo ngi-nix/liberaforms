@@ -17,10 +17,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import os, shutil, click
 from liberaforms import app
-from liberaforms.models.site import Installation
 
-def migrate_db():
+@app.cli.command("config_init")
+def config_init():
+    """
+    #print("sys.prefix: {}".format(sys.prefix))
+    print("app.instance_path: {}".format(app.instance_path))
+    print("realpath(__file__): {}".format(os.path.dirname(os.path.realpath(__file__))))
+    print("app.root_path: {}".format(app.root_path))
+    print("os.getcwd(): {}".format(os.getcwd()))
+    """
+    
+    conf_path = os.path.join(app.instance_path, 'config.cfg')
+    if not os.path.isfile(conf_path):
+        os.makedirs(app.instance_path, exist_ok=True)
+        example_cfg = os.path.join(app.root_path, 'config.example.cfg')
+        shutil.copyfile(example_cfg, conf_path)
+        print("\nNew config file created: {}".format(conf_path))
+        print("Don't forget to set a good SECRET_KEY !!")
+    else:
+        print("\nConfig file already exists: {}".format(conf_path))
+
+@app.cli.command("config_show")
+def config_show():
+    conf_path = os.path.join(app.instance_path, 'config.cfg')
+    
+    if os.path.isfile(conf_path):
+        print("Config file: {}\n".format(conf_path))
+        with open(conf_path) as f:
+            print(f.read())
+    else:
+        print("\nCound not find: {}\n".format(conf_path))
+        print("Please run 'flask config_init'")
+
+
+@app.cli.command("db_migrate")
+def db_migrate():
+    from liberaforms.models.site import Installation
     installation=Installation.get()
     print("Schema version is {}".format(installation.schemaVersion))
     if not installation.is_schema_up_to_date():
@@ -34,10 +69,6 @@ def migrate_db():
                                                 format( installation.schemaVersion,
                                                         app.config['SCHEMA_VERSION']))
             return False
-
     else:
         print("Database schema is already up to date")
         return True
-
-if __name__ == '__main__':
-    migrate_db()
