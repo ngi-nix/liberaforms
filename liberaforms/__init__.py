@@ -26,12 +26,13 @@ import sys, os
 
 from liberaforms import config
 
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
 
 # Load defaults
 app.config.from_object(config.DefaultConfig)
 # User overrides
-app.config.from_pyfile("../config.cfg")
+app.config.from_pyfile('config.cfg', silent=True)
+
 # Force internal configuration
 app.config.from_object(config.InternalConfig)
 # Merge extra configuration as/if necessary

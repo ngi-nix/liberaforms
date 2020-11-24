@@ -56,10 +56,10 @@ class Site(db.Document):
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
         return print_obj_values(self)
-    
+
     @classmethod
     def create(cls, hostname, scheme):
-        with open('%s/../default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
+        with open(os.path.join(app.root_path, 'data/index_blurb.md'), 'r') as defaultBlurb:
             defaultMD=defaultBlurb.read()
         blurb = {
             'markdown': defaultMD,

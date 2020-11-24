@@ -1,7 +1,9 @@
-venv
 config.cfg
 notes.txt
+venv
+build
+dist
 flask_session
+.eggs
 *.pyc
-static/node_modules
 __pycache__

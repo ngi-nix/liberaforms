@@ -1,0 +1,11 @@
+include COPYING
+recursive-include liberaforms/templates *
+recursive-include liberaforms/static *
+recursive-include liberaforms/babel *
+recursive-include liberaforms/translations *
+recursive-include docs *
+include liberaforms/data/default_blurb.md
+include liberaforms/config.example.cfg
+
+global-exclude __pycache__
+global-exclude venv
