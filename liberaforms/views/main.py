@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from urllib.parse import urlparse
-from flask import request, render_template, redirect, flash
+from flask import request, render_template, redirect, flash, send_file
 from flask import g, session, Blueprint
 from flask_wtf.csrf import CSRFError
 
@@ -84,6 +84,9 @@ def handle_csrf_error(e):
 def index():
     return render_template('index.html', site=g.site)
 
+@main_bp.route('/favicon.ico', methods=['GET'])
+def get_favicon():
+    return send_file(g.site.get_favicon_file_path(), mimetype='image/png')
 
 """
 @enabled_user_required

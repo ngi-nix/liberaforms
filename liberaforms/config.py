@@ -72,20 +72,17 @@ class InternalConfig(object):
     RESERVED_SLUGS = [
         "login",
         "logout",
-        "static",
-        "admin",
-        "admins",
-        "user",
-        "users",
+        "admin", "admins",
+        "user", "users",
+        "form", "forms",
+        "site", "sites",
         "profile",
-        "root",
-        "form",
-        "forms",
-        "site",
-        "sites",
         "update",
         "embed",
-        "api"
+        "api",
+        "static",
+        "upload", "uploads",
+        "logo", "favicon.ico",
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
@@ -112,5 +109,3 @@ class InternalConfig(object):
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
     }    
-    FAVICON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                  "static/images/favicon/")

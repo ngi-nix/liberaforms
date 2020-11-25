@@ -4,7 +4,8 @@ recursive-include liberaforms/static *
 recursive-include liberaforms/babel *
 recursive-include liberaforms/translations *
 recursive-include docs *
-include liberaforms/data/index_blurb.md
+include liberaforms/data/default-index-blurb.md
+include liberaforms/data/default-favicon.png
 include liberaforms/config.example.cfg
 
 global-exclude __pycache__

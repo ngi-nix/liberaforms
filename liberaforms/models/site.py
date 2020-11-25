@@ -59,7 +59,7 @@ class Site(db.Document):
 
     @classmethod
     def create(cls, hostname, scheme):
-        with open(os.path.join(app.root_path, 'data/index_blurb.md'), 'r') as defaultBlurb:
+        with open(os.path.join(app.root_path, 'data/default-index-blurb.md'), 'r') as defaultBlurb:
             defaultMD=defaultBlurb.read()
         blurb = {
             'markdown': defaultMD,
@@ -110,15 +110,14 @@ class Site(db.Document):
             url = "%s:%s" % (url, self.port)
         return url+'/'
 
-    def favicon_url(self):
-        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
-        if os.path.exists(path):
-            return "/static/images/favicon/%s_favicon.png" % self.hostname
-        else:
-            return "/static/images/favicon/default-favicon.png"
+    def get_favicon_file_path(self):
+        path = "{}/{}_favicon.png".format(Installation.get_branding_dir(), self.hostname)
+        if not os.path.exists(path):
+            path = os.path.join(app.root_path, 'data/default-favicon.png')
+        return path
 
     def delete_favicon(self):
-        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        path = "{}/{}_favicon.png".format(Installation.get_branding_dir(), self.hostname)
         if os.path.exists(path):
             os.remove(path)
             return True
@@ -465,3 +464,7 @@ class Installation(db.Document):
     @staticmethod
     def is_user(email):
         return True if User.objects(email=email).first() else False
+
+    @staticmethod
+    def get_branding_dir():
+        return os.path.join(app.instance_path, 'branding')

@@ -159,7 +159,7 @@ def change_site_favicon():
         # need to lower filename
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
             filename="%s_favicon.png" % g.site.hostname
-            file.save(os.path.join(app.config['FAVICON_FOLDER'], filename))
+            file.save(os.path.join(Installation.get_branding_dir(), filename))
         else:
             flash(gettext("Bad file name. PNG only"), 'warning')
             return render_template('change-site-favicon.html')

@@ -20,6 +20,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import os, shutil, click
 from liberaforms import app
 
+def _create_branding_dir():
+    branding_dir = os.path.join(app.instance_path, 'branding')
+    if not os.path.isdir(branding_dir):
+        os.makedirs(branding_dir, exist_ok=True)
+
 @app.cli.command("config_init")
 def config_init():
     """
@@ -30,6 +35,7 @@ def config_init():
     print("os.getcwd(): {}".format(os.getcwd()))
     """
     
+    _create_branding_dir()
     conf_path = os.path.join(app.instance_path, 'config.cfg')
     if not os.path.isfile(conf_path):
         os.makedirs(app.instance_path, exist_ok=True)

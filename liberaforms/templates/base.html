@@ -7,7 +7,7 @@
   {% endif %}
   {% if 'site' in g and g.site %}
   <title>{{ g.site.siteName }}</title>
-  <link rel="shortcut icon" type="image/png" href="{{g.site.favicon_url()}}"/>
+  <link rel="shortcut icon" type="image/png" href="/favicon.ico"/>
   {% endif %}
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
@@ -15,7 +15,7 @@
   <script src="/static/bootstrap/popper.1.14.3.min.js"></script>
   <script src="/static/bootstrap/4.1/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/static/bootstrap/4.1/bootstrap.min.css">
-    
+
   <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
   <link rel="stylesheet" href="/static/css/liberaforms.css">
   <link rel="stylesheet" href="/static/css/custom.css">
@@ -28,7 +28,7 @@
 <div class="container">
 
     {% if 'site' in g and g.site %}
-    <a class="navbar-brand" href="/"><img src="{{g.site.favicon_url()}}" /></a>
+    <a class="navbar-brand" href="/"><img src="/favicon.ico" /></a>
     {% endif %}
 
     <button class="navbar-toggler"

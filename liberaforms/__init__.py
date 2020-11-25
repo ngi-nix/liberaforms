@@ -44,6 +44,9 @@ babel = Babel(app)
 
 app.secret_key = app.config["SECRET_KEY"]
 app.session_type = app.config["SESSION_TYPE"]
+if app.config["SESSION_TYPE"] == "filesystem":
+    session_dir = os.path.join(app.instance_path, 'sessions')
+    app.config["SESSION_FILE_DIR"] = os.path.join(app.instance_path, 'sessions')
 Session(app)
 
 csrf = CSRFProtect()
@@ -69,5 +72,7 @@ import liberaforms.cli.custom_commands
 
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
+"""
 if __name__ == '__main__':
     app.run()
+"""
