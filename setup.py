@@ -51,6 +51,7 @@ setup(
         "unicodecsv==0.14.1",
         "beautifulsoup4==4.9.3",
         "flask_session==0.3.2",
+        "gunicorn"
 
     ],
     classifiers=[
@@ -59,12 +60,12 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     entry_points={
-        'console_scripts': [
-            'liberaforms-migrate-db = liberaforms.scripts.migrate_db:migrate_db',
-        ],
         'flask.commands': [
             'config_init = liberaforms.cli.custom_commands:config_init',
             'config_show = liberaforms.cli.custom_commands:config_show',
+            'gunicorn_config_init = liberaforms.cli.custom_commands:gunicorn_config_init',
+            'gunicorn_config_show = liberaforms.cli.custom_commands:gunicorn_config_show',
+            'supervisor_config = liberaforms.cli.custom_commands:supervisor_config',
             'db_migrate = liberaforms.cli.custom_commands:db_migrate',
         ],
     },

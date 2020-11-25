@@ -1,0 +1,4 @@
+[program:LiberaForms]
+command = {{ gunicorn_bin }} -c {{ gunicorn_py }} liberaforms:app
+directory = {{ pythonpath }}
+user = {{ username }}

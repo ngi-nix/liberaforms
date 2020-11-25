@@ -49,7 +49,6 @@ def config_init():
 @app.cli.command("config_show")
 def config_show():
     conf_path = os.path.join(app.instance_path, 'config.cfg')
-    
     if os.path.isfile(conf_path):
         print("Config file: {}\n".format(conf_path))
         with open(conf_path) as f:
@@ -58,6 +57,55 @@ def config_show():
         print("\nCound not find: {}\n".format(conf_path))
         print("Please run 'flask config_init'")
 
+@app.cli.command("gunicorn_config_init")
+def gunicorn_config_init():
+    gunicorn_config_path = os.path.join(app.instance_path, 'gunicorn.py')
+    if os.path.isfile(gunicorn_config_path):
+        print("\ngunicorn.py already exists: {}".format(gunicorn_config_path))
+    else:
+        from jinja2 import Environment, FileSystemLoader
+        j2_env = Environment(loader = FileSystemLoader(os.path.join(app.root_path, 'data')))
+        template = j2_env.get_template('gunicorn.jinja2')
+        gunicorn_config = template.render({
+                                'pythonpath': app.root_path,
+                                'gunicorn_bin': '{}/bin/gunicorn'.format(os.environ['VIRTUAL_ENV']),
+                                'username': os.environ.get('USER')
+                                })
+        gunicorn_config = "{}{}".format(gunicorn_config, os.linesep)
+        new_config_file = open(gunicorn_config_path, 'w')
+        new_config_file.write(gunicorn_config)
+        new_config_file.close()
+        print("\nNew gunicorn.py created: {}".format(gunicorn_config_path))
+    print("Edit as needed. Ensure 'user' is set to the user who will run gunicorn.")
+    print("Test config with 'gunicorn -c {} liberaforms:app'".format(gunicorn_config_path))
+
+@app.cli.command("gunicorn_config_show")
+def gunicorn_config_show():
+    gunicorn_config_path = os.path.join(app.instance_path, 'gunicorn.py')
+    if os.path.isfile(gunicorn_config_path):
+        print("gunicorn.py: {}\n".format(gunicorn_config_path))
+        with open(gunicorn_config_path) as f:
+            print(f.read())
+        print("Test config with 'gunicorn -c {} liberaforms:app'".format(gunicorn_config_path))
+    else:
+        print("\nCound not find: {}".format(gunicorn_config_path))
+        print("Please run 'flask gunicorn_config_init'")
+
+@app.cli.command("supervisor_config")
+def supervisor_config():
+    from jinja2 import Environment, FileSystemLoader
+    j2_env = Environment(loader = FileSystemLoader(os.path.join(app.root_path, 'data')))
+    template = j2_env.get_template('supervisor.jinja2')
+    gunicorn_py = os.path.join(app.instance_path, 'gunicorn.py')
+    supervisor_config = template.render({
+                            'pythonpath': app.root_path,
+                            'gunicorn_bin': '{}/bin/gunicorn'.format(os.environ['VIRTUAL_ENV']),
+                            'gunicorn_py': gunicorn_py,
+                            'username': os.environ.get('USER')
+                            })
+    print("Suggested supervisord config.")
+    print("/etc/supervisor/conf.d/LiberaForms.conf\n")
+    print("{}\n".format(supervisor_config))
 
 @app.cli.command("db_migrate")
 def db_migrate():
