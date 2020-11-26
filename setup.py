@@ -26,16 +26,18 @@ def read(fname):
 setup(
     name = "LiberaForms",
     version = "1.8.13",
+    license = "AGPLv3",
     author = "LiberaForms team",
     author_email = "info@liberaforms.org",
     description = ("Form management software."),
-    license = "AGPLv3",
-    keywords = "forms privacy",
-    url = "http://packages.python.org/an_example_pypi_project",
-    packages=find_packages(),
     long_description=read('README.md'),
+    long_description_content_type='text/markdown',
+    keywords = "forms privacy sovereignty",
+    url = "https://liberaforms.org",
+    
+    packages=find_packages(),
     include_package_data=True,
-    install_requires= [
+    install_requires = [
 
         "WTForms==2.2.1",
         "flask_mongoengine==0.9.5",
@@ -54,18 +56,34 @@ setup(
         "gunicorn"
 
     ],
+    extras_require = {
+        "dev": [
+            "twine",
+        ],
+    },
     classifiers=[
+        'Environment :: Web Environment',
+        'Framework :: Flask',
+        'License :: OSI Approved :: GNU Affero General Public License v3 (AGPLv3)',
+        'Intended Audience :: Developers',
+        'Intended Audience :: System Administrators',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],
+    project_urls={
+        'Bug Reports': 'https://gitlab.com/liberaforms/liberaforms/-/issues',
+        'Source': 'https://gitlab.com/liberaforms/liberaforms',
+    },
     entry_points={
         'flask.commands': [
-            'config_init = liberaforms.cli.custom_commands:config_init',
-            'config_show = liberaforms.cli.custom_commands:config_show',
+            'app_config_init = liberaforms.cli.custom_commands:app_config_init',
+            'app_config_show = liberaforms.cli.custom_commands:app_config_show',
             'gunicorn_config_init = liberaforms.cli.custom_commands:gunicorn_config_init',
             'gunicorn_config_show = liberaforms.cli.custom_commands:gunicorn_config_show',
             'supervisor_config = liberaforms.cli.custom_commands:supervisor_config',
+            'backup_dirs_show = liberaforms.cli.custom_commands:backup_dirs_show',
             'db_migrate = liberaforms.cli.custom_commands:db_migrate',
         ],
     },

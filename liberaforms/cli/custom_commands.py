@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os, shutil, click
+
 from liberaforms import app
 
 def _create_branding_dir():
@@ -25,8 +26,8 @@ def _create_branding_dir():
     if not os.path.isdir(branding_dir):
         os.makedirs(branding_dir, exist_ok=True)
 
-@app.cli.command("config_init")
-def config_init():
+@app.cli.command("app_config_init")
+def app_config_init():
     """
     #print("sys.prefix: {}".format(sys.prefix))
     print("app.instance_path: {}".format(app.instance_path))
@@ -42,20 +43,27 @@ def config_init():
         example_cfg = os.path.join(app.root_path, 'config.example.cfg')
         shutil.copyfile(example_cfg, conf_path)
         print("\nNew config file created: {}".format(conf_path))
-        print("Don't forget to set a good SECRET_KEY !!")
+        print("Don't forget to set a good SECRET_KEY !! (try 'openssl rand -base64 32')")
     else:
         print("\nConfig file already exists: {}".format(conf_path))
 
-@app.cli.command("config_show")
-def config_show():
+@app.cli.command("app_config_show")
+def app_config_show():
     conf_path = os.path.join(app.instance_path, 'config.cfg')
     if os.path.isfile(conf_path):
+        from configparser import ConfigParser
+        parser = ConfigParser()
+        with open(conf_path) as stream:
+            parser.read_string("[top]\n" + stream.read())
         print("Config file: {}\n".format(conf_path))
-        with open(conf_path) as f:
-            print(f.read())
+        for key, value in parser.items('top'):
+            if key == "secret_key":
+                print("SECRET_KEY = 'XXXXXX-A SECRET KEY-XXXXXX'")
+                continue
+            print("{} = {}".format(key.upper(), value))
     else:
         print("\nCound not find: {}\n".format(conf_path))
-        print("Please run 'flask config_init'")
+        print("Please run 'flask app_config_init'")
 
 @app.cli.command("gunicorn_config_init")
 def gunicorn_config_init():
@@ -103,9 +111,18 @@ def supervisor_config():
                             'gunicorn_py': gunicorn_py,
                             'username': os.environ.get('USER')
                             })
-    print("Suggested supervisord config.")
-    print("/etc/supervisor/conf.d/LiberaForms.conf\n")
+    print("Suggested supervisor config for /etc/supervisor/conf.d/LiberaForms.conf\n")
     print("{}\n".format(supervisor_config))
+
+@app.cli.command("backup_dirs_show")
+def backup_dirs_show():
+    print("#\n# Remember: The most important thing to backup is your database!")
+    print("# These _other_ files do not change often.\n#")
+    print("# Your config")
+    print(os.path.join(app.instance_path, 'config.cfg'))
+    print(os.path.join(app.instance_path, 'gunicorn.py'))
+    print("\n# Logos and favicons")
+    print(os.path.join(app.instance_path, 'branding'))
 
 @app.cli.command("db_migrate")
 def db_migrate():

@@ -1,63 +1,157 @@
-# Libera forms
+# LiberaForms
+
+Create a form, choose a URL slug, and publish it!
 
 Project page [https://liberaforms.org](https://liberaforms.org)
 
-We have built this software with the hope it will be used by our neighbours, friends, and anyone else who feels GAFAM already has way to much data on **all** of us.
+We are building this software with the hope it will be used by our neighbours, friends, and anyone else who feels GAFAM already has way to much data on **all** of us.
 
-Don't feed the Dictator!
-
-Please read INSTALL.txt for installation instructions.
-
-At the center of LiberaForms is the WYSIWYG web form creator [formbuilder](https://formbuilder.online/). Users build a form, choose a URL slug, and publish it.
 
 ## Resources
-We'd like to think that sharing resources makes things easier, so LiberaForms has been built to share server infraestructure with others. One server can serve multiple domains. An nginx proxy in front of LiberaForms routes the domains you choose to the gunicorn process.
+Sharing resources makes things easier so LiberaForms has been built to share server infraestructure with others.
 
-One installation, one database, one monitoring and one backup system mean less work for sysadmins too!
+One installation, one database, one monitoring, and one backup system means less work for sysadmins too.
 
-## Config
-Copy `config.example.cfg` to `config.cfg`. The configuration option are pretty straight forward.
+# Installation
 
-ROOT_USERS is a list of emails. Users with these emails are "Root users".
+## Install mongodb
+https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
 
-## User profiles
-**Anonymous users**:
- * Can fill out published forms
- 
-**Normal registered users:**
- * Can create and publish forms.
- * Can edit collected data on the web interface
- * Download collected form data in CSV
- * Share edit permission with other users on the site
- * Set some basic expiry conditions.
- * And other stuff
+## Install LiberaForms
+Create a virtual environment some where on the filesystem where you have write permissons.
 
-**Admins:**
- * Edit frontpage text
- * Invite new users to the site
- * Enable and disable users.
- * Give/remove admin permissions to users
- * Read all forms
- * Delete users and their forms
- * Site configuration. Invite only, Data protection text, smtp config, etc.
- * Admins **cannot** read collected data of other users' forms
+You can do this as root, but remember to `chown -R <username> ./liberaforms` when you finish.
 
-LiberaForms can serve multiple sites.
+```bash
+python3 -m venv liberaforms
+source ./liberaforms/bin/activate
+pip install LiberaForms
+cd ./liberaforms
+```
 
-**Root users:**
- * Bootstrap the first Admin of a new site
- * Have the same permissions as admins across **all sites**.
+*Note: **All the following commands** that begin with `flask` require you to have activated the virtual environment.*
 
-## Bootstrapping root_users
-1. From the index page, choose 'Forgot your password?' link.
-2. Enter an email defined as a root_user in the config.cfg
-3. Fill out the new user form.
-4. Go to the configuration page and get the SMTP config working first.
+## Create the app config file
+```bash
+flask app_config_init
+```
+Edit the newly created `config.cfg` file. The configuration options are pretty straight forward.
 
-## Bootstrapping a second site
-1. Get your friend to point their subdomain to your server IP.
+You can always see your configuration with
+```bash
+flask app_config_show
+```
+## Run/test LiberaForms on localhost
+```bash
+flask run
+```
+
+# Production server installation
+After installing LiberaForms, and after creating and editing `config.cfg`
+## Create the gunicorn config
+```bash
+flask gunicorn_config_init
+```
+You can always see your configuration with
+```bash
+flask gunicorn_config_show
+```
+Test the configuration with the command that is displayed.
+
+### Install Supervisor to manage gunicorn
+```bash
+sudo apt-get install supervisor
+```
+You need to create a conf file for supervisor. Try
+```bash
+flask supervisor_config
+```
+Copy the output, create a supervisor conf file, and paste.
+
+Restart supervisor to activate the new conf.
+```bash
+sudo systemctl restart supervisor
+```
+Supervisor commands you can use
+```bash
+sudo supervisorctl start|stop|restart|status LiberaForms
+```
+
+### Nginx or Apache or ..
+1. Install a web server
+2. Configure (letsencrypt) certificates for your domain
+3. Create a host configuration for your LiberaForms domain. (see docs/nginx.example)
+
+
+# Post installation
+## Create the first user
+If you installed locally, browse `http://localhost:5000/site/recover-password`
+
+If you installed on a remote server, `https://domain.com/site/recover-password`
+
+and enter your `ROOT_USER` email.
+
+## SMTP
+The first thing you should get working is the SMTP config. Browse the 'Config' page.
+
+# Backups
+
+Make sure you are dumping the database and saving off site.
+
+## Database
+Run this and check if a copy is dumped correctly.
+```bash
+/usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+```
+
+Add a line to your crontab to run it every night.
+```
+30 3 * * * /usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+```
+Note: This overwrites the last copy. You might want to change that.
+
+## LiberaForms
+
+These are some other files, not many, that do not change often. If you are hosting multiple domains, you will want to backup the 'branding' directory.
+
+Run this command to show the directories and files you might backup.
+
+```bash
+flask backup_dirs_show
+```
+
+# Development installation
+Create a virtual environment
+```bash
+python3 -m venv liberaforms
+source ./liberaforms/bin/activate
+```
+Clone the software via http
+```bash
+pip install -e git+https://gitlab.com/liberaforms/liberaforms.git#egg=LiberaForms
+```
+or via ssh
+```bash
+pip install -e git+ssh://git@gitlab.com/liberaforms/liberaforms.git#egg=LiberaForms
+```
+
+```bash
+cd ./liberaforms
+flask app_config_init
+```
+
+
+## Run in develop mode
+```bash
+source ./liberaforms/bin/activate
+cd ./liberaforms
+python run.py
+```
+
+# Multisite
+One server can serve multiple domains. An nginx proxy in front of LiberaForms routes the domains you choose to the gunicorn process.
+
+1. Get your friend/tenant to point their subdomain to your server IP.
 2. Configure nginx proxy to direct traffic to the running gunicorn process.
 3. Go to your config page and send the person you know an Admin invitation for the new site.
 4. Tell them to go to the configuration page and get the SMTP config working first.
-
-New user invitations, and password restore emails, expire in 24 hours. You can change that in the config.cfg

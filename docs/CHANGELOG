@@ -9,6 +9,7 @@ v.1.8
  * Added Site creation date
  * Moved INSTALL UPGRADE CHANGELOG to docs/
  * User can delete account
+ * Improved distribution adding setup.py
 
 v.1.7
  * Changed project name GNGforms -> LiberaForms
