@@ -54,7 +54,7 @@ def before_request():
     if request.path[0:7] == '/static':
         return
     uri = urlparse(request.host_url)
-    g.site=Site.find(hostname=uri.hostname, scheme=uri.scheme)
+    g.site=Site.find(hostname=uri.hostname)
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
         if not g.current_user:
