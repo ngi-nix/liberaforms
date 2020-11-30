@@ -19,13 +19,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 from setuptools import setup, find_packages
+from liberaforms import config
+
+VERSION = config.InternalConfig.APP_VERSION
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "LiberaForms",
-    version = "1.8.13",
+    name = "liberaforms",
+    version = VERSION,
     license = "AGPLv3",
     author = "LiberaForms team",
     author_email = "info@liberaforms.org",
