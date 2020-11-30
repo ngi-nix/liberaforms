@@ -66,7 +66,6 @@ class InternalConfig(object):
     Internal settings that cannot be overridden.
     """
 
-    APP_VERSION = "1.8.14"
     SCHEMA_VERSION = 24
 
     RESERVED_SLUGS = [
@@ -141,7 +140,7 @@ def load_env(app):
                         }
         except:
             pass
-
+"""
 def ensure_minimum_config(app):
     if not app.config['SECRET_KEY']:
         raise ValueError("No SECRET_KEY set for Flask application")
@@ -149,3 +148,4 @@ def ensure_minimum_config(app):
         raise ValueError("No ROOT_USERS set for Flask application")
     if not app.config['MONGODB_SETTINGS']:
         raise ValueError("No MONGODB_SETTINGS set for Flask application")
+"""

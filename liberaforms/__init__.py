@@ -28,6 +28,8 @@ from liberaforms import config
 
 app = Flask(__name__, instance_relative_config=True)
 
+app.config["APP_VERSION"] = open(os.path.join(app.root_path, 'VERSION')).read()
+
 # Load config defaults
 app.config.from_object(config.DefaultConfig)
 # Ensure instance dir and content are in place
@@ -41,10 +43,6 @@ for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
     app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
 # Override config with ENV vars
 config.load_env(app)
-# Check we have required config values
-config.ensure_minimum_config(app)
-
-
 
 db = MongoEngine(app)
 babel = Babel(app)

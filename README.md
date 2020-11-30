@@ -22,25 +22,26 @@ Create a virtual environment some where on the filesystem where you have write p
 
 You can do this as root, but remember to `chown -R <username> ./liberaforms` when you finish.
 
+Find the latest version of LiberaForms at https://pkg.liberaforms.org/liberaforms/
+
 ```bash
 python3 -m venv liberaforms
 source ./liberaforms/bin/activate
-pip install LiberaForms
+pip install https://pkg.liberaforms.org/liberaforms/liberaforms-1.8.14-py3-none-any.whl
 cd ./liberaforms
 ```
 
 *Note: **All the following commands** that begin with `flask` require you to have activated the virtual environment.*
-
-## Create the app config file
 ```bash
-flask app_config_init
+export FLASK_APP=liberaforms
+source ./liberaforms/bin/activate
 ```
-Edit the newly created `config.cfg` file. The configuration options are pretty straight forward.
-
-You can always see your configuration with
+## Configure
+Show the config file and edit as needed
 ```bash
 flask app_config_show
 ```
+
 ## Run/test LiberaForms on localhost
 ```bash
 flask run
@@ -121,6 +122,7 @@ flask backup_dirs_show
 ```
 
 # Development installation
+## Install from git repository
 Create a virtual environment
 ```bash
 python3 -m venv liberaforms
@@ -130,20 +132,33 @@ Clone the software via http
 ```bash
 pip install -e git+https://gitlab.com/liberaforms/liberaforms.git#egg=LiberaForms
 ```
-or via ssh
+or clone via ssh
 ```bash
 pip install -e git+ssh://git@gitlab.com/liberaforms/liberaforms.git#egg=LiberaForms
 ```
-
+## Install from source file
+Find the latest version of LiberaForms at https://pkg.liberaforms.org/liberaforms/
 ```bash
-cd ./liberaforms
-flask app_config_init
+wget https://pkg.liberaforms.org/liberaforms/liberaforms-1.8.14.tar.gz
+tar zxvf liberaforms-1.8.14.tar.gz
+cd liberaforms-1.8.14
+python3 -m venv venv
+source venv/bin/activate
+pip install -e .
 ```
-
+Remember to export the `FLASK_APP` and activate the venv.
+```bash
+export FLASK_APP=liberaforms
+source ./liberaforms/bin/activate
+```
+## Configure
+Show the config file and edit as needed
+```bash
+flask app_config_show
+```
 
 ## Run in develop mode
 ```bash
-source ./liberaforms/bin/activate
 cd ./liberaforms
 python run.py
 ```
