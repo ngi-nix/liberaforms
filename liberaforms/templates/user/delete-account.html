@@ -29,16 +29,16 @@
         <form method="POST">
         {{ wtform.csrf_token }}
         <p>
-            {{ wtform.username.label }} <span class='required-dot'>●</span><br />
-            {{ wtform.username(class_="form-control") }}
-            {% for error in wtform.username.errors %}
+            {{ wtform.delete_username.label }} <span class='required-dot'>●</span><br />
+            {{ wtform.delete_username(class_="form-control") }}
+            {% for error in wtform.delete_username.errors %}
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}
         </p>
         <p>
-            {{ wtform.password.label }} <span class='required-dot'>●</span><br />
-            {{ wtform.password(class_="form-control") }}
-            {% for error in wtform.password.errors %}
+            {{ wtform.delete_password.label }} <span class='required-dot'>●</span><br />
+            {{ wtform.delete_password(class_="form-control") }}
+            {% for error in wtform.delete_password.errors %}
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}
         </p>

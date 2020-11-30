@@ -18,7 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 from functools import wraps
-from flask import g, redirect, url_for, render_template
+from flask import g, redirect, url_for, render_template, flash
 from liberaforms import app
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
