@@ -57,9 +57,6 @@ def app_config_show():
             parser.read_string("[top]\n" + stream.read())
         print("Config file: {}\n".format(conf_path))
         for key, value in parser.items('top'):
-            if key == "secret_key":
-                print("SECRET_KEY = 'XXXXXX-A SECRET KEY-XXXXXX'")
-                continue
             print("{} = {}".format(key.upper(), value))
     else:
         print("\nCound not find: {}\n".format(conf_path))

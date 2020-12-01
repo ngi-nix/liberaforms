@@ -42,7 +42,7 @@ app.config.from_object(config.InternalConfig)
 for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
     app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
 # Override config with ENV vars
-config.load_env(app)
+config.load_config_from_env(app, os.environ)
 
 db = MongoEngine(app)
 babel = Babel(app)

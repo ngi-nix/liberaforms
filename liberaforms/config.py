@@ -123,20 +123,20 @@ def default_instance_setup(app):
         os.makedirs(branding_dir, exist_ok=True)
 
     
-def load_env(app):
-    if 'SECRET_KEY' in os.environ:
-        print("Found SECRET_KEY in os.env")
-        app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
-    if 'ROOT_USERS' in os.environ:
-        app.config['ROOT_USERS'] = os.environ['ROOT_USERS']
-    if 'MONGODB_DB' in os.environ and \
-        'MONGODB_HOST' in os.environ and \
-        'MONGODB_PORT' in os.environ:
+def load_config_from_env(app, env):
+    if 'SECRET_KEY' in env:
+        print("Found SECRET_KEY in env: {}".format(env['SECRET_KEY']))
+        app.config['SECRET_KEY'] = env['SECRET_KEY']
+    if 'ROOT_USERS' in env:
+        app.config['ROOT_USERS'] = env['ROOT_USERS']
+    if 'MONGODB_DB' in env and \
+        'MONGODB_HOST' in env and \
+        'MONGODB_PORT' in env:
         try:
             app.config['MONGODB_SETTINGS'] = {
-                            'db': os.environ['MONGODB_DB'],
-                            'host': os.environ['MONGODB_HOST'],
-                            'port': int(os.environ['MONGODB_PORT']),
+                            'db': env['MONGODB_DB'],
+                            'host': env['MONGODB_HOST'],
+                            'port': int(env['MONGODB_PORT']),
                         }
         except:
             pass

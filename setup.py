@@ -23,6 +23,9 @@ from setuptools import setup, find_packages
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setup(
     name = "liberaforms",
     version = read('./liberaforms/VERSION'),
@@ -37,30 +40,7 @@ setup(
     
     packages=find_packages(),
     include_package_data=True,
-    install_requires = [
-
-        "WTForms==2.2.1",
-        "flask_mongoengine==0.9.5",
-        "password_strength==0.0.3.post2",
-        "Markdown==3.2.1",
-        "validate_email==1.3",
-        "passlib==1.7.2",
-        "Unidecode==1.1.1",
-        "Flask==1.1.1",
-        "Flask_WTF==0.14.3",
-        "mongoengine==0.19.1",
-        "Flask_Babel==1.0.0",
-        "unicodecsv==0.14.1",
-        "beautifulsoup4==4.9.3",
-        "flask_session==0.3.2",
-        "gunicorn"
-
-    ],
-    extras_require = {
-        "dev": [
-            "twine",
-        ],
-    },
+    install_requires=requirements,
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Flask',
