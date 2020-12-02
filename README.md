@@ -146,21 +146,19 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -e .
 ```
-Remember to export the `FLASK_APP` and activate the venv.
-```bash
-export FLASK_APP=liberaforms
-source ./liberaforms/bin/activate
-```
+
 ## Configure
 Show the config file and edit as needed
 ```bash
+source ./liberaforms/bin/activate
 flask app_config_show
 ```
 
 ## Run in develop mode
 ```bash
+source ./liberaforms/bin/activate
 cd ./liberaforms
-python run.py
+FLASK_DEBUG=True python app.py
 ```
 
 # Multisite

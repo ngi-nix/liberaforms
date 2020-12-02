@@ -20,6 +20,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import os, shutil, click
 
 from liberaforms import app
+from liberaforms.config import ENV_VARIABLES
 
 def _create_branding_dir():
     branding_dir = os.path.join(app.instance_path, 'branding')
@@ -58,10 +59,14 @@ def app_config_show():
         print("Config file: {}\n".format(conf_path))
         for key, value in parser.items('top'):
             print("{} = {}".format(key.upper(), value))
-    else:
-        print("\nCound not find: {}\n".format(conf_path))
-        print("Please run 'flask app_config_init'")
-
+    env_vars=""
+    for variable in ENV_VARIABLES:
+        if variable in os.environ:
+            env_vars=env_vars+"{} = {}\n".format(variable, os.environ[variable])
+    if env_vars:
+        print("\nEnvironment variables override config.cfg")
+        print(env_vars)
+    
 @app.cli.command("gunicorn_config_init")
 def gunicorn_config_init():
     gunicorn_config_path = os.path.join(app.instance_path, 'gunicorn.py')

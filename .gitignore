@@ -4,6 +4,7 @@ venv
 build
 dist
 flask_session
+instance
 .eggs
 *.egg-info
 *.pyc

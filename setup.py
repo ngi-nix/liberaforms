@@ -28,7 +28,7 @@ with open('requirements.txt') as f:
 
 setup(
     name = "liberaforms",
-    version = read('./liberaforms/VERSION'),
+    version = read('./liberaforms/VERSION').rstrip(),
     license = "AGPLv3",
     author = "LiberaForms team",
     author_email = "info@liberaforms.org",

@@ -10,10 +10,10 @@ include liberaforms/data/gunicorn.jinja2
 include liberaforms/data/supervisor.jinja2
 include liberaforms/config.example.cfg
 include liberaforms/VERSION
-include app.py
-include run.py
 include requirements.txt
 include Dockerfile
+include docker-compose.yml
+include app.py
 
 global-exclude __pycache__
 global-exclude venv

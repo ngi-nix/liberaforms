@@ -28,7 +28,7 @@ from liberaforms import config
 
 app = Flask(__name__, instance_relative_config=True)
 
-app.config["APP_VERSION"] = open(os.path.join(app.root_path, 'VERSION')).read()
+app.config["APP_VERSION"] = open(os.path.join(app.root_path, 'VERSION')).read().rstrip()
 
 # Load config defaults
 app.config.from_object(config.DefaultConfig)

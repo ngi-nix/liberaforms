@@ -33,7 +33,8 @@ docker run \
  --publish 5000:5000 \
  -v$PWD/liberaforms:/app/liberaforms \
  --rm=true \
- -e FLASK_ENV='development' \
+ -e FLASK_DEBUG=True \
+ -e FLASK_RUN_HOST=0.0.0.0 \
  -e MONGODB_HOST=127.0.0.1 \
  -e MONGODB_PORT=2701 \
  -e MONGODB_DB=liberaforms \
