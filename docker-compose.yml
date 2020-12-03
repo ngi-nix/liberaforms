@@ -2,7 +2,7 @@
 
 version: "3.8"
 services:
-  app:
+  liberaforms:
     build: .
     ports:
       - "5000:5000"
@@ -12,6 +12,9 @@ services:
         #MONGODB_PORT: 27017
         #MONGODB_USERNAME: root
         #MONGODB_PASSWORD: rootpassword
+    #volumes:
+    #  - /app
+
   mongodb:
     image: mongo:latest
     #environment:

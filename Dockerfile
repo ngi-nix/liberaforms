@@ -3,6 +3,12 @@ FROM python:3.7-slim
 RUN mkdir /app
 WORKDIR /app
 
+COPY requirements.txt /app
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
+EXPOSE 5000
+
 ENV FLASK_APP=liberaforms
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5000
@@ -16,9 +22,4 @@ ENV FLASK_ENV=production
 #ENV MONGODB_USERNAME = 'db_user'
 #ENV MONGODB_PASSWORD = 'pwd123'
 
-COPY . /app
-RUN pip3 install -r requirements.txt
-
-EXPOSE 5000
-#CMD ["flask", "run"]
-ENTRYPOINT ["python", "/app/app.py"]
+#ENTRYPOINT ["python", "/app/app.py"]
