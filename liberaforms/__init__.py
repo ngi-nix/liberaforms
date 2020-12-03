@@ -41,8 +41,7 @@ app.config.from_object(config.InternalConfig)
 # Merge extra configuration as/if necessary
 for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
     app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
-# Override config with ENV vars
-config.load_config_from_env(app, os.environ)
+config.load_env_variables(app, os.environ)
 
 db = MongoEngine(app)
 babel = Babel(app)
@@ -75,8 +74,3 @@ app.register_blueprint(entries_bp)
 import liberaforms.cli.custom_commands
 
 app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-
-"""
-if __name__ == '__main__':
-    app.run()
-"""

@@ -29,6 +29,22 @@ You can copy values from the 'DefaultConfig' class and
 
 import os, shutil
 
+"""
+Managed environment variables
+"""
+ENV_VARIABLES = [
+    'SECRET_KEY',
+    'FLASK_RUN_HOST',
+    'FLASK_RUN_PORT',
+    'FLASK_DEBUG',
+    'ROOT_USERS',
+    'MONGODB_DB',
+    'MONGODB_HOST',
+    'MONGODB_PORT',
+    'MONGODB_USERNAME',
+    'MONGODB_PASSWORD'
+]
+
 class DefaultConfig(object):
     # Required config:
     # SECRET_KEY = 'super secret key'
@@ -130,34 +146,7 @@ def default_instance_setup(app):
     if not os.path.isdir(branding_dir):
         os.makedirs(branding_dir, exist_ok=True)
 
-"""
-Managed environment variables
-"""
-ENV_VARIABLES = [
-    'SECRET_KEY',
-    'FLASK_RUN_HOST',
-    'FLASK_RUN_PORT',
-    'FLASK_DEBUG',
-    'ROOT_USERS',
-    'MONGODB_DB',
-    'MONGODB_HOST',
-    'MONGODB_PORT',
-    'MONGODB_USERNAME',
-    'MONGODB_PASSWORD'
-]
-
-
-def load_config_from_env(app, env):
+def load_env_variables(app, env):
     for variable in ENV_VARIABLES:
         if variable in env:
             app.config[variable] = env[variable]
-
-"""
-def ensure_minimum_config(app):
-    if not app.config['SECRET_KEY']:
-        raise ValueError("No SECRET_KEY set for Flask application")
-    if not app.config['ROOT_USERS']:
-        raise ValueError("No ROOT_USERS set for Flask application")
-    if not app.config['MONGODB_SETTINGS']:
-        raise ValueError("No MONGODB_SETTINGS set for Flask application")
-"""

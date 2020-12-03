@@ -1,3 +1,5 @@
+# WARNING!! This is to build from source
+
 version: "3.8"
 services:
   app:
