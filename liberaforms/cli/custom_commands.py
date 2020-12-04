@@ -18,9 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import os, shutil, click
-
 from liberaforms import app
-from liberaforms.config import ENV_VARIABLES
 
 def _create_branding_dir():
     branding_dir = os.path.join(app.instance_path, 'branding')
@@ -60,7 +58,7 @@ def app_config_show():
         for key, value in parser.items('top'):
             print("{} = {}".format(key.upper(), value))
     env_vars=""
-    for variable in ENV_VARIABLES:
+    for variable in app.config:
         if variable in os.environ:
             env_vars=env_vars+"{} = {}\n".format(variable, os.environ[variable])
     if env_vars:

@@ -1,29 +1,42 @@
-# Some docker notes 
+# Docker installation 
 
+You need docker and docker-compose installed first.
 
-## Developer mode
+## Get the source code
 
-### From git repository
+You can download a gzip'd tar file
 ```bash
-git clone git@gitlab.com:liberaforms/liberaforms.git liberaforms
-or ..
+wget https://gitlab.com/liberaforms/liberaforms/-/archive/main/liberaforms-main.tar.gz
+mkdir liberaforms
+tar zxvf liberaforms-main.tar.gz --strip-components=1 -C liberaforms
+```
+or clone the git repository
+```bash
 git clone https://gitlab.com/liberaforms/liberaforms.git liberaforms
-
-cd liberaforms
+or ..
+git clone git@gitlab.com:liberaforms/liberaforms.git liberaforms
 ```
 
-### From source
-Download liberaforms src tgz
-*Where <version> is the version you want to use*
+## Build the liberaforms image and start the containers
 ```bash
-wget https://pkg.liberaforms.org/liberaforms/liberaforms-<version>.tar.gz
-tar zxvf liberaforms-<version>.tar.gz
-cd liberaforms-<version>
+cd liberaforms
+docker-compose up -d
 ```
+Browse `http://localhost:5000`
 
-And build
+See README.md 'Post installation' notes
+
+# Other notes to be organized ...
+
+Build
 ```bash
 docker build -t liberaforms .
+```
+
+## Run container
+```bash
+docker run --publish 5000:5000 --rm liberaforms:latest
+docker run --publish 5000:5000 --rm --detach liberaforms:latest
 ```
 
 ## Run container in development mode
@@ -40,11 +53,4 @@ docker run \
  -e MONGODB_DB=liberaforms \
  liberaforms:latest
 
-```
-
-# Other
-## Run container
-```bash
-docker run --publish 5000:5000 --rm liberaforms:latest
-docker run --publish 5000:5000 --rm --detach liberaforms:latest
 ```

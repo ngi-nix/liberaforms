@@ -13,7 +13,7 @@ include liberaforms/VERSION
 include requirements.txt
 include Dockerfile
 include docker-compose.yml
-include app.py
+include wsgi.py
 
 global-exclude __pycache__
 global-exclude venv

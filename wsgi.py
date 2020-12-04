@@ -17,27 +17,4 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from os import environ
 from liberaforms import app
-
-if app.config['SERVER_NAME']:
-    host_port = app.config['SERVER_NAME'].split(':')
-    host = host_port[0]
-    try:
-        port = host_port[1]
-    except:
-        port = 5000
-else:
-    host = "127.0.0.1"
-    port = 5000
-
-host = environ['FLASK_RUN_HOST'] if 'FLASK_RUN_HOST' in environ else host
-port = int(environ['FLASK_RUN_PORT']) if 'FLASK_RUN_PORT' in environ else port
-debug = False
-if 'FLASK_DEBUG' in environ:
-    if environ['FLASK_DEBUG'].lower() == "true":
-        debug = True
-
-#print("I am app.py")
-if __name__ == "__main__":
-    app.run(host=host, port=port, debug=debug)

@@ -16,6 +16,8 @@ One installation, one database, one monitoring, and one backup system means less
 
 # Installation
 
+For docker installation please see docs/docker.md
+
 ## Install mongodb
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
 
@@ -26,20 +28,34 @@ You can do this as root, but remember to `chown -R <username> ./liberaforms` whe
 
 Find the latest version of LiberaForms at https://pkg.liberaforms.org/liberaforms/
 
+### Get the source code
+
+You can download a gzip'd tar file
 ```bash
-python3 -m venv liberaforms
-source ./liberaforms/bin/activate
-pip install https://pkg.liberaforms.org/liberaforms/liberaforms-1.8.14-py3-none-any.whl
-cd ./liberaforms
+wget https://gitlab.com/liberaforms/liberaforms/-/archive/main/liberaforms-main.tar.gz
+mkdir liberaforms
+tar zxvf liberaforms-main.tar.gz --strip-components=1 -C liberaforms
+```
+or clone the git repository
+```bash
+git clone https://gitlab.com/liberaforms/liberaforms.git liberaforms
+or ..
+git clone git@gitlab.com:liberaforms/liberaforms.git liberaforms
+```
+### Install the software
+```bash
+cd liberaforms
+python3 -m venv ./venv
+source ./venv/bin/activate
+pip install -e .
 ```
 
 *Note: **All the following commands** that begin with `flask` require you to have activated the virtual environment.*
 ```bash
-export FLASK_APP=liberaforms
-source ./liberaforms/bin/activate
+source ./venv/bin/activate
 ```
 ## Configure
-Show the config file and edit as needed
+Show the configuration and edit `config.cfg` as needed
 ```bash
 flask app_config_show
 ```
@@ -47,6 +63,14 @@ flask app_config_show
 ## Run/test LiberaForms on localhost
 ```bash
 flask run
+```
+Browse `http://localhost:5000`
+
+# Development installation
+
+## Run in develop mode
+```bash
+FLASK_DEBUG=True flask run
 ```
 
 # Production server installation
@@ -121,46 +145,6 @@ Run this command to show the directories and files you might backup.
 
 ```bash
 flask backup_dirs_show
-```
-
-# Development installation
-## Install from git repository
-Create a virtual environment
-```bash
-python3 -m venv liberaforms
-source ./liberaforms/bin/activate
-```
-Clone the software via http
-```bash
-pip install -e git+https://gitlab.com/liberaforms/liberaforms.git#egg=LiberaForms
-```
-or clone via ssh
-```bash
-pip install -e git+ssh://git@gitlab.com/liberaforms/liberaforms.git#egg=LiberaForms
-```
-## Install from source file
-Find the latest version of LiberaForms at https://pkg.liberaforms.org/liberaforms/
-```bash
-wget https://pkg.liberaforms.org/liberaforms/liberaforms-1.8.14.tar.gz
-tar zxvf liberaforms-1.8.14.tar.gz
-cd liberaforms-1.8.14
-python3 -m venv venv
-source venv/bin/activate
-pip install -e .
-```
-
-## Configure
-Show the config file and edit as needed
-```bash
-source ./liberaforms/bin/activate
-flask app_config_show
-```
-
-## Run in develop mode
-```bash
-source ./liberaforms/bin/activate
-cd ./liberaforms
-FLASK_DEBUG=True python app.py
 ```
 
 # Multisite
