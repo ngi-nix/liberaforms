@@ -1,5 +1,7 @@
 # LiberaForms
 
+## *Provisional README under development!*
+
 Create a form, choose a URL slug, and publish it!
 
 Project page [https://liberaforms.org](https://liberaforms.org)

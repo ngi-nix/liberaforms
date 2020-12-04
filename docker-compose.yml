@@ -7,14 +7,20 @@ services:
     ports:
       - "5000:5000"
     environment:
+        MEMCACHED_HOST: memcached
+        #MEMCACHED_PORT: 11211
         MONGODB_HOST: mongodb
         #MONGODB_DB: liberaforms
         #MONGODB_PORT: 27017
         #MONGODB_USERNAME: root
         #MONGODB_PASSWORD: rootpassword
-    #volumes:
-    #  - /app
-
+    volumes:
+      - liberaforms_instance:/app/instance
+    command: /usr/local/bin/gunicorn -w 2 -b :5000 liberaforms:app
+  memcached:
+    image: memcached:latest  
+    ports:
+      - "11211:11211"
   mongodb:
     image: mongo:latest
     #environment:
@@ -27,3 +33,4 @@ services:
 
 volumes:
   mongodb_data_container:
+  liberaforms_instance:

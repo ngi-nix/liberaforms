@@ -37,6 +37,9 @@ ENV_VARIABLES = [
     'FLASK_RUN_HOST',
     'FLASK_RUN_PORT',
     'FLASK_DEBUG',
+    'SESSION_TYPE',
+    'MEMCACHED_HOST',
+    'MEMCACHED_PORT',
     'ROOT_USERS',
     'MONGODB_DB',
     'MONGODB_HOST',
@@ -150,3 +153,12 @@ def load_env_variables(app, env):
     for variable in ENV_VARIABLES:
         if variable in env:
             app.config[variable] = env[variable]
+    if 'SESSION_TYPE' in app.config and app.config['SESSION_TYPE'] == 'memcached':
+        if 'MEMCACHED_HOST' in app.config:
+            import pylibmc
+            if 'MEMCACHED_PORT' in app.config:
+                _server = "{}:{}".format(   app.config['MEMCACHED_HOST'],
+                                            app.config['MEMCACHED_PORT'])
+            else:
+                _server = "{}:11211".format(app.config['MEMCACHED_HOST'])
+            app.config['SESSION_MEMCACHED'] = pylibmc.Client([_server])

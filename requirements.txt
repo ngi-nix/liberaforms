@@ -12,4 +12,5 @@ Flask_Babel==1.0.0
 unicodecsv==0.14.1
 beautifulsoup4==4.9.3
 flask_session==0.3.2
-gunicorn
+gunicorn==20.0.4
+pylibmc==1.6.1

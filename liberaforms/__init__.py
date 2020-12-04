@@ -17,13 +17,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
+import sys, os, uuid 
 from flask import Flask, session
 from flask_session import Session
 from flask_mongoengine import MongoEngine
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
-import sys, os
 
+#from liberaforms.utils import utils
 from liberaforms import config
 
 app = Flask(__name__, instance_relative_config=True)
@@ -50,6 +51,7 @@ app.secret_key = app.config["SECRET_KEY"]
 app.session_type = app.config["SESSION_TYPE"]
 if app.config["SESSION_TYPE"] == "filesystem":
     app.config["SESSION_FILE_DIR"] = os.path.join(app.instance_path, 'sessions')
+app.config['SESSION_KEY_PREFIX'] = str(uuid.uuid1())
 Session(app)
 
 csrf = CSRFProtect()
