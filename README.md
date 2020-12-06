@@ -26,8 +26,6 @@ Create a virtual environment some where on the filesystem where you have write p
 
 You can do this as root, but remember to `chown -R <username> ./liberaforms` when you finish.
 
-Find the latest version of LiberaForms at https://pkg.liberaforms.org/liberaforms/
-
 ### Get the source code
 
 You can download a gzip'd tar file
@@ -55,7 +53,7 @@ pip install -e .
 source ./venv/bin/activate
 ```
 ## Configure
-Show the configuration and edit `config.cfg` as needed
+Show the configuration and edit the `config.cfg` file as needed.
 ```bash
 flask app_config_show
 ```
@@ -66,14 +64,15 @@ flask run
 ```
 Browse `http://localhost:5000`
 
-# Development installation
-
-## Run in develop mode
+## Run in debug mode
 ```bash
 FLASK_DEBUG=True flask run
 ```
 
-# Production server installation
+# Production installation
+
+*Note: These instructions are not necessary when installing with docker.*
+
 After installing LiberaForms, and after creating and editing `config.cfg`
 ## Create the gunicorn config
 ```bash
@@ -93,7 +92,7 @@ You need to create a conf file for supervisor. Try
 ```bash
 flask supervisor_config
 ```
-Copy the output, create a supervisor conf file, and paste.
+Copy the output, create the supervisor conf file, and paste.
 
 Restart supervisor to activate the new conf.
 ```bash
@@ -135,7 +134,7 @@ Add a line to your crontab to run it every night.
 ```
 30 3 * * * /usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
 ```
-Note: This overwrites the last copy. You might want to change that.
+*Note: This overwrites the last copy. You might want to change that.*
 
 ## LiberaForms
 

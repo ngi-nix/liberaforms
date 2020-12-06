@@ -26,6 +26,10 @@ Browse `http://localhost:5000`
 
 See README.md 'Post installation' notes
 
+## Run in debug mode
+*See comments in `docker-compose.yml`*
+
+
 # Other notes to be organized ...
 
 Build

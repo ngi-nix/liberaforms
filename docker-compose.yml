@@ -1,4 +1,5 @@
-# WARNING!! This is to build from source
+# WARNING!! Configured for development env.
+# WARNING!! This is to build liberaforms from source
 
 version: "3.8"
 services:
@@ -10,13 +11,16 @@ services:
         MEMCACHED_HOST: memcached
         #MEMCACHED_PORT: 11211
         MONGODB_HOST: mongodb
-        #MONGODB_DB: liberaforms
+        MONGODB_DB: dev-liberaforms  #develop
         #MONGODB_PORT: 27017
         #MONGODB_USERNAME: root
         #MONGODB_PASSWORD: rootpassword
+        FLASK_DEBUG: 1  #develop
     volumes:
       - liberaforms_instance:/app/instance
-    command: /usr/local/bin/gunicorn -w 2 -b :5000 liberaforms:app
+      - ./:/app #develop
+    #command: /usr/local/bin/gunicorn -w 2 -b :5000 liberaforms:app
+    command: flask run  #develop
   memcached:
     image: memcached:latest  
     ports:

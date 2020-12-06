@@ -64,6 +64,8 @@ def app_config_show():
     if env_vars:
         print("\nEnvironment variables override config.cfg")
         print(env_vars)
+    else:
+        print("")
     
 @app.cli.command("gunicorn_config_init")
 def gunicorn_config_init():
