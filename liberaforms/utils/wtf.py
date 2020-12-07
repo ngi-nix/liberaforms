@@ -78,16 +78,16 @@ class Login(FlaskForm):
 
 
 class DeleteAccount(FlaskForm):
-    username = StringField(_("Your username"), validators=[DataRequired()])
-    password = PasswordField(_("Your password"), validators=[DataRequired()])
+    delete_username = StringField(_("Your username"), validators=[DataRequired()])
+    delete_password = PasswordField(_("Your password"), validators=[DataRequired()])
 
-    def validate_username(self, username):
-        if username.data != g.current_user.username:
+    def validate_delete_username(self, delete_username):
+        if delete_username.data != g.current_user.username:
             raise ValidationError(_("That is not your username"))
             return False
     
-    def validate_password(self, password):
-        if not validators.verify_password(password.data, g.current_user.password_hash):
+    def validate_delete_password(self, delete_password):
+        if not validators.verify_password(delete_password.data, g.current_user.password_hash):
             raise ValidationError(_("That is not your password"))    
 
 

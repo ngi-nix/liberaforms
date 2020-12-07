@@ -96,7 +96,7 @@ class Site(db.Document):
     def find(cls, *args, **kwargs):
         site = cls.find_all(*args, **kwargs).first()
         if not site:
-            site=cls.create(**kwargs)
+            site=cls.create(hostname=kwargs['hostname'], scheme="http")
         return site
 
     @classmethod
