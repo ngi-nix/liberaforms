@@ -1,13 +1,16 @@
-# WARNING!! Configured for development env.
-# WARNING!! This is to build liberaforms from source
+# WARNING!!
+# Configured for development env.
+# This will build liberaforms from source
 
 version: "3.8"
 services:
   liberaforms:
-    build: .
+    #image: liberaforms/liberaforms-dev:1.8.14
+    build: ./  #develop
     ports:
       - "5000:5000"
     environment:
+        SESSION_KEY_PREFIX: unique_string
         MEMCACHED_HOST: memcached
         #MEMCACHED_PORT: 11211
         MONGODB_HOST: mongodb

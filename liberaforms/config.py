@@ -17,7 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-import os, shutil, uuid 
+import os, shutil, uuid
+from pathlib import Path
 
 """
 Managed environment variables
@@ -27,6 +28,7 @@ CONFIG_VARIABLES = [
     'FLASK_RUN_HOST',
     'FLASK_RUN_PORT',
     'SESSION_TYPE',
+    'SESSION_KEY_PREFIX',
     'MEMCACHED_HOST',
     'MEMCACHED_PORT',
     'ROOT_USERS',
@@ -40,9 +42,7 @@ CONFIG_VARIABLES = [
 def load_app_config(app):
     # Load config defaults
     app.config.from_object(DefaultConfig)
-    # Ensure instance dir and content are in place
-    default_instance_setup(app)
-    # User overrides
+    # User overrides. Future: This should only be done if not running from docker
     app.config.from_pyfile('config.cfg', silent=True)
     # Force internal configuration
     app.config.from_object(InternalConfig)
@@ -51,8 +51,7 @@ def load_app_config(app):
         app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
     app.config["APP_VERSION"] = open(os.path.join(app.root_path, 'VERSION')).read().rstrip()
     app.secret_key = app.config["SECRET_KEY"]
-    load_env_variables(app)
-    setup_session_type(app)
+
 
 
 class DefaultConfig(object):
@@ -76,6 +75,9 @@ class DefaultConfig(object):
     # Session management (see docs/INSTALL)
     SESSION_TYPE = "filesystem"
     #SESSION_TYPE = "memcached"
+    
+    # Should be passed and an env variable with docker
+    SESSION_KEY_PREFIX = 'liberaforms'
 
     # 3600 seconds = 1hrs. Time to fill out a form.
     # This number must be less than PERMANENT_SESSION_LIFETIME (see below)
@@ -143,15 +145,16 @@ class InternalConfig(object):
         "eu": ("Euskara ", "eu-ES"),
     }
 
-
-def default_instance_setup(app):
-    # create config.cfg if not present
-    config_file=os.path.join(app.instance_path, 'config.cfg')
-    if not os.path.isfile(config_file):
+def ensure_app_config(app):
+    conf_path = os.path.join(app.instance_path, 'config.cfg')
+    if not os.path.isfile(conf_path):
         os.makedirs(app.instance_path, exist_ok=True)
         example_cfg = os.path.join(app.root_path, 'config.example.cfg')
-        shutil.copyfile(example_cfg, config_file)
-    # create 'branding' dir if not present
+        shutil.copyfile(example_cfg, conf_path)
+
+# Future:
+# We shouldn't need to do this when running from Docker.
+def ensure_branding_dir(app):
     branding_dir = os.path.join(app.instance_path, 'branding')
     if not os.path.isdir(branding_dir):
         os.makedirs(branding_dir, exist_ok=True)
@@ -167,7 +170,6 @@ def setup_session_type(app):
         app.config["SESSION_FILE_DIR"] = os.path.join(app.instance_path, 'sessions')
         return
     if app.config['SESSION_TYPE'] == "memcached":
-        app.config['SESSION_KEY_PREFIX'] = str(uuid.uuid1())
         if 'MEMCACHED_HOST' in app.config:
             import pylibmc
             if 'MEMCACHED_PORT' in app.config:

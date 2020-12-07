@@ -45,7 +45,7 @@ git clone git@gitlab.com:liberaforms/liberaforms.git liberaforms
 cd liberaforms
 python3 -m venv ./venv
 source ./venv/bin/activate
-pip install -e .
+pip install -e ./
 ```
 
 *Note: **All the following commands** that begin with `flask` require you to have activated the virtual environment.*

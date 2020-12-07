@@ -27,7 +27,12 @@ from liberaforms import config
 
 app = Flask(__name__, instance_relative_config=True)
 
+config.ensure_app_config(app)
+config.ensure_branding_dir(app)
 config.load_app_config(app)
+config.load_env_variables(app)
+config.setup_session_type(app)
+
 db = MongoEngine(app)
 babel = Babel(app)
 Session(app)
