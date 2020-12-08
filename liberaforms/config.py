@@ -61,8 +61,6 @@ class DefaultConfig(object):
     # MONGODB_HOST = '127.0.0.1'
     # MONGODB_PORT = 27017
     # MONGODB_DB = 'liberaforms'
-    # MONGODB_USERNAME = 'webapp'
-    # MONGODB_PASSWORD = 'pwd123'
 
     """
     User overridable settings with their sensible defaults.
@@ -76,7 +74,7 @@ class DefaultConfig(object):
     SESSION_TYPE = "filesystem"
     #SESSION_TYPE = "memcached"
     
-    # Should be passed and an env variable with docker
+    # Should be passed as an env variable with docker
     SESSION_KEY_PREFIX = 'liberaforms'
 
     # 3600 seconds = 1hrs. Time to fill out a form.
@@ -152,8 +150,7 @@ def ensure_app_config(app):
         example_cfg = os.path.join(app.root_path, 'config.example.cfg')
         shutil.copyfile(example_cfg, conf_path)
 
-# Future:
-# We shouldn't need to do this when running from Docker.
+# Maybe shouldn't do this when running as a container.
 def ensure_branding_dir(app):
     branding_dir = os.path.join(app.instance_path, 'branding')
     if not os.path.isdir(branding_dir):

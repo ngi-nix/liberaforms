@@ -10,7 +10,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-        SESSION_KEY_PREFIX: unique_string
+        SESSION_KEY_PREFIX: 'a_unique_string'
         MEMCACHED_HOST: memcached
         #MEMCACHED_PORT: 11211
         MONGODB_HOST: mongodb
@@ -19,24 +19,30 @@ services:
         #MONGODB_USERNAME: root
         #MONGODB_PASSWORD: rootpassword
         FLASK_DEBUG: 1  #develop
+    networks:
+      - libera-default
     volumes:
       - liberaforms_instance:/app/instance
       - ./:/app #develop
-    #command: /usr/local/bin/gunicorn -w 2 -b :5000 liberaforms:app
+    #command: /usr/local/bin/gunicorn -w 3 -b :5000 liberaforms:app
     command: flask run  #develop
   memcached:
     image: memcached:latest  
-    ports:
-      - "11211:11211"
+    networks:
+      - libera-default
   mongodb:
     image: mongo:latest
     #environment:
     #  MONGO_INITDB_ROOT_USERNAME: root
     #  MONGO_INITDB_ROOT_PASSWORD: rootpassword
-    ports:
-      - "27017:27017"
+    networks:
+      - libera-default
     volumes:
       - mongodb_data_container:/data/db
+
+networks:
+  libera-default:
+    driver: bridge
 
 volumes:
   mongodb_data_container:
