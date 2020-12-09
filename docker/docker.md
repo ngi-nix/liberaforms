@@ -19,8 +19,8 @@ git clone git@gitlab.com:liberaforms/liberaforms.git liberaforms
 
 ## Build the liberaforms image and start the containers
 ```bash
-cd liberaforms
-docker-compose up -d
+cd liberaforms/docker/dev/
+docker-compose -p liberaforms up -d
 ```
 Browse `http://localhost:5000`
 
@@ -29,6 +29,15 @@ See README.md 'Post installation' notes
 ## Run in debug mode
 *See comments in `docker-compose.yml`*
 
+
+# mongodb backup
+```
+bash backup_mongodb.sh --db_name liberaforms --dest_dir /tmp
+```
+Recover
+```
+docker exec -i liberaforms_mongodb_1 sh -c 'mongorestore --archive' < /tmp/xxxx.mongodump
+```
 
 # Other notes to be organized ...
 

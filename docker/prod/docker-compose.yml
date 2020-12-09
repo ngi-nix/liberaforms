@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  liberaforms:
+    image: liberaforms/liberaforms-dev:1.8.14
+    ports:
+      - "5000:5000"
+    environment:
+        SESSION_KEY_PREFIX: 'a_unique_string'
+        MEMCACHED_HOST: memcached
+        #MEMCACHED_PORT: 11211
+        MONGODB_HOST: mongodb
+        MONGODB_DB: liberaforms
+        #MONGODB_PORT: 27017
+        #MONGODB_USERNAME: root
+        #MONGODB_PASSWORD: rootpassword
+    networks:
+      - libera-default
+    volumes:
+      - liberaforms_instance:/app/instance
+    command: /usr/local/bin/gunicorn -w 3 -b :5000 liberaforms:app
+  memcached:
+    image: memcached:latest  
+    networks:
+      - libera-default
+  mongodb:
+    image: mongo:latest
+    #environment:
+    #  MONGO_INITDB_ROOT_USERNAME: root
+    #  MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    networks:
+      - libera-default
+    volumes:
+      - mongodb_data_container:/data/db
+
+networks:
+  libera-default:
+    driver: bridge
+
+volumes:
+  mongodb_data_container:
+  liberaforms_instance:

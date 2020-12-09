@@ -16,7 +16,7 @@ One installation, one database, one monitoring, and one backup system means less
 
 # Installation
 
-For docker installation please see docs/docker.md
+For docker installation please see docker/
 
 ## Install mongodb
 https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
@@ -127,12 +127,12 @@ Make sure you are dumping the database and saving off site.
 ## Database
 Run this and check if a copy is dumped correctly.
 ```bash
-/usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+/usr/bin/mongodump --db=liberaforms --out="/var/backups/"
 ```
 
 Add a line to your crontab to run it every night.
 ```
-30 3 * * * /usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+30 3 * * * /usr/bin/mongodump --db=liberaforms --out="/var/backups/"
 ```
 *Note: This overwrites the last copy. You might want to change that.*
 

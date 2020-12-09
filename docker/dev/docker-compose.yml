@@ -5,8 +5,7 @@
 version: "3.8"
 services:
   liberaforms:
-    #image: liberaforms/liberaforms-dev:1.8.14
-    build: ./  #develop
+    build: ../../
     ports:
       - "5000:5000"
     environment:
@@ -14,34 +13,32 @@ services:
         MEMCACHED_HOST: memcached
         #MEMCACHED_PORT: 11211
         MONGODB_HOST: mongodb
-        MONGODB_DB: dev-liberaforms  #develop
+        MONGODB_DB: dev-liberaforms
         #MONGODB_PORT: 27017
         #MONGODB_USERNAME: root
         #MONGODB_PASSWORD: rootpassword
-        FLASK_DEBUG: 1  #develop
+        FLASK_DEBUG: 1
     networks:
-      - libera-default
+      - libera-dev
     volumes:
-      - liberaforms_instance:/app/instance
-      - ./:/app #develop
-    #command: /usr/local/bin/gunicorn -w 3 -b :5000 liberaforms:app
-    command: flask run  #develop
+      - ../../:/app
+    command: flask run
   memcached:
     image: memcached:latest  
     networks:
-      - libera-default
+      - libera-dev
   mongodb:
     image: mongo:latest
     #environment:
     #  MONGO_INITDB_ROOT_USERNAME: root
     #  MONGO_INITDB_ROOT_PASSWORD: rootpassword
     networks:
-      - libera-default
+      - libera-dev
     volumes:
       - mongodb_data_container:/data/db
 
 networks:
-  libera-default:
+  libera-dev:
     driver: bridge
 
 volumes:

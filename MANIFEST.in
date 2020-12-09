@@ -4,16 +4,13 @@ recursive-include liberaforms/static *
 recursive-include liberaforms/babel *
 recursive-include liberaforms/translations *
 recursive-include docs *
-include liberaforms/data/default-index-blurb.md
-include liberaforms/data/default-favicon.png
-include liberaforms/data/gunicorn.jinja2
-include liberaforms/data/supervisor.jinja2
+recursive-include docker *
+recursive-include data *
 include liberaforms/config.example.cfg
 include liberaforms/VERSION
 include requirements.txt
-include Dockerfile
-include docker-compose.yml
 include wsgi.py
+include Dockerfile
 
 global-exclude __pycache__
 global-exclude venv
