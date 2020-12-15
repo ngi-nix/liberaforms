@@ -369,8 +369,8 @@ class Invite(db.Document):
     def find_all(cls, **kwargs):
         return cls.objects.ensure_hostname(**kwargs)
     
-    def get_link(self, **kwargs):
-        site = Site.find(**kwargs)
+    def get_link(self):
+        site = Site.find(hostname=self.hostname)
         return "{}user/new/{}".format(site.host_url, self.token['token'])
     
     def get_message(self):
