@@ -17,17 +17,15 @@ or ..
 git clone git@gitlab.com:liberaforms/liberaforms.git liberaforms
 ```
 
-## Build the liberaforms image and start the containers
+## Docker Development
+Build the liberaforms image and start the containers
 ```bash
 cd liberaforms/docker/dev/
-docker-compose -p liberaforms up -d
+./update_dev_env.sh
 ```
 Browse `http://localhost:5000`
 
 See README.md 'Post installation' notes
-
-## Run in debug mode
-*See comments in `docker-compose.yml`*
 
 
 # mongodb backup
@@ -41,16 +39,6 @@ docker exec -i liberaforms_mongodb_1 sh -c 'mongorestore --archive' < /tmp/xxxx.
 
 # Other notes to be organized ...
 
-Build
-```bash
-docker build -t liberaforms .
-```
-
-## Run container
-```bash
-docker run --publish 5000:5000 --rm liberaforms:latest
-docker run --publish 5000:5000 --rm --detach liberaforms:latest
-```
 
 ## Run container in development mode
 ```bash

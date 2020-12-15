@@ -24,6 +24,7 @@ services:
       - libera-default
   mongodb:
     image: mongo:latest
+    container_name: liberaforms_db
     #environment:
     #  MONGO_INITDB_ROOT_USERNAME: root
     #  MONGO_INITDB_ROOT_PASSWORD: rootpassword
