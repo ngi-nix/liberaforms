@@ -1,4 +1,5 @@
-# Libera forms
+![LiberaForms logo](https://arxius.laloka.org/projectes/LiberaForms/Grafica/png/logo-liberaforms-en-negre.png  "LiberaForms logo")
+
 
 We have built this software with the hope it will be used by our neighbours, friends, and anyone else who feels GAFAM already has way too much data on all of us.
 
