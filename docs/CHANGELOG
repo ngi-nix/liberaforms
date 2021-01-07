@@ -1,5 +1,10 @@
 https://keepachangelog.com/en/1.0.0/
 
+v.1.9
+ * python setup.py
+ * docker file
+ * new CLI conifg tools
+
 v.1.8
  * Admins can export users and admins in CSV
  * Root_user can export all admins in CSV
@@ -10,6 +15,7 @@ v.1.8
  * Moved INSTALL UPGRADE CHANGELOG to docs/
  * User can delete account
  * Improved distribution adding setup.py
+ * Bug fixes
 
 v.1.7
  * Changed project name GNGforms -> LiberaForms
