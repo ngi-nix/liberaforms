@@ -61,3 +61,7 @@ LiberaForms can serve multiple sites.
 4. Tell them to go to the configuration page and get the SMTP config working first.
 
 New user invitations, and password restore emails, expire in 24 hours. You can change that in the config.cfg
+
+## License information
+
+This project is available as open source under the terms of the AGPL 3.0 or later license. However, some elements are being licensed under different licenses, for accurate information please check individual files and also check the NOTICE file in the root of the project. 
