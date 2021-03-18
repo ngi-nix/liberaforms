@@ -28,7 +28,7 @@ admin_bp = Blueprint('admin_bp', __name__,
 @admin_bp.route('/admin', methods=['GET'])
 @admin_required
 def site_admin():
-    sites = Site.objects() if g.current_user.is_root_user() else None
+    sites = [g.site] if g.current_user.is_root_user() else None
     context = {
         'site': g.site,
         'sites': sites,
@@ -43,7 +43,7 @@ def site_admin():
 def list_users():
     return render_template('list-users.html',
                             users=User.find_all(),
-                            invites=Invite.find_all()) 
+                            invites=Invite.find_all())
 
 @admin_bp.route('/admin/users/<string:id>', methods=['GET'])
 @admin_required
@@ -52,12 +52,12 @@ def inspect_user(id):
     if not user:
         flash(gettext("User not found"), 'warning')
         return redirect(make_url_for('admin_bp.list_users'))
-    return render_template('inspect-user.html', user=user) 
+    return render_template('inspect-user.html', user=user)
 
 
 @admin_bp.route('/admin/users/toggle-blocked/<string:id>', methods=['POST'])
 @admin_required
-def toggle_user_blocked(id):       
+def toggle_user_blocked(id):
     user=User.find(id=id)
     if not user:
         return JsonResponse(json.dumps())
@@ -71,7 +71,7 @@ def toggle_user_blocked(id):
 
 @admin_bp.route('/admin/users/toggle-admin/<string:id>', methods=['POST'])
 @admin_required
-def toggle_admin(id):       
+def toggle_admin(id):
     user=User.find(id=id)
     if not user:
         return JsonResponse(json.dumps())
@@ -85,19 +85,19 @@ def toggle_admin(id):
 
 @admin_bp.route('/admin/users/delete/<string:id>', methods=['GET', 'POST'])
 @admin_required
-def delete_user(id):       
+def delete_user(id):
     user=User.find(id=id)
     if not user:
         flash(gettext("User not found"), 'warning')
         return redirect(make_url_for('admin_bp.list_users'))
-  
+
     if request.method == 'POST' and 'username' in request.form:
         if user.is_root_user():
             flash(gettext("Cannot delete root user"), 'warning')
-            return redirect(make_url_for('admin_bp.inspect_user', id=user.id)) 
+            return redirect(make_url_for('admin_bp.inspect_user', id=user.id))
         if user.id == g.current_user.id:
             flash(gettext("Cannot delete yourself"), 'warning')
-            return redirect(make_url_for('admin_bp.inspect_user', username=user.username)) 
+            return redirect(make_url_for('admin_bp.inspect_user', username=user.username))
         if user.username == request.form['username']:
             user.delete_user()
             flash(gettext("Deleted user '%s'" % (user.username)), 'success')
@@ -111,19 +111,19 @@ def delete_user(id):
 @admin_required
 def csv_users():
     csv_file = g.site.write_users_csv()
-    @after_this_request 
-    def remove_file(response): 
-        os.remove(csv_file) 
+    @after_this_request
+    def remove_file(response):
+        os.remove(csv_file)
         return response
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
-    
+
 
 """ Form management """
 
 @admin_bp.route('/admin/forms', methods=['GET'])
 @admin_required
 def list_forms():
-    return render_template('list-forms.html', forms=Form.find_all()) 
+    return render_template('list-forms.html', forms=Form.find_all())
 
 
 @admin_bp.route('/admin/forms/toggle-public/<string:id>', methods=['GET'])
@@ -178,7 +178,7 @@ def list_invites():
 @admin_required
 def new_invite():
     wtform=wtf.NewInvite()
-    if wtform.validate_on_submit():  
+    if wtform.validate_on_submit():
         message=wtform.message.data
         invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
         EmailServer().sendInvite(invite)
@@ -207,11 +207,11 @@ def delete_invite(id):
 
 @admin_bp.route('/admin/toggle-newuser-notification', methods=['POST'])
 @admin_required
-def toggle_newUser_notification(): 
+def toggle_newUser_notification():
     return json.dumps({'notify': g.current_user.toggle_new_user_notification()})
 
 
 @admin_bp.route('/admin/toggle-newform-notification', methods=['POST'])
 @admin_required
-def toggle_newForm_notification(): 
+def toggle_newForm_notification():
     return json.dumps({'notify': g.current_user.toggle_new_form_notification()})

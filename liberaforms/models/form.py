@@ -5,14 +5,18 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, unicodecsv as csv
+import os, datetime, copy
+import unicodecsv as csv
 from urllib.parse import urlparse
 
 from flask import g
 from flask_babel import gettext
 
 from liberaforms import app, db
-from liberaforms.utils.queryset import HostnameQuerySet
+from sqlalchemy.dialects.postgresql import JSON, JSONB, ARRAY
+from sqlalchemy.ext.mutable import MutableDict, MutableList
+from sqlalchemy.orm.attributes import flag_modified
+from liberaforms.utils.crud import CRUD
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
@@ -20,43 +24,48 @@ from liberaforms.utils import validators
 #from pprint import pprint as pp
 
 
-class Form(db.Document):
-    meta = {'collection': 'forms', 'queryset_class': HostnameQuerySet}
-    created = db.StringField(required=True)
-    hostname = db.StringField(required=True)
-    slug = db.StringField(required=True)
-    author_id = db.StringField(db_field="author", required=True)
-    editors = db.DictField(required=True)
-    postalCode = db.StringField(required=False)
-    enabled = db.BooleanField()
-    expired = db.BooleanField()
-    sendConfirmation = db.BooleanField()
-    expiryConditions = db.DictField(required=True)
+class Form(db.Model, CRUD):
+    __tablename__ = "forms"
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    created = db.Column(db.Date, nullable=False)
+    hostname = db.Column(db.String, nullable=False)
+    slug = db.Column(db.String, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    editors = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
+    postalCode = db.Column(db.String, nullable=True)
+    enabled = db.Column(db.Boolean, default=False)
+    expired = db.Column(db.Boolean, default=False)
+    sendConfirmation = db.Column(db.Boolean, default=False)
+    expiryConditions = db.Column(JSONB, nullable=False)
     """
     structure: A list of dicts that is built by and rendered by formbuilder.
     fieldIndex: List of dictionaries. Each dict contains one formbuider field info.
                 [{"label": <displayed_field_name>, "name": <unique_field_identifier>}]
     """
-    structure = db.ListField(required=True)
-    fieldIndex = db.ListField(required=True)
-    sharedEntries = db.DictField(required=False)
-    log = db.ListField(required=False)
-    restrictedAccess = db.BooleanField()
-    adminPreferences = db.DictField(required=True)
-    introductionText = db.DictField(required=True)
-    afterSubmitText = db.DictField(required=True)
-    expiredText = db.DictField(required=True)
-    consentTexts = db.ListField(required=False)
+    #structure = db.Column(JSONB, nullable=False)
+    structure = db.Column(ARRAY(JSONB), nullable=False)
+    #fieldIndex = db.Column(JSONB, nullable=False)
+    fieldIndex = db.Column(ARRAY(JSONB), nullable=False)
+    sharedEntries = db.Column(JSONB, nullable=True)
+    log = db.Column(JSONB, nullable=True)
+    restrictedAccess = db.Column(db.Boolean, default=False)
+    adminPreferences = db.Column(JSONB, nullable=False)
+    introductionText = db.Column(JSONB, nullable=False)
+    afterSubmitText = db.Column(JSONB, nullable=False)
+    expiredText = db.Column(JSONB, nullable=False)
+    consentTexts = db.Column(ARRAY(JSONB), nullable=True)
+    answers = db.relationship("FormResponse")
+    author = db.relationship("User")
     _site=None
 
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
         #print("Form.__init__ {}".format(self.slug))
-    
+
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
         return print_obj_values(self)
-        
+
     @property
     def site(self):
         from liberaforms.models.site import Site
@@ -65,24 +74,28 @@ class Form(db.Document):
         #print("form.site")
         self._site = Site.find(hostname=self.hostname)
         return self._site
-    
+
     @classmethod
     def find(cls, **kwargs):
         return cls.find_all(**kwargs).first()
 
     @classmethod
     def find_all(cls, **kwargs):
+        filters = []
         if 'editor_id' in kwargs:
-            kwargs={"__raw__": {'editors.%s' % kwargs["editor_id"]: {'$exists': True}}, **kwargs}
+            filters.append(cls.editors.has_key(kwargs['editor_id']))
             kwargs.pop('editor_id')
         if 'key' in kwargs:
             kwargs={"sharedEntries__key": kwargs['key'], **kwargs}
             kwargs.pop('key')
-        return cls.objects.ensure_hostname(**kwargs)
-   
+        for key, value in kwargs.items():
+            filters.append(getattr(cls, key) == value)
+        return cls.query.filter(*filters)
+
     def get_author(self):
-        from liberaforms.models.user import User
-        return User.find(id=self.author_id)
+        return self.author
+        #from liberaforms.models.user import User
+        #return User.find(id=self.author_id)
 
     def change_author(self, new_author):
         if new_author.enabled:
@@ -111,7 +124,7 @@ class Form(db.Document):
                     element['label']=gettext("Label")
                 index.append({'name': element['name'], 'label': element['label']})
         return index
-        
+
     def update_field_index(self, newIndex):
         if self.get_total_entries() == 0:
             self.fieldIndex = newIndex
@@ -151,7 +164,7 @@ class Form(db.Document):
             # append dynamic DPL field
             result.append({"name": "DPL", "label": gettext("DPL")})
         return result
-    
+
     def has_removed_fields(self):
         return any('removed' in field for field in self.fieldIndex)
 
@@ -162,14 +175,14 @@ class Form(db.Document):
             return True
         else:
             return False
-    
+
     @classmethod
     def structure_has_email_field(cls, structure):
         for element in structure:
             if cls.is_email_field(element):
                 return True
         return False
-        
+
     def has_email_field(self):
         return Form.structure_has_email_field(self.structure)
 
@@ -178,7 +191,7 @@ class Form(db.Document):
             return True
         else:
             return False
-    
+
     def get_confirmation_email_address(self, entry):
         for element in self.structure:
             if Form.is_email_field(element):
@@ -188,7 +201,7 @@ class Form(db.Document):
 
     def get_entries(self, oldest_first=False, **kwargs):
         kwargs['oldest_first'] = oldest_first
-        kwargs['form_id'] = str(self.id)
+        kwargs['form_id'] = self.id
         return FormResponse.find_all(**kwargs)
 
     def find_entry(self, entry_id):
@@ -214,7 +227,7 @@ class Form(db.Document):
         new_response = FormResponse(**response)
         new_response.save()
         return new_response
-        
+
     def get_entries_for_display(self, oldest_first=False):
         entries = self.get_entries(oldest_first=oldest_first)
         result = []
@@ -226,11 +239,11 @@ class Form(db.Document):
         return result
 
     def get_total_entries(self):
-        return FormResponse.find_all(form_id=str(self.id)).count()
+        return FormResponse.find_all(form_id=self.id).count()
 
     def get_last_entry_date(self):
         last_entry = FormResponse.find(form_id=str(self.id))
-        return last_entry.created if last_entry else "" 
+        return last_entry.created if last_entry else ""
 
     def is_enabled(self):
         if not (self.get_author().enabled and self.adminPreferences['public']):
@@ -261,10 +274,10 @@ class Form(db.Document):
             self.save()
             return editor_id
         return None
-   
+
     @property
     def url(self):
-        return "%s%s" % (self.site.host_url, self.slug)  
+        return "%s%s" % (self.site.host_url, self.slug)
 
     @property
     def embed_url(self):
@@ -273,7 +286,7 @@ class Form(db.Document):
     @property
     def data_consent(self):
         return self.consentTexts[0]
-    
+
     def get_consent_for_display(self, id):
         #print(self.consentTexts)
         return ConsentText.get_consent_for_display(id, self)
@@ -283,7 +296,7 @@ class Form(db.Document):
 
     def get_data_consent_for_display(self):
         return self.get_consent_for_display(self.data_consent['id'])
-        
+
     def get_default_data_consent_for_display(self):
         return ConsentText.get_consent_for_display(g.site.DPL_consent_id, self.author)
 
@@ -371,7 +384,7 @@ class Form(db.Document):
                     element["type"] == "radio-group" or \
                     element["type"] == "select":
                     result.append(element)
-        return result        
+        return result
 
     def get_field_label(self, fieldName):
         for element in self.structure:
@@ -436,10 +449,10 @@ class Form(db.Document):
 
     def delete_entries(self):
         FormResponse.find_all(form_id=str(self.id)).delete()
-    
+
     def is_author(self, user):
         return True if self.author_id == str(user.id) else False
-        
+
     def is_editor(self, user):
         return True if str(user.id) in self.editors else False
 
@@ -464,7 +477,7 @@ class Form(db.Document):
         if self.expiry_conditions["fields"]:
             return True
         return False
-    
+
     def has_expired(self):
         if not self.can_expire():
             return False
@@ -489,7 +502,7 @@ class Form(db.Document):
             except:
                 continue
         return total
-                
+
     def is_public(self):
         if not self.is_enabled() or self.expired:
             return False
@@ -502,10 +515,10 @@ class Form(db.Document):
         if len(self.editors) > 1:
             return True
         return False
-    
+
     def are_entries_shared(self):
         return self.sharedEntries['enabled']
-    
+
     def get_shared_entries_url(self, part="results"):
         return "%s/%s/%s" % (self.url, part, self.sharedEntries['key'])
 
@@ -557,7 +570,7 @@ class Form(db.Document):
                 entry[field['label']]=value
             result.append(entry)
         return result
-        
+
     def get_chart_data(self):
         chartable_time_fields=[]
         total={'entries':0}
@@ -567,14 +580,14 @@ class Form(db.Document):
             total[label]=0
             time_data[label]=[]
             chartable_time_fields.append({'name':field, 'label':label})
-            
+
         multichoice_fields=self.get_multichoice_fields()
         multi_choice_for_chart=[]
         for field in multichoice_fields:
             field_for_chart={   "name":field['name'], "title":field['label'],
                                 "axis_1":[], "axis_2":[]}
             multi_choice_for_chart.append(field_for_chart)
-            
+
             for value in field['values']:
                 field_for_chart['axis_1'].append(value['label'])
                 field_for_chart['axis_2'].append(0) #start counting at zero
@@ -607,12 +620,12 @@ class Form(db.Document):
             self.enabled = False if self.enabled else True
             self.save()
             return self.enabled
-            
+
     def toggle_admin_form_public(self):
         self.adminPreferences['public'] = False if self.adminPreferences['public'] else True
         self.save()
         return self.adminPreferences['public']
-    
+
     def toggle_shared_entries(self):
         self.sharedEntries['enabled'] = False if self.sharedEntries['enabled'] else True
         self.save()
@@ -622,13 +635,14 @@ class Form(db.Document):
         self.restrictedAccess = False if self.restrictedAccess else True
         self.save()
         return self.restrictedAccess
-        
+
     def toggle_notification(self, editor_id):
         if editor_id in self.editors:
             if self.editors[editor_id]['notification']['newEntry']:
                 self.editors[editor_id]['notification']['newEntry']=False
             else:
                 self.editors[editor_id]['notification']['newEntry']=True
+            flag_modified(self, 'editors')
             self.save()
             return self.editors[editor_id]['notification']['newEntry']
         return False
@@ -639,15 +653,16 @@ class Form(db.Document):
                 self.editors[editor_id]['notification']['expiredForm']=False
             else:
                 self.editors[editor_id]['notification']['expiredForm']=True
+            flag_modified(self, 'editors')
             self.save()
             return self.editors[editor_id]['notification']['expiredForm']
         return False
-    
+
     def toggle_send_confirmation(self):
         self.sendConfirmation = False if self.sendConfirmation else True
         self.save()
         return self.sendConfirmation
-        
+
     def add_log(self, message, anonymous=False):
         if anonymous:
             actor="system"
@@ -671,7 +686,7 @@ class Form(db.Document):
             for entry in entries:
                 writer.writerow(entry)
         return csv_name
-        
+
     @staticmethod
     def default_introduction_text():
         title=gettext("Form title")
@@ -680,15 +695,16 @@ class Form(db.Document):
         return "## {}\n\n### {}\n\n{}".format(title, context, content)
 
 
-class FormResponse(db.Document):
-    meta = {'collection': 'responses', 'queryset_class': HostnameQuerySet}
-    created = db.StringField(required=True)
-    hostname = db.StringField(required=True)
-    author_id = db.StringField(required=True)
-    form_id = db.StringField(required=True)
-    marked = db.BooleanField(default=False)
-    data = db.DictField(required=False)
-    
+class FormResponse(db.Model, CRUD):
+    __tablename__ = "answers"
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    created = db.Column(db.DateTime, nullable=False)
+    hostname = db.Column(db.String, nullable=False)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+    marked = db.Column(db.Boolean, default=False)
+    data = db.Column(JSONB, nullable=True)
+
     def __init__(self, *args, **kwargs):
         db.Document.__init__(self, *args, **kwargs)
 
@@ -698,11 +714,13 @@ class FormResponse(db.Document):
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.find_all(**kwargs).first()
+        return cls.query.filter_by(**kwargs).first()
 
     @classmethod
     def find_all(cls, **kwargs):
-        order = 'created' if 'oldest_first' in kwargs and kwargs['oldest_first'] else '-created'
+        order = cls.created.desc()
         if 'oldest_first' in kwargs:
+            if kwargs['oldest_first']:
+                order = cls.created
             kwargs.pop('oldest_first')
-        return cls.objects.ensure_hostname(**kwargs).order_by(order)
+        return cls.query.filter_by(**kwargs).order_by(order)
