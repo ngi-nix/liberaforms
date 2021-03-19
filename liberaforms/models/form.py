@@ -13,13 +13,16 @@ from flask import g
 from flask_babel import gettext
 
 from liberaforms import app, db
-from sqlalchemy.dialects.postgresql import JSON, JSONB, ARRAY
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
-from liberaforms.utils.crud import CRUD
+from liberaforms.utils.database import CRUD
+from liberaforms.models.log import FormLog
+from liberaforms.models.answer import Answer
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
+from liberaforms.utils import utils
 
 #from pprint import pprint as pp
 
@@ -29,10 +32,9 @@ class Form(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
     hostname = db.Column(db.String, nullable=False)
-    slug = db.Column(db.String, nullable=False)
+    slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     editors = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    postalCode = db.Column(db.String, nullable=True)
     enabled = db.Column(db.Boolean, default=False)
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
@@ -43,24 +45,41 @@ class Form(db.Model, CRUD):
                 [{"label": <displayed_field_name>, "name": <unique_field_identifier>}]
     """
     #structure = db.Column(JSONB, nullable=False)
-    structure = db.Column(ARRAY(JSONB), nullable=False)
+    structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
     #fieldIndex = db.Column(JSONB, nullable=False)
-    fieldIndex = db.Column(ARRAY(JSONB), nullable=False)
-    sharedEntries = db.Column(JSONB, nullable=True)
-    log = db.Column(JSONB, nullable=True)
+    fieldIndex = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
+    sharedEntries = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     restrictedAccess = db.Column(db.Boolean, default=False)
-    adminPreferences = db.Column(JSONB, nullable=False)
+    adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     introductionText = db.Column(JSONB, nullable=False)
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
-    answers = db.relationship("FormResponse")
+    answers = db.relationship("Answer")
     author = db.relationship("User")
+    log = db.relationship("FormLog")
     _site=None
 
-    def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-        #print("Form.__init__ {}".format(self.slug))
+    def __init__(self, author, **kwargs):
+        self.created = datetime.datetime.now().isoformat()
+        self.author_id = author.id
+        self.editors = {self.author_id: self.new_editor_preferences(author)}
+        self.expiryConditions = {"totalEntries": 0,
+                                 "expireDate": False,
+                                 "fields": {}}
+        self.slug = kwargs["slug"]
+        self.structure = kwargs["structure"]
+        self.fieldIndex = kwargs["fieldIndex"]
+        self.sharedEntries = {  "enabled": False,
+                                "key": utils.gen_random_string(),
+                                "password": False,
+                                "expireDate": False}
+        self.introductionText = kwargs["introductionText"]
+        self.consentTexts = kwargs["consentTexts"]
+        self.afterSubmitText = kwargs["afterSubmitText"]
+        self.expiredText = kwargs["expiredText"]
+        self.sendConfirmation = self.structure_has_email_field(self.structure)
+        self.adminPreferences = {"public": True}
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -72,7 +91,7 @@ class Form(db.Model, CRUD):
         if self._site:
             return self._site
         #print("form.site")
-        self._site = Site.find(hostname=self.hostname)
+        self._site = Site.query.first()
         return self._site
 
     @classmethod
@@ -86,7 +105,7 @@ class Form(db.Model, CRUD):
             filters.append(cls.editors.has_key(kwargs['editor_id']))
             kwargs.pop('editor_id')
         if 'key' in kwargs:
-            kwargs={"sharedEntries__key": kwargs['key'], **kwargs}
+            filters.append(cls.sharedEntries.contains({'key':kwargs['key']}))
             kwargs.pop('key')
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
@@ -94,8 +113,6 @@ class Form(db.Model, CRUD):
 
     def get_author(self):
         return self.author
-        #from liberaforms.models.user import User
-        #return User.find(id=self.author_id)
 
     def change_author(self, new_author):
         if new_author.enabled:
@@ -202,31 +219,7 @@ class Form(db.Model, CRUD):
     def get_entries(self, oldest_first=False, **kwargs):
         kwargs['oldest_first'] = oldest_first
         kwargs['form_id'] = self.id
-        return FormResponse.find_all(**kwargs)
-
-    def find_entry(self, entry_id):
-        return FormResponse.find(id=entry_id, form_id=str(self.id))
-
-    def add_entry(self, data):
-        if 'created'in data: # data comes from 'undo delete'
-            created = data['created']
-            data.pop('created')
-        else:
-            created = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if 'marked'in data: # data comes from 'undo delete'
-            marked = data['marked']
-            data.pop('marked')
-        else:
-            marked = False
-        response={  'hostname': self.hostname,
-                    'form_id': str(self.id),
-                    'author_id': self.author_id,
-                    'created': created,
-                    'marked': marked,
-                    'data': data }
-        new_response = FormResponse(**response)
-        new_response.save()
-        return new_response
+        return Answer.find_all(**kwargs)
 
     def get_entries_for_display(self, oldest_first=False):
         entries = self.get_entries(oldest_first=oldest_first)
@@ -239,10 +232,10 @@ class Form(db.Model, CRUD):
         return result
 
     def get_total_entries(self):
-        return FormResponse.find_all(form_id=self.id).count()
+        return Answer.find_all(form_id=self.id).count()
 
     def get_last_entry_date(self):
-        last_entry = FormResponse.find(form_id=str(self.id))
+        last_entry = Answer.find(form_id=str(self.id))
         return last_entry.created if last_entry else ""
 
     def is_enabled(self):
@@ -435,6 +428,7 @@ class Form(db.Model, CRUD):
                         break
         return field_positions
 
+    """
     @classmethod
     def save_new_form(cls, formData):
         if formData['slug'] in app.config['RESERVED_SLUGS']:
@@ -442,16 +436,20 @@ class Form(db.Model, CRUD):
         new_form=Form(**formData)
         new_form.save()
         return new_form
+    """
 
     def delete_form(self):
-        self.delete_entries()
+        #self.delete_entries()
+        self.answers.delete()
         self.delete()
 
+    """
     def delete_entries(self):
-        FormResponse.find_all(form_id=str(self.id)).delete()
+        Answer.find_all(form_id=self.id).delete()
+    """
 
     def is_author(self, user):
-        return True if self.author_id == str(user.id) else False
+        return True if self.author_id == user.id else False
 
     def is_editor(self, user):
         return True if str(user.id) in self.editors else False
@@ -663,14 +661,9 @@ class Form(db.Model, CRUD):
         self.save()
         return self.sendConfirmation
 
-    def add_log(self, message, anonymous=False):
-        if anonymous:
-            actor="system"
-        else:
-            actor=g.current_user.username if g.current_user else "system"
-        logTime=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.log.insert(0, (logTime, actor, message))
-        self.save()
+    def add_log(self, message):
+        log = FormLog(user_id=g.current_user.id, form_id=self.id, message=message)
+        log.save()
 
     def write_csv(self, with_deleted_columns=False):
         fieldnames=[]
@@ -693,34 +686,3 @@ class Form(db.Model, CRUD):
         context=gettext("Context")
         content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
         return "## {}\n\n### {}\n\n{}".format(title, context, content)
-
-
-class FormResponse(db.Model, CRUD):
-    __tablename__ = "answers"
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
-    hostname = db.Column(db.String, nullable=False)
-    author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
-    marked = db.Column(db.Boolean, default=False)
-    data = db.Column(JSONB, nullable=True)
-
-    def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-
-    def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
-
-    @classmethod
-    def find(cls, **kwargs):
-        return cls.query.filter_by(**kwargs).first()
-
-    @classmethod
-    def find_all(cls, **kwargs):
-        order = cls.created.desc()
-        if 'oldest_first' in kwargs:
-            if kwargs['oldest_first']:
-                order = cls.created
-            kwargs.pop('oldest_first')
-        return cls.query.filter_by(**kwargs).order_by(order)

@@ -8,9 +8,12 @@ This file is part of LiberaForms.
 import datetime
 from dateutil.relativedelta import relativedelta
 from liberaforms import app, db
-from sqlalchemy.dialects.postgresql import JSONB
-from liberaforms.utils.crud import CRUD
-from liberaforms.models.form import Form, FormResponse
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.ext.mutable import MutableDict
+#from sqlalchemy.orm.attributes import flag_modified
+from liberaforms.utils.database import CRUD
+from liberaforms.models.form import Form
+from liberaforms.models.answer import Answer
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
 from liberaforms.utils.utils import create_token
@@ -21,20 +24,19 @@ class User(db.Model, CRUD):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
-    username = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
     hostname = db.Column(db.String, nullable=False)
-    preferences = db.Column(JSONB, nullable=True)
+    preferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     blocked = db.Column(db.Boolean)
-    admin = db.Column(JSONB, nullable=False)
+    admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean)
     token = db.Column(JSONB, nullable=True)
-    consentTexts = db.Column(JSONB, nullable=True)
+    consentTexts = db.Column(ARRAY(JSONB), nullable=True)
 
     def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-        #print("User.__init__ {}".format(self.username))
+        pass
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -44,7 +46,7 @@ class User(db.Model, CRUD):
     def site(self):
         #print("user.site")
         from liberaforms.models.site import Site
-        return Site.find(hostname=self.hostname)
+        return Site.query.first()
 
     @classmethod
     def create(cls, newUserData):
@@ -54,14 +56,27 @@ class User(db.Model, CRUD):
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.query.filter_by(**kwargs).first()
+        return cls.find_all(**kwargs).first()
 
     @classmethod
-    def find_all(cls, *args, **kwargs):
+    def find_all(cls, **kwargs):
+        filters = []
         if 'token' in kwargs:
-            kwargs={"token__token": kwargs['token'], **kwargs}
+            filters.append(cls.token.contains({'token':kwargs['token']}))
             kwargs.pop('token')
-        return cls.query.filter_by(**kwargs)
+        if 'isAdmin' in kwargs:
+            filters.append(cls.admin.contains({"isAdmin":kwargs['isAdmin']}))
+            kwargs.pop('isAdmin')
+        if 'notifyNewForm' in kwargs:
+            filters.append(cls.admin.contains(
+                                {"notifyNewForm":kwargs['notifyNewForm']}
+                            ))
+            kwargs.pop('notifyNewForm')
+        for key, value in kwargs.items():
+            filters.append(getattr(cls, key) == value)
+        return cls.query.filter(*filters)
+
+
 
     @property
     def enabled(self):
@@ -167,7 +182,7 @@ class User(db.Model, CRUD):
 
     def get_entries(self, **kwargs):
         kwargs['author_id']=str(self.id)
-        return FormResponse.find_all(**kwargs)
+        return Answer.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
         today = datetime.date.today().strftime("%Y-%m")
@@ -189,17 +204,17 @@ class User(db.Model, CRUD):
                 break
         total_entries=0
         total_forms=0
-        entry_filter=[FormResponse.author_id == self.id]
+        entry_filter=[Answer.author_id == self.id]
         form_filter=[Form.author_id == self.id]
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
             start_date = datetime.datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
-            entries_filter = entry_filter + [FormResponse.created >= start_date]
-            entries_filter = entry_filter + [FormResponse.created < stop_date]
+            entries_filter = entry_filter + [Answer.created >= start_date]
+            entries_filter = entry_filter + [Answer.created < stop_date]
             forms_filter = form_filter + [Form.created >= start_date]
             forms_filter = form_filter + [Form.created < stop_date]
-            monthy_entries = FormResponse.query.filter(*entries_filter).count()
+            monthy_entries = Answer.query.filter(*entries_filter).count()
             monthy_forms = Form.query.filter(*forms_filter).count()
             total_entries= total_entries + monthy_entries
             total_forms= total_forms + monthy_forms

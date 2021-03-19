@@ -15,13 +15,14 @@ from flask_babel import gettext
 from liberaforms import app, csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
+from liberaforms.models.answer import Answer
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 from liberaforms.utils.email import EmailServer
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import make_url_for, JsonResponse, gen_random_string, logout_user
+from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
 import liberaforms.utils.wtf as wtf
 
 #from pprint import pprint as pp
@@ -33,7 +34,7 @@ form_bp = Blueprint('form_bp', __name__,
 @form_bp.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    return render_template( 'my-forms.html', user=g.current_user) 
+    return render_template( 'my-forms.html', user=g.current_user)
 
 """
 @form_bp.route('/forms/templates', methods=['GET'])
@@ -52,14 +53,14 @@ def new_form(templateID=None):
 
 
 @form_bp.route('/forms/edit', methods=['GET', 'POST'])
-@form_bp.route('/forms/edit/<string:id>', methods=['GET', 'POST'])
+@form_bp.route('/forms/edit/<int:id>', methods=['GET', 'POST'])
 @enabled_user_required
 def edit_form(id=None):
     queriedForm=None
     if id:
-        if session['form_id'] != id:
+        if session['form_id'] != str(id):
             flash(gettext("Something went wrong. id does not match session['form_id']"), 'error')
-            return redirect(make_url_for('form_bp.my_forms'))            
+            return redirect(make_url_for('form_bp.my_forms'))
         queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
         if not queriedForm:
             flash(gettext("You can't edit that form"), 'warning')
@@ -85,7 +86,7 @@ def edit_form(id=None):
 
 @form_bp.route('/forms/check-slug-availability', methods=['POST'])
 @enabled_user_required
-def is_slug_available():    
+def is_slug_available():
     if 'slug' in request.form and request.form['slug']:
         slug=request.form['slug']
     else:
@@ -113,7 +114,7 @@ def preview_form():
                                                             session['introductionTextMD']))
 
 
-@form_bp.route('/forms/edit/conditions/<string:id>', methods=['GET'])
+@form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
 @enabled_user_required
 def conditions_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -125,9 +126,9 @@ def conditions_form(id):
 
 
 @form_bp.route('/forms/save', methods=['POST'])
-@form_bp.route('/forms/save/<string:id>', methods=['POST'])
+@form_bp.route('/forms/save/<int:id>', methods=['POST'])
 @enabled_user_required
-def save_form(id=None):    
+def save_form(id=None):
     if 'structure' in request.form:
         structure = form_helper.repair_form_structure(json.loads(request.form['structure']))
         session['formStructure'] = json.dumps(structure)
@@ -135,14 +136,14 @@ def save_form(id=None):
     if 'introductionTextMD' in request.form:
         session['introductionTextMD'] = sanitizers.escape_markdown(
                                                         request.form['introductionTextMD'])
-    
+
     formStructure = json.loads(session['formStructure'])
     if not formStructure:
         formStructure=[{'label': gettext("Form"), 'subtype': 'h1', 'type': 'header'}]
     introductionText={  'markdown':sanitizers.escape_markdown(session['introductionTextMD']),
                         'html':sanitizers.markdown2HTML(session['introductionTextMD'])}
-    
-    queriedForm = Form.find(id=id, editor_id=str(g.current_user.id)) if id else None    
+
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id) if id else None
     if queriedForm:
         queriedForm.structure=formStructure
         queriedForm.update_field_index(session['formFieldIndex'])
@@ -156,10 +157,9 @@ def save_form(id=None):
     else:
         # this is a new form
         if not session['slug']:
-            # just in case!
             flash(gettext("Slug is missing."), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
-        if Form.find(slug=session['slug'], hostname=g.site.hostname):
+        if Form.find(slug=session['slug']):
             flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
@@ -172,40 +172,24 @@ def save_form(id=None):
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
         #pp(formStructure)
-        
         newFormData={
-                    "created": datetime.date.today().strftime("%Y-%m-%d"),
-                    "author_id": str(g.current_user.id),
-                    "editors": {str(g.current_user.id): Form.new_editor_preferences(g.current_user)},
-                    "postalCode": "08014",
-                    "enabled": False,
-                    "expired": False,
-                    "expiryConditions": {"totalEntries": 0, "expireDate": False, "fields": {}},
-                    "hostname": g.site.hostname,
-                    "slug": session['slug'],
-                    "structure": formStructure,
-                    "fieldIndex": session['formFieldIndex'],
-                    "sharedEntries": {  "enabled": False,
-                                        "key": gen_random_string(),
-                                        "password": False,
-                                        "expireDate": False},
-                    "introductionText": introductionText,
-                    "consentTexts": consentTexts,
-                    "afterSubmitText": afterSubmitText,
-                    "expiredText": expiredText,
-                    "sendConfirmation": Form.structure_has_email_field(formStructure),
-                    "log": [],
-                    "restrictedAccess": False,
-                    "adminPreferences": { "public": True }
-                }
-        newForm=Form.save_new_form(newFormData)
+                        "slug": session['slug'],
+                        "structure": formStructure,
+                        "fieldIndex": session['formFieldIndex'],
+                        "introductionText": introductionText,
+                        "consentTexts": consentTexts,
+                        "afterSubmitText": afterSubmitText,
+                        "expiredText": expiredText
+                    }
+        new_form = Form(g.current_user, **newFormData)
+        new_form.save()
         form_helper.clear_session_form_data()
-        newForm.add_log(gettext("Form created"))
+        new_form.add_log(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
-        # notify form.site.admins
-        thread = Thread(target=EmailServer().sendNewFormNotification(newForm))
+        # notify admins
+        thread = Thread(target=EmailServer().sendNewFormNotification(new_form))
         thread.start()
-        return redirect(make_url_for('form_bp.inspect_form', id=newForm.id))
+        return redirect(make_url_for('form_bp.inspect_form', id=new_form.id))
 
 
 @form_bp.route('/forms/save-consent/<string:form_id>/<string:consent_id>', methods=['POST'])
@@ -230,7 +214,7 @@ def default_consent_text(form_id, consent_id):
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
 
 
-@form_bp.route('/forms/save-after-submit-text/<string:id>', methods=['POST'])
+@form_bp.route('/forms/save-after-submit-text/<int:id>', methods=['POST'])
 @enabled_user_required
 def save_after_submit_text(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -243,7 +227,7 @@ def save_after_submit_text(id):
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"), 'markdown': ""}))
 
 
-@form_bp.route('/forms/save-expired-text/<string:id>', methods=['POST'])
+@form_bp.route('/forms/save-expired-text/<int:id>', methods=['POST'])
 @enabled_user_required
 def save_expired_text(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -256,7 +240,7 @@ def save_expired_text(id):
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"), 'markdown': ""}))
 
 
-@form_bp.route('/forms/delete/<string:id>', methods=['GET', 'POST'])
+@form_bp.route('/forms/delete/<int:id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -274,7 +258,7 @@ def delete_form(id):
     return render_template('delete-form.html', form=queriedForm)
 
 
-@form_bp.route('/forms/view/<string:id>', methods=['GET'])
+@form_bp.route('/forms/view/<int:id>', methods=['GET'])
 @enabled_user_required
 def inspect_form(id):
     queriedForm = Form.find(id=id)
@@ -289,7 +273,7 @@ def inspect_form(id):
     return render_template('inspect-form.html', form=queriedForm)
 
 
-@form_bp.route('/forms/share/<string:id>', methods=['GET'])
+@form_bp.route('/forms/share/<int:id>', methods=['GET'])
 @enabled_user_required
 def share_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -299,7 +283,7 @@ def share_form(id):
     return render_template('share-form.html', form=queriedForm, wtform=wtf.GetEmail())
 
 
-@form_bp.route('/forms/add-editor/<string:id>', methods=['POST'])
+@form_bp.route('/forms/add-editor/<int:id>', methods=['POST'])
 @enabled_user_required
 def add_editor(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -315,7 +299,7 @@ def add_editor(id):
         if str(newEditor.id) in queriedForm.editors:
             flash(gettext("%s is already an editor" % newEditor.email), 'warning')
             return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
-        
+
         if queriedForm.add_editor(newEditor):
             flash(gettext("New editor added ok"), 'success')
             queriedForm.add_log(gettext("Added editor %s" % newEditor.email))
@@ -334,7 +318,7 @@ def remove_editor(form_id, editor_id):
     return json.dumps(False)
 
 
-@form_bp.route('/forms/expiration/<string:id>', methods=['GET'])
+@form_bp.route('/forms/expiration/<int:id>', methods=['GET'])
 @enabled_user_required
 def expiration(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -344,7 +328,7 @@ def expiration(id):
     return render_template('expiration.html', form=queriedForm)
 
 
-@form_bp.route('/forms/set-expiration-date/<string:id>', methods=['POST'])
+@form_bp.route('/forms/set-expiration-date/<int:id>', methods=['POST'])
 @enabled_user_required
 def set_expiration_date(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -373,7 +357,7 @@ def set_expiration_date(id):
         return JsonResponse(json.dumps({'expired': queriedForm.has_expired()}))
 
 
-@form_bp.route('/forms/set-expiry-field-condition/<string:id>', methods=['POST'])
+@form_bp.route('/forms/set-expiry-field-condition/<int:id>', methods=['POST'])
 @enabled_user_required
 def set_expiry_field_condition(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -386,7 +370,7 @@ def set_expiry_field_condition(id):
     return JsonResponse(json.dumps({'condition': False}))
 
 
-@form_bp.route('/forms/set-expiry-total-entries/<string:id>', methods=['POST'])
+@form_bp.route('/forms/set-expiry-total-entries/<int:id>', methods=['POST'])
 @enabled_user_required
 def set_expiry_total_entries(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -409,7 +393,7 @@ def set_expiry_total_entries(id):
     return JsonResponse(json.dumps({'expired': queriedForm.expired, 'total_entries':total_entries}))
 
 
-@form_bp.route('/forms/duplicate/<string:id>', methods=['GET'])
+@form_bp.route('/forms/duplicate/<int:id>', methods=['GET'])
 @enabled_user_required
 def duplicate_form(id):
     queriedForm = Form.find(id=id)
@@ -424,7 +408,7 @@ def duplicate_form(id):
     return render_template('edit-form.html', host_url=g.site.host_url)
 
 
-@form_bp.route('/forms/log/list/<string:id>', methods=['GET'])
+@form_bp.route('/forms/log/list/<int:id>', methods=['GET'])
 @enabled_user_required
 def list_log(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -437,7 +421,7 @@ def list_log(id):
 
 """ Form settings """
 
-@form_bp.route('/form/toggle-enabled/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-enabled/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_enabled(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -448,7 +432,7 @@ def toggle_form_enabled(id):
     return JsonResponse(json.dumps({'enabled': enabled}))
 
 
-@form_bp.route('/form/toggle-shared-entries/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-shared-entries/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_shared_entries(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -459,7 +443,7 @@ def toggle_shared_entries(id):
     return JsonResponse(json.dumps({'enabled':shared}))
 
 
-@form_bp.route('/form/toggle-restricted-access/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-restricted-access/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_restricted_access(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -470,7 +454,7 @@ def toggle_restricted_access(id):
     return JsonResponse(json.dumps({'restricted':access}))
 
 
-@form_bp.route('/form/toggle-notification/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-notification/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_notification(id):
     editor_id=str(g.current_user.id)
@@ -480,7 +464,7 @@ def toggle_form_notification(id):
     return JsonResponse(json.dumps({'notification':queriedForm.toggle_notification(editor_id)}))
 
 
-@form_bp.route('/form/toggle-data-consent/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-data-consent/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_dataconsent(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -491,7 +475,7 @@ def toggle_form_dataconsent(id):
     return JsonResponse(json.dumps({'enabled':dataConsentBool}))
 
 
-@form_bp.route('/form/toggle-send-confirmation/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-send-confirmation/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_sendconfirmation(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -502,7 +486,7 @@ def toggle_form_sendconfirmation(id):
     return JsonResponse(json.dumps({'confirmation':sendConfirmationBool}))
 
 
-@form_bp.route('/form/toggle-expiration-notification/<string:id>', methods=['POST'])
+@form_bp.route('/form/toggle-expiration-notification/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_expiration_notification(id):
     editor_id=str(g.current_user.id)
@@ -511,7 +495,7 @@ def toggle_form_expiration_notification(id):
         return JsonResponse(json.dumps())
     return JsonResponse(json.dumps({
             'notification':queriedForm.toggle_expiration_notification(editor_id) }))
-    
+
 
 @form_bp.route('/embed/<string:slug>', methods=['GET', 'POST'])
 @csrf.exempt
@@ -524,7 +508,7 @@ def view_embedded_form(slug):
 @form_bp.route('/<string:slug>', methods=['GET', 'POST'])
 @sanitized_slug_required
 def view_form(slug):
-    queriedForm = Form.find(slug=slug, hostname=g.site.hostname)
+    queriedForm = Form.find(slug=slug)
     if not queriedForm:
         if g.current_user:
             flash(gettext("Can't find that form"), 'warning')
@@ -553,13 +537,14 @@ def view_form(slug):
             if key=='csrf_token':
                 continue
             value = formData[key]
-            if isinstance(value, list): # A checkboxes-group contains multiple values 
+            if isinstance(value, list): # A checkboxes-group contains multiple values
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             value=sanitizers.remove_first_and_last_newlines(value.strip())
             entry[key]=value
-        queriedForm.add_entry(entry)
-        
+        new_answer = Answer(queriedForm.id, queriedForm.author_id, entry)
+        new_answer.save()
+
         if not queriedForm.expired and queriedForm.has_expired():
             queriedForm.expired=True
             emails=[]
@@ -574,7 +559,7 @@ def view_form(slug):
                 thread = Thread(target=sendExpiredFormNotification())
                 thread.start()
         queriedForm.save()
-        
+
         if queriedForm.might_send_confirmation_email() and 'send-confirmation' in formData:
             confirmationEmail=queriedForm.get_confirmation_email_address(entry)
             if confirmationEmail and validators.is_valid_email(confirmationEmail):

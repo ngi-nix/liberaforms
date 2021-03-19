@@ -45,7 +45,7 @@ def list_users():
                             users=User.find_all(),
                             invites=Invite.find_all())
 
-@admin_bp.route('/admin/users/<string:id>', methods=['GET'])
+@admin_bp.route('/admin/users/<int:id>', methods=['GET'])
 @admin_required
 def inspect_user(id):
     user=User.find(id=id)
@@ -55,7 +55,7 @@ def inspect_user(id):
     return render_template('inspect-user.html', user=user)
 
 
-@admin_bp.route('/admin/users/toggle-blocked/<string:id>', methods=['POST'])
+@admin_bp.route('/admin/users/toggle-blocked/<int:id>', methods=['POST'])
 @admin_required
 def toggle_user_blocked(id):
     user=User.find(id=id)
@@ -69,7 +69,7 @@ def toggle_user_blocked(id):
     return JsonResponse(json.dumps({'blocked':blocked}))
 
 
-@admin_bp.route('/admin/users/toggle-admin/<string:id>', methods=['POST'])
+@admin_bp.route('/admin/users/toggle-admin/<int:id>', methods=['POST'])
 @admin_required
 def toggle_admin(id):
     user=User.find(id=id)
@@ -83,7 +83,7 @@ def toggle_admin(id):
     return JsonResponse(json.dumps({'admin':is_admin}))
 
 
-@admin_bp.route('/admin/users/delete/<string:id>', methods=['GET', 'POST'])
+@admin_bp.route('/admin/users/delete/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def delete_user(id):
     user=User.find(id=id)
@@ -126,7 +126,7 @@ def list_forms():
     return render_template('list-forms.html', forms=Form.find_all())
 
 
-@admin_bp.route('/admin/forms/toggle-public/<string:id>', methods=['GET'])
+@admin_bp.route('/admin/forms/toggle-public/<int:id>', methods=['GET'])
 @admin_required
 def toggle_form_public_admin_prefs(id):
     queriedForm = Form.find(id=id)
@@ -137,7 +137,7 @@ def toggle_form_public_admin_prefs(id):
     return redirect(make_url_for('form_bp.inspect_form', id=id))
 
 
-@admin_bp.route('/admin/forms/change-author/<string:id>', methods=['GET', 'POST'])
+@admin_bp.route('/admin/forms/change-author/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def change_author(id):
     queriedForm = Form.find(id=id)
@@ -191,7 +191,7 @@ def new_invite():
                             sites=Site.find_all())
 
 
-@admin_bp.route('/admin/invites/delete/<string:id>', methods=['GET'])
+@admin_bp.route('/admin/invites/delete/<int:id>', methods=['GET'])
 @admin_required
 def delete_invite(id):
     invite=Invite.find(id=id)

@@ -14,8 +14,9 @@ from urllib.parse import urlparse
 
 from liberaforms import app, db
 from sqlalchemy.dialects.postgresql import JSONB
-from liberaforms.utils.crud import CRUD
-from liberaforms.models.form import Form, FormResponse
+from liberaforms.utils.database import CRUD
+from liberaforms.models.form import Form
+from liberaforms.models.answer import Answer
 from liberaforms.models.user import User
 
 from liberaforms.utils.consent_texts import ConsentText
@@ -41,8 +42,7 @@ class Site(db.Model, CRUD):
     smtpConfig = db.Column(JSONB, nullable=False)
 
     def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-        #print("Site.__init__ {}".format(self.hostname))
+        pass
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -247,14 +247,13 @@ class Site(db.Model, CRUD):
         return Form.find_all(**kwargs)
 
     def get_entries(self, **kwargs):
-        return FormResponse.find_all(**kwargs)
+        return Answer.find_all(**kwargs)
 
     def get_users(self, **kwargs):
         return User.find_all(**kwargs)
 
-    def get_admins(self, **kwargs):
-        kwargs={"admin__isAdmin": True, **kwargs}
-        return User.find_all(**kwargs)
+    def get_admins(self):
+        return User.query.filter(User.admin.contains({"isAdmin": True}))
 
     def get_statistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
@@ -287,9 +286,9 @@ class Site(db.Model, CRUD):
             monthy_forms = Form.query.filter(
                                     Form.created >= start_date,
                                     Form.created < stop_date).count()
-            monthy_entries = FormResponse.query.filter(
-                                    FormResponse.created >= start_date,
-                                    FormResponse.created < stop_date).count()
+            monthy_entries = Answer.query.filter(
+                                    Answer.created >= start_date,
+                                    Answer.created < stop_date).count()
             total_entries = total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             total_users = total_users + monthy_users
@@ -339,7 +338,7 @@ class Invite(db.Model, CRUD):
     admin = db.Column(db.Boolean)
 
     def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
+        pass
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -392,7 +391,7 @@ class Installation(db.Model, CRUD):
     created = db.Column(db.Date, nullable=False)
 
     def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
+        pass
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -435,8 +434,7 @@ class Installation(db.Model, CRUD):
 
     @staticmethod
     def get_admins(**kwargs):
-        kwargs={"admin__isAdmin": True, **kwargs}
-        return User.query.filter_by(**kwargs)
+        return User.query.filter(User.admin.contains({"isAdmin": True}))
 
     @classmethod
     def write_admins_csv(cls):
