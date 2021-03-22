@@ -66,13 +66,6 @@ def recover_password(token=None):
         if user:
             user.set_token()
             EmailServer().sendRecoverPassword(user)
-        if not user and wtform.email.data in app.config['ROOT_USERS']:
-            # root_user emails are only good for one account, across all sites.
-            if not Installation.is_user(wtform.email.data):
-                # auto invite root users
-                message="New root user at %s." % g.site.hostname
-                invite=Invite.create(g.site.hostname, wtform.email.data, message, True)
-                return redirect(make_url_for('user_bp.new_user', token=invite.token['token']))
         flash(gettext("We may have sent you an email"), 'info')
         return redirect(make_url_for('main_bp.index'))
     return render_template('recover-password.html', wtform=wtform)
@@ -201,10 +194,10 @@ def test_smtp():
     return redirect(make_url_for('site_bp.smtp_config'))
 
 
-@site_bp.route('/site/edit/<string:hostname>', methods=['GET'])
+@site_bp.route('/site/edit', methods=['GET'])
 @rootuser_required
-def edit_site(hostname):
-    queriedSite=Site.find(hostname=hostname)
+def edit_site():
+    queriedSite=Site.find()
     return render_template('edit-site.html', site=queriedSite)
 
 @site_bp.route('/site/change-menu-color', methods=['GET', 'POST'])
@@ -226,48 +219,19 @@ def stats():
     return render_template('stats.html', site=g.site, sites=sites)
 
 
-@site_bp.route('/site/toggle-scheme/<string:hostname>', methods=['POST'])
+@site_bp.route('/site/toggle-scheme', methods=['POST'])
 @rootuser_required
-def toggle_site_scheme(hostname):
-    queriedSite=Site.find(hostname=hostname)
-    return json.dumps({'scheme': queriedSite.toggle_scheme()})
+def toggle_site_scheme():
+    return json.dumps({'scheme': g.site.toggle_scheme()})
 
 
-@site_bp.route('/site/change-port/<string:hostname>/', methods=['POST'])
-@site_bp.route('/site/change-port/<string:hostname>/<string:port>', methods=['POST'])
+@site_bp.route('/site/change-port/', methods=['POST'])
+@site_bp.route('/site/change-port/<int:port>', methods=['POST'])
 @rootuser_required
-def change_site_port(hostname, port=None):
-    queriedSite=Site.find(hostname=hostname)
-    if not port:
-        queriedSite.port=None
-    else:
-        try:
-            int(port)
-            queriedSite.port=port
-        except:
-            pass
-    queriedSite.save()
-    return json.dumps({'port': queriedSite.port})
-
-
-@site_bp.route('/site/delete/<string:hostname>', methods=['GET', 'POST'])
-@rootuser_required
-def delete_site(hostname):
-    queriedSite=Site.find(hostname=hostname)
-    if not queriedSite:
-        flash(gettext("Site not found"), 'warning')
-        return redirect(make_url_for('admin_bp.site_admin'))
-    if request.method == 'POST' and 'hostname' in request.form:
-        if queriedSite.hostname == request.form['hostname']:
-            if g.site.hostname == queriedSite.hostname:
-                flash(gettext("Cannot delete current site"), 'warning')
-                return redirect(make_url_for('admin_bp.site_admin'))
-            queriedSite.delete_site()
-            flash(gettext("Deleted %s" % queriedSite.host_url), 'success')
-            return redirect(make_url_for('admin_bp.site_admin'))
-        else:
-            flash(gettext("Site name does not match"), 'warning')
-    return render_template('delete-site.html', site=queriedSite)
+def change_site_port(port=None):
+    g.site.port=port
+    g.site.save()
+    return json.dumps({'port': g.site.port})
 
 
 @site_bp.route('/site/admins', methods=['GET'])

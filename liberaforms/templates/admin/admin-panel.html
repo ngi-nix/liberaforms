@@ -8,144 +8,134 @@
     <div class="col-md-6">
 
         <div class="title_1 delimited">
-            {%trans%}Administrator{%endtrans%}
-            <div style="float:right">
-                <a class="btn btn-primary btn-sm" role="button" href="/site/admins">
-                    {%trans%}Admins{%endtrans%}
-                    <i class="fa fa-users" aria-hidden="true"></i>
-                </a>
-            </div>
+          {%trans%}Administrator{%endtrans%}
         </div>
 
         <div id="site_settings" class="title_2">
-            {%trans%}Site settings{%endtrans%}
+          {%trans%}Site settings{%endtrans%}
         </div>
 
         <table class="table table-sm">
-            <tr>
-                <td>{%trans%}Site name{%endtrans%}</td>
-                <td>
-                {{ site.siteName }}
-                </td>
-                <td class="text-right">
-                <a class="btn-primary btn btn-xs" role="button" href="/site/change-sitename">{%trans%}Change{%endtrans%}</a>
-                </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Default language{%endtrans%}</td>
-                <td>{{config['LANGUAGES'][g.site.defaultLanguage][0]}}</td>
-                <td class="text-right">
-                <a class="btn btn-primary btn-xs" role="button" href="/site/change-default-language">{%trans%}Change{%endtrans%}</a>
-                </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Invitation only{%endtrans%}</td>
-                <td></td>
-                <td class="text-right">
-                    <div id="toggle_invitation_only" class="btn-group btn-toggle">
-                    <button id="invitation_only_true" class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="invitation_only_false" class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-                    </div>
-               </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Consent{%endtrans%}</td>
-                <td>
-                    {%trans%}Terms and conditions{%endtrans%},
-                    {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
-                </td>
-                <td class="text-right">
-                <a class="btn btn-primary btn-xs" role="button" href="/site/consent-texts">{%trans%}Edit{%endtrans%}</a>
-               </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Favicon{%endtrans%}</td>
-                <td>
-                <img src="{{g.site.favicon_url()}}" width=18 height=18 />
-                </td>
-                <td class="text-right">
-                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Change{%endtrans%}" onClick="location.href='/site/change-favicon'">
-                </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Menu color{%endtrans%}</td>
-                <td>{{g.site.menuColor}}</td>
-                <td class="text-right">
-                <a class="btn btn-primary btn-xs" role="button" href="/site/change-menu-color">{%trans%}Change{%endtrans%}</a>
-                </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Email server{%endtrans%}</td>
-                <td>{{g.site.smtpConfig["host"]}}</td>
-                <td class="text-right">
-                <input class="btn-primary btn btn-xs" type="button" value="{%trans%}Configure{%endtrans%}" onClick="location.href='/site/email/config'">
-                </td>
-            </tr>
+          <tr>
+            <td>{%trans%}Site name{%endtrans%}</td>
+            <td>
+            {{ site.siteName }}
+            </td>
+            <td class="text-right">
+              <a class="btn-primary btn btn-xs"
+                 role="button"
+                 href="/site/change-sitename">
+                  {%trans%}Change{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Default language{%endtrans%}</td>
+            <td>{{config['LANGUAGES'][g.site.defaultLanguage][0]}}</td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/site/change-default-language">
+                  {%trans%}Change{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Invitation only{%endtrans%}</td>
+            <td></td>
+            <td class="text-right">
+                <div id="toggle_invitation_only" class="btn-group btn-toggle">
+                <button id="invitation_only_true"
+                        class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">
+                        {%trans%}True{%endtrans%}
+                </button>
+                <button id="invitation_only_false"
+                        class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">
+                        {%trans%}False{%endtrans%}
+                </button>
+                </div>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Consent{%endtrans%}</td>
+            <td>
+              {%trans%}Terms and conditions{%endtrans%},
+              {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
+            </td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/site/consent-texts">
+                  {%trans%}Edit{%endtrans%}
+                </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {%trans%}Favicon{%endtrans%}
+            </td>
+            <td>
+              <img src="{{g.site.favicon_url()}}" width=18 height=18 />
+            </td>
+            <td class="text-right">
+              <input class="btn-primary btn btn-xs"
+                     type="button"
+                     value="{%trans%}Change{%endtrans%}"
+                     onClick="location.href='/site/change-favicon'">
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Menu color{%endtrans%}</td>
+            <td>{{g.site.menuColor}}</td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button" href="/site/change-menu-color">
+                  {%trans%}Change{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Email server{%endtrans%}</td>
+            <td>{{g.site.smtpConfig["host"]}}</td>
+            <td class="text-right">
+              <input class="btn-primary btn btn-xs"
+                      type="button" value="{%trans%}Configure{%endtrans%}"
+                      onClick="location.href='/site/email/config'" />
+            </td>
+          </tr>
+          {% if g.current_user.is_root_user() %}
+          <tr>
+            <td colspan="2">
+              {%trans%}Public links{%endtrans%}
+            </td>
+            <td class="text-right">
+              <input  class="btn-primary btn btn-xs"
+                      type="button" value="{%trans%}Edit{%endtrans%}"
+                      onClick="location.href='/site/edit'">
+            </td>
+          </tr>
+          {% endif %}
         </table>
-    
-    {% if g.current_user.is_root_user() %}
-        <div id="root_user_settings" class="title_1" style="margin-top:2.75em;">
-            {%trans%}Root user{%endtrans%}
-            <i class="fa fa-shield" style="font-size: 0.9em" aria-hidden="true"></i>
-        </div>
-        
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                <th>Site</th>
-                <th>{%trans%}Created{%endtrans%}</th>
-                <th>{%trans%}Users{%endtrans%}</th>
-                <th>{%trans%}Forms{%endtrans%}</th>
-                <th></th>
-                </tr>
-            </thead>
 
-        {% set total = {'forms': 0, 'users': 0} %}    
-        {% for site in sites %}
-            {% set site_users = site.get_users(hostname=site.hostname).count() %}
-            {% set site_forms = site.get_forms(hostname=site.hostname).count() %}
-            {% if total.update({'users': total.users + site_users }) %}{% endif %}
-            {% if total.update({'forms': total.forms + site_forms }) %}{% endif %}
-            <tr>
-                <td>{{ site.hostname }}</td>
-                <td>{{ site.created }}</td>
-                <td>{{ site_users }}</td>
-                <td>{{ site_forms }}</td>
-                <td class="text-right">
-                <input  class="btn-primary btn btn-xs"
-                        type="button" value="{%trans%}Edit{%endtrans%}"
-                        onClick="location.href='/site/edit/{{site.hostname}}'">
-                </td>
-            </tr>
-        {% endfor %}
-            <tr style="font-weight:bold">
-                <td>Total</td>
-                <td></td>
-                <td>{{ total.users }}</td>
-                <td>{{ total.forms }}</td>
-                <td></td>
-            </tr>        
-        </table>
-    {% endif %}
         <p>&nbsp;</p>
         <div class="title_2">
-            {%trans%}Installation{%endtrans%}
+          {%trans%}Installation{%endtrans%}
         </div>
 
         <table class="table table-sm">
         {% if g.current_user.is_root_user() %}
         <tr>
-            <td>{%trans%}Created{%endtrans%}</td>
-            <td>{{installation.created}}</td>
+          <td>{%trans%}Created{%endtrans%}</td>
+          <td>{{installation.created}}</td>
         </tr>
         {% endif %}
         <tr>
-            <td>LiberaForms version</td>
-            <td>{{config['APP_VERSION']}}</td>
+          <td>LiberaForms version</td>
+          <td>{{config['APP_VERSION']}}</td>
         </tr>
         <tr>
-            <td>Mongo schema version</td>
-            <td>{{installation.schemaVersion}}</td>
+          <td>Database schema version</td>
+          <td>1234</td>
         </tr>
         </table>
     </div>
@@ -180,7 +170,7 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
 $(document).on('click', '#invites_table td:first-child', function(){
     if($(this).parent().next('tr').is(":visible")){
         $(this).parent().next('tr').hide()
-    }else{ 
+    }else{
         $(this).parent().next('tr').show() // token message
     }
 });

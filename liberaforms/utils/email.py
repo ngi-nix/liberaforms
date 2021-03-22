@@ -58,7 +58,6 @@ class EmailServer():
             msg['Message-ID'] = make_msgid()
             if not msg['Errors-To']:
                 criteria={  'blocked': False,
-                            'hostname': g.site.hostname,
                             'validatedEmail': True,
                             'isAdmin': True }
                 admins=User.find_all(**criteria)
@@ -83,7 +82,8 @@ class EmailServer():
     def sendInvite(self, invite):
         body = invite.get_message()
         msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
-        msg['Subject'] = Header(gettext("Invitation to %s" % invite.hostname)).encode()
+        subject = gettext("Invitation to %s" % g.site.siteName)
+        msg['Subject'] = Header(subject).encode()
         msg['To'] = invite.email
         state = self.send(msg)
         self.closeConnection()
@@ -92,14 +92,14 @@ class EmailServer():
     def sendNewUserNotification(self, user):
         emails=[]
         criteria={  'blocked': False,
-                    'hostname': user.hostname,
                     'validatedEmail': True,
                     'isAdmin': True,
                     'notifyNewUser': True}
         admins=User.find_all(**criteria)
         for admin in admins:
-            emails.append(admin['email'])
-        body = gettext("New user '%s' created at %s" % (user.username, user.hostname))
+            emails.append(admin.email)
+        body = gettext("New user '%s' created at %s" % (user.username,
+                                                        g.site.siteName))
         subject = Header(gettext("LiberaForms. New user notification")).encode()
         for msg_to in emails:
             msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
@@ -110,7 +110,9 @@ class EmailServer():
 
     def sendRecoverPassword(self, user):
         link = "%ssite/recover-password/%s" % (g.site.host_url, user.token['token'])
-        body = "%s\n\n%s" % (gettext("Please use this link to recover your password"), link)
+        body = "%s\n\n%s" % (
+                    gettext("Please use this link to recover your password"),
+                    link)
         msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
         msg['Subject'] = Header(gettext("LiberaForms. Recover password")).encode()
         msg['To'] = user.email

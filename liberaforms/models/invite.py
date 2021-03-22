@@ -18,14 +18,12 @@ from pprint import pprint
 class Invite(db.Model, CRUD):
     __tablename__ = "invites"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    hostname = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     message = db.Column(db.String, nullable=True)
     token = db.Column(JSONB, nullable=False)
     admin = db.Column(db.Boolean)
 
     def __init__(self, **kwargs):
-        self.hostname = kwargs["hostname"]
         self.email = kwargs["email"]
         self.message = kwargs["message"]
         self.token = kwargs["token"]
@@ -34,25 +32,10 @@ class Invite(db.Model, CRUD):
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
         return print_obj_values(self)
-    """
-    @classmethod
-    def create(cls, hostname, email, message, admin=False):
-        data={
-            "hostname": hostname,
-            "email": email,
-            "message": message,
-            "token": utils.create_token(Invite),
-            "admin": admin
-        }
-        newInvite=Invite(**data)
-        pprint(data)
-        newInvite.save()
-        return newInvite
-    """
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.find_all().first()
+        return cls.find_all(**kwargs).first()
 
     @classmethod
     def find_all(cls, **kwargs):
@@ -65,11 +48,11 @@ class Invite(db.Model, CRUD):
         return cls.query.filter(*filters)
 
     def get_link(self):
-        site = Site.find(hostname=self.hostname)
-        return "{}user/new/{}".format(site.host_url, self.token['token'])
+        site = Site.find()
+        return f"{site.host_url}user/new/{self.token['token']}"
 
     def get_message(self):
-        return "{}\n\n{}".format(self.message, self.get_link())
+        return f"{self.message}\n\n{self.get_link()}"
 
     def set_token(self, **kwargs):
         self.invite['token']=utils.create_token(Invite, **kwargs)

@@ -24,27 +24,18 @@ main_bp = Blueprint('main_bp', __name__,
                     template_folder='../templates/main')
 #main_bp.before_request(shared_functions.before_request)
 
-"""
-def print_g(string=None):
-    if string:
-        print("printing from: %s" % string)
-    for e in iter(g):
-        print(e)
-"""
-
 @app.before_request
 def before_request():
-    g.site=None
+    g.site=Site.find()
     g.current_user=None
     g.is_admin=False
     g.is_root_user_enabled=False
     g.embedded=False
     if request.path[0:7] == '/static':
         return
-    uri = urlparse(request.host_url)
-    g.site=Site.find(hostname=uri.hostname)
+    #uri = urlparse(request.host_url)
     if 'user_id' in session and session["user_id"] != None:
-        g.current_user=User.find(id=session["user_id"], hostname=g.site.hostname)
+        g.current_user=User.find(id=session["user_id"])
         if not g.current_user:
             logout_user()
             return

@@ -30,7 +30,7 @@ class Site(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
     hostname = db.Column(db.String, nullable=False)
-    port = db.Column(db.String, nullable=True)
+    port = db.Column(db.Integer, nullable=True)
     siteName = db.Column(db.String, nullable=False)
     defaultLanguage = db.Column(db.String, nullable=False)
     menuColor = db.Column(db.String, nullable=False)

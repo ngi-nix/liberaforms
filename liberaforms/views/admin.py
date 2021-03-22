@@ -193,8 +193,7 @@ def new_invite():
         message=wtform.message.data
         token = utils.create_token(Invite)
         pprint(token)
-        new_invite=Invite(  hostname=wtform.hostname.data,
-                            email=wtform.email.data,
+        new_invite=Invite(  email=wtform.email.data,
                             message=message,
                             token=token,
                             admin=wtform.admin.data)
@@ -206,8 +205,7 @@ def new_invite():
     wtform.message.data=Invite.default_message()
     return render_template('new-invite.html',
                             wtform=wtform,
-                            total_invites=Invite.find_all().count(),
-                            sites=Site.find_all())
+                            total_invites=Invite.find_all().count())
 
 
 @admin_bp.route('/admin/invites/delete/<int:id>', methods=['GET'])

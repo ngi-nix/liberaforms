@@ -102,7 +102,7 @@ def is_slug_available():
     slug=sanitizers.sanitize_slug(slug)
     if not slug:
         available = False
-    elif Form.find(slug=slug, hostname=g.site.hostname):
+    elif Form.find(slug=slug):
         available = False
     elif slug in app.config['RESERVED_SLUGS']:
         available = False
