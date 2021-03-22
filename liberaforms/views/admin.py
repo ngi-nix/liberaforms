@@ -13,7 +13,8 @@ from flask_babel import gettext
 
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
-from liberaforms.models.site import Site, Invite, Installation
+from liberaforms.models.site import Site, Installation
+from liberaforms.models.invite import Invite
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
@@ -97,7 +98,8 @@ def delete_user(id):
             return redirect(make_url_for('admin_bp.inspect_user', id=user.id))
         if user.id == g.current_user.id:
             flash(gettext("Cannot delete yourself"), 'warning')
-            return redirect(make_url_for('admin_bp.inspect_user', username=user.username))
+            return redirect(make_url_for('admin_bp.inspect_user',
+                                         username=user.username))
         if user.username == request.form['username']:
             user.delete_user()
             flash(gettext("Deleted user '%s'" % (user.username)), 'success')
@@ -151,16 +153,20 @@ def change_author(id):
             flash(gettext("Current author incorrect"), 'warning')
             return render_template('change-author.html', form=queriedForm)
         if 'new_author_username' in request.form:
-            new_author=User.find(username=request.form['new_author_username'], hostname=queriedForm.hostname)
+            new_author=User.find(username=request.form['new_author_username'],
+                                 hostname=queriedForm.hostname)
             if new_author:
                 if new_author.enabled:
                     old_author=author
                     if queriedForm.change_author(new_author):
                         queriedForm.add_log(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
                         flash(gettext("Changed author OK"), 'success')
-                        return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
+                        return redirect(make_url_for('form_bp.inspect_form',
+                                                     id=queriedForm.id))
                 else:
-                    flash(gettext("Cannot use %s. The user is not enabled" % (request.form['new_author_username'])), 'warning')
+                    flash(gettext("Cannot use %s. The user is not enabled" % \
+                                    (request.form['new_author_username'])),
+                                    'warning')
             else:
                 flash(gettext("Can't find username %s" % (request.form['new_author_username'])), 'warning')
     return render_template('change-author.html', form=queriedForm)
@@ -180,7 +186,10 @@ def new_invite():
     wtform=wtf.NewInvite()
     if wtform.validate_on_submit():
         message=wtform.message.data
-        invite=Invite.create(wtform.hostname.data, wtform.email.data, message, wtform.admin.data)
+        invite=Invite.create(wtform.hostname.data,
+                             wtform.email.data,
+                             message,
+                             wtform.admin.data)
         EmailServer().sendInvite(invite)
         flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
         return redirect(make_url_for('admin_bp.list_invites'))

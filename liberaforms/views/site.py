@@ -12,7 +12,8 @@ from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms import app
-from liberaforms.models.site import Site, Invite, Installation
+from liberaforms.models.site import Site, Installation
+from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse
@@ -28,7 +29,7 @@ site_bp = Blueprint('site_bp', __name__,
 @site_bp.route('/site/save-blurb', methods=['POST'])
 @admin_required
 def save_blurb():
-    if 'editor' in request.form:            
+    if 'editor' in request.form:
         g.site.save_blurb(request.form['editor'])
         flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('main_bp.index'))
@@ -58,7 +59,7 @@ def recover_password(token=None):
         # login the user
         session['user_id']=str(user.id)
         return redirect(make_url_for('user_bp.reset_password'))
-    
+
     wtform=wtf.GetEmail()
     if wtform.validate_on_submit():
         user = User.find(email=wtform.email.data, blocked=False)
@@ -166,7 +167,7 @@ def reset_site_favicon():
 
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
 @admin_required
-def toggle_invitation_only(): 
+def toggle_invitation_only():
     return JsonResponse(json.dumps({'invite': g.site.toggle_invitation_only()}))
 
 
@@ -227,7 +228,7 @@ def stats():
 
 @site_bp.route('/site/toggle-scheme/<string:hostname>', methods=['POST'])
 @rootuser_required
-def toggle_site_scheme(hostname): 
+def toggle_site_scheme(hostname):
     queriedSite=Site.find(hostname=hostname)
     return json.dumps({'scheme': queriedSite.toggle_scheme()})
 
@@ -247,7 +248,7 @@ def change_site_port(hostname, port=None):
             pass
     queriedSite.save()
     return json.dumps({'port': queriedSite.port})
-    
+
 
 @site_bp.route('/site/delete/<string:hostname>', methods=['GET', 'POST'])
 @rootuser_required
@@ -279,9 +280,9 @@ def list_admins():
 @rootuser_required
 def csv_admin():
     csv_file = Installation.write_admins_csv()
-    @after_this_request 
-    def remove_file(response): 
-        os.remove(csv_file) 
+    @after_this_request
+    def remove_file(response):
+        os.remove(csv_file)
         return response
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 

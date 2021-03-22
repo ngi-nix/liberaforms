@@ -1,7 +1,7 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
@@ -26,7 +26,11 @@ from liberaforms.utils import utils
 
 #from pprint import pprint as pp
 
-
+""" Form properties
+structure: A list of dicts that is built by and rendered by formbuilder.
+fieldIndex: List of dictionaries. Each dict contains one formbuider field info.
+            [{"label": <displayed_field_name>, "name": <unique_field_identifier>}]
+"""
 class Form(db.Model, CRUD):
     __tablename__ = "forms"
     id = db.Column(db.Integer, primary_key=True, index=True)
@@ -34,20 +38,13 @@ class Form(db.Model, CRUD):
     hostname = db.Column(db.String, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
+    fieldIndex = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
     editors = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     enabled = db.Column(db.Boolean, default=False)
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
-    """
-    structure: A list of dicts that is built by and rendered by formbuilder.
-    fieldIndex: List of dictionaries. Each dict contains one formbuider field info.
-                [{"label": <displayed_field_name>, "name": <unique_field_identifier>}]
-    """
-    #structure = db.Column(JSONB, nullable=False)
-    structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
-    #fieldIndex = db.Column(JSONB, nullable=False)
-    fieldIndex = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
     sharedEntries = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
@@ -102,7 +99,7 @@ class Form(db.Model, CRUD):
     def find_all(cls, **kwargs):
         filters = []
         if 'editor_id' in kwargs:
-            filters.append(cls.editors.has_key(kwargs['editor_id']))
+            filters.append(cls.editors.has_key(str(kwargs['editor_id'])))
             kwargs.pop('editor_id')
         if 'key' in kwargs:
             filters.append(cls.sharedEntries.contains({'key':kwargs['key']}))
@@ -116,13 +113,13 @@ class Form(db.Model, CRUD):
 
     def change_author(self, new_author):
         if new_author.enabled:
-            if str(new_author.id) == self.author_id:
+            if new_author.id == self.author_id:
                 return False
             try:
                 del self.editors[self.author_id]
             except:
                 return False
-            self.author_id=str(new_author.id)
+            self.author_id=new_author.id
             if not self.is_editor(new_author):
                 self.add_editor(new_author)
             self.save()
@@ -153,19 +150,19 @@ class Form(db.Model, CRUD):
                 if not [i for i in newIndex if i['name'] == field['name']]:
                     # This field was removed by the editor. Can we safely delete it?
                     can_delete=True
-                    entries = self.get_entries()
-                    for entry in entries:
-                        entry_data = entry['data']
-                        if field['name'] in entry_data and entry_data[field['name']]:
+                    for answer in self.answers:
+                        if field['name'] in answer.data and \
+                            answer.data[field['name']]:
                             # This field contains data
                             can_delete=False
                             break
                     if can_delete:
-                        # A pseudo delete. We drop the field (it's reference) from the index.
-                        # Note that the empty field in each entry is not deleted from the db.
+                        # A pseudo delete.
+                        # We drop the field (it's reference) from the index
+                        # (the empty field remains as is in each entry in the db)
                         pass
                     else:
-                        # We maintain this field in the index because it contains data
+                        # We don't delete this field from the index because it contains data
                         field['removed']=True
                         deletedFieldsWithData.append(field)
             self.fieldIndex = newIndex + deletedFieldsWithData
@@ -226,7 +223,7 @@ class Form(db.Model, CRUD):
         result = []
         for entry in entries:
             result.append({ 'id': entry.id,
-                            'created': entry.created,
+                            'created': entry.created.strftime("%Y-%m-%d %H:%M:%S"),
                             'marked': entry.marked,
                             **entry.data})
         return result
@@ -291,16 +288,18 @@ class Form(db.Model, CRUD):
         return self.get_consent_for_display(self.data_consent['id'])
 
     def get_default_data_consent_for_display(self):
-        return ConsentText.get_consent_for_display(g.site.DPL_consent_id, self.author)
+        return ConsentText.get_consent_for_display( g.site.DPL_consent_id,
+                                                    self.author)
 
     def toggle_data_consent_enabled(self):
         return ConsentText.toggle_enabled(self.data_consent['id'], self)
 
     @staticmethod
     def new_data_consent():
-        consent = ConsentText.get_empty_consent(g.site.DPL_consent_id,
-                                                name="DPL",
-                                                enabled=g.site.data_consent['enabled'])
+        consent = ConsentText.get_empty_consent(
+                                        g.site.DPL_consent_id,
+                                        name="DPL",
+                                        enabled=g.site.data_consent['enabled'])
         return consent
 
     @staticmethod
@@ -364,7 +363,8 @@ class Form(db.Model, CRUD):
         for element in self.structure:
             if "type" in element and element["type"] == "number":
                 if element["name"] in self.expiry_conditions['fields']:
-                    result[element["name"]]=self.expiry_conditions['fields'][element["name"]]
+                    element_name = self.expiry_conditions['fields'][element["name"]]
+                    result[element["name"]] = element_name
                 else:
                     result[element["name"]]={"type":"number", "condition": None}
         return result
@@ -402,8 +402,8 @@ class Form(db.Model, CRUD):
         field_type = available_fields[field_name]['type']
         if field_type == "number":
             try:
-                self.expiry_conditions['fields'][field_name]={  "type": field_type,
-                                                                "condition": int(condition)}
+                condition_dict = {"type": field_type, "condition": int(condition)}
+                self.expiry_conditions['fields'][field_name] = condition_dict
                 self.expired=self.has_expired()
                 self.save()
                 return condition
@@ -413,7 +413,11 @@ class Form(db.Model, CRUD):
 
     def update_expiry_conditions(self):
         saved_expiry_fields = [field for field in self.expiry_conditions['fields']]
-        available_expiry_fields=[element["name"] for element in self.structure if "name" in element]
+        available_expiry_fields = []
+        #available_expiry_fields=[element["name"] for element in self.structure if "name" in element]
+        for element in self.structure:
+            if "name" in element:
+                available_expiry_fields.append(element["name"])
         for field in saved_expiry_fields:
             if not field in available_expiry_fields:
                 del self.expiry_conditions['fields'][field]
@@ -427,16 +431,6 @@ class Form(db.Model, CRUD):
                         field_positions.append(position)
                         break
         return field_positions
-
-    """
-    @classmethod
-    def save_new_form(cls, formData):
-        if formData['slug'] in app.config['RESERVED_SLUGS']:
-            return None
-        new_form=Form(**formData)
-        new_form.save()
-        return new_form
-    """
 
     def delete_form(self):
         #self.delete_entries()
@@ -458,7 +452,6 @@ class Form(db.Model, CRUD):
         from liberaforms.models.user import User
         editors=[]
         for editor_id in self.editors:
-            #print (editor_id)
             user=User.find(id=editor_id)
             if user:
                 editors.append(user)
@@ -518,35 +511,34 @@ class Form(db.Model, CRUD):
         return self.sharedEntries['enabled']
 
     def get_shared_entries_url(self, part="results"):
-        return "%s/%s/%s" % (self.url, part, self.sharedEntries['key'])
+        return f"{self.url}/{part}/{self.sharedEntries['key']}"
 
     """
     Used when editing a form.
     We don't want the Editor to change the option values if an
-    entry with that value is already present in the database
+    answer.data[key] with a value is already present in the database
     """
     def get_multichoice_options_with_saved_data(self):
         result = {}
-        entries = self.get_entries()
-        if not entries:
+        if not self.answers:
             return result
         multiChoiceFields = {}  # {field.name: [option.value, option.value]}
         for field in self.get_multichoice_fields():
             multiChoiceFields[field['name']] = []
             for value in field['values']:
                 multiChoiceFields[field['name']].append(value['value'])
-        for entry in entries:
-            entry_data = entry['data']
+        for answer in self.answers:
             removeFieldsFromSearch=[]
             for field in multiChoiceFields:
-                if field in entry_data.keys():
-                    for savedValue in entry_data[field].split(', '):
+                if field in answer.data.keys():
+                    for savedValue in answer.data[field].split(', '):
                         if savedValue in multiChoiceFields[field]:
                             if not field in result:
                                     result[field]=[]
                             result[field].append(savedValue)
                             multiChoiceFields[field].remove(savedValue)
-                            if multiChoiceFields[field] == []:  # all option.values are present in database
+                            if multiChoiceFields[field] == []:
+                                # all option.values are present in database
                                 removeFieldsFromSearch.append(field)
             for field_to_remove in removeFieldsFromSearch:
                 del(multiChoiceFields[field_to_remove])
@@ -554,17 +546,17 @@ class Form(db.Model, CRUD):
                     return result
         return result
 
-    #@property
-    #def orderedEntries(self):
-    #    return sorted(self.entries, key=lambda k: k['created'])
-
     def get_entries_for_json(self):
         result=[]
         entries = self.get_entries_for_display(oldest_first=True)
         for saved_entry in entries:
             entry={}
             for field in self.get_field_index_for_data_display():
-                value=saved_entry[field['name']] if field['name'] in saved_entry else ""
+                #value=saved_entry[field['name']] if field['name'] in saved_entry else ""
+                if field['name'] in saved_entry:
+                    value = saved_entry[field['name']]
+                else:
+                    value = ""
                 entry[field['label']]=value
             result.append(entry)
         return result
@@ -596,8 +588,9 @@ class Form(db.Model, CRUD):
             for field in chartable_time_fields:
                 try:
                     total[field['label']]+=int(entry[field['name']])
-                    time_data[field['label']].append({  'x': entry['created'],
-                                                        'y': total[field['label']]})
+                    time_data[field['label']].append({'x': entry['created'],
+                                                      'y': total[field['label']]
+                                                    })
                 except:
                     continue
             for field in multichoice_fields:
@@ -620,12 +613,14 @@ class Form(db.Model, CRUD):
             return self.enabled
 
     def toggle_admin_form_public(self):
-        self.adminPreferences['public'] = False if self.adminPreferences['public'] else True
+        public = self.adminPreferences['public']
+        self.adminPreferences['public'] = False if public else True
         self.save()
         return self.adminPreferences['public']
 
     def toggle_shared_entries(self):
-        self.sharedEntries['enabled'] = False if self.sharedEntries['enabled'] else True
+        enabled = self.sharedEntries['enabled']
+        self.sharedEntries['enabled'] = False if enabled else True
         self.save()
         return self.sharedEntries['enabled']
 
@@ -635,6 +630,7 @@ class Form(db.Model, CRUD):
         return self.restrictedAccess
 
     def toggle_notification(self, editor_id):
+        editor_id = str(editor_id)
         if editor_id in self.editors:
             if self.editors[editor_id]['notification']['newEntry']:
                 self.editors[editor_id]['notification']['newEntry']=False
@@ -646,6 +642,7 @@ class Form(db.Model, CRUD):
         return False
 
     def toggle_expiration_notification(self, editor_id):
+        editor_id = str(editor_id)
         if editor_id in self.editors:
             if self.editors[editor_id]['notification']['expiredForm']:
                 self.editors[editor_id]['notification']['expiredForm']=False
@@ -662,7 +659,9 @@ class Form(db.Model, CRUD):
         return self.sendConfirmation
 
     def add_log(self, message):
-        log = FormLog(user_id=g.current_user.id, form_id=self.id, message=message)
+        log = FormLog(  user_id=g.current_user.id,
+                        form_id=self.id,
+                        message=message)
         log.save()
 
     def write_csv(self, with_deleted_columns=False):
@@ -671,9 +670,11 @@ class Form(db.Model, CRUD):
         for field in self.get_field_index_for_data_display(with_deleted_columns):
             fieldnames.append(field['name'])
             fieldheaders[field['name']]=field['label']
-        csv_name = os.path.join(app.config['TMP_DIR'], "{}.csv".format(self.slug))
+        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.slug}.csv")
         with open(csv_name, mode='wb') as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer = csv.DictWriter(csv_file,
+                                    fieldnames=fieldnames,
+                                    extrasaction='ignore')
             writer.writerow(fieldheaders)
             entries = self.get_entries_for_display(oldest_first=True)
             for entry in entries:

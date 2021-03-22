@@ -13,7 +13,8 @@ from flask_babel import gettext
 from flask_babel import refresh as babel_refresh
 
 from liberaforms import app
-from liberaforms.models.site import Invite, Site, Installation
+from liberaforms.models.site import Site, Installation
+from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
@@ -46,24 +47,25 @@ def new_user(token=None):
             flash(gettext("This invitation has expired"), 'warning')
             invite.delete()
             return redirect(make_url_for('main_bp.index'))
-    
+
     wtform=wtf.NewUser()
     if wtform.validate_on_submit():
         validatedEmail=False
-        adminSettings=User.default_admin_settings()        
+        adminSettings=User.default_admin_settings()
         if invite:
             if invite.email == wtform.email.data:
                 validatedEmail=True
             if invite.admin == True:
                 adminSettings['isAdmin']=True
-                # the first admin of a new Site needs to config. SMTP before we can send emails, but
-                # when validatedEmail=False, a validation email fails to be sent because SMTP is not congifured.
+                # the first admin of a new Site needs to config.
+                # SMTP before we can send emails, but when validatedEmail=False,
+                # a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.get_admins():
                     validatedEmail=True
         if wtform.email.data in app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
-        
+
         newUserData = {
             "username": wtform.username.data,
             "email": wtform.email.data,
@@ -82,16 +84,16 @@ def new_user(token=None):
             flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
         if invite:
-            invite.delete()           
+            invite.delete()
 
         thread = Thread(target=EmailServer().sendNewUserNotification(user))
         thread.start()
-        
+
         session["user_id"]=str(user.id)
         g.current_user = user
         babel_refresh()
         flash(gettext("Welcome!"), 'success')
-        
+
         if validatedEmail == True:
             return redirect(make_url_for('form_bp.my_forms'))
         else:
@@ -110,7 +112,7 @@ def user_settings(username):
     if username != g.current_user.username:
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('user-settings.html', user=g.current_user)
- 
+
 
 @user_bp.route('/user/<string:username>/statistics', methods=['GET'])
 @enabled_user_required
@@ -122,12 +124,12 @@ def statistics(username):
 
 @user_bp.route('/user/send-validation', methods=['GET'])
 @login_required
-def send_validation_email():   
+def send_validation_email():
     g.current_user.set_token(email=g.current_user.email)
     EmailServer().sendConfirmEmail(g.current_user, g.current_user.email)
     flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
     return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
-    
+
 
 """ Personal user settings """
 
@@ -154,7 +156,7 @@ def change_email():
         flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
         return redirect(make_url_for('user_bp.user_settings', username=g.current_user.username))
     return render_template('change-email.html', wtform=wtform)
-    
+
 
 @user_bp.route('/user/reset-password', methods=['GET', 'POST'])
 @login_required
@@ -210,7 +212,7 @@ def validate_email(token):
     # On a Change email request, the new email address is saved in the token.
     if 'email' in user.token:
         user.email = user.token['email']
-    
+
     user.delete_token()
     user.validatedEmail=True
     user.save()

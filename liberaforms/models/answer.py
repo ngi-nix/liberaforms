@@ -26,9 +26,9 @@ class Answer(db.Model, CRUD):
             self.created = created
         else:
             self.created = datetime.datetime.now().isoformat()
-        self.marked = marked
         self.form_id = form_id
         self.author_id = author_id
+        self.marked = marked
         self.data = data
 
     def __str__(self):

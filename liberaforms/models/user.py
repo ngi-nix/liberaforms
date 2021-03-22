@@ -1,7 +1,7 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
@@ -75,8 +75,6 @@ class User(db.Model, CRUD):
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
         return cls.query.filter(*filters)
-
-
 
     @property
     def enabled(self):

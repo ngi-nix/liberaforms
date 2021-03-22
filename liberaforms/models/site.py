@@ -1,7 +1,7 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
@@ -50,7 +50,8 @@ class Site(db.Model, CRUD):
 
     @classmethod
     def create(cls, hostname, scheme):
-        with open('%s/../default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
+        real_path = os.path.realpath(__file__)
+        with open(f'{os.path.dirname(real_path)}/../default_blurb.md', 'r') as defaultBlurb:
             defaultMD=defaultBlurb.read()
         blurb = {
             'markdown': defaultMD,
@@ -66,16 +67,21 @@ class Site(db.Model, CRUD):
             "siteName": "LiberaForms!",
             "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
             "menuColor": "#b71c1c",
-            "consentTexts": [   ConsentText.get_empty_consent(id=utils.gen_random_string(), name="terms"),
-                                ConsentText.get_empty_consent(id=utils.gen_random_string(), name="DPL") ],
+            "consentTexts": [   ConsentText.get_empty_consent(
+                                                id=utils.gen_random_string(),
+                                                name="terms"),
+                                ConsentText.get_empty_consent(
+                                                id=utils.gen_random_string(),
+                                                name="DPL")
+                            ],
             "newUserConsentment": [],
             "smtpConfig": {
-                "host": "smtp.%s" % hostname,
+                "host": f"smtp.{hostname}",
                 "port": 25,
                 "encryption": "",
                 "user": "",
                 "password": "",
-                "noreplyAddress": "no-reply@%s" % hostname
+                "noreplyAddress": f"no-reply@{hostname}"
             }
         }
         new_site=Site(**newSiteData)
@@ -162,7 +168,8 @@ class Site(db.Model, CRUD):
             consent['label'] = ""
             return consent
         if not consent['markdown']:
-            consent = ConsentText.default_terms(id=consent['id'], enabled=consent['enabled'])
+            consent = ConsentText.default_terms(id=consent['id'],
+                                                enabled=consent['enabled'])
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
@@ -173,7 +180,8 @@ class Site(db.Model, CRUD):
             consent['label'] = ""
             return consent
         if not consent['markdown']:
-            consent = ConsentText.default_DPL(id=consent['id'], enabled=consent['enabled'])
+            consent = ConsentText.default_DPL(  id=consent['id'],
+                                                enabled=consent['enabled'])
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
@@ -222,7 +230,7 @@ class Site(db.Model, CRUD):
         self.save()
 
     def get_admins(self):
-        return User.find_all(admin__isAdmin=True, hostname=self.hostname)
+        return User.find_all(isAdmin=True)
 
     def toggle_invitation_only(self):
         self.invitationOnly = False if self.invitationOnly else True
@@ -251,9 +259,10 @@ class Site(db.Model, CRUD):
 
     def get_users(self, **kwargs):
         return User.find_all(**kwargs)
-
+    """
     def get_admins(self):
         return User.query.filter(User.admin.contains({"isAdmin": True}))
+    """
 
     def get_statistics(self, **kwargs):
         today = datetime.date.today().strftime("%Y-%m")
@@ -302,8 +311,6 @@ class Site(db.Model, CRUD):
 
     def write_users_csv(self):
         fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
-        if g.is_root_user_enabled:
-            fieldnames.insert(0, "hostname")
         fieldheaders={  "username": gettext("Username"),
                         "created": gettext("Created"),
                         "enabled": gettext("Enabled"),
@@ -311,77 +318,25 @@ class Site(db.Model, CRUD):
                         "forms": gettext("Forms"),
                         "admin": gettext("Admin")
                         }
-        csv_name = os.path.join(app.config['TMP_DIR'], "{}.users.csv".format(self.hostname))
+        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.hostname}.users.csv")
         with open(csv_name, mode='wb') as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer = csv.DictWriter(csv_file,
+                                    fieldnames=fieldnames,
+                                    extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in self.get_users():
+                is_enabled = gettext("True") if user.enabled else gettext("False")
+                is_admin = gettext("True") if user.is_admin() else gettext("False")
                 row = { "username": user.username,
-                        "created": user.created,
-                        "enabled": gettext("True") if user.enabled else gettext("False"),
+                        "created": user.created.strftime("%Y-%m-%d"),
+                        "enabled": is_enabled,
                         "email": user.email,
                         "forms": user.get_forms().count(),
-                        "admin": gettext("True") if user.is_admin() else gettext("False"),
-                        "hostname": user.hostname
+                        "admin": is_admin
                         }
                 writer.writerow(row)
         return csv_name
 
-
-class Invite(db.Model, CRUD):
-    __tablename__ = "invites"
-    id = db.Column(db.Integer, primary_key=True, index=True)
-    hostname = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=False)
-    message = db.Column(db.String, nullable=True)
-    token = db.Column(JSONB, nullable=False)
-    admin = db.Column(db.Boolean)
-
-    def __init__(self, *args, **kwargs):
-        pass
-
-    def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
-
-    @classmethod
-    def create(cls, hostname, email, message, admin=False):
-        data={
-            "hostname": hostname,
-            "email": email,
-            "message": message,
-            "token": utils.create_token(Invite),
-            "admin": admin
-        }
-        newInvite=Invite(**data)
-        newInvite.save()
-        return newInvite
-
-    @classmethod
-    def find(cls, **kwargs):
-        if 'token' in kwargs:
-            kwargs={"token__token": kwargs['token'], **kwargs}
-            kwargs.pop('token')
-        return cls.query.filter_by(**kwargs).first()
-
-    @classmethod
-    def find_all(cls, **kwargs):
-        return cls.query.filter_by(**kwargs)
-
-    def get_link(self):
-        site = Site.find(hostname=self.hostname)
-        return "{}user/new/{}".format(site.host_url, self.token['token'])
-
-    def get_message(self):
-        return "{}\n\n{}".format(self.message, self.get_link())
-
-    def set_token(self, **kwargs):
-        self.invite['token']=utils.create_token(Invite, **kwargs)
-        self.save()
-
-    @staticmethod
-    def default_message():
-        return gettext("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")
 
 class Installation(db.Model, CRUD):
     __tablename__ = "installation"
@@ -447,7 +402,9 @@ class Installation(db.Model, CRUD):
                         }
         csv_name = os.path.join(app.config['TMP_DIR'], "LiberaForms.admin.csv")
         with open(csv_name, mode='wb') as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer = csv.DictWriter(csv_file,
+                                    fieldnames=fieldnames,
+                                    extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in cls.get_admins():
                 row = { "username": user.username,
