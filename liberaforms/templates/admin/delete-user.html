@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set authored_forms = user.get_authored_forms() %}
-{% set form_count = authored_forms|length %}
+{% set form_count = user.authored_forms|length %}
 
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
-            
+
     <div class="col-md-5">
         <div class="title_1 delimited">{%trans%}Delete user{%endtrans%}</div>
         <p>
@@ -27,11 +26,11 @@
                         <th>{%trans%}Entries{%endtrans%}</th>
                     </tr>
                 </thead>
-                {% for form in authored_forms %}
+                {% for form in user.authored_forms %}
                 <tr>
                    <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
                    <td>{{form.editors|length}}</td>
-                   <td>{{form.get_entries()|length}}</td>
+                   <td>{{form.answers|length}}</td>
                 </tr>
                 {% endfor %}
             </table>
@@ -46,7 +45,7 @@
             <p>
             <input type="text" name="username" class="form-control" required >
             </p>
-            
+
             <div class="form-actions">
             {% if form_count %}
                 <input class="btn-danger btn" type="submit" value="{%trans%}Delete user and forms{%endtrans%}">
@@ -57,9 +56,9 @@
             </div>
         </form>
     </div>
-  
+
 </div>
 </div>
 
-  
+
 {% endblock %}

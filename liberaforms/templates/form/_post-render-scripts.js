@@ -17,7 +17,7 @@ $(document).on("wheel", "input[type=number]", function (e) {
 
 {% if form %}
 function setLimits(){
-    {% for field, values in form.expiry_conditions.items() %}
+    {% for field, values in form.expiryConditions.items() %}
         {% if values["type"] == "number" %}
             {% set available = values["condition"] - form.tally_number_field(field) %}
             if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
@@ -49,7 +49,7 @@ function watchEmail(){
             $("#confirmation_checkbox").prop("disabled", true );
             $("#confirmation_checkbox").prop("checked", false );
         }
-    });    
+    });
 }
 function isEmailValid(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)

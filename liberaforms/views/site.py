@@ -45,7 +45,7 @@ def recover_password(token=None):
         if not user:
             flash(gettext("Couldn't find that token"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        if not validators.is_valid_token(user.token):
+        if validators.has_token_expired(user.token):
             flash(gettext("Your petition has expired"), 'warning')
             user.delete_token()
             return redirect(make_url_for('main_bp.index'))

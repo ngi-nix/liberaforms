@@ -16,11 +16,12 @@ from liberaforms.models.form import Form
 from liberaforms.models.site import Site, Installation
 from liberaforms.models.invite import Invite
 from liberaforms.utils.wraps import *
+from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
 
-#from pprint import pprint as pp
+from pprint import pprint
 
 admin_bp = Blueprint('admin_bp', __name__,
                     template_folder='../templates/admin')
@@ -147,28 +148,32 @@ def change_author(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
     if request.method == 'POST':
-        author = queriedForm.get_author()
+        author = queriedForm.author
         if not ('old_author_username' in request.form and \
                 request.form['old_author_username']==author.username):
             flash(gettext("Current author incorrect"), 'warning')
             return render_template('change-author.html', form=queriedForm)
         if 'new_author_username' in request.form:
-            new_author=User.find(username=request.form['new_author_username'],
-                                 hostname=queriedForm.hostname)
+            new_author=User.find(username=request.form['new_author_username'])
             if new_author:
                 if new_author.enabled:
                     old_author=author
                     if queriedForm.change_author(new_author):
-                        queriedForm.add_log(gettext("Changed author from %s to %s" % (old_author.username, new_author.username)))
+                        log_text = gettext("Changed author from %s to %s" % (
+                                                        old_author.username,
+                                                        new_author.username))
+                        queriedForm.add_log(log_text)
                         flash(gettext("Changed author OK"), 'success')
                         return redirect(make_url_for('form_bp.inspect_form',
                                                      id=queriedForm.id))
                 else:
-                    flash(gettext("Cannot use %s. The user is not enabled" % \
-                                    (request.form['new_author_username'])),
-                                    'warning')
+                    flash(gettext("Cannot use %s. The user is not enabled" % (
+                                    request.form['new_author_username']),
+                         ), 'warning')
             else:
-                flash(gettext("Can't find username %s" % (request.form['new_author_username'])), 'warning')
+                flash(gettext("Can't find username %s" % (
+                                request.form['new_author_username'])
+                     ), 'warning')
     return render_template('change-author.html', form=queriedForm)
 
 
@@ -186,12 +191,17 @@ def new_invite():
     wtform=wtf.NewInvite()
     if wtform.validate_on_submit():
         message=wtform.message.data
-        invite=Invite.create(wtform.hostname.data,
-                             wtform.email.data,
-                             message,
-                             wtform.admin.data)
-        EmailServer().sendInvite(invite)
-        flash(gettext("We've sent an invitation to %s") % invite.email, 'success')
+        token = utils.create_token(Invite)
+        pprint(token)
+        new_invite=Invite(  hostname=wtform.hostname.data,
+                            email=wtform.email.data,
+                            message=message,
+                            token=token,
+                            admin=wtform.admin.data)
+        new_invite.save()
+        EmailServer().sendInvite(new_invite)
+        flash_text = gettext("We've sent an invitation to %s" % new_invite.email)
+        flash(flash_text, 'success')
         return redirect(make_url_for('admin_bp.list_invites'))
     wtform.message.data=Invite.default_message()
     return render_template('new-invite.html',

@@ -24,7 +24,7 @@ from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 from liberaforms.utils import utils
 
-#from pprint import pprint as pp
+from pprint import pprint
 
 """ Form properties
 structure: A list of dicts that is built by and rendered by formbuilder.
@@ -52,9 +52,9 @@ class Form(db.Model, CRUD):
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
-    answers = db.relationship("Answer")
-    author = db.relationship("User")
-    log = db.relationship("FormLog")
+    author = db.relationship("User", back_populates="authored_forms")
+    answers = db.relationship("Answer", cascade = "all, delete, delete-orphan")
+    log = db.relationship("FormLog", cascade = "all, delete, delete-orphan")
     _site=None
 
     def __init__(self, author, **kwargs):
@@ -102,7 +102,7 @@ class Form(db.Model, CRUD):
             filters.append(cls.editors.has_key(str(kwargs['editor_id'])))
             kwargs.pop('editor_id')
         if 'key' in kwargs:
-            filters.append(cls.sharedEntries.contains({'key':kwargs['key']}))
+            filters.append(cls.sharedEntries.contains({'key': kwargs['key']}))
             kwargs.pop('key')
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
@@ -116,7 +116,7 @@ class Form(db.Model, CRUD):
             if new_author.id == self.author_id:
                 return False
             try:
-                del self.editors[self.author_id]
+                del self.editors[str(self.author_id)]
             except:
                 return False
             self.author_id=new_author.id
@@ -232,8 +232,10 @@ class Form(db.Model, CRUD):
         return Answer.find_all(form_id=self.id).count()
 
     def get_last_entry_date(self):
-        last_entry = Answer.find(form_id=str(self.id))
-        return last_entry.created if last_entry else ""
+        last_entry = Answer.find(form_id=self.id)
+        if last_entry:
+            return last_entry.created.strftime('%Y-%m-%d %H:%M:%S')
+        return ""
 
     def is_enabled(self):
         if not (self.get_author().enabled and self.adminPreferences['public']):
@@ -242,7 +244,9 @@ class Form(db.Model, CRUD):
 
     @classmethod
     def new_editor_preferences(cls, editor):
-        return {'notification': {   'newEntry': editor.preferences["newEntryNotification"],
+        return {'notification': {   'newEntry': editor.preferences[
+                                                    "newEntryNotification"
+                                                ],
                                     'expiredForm': True }}
 
     def add_editor(self, editor):
@@ -362,8 +366,8 @@ class Form(db.Model, CRUD):
         result={}
         for element in self.structure:
             if "type" in element and element["type"] == "number":
-                if element["name"] in self.expiry_conditions['fields']:
-                    element_name = self.expiry_conditions['fields'][element["name"]]
+                if element["name"] in self.expiryConditions['fields']:
+                    element_name = self.expiryConditions['fields'][element["name"]]
                     result[element["name"]] = element_name
                 else:
                     result[element["name"]]={"type":"number", "condition": None}
@@ -385,34 +389,44 @@ class Form(db.Model, CRUD):
                 return element['label']
         return None
 
-    @property
-    def expiry_conditions(self):
-        return self.expiryConditions
+    def save_expiry_date(self, expireDate):
+        self.expiryConditions['expireDate']=expireDate
+        self.expired=self.has_expired()
+        flag_modified(self, "expiryConditions")
+        self.save()
 
-    def set_expiry_field_condition(self, field_name, condition):
+    def save_expiry_total_entries(self, total_entries):
+        self.expiryConditions['totalEntries']=total_entries
+        self.expired = self.has_expired()
+        flag_modified(self, "expiryConditions")
+        self.save()
+
+    def save_expiry_field_condition(self, field_name, condition):
         available_fields=self.get_available_number_type_fields()
         if not field_name in available_fields:
             return False
         if not condition:
-            if field_name in self.expiry_conditions['fields']:
-                del self.expiry_conditions['fields'][field_name]
+            if field_name in self.expiryConditions['fields']:
+                del self.expiryConditions['fields'][field_name]
                 self.expired=self.has_expired()
+                flag_modified(self, "expiryConditions")
                 self.save()
             return False
         field_type = available_fields[field_name]['type']
         if field_type == "number":
             try:
                 condition_dict = {"type": field_type, "condition": int(condition)}
-                self.expiry_conditions['fields'][field_name] = condition_dict
+                self.expiryConditions['fields'][field_name] = condition_dict
                 self.expired=self.has_expired()
+                flag_modified(self, "expiryConditions")
                 self.save()
                 return condition
             except:
                 return False
         return False
 
-    def update_expiry_conditions(self):
-        saved_expiry_fields = [field for field in self.expiry_conditions['fields']]
+    def update_expiryConditions(self):
+        saved_expiry_fields = [field for field in self.expiryConditions['fields']]
         available_expiry_fields = []
         #available_expiry_fields=[element["name"] for element in self.structure if "name" in element]
         for element in self.structure:
@@ -420,11 +434,11 @@ class Form(db.Model, CRUD):
                 available_expiry_fields.append(element["name"])
         for field in saved_expiry_fields:
             if not field in available_expiry_fields:
-                del self.expiry_conditions['fields'][field]
+                del self.expiryConditions['fields'][field]
 
     def get_expiry_numberfield_positions_in_field_index(self):
         field_positions=[]
-        for fieldName, condition in self.expiry_conditions['fields'].items():
+        for fieldName, condition in self.expiryConditions['fields'].items():
             if condition['type'] == 'number':
                 for position, field in enumerate(self.fieldIndex):
                     if field['name'] == fieldName:
@@ -432,15 +446,9 @@ class Form(db.Model, CRUD):
                         break
         return field_positions
 
-    def delete_form(self):
-        #self.delete_entries()
-        self.answers.delete()
-        self.delete()
-
-    """
     def delete_entries(self):
-        Answer.find_all(form_id=self.id).delete()
-    """
+        Answer.query.filter_by(form_id=self.id).delete()
+        db.session.commit()
 
     def is_author(self, user):
         return True if self.author_id == user.id else False
@@ -461,24 +469,24 @@ class Form(db.Model, CRUD):
         return editors
 
     def can_expire(self):
-        if self.expiry_conditions["totalEntries"]:
+        if self.expiryConditions["totalEntries"]:
             return True
-        if self.expiry_conditions["expireDate"]:
+        if self.expiryConditions["expireDate"]:
             return True
-        if self.expiry_conditions["fields"]:
+        if self.expiryConditions["fields"]:
             return True
         return False
 
     def has_expired(self):
         if not self.can_expire():
             return False
-        if self.expiry_conditions["totalEntries"] and \
-            self.get_entries().count() >= self.expiry_conditions["totalEntries"]:
+        if self.expiryConditions["totalEntries"] and \
+            self.get_entries().count() >= self.expiryConditions["totalEntries"]:
             return True
-        if self.expiry_conditions["expireDate"] and not \
-            validators.is_future_date(self.expiry_conditions["expireDate"]):
+        if self.expiryConditions["expireDate"] and not \
+            validators.is_future_date(self.expiryConditions["expireDate"]):
             return True
-        for fieldName, value in self.expiry_conditions['fields'].items():
+        for fieldName, value in self.expiryConditions['fields'].items():
             if value['type'] == 'number':
                 total=self.tally_number_field(fieldName)
                 if total >= int(value['condition']):

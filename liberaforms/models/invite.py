@@ -13,6 +13,8 @@ from liberaforms import db
 from liberaforms.models.site import Site
 from liberaforms.utils import utils
 
+from pprint import pprint
+
 class Invite(db.Model, CRUD):
     __tablename__ = "invites"
     id = db.Column(db.Integer, primary_key=True, index=True)
@@ -22,13 +24,17 @@ class Invite(db.Model, CRUD):
     token = db.Column(JSONB, nullable=False)
     admin = db.Column(db.Boolean)
 
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, **kwargs):
+        self.hostname = kwargs["hostname"]
+        self.email = kwargs["email"]
+        self.message = kwargs["message"]
+        self.token = kwargs["token"]
+        self.admin = kwargs["admin"]
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
         return print_obj_values(self)
-
+    """
     @classmethod
     def create(cls, hostname, email, message, admin=False):
         data={
@@ -39,19 +45,24 @@ class Invite(db.Model, CRUD):
             "admin": admin
         }
         newInvite=Invite(**data)
+        pprint(data)
         newInvite.save()
         return newInvite
+    """
 
     @classmethod
     def find(cls, **kwargs):
-        if 'token' in kwargs:
-            kwargs={"token__token": kwargs['token'], **kwargs}
-            kwargs.pop('token')
-        return cls.query.filter_by(**kwargs).first()
+        return cls.find_all().first()
 
     @classmethod
     def find_all(cls, **kwargs):
-        return cls.query.filter_by(**kwargs)
+        filters = []
+        if 'token' in kwargs:
+            filters.append(cls.token.contains({'token':kwargs['token']}))
+            kwargs.pop('token')
+        for key, value in kwargs.items():
+            filters.append(getattr(cls, key) == value)
+        return cls.query.filter(*filters)
 
     def get_link(self):
         site = Site.find(hostname=self.hostname)

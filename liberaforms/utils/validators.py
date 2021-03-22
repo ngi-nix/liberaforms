@@ -29,9 +29,11 @@ def hash_password(password):
 def verify_password(password, hash):
     return pbkdf2_sha256.verify(password, hash)
 
-def is_valid_token(tokenData):
-    token_age = datetime.datetime.now() - tokenData['created']
-    if token_age.total_seconds() > app.config['TOKEN_EXPIRATION']:
+def has_token_expired(token_data):
+    token_created = datetime.datetime.strptime( token_data['created'],
+                                                "%Y-%m-%d %H:%M:%S")
+    token_age = datetime.datetime.now() - token_created
+    if token_age.total_seconds() <= app.config['TOKEN_EXPIRATION']:
         return False
     return True
 
@@ -51,7 +53,7 @@ def is_valid_date(date):
         return True
     except:
         return False
-        
+
 def is_future_date(date):
     now=time.time()
     future=int(datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").strftime("%s"))

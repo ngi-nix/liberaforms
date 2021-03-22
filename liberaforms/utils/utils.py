@@ -41,8 +41,8 @@ Used to respond to Ajax requests
 """
 def JsonResponse(json_response="1", status_code=200):
     return Response(
-        json_response, 
-        status_code, 
+        json_response,
+        status_code,
         {'Content-Type':'application/json; charset=utf-8'}
     )
 
@@ -65,7 +65,8 @@ def create_token(persistentClass, **kwargs):
     token_string = gen_random_string()
     while persistentClass.find(token=token_string):
         token_string = gen_random_string()
-    result={'token': token_string, 'created': datetime.datetime.now()}
+    created = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    result={'token': token_string, 'created': created}
     return {**result, **kwargs}
 
 """ ######## Other ######## """

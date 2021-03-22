@@ -59,7 +59,8 @@ def edit_form(id=None):
     queriedForm=None
     if id:
         if session['form_id'] != str(id):
-            flash(gettext("Something went wrong. id does not match session['form_id']"), 'error')
+            flash_text = gettext("Something went wrong. id does not match session['form_id']")
+            flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
         queriedForm = Form.find(id=id, editor_id=g.current_user.id)
         if not queriedForm:
@@ -73,13 +74,18 @@ def edit_form(id=None):
         if not session['slug']:
             flash(gettext("Something went wrong. No slug!"), 'error')
             return redirect(make_url_for('form_bp.my_forms'))
-        structure = form_helper.repair_form_structure(json.loads(request.form['structure']))
+        structure = form_helper.repair_form_structure(
+                                        json.loads(request.form['structure'])
+                                )
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.create_field_index(structure)
         session['introductionTextMD'] = sanitizers.escape_markdown(
-                                                request.form['introductionTextMD'])
+                                            request.form['introductionTextMD']
+                                        )
         return redirect(make_url_for('form_bp.preview_form'))
-    optionsWithData = queriedForm.get_multichoice_options_with_saved_data() if queriedForm else {}
+    optionsWithData = {}
+    if queriedForm:
+        optionsWithData = queriedForm.get_multichoice_options_with_saved_data()
     return render_template('edit-form.html',
                             host_url=g.site.host_url,
                             multichoiceOptionsWithSavedData=optionsWithData)
@@ -152,7 +158,7 @@ def save_form(id=None):
     if queriedForm:
         queriedForm.structure=formStructure
         queriedForm.update_field_index(session['formFieldIndex'])
-        queriedForm.update_expiry_conditions()
+        queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
         queriedForm.save()
         form_helper.clear_session_form_data()
@@ -290,7 +296,6 @@ def inspect_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #print(queriedForm.expiry_conditions)
     if not g.current_user.can_inspect_form(queriedForm):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -320,7 +325,7 @@ def add_editor(id):
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
     if wtform.validate():
-        newEditor=User.find(email=wtform.email.data, hostname=queriedForm.hostname)
+        newEditor=User.find(email=wtform.email.data)
         if not newEditor or newEditor.enabled==False:
             flash(gettext("Can't find a user with that email"), 'warning')
             return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
@@ -370,15 +375,11 @@ def set_expiration_date(id):
                             'expired': queriedForm.has_expired()}
                 return JsonResponse(json.dumps(pay_load))
             else:
-                queriedForm.expiryConditions['expireDate']=expireDate
-                queriedForm.expired=queriedForm.has_expired()
-                queriedForm.save()
+                queriedForm.save_expiry_date(expireDate)
                 queriedForm.add_log(gettext("Expiry date set to: %s" % expireDate))
         elif not request.form['date'] and not request.form['time']:
             if queriedForm.expiryConditions['expireDate']:
-                queriedForm.expiryConditions['expireDate']=False
-                queriedForm.expired=queriedForm.has_expired()
-                queriedForm.save()
+                queriedForm.save_expiry_date(False)
                 queriedForm.add_log(gettext("Expiry date cancelled"))
         else:
             pay_load = {'error': gettext("Missing date or time"),
@@ -394,9 +395,14 @@ def set_expiry_field_condition(id):
     if not queriedForm:
         return JsonResponse(json.dumps({'condition': False}))
     if 'field_name' in request.form and 'condition' in request.form:
-        condition=queriedForm.set_expiry_field_condition(
+        condition=queriedForm.save_expiry_field_condition(
                                                     request.form['field_name'],
                                                     request.form['condition'])
+        field_label = queriedForm.get_field_label(request.form['field_name'])
+        queriedForm.add_log(gettext("Field '%s' expiry set to: %s" % (
+                                                    field_label,
+                                                    request.form['condition']))
+                                    )
         return JsonResponse(json.dumps({'condition': condition,
                                         'expired': queriedForm.expired}))
     return JsonResponse(json.dumps({'condition': False}))
@@ -413,15 +419,13 @@ def set_expiry_total_entries(id):
             total_entries = int(request.form['total_entries'])
             if total_entries < 0:
                 total_entries = 0
-            queriedForm.expiry_conditions['totalEntries']=total_entries
-            queriedForm.expired = queriedForm.has_expired()
-            queriedForm.save()
+            queriedForm.save_expiry_total_entries(total_entries)
         except:
-            total_entries = queriedForm.expiry_conditions['totalEntries']
+            total_entries = queriedForm.expiryConditions['totalEntries']
             return JsonResponse(json.dumps({'expired': False,
                                             'total_entries': total_entries,
                                             "error": True}))
-    total_entries = queriedForm.expiry_conditions['totalEntries']
+    total_entries = queriedForm.expiryConditions['totalEntries']
     return JsonResponse(json.dumps({'expired': queriedForm.expired,
                                     'total_entries':total_entries}))
 

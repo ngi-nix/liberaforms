@@ -18,7 +18,7 @@ from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
 from liberaforms.utils.utils import create_token
 
-#from pprint import pprint as pp
+from pprint import pprint
 
 class User(db.Model, CRUD):
     __tablename__ = "users"
@@ -34,9 +34,20 @@ class User(db.Model, CRUD):
     validatedEmail = db.Column(db.Boolean)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
+    authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
 
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, **kwargs):
+        self.created = datetime.datetime.now().isoformat()
+        self.username = kwargs["username"]
+        self.email = kwargs["email"]
+        self.password_hash = kwargs["password_hash"]
+        self.preferences = kwargs["preferences"]
+        self.hostname = kwargs["hostname"]
+        self.blocked = False
+        self.admin = kwargs["admin"]
+        self.validatedEmail = kwargs["validatedEmail"]
+        self.token = {}
+        self.consentTexts = []
 
     def __str__(self):
         from liberaforms.utils.utils import print_obj_values
@@ -48,11 +59,13 @@ class User(db.Model, CRUD):
         from liberaforms.models.site import Site
         return Site.query.first()
 
+    """
     @classmethod
     def create(cls, newUserData):
         newUser=User(**newUserData)
         newUser.save()
         return newUser
+    """
 
     @classmethod
     def find(cls, **kwargs):
@@ -68,10 +81,15 @@ class User(db.Model, CRUD):
             filters.append(cls.admin.contains({"isAdmin":kwargs['isAdmin']}))
             kwargs.pop('isAdmin')
         if 'notifyNewForm' in kwargs:
-            filters.append(cls.admin.contains(
-                                {"notifyNewForm":kwargs['notifyNewForm']}
-                            ))
+            filters.append(cls.admin.contains({
+                                "notifyNewForm": kwargs['notifyNewForm']
+                            }))
             kwargs.pop('notifyNewForm')
+        if 'notifyNewUser' in kwargs:
+            filters.append(cls.admin.contains({
+                                "notifyNewUser": kwargs['notifyNewUser']
+                            }))
+            kwargs.pop('notifyNewUser')
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
         return cls.query.filter(*filters)
@@ -85,12 +103,12 @@ class User(db.Model, CRUD):
         return True
 
     def get_forms(self, **kwargs):
-        kwargs['editor_id']=str(self.id)
+        kwargs['editor_id']=self.id
         return Form.find_all(**kwargs)
 
-    def get_authored_forms(self, **kwargs):
-        kwargs['author_id']=str(self.id)
-        return Form.find_all(**kwargs)
+    def authored_forms_total(self, **kwargs):
+        kwargs["author_id"] = self.id
+        return Form.find_all(**kwargs).count()
 
     @property
     def language(self):
@@ -110,14 +128,14 @@ class User(db.Model, CRUD):
         return validators.verify_password(password, self.password_hash)
 
     def delete_user(self):
-        forms = Form.find_all(author_id=str(self.id))
-        for form in forms:
-            form.delete_form()
-        forms = Form.find_all(editor_id=str(self.id))
+        """
+        Remove this users from other form.editors{}
+        """
+        forms = Form.find_all(editor_id=self.id)
         for form in forms:
             del form.editors[str(self.id)]
             form.save()
-        self.delete()
+        self.delete()   # cascade delete user.authored_forms
 
     def set_token(self, **kwargs):
         self.token=create_token(User, **kwargs)
@@ -223,4 +241,6 @@ class User(db.Model, CRUD):
         return result
 
     def can_inspect_form(self, form):
-        return True if (str(self.id) in form.editors or self.is_admin()) else False
+        if str(self.id) in form.editors or self.is_admin():
+            return True
+        return False

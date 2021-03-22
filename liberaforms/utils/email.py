@@ -95,15 +95,10 @@ class EmailServer():
                     'hostname': user.hostname,
                     'validatedEmail': True,
                     'isAdmin': True,
-                    'admin__notifyNewUser': True}
+                    'notifyNewUser': True}
         admins=User.find_all(**criteria)
         for admin in admins:
             emails.append(admin['email'])
-        rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
-                                        'admin.notifyNewUser':True})
-        for rootUser in rootUsers:
-            if not rootUser['email'] in emails:
-                emails.append(rootUser['email'])
         body = gettext("New user '%s' created at %s" % (user.username, user.hostname))
         subject = Header(gettext("LiberaForms. New user notification")).encode()
         for msg_to in emails:
@@ -142,13 +137,6 @@ class EmailServer():
         admins=User.find_all(**criteria)
         for admin in admins:
             emails.append(admin.email)
-        """
-        rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
-                                        'admin.notifyNewForm':True})
-        for rootUser in rootUsers:
-            if not rootUser['email'] in emails:
-                emails.append(rootUser['email'])
-        """
         body = gettext("New form '%s' created at %s" % (form.slug, form.hostname))
         subject = Header(gettext("LiberaForms. New form notification")).encode()
         for msg_to in emails:

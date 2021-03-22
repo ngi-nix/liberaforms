@@ -420,4 +420,4 @@ class Installation(db.Model, CRUD):
 
     @staticmethod
     def is_user(email):
-        return True if User.objects(email=email).first() else False
+        return True if User.find(email=email) else False
