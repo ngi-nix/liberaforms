@@ -12,7 +12,7 @@ from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms import app
-from liberaforms.models.site import Site, Installation
+from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
@@ -215,8 +215,7 @@ def menu_color():
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():
-    sites = Installation.get_sites() if g.is_root_user_enabled else []
-    return render_template('stats.html', site=g.site, sites=sites)
+    return render_template('stats.html', site=g.site)
 
 
 @site_bp.route('/site/toggle-scheme', methods=['POST'])
@@ -238,17 +237,6 @@ def change_site_port(port=None):
 @admin_required
 def list_admins():
     return render_template('list-admins.html', admins=g.site.get_admins())
-
-
-@site_bp.route('/site/admins/csv', methods=['GET'])
-@rootuser_required
-def csv_admin():
-    csv_file = Installation.write_admins_csv()
-    @after_this_request
-    def remove_file(response):
-        os.remove(csv_file)
-        return response
-    return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
 @site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])

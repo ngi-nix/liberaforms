@@ -35,7 +35,6 @@ class Form(db.Model, CRUD):
     __tablename__ = "forms"
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
-    hostname = db.Column(db.String, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)

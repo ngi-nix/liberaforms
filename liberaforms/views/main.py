@@ -41,10 +41,6 @@ def before_request():
             return
         if g.current_user.is_admin():
             g.is_admin=True
-        if not "root_enabled" in session:
-            session["root_enabled"]=False
-        if g.current_user.is_root_user() and session["root_enabled"] == True:
-            g.is_root_user_enabled=True
 
 @app.errorhandler(404)
 def page_not_found(error):

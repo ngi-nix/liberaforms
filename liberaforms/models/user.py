@@ -27,7 +27,6 @@ class User(db.Model, CRUD):
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
-    hostname = db.Column(db.String, nullable=False)
     preferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     blocked = db.Column(db.Boolean)
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
@@ -42,7 +41,6 @@ class User(db.Model, CRUD):
         self.email = kwargs["email"]
         self.password_hash = kwargs["password_hash"]
         self.preferences = kwargs["preferences"]
-        self.hostname = kwargs["hostname"]
         self.blocked = False
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
@@ -55,17 +53,8 @@ class User(db.Model, CRUD):
 
     @property
     def site(self):
-        #print("user.site")
         from liberaforms.models.site import Site
         return Site.query.first()
-
-    """
-    @classmethod
-    def create(cls, newUserData):
-        newUser=User(**newUserData)
-        newUser.save()
-        return newUser
-    """
 
     @classmethod
     def find(cls, **kwargs):

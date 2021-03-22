@@ -14,7 +14,6 @@ from flask_babel import lazy_gettext as _
 
 from liberaforms import app
 from liberaforms.models.user import User
-from liberaforms.models.site import Installation
 from liberaforms.utils.sanitizers import sanitize_username
 from liberaforms.utils import validators
 
@@ -38,10 +37,7 @@ class NewUser(FlaskForm):
             raise ValidationError(_("Please use a different username"))
 
     def validate_email(self, email):
-        if (email.data) and User.find(email=email.data):
-            raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
-            # a root_user email can only be used once across all sites.
+        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
     def validate_password(self, password):
@@ -55,6 +51,7 @@ class NewUser(FlaskForm):
     def validate_DPLConsent(self, DPLConsent):
         if g.site.DPL_consent_id in g.site.newUserConsentment and not DPLConsent.data:
             raise ValidationError(_("Please accept our data protection policy"))
+
 
 class Login(FlaskForm):
     username = StringField(_("Username"), validators=[DataRequired()])
@@ -87,12 +84,8 @@ class ChangeEmail(FlaskForm):
     email = StringField(_("New email address"), validators=[DataRequired(), Email()])
 
     def validate_email(self, email):
-        if User.find(email=email.data):
+        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
-            # a root_user email can only be used once across all sites.
-            raise ValidationError(_("Please use a different email address"))
-
 
 class ResetPassword(FlaskForm):
     password = PasswordField(_("Password"), validators=[DataRequired()])
@@ -120,10 +113,7 @@ class NewInvite(FlaskForm):
     admin = BooleanField(_("Make the new user an Admin"))
 
     def validate_email(self, email):
-        if User.find(email=email.data):
-            raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
-            # a root_user email can only be used once across all sites.
+        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 

@@ -51,10 +51,8 @@ def JsonResponse(json_response="1", status_code=200):
 def logout_user():
     if "user_id" in session:
         session.pop("user_id")
-    session["root_enabled"]=False
     g.current_user=None
     g.is_admin=False
-    g.is_root_user_enabled=False
 
 
 """

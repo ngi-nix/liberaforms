@@ -13,7 +13,7 @@ from flask_babel import gettext
 
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
-from liberaforms.models.site import Site, Installation
+from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
@@ -30,13 +30,9 @@ admin_bp = Blueprint('admin_bp', __name__,
 @admin_bp.route('/admin', methods=['GET'])
 @admin_required
 def site_admin():
-    sites = [g.site] if g.current_user.is_root_user() else None
-    context = {
-        'site': g.site,
-        'sites': sites,
-        'installation': Installation.get()
-    }
-    return render_template('admin-panel.html', user=g.current_user, **context)
+    return render_template('admin-panel.html',
+                            user=g.current_user,
+                            site=g.site)
 
 """ User management """
 
