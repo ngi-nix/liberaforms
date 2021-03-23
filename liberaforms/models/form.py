@@ -7,7 +7,6 @@ This file is part of LiberaForms.
 
 import os, datetime, copy
 import unicodecsv as csv
-from urllib.parse import urlparse
 
 from flask import g
 from flask_babel import gettext
@@ -78,15 +77,13 @@ class Form(db.Model, CRUD):
         self.adminPreferences = {"public": True}
 
     def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
+        return utils.print_obj_values(self)
 
     @property
     def site(self):
-        from liberaforms.models.site import Site
         if self._site:
             return self._site
-        #print("form.site")
+        from liberaforms.models.site import Site
         self._site = Site.query.first()
         return self._site
 

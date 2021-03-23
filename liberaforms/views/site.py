@@ -16,6 +16,7 @@ from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
+from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
@@ -66,6 +67,16 @@ def recover_password(token=None):
         if user:
             user.set_token()
             EmailServer().sendRecoverPassword(user)
+        if not user and wtform.email.data in app.config['ROOT_USERS']:
+            if User.query.count() == 0:
+                # auto invite first root user
+                invite=Invite(  email=wtform.email.data,
+                                message="New root user",
+                                token=utils.create_token(Invite),
+                                admin=True)
+                invite.save()
+                return redirect(make_url_for('user_bp.new_user',
+                                             token=invite.token['token']))
         flash(gettext("We may have sent you an email"), 'info')
         return redirect(make_url_for('main_bp.index'))
     return render_template('recover-password.html', wtform=wtform)
@@ -121,7 +132,8 @@ def change_siteName():
 @admin_required
 def change_default_language():
     if request.method == 'POST':
-        if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
+        if 'language' in request.form \
+            and request.form['language'] in app.config['LANGUAGES']:
             g.site.defaultLanguage=request.form['language']
             g.site.save()
             flash(gettext("Language updated OK"), 'success')
@@ -169,17 +181,23 @@ def toggle_invitation_only():
 def smtp_config():
     wtf_smtp=wtf.smtpConfig(**g.site.smtpConfig)
     if wtf_smtp.validate_on_submit():
+        if not wtf_smtp.encryption.data == "None":
+            encryption = wtf_smtp.encryption.data
+        else:
+            encryption = ""
         config={}
         config['host'] = wtf_smtp.host.data
         config['port'] = wtf_smtp.port.data
-        config['encryption']=wtf_smtp.encryption.data if not wtf_smtp.encryption.data=="None" else ""
+        config['encryption'] = encryption
         config['user'] = wtf_smtp.user.data
         config['password'] = wtf_smtp.password.data
         config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
         g.site.save_smtp_config(**config)
         flash(gettext("Confguration saved OK"), 'success')
     wtf_email=wtf.GetEmail()
-    return render_template('smtp-config.html', wtf_smtp=wtf_smtp, wtf_email=wtf_email)
+    return render_template('smtp-config.html',
+                            wtf_smtp=wtf_smtp,
+                            wtf_email=wtf_email)
 
 
 @site_bp.route('/site/email/test-config', methods=['POST'])
@@ -231,12 +249,6 @@ def change_site_port(port=None):
     g.site.port=port
     g.site.save()
     return json.dumps({'port': g.site.port})
-
-
-@site_bp.route('/site/admins', methods=['GET'])
-@admin_required
-def list_admins():
-    return render_template('list-admins.html', admins=g.site.get_admins())
 
 
 @site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])

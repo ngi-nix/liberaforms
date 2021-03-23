@@ -281,7 +281,9 @@ def delete_form(id):
         if queriedForm.slug == request.form['slug']:
             entry_cnt = queriedForm.get_entries().count()
             queriedForm.delete_form()
-            flash_text = gettext("Deleted '%s' and %s entries" % (queriedForm.slug, entry_cnt))
+            flash_text = gettext("Deleted '%s' and %s entries" % (
+                                                        queriedForm.slug,
+                                                        entry_cnt))
             flash(flash_text, 'success')
             return redirect(make_url_for('form_bp.my_forms'))
         else:

@@ -9,18 +9,17 @@ import json, string, random, datetime, uuid
 from pprint import pformat
 
 from flask import Response, redirect, request, url_for
-from flask import g, session #, has_app_context
+from flask import g, session
 from flask_babel import gettext
 
 from liberaforms import app, babel
 
 
 def print_obj_values(obj):
-    values = {}
-    fields = type(obj).__dict__['_fields']
-    for key, _ in fields.items():
-        value = getattr(obj, key, None)
-        values[key] = value
+    values={}
+    obj_vars = vars(obj)
+    for var in obj_vars:
+        values[var] = obj_vars[var]
     return pformat({obj.__class__.__name__: values})
 
 def make_url_for(function, **kwargs):

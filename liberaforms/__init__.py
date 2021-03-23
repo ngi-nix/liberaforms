@@ -29,6 +29,9 @@ for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
 db = SQLAlchemy(app)
 babel = Babel(app)
 
+from liberaforms.utils import database
+database.create_tables()
+
 app.secret_key = app.config["SECRET_KEY"]
 app.session_type = app.config["SESSION_TYPE"]
 Session(app)

@@ -16,7 +16,7 @@ from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
-from liberaforms.utils.utils import create_token
+from liberaforms.utils import utils
 
 from pprint import pprint
 
@@ -48,8 +48,7 @@ class User(db.Model, CRUD):
         self.consentTexts = []
 
     def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
+        return utils.print_obj_values(self)
 
     @property
     def site(self):
@@ -117,9 +116,7 @@ class User(db.Model, CRUD):
         return validators.verify_password(password, self.password_hash)
 
     def delete_user(self):
-        """
-        Remove this users from other form.editors{}
-        """
+        # Before delete, remove this user from other form.editors{}
         forms = Form.find_all(editor_id=self.id)
         for form in forms:
             del form.editors[str(self.id)]
@@ -127,7 +124,7 @@ class User(db.Model, CRUD):
         self.delete()   # cascade delete user.authored_forms
 
     def set_token(self, **kwargs):
-        self.token=create_token(User, **kwargs)
+        self.token=utils.create_token(User, **kwargs)
         self.save()
 
     def delete_token(self):

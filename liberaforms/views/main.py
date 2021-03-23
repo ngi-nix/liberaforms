@@ -26,14 +26,12 @@ main_bp = Blueprint('main_bp', __name__,
 
 @app.before_request
 def before_request():
-    g.site=Site.find()
     g.current_user=None
     g.is_admin=False
-    g.is_root_user_enabled=False
     g.embedded=False
     if request.path[0:7] == '/static':
         return
-    #uri = urlparse(request.host_url)
+    g.site=Site.find(urlparse(request.host_url))
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"])
         if not g.current_user:

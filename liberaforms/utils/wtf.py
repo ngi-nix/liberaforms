@@ -37,7 +37,7 @@ class NewUser(FlaskForm):
             raise ValidationError(_("Please use a different username"))
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
+        if User.find(email=email.data):
             raise ValidationError(_("Please use a different email address"))
 
     def validate_password(self, password):
@@ -45,11 +45,13 @@ class NewUser(FlaskForm):
             raise ValidationError(_("Your password is weak"))
 
     def validate_termsAndConditions(self, termsAndConditions):
-        if g.site.terms_consent_id in g.site.newUserConsentment and not termsAndConditions.data:
+        if g.site.terms_consent_id in g.site.newUserConsentment \
+            and not termsAndConditions.data:
             raise ValidationError(_("Please accept our terms and conditions"))
 
     def validate_DPLConsent(self, DPLConsent):
-        if g.site.DPL_consent_id in g.site.newUserConsentment and not DPLConsent.data:
+        if g.site.DPL_consent_id in g.site.newUserConsentment \
+            and not DPLConsent.data:
             raise ValidationError(_("Please accept our data protection policy"))
 
 

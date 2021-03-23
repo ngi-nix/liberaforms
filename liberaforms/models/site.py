@@ -8,9 +8,7 @@ This file is part of LiberaForms.
 import os, datetime, markdown
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
-from flask import g
 from flask_babel import gettext
-from urllib.parse import urlparse
 
 from liberaforms import app, db
 from sqlalchemy.dialects.postgresql import JSONB
@@ -31,27 +29,21 @@ class Site(db.Model, CRUD):
     created = db.Column(db.Date, nullable=False)
     hostname = db.Column(db.String, nullable=False)
     port = db.Column(db.Integer, nullable=True)
+    scheme = db.Column(db.String, nullable=False, default="http")
     siteName = db.Column(db.String, nullable=False)
     defaultLanguage = db.Column(db.String, nullable=False)
     menuColor = db.Column(db.String, nullable=False)
-    scheme = db.Column(db.String, nullable=False, default="http")
-    blurb = db.Column(JSONB, nullable=False)
     invitationOnly = db.Column(db.Boolean, default=True)
     consentTexts = db.Column(JSONB, nullable=False)
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
+    blurb = db.Column(JSONB, nullable=False)
 
-    def __init__(self, *args, **kwargs):
-        real_path = os.path.realpath(__file__)
-        with open(f'{os.path.dirname(real_path)}/../default_blurb.md', 'r') as defaultBlurb:
-            defaultMD=defaultBlurb.read()
+    def __init__(self, hostname, port, scheme):
         self.created = datetime.datetime.now().isoformat()
-        self.hostname = kwargs["hostname"]
-        self.port = kwargs["port"]
-        self.scheme = kwargs["scheme"]
-        self.blurb = {  'markdown': defaultMD,
-                        'html': markdown.markdown(defaultMD)
-                     }
+        self.hostname = hostname
+        self.port = port
+        self.scheme = scheme
         self.siteName = "LiberaForms!"
         self.defaultLanguage = app.config['DEFAULT_LANGUAGE']
         self.menuColor = "#b71c1c"
@@ -70,38 +62,48 @@ class Site(db.Model, CRUD):
                             "password": "",
                             "noreplyAddress": f"no-reply@{hostname}"
                           }
+        real_path = os.path.realpath(__file__)
+        blurb_path = f'{os.path.dirname(real_path)}/../default_blurb.md'
+        with open(blurb_path, 'r') as defaultBlurb:
+            defaultMD=defaultBlurb.read()
+        self.blurb = {  'markdown': defaultMD,
+                        'html': markdown.markdown(defaultMD)
+                     }
 
     def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
+        return utils.print_obj_values(self)
 
     @classmethod
-    def find(cls, **kwargs):
-        return cls.query.filter_by(**kwargs).first()
-        if not site:
-            site=cls.create(hostname=kwargs['hostname'], scheme="http")
-        return site
-
-    @classmethod
-    def find_all(cls, **kwargs):
-        return cls.query.filter_by(**kwargs)
+    def find(cls, url_parse=None):
+        site = cls.query.first()
+        if site:
+            return site
+        if url_parse:
+            new_site = Site(
+                hostname = url_parse.hostname,
+                port = url_parse.port,
+                scheme = url_parse.scheme
+            )
+            new_site.save()
+            return new_site
+        return None
 
     @property
     def host_url(self):
-        url= "%s://%s" % (self.scheme, self.hostname)
+        url= f"{self.scheme}://{self.hostname}"
         if self.port:
-            url = "%s:%s" % (url, self.port)
+            url = f"{url}:{self.port}"
         return url+'/'
 
     def favicon_url(self):
-        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
         if os.path.exists(path):
-            return "/static/images/favicon/%s_favicon.png" % self.hostname
+            return f"/static/images/favicon/{self.hostname}_favicon.png"
         else:
             return "/static/images/favicon/default-favicon.png"
 
     def delete_favicon(self):
-        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
         if os.path.exists(path):
             os.remove(path)
             return True
@@ -228,15 +230,6 @@ class Site(db.Model, CRUD):
         self.save()
         return self.scheme
 
-    def delete_site(self):
-        users=User.find_all(hostname=self.hostname)
-        for user in users:
-            user.delete_user()
-        invites = Invite.find_all(hostname=self.hostname)
-        for invite in invites:
-            invite.delete()
-        return self.delete()
-
     def get_forms(self, **kwargs):
         return Form.find_all(**kwargs)
 
@@ -318,7 +311,3 @@ class Site(db.Model, CRUD):
                         }
                 writer.writerow(row)
         return csv_name
-
-    @staticmethod
-    def is_user(email):
-        return True if User.find(email=email) else False
