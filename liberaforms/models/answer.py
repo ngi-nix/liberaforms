@@ -9,6 +9,7 @@ import datetime
 from sqlalchemy.dialects.postgresql import JSONB
 from liberaforms.utils.database import CRUD
 from liberaforms import db
+from liberaforms.utils import utils
 
 #from pprint import pprint
 
@@ -32,8 +33,7 @@ class Answer(db.Model, CRUD):
         self.data = data
 
     def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
+        return utils.print_obj_values(self)
 
     @classmethod
     def find(cls, **kwargs):

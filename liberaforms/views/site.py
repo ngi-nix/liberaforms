@@ -91,11 +91,16 @@ def consent():
 @site_bp.route('/site/save-consent/<string:id>', methods=['POST'])
 @admin_required
 def save_consent(id):
-    if 'markdown' in request.form and "label" in request.form and "required" in request.form:
-        consent = g.site.save_consent(id, data=request.form.to_dict(flat=True))
+    if 'markdown' in request.form \
+        and "label" in request.form \
+        and "required" in request.form:
+        data = request.form.to_dict(flat=True)
+        consent = g.site.save_consent(id, data=data)
         if consent:
             return JsonResponse(json.dumps(consent))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % (
+                                                gettext("An error occured")),
+                                    "label":""}))
 
 
 

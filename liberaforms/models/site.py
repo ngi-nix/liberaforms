@@ -11,7 +11,8 @@ import unicodecsv as csv
 from flask_babel import gettext
 
 from liberaforms import app, db
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
@@ -34,7 +35,7 @@ class Site(db.Model, CRUD):
     defaultLanguage = db.Column(db.String, nullable=False)
     menuColor = db.Column(db.String, nullable=False)
     invitationOnly = db.Column(db.Boolean, default=True)
-    consentTexts = db.Column(JSONB, nullable=False)
+    consentTexts = db.Column(ARRAY(JSONB), nullable=False)
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
     blurb = db.Column(JSONB, nullable=False)
@@ -176,6 +177,7 @@ class Site(db.Model, CRUD):
     def update_included_new_user_consentment_texts(self, id):
         if id in self.newUserConsentment:
             self.newUserConsentment.remove(id)
+            flag_modified(self, "newUserConsentment")
             self.save()
             return False
         else:
@@ -185,6 +187,7 @@ class Site(db.Model, CRUD):
                 self.newUserConsentment.append(id)
             else:
                 self.newUserConsentment.insert(-1, id)
+            flag_modified(self, "newUserConsentment")
             self.save()
             return True
 
@@ -210,6 +213,7 @@ class Site(db.Model, CRUD):
             if not consent['markdown']:
                 consent['markdown'] = ConsentText.default_DPL()['markdown']
                 consent['html'] = ConsentText.default_DPL()['html']
+        flag_modified(self, "consentTexts")
         self.save()
         return consent
 

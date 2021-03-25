@@ -139,7 +139,7 @@ class EmailServer():
         admins=User.find_all(**criteria)
         for admin in admins:
             emails.append(admin.email)
-        body = gettext("New form '%s' created at %s" % (form.slug, form.hostname))
+        body = gettext("New form '%s' created" % form.slug)
         subject = Header(gettext("LiberaForms. New form notification")).encode()
         for msg_to in emails:
             msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
@@ -149,7 +149,7 @@ class EmailServer():
         self.closeConnection()
 
     def sendNewFormEntryNotification(self, emails, entry, slug):
-        body = gettext("New form entry in %s at %s\n" % (slug, g.site.hostname))
+        body = gettext("New form entry for %s\n" % slug)
         for data in entry:
             body = "%s\n%s: %s" % (body, data[0], data[1])
         body = "%s\n" % body
@@ -172,7 +172,7 @@ class EmailServer():
         return state
 
     def sendExpiredFormNotification(self, editorEmails, form):
-        body = gettext("The form '%s' has expired at %s" % (form.slug, g.site.hostname))
+        body = gettext("The form '%s' has expired" % form.slug)
         subject = Header(gettext("LiberaForms. A form has expired")).encode()
         for msg_to in editorEmails:
             msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
