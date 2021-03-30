@@ -1,65 +1,87 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
 import datetime
+from dateutil.relativedelta import relativedelta
 from liberaforms import app, db
-from liberaforms.models.form import Form, FormResponse
-from liberaforms.utils.queryset import HostnameQuerySet
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.ext.mutable import MutableDict
+#from sqlalchemy.orm.attributes import flag_modified
+from liberaforms.utils.database import CRUD
+from liberaforms.models.form import Form
+from liberaforms.models.answer import Answer
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
-from liberaforms.utils.utils import create_token
+from liberaforms.utils import utils
 
-#from pprint import pprint as pp
+from pprint import pprint
 
-class User(db.Document):
-    meta = {'collection': 'users', 'queryset_class': HostnameQuerySet}
-    username = db.StringField(required=True)
-    email = db.StringField(required=True)
-    password_hash =db.StringField(db_field="password", required=True)
-    hostname = db.StringField(required=True)
-    preferences = db.DictField(required=False)
-    blocked = db.BooleanField()
-    admin = db.DictField(required=True)
-    validatedEmail = db.BooleanField()
-    created = db.StringField(required=True)
-    token = db.DictField(required=False)
-    consentTexts = db.ListField(required=False)
+class User(db.Model, CRUD):
+    __tablename__ = "users"
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    created = db.Column(db.Date, nullable=False)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password_hash = db.Column(db.String, nullable=False)
+    preferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
+    blocked = db.Column(db.Boolean, default=False)
+    admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
+    validatedEmail = db.Column(db.Boolean, default=False)
+    token = db.Column(JSONB, nullable=True)
+    consentTexts = db.Column(ARRAY(JSONB), nullable=True)
+    authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
 
-    def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-        #print("User.__init__ {}".format(self.username))
+    def __init__(self, **kwargs):
+        self.created = datetime.datetime.now().isoformat()
+        self.username = kwargs["username"]
+        self.email = kwargs["email"]
+        self.password_hash = kwargs["password_hash"]
+        self.preferences = kwargs["preferences"]
+        self.blocked = False
+        self.admin = kwargs["admin"]
+        self.validatedEmail = kwargs["validatedEmail"]
+        self.token = {}
+        self.consentTexts = []
 
     def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
-    
+        return utils.print_obj_values(self)
+
     @property
     def site(self):
-        #print("user.site")
         from liberaforms.models.site import Site
-        return Site.find(hostname=self.hostname)
-    
-    @classmethod
-    def create(cls, newUserData):
-        newUser=User(**newUserData)
-        newUser.save()
-        return newUser
+        return Site.query.first()
 
     @classmethod
     def find(cls, **kwargs):
         return cls.find_all(**kwargs).first()
 
     @classmethod
-    def find_all(cls, *args, **kwargs):
+    def find_all(cls, **kwargs):
+        filters = []
         if 'token' in kwargs:
-            kwargs={"token__token": kwargs['token'], **kwargs}
+            filters.append(cls.token.contains({'token':kwargs['token']}))
             kwargs.pop('token')
-        return cls.objects.ensure_hostname(**kwargs)
-    
+        if 'isAdmin' in kwargs:
+            filters.append(cls.admin.contains({"isAdmin":kwargs['isAdmin']}))
+            kwargs.pop('isAdmin')
+        if 'notifyNewForm' in kwargs:
+            filters.append(cls.admin.contains({
+                                "notifyNewForm": kwargs['notifyNewForm']
+                            }))
+            kwargs.pop('notifyNewForm')
+        if 'notifyNewUser' in kwargs:
+            filters.append(cls.admin.contains({
+                                "notifyNewUser": kwargs['notifyNewUser']
+                            }))
+            kwargs.pop('notifyNewUser')
+        for key, value in kwargs.items():
+            filters.append(getattr(cls, key) == value)
+        return cls.query.filter(*filters)
+
     @property
     def enabled(self):
         if not self.validatedEmail:
@@ -69,13 +91,13 @@ class User(db.Document):
         return True
 
     def get_forms(self, **kwargs):
-        kwargs['editor_id']=str(self.id)
+        kwargs['editor_id']=self.id
         return Form.find_all(**kwargs)
 
-    def get_authored_forms(self, **kwargs):
-        kwargs['author_id']=str(self.id)
-        return Form.find_all(**kwargs)
-        
+    def authored_forms_total(self, **kwargs):
+        kwargs["author_id"] = self.id
+        return Form.find_all(**kwargs).count()
+
     @property
     def language(self):
         return self.preferences["language"]
@@ -89,22 +111,20 @@ class User(db.Document):
 
     def is_root_user(self):
         return True if self.email in app.config['ROOT_USERS'] else False
-    
+
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
-        
+
     def delete_user(self):
-        forms = Form.find_all(author_id=str(self.id))
-        for form in forms:
-            form.delete_form()
-        forms = Form.find_all(editor_id=str(self.id))
+        # Before delete, remove this user from other form.editors{}
+        forms = Form.find_all(editor_id=self.id)
         for form in forms:
             del form.editors[str(self.id)]
             form.save()
-        self.delete()
-    
+        self.delete()   # cascade delete user.authored_forms
+
     def set_token(self, **kwargs):
-        self.token=create_token(User, **kwargs)
+        self.token=utils.create_token(User, **kwargs)
         self.save()
 
     def delete_token(self):
@@ -160,11 +180,11 @@ class User(db.Document):
             return False
         self.admin['notifyNewForm']=False if self.admin['notifyNewForm'] else True
         self.save()
-        return self.admin['notifyNewForm']    
+        return self.admin['notifyNewForm']
 
     def get_entries(self, **kwargs):
         kwargs['author_id']=str(self.id)
-        return FormResponse.find_all(**kwargs)
+        return Answer.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
         today = datetime.date.today().strftime("%Y-%m")
@@ -180,16 +200,24 @@ class User(db.Document):
                 month = 1
                 year = year +1
             two_digit_month="{0:0=2d}".format(month)
-            year_month = "{}-{}".format(year, two_digit_month)
+            year_month = f"{year}-{two_digit_month}"
             result['labels'].append(year_month)
             if year_month == today:
                 break
         total_entries=0
         total_forms=0
+        entry_filter=[Answer.author_id == self.id]
+        form_filter=[Form.author_id == self.id]
         for year_month in result['labels']:
-            query = {'created__startswith': year_month}
-            monthy_entries = self.get_entries(**query).count()
-            monthy_forms = self.get_authored_forms(**query).count()
+            date_str = year_month.replace('-', ', ')
+            start_date = datetime.datetime.strptime(date_str, '%Y, %m')
+            stop_date = start_date + relativedelta(months=1)
+            entries_filter = entry_filter + [Answer.created >= start_date]
+            entries_filter = entry_filter + [Answer.created < stop_date]
+            forms_filter = form_filter + [Form.created >= start_date]
+            forms_filter = form_filter + [Form.created < stop_date]
+            monthy_entries = Answer.query.filter(*entries_filter).count()
+            monthy_forms = Form.query.filter(*forms_filter).count()
             total_entries= total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             result['entries'].append(monthy_entries)
@@ -199,4 +227,6 @@ class User(db.Document):
         return result
 
     def can_inspect_form(self, form):
-        return True if (str(self.id) in form.editors or self.is_admin()) else False
+        if str(self.id) in form.editors or self.is_admin():
+            return True
+        return False

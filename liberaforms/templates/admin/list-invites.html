@@ -30,7 +30,7 @@
             </thead>
             {% for invite in invites %}
             <tr>
-                <td class="link">{{ invite.token.created.strftime('%Y-%m-%d') }}</td>
+                <td class="link">{{ invite.token.created }}</td>
                 <td>{{ invite.email }}</td>
                 {% if g.is_root_user_enabled %}
                     <td>{{ invite.hostname }}</td>
@@ -59,13 +59,13 @@
         {% endif %}
     </div>
 </div>
-</div>        
+</div>
 
 <script>
 $(document).on('click', '#invites_table td:first-child', function(){
     if($(this).parent().next('tr').is(":visible")){
         $(this).parent().next('tr').hide()
-    }else{ 
+    }else{
         $(this).parent().next('tr').show() // show the sent message
     }
 });

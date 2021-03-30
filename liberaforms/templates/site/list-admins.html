@@ -36,7 +36,7 @@
         <td>{{user.created}}</td>
         <td>{{user.enabled}}</td>
         <td>{{user.email}}</td>
-        <td>{{user.get_forms()|length}}</td>
+        <td>{{user.get_forms().count()}}</td>
     </tr>
     {% endfor %}
     </table>
@@ -58,5 +58,5 @@ $(document).ready(function() {
     });
 } );
 </script>
-  
+
 {% endblock %}

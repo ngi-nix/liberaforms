@@ -7,7 +7,7 @@ This file is part of LiberaForms.
 
 from flask import Flask, session
 from flask_session import Session
-from flask_mongoengine import MongoEngine
+from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 import sys, os
@@ -26,8 +26,11 @@ app.config.from_object(config.InternalConfig)
 for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
     app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
 
-db = MongoEngine(app)
+db = SQLAlchemy(app)
 babel = Babel(app)
+
+from liberaforms.utils import database
+database.create_tables()
 
 app.secret_key = app.config["SECRET_KEY"]
 app.session_type = app.config["SESSION_TYPE"]

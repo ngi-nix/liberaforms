@@ -5,6 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils import sanitizers
 from liberaforms.utils import utils
 from flask_babel import gettext as _
@@ -17,11 +18,11 @@ variable obj is a Form or User or Site object.
 """
 
 class ConsentText():
-    def __init__(self, *args, **kwargs):        
+    def __init__(self, *args, **kwargs):
         pass
-    
+
     @staticmethod
-    def _get_consent_by_id(id, obj):           
+    def _get_consent_by_id(id, obj):
         consent = [item for item in obj.consentTexts if item["id"]==id]
         #pp({"obj": obj.__class__.__name__, "consents on getByID" :obj.consentTexts})
         return consent[0] if consent else None
@@ -29,6 +30,7 @@ class ConsentText():
     @staticmethod
     def _save(consent, obj):
         obj.consentTexts = [consent if item["id"]==consent["id"] else item for item in obj.consentTexts]
+        flag_modified(obj, 'consentTexts')
         obj.save()
 
     @classmethod
@@ -47,13 +49,13 @@ class ConsentText():
         if obj.__class__.__name__=="User":
             # we will add code here when user defined ConsentTexts are enabled (future)
             obj=obj.site
-        
+
         if obj.__class__.__name__=="Site":
             site_consent=obj.get_consent_for_display(consent['id'], enabled_only=True)
             if site_consent:
                 if site_consent['markdown'] and not consent['markdown']:
                     consent['markdown'] = site_consent['markdown']
-                    consent['html'] = site_consent['html']                
+                    consent['html'] = site_consent['html']
                 if site_consent['label'] and not consent['label']:
                     consent['label'] = site_consent['label']
         consent['label'] = consent['label'] if consent['label'] else "{}".format(_("I agree"))
@@ -73,8 +75,8 @@ class ConsentText():
         consent['html'] = sanitizers.markdown2HTML(consent['markdown'])
         consent['label'] = sanitizers.strip_html_tags(data['label']).strip()
         consent['required'] = utils.str2bool(data['required'])
-        
-        default_consent=None        
+
+        default_consent=None
         if obj.__class__.__name__ == "Form":
             default_consent = cls._get_consent_by_id(id, obj.get_author())
         if not default_consent:
@@ -107,7 +109,7 @@ class ConsentText():
                 "label": "",
                 "required": required,
                 "enabled": enabled}
-    
+
     @staticmethod
     def default_terms(id=None, enabled=False):
         text=_("Please accept our terms and conditions.")
