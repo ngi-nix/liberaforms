@@ -5,6 +5,7 @@ Flask-SQLAlchemy>=2.4.0,==2.*
 sqlalchemy-json>=0.4.0,==0.*
 Flask-Migrate>=2.5.0,==2.*
 alembic>=1.5.0,==1.*
+python-dotenv>=0.16.0,==0.*
 password_strength==0.0.3.post2
 Markdown==3.2.1
 validate_email==1.3

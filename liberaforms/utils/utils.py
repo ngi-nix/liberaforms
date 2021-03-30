@@ -9,10 +9,10 @@ import json, string, random, datetime, uuid
 from pprint import pformat
 
 from flask import Response, redirect, request, url_for
-from flask import g, session
+from flask import current_app, g, session
 from flask_babel import gettext
 
-from liberaforms import app, babel
+from liberaforms import babel
 
 
 def print_obj_values(obj):
@@ -33,7 +33,9 @@ def get_locale():
     if 'current_user' in g and g.current_user:
         return g.current_user.language
     else:
-        return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+        return request.accept_languages.best_match(
+                                        current_app.config['LANGUAGES'].keys()
+                                        )
 
 """
 Used to respond to Ajax requests

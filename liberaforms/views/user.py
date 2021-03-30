@@ -5,14 +5,15 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import datetime, json
+import os, datetime, json
 from threading import Thread
 from flask import g, request, render_template, redirect
-from flask import session, flash, Blueprint
+from flask import Blueprint, current_app
+from flask import session, flash
 from flask_babel import gettext
 from flask_babel import refresh as babel_refresh
 
-from liberaforms import app
+#from liberaforms import app
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
@@ -23,10 +24,10 @@ from liberaforms.utils.email import EmailServer
 from liberaforms.utils import validators
 import liberaforms.utils.wtf as wtf
 
-
 from pprint import pprint
 
-user_bp = Blueprint('user_bp', __name__,
+user_bp = Blueprint('user_bp',
+                    __name__,
                     template_folder='../templates/user')
 
 
@@ -62,7 +63,7 @@ def new_user(token=None):
                 # a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.get_admins():
                     validatedEmail=True
-        if wtform.email.data in app.config['ROOT_USERS']:
+        if wtform.email.data in os.environ['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
 
@@ -138,7 +139,8 @@ def send_validation_email():
 @login_required
 def change_language():
     if request.method == 'POST':
-        if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
+        if 'language' in request.form and \
+            request.form['language'] in current_app.config['LANGUAGES']:
             g.current_user.preferences["language"]=request.form['language']
             g.current_user.save()
             babel_refresh()

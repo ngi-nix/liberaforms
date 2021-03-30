@@ -15,7 +15,6 @@ from threading import Thread
 from flask import g, flash, request
 from flask_babel import gettext
 
-from liberaforms import app
 from liberaforms.models.user import User
 
 class EmailServer():

@@ -5,14 +5,13 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import re
+import os, re
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SelectField, PasswordField, BooleanField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from flask import g
+from flask import current_app, g
 from flask_babel import lazy_gettext as _
 
-from liberaforms import app
 from liberaforms.models.user import User
 from liberaforms.utils.sanitizers import sanitize_username
 from liberaforms.utils import validators
@@ -30,7 +29,7 @@ class NewUser(FlaskForm):
         if username.data != sanitize_username(username.data):
             raise ValidationError(_("Username is not valid"))
             return False
-        if username.data in app.config['RESERVED_USERNAMES']:
+        if username.data in current_app.config['RESERVED_USERNAMES']:
             raise ValidationError(_("Please use a different username"))
             return False
         if User.find(username=username.data):
@@ -86,7 +85,7 @@ class ChangeEmail(FlaskForm):
     email = StringField(_("New email address"), validators=[DataRequired(), Email()])
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 class ResetPassword(FlaskForm):
@@ -101,13 +100,17 @@ class ResetPassword(FlaskForm):
 class smtpConfig(FlaskForm):
     host = StringField(_("Email server"), validators=[DataRequired()])
     port = IntegerField(_("Port"))
-    encryption = SelectField(_("Encryption"), choices=[ ('None', 'None'),
-                                                        ('SSL', 'SSL'),
-                                                        ('STARTTLS', 'STARTTLS (maybe)')])
+    encryption = SelectField(_("Encryption"), choices=[
+                                                    ('None', 'None'),
+                                                    ('SSL', 'SSL'),
+                                                    ('STARTTLS', 'STARTTLS (maybe)')
+                                                    ])
     user = StringField(_("User"))
     password = StringField(_("Password"))
-    noreplyAddress = StringField(_("Sender address"), validators=[DataRequired(), Email()])
-
+    noreplyAddress = StringField(_("Sender address"), validators = [
+                                                                DataRequired(),
+                                                                Email()
+                                                            ])
 
 class NewInvite(FlaskForm):
     email = StringField(_("New user's email"), validators=[DataRequired(), Email()])
@@ -115,7 +118,7 @@ class NewInvite(FlaskForm):
     admin = BooleanField(_("Make the new user an Admin"))
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 

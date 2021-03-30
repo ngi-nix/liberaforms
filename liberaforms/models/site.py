@@ -8,9 +8,10 @@ This file is part of LiberaForms.
 import os, datetime, markdown
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
+from flask import current_app
 from flask_babel import gettext
 
-from liberaforms import app, db
+from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
@@ -46,7 +47,7 @@ class Site(db.Model, CRUD):
         self.port = port
         self.scheme = scheme
         self.siteName = "LiberaForms!"
-        self.defaultLanguage = app.config['DEFAULT_LANGUAGE']
+        self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
         self.menuColor = "#b71c1c"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
@@ -97,14 +98,14 @@ class Site(db.Model, CRUD):
         return url+'/'
 
     def favicon_url(self):
-        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
+        path = f"{current_app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
         if os.path.exists(path):
             return f"/static/images/favicon/{self.hostname}_favicon.png"
         else:
             return "/static/images/favicon/default-favicon.png"
 
     def delete_favicon(self):
-        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
+        path = f"{current_app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
         if os.path.exists(path):
             os.remove(path)
             return True
@@ -297,7 +298,7 @@ class Site(db.Model, CRUD):
                         "forms": gettext("Forms"),
                         "admin": gettext("Admin")
                         }
-        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.hostname}.users.csv")
+        csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
         with open(csv_name, mode='wb') as csv_file:
             writer = csv.DictWriter(csv_file,
                                     fieldnames=fieldnames,

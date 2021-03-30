@@ -1,7 +1,6 @@
 venv
-config.cfg
+.env
 notes.txt
 flask_session
 *.pyc
-static/node_modules
 __pycache__

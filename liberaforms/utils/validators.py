@@ -5,8 +5,8 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+import os
 import re, datetime, time, uuid
-from liberaforms import app
 from validate_email import validate_email
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
@@ -33,7 +33,7 @@ def has_token_expired(token_data):
     token_created = datetime.datetime.strptime( token_data['created'],
                                                 "%Y-%m-%d %H:%M:%S")
     token_age = datetime.datetime.now() - token_created
-    if token_age.total_seconds() <= app.config['TOKEN_EXPIRATION']:
+    if token_age.total_seconds() <= os.environ['TOKEN_EXPIRATION']:
         return False
     return True
 

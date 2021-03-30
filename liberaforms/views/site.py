@@ -7,11 +7,11 @@ This file is part of LiberaForms.
 
 import os, json
 from flask import g, request, render_template, redirect
+from flask import Blueprint, current_app
 from flask import session, flash
-from flask import Blueprint, send_file, after_this_request
+from flask import send_file, after_this_request
 from flask_babel import gettext
 
-from liberaforms import app
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
@@ -67,7 +67,7 @@ def recover_password(token=None):
         if user:
             user.set_token()
             EmailServer().sendRecoverPassword(user)
-        if not user and wtform.email.data in app.config['ROOT_USERS']:
+        if not user and wtform.email.data in os.environ['ROOT_USERS']:
             if User.query.count() == 0:
                 # auto invite first root user
                 invite=Invite(  email=wtform.email.data,
@@ -138,7 +138,7 @@ def change_siteName():
 def change_default_language():
     if request.method == 'POST':
         if 'language' in request.form \
-            and request.form['language'] in app.config['LANGUAGES']:
+            and request.form['language'] in current_app.config['LANGUAGES']:
             g.site.defaultLanguage=request.form['language']
             g.site.save()
             flash(gettext("Language updated OK"), 'success')
@@ -158,7 +158,7 @@ def change_site_favicon():
         # need to lower filename
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
             filename="%s_favicon.png" % g.site.hostname
-            file.save(os.path.join(app.config['FAVICON_FOLDER'], filename))
+            file.save(os.path.join(current_app.config['FAVICON_FOLDER'], filename))
         else:
             flash(gettext("Bad file name. PNG only"), 'warning')
             return render_template('change-site-favicon.html')
