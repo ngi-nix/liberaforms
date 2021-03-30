@@ -21,7 +21,7 @@ class Invite(db.Model, CRUD):
     email = db.Column(db.String, nullable=False)
     message = db.Column(db.String, nullable=True)
     token = db.Column(JSONB, nullable=False)
-    admin = db.Column(db.Boolean)
+    admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, **kwargs):
         self.email = kwargs["email"]

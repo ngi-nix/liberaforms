@@ -12,7 +12,7 @@ from liberaforms.utils.database import CRUD
 class FormLog(db.Model, CRUD):
     __tablename__ = "form_logs"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime)
+    created = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
     message = db.Column(db.String, nullable=False)
