@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13.1-alpine
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "${POSTGRES_ROOT_USER}" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_ROOT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+    volumes:
+      - dev_db_data:/var/lib/postgresql/data
+    networks:
+      - db_nw
+
+  liberaforms:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
+    environment:
+      FLASK_APP: ${FLASK_APP}
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_CONFIG: ${FLASK_CONFIG}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    volumes:
+      - ./:/app
+    command: flask run --host 0.0.0.0
+    networks:
+      - db_nw
+
+volumes:
+  dev_db_data:
+    name: dev_db_data
+
+networks:
+  db_nw:
+    driver: bridge
