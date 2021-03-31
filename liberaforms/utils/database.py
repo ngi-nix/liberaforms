@@ -16,12 +16,3 @@ class CRUD():
     def delete(self):
         db.session.delete(self)
         return db.session.commit()
-
-def create_tables():
-    from liberaforms.models.site import Site
-    from liberaforms.models.user import User
-    from liberaforms.models.form import Form
-    from liberaforms.models.answer import Answer
-    from liberaforms.models.invite import Invite
-    from liberaforms.models.log import FormLog
-    db.create_all()

@@ -32,9 +32,17 @@ def create_app(config_name):
     session.init_app(app)
     csrf.init_app(app)
 
-    #from liberaforms.utils import database
-    #database.create_tables()
+    register_blueprints(app)
 
+    from liberaforms.commands import register_commands
+    register_commands(app)
+
+    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+
+    return app
+
+
+def register_blueprints(app):
     from liberaforms.views.errors import errors_bp
     from liberaforms.views.main import main_bp
     from liberaforms.views.user import user_bp
@@ -50,10 +58,3 @@ def create_app(config_name):
     app.register_blueprint(site_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(entries_bp)
-
-    from liberaforms.commands import register_commands
-    register_commands(app)
-
-    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-
-    return app
