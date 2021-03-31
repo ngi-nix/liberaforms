@@ -33,7 +33,7 @@ def has_token_expired(token_data):
     token_created = datetime.datetime.strptime( token_data['created'],
                                                 "%Y-%m-%d %H:%M:%S")
     token_age = datetime.datetime.now() - token_created
-    if token_age.total_seconds() <= os.environ['TOKEN_EXPIRATION']:
+    if token_age.total_seconds() <= int(os.environ['TOKEN_EXPIRATION']):
         return False
     return True
 

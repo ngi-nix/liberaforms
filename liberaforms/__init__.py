@@ -51,6 +51,9 @@ def create_app(config_name):
     app.register_blueprint(admin_bp)
     app.register_blueprint(entries_bp)
 
+    from liberaforms.commands import register_commands
+    register_commands(app)
+
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
     return app

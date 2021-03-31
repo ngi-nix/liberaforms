@@ -155,6 +155,15 @@ class User(db.Model, CRUD):
         return self.is_admin()
 
     @staticmethod
+    def default_user_preferences(site=None):
+        if site:
+            default_language = site.defaultLanguage
+        else:
+            default_language = os.environ['DEFAULT_LANGUAGE']
+        return { "language": default_language,
+                 "newEntryNotification": True}
+
+    @staticmethod
     def default_admin_settings():
         return {
             "isAdmin": False,

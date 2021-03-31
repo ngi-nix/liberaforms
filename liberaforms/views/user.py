@@ -71,9 +71,7 @@ def new_user(token=None):
             username = wtform.username.data,
             email =  wtform.email.data,
             password_hash = validators.hash_password(wtform.password.data),
-            preferences = { "language": g.site.defaultLanguage,
-                            "newEntryNotification": True},
-            hostname = g.site.hostname,
+            preferences = User.default_user_preferences(g.site),
             admin = adminSettings,
             validatedEmail = validatedEmail,
         )
