@@ -1,7 +1,7 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
@@ -14,19 +14,6 @@ from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
 from liberaforms.config import config
-
-
-"""
-# Load defaults
-app.config.from_object(config.DefaultConfig)
-# User overrides
-app.config.from_pyfile("../config.cfg")
-# Force internal configuration
-app.config.from_object(config.InternalConfig)
-# Merge extra configuration as/if necessary
-for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
-    app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
-"""
 
 db = SQLAlchemy()
 babel = Babel()
@@ -47,8 +34,6 @@ def create_app(config_name):
 
     #from liberaforms.utils import database
     #database.create_tables()
-
-    #email_server.load_config(**app.config)
 
     from liberaforms.views.errors import errors_bp
     from liberaforms.views.main import main_bp

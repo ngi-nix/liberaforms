@@ -8,6 +8,7 @@ TMP_DIR = '/tmp'
 SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://user:passwd@localhost:5432/liberaforms"
 SQLALCHEMY_TRACK_MODIFICATIONS=False
 
+# Maximum valid age for password resets, invitations, ..
 # 86400 seconds = 24h
 TOKEN_EXPIRATION = 604800
 

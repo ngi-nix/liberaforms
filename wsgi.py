@@ -1,3 +1,10 @@
+"""
+This file is part of LiberaForms.
+
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
+# SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 import os
 from liberaforms import create_app, db
 from flask_migrate import Migrate
