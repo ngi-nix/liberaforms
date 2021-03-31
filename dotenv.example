@@ -5,10 +5,11 @@ DEFAULT_LANGUAGE = 'en'
 TMP_DIR = '/tmp'
 
 ## Database
-DB_HOST="localhost"
-DB_NAME="test"
-DB_USER="tuttle"
-DB_PASSWORD="hello"
+DB_HOST=localhost
+DB_NAME=liberaforms
+DB_USER=liberaforms
+# Use a strong password
+DB_PASSWORD=""
 
 # Maximum valid age for password resets, invitations, ..
 # 86400 seconds = 24h

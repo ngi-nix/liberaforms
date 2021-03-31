@@ -8,7 +8,7 @@ This file is part of LiberaForms.
 import os
 import click
 from flask.cli import AppGroup
-from pathlib import Path
+#from pathlib import Path
 import signal, subprocess
 #from dotenv import load_dotenv
 
@@ -28,10 +28,6 @@ def run_subprocess(cmdline):
 @click.group()
 def cli():
     pass
-
-@database_cli.command()
-def hello():
-    click.echo("hello")
 
 @database_cli.command()
 @click.option('-docker', 'is_docker', is_flag=True, help="Use a docker container")

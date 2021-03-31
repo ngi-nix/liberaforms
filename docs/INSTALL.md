@@ -103,14 +103,19 @@ If you need to delete the database
 flask database drop
 ```
 
+### Database backup
 
-## Admin user
-
-Create your Admin user
-
+Run this and check if a copy is dumped correctly.
 ```
-flask create-admin <username> <email> <password>
+/usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
 ```
+
+Add a line to your crontab to run it every night.
+```
+30 3 * * * /usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+```
+Note: This overwrites the last copy. You might want to change that.
+
 
 ## Test your installation
 ```
@@ -152,14 +157,21 @@ python run.py
 See `docs/nginx.example`
 
 
-## Database backup
-Run this and check if a copy is dumped correctly.
+# Utilities
+
+## Users
+
+You can create a user when needed.
+
+Note that users created via the command line will have validated_email set to True
+
 ```
-/usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+flask user create -admin <username> <email> <password>
 ```
 
-Add a line to your crontab to run it every night.
+Disable and enable users.
+
 ```
-30 3 * * * /usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+flask user disable <username>
+flask user enable <username>
 ```
-Note: This overwrites the last copy. You might want to change that.
