@@ -64,12 +64,11 @@ class Site(db.Model, CRUD):
                             "password": "",
                             "noreplyAddress": f"no-reply@{hostname}"
                           }
-        real_path = os.path.realpath(__file__)
-        blurb_path = f'{os.path.dirname(real_path)}/../default_blurb.md'
-        with open(blurb_path, 'r') as defaultBlurb:
-            defaultMD=defaultBlurb.read()
-        self.blurb = {  'markdown': defaultMD,
-                        'html': markdown.markdown(defaultMD)
+        blurb = os.path.join(current_app.root_path, 'data/templates/index.md')
+        with open(blurb, 'r') as default_blurb:
+            default_MD = default_blurb.read()
+        self.blurb = {  'markdown': default_MD,
+                        'html': markdown.markdown(default_MD)
                      }
 
     def __str__(self):

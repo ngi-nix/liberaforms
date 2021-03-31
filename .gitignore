@@ -1,5 +1,6 @@
 venv
 .env
+gunicorn.py
 notes.txt
 flask_session
 migrations

@@ -7,7 +7,7 @@ This file is part of LiberaForms.
 
 import os
 #import sys
-from flask import Flask #, session
+from flask import Flask
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
@@ -22,8 +22,9 @@ csrf = CSRFProtect()
 
 #sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
-def create_app(config_name):
+def create_app():
     app = Flask(__name__)
+    config_name = os.getenv('FLASK_CONFIG') or 'default'
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
