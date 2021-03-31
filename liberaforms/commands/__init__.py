@@ -6,7 +6,9 @@ This file is part of LiberaForms.
 """
 
 from .create_admin import create_admin
+from .database import database_cli
 
 
 def register_commands(app):
     app.cli.add_command(create_admin)
+    app.cli.add_command(database_cli)

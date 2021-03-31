@@ -1,17 +1,23 @@
 
 # Install LiberaForms
 
-## Install mongodb
-https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/
+Requires python3.7 or greater
+
+## Install PostgreSQL
+
+
 
 
 ## Clone LiberaForms
+
+
 ```
 apt-get install git
 git clone https://gitlab.com/liberaforms/liberaforms.git /opt/LiberaForms
 ```
 
 ## Create a python3 venv
+
 If you have Python3 on your host
 ```
 apt-get install python3-venv
@@ -25,19 +31,14 @@ virtualenv /opt/LiberaForms/venv --python=python3
 
 ### Install python packages
 ```
-source /opt/LiberaForms/venv/bin/activate
+source ./venv/bin/activate
 pip install --upgrade setuptools
 pip install wheel
-pip install -r /opt/LiberaForms/requirements.txt
+pip install -r ./requirements.txt
 pip install gunicorn
 ```
 
 ## Configure
-
-### Session management
-Before editing config.cfg, decide if you want session data saved on the filesystem or in memory.
-
-The default configuration is `filesystem`
 
 #### Filesystem
 Create this directory. session data will be saved there.
@@ -54,10 +55,9 @@ source /opt/LiberaForms/venv/bin/activate
 pip install pylibmc
 ```
 
-### Create and edit `/opt/LiberaForms/config.cfg`
+### Create and edit `.env`
 ```
-cd /opt/LiberaForms
-cp config.example.cfg config.cfg
+cp dotenv.example .env
 ```
 
 You can create a SECRET_KEY like this
@@ -66,15 +66,50 @@ openssl rand -base64 32
 ```
 
 ### File permissions
-Protect the config file
-```
-chown www-data /opt/LiberaForms/config.cfg
-chmod go-rw /opt/LiberaForms/config.cfg
-```
+
 
 Admins can upload a logo. You need to give the system user who runs LiberaForms write permission
 ```
 chown -R www-data /opt/LiberaForms/liberaforms/static/images
+```
+
+## Database
+### Create the empty database
+
+This will use the DB values in your `.env` file
+```
+flask database create
+```
+
+### Initialize schema versioning
+
+```
+flask database init
+```
+
+### Create tables
+
+Update the database to the latest version
+
+```
+flask database update
+```
+
+### Drop database
+
+If you need to delete the database
+
+```
+flask database drop
+```
+
+
+## Admin user
+
+Create your Admin user
+
+```
+flask create-admin <username> <email> <password>
 ```
 
 ## Test your installation

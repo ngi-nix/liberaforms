@@ -7,6 +7,16 @@ This file is part of LiberaForms.
 
 import os
 
+def get_SQLALCHEMY_DATABASE_URI():
+    user = os.environ['DB_USER']
+    pswd = os.environ['DB_PASSWORD']
+    host = os.environ['DB_HOST']
+    dbase = os.environ['DB_NAME']
+    port = os.environ.get('DB_PORT', 5432)
+    uri = f'postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbase}'
+    return uri
+
+
 class Config(object):
     DEBUG = False
     TESTING = False
@@ -62,8 +72,8 @@ class Config(object):
                                   "static/images/favicon/")
 
     SECRET_KEY = os.environ['SECRET_KEY']
-    SQLALCHEMY_DATABASE_URI = os.environ['SQLALCHEMY_DATABASE_URI']
-    SQLALCHEMY_TRACK_MODIFICATIONS = os.environ['SQLALCHEMY_TRACK_MODIFICATIONS']
+    SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_TYPE = os.environ['SESSION_TYPE']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 

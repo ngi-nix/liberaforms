@@ -4,9 +4,11 @@ ROOT_USERS = ['your_email_address@example.com']
 DEFAULT_LANGUAGE = 'en'
 TMP_DIR = '/tmp'
 
-## SQLALCHEMY config
-SQLALCHEMY_DATABASE_URI="postgresql+psycopg2://user:passwd@localhost:5432/liberaforms"
-SQLALCHEMY_TRACK_MODIFICATIONS=False
+## Database
+DB_HOST="localhost"
+DB_NAME="test"
+DB_USER="tuttle"
+DB_PASSWORD="hello"
 
 # Maximum valid age for password resets, invitations, ..
 # 86400 seconds = 24h
