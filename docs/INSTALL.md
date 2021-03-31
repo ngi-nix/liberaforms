@@ -118,39 +118,55 @@ Note: This overwrites the last copy. You might want to change that.
 
 
 ## Test your installation
+
 ```
-source /opt/LiberaForms/venv/bin/activate
-gunicorn -c /opt/LiberaForms/gunicorn.py liberaforms:app
+flask run
+ctrl-c
 ```
 
-## Install Supervisor to manage the LiberaForms process.
+## Configure Gunicorn
+
+Gunicorn serves LiberaForms.
+
+This command will suggest a configuration file path and it's content. It will also output a command to test the configuration.
 ```
-apt-get install supervisor
+flask config hint gunicorn
+```
+Copy the content. Create the `gunicorn.py` file and paste.
+
+## Install Supervisor
+
+Supervisor manages Gunicorn. It will start the process when the server boots.
+```
+sudo apt-get install supervisor
+```
+### Configure Supervisor
+
+This command will suggest a configuration file path and it's content.
+```
+flask config hint supervisor
+```
+Copy the content. Create the `liberaforms.conf` file and paste.
+
+Restart supervisor and check if LiberaForms is running.
+```
+sudo systemctl restart supervisor
+sudo supervisorctl status liberaforms
+```
+Other supervisor commands
+```
+sudo supervisorctl start liberaforms
+sudo supervisorctl stop liberaforms
 ```
 
-### Edit `/etc/supervisor/conf.d/LiberaForms.conf`
-```
-[program:LiberaForms]
-command = /opt/LiberaForms/venv/bin/gunicorn -c /opt/LiberaForms/gunicorn.py liberaforms:app
-directory = /opt/LiberaForms
-user = www-data
-```
 
-### Restart supervisor and check if LiberaForms is running.
-```
-systemctl restart supervisor
-supervisorctl status LiberaForms
-```
-
-## Debug LiberaForms
+## Debugging
 You can check supervisor's log at `/var/log/supervisor/...`
 
-You can also run LiberaFroms in degug mode.
+You can also run LiberaForms in debug mode.
 ```
-supervisorctl stop LiberaForms
-cd /opt/LiberaForms
-source /opt/LiberaForms/venv/bin/activate
-python run.py
+sudo supervisorctl stop liberaforms
+FLASK_ENV=development flask run
 ```
 
 ## Configure nginx proxy
