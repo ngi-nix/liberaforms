@@ -20,7 +20,8 @@ def hint(configuration):
     installation_path = os.path.join(current_app.root_path, '../')
     installation_path = os.path.abspath(installation_path)
     gunicorn_py = os.path.join(installation_path, 'gunicorn.py')
-    template_dir = os.path.join(current_app.root_path, 'data/templates/')
+    template_dir = os.path.dirname(os.path.realpath(__file__))
+    template_dir = os.path.join(template_dir, 'templates')
     j2_env = Environment(loader = FileSystemLoader(template_dir))
     python_bin_dir = Path(sys.executable).parent
 

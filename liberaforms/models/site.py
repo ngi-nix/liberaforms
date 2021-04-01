@@ -64,7 +64,7 @@ class Site(db.Model, CRUD):
                             "password": "",
                             "noreplyAddress": f"no-reply@{hostname}"
                           }
-        blurb = os.path.join(current_app.root_path, 'data/templates/index.md')
+        blurb = os.path.join(current_app.root_path, 'templates/index.md')
         with open(blurb, 'r') as default_blurb:
             default_MD = default_blurb.read()
         self.blurb = {  'markdown': default_MD,
