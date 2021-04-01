@@ -30,15 +30,14 @@ def cli():
     pass
 
 @database_cli.command()
-@click.option('-docker', 'is_docker', is_flag=True, help="Use a docker container")
-@click.option('-name', 'container_name', default=os.environ['DB_HOST'],
-              help="PostgreSQL docker container name", show_default=True)
-def create(is_docker, container_name):
+@click.option('--docker-container', 'container_name',
+              help="PostgreSQL container name")
+def create(container_name=None):
     db_name = os.environ['DB_NAME']
     user = os.environ['DB_USER']
     password = os.environ['DB_PASSWORD']
 
-    if is_docker:
+    if container_name:
         pg_cmd = f"docker exec {container_name} psql -U postgres -c".split()
     else:
         pg_cmd = "psql -U postgres -c ".split()
@@ -59,11 +58,10 @@ def create(is_docker, container_name):
     run_subprocess(cmdline)
 
 @database_cli.command()
-@click.option('-docker', 'is_docker', is_flag=True, help="Use a docker container")
-@click.option('-name', 'container_name', default="lbfrms_api", show_default=True,
-                help="LiberaForms API docker container name")
-def init(is_docker, container_name):
-    if is_docker:
+@click.option('--docker-container', 'container_name',
+              help="LiberaForms container name")
+def init(container_name=None):
+    if container_name:
         flask_cmd = f"docker exec {container_name} flask db".split()
     else:
         flask_cmd = "flask db".split()
@@ -72,11 +70,10 @@ def init(is_docker, container_name):
     run_subprocess(cmdline)
 
 @database_cli.command()
-@click.option('-docker', 'is_docker', is_flag=True, help="Use a docker container")
-@click.option('-name', 'container_name', default="lbfrms_api", show_default=True,
-                help="LiberaForms API docker container name")
-def update(is_docker, container_name):
-    if is_docker:
+@click.option('--docker-container', 'container_name',
+              help="LiberaForms container name")
+def update(container_name=None):
+    if container_name:
         flask_cmd = f"docker exec {container_name} flask db".split()
     else:
         flask_cmd = "flask db".split()
@@ -88,14 +85,13 @@ def update(is_docker, container_name):
     run_subprocess(cmdline)
 
 @database_cli.command()
-@click.option('-docker', 'is_docker', is_flag=True, help="Use a docker container")
-@click.option('-name', 'container_name', default=os.environ['DB_HOST'],
-                help="PostgreSQL docker container name")
-def drop(is_docker, container_name):
+@click.option('--docker-container', 'container_name',
+              help="PostgreSQL container name")
+def drop(container_name=None):
     db_name = os.environ['DB_NAME']
     db_user = os.environ['DB_USER']
 
-    if is_docker:
+    if container_name:
         pg_cmd = f"docker exec {container_name} psql -U postgres -c".split()
     else:
         pg_cmd = "psql -U postgres -c".split()
