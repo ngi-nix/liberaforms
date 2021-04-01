@@ -8,7 +8,6 @@ This file is part of LiberaForms.
 import os, sys
 import click
 from pathlib import Path
-import signal, subprocess
 from flask import current_app
 from flask.cli import AppGroup
 from jinja2 import Environment, FileSystemLoader

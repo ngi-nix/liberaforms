@@ -1,41 +1,27 @@
-
 # Install LiberaForms
 
-Requires python3.7 or greater
+Requires python3.7 or greater.
 
-## Install PostgreSQL
-
-
-
+If you want to use Docker, please follow the instructions in `docs/docker.md`
 
 ## Clone LiberaForms
 
-
 ```
 apt-get install git
-git clone https://gitlab.com/liberaforms/liberaforms.git /opt/LiberaForms
+git clone https://gitlab.com/liberaforms/liberaforms.git
 ```
 
-## Create a python3 venv
+## Create a Python venv
 
-If you have Python3 on your host
 ```
 apt-get install python3-venv
-python3 -m venv /opt/LiberaForms/venv
-```
-Or if you have old python2 on your host
-```
-apt-get install virtualenv
-virtualenv /opt/LiberaForms/venv --python=python3
+python3 -m venv ./venv
 ```
 
 ### Install python packages
 ```
 source ./venv/bin/activate
-pip install --upgrade setuptools
-pip install wheel
 pip install -r ./requirements.txt
-pip install gunicorn
 ```
 
 ## Configure
@@ -43,15 +29,15 @@ pip install gunicorn
 #### Filesystem
 Create this directory. session data will be saved there.
 ```
-mkdir /opt/LiberaForms/liberaforms/flask_session
-chown www-data /opt/LiberaForms/liberaforms/flask_session
+mkdir ./liberaforms/flask_session
+chown www-data ./liberaforms/flask_session
 ```
 
 #### Memory
 If you prefer to use memcached, you need to do this.
 ```
 apt-get install memcached
-source /opt/LiberaForms/venv/bin/activate
+source ./liberaforms/venv/bin/activate
 pip install pylibmc
 ```
 
@@ -70,10 +56,13 @@ openssl rand -base64 32
 
 Admins can upload a logo. You need to give the system user who runs LiberaForms write permission
 ```
-chown -R www-data /opt/LiberaForms/liberaforms/static/images
+chown -R www-data ./liberaforms/liberaforms/static/images
 ```
 
 ## Database
+
+Install PostgreSQL
+
 ### Create the empty database
 
 This will use the DB values in your `.env` file
@@ -107,15 +96,16 @@ flask database drop
 
 Run this and check if a copy is dumped correctly.
 ```
-/usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+/usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
 ```
 
 Add a line to your crontab to run it every night.
 ```
-30 3 * * * /usr/bin/mongodump --db=LiberaForms --out="/var/backups/"
+30 3 * * * /usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
 ```
 Note: This overwrites the last copy. You might want to change that.
 
+Don't forget to check that the cronjob is dumping the database correctly.
 
 ## Test your installation
 

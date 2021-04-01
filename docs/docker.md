@@ -1,5 +1,18 @@
 # Docker
 
+If you only want to run one LiberaForms server with Docker, this documentation is for you!
+
+If you want to run multiple LiberaForms servers, please see the LiberaForms cluster project.
+
+## Clone LiberaForms
+
+```
+apt-get install git
+git clone https://gitlab.com/liberaforms/liberaforms.git
+```
+
+## Build the image
+
 First create a docker image.
 ```
 docker build -t liberaforms:latest .
@@ -54,4 +67,10 @@ If you need to delete the database
 
 ```
 flask database drop --docker-container liberaforms-db
+```
+
+## backups
+
+```
+docker exec <container> /usr/local/bin/pg_dump -U <db_user> <db_name> > backup.sql
 ```
