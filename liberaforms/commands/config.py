@@ -5,16 +5,17 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, sys
 import click
 from pathlib import Path
+import signal, subprocess
 from flask import current_app
 from flask.cli import AppGroup
 from jinja2 import Environment, FileSystemLoader
 
-config_hinter_cli = AppGroup('config')
+config_hint_cli = AppGroup('config')
 
-@config_hinter_cli.command()
+@config_hint_cli.command()
 @click.argument("configuration")
 def hint(configuration):
     installation_path = os.path.join(current_app.root_path, '../')
@@ -22,12 +23,13 @@ def hint(configuration):
     gunicorn_py = os.path.join(installation_path, 'gunicorn.py')
     template_dir = os.path.join(current_app.root_path, 'data/templates/')
     j2_env = Environment(loader = FileSystemLoader(template_dir))
+    python_bin_dir = Path(sys.executable).parent
 
     if configuration == "gunicorn":
         template = j2_env.get_template('gunicorn.j2')
         config = template.render({
                     'pythonpath': installation_path,
-                    'gunicorn_bin': f"{os.environ['VIRTUAL_ENV']}/bin/gunicorn",
+                    'gunicorn_bin': f"{python_bin_dir}/gunicorn",
                     'username': os.environ.get('USER')
                 })
         click.echo(f"Suggested config for {gunicorn_py}\n")
@@ -38,7 +40,7 @@ def hint(configuration):
         template = j2_env.get_template('supervisor.j2')
         supervisor_config = template.render({
                     'installation_path': installation_path,
-                    'gunicorn_bin': f"{os.environ['VIRTUAL_ENV']}/bin/gunicorn",
+                    'gunicorn_bin': f"{python_bin_dir}/gunicorn",
                     'gunicorn_py': gunicorn_py,
                     'username': os.environ.get('USER')
                 })

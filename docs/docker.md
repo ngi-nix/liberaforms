@@ -13,7 +13,7 @@ It will not setup a webserver, you will have to do that.
 ### Edit `.env`
 
 The Postgres container requires two extra environment variables.
-The name of the container will be set to `DB_HOST`
+Also, the name of the container will be set to `DB_HOST`
 
 ```
 POSTGRES_ROOT_USER=

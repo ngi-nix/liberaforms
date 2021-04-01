@@ -34,12 +34,19 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       ROOT_USERS: ${ROOT_USERS}
-    ## for development
-    #volumes:
-    #  - ./:/app
-    command: flask run --host 0.0.0.0
+      DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+      SECRET_KEY: ${SECRET_KEY}
+      SESSION_TYPE: ${SESSION_TYPE}
+      TOKEN_EXPIRATION: ${TOKEN_EXPIRATION}
     networks:
       - db_net
+    ## For development
+    #volumes:
+    #  - ./:/app
+    #command: flask run --host 0.0.0.0
+    ## For production
+    command: gunicorn --bind 0.0.0.0:5000 --workers 3 wsgi:app
+
 
 volumes:
   db_data:
