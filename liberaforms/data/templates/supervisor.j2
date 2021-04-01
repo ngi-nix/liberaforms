@@ -1,0 +1,6 @@
+# ~~~~~~~~~ liberaforms.conf ~~~~~~~~~
+[program:liberaforms]
+directory = {{ installation_path }}
+command = {{ gunicorn_bin }} -c {{ gunicorn_py }} 'wsgi:create_app()'
+user = {{ username }}
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
