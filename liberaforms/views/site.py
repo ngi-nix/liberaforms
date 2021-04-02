@@ -147,24 +147,22 @@ def change_default_language():
                             current_language=g.site.defaultLanguage,
                             go_back_to_admin_panel=True)
 
-@site_bp.route('/site/change-favicon', methods=['GET', 'POST'])
+@site_bp.route('/site/change-icon', methods=['GET', 'POST'])
 @admin_required
-def change_site_favicon():
+def change_icon():
     if request.method == 'POST':
         if not request.files['file']:
             flash(gettext("Required file is missing"), 'warning')
-            return render_template('change-site-favicon.html')
+            return render_template('change-icon.html')
         file=request.files['file']
-        # need to lower filename
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
-            filename="%s_favicon.png" % g.site.hostname
-            file.save(os.path.join(current_app.config['FAVICON_FOLDER'], filename))
+            file.save(os.path.join(current_app.config['BRAND_DIR'], 'favicon.png'))
         else:
             flash(gettext("Bad file name. PNG only"), 'warning')
-            return render_template('change-site-favicon.html')
-        flash(gettext("Favicon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+            return render_template('change-icon.html')
+        flash(gettext("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
-    return render_template('change-site-favicon.html')
+    return render_template('change-icon.html')
 
 
 @site_bp.route('/site/reset-favicon', methods=['GET'])

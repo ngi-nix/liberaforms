@@ -68,14 +68,19 @@ class Config(object):
         "eu": ("Euskara ", "eu-ES"),
     }
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
-    FAVICON_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                  "static/images/favicon/")
-
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_TYPE = os.environ['SESSION_TYPE']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
+
+    base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    if 'HOSTNAME' in os.environ:
+        # LiberaForms cluser requires a unique directory
+        BRAND_DIR = os.path.join(base_dir,
+                                f"instancefiles/brand/{os.environ['HOSTNAME']}")
+    else:
+        BRAND_DIR = os.path.join(base_dir, 'instancefiles/brand')
 
     @staticmethod
     def init_app(app):

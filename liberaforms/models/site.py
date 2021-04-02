@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, markdown
+import os, datetime, markdown, shutil
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
 from flask import current_app
@@ -64,7 +64,7 @@ class Site(db.Model, CRUD):
                             "password": "",
                             "noreplyAddress": f"no-reply@{hostname}"
                           }
-        blurb = os.path.join(current_app.root_path, 'templates/index.md')
+        blurb = os.path.join(current_app.root_path, 'templates/default_index.md')
         with open(blurb, 'r') as default_blurb:
             default_MD = default_blurb.read()
         self.blurb = {  'markdown': default_MD,
@@ -96,19 +96,11 @@ class Site(db.Model, CRUD):
             url = f"{url}:{self.port}"
         return url+'/'
 
-    def favicon_url(self):
-        path = f"{current_app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
-        if os.path.exists(path):
-            return f"/static/images/favicon/{self.hostname}_favicon.png"
-        else:
-            return "/static/images/favicon/default-favicon.png"
-
     def delete_favicon(self):
-        path = f"{current_app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
-        if os.path.exists(path):
-            os.remove(path)
-            return True
-        return False
+        favicon_path = f"{current_app.config['BRAND_DIR']}/favicon.png"
+        default_favicon = f"{current_app.config['BRAND_DIR']}/favicon-default.png"
+        shutil.copyfile(default_favicon, favicon_path)
+        return True
 
     def save_blurb(self, MDtext):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
