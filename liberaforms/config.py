@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, shutil
 
 def get_SQLALCHEMY_DATABASE_URI():
     user = os.environ['DB_USER']
@@ -74,13 +74,21 @@ class Config(object):
     SESSION_TYPE = os.environ['SESSION_TYPE']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
-    base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    if 'HOSTNAME' in os.environ:
-        # LiberaForms cluser requires a unique directory
-        BRAND_DIR = os.path.join(base_dir,
-                                f"instancefiles/brand/{os.environ['HOSTNAME']}")
-    else:
-        BRAND_DIR = os.path.join(base_dir, 'instancefiles/brand')
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    instancefiles = 'instancefiles'
+    BRAND_DIR = os.path.join(base_dir, instancefiles, 'brand')
+    if 'FQDN' in os.environ:
+        # LiberaForms' cluster project requires a unique directory
+        brand_dir = os.path.join(   base_dir,
+                                    instancefiles,
+                                    "hosts",
+                                    os.environ['FQDN'],
+                                    "brand")
+        if not os.path.isdir(brand_dir):
+            #os.mkdir(host_brand_dir)
+            shutil.copytree(BRAND_DIR, brand_dir)
+        BRAND_DIR = brand_dir
+
 
     @staticmethod
     def init_app(app):

@@ -11,8 +11,6 @@ from flask import request, render_template, flash
 from flask import g, session
 from flask_wtf.csrf import CSRFError
 
-#from flask import ctx, current_app, has_app_context, app_ctx_globals_class
-
 from liberaforms.models.site import Site
 from liberaforms.models.user import User
 from liberaforms.utils.utils import logout_user
@@ -27,6 +25,7 @@ def before_request():
     g.is_admin=False
     g.embedded=False
     if request.path[0:7] == '/static':
+        # nginx should handle static files, but just in case.
         return
     g.site=Site.find(urlparse(request.host_url))
     if 'user_id' in session and session["user_id"] != None:
@@ -41,11 +40,3 @@ def before_request():
 @main_bp.route('/', methods=['GET'])
 def index():
     return render_template('index.html', site=g.site)
-
-
-"""
-@enabled_user_required
-@main_bp.route('/test', methods=['GET'])
-def test():
-    return render_template('test.html', sites=[])
-"""

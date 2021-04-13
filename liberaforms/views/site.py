@@ -9,7 +9,6 @@ import os, json
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import session, flash
-from flask import send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms.models.site import Site
