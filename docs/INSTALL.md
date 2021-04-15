@@ -38,6 +38,7 @@ If you prefer to use memcached, you need to do this.
 ```
 apt-get install memcached
 source ./liberaforms/venv/bin/activate
+pip install pylibmc
 ```
 
 ### Create and edit `.env`

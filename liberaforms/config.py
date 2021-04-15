@@ -75,7 +75,6 @@ class Config(object):
     if SESSION_TYPE == "memcached":
         import pylibmc as memcache
         server = os.environ['MEMCACHED_HOST']
-        print(server)
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
