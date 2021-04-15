@@ -72,6 +72,12 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_TYPE = os.environ['SESSION_TYPE']
+    if SESSION_TYPE == "memcached":
+        import pylibmc as memcache
+        server = os.environ['MEMCACHED_HOST']
+        print(server)
+        SESSION_MEMCACHED = memcache.Client([server])
+        SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
     base_dir = os.path.dirname(os.path.abspath(__file__))

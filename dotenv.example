@@ -18,6 +18,8 @@ TOKEN_EXPIRATION = 604800
 # Session management (see docs/INSTALL)
 SESSION_TYPE = "filesystem"
 #SESSION_TYPE = "memcached"
+#MEMCACHED_HOST=
+#SESSION_KEY_PREFIX=
 
 # FLASK_ENV
 # this sets the Flask running mode
