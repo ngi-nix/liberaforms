@@ -79,7 +79,7 @@ class Config(object):
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     LOG_TYPE = os.environ['LOG_TYPE']
-    #LOG_DIR = os.environ['LOG_DIR']
+    LOG_DIR = os.environ['LOG_DIR']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
     base_dir = os.path.dirname(os.path.abspath(__file__))

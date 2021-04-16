@@ -21,13 +21,13 @@ class LogSetup(object):
         if log_type != "stream":
             try:
                 log_directory = app.config["LOG_DIR"]
-                app_log_file_name = "app"
-                access_log_file_name = "www"
+                app_log_file_name = "app.log"
+                www_log_file_name = "www.log"
             except KeyError as e:
                 print(f"{e} is a required parameter for log_type '{log_type}'")
                 exit(code=f"{e} is a required parameter for log_type '{log_type}'")
             app_log = "/".join([log_directory, app_log_file_name])
-            www_log = "/".join([log_directory, access_log_file_name])
+            www_log = "/".join([log_directory, www_log_file_name])
 
         if log_type == "stream":
             logging_policy = "logging.StreamHandler"
