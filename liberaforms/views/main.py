@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 from urllib.parse import urlparse
-from flask import Blueprint
+from flask import Blueprint, current_app
 from flask import request, render_template, flash
 from flask import g, session
 from flask_wtf.csrf import CSRFError
@@ -26,6 +26,7 @@ def before_request():
     g.embedded=False
     if request.path[0:7] == '/static':
         # nginx should handle static files, but just in case.
+        current_app.logger.warning('Serving a static file')
         return
     g.site=Site.find(urlparse(request.host_url))
     if 'user_id' in session and session["user_id"] != None:

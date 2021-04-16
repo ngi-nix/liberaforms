@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, logging
 #import sys
 from flask import Flask
 from flask_session import Session
@@ -32,6 +32,14 @@ def create_app():
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
+
+    # Configure logging
+    if app.config['LOGGING_TYPE'] == "filesystem":
+        handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
+        handler.setLevel(app.config['LOGGING_LEVEL'])
+        formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+        handler.setFormatter(formatter)
+        app.logger.addHandler(handler)
 
     register_blueprints(app)
 

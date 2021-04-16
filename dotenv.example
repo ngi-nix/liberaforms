@@ -21,6 +21,12 @@ SESSION_TYPE = "filesystem"
 #MEMCACHED_HOST=
 #SESSION_KEY_PREFIX=
 
+# Logging
+LOGGING_TYPE=filesystem
+LOGGING_LOCATION=./logs
+
+
+
 # FLASK_ENV
 # this sets the Flask running mode
 # can be 'production' or 'development'

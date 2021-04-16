@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os, shutil
+import logging
 
 def get_SQLALCHEMY_DATABASE_URI():
     user = os.environ['DB_USER']
@@ -77,6 +78,10 @@ class Config(object):
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
+    LOGGING_TYPE = os.environ['LOGGING_TYPE']
+    LOGGING_FORMAT = '%(asctime)s: %(name)s:%(levelname)s: %(message)s'
+    if LOGGING_TYPE == "filesystem":
+        LOGGING_LOCATION = os.environ['LOGGING_LOCATION']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
@@ -102,6 +107,7 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
+    LOGGING_LEVEL = logging.WARNING
 
 
 class StagingConfig(Config):
@@ -110,10 +116,12 @@ class StagingConfig(Config):
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
+    LOGGING_LEVEL = logging.DEBUG
 
 
 class TestingConfig(Config):
     TESTING = True
+    LOGGING_LEVEL = logging.DEBUG
 
 
 config = {
