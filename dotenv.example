@@ -21,10 +21,9 @@ SESSION_TYPE = "filesystem"
 #MEMCACHED_HOST=
 #SESSION_KEY_PREFIX=
 
-# Logging
-LOGGING_TYPE=filesystem
-LOGGING_LOCATION=./logs
-
+# Logging [watched|stream]
+LOG_TYPE=watched
+LOG_DIR=./logs
 
 
 # FLASK_ENV

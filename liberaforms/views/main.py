@@ -15,6 +15,9 @@ from liberaforms.models.site import Site
 from liberaforms.models.user import User
 from liberaforms.utils.utils import logout_user
 
+#import logging
+#logger = logging.getLogger("app.access")
+
 main_bp = Blueprint('main_bp',
                     __name__,
                     template_folder='../templates/main')
@@ -25,8 +28,7 @@ def before_request():
     g.is_admin=False
     g.embedded=False
     if request.path[0:7] == '/static':
-        # nginx should handle static files, but just in case.
-        current_app.logger.warning('Serving a static file')
+        current_app.logger.warning('Serving a static file. Check nginx config.')
         return
     g.site=Site.find(urlparse(request.host_url))
     if 'user_id' in session and session["user_id"] != None:

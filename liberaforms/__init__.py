@@ -6,48 +6,60 @@ This file is part of LiberaForms.
 """
 
 import os, logging
+from datetime import datetime
+
 #import sys
-from flask import Flask
+from flask import Flask, request
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
 from liberaforms.config import config
+from liberaforms.utils.logging import LogSetup
 
 db = SQLAlchemy()
 babel = Babel()
 session = Session()
 csrf = CSRFProtect()
+logs = LogSetup()
 
 #sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__.split(".")[0])
     config_name = os.getenv('FLASK_CONFIG') or 'default'
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    logs.init_app(app)
     db.init_app(app)
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
 
-    # Configure logging
-    if app.config['LOGGING_TYPE'] == "filesystem":
-        handler = logging.FileHandler(app.config['LOGGING_LOCATION'])
-        handler.setLevel(app.config['LOGGING_LEVEL'])
-        formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
-        handler.setFormatter(formatter)
-        app.logger.addHandler(handler)
-
-    register_blueprints(app)
-
     from liberaforms.commands import register_commands
     register_commands(app)
+    register_blueprints(app)
+
+    @app.after_request
+    def after_request(response):
+        """ Logging after every request. """
+        logger = logging.getLogger("app.access")
+        logger.info(
+            "[%s] %s %s %s %s %s %s %s",
+            datetime.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+            request.method,
+            request.path,
+            request.scheme,
+            response.status,
+            response.content_length,
+            request.referrer,
+            request.user_agent,
+        )
+        return response
 
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-
     return app
 
 
@@ -67,3 +79,4 @@ def register_blueprints(app):
     app.register_blueprint(site_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(entries_bp)
+    return None
