@@ -23,7 +23,7 @@ def test_new_user(new_user):
     WHEN a new User is created
     THEN check the email, password_hash, and admin fields
     """
-    assert new_user.email == 'dave@example.com'
-    assert new_user.password_hash != 'super_secret'
+    assert new_user.email == os.environ['TEST_USER_EMAIL']
+    assert new_user.password_hash[:14] == "$pbkdf2-sha256"
     assert new_user.preferences['language'] == os.environ['DEFAULT_LANGUAGE']
     assert new_user.admin['isAdmin'] == False

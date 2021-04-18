@@ -21,7 +21,7 @@ def get_SQLALCHEMY_DATABASE_URI():
 class Config(object):
     DEBUG = False
     TESTING = False
-    CSRF_ENABLED = True
+    WTF_CSRF_ENABLED = True
     # WTF_CSRF_TIME_LIMIT. Time to fill out a form.
     # Must be less than PERMANENT_SESSION_LIFETIME
     WTF_CSRF_TIME_LIMIT = 21600
@@ -120,6 +120,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+    WTF_CSRF_ENABLED = False
     LOG_LEVEL = logging.DEBUG
 
 

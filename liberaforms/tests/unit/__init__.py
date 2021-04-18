@@ -5,6 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+import os
 import pytest
 from liberaforms import create_app
 from liberaforms.models.user import User
@@ -25,9 +26,9 @@ def new_site():
 @pytest.fixture(scope='module')
 def new_user():
     user = User(
-        username = "dave",
-        email = "dave@example.com",
-        password = "super_secret",
+        username = os.environ['TEST_USERNAME'],
+        email = os.environ['TEST_USER_EMAIL'],
+        password = os.environ['TEST_USER_PASSWORD'],
         preferences = User.default_user_preferences(),
         admin = User.default_admin_settings(),
         validatedEmail = True,
