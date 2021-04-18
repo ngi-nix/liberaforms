@@ -31,9 +31,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE AND DOCUMENTATION, EVEN IF
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import os, pytest
-#from dotenv import load_dotenv
-import liberaforms# import current_app
+import pytest
+from liberaforms import create_app
 
 
 @pytest.fixture
@@ -42,10 +41,7 @@ def client():
 
     :return: App for testing
     """
-    #print(os.getcwd())
-    #load_dotenv('../../.env')
-    #app.config['TESTING'] = True
-    app = liberaforms.create_app()
+    app = create_app()
     client = app.test_client()
 
     yield client
