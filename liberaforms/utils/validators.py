@@ -24,7 +24,11 @@ pwd_policy = PasswordPolicy.from_names(
 )
 
 def hash_password(password):
-    return pbkdf2_sha256.hash(password, rounds=200000, salt_size=16)
+    settings = {
+        'rounds': 200000,
+        'salt_size': 16,
+    }
+    return pbkdf2_sha256.using(**settings).hash(password)
 
 def verify_password(password, hash):
     return pbkdf2_sha256.verify(password, hash)

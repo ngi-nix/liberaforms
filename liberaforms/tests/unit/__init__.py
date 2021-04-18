@@ -7,15 +7,16 @@ This file is part of LiberaForms.
 
 import pytest
 from liberaforms.models.user import User
+#from liberaforms.models.site import Site
 
 @pytest.fixture(scope='module')
 def new_user():
-    user = User(**{
-        'username': "dave",
-        'email': "dave@example.com",
-        'password_hash': "hashed",
-        'preferences': {},
-        'admin': {},
-        'validatedEmail': True,
-    })
+    user = User(
+        username = "dave",
+        email = "dave@example.com",
+        password = "super_secret",
+        preferences = User.default_user_preferences(),
+        admin = User.default_admin_settings(),
+        validatedEmail = True,
+    )
     return user

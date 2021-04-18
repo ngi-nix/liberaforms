@@ -39,7 +39,7 @@ class User(db.Model, CRUD):
         self.created = datetime.datetime.now().isoformat()
         self.username = kwargs["username"]
         self.email = kwargs["email"]
-        self.password_hash = kwargs["password_hash"]
+        self.password_hash = validators.hash_password(kwargs["password"])
         self.preferences = kwargs["preferences"]
         self.blocked = False
         self.admin = kwargs["admin"]
