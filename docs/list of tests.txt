@@ -20,7 +20,8 @@ Start with empty database
   * add/edit/delete consentment texts
   * edit frontpage
 
-3. Create new user with new user form
+3. Create new user.  unit[✔]
+3.1 Create new user with new user form
   * with RESERVED_USERNAMES
   * with ROOT_USERS email
 
@@ -28,7 +29,7 @@ Start with empty database
   * with admin permission
   * respond to invitation
 
-5. Create a new site
+5. Create a new site. unit[✔]
   * Invite a new admin to the new site
 
 6. Create form

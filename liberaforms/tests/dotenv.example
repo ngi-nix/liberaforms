@@ -5,6 +5,7 @@ FLASK_CONFIG=testing
 
 DEFAULT_LANGUAGE=en
 SECRET_KEY=a_secret_key
+ROOT_USERS=['dave@example.com']
 
 DB_HOST=localhost
 DB_NAME=liberaforms

@@ -6,8 +6,16 @@ This file is part of LiberaForms.
 """
 
 import os
-from liberaforms.tests.unit import new_user
+from liberaforms.tests.unit import new_site, new_user
 
+def test_new_site(new_site):
+    """
+    GIVEN a Site model
+    WHEN a new Site is created
+    THEN check the smtpConfig, blurb fields
+    """
+    assert new_site.smtpConfig['host'] == "smtp.example.com"
+    assert "<h1>LiberaForms</h1>" in new_site.blurb['html']
 
 def test_new_user(new_user):
     """
