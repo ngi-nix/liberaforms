@@ -7,15 +7,13 @@ This file is part of LiberaForms.
 
 import os
 import pytest
-from liberaforms import create_app
 from liberaforms.models.user import User
 from liberaforms.models.site import Site
 
 
 @pytest.fixture(scope='module')
-def new_site():
-    flask_app = create_app()
-    with flask_app.app_context():
+def new_site(app):
+    with app.app_context():
         site = Site(
             hostname = "example.com",
             port = 80,

@@ -8,7 +8,7 @@ SECRET_KEY=a_secret_key
 ROOT_USERS=['dave@example.com']
 
 DB_HOST=localhost
-DB_NAME=liberaforms
+DB_NAME=test_db
 DB_USER=db_user
 DB_PASSWORD="db_password"
 

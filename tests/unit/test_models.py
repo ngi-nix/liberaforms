@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os
-from liberaforms.tests.unit import new_site, new_user
+
 
 def test_new_site(new_site):
     """
