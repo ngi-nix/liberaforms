@@ -3,6 +3,5 @@ venv
 gunicorn.py
 notes.txt
 flask_session
-migrations
 __pycache__
 .pytest_cache

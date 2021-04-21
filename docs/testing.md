@@ -7,21 +7,17 @@ pip install pytest
 pip install pytest-dotenv
 ```
 
-Create `.env` and edit
+Create `test.env` and edit
 ```
-cd ./liberaforms/tests
-cp dotenv.example .env
+cd ./tests
+cp test.env.example test.env
 ```
 
-Run all tests
+Run all tests, unit tests, functional tests
 
 ```
+cd ./test
 pytest
-```
-
-Run only `unit` tests
-
-```
-cd ./liberaforms/tests/unit
-pytest
+pytest unit
+pytest functional
 ```
