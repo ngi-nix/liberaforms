@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-11-02 20:52+0100\n"
-"PO-Revision-Date: 2020-11-02 20:55+0100\n"
+"PO-Revision-Date: 2021-04-22 11:05+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
-"Language: eu\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: models/form.py:118
 msgid "Marked"
@@ -41,7 +42,7 @@ msgstr "DPBLO"
 
 #: models/form.py:314
 msgid "Sorry, this form has expired."
-msgstr "Sentitzen dugu, formulario hau iraungi egin da."
+msgstr "Sentitzen dugu, galdetegi hau iraungi egin da."
 
 #: models/form.py:342
 msgid "Thank you!!"
@@ -99,11 +100,11 @@ msgstr "Nire galdetegiak"
 
 #: templates/base.html:74
 msgid "Config"
-msgstr ""
+msgstr "Configurazioa"
 
 #: templates/base.html:82
 msgid "Profile"
-msgstr ""
+msgstr "Profila"
 
 #: templates/base.html:88
 msgid "Logout"
@@ -453,7 +454,7 @@ msgstr "Ados, erabili URL hau"
 
 #: templates/form/edit-form.html:193
 msgid "Cannot modify because a response with this value exists in the database"
-msgstr ""
+msgstr "Ezin da aldatu jada badagoela balio hau duen erantzun bat datu-basean"
 
 #: templates/form/expiration.html:24
 msgid "Notify me when this form expires"
@@ -478,23 +479,23 @@ msgstr "Gorde aldaketak"
 
 #: templates/form/expiration.html:69
 msgid "Fields"
-msgstr ""
+msgstr "Esparruak"
 
 #: templates/form/expiration.html:86
 msgid "Save max."
-msgstr "Gorde gehiengoa"
+msgstr "Gorde gehiengoz"
 
 #: templates/form/expiration.html:99
 msgid "Maximum responses"
-msgstr ""
+msgstr "Gehienezko erantzunak"
 
 #: templates/form/expiration.html:104
 msgid "The form will expire after"
-msgstr ""
+msgstr "Galdetegia honen ostean iraungiko da:"
 
 #: templates/form/expiration.html:118
 msgid "responses"
-msgstr ""
+msgstr "erantzun"
 
 #: templates/form/expiration.html:130 templates/form/inspect-form.html:248
 msgid "When the form has expired"
@@ -673,7 +674,8 @@ msgstr "Editatu berriro"
 
 #: templates/form/share-form.html:20
 msgid "Users listed here have the <b>same permissions</b> as you"
-msgstr "Hemen zerrendatutako erabiltzaileek zure <b>baimen berberak</b> dituzte"
+msgstr ""
+"Hemen zerrendatutako erabiltzaileek zure <b>baimen berberak</b> dituzte"
 
 #: templates/form/share-form.html:34
 msgid "Remove"
@@ -933,25 +935,25 @@ msgstr "Probatu konfigurazioa"
 
 #: templates/site/stats.html:12
 msgid "Site statistics"
-msgstr ""
+msgstr "Webgunearen estatistikak"
 
 #: templates/site/stats.html:59 templates/site/stats.html:135
 #: templates/user/statistics.html:48
 msgid "New forms"
-msgstr ""
+msgstr "Galdetegi berriak"
 
 #: templates/site/stats.html:66 templates/site/stats.html:142
 #: templates/user/statistics.html:55
 msgid "Total forms"
-msgstr ""
+msgstr "Guztizko galdetegiak"
 
 #: templates/site/stats.html:75 templates/site/stats.html:151
 msgid "New users"
-msgstr ""
+msgstr "Erabiltzaile berriak"
 
 #: templates/site/stats.html:83 templates/site/stats.html:159
 msgid "Total users"
-msgstr ""
+msgstr "Guztizko erabiltzaileak"
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
@@ -964,8 +966,7 @@ msgstr "Baimentze-testu lehenetsia"
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
 msgstr ""
-"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien "
-"galdetegietan"
+"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien galdetegietan"
 
 #: templates/user/login.html:24
 msgid "Forgot your password?"
@@ -1013,7 +1014,7 @@ msgstr "Berrezarri pasahitza"
 
 #: templates/user/statistics.html:12
 msgid "My statistics"
-msgstr ""
+msgstr "Nire estatistikak"
 
 #: templates/user/user-settings.html:10
 msgid "Hello"
@@ -1066,8 +1067,7 @@ msgstr "Onartu gure erabilera-baldintzak."
 
 #: utils/consent_texts.py:137
 msgid ""
-"We take your data protection seriously. Please contact us for any "
-"inquiries."
+"We take your data protection seriously. Please contact us for any inquiries."
 msgstr ""
 "Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
 "harremanetan edozein kontsultatarako."
@@ -1586,10 +1586,10 @@ msgstr "Kredentzial okerrak"
 #~ msgid "User's forms"
 #~ msgstr "Erabiltzailearen galdetegiak"
 
-#~ msgid "Cannot modify because an entry with this value exists in the database"
+#~ msgid ""
+#~ "Cannot modify because an entry with this value exists in the database"
 #~ msgstr ""
-#~ "Ezin da aldatu, jada badagoelako balio"
-#~ " hau duen erantzun bat datu-basean"
+#~ "Ezin da aldatu, jada badagoelako balio hau duen erantzun bat datu-basean"
 
 #~ msgid "Conditionals"
 #~ msgstr "Baldintzak"
@@ -1614,4 +1614,3 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "root mode"
 #~ msgstr "root modua"
-

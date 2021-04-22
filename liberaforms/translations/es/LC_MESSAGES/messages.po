@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-11-02 20:52+0100\n"
-"PO-Revision-Date: 2020-11-02 21:02+0100\n"
+"PO-Revision-Date: 2021-04-18 13:34+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 2.4.1\n"
 
 #: models/form.py:118
 msgid "Marked"
@@ -76,7 +76,7 @@ msgstr "Hola,\n"
 
 #: templates/base.html:43 templates/site/admin-panel.html:138
 msgid "Toggle root mode"
-msgstr ""
+msgstr "Commutar modo root"
 
 #: templates/admin/delete-user.html:21 templates/admin/inspect-user.html:86
 #: templates/admin/inspect-user.html:199 templates/admin/list-users.html:32
@@ -708,7 +708,7 @@ msgstr "Vaya! Error de servidor 500"
 
 #: templates/site/admin-panel.html:11
 msgid "Administrator"
-msgstr ""
+msgstr "Administrador"
 
 #: templates/site/admin-panel.html:16
 msgid "Invitations"
@@ -720,15 +720,15 @@ msgstr "Invitar a un usuario nuevo"
 
 #: templates/site/admin-panel.html:53
 msgid "Invitation message"
-msgstr "Mensaje de invitación"
+msgstr "Mensaje de la invitación"
 
 #: templates/site/admin-panel.html:63
 msgid "Site settings"
-msgstr "Preferencias del Sitio"
+msgstr "Preferencias del sitio web"
 
 #: templates/site/admin-panel.html:68
 msgid "Site name"
-msgstr "Nombre de sitio"
+msgstr "Nombre de sitio web"
 
 #: templates/site/admin-panel.html:73 templates/site/admin-panel.html:80
 #: templates/site/admin-panel.html:109 templates/site/admin-panel.html:116
@@ -747,7 +747,7 @@ msgstr "Solo invitaciones"
 
 #: templates/site/admin-panel.html:94
 msgid "Consent"
-msgstr "Consentimiento"
+msgstr "Texto de consentimiento por omisión"
 
 #: templates/site/admin-panel.html:96 templates/site/consent.html:28
 #: templates/user/new-user.html:50
@@ -1049,7 +1049,7 @@ msgstr "Notifíqueme cuando se cree un nuevo formulario"
 
 #: utils/consent_texts.py:125
 msgid "Please accept our terms and conditions."
-msgstr "Por favor, acepta nuestros términos y condiciones"
+msgstr "Por favor, acepta nuestros términos y condiciones."
 
 #: utils/consent_texts.py:137
 msgid "We take your data protection seriously. Please contact us for any inquiries."
@@ -1114,9 +1114,7 @@ msgstr "LiberaForms. Notificación de nuevo formulario"
 #: utils/email.py:174
 #, python-format
 msgid "New form entry in %s at %s\n"
-""
 msgstr "Nueva respuesta para %s en %s\n"
-""
 
 #: utils/email.py:178
 msgid "LiberaForms. New form entry"
@@ -1439,7 +1437,7 @@ msgstr "Tu cuenta ha sido bloqueado"
 
 #: views/site.py:87
 msgid "We may have sent you an email"
-msgstr "Puede que te hemos enviado un correo-e"
+msgstr "Puede que te hayamos enviado un correo electrónico"
 
 #: views/site.py:133
 msgid "Site name changed OK"
@@ -1546,7 +1544,7 @@ msgstr "Tu dirección de correo-e es válida"
 
 #: views/user.py:241
 msgid "Bad credentials"
-msgstr "Los credenciales no son correctos"
+msgstr "Las credenciales no son correctos"
 
 #~ msgid "Can't find that form. 404"
 #~ msgstr "No se encuentra ese formulario"
