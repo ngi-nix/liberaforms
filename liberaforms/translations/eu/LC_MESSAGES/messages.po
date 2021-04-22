@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-11-02 20:52+0100\n"
-"PO-Revision-Date: 2021-04-22 11:05+0200\n"
+"PO-Revision-Date: 2021-04-22 11:11+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -100,7 +100,7 @@ msgstr "Nire galdetegiak"
 
 #: templates/base.html:74
 msgid "Config"
-msgstr "Configurazioa"
+msgstr "Konfigurazioa"
 
 #: templates/base.html:82
 msgid "Profile"
@@ -270,11 +270,11 @@ msgstr "Hizkuntza"
 #: templates/admin/inspect-user.html:47 templates/admin/list-users.html:31
 #: templates/site/admin-panel.html:29 utils/wtf.py:36
 msgid "Email"
-msgstr "E-posta"
+msgstr "Eposta"
 
 #: templates/admin/inspect-user.html:51
 msgid "Validated email"
-msgstr "Balioztatutako e-posta"
+msgstr "Balioztatutako eposta"
 
 #: templates/admin/inspect-user.html:60
 msgid "Blocked by admin"
@@ -641,7 +641,7 @@ msgstr "Nahitaezko eremuak"
 
 #: templates/form/inspect-form.html:329 templates/form/view-form.html:32
 msgid "Send me confirmation by mail"
-msgstr "Bidali berrespena e-postaz"
+msgstr "Bidali berrespena epostaz"
 
 #: templates/form/inspect-form.html:343 templates/form/preview-form.html:23
 #: templates/form/view-form.html:48 templates/site/smtp-config.html:61
@@ -785,7 +785,7 @@ msgstr "Menuaren kolorea"
 
 #: templates/site/admin-panel.html:120 utils/wtf.py:104
 msgid "Email server"
-msgstr "E-posta zerbitzaria"
+msgstr "Eposta zerbitzaria"
 
 #: templates/site/admin-panel.html:123
 msgid "Configure"
@@ -923,11 +923,11 @@ msgstr "Gonbidatu webgune hauetako batera"
 
 #: templates/site/new-invite.html:60
 msgid "Send email"
-msgstr "Bidali e-posta"
+msgstr "Bidali eposta"
 
 #: templates/site/smtp-config.html:9
 msgid "Email server configuration"
-msgstr "E-posta zerbitzariaren konfigurazioa"
+msgstr "Eposta zerbitzariaren konfigurazioa"
 
 #: templates/site/smtp-config.html:54
 msgid "Test configuration"
@@ -957,7 +957,7 @@ msgstr "Guztizko erabiltzaileak"
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr "Aldatu e-posta helbidea"
+msgstr "Aldatu eposta helbidea"
 
 #: templates/user/consent.html:14
 msgid "Default consent text"
@@ -994,7 +994,7 @@ msgstr "Beste adibide bat: Nirekin bizi den zakurrak arkakusoak ditu"
 
 #: templates/user/new-user.html:105
 msgid "We sent you an email!"
-msgstr "E-posta mezu bat bidali dizugu!"
+msgstr "Eposta mezu bat bidali dizugu!"
 
 #: templates/user/recover-password.html:11
 msgid "Recover password"
@@ -1026,11 +1026,11 @@ msgstr "Zure eposta helbidea ez da egiaztatu"
 
 #: templates/user/user-settings.html:20
 msgid "Validate my email"
-msgstr "Egiaztatu nire e-posta helbidea"
+msgstr "Egiaztatu nire eposta helbidea"
 
 #: templates/user/user-settings.html:29 utils/wtf.py:80
 msgid "Email address"
-msgstr "E-posta helbidea"
+msgstr "Eposta helbidea"
 
 #: templates/user/user-settings.html:38 utils/wtf.py:37 utils/wtf.py:73
 #: utils/wtf.py:95 utils/wtf.py:110
@@ -1113,13 +1113,13 @@ msgid ""
 msgstr ""
 "Kaixo %s\n"
 "\n"
-"Egiaztatu zure e-posta helbidea\n"
+"Egiaztatu zure eposta helbidea\n"
 "\n"
 "%s"
 
 #: utils/email.py:142
 msgid "LiberaForms. Confirm email"
-msgstr "LiberaForms. Egiaztatu e-posta"
+msgstr "LiberaForms. Egiaztatu eposta"
 
 #: utils/email.py:164
 #, python-format
@@ -1175,7 +1175,7 @@ msgstr "Erabili beste erabiltzaile-izen bat"
 #: utils/wtf.py:54 utils/wtf.py:57 utils/wtf.py:88 utils/wtf.py:91
 #: utils/wtf.py:122 utils/wtf.py:125
 msgid "Please use a different email address"
-msgstr "Erabili beste e-posta helbide bat"
+msgstr "Erabili beste eposta helbide bat"
 
 #: utils/wtf.py:61 utils/wtf.py:100
 msgid "Your password is weak"
@@ -1191,7 +1191,7 @@ msgstr "Onartu gure datu datuen babeserako gidalerroak"
 
 #: utils/wtf.py:84
 msgid "New email address"
-msgstr "E-posta helbide berria"
+msgstr "Eposta helbide berria"
 
 #: utils/wtf.py:105
 msgid "Port"
@@ -1207,7 +1207,7 @@ msgstr "Bidaltzailearen helbidea"
 
 #: utils/wtf.py:115
 msgid "New user's email"
-msgstr "Erabiltzaile berriaren e-posta"
+msgstr "Erabiltzaile berriaren eposta"
 
 #: utils/wtf.py:116
 msgid "Include message"
@@ -1363,7 +1363,7 @@ msgstr "Baimena behar da galdetegia ikusteko"
 
 #: views/form.py:325
 msgid "Can't find a user with that email"
-msgstr "Ez da aurkitu e-posta helbide hori duen erabiltzailerik"
+msgstr "Ez da aurkitu eposta helbide hori duen erabiltzailerik"
 
 #: views/form.py:328
 #, python-format
@@ -1428,7 +1428,7 @@ msgstr "Datuak babesteko baimena zehaztuta: %s"
 #: views/form.py:513
 #, python-format
 msgid "Send Confirmation set to: %s"
-msgstr "Bidali berrespena e-postaz zehaztuta: %s"
+msgstr "Bidali berrespena epostaz zehaztuta: %s"
 
 #: views/form.py:549
 msgid "That form has expired"
@@ -1559,7 +1559,7 @@ msgstr "Ezin izan dugu eskaera aurkitu"
 
 #: views/user.py:211
 msgid "Your email address is valid"
-msgstr "Zure e-posta helbidea baliozkoa da"
+msgstr "Zure eposta helbidea baliozkoa da"
 
 #: views/user.py:241
 msgid "Bad credentials"
