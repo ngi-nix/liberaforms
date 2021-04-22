@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2020-11-02 20:52+0100\n"
-"PO-Revision-Date: 2021-04-18 13:38+0200\n"
+"PO-Revision-Date: 2021-04-22 11:05+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
 "Language: eu\n"
@@ -42,7 +42,7 @@ msgstr "DPBLO"
 
 #: models/form.py:314
 msgid "Sorry, this form has expired."
-msgstr "Sentitzen dugu, formulario hau iraungi egin da."
+msgstr "Sentitzen dugu, galdetegi hau iraungi egin da."
 
 #: models/form.py:342
 msgid "Thank you!!"
