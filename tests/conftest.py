@@ -33,8 +33,8 @@ def db(app):
         stamp(revision='base')
         upgrade()
         yield _db
-        _db.drop_all()
-        stamp(revision='base')
+        #_db.drop_all()
+        #stamp(revision='base')
 
 @pytest.fixture(scope='session')
 def session(db):
