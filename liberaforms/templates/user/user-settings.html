@@ -1,15 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- user_settings_page -->
+
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-        
+
         <div class="title_1">
             {%trans%}Hello{%endtrans%} {{ g.current_user.username }} !!
         </div>
-        
+
         {% if not g.current_user.validatedEmail %}
         <div class="row">
             <div class="col title_2">
@@ -83,7 +85,7 @@
                 </td>
             </tr>
         </table>
-        
+
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">
             {%trans%}My admin settings{%endtrans%}

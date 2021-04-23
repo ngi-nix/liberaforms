@@ -22,7 +22,7 @@ def new_site(app):
         return site
 
 @pytest.fixture(scope='session')
-def default_user():
+def dummy_user():
     """The default test user as defined in ./tests/test.env"""
     user = User(
         username = os.environ['TEST_USERNAME'],
