@@ -7,13 +7,10 @@ This file is part of LiberaForms.
 
 import os
 import pytest
-
+from liberaforms.models.site import Site
 from tests.unit.conftest import dummy_user as _dummy_user
 
+
 @pytest.fixture(scope="class")
-def users(_dummy_user):
-    _dummy_user.save()
-    return {
-        "dummy": _dummy_user,
-        "admin": None,
-    }
+def site(db):
+    return Site.find()

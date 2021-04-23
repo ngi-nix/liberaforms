@@ -51,14 +51,10 @@ def client(app):
     with app.test_client() as client:
         yield client
 
-"""
-@pytest.fixture(scope='function')
-def session(request, db):
-    session = db['session_factory']()
-    yield session
-    print('\n----- CREATE DB SESSION\n')
-
-    session.rollback()
-    session.close()
-    print('\n----- ROLLBACK DB SESSION\n')
-"""
+@pytest.fixture(scope='session')
+def users():
+    return {
+        "dummy": None,
+        "admin": None,
+        "admin_password": "a good password"
+    }

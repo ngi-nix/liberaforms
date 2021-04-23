@@ -11,12 +11,15 @@ import pytest
 from urllib.parse import urlparse
 from liberaforms.models.user import User
 
+from tests.unit.conftest import dummy_user
 
 #@pytest.mark.usefixtures('users')
 @pytest.mark.order(after="TestAdmin")
 class TestUser():
 
-    def test_dummy_user(self, users):
+    def test_save_user(self, db, dummy_user, users):
+        dummy_user.save()
+        users['dummy']=dummy_user
         assert users['dummy'].id != None
 
     def test_login(self, client, users):
@@ -60,7 +63,6 @@ class TestUser():
                     )
         assert response.status_code == 200
         assert users['dummy'].preferences['language'] != unavailable_language
-
         available_language = 'ca'
         response = client.post(
                         "/user/change-language",
@@ -115,6 +117,16 @@ class TestUser():
         assert response.status_code == 200
         assert users['dummy'].preferences["newEntryNotification"] != current_default
 
+    def test_logout_dummy(self, client):
+        response = client.post(
+                        "/user/logout",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div id="blurb" class="marked-up">' in html
+        assert '<a class="nav-link" href="/user/login">' in html
+
 
 class TestAdmin():
 
@@ -134,7 +146,7 @@ class TestAdmin():
         # this path contains the invite token
         new_user_url = urlparse(response.location).path
         username = root_user_email.split('@')[0]
-        password = "a good password"
+        password = users["admin_password"]
         response = client.post(
                                 new_user_url,
                                 data = {
@@ -169,7 +181,7 @@ class TestAdmin():
         assert response.status_code == 200
         assert users['admin'].admin["notifyNewForm"] != notification
 
-    def test_logout(self, client):
+    def test_logout_admin(self, client):
         response = client.post(
                         "/user/logout",
                         follow_redirects=True,
