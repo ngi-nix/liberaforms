@@ -7,24 +7,24 @@ This file is part of LiberaForms.
 
 import os
 import ast
+import pytest
 from urllib.parse import urlparse
-import pytest #, logging
 from liberaforms.models.user import User
 
 
-#@pytest.mark.usefixtures('dummy_user')
+#@pytest.mark.usefixtures('users')
 @pytest.mark.order(after="TestAdmin")
 class TestUser():
 
-    def test_dummy_user(self, dummy_user):
-        assert dummy_user.id != None
+    def test_dummy_user(self, users):
+        assert users['dummy'].id != None
 
-    def test_login(self, client, dummy_user):
+    def test_login(self, client, users):
         """ Tests bad credentials and good credentials """
         response = client.post(
                         "/user/login",
                         data = {
-                            "username": os.environ['TEST_USERNAME'],
+                            "username": users['dummy'].username,
                             "password": os.environ['TEST_USER_PASSWORD']+'*',
                         },
                         follow_redirects=True,
@@ -36,7 +36,7 @@ class TestUser():
         response = client.post(
                         "/user/login",
                         data = {
-                            "username": dummy_user.username,
+                            "username": users['dummy'].username,
                             "password": os.environ['TEST_USER_PASSWORD'],
                         },
                         follow_redirects=True,
@@ -45,7 +45,7 @@ class TestUser():
         html = response.data.decode()
         assert '<a class="nav-link" href="/user/logout">' in html
 
-    def test_change_language(self, dummy_user, client):
+    def test_change_language(self, users, client):
         """ Tests unavailable language and available language
             as defined in ./liberaforms/config.py
         """
@@ -59,7 +59,7 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert dummy_user.preferences['language'] != unavailable_language
+        assert users['dummy'].preferences['language'] != unavailable_language
 
         available_language = 'ca'
         response = client.post(
@@ -70,14 +70,14 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert dummy_user.preferences['language'] == available_language
-        dummy_user.save()
+        assert users['dummy'].preferences['language'] == available_language
+        users['dummy'].save()
 
-    def test_change_password(self, dummy_user, client):
+    def test_change_password(self, users, client):
         """ Tests bad password and good password
             as defined in ./liberaforms/utils/validators.py
         """
-        password_hash = dummy_user.password_hash
+        password_hash = users['dummy'].password_hash
         bad_password="1234"
         response = client.post(
                         "/user/reset-password",
@@ -88,7 +88,7 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert dummy_user.password_hash == password_hash
+        assert users['dummy'].password_hash == password_hash
         good_password="this is a good password"
         response = client.post(
                         "/user/reset-password",
@@ -99,27 +99,27 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert dummy_user.password_hash != password_hash
+        assert users['dummy'].password_hash != password_hash
 
     @pytest.mark.skip(reason="No way of currently testing this")
     def test_change_email(self, client):
         """ Not impletmented """
         pass
 
-    def test_new_answer_default_notification(self, dummy_user, client):
-        current_default = dummy_user.preferences["newEntryNotification"]
+    def test_new_answer_notification_default(self, users, client):
+        current_default = users['dummy'].preferences["newEntryNotification"]
         response = client.post(
                         "/user/toggle-new-entry-notification",
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert dummy_user.preferences["newEntryNotification"] != current_default
+        assert users['dummy'].preferences["newEntryNotification"] != current_default
 
 
-class TestAdmin:
+class TestAdmin():
 
-    def test_bootstrap_first_admin(self, db, client):
-        """ Creates a new admin user using ROOT_USER
+    def test_bootstrap_first_admin(self, db, users, client):
+        """ Creates the first admin user using ROOT_USER
             as defined in ./tests/test.env
         """
         root_user_email = ast.literal_eval(os.environ['ROOT_USERS'])[0]
@@ -136,22 +136,38 @@ class TestAdmin:
         username = root_user_email.split('@')[0]
         password = "a good password"
         response = client.post(
-                        new_user_url,
-                        data = {
-                            "username": username,
-                            "email": root_user_email,
-                            "password": password,
-                            "password2": password,
-                        },
-                        follow_redirects=True,
-                    )
+                                new_user_url,
+                                data = {
+                                    "username": username,
+                                    "email": root_user_email,
+                                    "password": password,
+                                    "password2": password,
+                                },
+                                follow_redirects=True,
+                            )
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- my_forms_page -->" in html
         assert '<a class="nav-link" href="/user/logout">' in html
         user = User.find(username=username)
         assert user.admin['isAdmin'] == True
+        users['admin']=user
 
+    def test_toggle_new_user_notification(self, users, client):
+        notification = users['admin'].admin["notifyNewUser"]
+        response = client.post(
+                                "/admin/toggle-newuser-notification",
+                            )
+        assert response.status_code == 200
+        assert users['admin'].admin["notifyNewUser"] != notification
+
+    def test_toggle_new_form_notification(self, users, client):
+        notification = users['admin'].admin["notifyNewForm"]
+        response = client.post(
+                                "/admin/toggle-newform-notification",
+                            )
+        assert response.status_code == 200
+        assert users['admin'].admin["notifyNewForm"] != notification
 
     def test_logout(self, client):
         response = client.post(
@@ -160,4 +176,5 @@ class TestAdmin:
                     )
         assert response.status_code == 200
         html = response.data.decode()
+        assert '<div id="blurb" class="marked-up">' in html
         assert '<a class="nav-link" href="/user/login">' in html

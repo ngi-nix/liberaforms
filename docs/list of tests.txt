@@ -5,7 +5,7 @@ Start with empty database
 
 ## Empty database
 
-1. Create first root user
+1. Create first root user. functional[✔]
 
 2. Config site
   * config SMTP

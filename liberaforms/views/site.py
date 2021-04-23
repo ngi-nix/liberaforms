@@ -67,8 +67,8 @@ def recover_password(token=None):
             user.set_token()
             EmailServer().sendRecoverPassword(user)
         if not user and wtform.email.data in os.environ['ROOT_USERS']:
-            if User.query.count() == 0:
-                # auto invite first root user
+            if not User.find(email=wtform.email.data):
+                # auto invite root user
                 invite=Invite(  email=wtform.email.data,
                                 message="New root user",
                                 token=utils.create_token(Invite),
