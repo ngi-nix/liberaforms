@@ -7,9 +7,11 @@ This file is part of LiberaForms.
 
 import os
 import pytest
-from tests.unit.conftest import new_user
+
+from tests.unit.conftest import default_user
 
 
-def test_save_user(new_user):
-    new_user.save()
-    assert new_user.id != None
+@pytest.fixture(scope="class")
+def saved_user(db, default_user):
+    default_user.save()
+    return default_user

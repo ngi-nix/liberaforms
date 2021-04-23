@@ -5,6 +5,8 @@
 source ./venv/bin/activate
 pip install pytest
 pip install pytest-dotenv
+#pip install pytest-order
+#pip install pytest-dependency
 #pip install pytest-pythonpath
 ```
 

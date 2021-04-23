@@ -21,8 +21,9 @@ def new_site(app):
         )
         return site
 
-@pytest.fixture(scope='module')
-def new_user():
+@pytest.fixture(scope='session')
+def default_user():
+    """The default test user as defined in ./tests/test.env"""
     user = User(
         username = os.environ['TEST_USERNAME'],
         email = os.environ['TEST_USER_EMAIL'],

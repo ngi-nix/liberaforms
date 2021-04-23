@@ -7,7 +7,7 @@ This file is part of LiberaForms.
 
 import os
 import pytest
-from flask_migrate import Migrate, upgrade
+from flask_migrate import Migrate, upgrade, stamp
 from liberaforms import create_app
 from liberaforms import db as _db
 
@@ -21,14 +21,20 @@ def app():
     yield flask_app
 
 """
-Upgrades the database schema with alembic
+Upgrades database schema with alembic
+Yields db
+Drops tables
 """
 @pytest.fixture(scope='session')
 def db(app):
     migrate = Migrate(app, _db, directory='../migrations')
     with app.app_context():
+        _db.drop_all()
+        stamp(revision='base')
         upgrade()
-    yield _db
+        yield _db
+        _db.drop_all()
+        stamp(revision='base')
 
 @pytest.fixture(scope='session')
 def session(db):
@@ -39,7 +45,6 @@ def session(db):
     session = db.create_scoped_session(options=options)
     db.session = session
     yield session
-
 
 @pytest.fixture(scope='session')
 def client(app):
