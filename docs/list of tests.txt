@@ -8,17 +8,17 @@ Start with empty database
 1. Create first root user. functional[✔]
 
 2. Config site
-  * config SMTP
-    * test SMTP
-  * save and delete favicon. functional[✔]
+  * save and restore favicon. functional[✔]
   * change colour. functional[✔]
   * change site name. functional[✔]
   * change default language. functional[✔]
   * change 'only invitations'. functional[✔]
-  * change port
-  * change scheme
+  * change port. functional[✔]
+  * change scheme. functional[✔]
+  * edit frontpage. functional[✔]
   * add/edit/delete consentment texts
-  * edit frontpage
+  * config SMTP
+  * test SMTP
 
 3. Create new user.  unit[✔]
 3.1 Create new user with new user form

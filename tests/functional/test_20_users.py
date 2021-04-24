@@ -17,7 +17,7 @@ from tests.unit.conftest import dummy_user
 @pytest.mark.order(after="TestAdmin")
 class TestUser():
 
-    def test_save_user(self, db, dummy_user, users):
+    def test_save_new_user(self, db, dummy_user, users):
         dummy_user.save()
         users['dummy']=dummy_user
         assert users['dummy'].id != None
@@ -35,7 +35,6 @@ class TestUser():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<form action="/user/login"' in html
-
         response = client.post(
                         "/user/login",
                         data = {
@@ -108,7 +107,7 @@ class TestUser():
         """ Not impletmented """
         pass
 
-    def test_new_answer_notification_default(self, users, client):
+    def test_toggle_new_answer_notification(self, users, client):
         current_default = users['dummy'].preferences["newEntryNotification"]
         response = client.post(
                         "/user/toggle-new-entry-notification",
@@ -117,7 +116,7 @@ class TestUser():
         assert response.status_code == 200
         assert users['dummy'].preferences["newEntryNotification"] != current_default
 
-    def test_logout_dummy(self, client):
+    def test_logout(self, client):
         response = client.post(
                         "/user/logout",
                         follow_redirects=True,

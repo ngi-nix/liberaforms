@@ -75,7 +75,7 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert site.invitationOnly != invitation_only
 
-    @pytest.mark.skip(reason="No way of currently testing this")
+    @pytest.mark.skip(reason="TODO")
     def test_set_consent_texts(cls, client):
         pass
 
@@ -104,7 +104,9 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert site.menuColor != color
 
-    def test_change_icon(self, app, client):
+    def test_change_favicon(self, app, client):
+        """ Tests valid and invalid image files in ./tests/assets
+        """
         favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
         initial_favicon_stats = os.stat(favicon_path)
         invalid_favicon = "favicon_invalid.jpeg"
@@ -145,7 +147,7 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
 
-    def test_restore_default_icon(self, app, client):
+    def test_restore_default_favicon(self, app, client):
         favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
         initial_favicon_stats = os.stat(favicon_path)
         response = client.get(
@@ -154,3 +156,50 @@ class TestSiteConfig():
                     )
         assert response.status_code == 200
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
+
+    def test_edit_public_link_creation(self, site, client):
+        """ Tests valid and invalid ports
+        """
+        response = client.get(
+                        "/site/edit",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<span id="site_scheme">' in html
+        # toggle site_scheme
+        initial_scheme = site.scheme
+        response = client.post(
+                    '/site/toggle-scheme',
+                    follow_redirects=True,
+                )
+        assert response.status_code == 200
+        assert site.scheme != initial_scheme
+        # change port
+        initial_port = site.port
+        invalid_port = "i_am_a_string"
+        response = client.post(
+                    f'/site/change-port/{invalid_port}',
+                    follow_redirects=True,
+                )
+        assert response.status_code == 400
+        assert site.port == initial_port
+        valid_port = 5555
+        response = client.post(
+                    f'/site/change-port/{valid_port}',
+                    follow_redirects=True,
+                )
+        assert response.status_code == 200
+        assert site.port != initial_port
+
+    def test_edit_landing_page(self, site, client):
+        response = client.post(
+                    '/site/save-blurb',
+                    data = {
+                        'editor': "# Tested !!",
+                    },
+                    follow_redirects=True,
+                )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<h1>Tested !!</h1>' in html
