@@ -90,12 +90,12 @@ class TestUser():
                     )
         assert response.status_code == 200
         assert users['dummy'].password_hash == password_hash
-        good_password="this is a good password"
+        valid_password="this is a valid password"
         response = client.post(
                         "/user/reset-password",
                         data = {
-                            "password": good_password,
-                            "password2": good_password
+                            "password": valid_password,
+                            "password2": valid_password
                         },
                         follow_redirects=True,
                     )
@@ -147,15 +147,15 @@ class TestAdmin():
         username = root_user_email.split('@')[0]
         password = users["admin_password"]
         response = client.post(
-                                new_user_url,
-                                data = {
-                                    "username": username,
-                                    "email": root_user_email,
-                                    "password": password,
-                                    "password2": password,
-                                },
-                                follow_redirects=True,
-                            )
+                            new_user_url,
+                            data = {
+                                "username": username,
+                                "email": root_user_email,
+                                "password": password,
+                                "password2": password,
+                            },
+                            follow_redirects=True,
+                        )
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- my_forms_page -->" in html

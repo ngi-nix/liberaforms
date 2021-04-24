@@ -28,7 +28,7 @@ class TestSiteConfig():
         assert '<a class="nav-link" href="/user/logout">' in html
 
     def test_change_sitename(cls, site, client):
-        sitename = site.siteName
+        initial_sitename = site.siteName
         new_name = "New name!!"
         response = client.post(
                         "/site/change-sitename",
@@ -38,7 +38,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.siteName != sitename
+        assert site.siteName != initial_sitename
 
     def test_change_default_language(cls, site, client):
         """ Tests unavailable language and available language
@@ -82,7 +82,7 @@ class TestSiteConfig():
     def test_change_menucolor(cls, site, client):
         """ Tests valid and invalid html hex color
         """
-        color = site.menuColor
+        initial_color = site.menuColor
         bad_color = "green"
         response = client.post(
                         "/site/change-menu-color",
@@ -92,7 +92,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.menuColor == color
+        assert site.menuColor == initial_color
         good_color = "#cccccc"
         response = client.post(
                         "/site/change-menu-color",
@@ -102,7 +102,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.menuColor != color
+        assert site.menuColor != initial_color
 
     def test_change_favicon(self, app, client):
         """ Tests valid and invalid image files in ./tests/assets
@@ -127,7 +127,6 @@ class TestSiteConfig():
                 )
         assert response.status_code == 200
         assert initial_favicon_stats.st_size == os.stat(favicon_path).st_size
-
         valid_favicon = "favicon_valid.png"
         with open(f'./assets/{valid_favicon}', 'rb') as f:
             stream = BytesIO(f.read())
@@ -193,6 +192,8 @@ class TestSiteConfig():
         assert site.port != initial_port
 
     def test_edit_landing_page(self, site, client):
+        """ Posts markdown and tests resulting HTML
+        """
         response = client.post(
                     '/site/save-blurb',
                     data = {
