@@ -9,11 +9,17 @@ import os
 import pytest
 import werkzeug
 from io import BytesIO
-import pathlib
 
 class TestSiteConfig():
 
     def test_login_admin(cls, users, client):
+        response = client.get(
+                        "/user/login",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<form action="/user/login" method="POST"' in html
         response = client.post(
                         "/user/login",
                         data = {
@@ -44,6 +50,12 @@ class TestSiteConfig():
         """ Tests unavailable language and available language
             as defined in ./liberaforms/config.py
         """
+        response = client.get(
+                        "/site/change-default-language",
+                        follow_redirects=True,
+                    )
+        html = response.data.decode()
+        assert '<!-- change_language_page -->' in html
         language = site.defaultLanguage
         unavailable_language = 'af' # Afrikaans
         response = client.post(
@@ -82,6 +94,12 @@ class TestSiteConfig():
     def test_change_menucolor(cls, site, client):
         """ Tests valid and invalid html hex color
         """
+        response = client.get(
+                        "/site/change-menu-color",
+                        follow_redirects=True,
+                    )
+        html = response.data.decode()
+        assert '<div class="menu-color-options">' in html
         initial_color = site.menuColor
         bad_color = "green"
         response = client.post(
@@ -93,20 +111,30 @@ class TestSiteConfig():
                     )
         assert response.status_code == 200
         assert site.menuColor == initial_color
-        good_color = "#cccccc"
+        html = response.data.decode()
+        assert '<div class="menu-color-options">' in html
+        valid_color = "#cccccc"
         response = client.post(
                         "/site/change-menu-color",
                         data = {
-                            "hex_color": good_color
+                            "hex_color": valid_color
                         },
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         assert site.menuColor != initial_color
+        html = response.data.decode()
+        assert '<div id="site_settings"' in html
 
     def test_change_favicon(self, app, client):
         """ Tests valid and invalid image files in ./tests/assets
         """
+        response = client.get(
+                    '/site/change-icon',
+                    follow_redirects=True,
+                )
+        html = response.data.decode()
+        assert '<form method="POST" enctype=multipart/form-data >' in html
         favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
         initial_favicon_stats = os.stat(favicon_path)
         invalid_favicon = "favicon_invalid.jpeg"
@@ -127,6 +155,8 @@ class TestSiteConfig():
                 )
         assert response.status_code == 200
         assert initial_favicon_stats.st_size == os.stat(favicon_path).st_size
+        html = response.data.decode()
+        assert '<form method="POST" enctype=multipart/form-data >' in html
         valid_favicon = "favicon_valid.png"
         with open(f'./assets/{valid_favicon}', 'rb') as f:
             stream = BytesIO(f.read())
@@ -145,6 +175,8 @@ class TestSiteConfig():
                 )
         assert response.status_code == 200
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
+        html = response.data.decode()
+        assert '<div id="site_settings"' in html
 
     def test_restore_default_favicon(self, app, client):
         favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
@@ -155,6 +187,8 @@ class TestSiteConfig():
                     )
         assert response.status_code == 200
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
+        html = response.data.decode()
+        assert '<div id="site_settings"' in html
 
     def test_edit_public_link_creation(self, site, client):
         """ Tests valid and invalid ports

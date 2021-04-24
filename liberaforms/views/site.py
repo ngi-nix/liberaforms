@@ -226,10 +226,11 @@ def menu_color():
     wtform=wtf.ChangeMenuColor()
     if request.method == 'GET':
         wtform.hex_color.data=g.site.menuColor
-    if wtform.validate():
+    if wtform.validate_on_submit():
         g.site.menuColor=wtform.hex_color.data
         g.site.save()
         flash(gettext("Color changed OK"), 'success')
+        return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('menu-color.html', wtform=wtform)
 
 @site_bp.route('/site/stats', methods=['GET'])
