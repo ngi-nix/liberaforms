@@ -10,11 +10,11 @@ Start with empty database
 2. Config site
   * config SMTP
     * test SMTP
-  * save and delete favicon
-  * change colour
-  * change site name
-  * change default language
-  * change 'only invitations'
+  * save and delete favicon. functional[✔]
+  * change colour. functional[✔]
+  * change site name. functional[✔]
+  * change default language. functional[✔]
+  * change 'only invitations'. functional[✔]
   * change port
   * change scheme
   * add/edit/delete consentment texts

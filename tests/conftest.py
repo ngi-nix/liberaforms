@@ -46,7 +46,7 @@ def session(db):
     db.session = session
     yield session
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='class')
 def client(app):
     with app.test_client() as client:
         yield client
@@ -56,5 +56,5 @@ def users():
     return {
         "dummy": None,
         "admin": None,
-        "admin_password": "a good password"
+        "admin_password": "this is a valid password"
     }

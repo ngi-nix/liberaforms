@@ -180,13 +180,3 @@ class TestAdmin():
                             )
         assert response.status_code == 200
         assert users['admin'].admin["notifyNewForm"] != notification
-
-    def test_logout_admin(self, client):
-        response = client.post(
-                        "/user/logout",
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<div id="blurb" class="marked-up">' in html
-        assert '<a class="nav-link" href="/user/login">' in html

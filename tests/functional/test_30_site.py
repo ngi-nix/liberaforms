@@ -7,6 +7,9 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+import werkzeug
+from io import BytesIO
+import pathlib
 
 class TestSiteConfig():
 
@@ -101,12 +104,53 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert site.menuColor != color
 
-    def test_logout_admin(cls, client):
+    def test_change_icon(self, app, client):
+        favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
+        initial_favicon_stats = os.stat(favicon_path)
+        invalid_favicon = "favicon_invalid.jpeg"
+        with open(f'./assets/{invalid_favicon}', 'rb') as f:
+            stream = BytesIO(f.read())
+        file = werkzeug.datastructures.FileStorage(
+            stream=stream,
+            filename=invalid_favicon,
+            content_type="image/png",
+        )
         response = client.post(
-                        "/user/logout",
+                    '/site/change-icon',
+                    data = {
+                        'file': file,
+                    },
+                    follow_redirects=True,
+                    content_type='multipart/form-data',
+                )
+        assert response.status_code == 200
+        assert initial_favicon_stats.st_size == os.stat(favicon_path).st_size
+
+        valid_favicon = "favicon_valid.png"
+        with open(f'./assets/{valid_favicon}', 'rb') as f:
+            stream = BytesIO(f.read())
+        file = werkzeug.datastructures.FileStorage(
+            stream=stream,
+            filename=valid_favicon,
+            content_type="image/png",
+        )
+        response = client.post(
+                    '/site/change-icon',
+                    data = {
+                        'file': file,
+                    },
+                    follow_redirects=True,
+                    content_type='multipart/form-data',
+                )
+        assert response.status_code == 200
+        assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
+
+    def test_restore_default_icon(self, app, client):
+        favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
+        initial_favicon_stats = os.stat(favicon_path)
+        response = client.get(
+                        "/site/reset-favicon",
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        html = response.data.decode()
-        assert '<div id="blurb" class="marked-up">' in html
-        assert '<a class="nav-link" href="/user/login">' in html
+        assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
