@@ -326,7 +326,7 @@ def add_editor(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
-    if wtform.validate():
+    if wtform.validate_on_submit():
         newEditor=User.find(email=wtform.email.data)
         if not newEditor or newEditor.enabled==False:
             flash(gettext("Can't find a user with that email"), 'warning')

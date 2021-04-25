@@ -250,7 +250,7 @@ def consent(username):
 def login():
     logout_user()
     wtform=wtf.Login()
-    if wtform.validate():
+    if wtform.validate_on_submit():
         user=User.find(username=wtform.username.data, blocked=False)
         if not user and validators.is_valid_email(wtform.username.data):
             user=User.find(email=wtform.username.data, blocked=False)

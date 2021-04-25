@@ -206,7 +206,7 @@ def smtp_config():
 @admin_required
 def test_smtp():
     wtform=wtf.GetEmail()
-    if wtform.validate():
+    if wtform.validate_on_submit():
         if EmailServer().sendTestEmail(wtform.email.data):
             flash(gettext("SMTP config works!"), 'success')
     else:
