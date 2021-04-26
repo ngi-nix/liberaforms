@@ -46,7 +46,7 @@ msgstr "Sentitzen dugu, galdetegi hau iraungi egin da."
 
 #: models/form.py:342
 msgid "Thank you!!"
-msgstr "Eskerrik asko!"
+msgstr "Esker aunitz!"
 
 #: models/form.py:689
 msgid "Form title"
