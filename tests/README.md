@@ -1,13 +1,48 @@
+# Tests
 
-These are notes of things to test.
+```
+source ./venv/bin/activate
+pip install pytest
+pip install pytest-dotenv
+pip install pytest-order
+#pip install pytest-dependency
+#pip install pytest-pythonpath
+```
 
-Start with empty database
+Create `test.env` and edit
+```
+cd ./tests
+cp test.env.example test.env
+```
 
-## Empty database
+Run all tests, unit tests, functional tests
 
-1. Create first root user. functional[✔]
+```
+cd ./tests
+pytest -v
+pytest -v unit
+pytest -v functional
+```
 
-2. Config site
+
+# List of tests
+
+## Database
+  * create tables with alembic migrations. fixture[✔]
+
+## Users
+  * create first admin user with ROOT_USERS email. functional[✔]
+  * create user. unit[✔]
+  * create new user with new user form
+    * with RESERVED_USERNAMES
+  * invite new user
+    * with admin permission
+    * respond to invitation
+
+## Site
+  * create a new site. unit[✔]
+
+## Site configuration
   * save and restore favicon. functional[✔]
   * change colour. functional[✔]
   * change site name. functional[✔]
@@ -15,45 +50,36 @@ Start with empty database
   * change 'only invitations'. functional[✔]
   * change port. functional[✔]
   * change scheme. functional[✔]
-  * edit frontpage. functional[✔]
+  * edit landing page. functional[✔]
   * add/edit/delete consentment texts
   * config SMTP
   * test SMTP
 
-3. Create new user.  unit[✔]
-3.1 Create new user with new user form
-  * with RESERVED_USERNAMES
-  * with ROOT_USERS email
 
-4. Invite new user
-  * with admin permission
-  * respond to invitation
 
-5. Create a new site. unit[✔]
-  * Invite a new admin to the new site
-
-6. Create form
+## Forms
+### Create form
   * with RESERVED_SLUGS
   * with RESERVED_FORM_ELEMENT_NAMES
 
-7. Answers
+### Answers
   * make a answer
   * delete/undo answer
   * edit a answer
   * delete all answer
 
-8. Exipry conditions
+### Exipry conditions
   * Set date expiry in past
   * set number field max total
   * set max answers
 
-9. Share a form
+### Share a form
   * add an editor
 
-10. Shared results.
+### Shared results.
   * share the results and check the links
 
-11. Post subit text
+### Post submit text
   * Modify  the text
   * Check if user receives confirmation email.
 
