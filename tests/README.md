@@ -52,7 +52,7 @@ pytest -v functional
   * change scheme. functional[✔]
   * edit landing page. functional[✔]
   * add/edit/delete consentment texts
-  * config SMTP
+  * config SMTP functional[✔] (partially)
   * test SMTP
 
 

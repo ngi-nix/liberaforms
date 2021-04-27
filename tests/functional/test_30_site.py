@@ -238,3 +238,35 @@ class TestSiteConfig():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<h1>Tested !!</h1>' in html
+
+    def test_save_smtp_config(self, site, client):
+        """ Tests valid smtp config
+        """
+        # TODO: test invalid smtp config
+        response = client.get(
+                        "/site/email/config",
+                        follow_redirects=True,
+                    )
+        html = response.data.decode()
+        assert '<form method="POST" action="/site/email/config">' in html
+        valid_smtp_conf = {
+            'host': 'smtp.example.com',
+            'port': 25,
+            'encryption': 'SSL',
+            'user': 'username',
+            'password': 'password',
+            'noreplyAddress': 'noreply@example.com'
+        }
+        response = client.post(
+                        "/site/email/config",
+                        data = valid_smtp_conf,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        assert site.smtpConfig == valid_smtp_conf
+        html = response.data.decode()
+        assert '<form method="POST" action="/site/email/config">' in html
+
+    @pytest.mark.skip(reason="No way of currently testing this")
+    def test_test_smtp_config(self, site, client):
+        pass
