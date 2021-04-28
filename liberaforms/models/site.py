@@ -1,112 +1,110 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
 import os, datetime, markdown
+from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
-from flask import g
 from flask_babel import gettext
-from urllib.parse import urlparse
 
 from liberaforms import app, db
-from liberaforms.models.form import Form, FormResponse
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.orm.attributes import flag_modified
+from liberaforms.utils.database import CRUD
+from liberaforms.models.form import Form
+from liberaforms.models.answer import Answer
 from liberaforms.models.user import User
 
-from liberaforms.utils.queryset import HostnameQuerySet
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import utils
 
 #from pprint import pprint as pp
 
-class Site(db.Document):
-    meta = {'collection': 'sites', 'queryset_class': HostnameQuerySet}
-    created = db.StringField(required=True)
-    hostname = db.StringField(required=True)
-    port = db.StringField(required=False)
-    siteName = db.StringField(required=True)
-    defaultLanguage=db.StringField(required=True)
-    menuColor=db.StringField(required=True)
-    scheme = db.StringField(required=False)
-    blurb = db.DictField(required=True)
-    invitationOnly = db.BooleanField()
-    consentTexts = db.ListField(required=True)
-    newUserConsentment = db.ListField(required=False)
-    smtpConfig = db.DictField(required=True)
+class Site(db.Model, CRUD):
+    __tablename__ = "site"
+    id = db.Column(db.Integer, primary_key=True, index=True)
+    created = db.Column(db.Date, nullable=False)
+    hostname = db.Column(db.String, nullable=False)
+    port = db.Column(db.Integer, nullable=True)
+    scheme = db.Column(db.String, nullable=False, default="http")
+    siteName = db.Column(db.String, nullable=False)
+    defaultLanguage = db.Column(db.String, nullable=False)
+    menuColor = db.Column(db.String, nullable=False)
+    invitationOnly = db.Column(db.Boolean, default=True)
+    consentTexts = db.Column(ARRAY(JSONB), nullable=False)
+    newUserConsentment = db.Column(JSONB, nullable=True)
+    smtpConfig = db.Column(JSONB, nullable=False)
+    blurb = db.Column(JSONB, nullable=False)
 
-    def __init__(self, *args, **kwargs):        
-        db.Document.__init__(self, *args, **kwargs)
-        #print("Site.__init__ {}".format(self.hostname))
-    
-    def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
-    
-    @classmethod
-    def create(cls, hostname, scheme):
-        with open('%s/../default_blurb.md' % os.path.dirname(os.path.realpath(__file__)), 'r') as defaultBlurb:
+    def __init__(self, hostname, port, scheme):
+        self.created = datetime.datetime.now().isoformat()
+        self.hostname = hostname
+        self.port = port
+        self.scheme = scheme
+        self.siteName = "LiberaForms!"
+        self.defaultLanguage = app.config['DEFAULT_LANGUAGE']
+        self.menuColor = "#b71c1c"
+        self.consentTexts = [   ConsentText.get_empty_consent(
+                                            id=utils.gen_random_string(),
+                                            name="terms"),
+                                ConsentText.get_empty_consent(
+                                            id=utils.gen_random_string(),
+                                            name="DPL")
+                            ]
+        self.newUserConsentment = []
+        self.smtpConfig = { "host": f"smtp.{hostname}",
+                            "port": 25,
+                            "encryption": "",
+                            "user": "",
+                            "password": "",
+                            "noreplyAddress": f"no-reply@{hostname}"
+                          }
+        real_path = os.path.realpath(__file__)
+        blurb_path = f'{os.path.dirname(real_path)}/../default_blurb.md'
+        with open(blurb_path, 'r') as defaultBlurb:
             defaultMD=defaultBlurb.read()
-        blurb = {
-            'markdown': defaultMD,
-            'html': markdown.markdown(defaultMD)
-        }
-        newSiteData={
-            "created": datetime.date.today().strftime("%Y-%m-%d"),
-            "hostname": hostname,
-            "port": None,
-            "scheme": scheme,
-            "blurb": blurb,
-            "invitationOnly": True,
-            "siteName": "LiberaForms!",
-            "defaultLanguage": app.config['DEFAULT_LANGUAGE'],
-            "menuColor": "#b71c1c",
-            "consentTexts": [   ConsentText.get_empty_consent(id=utils.gen_random_string(), name="terms"),
-                                ConsentText.get_empty_consent(id=utils.gen_random_string(), name="DPL") ],
-            "newUserConsentment": [],
-            "smtpConfig": {
-                "host": "smtp.%s" % hostname,
-                "port": 25,
-                "encryption": "",
-                "user": "",
-                "password": "",
-                "noreplyAddress": "no-reply@%s" % hostname
-            }
-        }
-        new_site=Site(**newSiteData)
-        new_site.save()
-        Installation.get() #create the Installation if it doesn't exist
-        return new_site
+        self.blurb = {  'markdown': defaultMD,
+                        'html': markdown.markdown(defaultMD)
+                     }
+
+    def __str__(self):
+        return utils.print_obj_values(self)
 
     @classmethod
-    def find(cls, *args, **kwargs):
-        site = cls.find_all(*args, **kwargs).first()
-        if not site:
-            site=cls.create(hostname=kwargs['hostname'], scheme="http")
-        return site
-
-    @classmethod
-    def find_all(cls, *args, **kwargs):
-        return cls.objects.ensure_hostname(**kwargs)
+    def find(cls, url_parse=None):
+        site = cls.query.first()
+        if site:
+            return site
+        if url_parse:
+            new_site = Site(
+                hostname = url_parse.hostname,
+                port = url_parse.port,
+                scheme = url_parse.scheme
+            )
+            new_site.save()
+            return new_site
+        return None
 
     @property
     def host_url(self):
-        url= "%s://%s" % (self.scheme, self.hostname)
+        url= f"{self.scheme}://{self.hostname}"
         if self.port:
-            url = "%s:%s" % (url, self.port)
+            url = f"{url}:{self.port}"
         return url+'/'
 
     def favicon_url(self):
-        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
         if os.path.exists(path):
-            return "/static/images/favicon/%s_favicon.png" % self.hostname
+            return f"/static/images/favicon/{self.hostname}_favicon.png"
         else:
             return "/static/images/favicon/default-favicon.png"
 
     def delete_favicon(self):
-        path="%s%s_favicon.png" % (app.config['FAVICON_FOLDER'], self.hostname)
+        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
         if os.path.exists(path):
             os.remove(path)
             return True
@@ -124,15 +122,15 @@ class Site(db.Document):
     @property
     def DPL_consent_id(self):
         return self.consentTexts[1]['id']
-    
+
     @property
     def termsAndConditions(self):
         return self.consentTexts[0]
-    
+
     @property
     def data_consent(self):
         return self.consentTexts[1]
-    
+
     def get_consent_for_display(self, id, enabled_only=True):
         #print("id to find: "+id)
         #print("site.terms_consent_id: "+self.terms_consent_id)
@@ -141,17 +139,17 @@ class Site(db.Document):
             return self.get_terms_and_conditions_for_display(enabled_only=enabled_only)
         if id == self.DPL_consent_id:
             return self.get_data_consent_for_display(enabled_only=enabled_only)
-        
+
         # this method should return before this.
         print("ERROR")
         return ConsentText.get_empty_consent()
-        
+
         # need to test this
         consent = ConsentText._get_consent_by_id(id, self)
         if consent and (enabled_only and not consent['enabled']):
             return ConsentText.get_empty_consent(id=consent['id'])
         return ConsentText.get_consent_for_display(id, self)
-        
+
     def get_terms_and_conditions_for_display(self, enabled_only=True):
         consent=self.termsAndConditions
         if (enabled_only and not consent['enabled']):
@@ -159,7 +157,8 @@ class Site(db.Document):
             consent['label'] = ""
             return consent
         if not consent['markdown']:
-            consent = ConsentText.default_terms(id=consent['id'], enabled=consent['enabled'])
+            consent = ConsentText.default_terms(id=consent['id'],
+                                                enabled=consent['enabled'])
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
@@ -170,13 +169,15 @@ class Site(db.Document):
             consent['label'] = ""
             return consent
         if not consent['markdown']:
-            consent = ConsentText.default_DPL(id=consent['id'], enabled=consent['enabled'])
+            consent = ConsentText.default_DPL(  id=consent['id'],
+                                                enabled=consent['enabled'])
         consent['label'] = consent['label'] if consent['label'] else ""
         return consent
 
     def update_included_new_user_consentment_texts(self, id):
         if id in self.newUserConsentment:
             self.newUserConsentment.remove(id)
+            flag_modified(self, "newUserConsentment")
             self.save()
             return False
         else:
@@ -186,12 +187,13 @@ class Site(db.Document):
                 self.newUserConsentment.append(id)
             else:
                 self.newUserConsentment.insert(-1, id)
+            flag_modified(self, "newUserConsentment")
             self.save()
             return True
-    
+
     def toggle_consent_enabled(self, id):
         return ConsentText.toggle_enabled(id, self)
-        
+
     def save_consent(self, id, data):
         consent = [item for item in self.consentTexts if item["id"]==id]
         consent = consent[0] if consent else None
@@ -211,6 +213,7 @@ class Site(db.Document):
             if not consent['markdown']:
                 consent['markdown'] = ConsentText.default_DPL()['markdown']
                 consent['html'] = ConsentText.default_DPL()['html']
+        flag_modified(self, "consentTexts")
         self.save()
         return consent
 
@@ -219,8 +222,8 @@ class Site(db.Document):
         self.save()
 
     def get_admins(self):
-        return User.find_all(admin__isAdmin=True, hostname=self.hostname)
-    
+        return User.find_all(isAdmin=True)
+
     def toggle_invitation_only(self):
         self.invitationOnly = False if self.invitationOnly else True
         self.save()
@@ -231,26 +234,13 @@ class Site(db.Document):
         self.save()
         return self.scheme
 
-    def delete_site(self):
-        users=User.find_all(hostname=self.hostname)
-        for user in users:
-            user.delete_user()
-        invites = Invite.find_all(hostname=self.hostname)
-        for invite in invites:
-            invite.delete()
-        return self.delete()
-    
     def get_forms(self, **kwargs):
         return Form.find_all(**kwargs)
 
     def get_entries(self, **kwargs):
-        return FormResponse.find_all(**kwargs)
-    
-    def get_users(self, **kwargs):
-        return User.find_all(**kwargs)
+        return Answer.find_all(**kwargs)
 
-    def get_admins(self, **kwargs):
-        kwargs={"admin__isAdmin": True, **kwargs}
+    def get_users(self, **kwargs):
         return User.find_all(**kwargs)
 
     def get_statistics(self, **kwargs):
@@ -267,7 +257,7 @@ class Site(db.Document):
                 month = 1
                 year = year +1
             two_digit_month="{0:0=2d}".format(month)
-            year_month = "{}-{}".format(year, two_digit_month)
+            year_month = f"{year}-{two_digit_month}"
             result['labels'].append(year_month)
             if year_month == today:
                 break
@@ -275,10 +265,18 @@ class Site(db.Document):
         total_forms=0
         total_users=0
         for year_month in result['labels']:
-            kwargs['created__startswith'] = year_month
-            monthy_entries = FormResponse.find_all(**kwargs).count()
-            monthy_forms = Form.find_all(**kwargs).count()
-            monthy_users = User.find_all(**kwargs).count()
+            date_str = year_month.replace('-', ', ')
+            start_date = datetime.datetime.strptime(date_str, '%Y, %m')
+            stop_date = start_date + relativedelta(months=1)
+            monthy_users = User.query.filter(
+                                    User.created >= start_date,
+                                    User.created < stop_date).count()
+            monthy_forms = Form.query.filter(
+                                    Form.created >= start_date,
+                                    Form.created < stop_date).count()
+            monthy_entries = Answer.query.filter(
+                                    Answer.created >= start_date,
+                                    Answer.created < stop_date).count()
             total_entries = total_entries + monthy_entries
             total_forms= total_forms + monthy_forms
             total_users = total_users + monthy_users
@@ -292,8 +290,6 @@ class Site(db.Document):
 
     def write_users_csv(self):
         fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
-        if g.is_root_user_enabled:
-            fieldnames.insert(0, "hostname")
         fieldheaders={  "username": gettext("Username"),
                         "created": gettext("Created"),
                         "enabled": gettext("Enabled"),
@@ -301,155 +297,21 @@ class Site(db.Document):
                         "forms": gettext("Forms"),
                         "admin": gettext("Admin")
                         }
-        csv_name = os.path.join(app.config['TMP_DIR'], "{}.users.csv".format(self.hostname))
+        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.hostname}.users.csv")
         with open(csv_name, mode='wb') as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
+            writer = csv.DictWriter(csv_file,
+                                    fieldnames=fieldnames,
+                                    extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in self.get_users():
+                is_enabled = gettext("True") if user.enabled else gettext("False")
+                is_admin = gettext("True") if user.is_admin() else gettext("False")
                 row = { "username": user.username,
-                        "created": user.created,
-                        "enabled": gettext("True") if user.enabled else gettext("False"),
+                        "created": user.created.strftime("%Y-%m-%d"),
+                        "enabled": is_enabled,
                         "email": user.email,
                         "forms": user.get_forms().count(),
-                        "admin": gettext("True") if user.is_admin() else gettext("False"),
-                        "hostname": user.hostname
+                        "admin": is_admin
                         }
                 writer.writerow(row)
         return csv_name
-
-
-class Invite(db.Document):
-    meta = {'collection': 'invites', 'queryset_class': HostnameQuerySet}
-    hostname = db.StringField(required=True)
-    email = db.EmailField(required=True)
-    message = db.StringField(required=False)
-    token = db.DictField(required=True)
-    admin = db.BooleanField()
-   
-    def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-
-    def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
-
-    @classmethod
-    def create(cls, hostname, email, message, admin=False):
-        data={
-            "hostname": hostname,
-            "email": email,
-            "message": message,
-            "token": utils.create_token(Invite),
-            "admin": admin
-        }
-        newInvite=Invite(**data)
-        newInvite.save()
-        return newInvite
-
-    @classmethod
-    def find(cls, **kwargs):
-        if 'token' in kwargs:
-            kwargs={"token__token": kwargs['token'], **kwargs}
-            kwargs.pop('token')
-        return cls.find_all(**kwargs).first()
-
-    @classmethod
-    def find_all(cls, **kwargs):
-        return cls.objects.ensure_hostname(**kwargs)
-    
-    def get_link(self):
-        site = Site.find(hostname=self.hostname)
-        return "{}user/new/{}".format(site.host_url, self.token['token'])
-    
-    def get_message(self):
-        return "{}\n\n{}".format(self.message, self.get_link())
-
-    def set_token(self, **kwargs):
-        self.invite['token']=utils.create_token(Invite, **kwargs)
-        self.save()
-        
-    @staticmethod
-    def default_message():
-        return gettext("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")
-        
-
-class Installation(db.Document):
-    name = db.StringField(required=True)
-    schemaVersion = db.IntField(required=True)
-    created = db.StringField(required=True)
-   
-    def __init__(self, *args, **kwargs):
-        db.Document.__init__(self, *args, **kwargs)
-
-    def __str__(self):
-        from liberaforms.utils.utils import print_obj_values
-        return print_obj_values(self)
-
-    @classmethod
-    def get(cls):
-        installation=cls.objects.first()
-        if not installation:
-            installation=Installation.create()
-        return installation
-    
-    @classmethod
-    def create(cls):
-        if cls.objects.first():
-            return
-        data={  "name": "LiberaForms",
-                "schemaVersion": app.config['SCHEMA_VERSION'],
-                "created": datetime.date.today().strftime("%Y-%m-%d")}
-        new_installation=cls(**data)
-        new_installation.save()
-        return new_installation
-    
-    def is_schema_up_to_date(self):
-        return True if self.schemaVersion == app.config['SCHEMA_VERSION'] else False
-
-    def update_schema(self):
-        from liberaforms.utils.migrate import migrateMongoSchema
-        if not self.is_schema_up_to_date():
-            migrated_up_to=migrateMongoSchema(self.schemaVersion)
-            self.schemaVersion=migrated_up_to
-            self.save()
-            return True if self.is_schema_up_to_date() else False
-        else:
-            True
-    
-    @staticmethod
-    def get_sites(**kwargs):
-        return Site.find_all(**kwargs)
-    
-    @staticmethod
-    def get_admins(**kwargs):
-        kwargs={"admin__isAdmin": True, **kwargs}
-        return User.objects(**kwargs)
-
-    @classmethod
-    def write_admins_csv(cls):
-        fieldnames=["hostname", "username", "created", "enabled", "email", "forms"]
-        fieldheaders={  "username": gettext("Username"),
-                        "created": gettext("Created"),
-                        "enabled": gettext("Enabled"),
-                        "email": gettext("Email"),
-                        "forms": gettext("Forms")
-                        }
-        csv_name = os.path.join(app.config['TMP_DIR'], "LiberaForms.admin.csv")
-        with open(csv_name, mode='wb') as csv_file:
-            writer = csv.DictWriter(csv_file, fieldnames=fieldnames, extrasaction='ignore')
-            writer.writerow(fieldheaders)
-            for user in cls.get_admins():
-                row = { "username": user.username,
-                        "created": user.created,
-                        "enabled": gettext("True") if user.enabled else gettext("False"),
-                        "email": user.email,
-                        "forms": user.get_forms().count(),
-                        "admin": gettext("True") if user.is_admin() else gettext("False"),
-                        "hostname": user.hostname
-                        }
-                writer.writerow(row)
-        return csv_name
-
-    @staticmethod
-    def is_user(email):
-        return True if User.objects(email=email).first() else False

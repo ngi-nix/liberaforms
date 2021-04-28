@@ -14,7 +14,6 @@ from flask_babel import lazy_gettext as _
 
 from liberaforms import app
 from liberaforms.models.user import User
-from liberaforms.models.site import Installation
 from liberaforms.utils.sanitizers import sanitize_username
 from liberaforms.utils import validators
 
@@ -26,7 +25,7 @@ class NewUser(FlaskForm):
     password2 = PasswordField(_("Password again"), validators=[DataRequired(), EqualTo('password')])
     termsAndConditions = BooleanField()
     DPLConsent = BooleanField()
-    
+
     def validate_username(self, username):
         if username.data != sanitize_username(username.data):
             raise ValidationError(_("Username is not valid"))
@@ -38,28 +37,28 @@ class NewUser(FlaskForm):
             raise ValidationError(_("Please use a different username"))
 
     def validate_email(self, email):
-        if (email.data) and User.find(email=email.data):
+        if User.find(email=email.data):
             raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
-            # a root_user email can only be used once across all sites.
-            raise ValidationError(_("Please use a different email address"))
-            
+
     def validate_password(self, password):
         if validators.pwd_policy.test(password.data):
             raise ValidationError(_("Your password is weak"))
-            
+
     def validate_termsAndConditions(self, termsAndConditions):
-        if g.site.terms_consent_id in g.site.newUserConsentment and not termsAndConditions.data:
+        if g.site.terms_consent_id in g.site.newUserConsentment \
+            and not termsAndConditions.data:
             raise ValidationError(_("Please accept our terms and conditions"))
 
     def validate_DPLConsent(self, DPLConsent):
-        if g.site.DPL_consent_id in g.site.newUserConsentment and not DPLConsent.data:
+        if g.site.DPL_consent_id in g.site.newUserConsentment \
+            and not DPLConsent.data:
             raise ValidationError(_("Please accept our data protection policy"))
+
 
 class Login(FlaskForm):
     username = StringField(_("Username"), validators=[DataRequired()])
     password = PasswordField(_("Password"), validators=[DataRequired()])
-    
+
     def validate_username(self, username):
         if username.data != sanitize_username(username.data):
             return False
@@ -73,26 +72,22 @@ class DeleteAccount(FlaskForm):
         if delete_username.data != g.current_user.username:
             raise ValidationError(_("That is not your username"))
             return False
-    
+
     def validate_delete_password(self, delete_password):
         if not validators.verify_password(delete_password.data, g.current_user.password_hash):
-            raise ValidationError(_("That is not your password"))    
+            raise ValidationError(_("That is not your password"))
 
 
 class GetEmail(FlaskForm):
     email = StringField(_("Email address"), validators=[DataRequired(), Email()])
-    
-    
+
+
 class ChangeEmail(FlaskForm):
     email = StringField(_("New email address"), validators=[DataRequired(), Email()])
-    
-    def validate_email(self, email):
-        if User.find(email=email.data):
-            raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
-            # a root_user email can only be used once across all sites.
-            raise ValidationError(_("Please use a different email address"))
 
+    def validate_email(self, email):
+        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
+            raise ValidationError(_("Please use a different email address"))
 
 class ResetPassword(FlaskForm):
     password = PasswordField(_("Password"), validators=[DataRequired()])
@@ -118,13 +113,9 @@ class NewInvite(FlaskForm):
     email = StringField(_("New user's email"), validators=[DataRequired(), Email()])
     message = TextAreaField(_("Include message"), validators=[DataRequired()])
     admin = BooleanField(_("Make the new user an Admin"))
-    hostname = StringField(_("hostname"), validators=[DataRequired()])
-    
+
     def validate_email(self, email):
-        if User.find(email=email.data, hostname=self.hostname.data):
-            raise ValidationError(_("Please use a different email address"))
-        elif email.data in app.config['ROOT_USERS'] and Installation.is_user(email.data):
-            # a root_user email can only be used once across all sites.
+        if User.find(email=email.data) or email.data in app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 

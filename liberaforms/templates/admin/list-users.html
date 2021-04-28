@@ -56,7 +56,7 @@
         {% endif %}
         <td>{{user.enabled}}</td>
         <td>{{user.email}}</td>
-        <td>{{user.get_forms()|length}}</td>
+        <td>{{user.get_forms().count()}}</td>
         <td>{{user.is_admin()}}</td>
     </tr>
     {% endfor %}

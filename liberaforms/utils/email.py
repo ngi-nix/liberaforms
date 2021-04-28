@@ -21,7 +21,7 @@ from liberaforms.models.user import User
 class EmailServer():
     server = None
 
-    def __init__(self):    
+    def __init__(self):
         config = g.site.smtpConfig
         if config["encryption"] == "SSL":
             try:
@@ -48,7 +48,7 @@ class EmailServer():
     def closeConnection(self):
         if self.server:
             self.server.quit()
-            
+
     def send(self, msg):
         if not self.server:
             return False
@@ -58,9 +58,8 @@ class EmailServer():
             msg['Message-ID'] = make_msgid()
             if not msg['Errors-To']:
                 criteria={  'blocked': False,
-                            'hostname': g.site.hostname,
                             'validatedEmail': True,
-                            'admin__isAdmin': True }
+                            'isAdmin': True }
                 admins=User.find_all(**criteria)
                 if admins:
                     msg['Errors-To'] = g.site.get_admins()[0].email
@@ -79,11 +78,12 @@ class EmailServer():
         state = self.send(msg)
         self.closeConnection()
         return state
-        
+
     def sendInvite(self, invite):
         body = invite.get_message()
         msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
-        msg['Subject'] = Header(gettext("Invitation to %s" % invite.hostname)).encode()
+        subject = gettext("Invitation to %s" % g.site.siteName)
+        msg['Subject'] = Header(subject).encode()
         msg['To'] = invite.email
         state = self.send(msg)
         self.closeConnection()
@@ -92,19 +92,14 @@ class EmailServer():
     def sendNewUserNotification(self, user):
         emails=[]
         criteria={  'blocked': False,
-                    'hostname': user.hostname,
                     'validatedEmail': True,
-                    'admin__isAdmin': True,
-                    'admin__notifyNewUser': True}
+                    'isAdmin': True,
+                    'notifyNewUser': True}
         admins=User.find_all(**criteria)
         for admin in admins:
-            emails.append(admin['email'])
-        rootUsers=User.objects(__raw__={'email':{"$in": app.config['ROOT_USERS']},
-                                        'admin.notifyNewUser':True})
-        for rootUser in rootUsers:
-            if not rootUser['email'] in emails:
-                emails.append(rootUser['email'])
-        body = gettext("New user '%s' created at %s" % (user.username, user.hostname))
+            emails.append(admin.email)
+        body = gettext("New user '%s' created at %s" % (user.username,
+                                                        g.site.siteName))
         subject = Header(gettext("LiberaForms. New user notification")).encode()
         for msg_to in emails:
             msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
@@ -115,7 +110,9 @@ class EmailServer():
 
     def sendRecoverPassword(self, user):
         link = "%ssite/recover-password/%s" % (g.site.host_url, user.token['token'])
-        body = "%s\n\n%s" % (gettext("Please use this link to recover your password"), link)
+        body = "%s\n\n%s" % (
+                    gettext("Please use this link to recover your password"),
+                    link)
         msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
         msg['Subject'] = Header(gettext("LiberaForms. Recover password")).encode()
         msg['To'] = user.email
@@ -136,20 +133,13 @@ class EmailServer():
     def sendNewFormNotification(self, form):
         emails=[]
         criteria={  'blocked': False,
-                    'hostname': form.hostname,
                     'validatedEmail': True,
-                    'admin__isAdmin': True,
-                    'admin__notifyNewForm': True}
+                    'isAdmin': True,
+                    'notifyNewForm': True}
         admins=User.find_all(**criteria)
         for admin in admins:
-            emails.append(admin['email'])
-        rootUsers=User.objects(__raw__={'email': {"$in": app.config['ROOT_USERS']},
-                                        'admin.notifyNewForm':True})
-        for rootUser in rootUsers:
-            if not rootUser['email'] in emails:
-                emails.append(rootUser['email'])
-            
-        body = gettext("New form '%s' created at %s" % (form.slug, form.hostname))
+            emails.append(admin.email)
+        body = gettext("New form '%s' created" % form.slug)
         subject = Header(gettext("LiberaForms. New form notification")).encode()
         for msg_to in emails:
             msg = MIMEText(body, _subtype='plain', _charset='UTF-8')
@@ -159,7 +149,7 @@ class EmailServer():
         self.closeConnection()
 
     def sendNewFormEntryNotification(self, emails, entry, slug):
-        body = gettext("New form entry in %s at %s\n" % (slug, g.site.hostname))
+        body = gettext("New form entry for %s\n" % slug)
         for data in entry:
             body = "%s\n%s: %s" % (body, data[0], data[1])
         body = "%s\n" % body
@@ -182,7 +172,7 @@ class EmailServer():
         return state
 
     def sendExpiredFormNotification(self, editorEmails, form):
-        body = gettext("The form '%s' has expired at %s" % (form.slug, g.site.hostname))
+        body = gettext("The form '%s' has expired" % form.slug)
         subject = Header(gettext("LiberaForms. A form has expired")).encode()
         for msg_to in editorEmails:
             msg = MIMEText(body, _subtype='plain', _charset='UTF-8')

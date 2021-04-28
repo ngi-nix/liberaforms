@@ -19,7 +19,7 @@
             <tr>
                <td>{%trans%}Username{%endtrans%}</td>
                <td>{{ user.username }}</td>
-            </tr>        
+            </tr>
             {% if g.is_root_user_enabled %}
                 <tr>
                    <td>{%trans%}Hostname{%endtrans%}</td>
@@ -34,7 +34,7 @@
                     <button id="admin_false" class="btn btn-xs btn-default {% if not user.is_admin() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                 </td>
-            </tr>            
+            </tr>
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ user.created }}</td>
@@ -67,7 +67,7 @@
             </tr>
         </table>
         {% if not user.id == g.current_user.id %}
-            {% if forms|length %}
+            {% if forms.count() %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
             <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
@@ -85,7 +85,7 @@
     <div class="title_1 delimited" style="margin-top:2em">
         {%trans%}Forms{%endtrans%}
     </div>
-    
+
     <table id="forms" style="display:none" class="table table-sm table-striped">
         <thead>
             <tr>
@@ -97,7 +97,7 @@
                 <th>{%trans%}Entries{%endtrans%}</th>
             </tr>
         </thead>
-        
+
         {% for form in forms %}
         <tr>
            <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
@@ -115,7 +115,7 @@
         </tr>
         {% endfor %}
     </table>
-    
+
     </div>
 </div>
 </div>
@@ -193,7 +193,7 @@ var time_chart = new Chart(ctx, {
                 fill: true,
                 borderWidth: 0,
                 backgroundColor: "rgba(182, 0, 181, 0.7)",
-                
+
             },
             {
                 label: ["{{ _('Forms')}}"],
@@ -217,5 +217,5 @@ var time_chart = new Chart(ctx, {
     }
 });
 </script>
-  
+
 {% endblock %}

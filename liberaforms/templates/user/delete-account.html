@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-    
+
         <div class="title_1 delimited">
             {%trans%}Delete account{%endtrans%}: {{ user.username }}
         </div>
@@ -15,7 +15,7 @@
         <table class="table table-sm" style="margin-top: 1em">
             <tr>
                 <td>{%trans%}The forms you have created{%endtrans%}</td>
-                <td>{{ user.get_authored_forms().count() }}</td>
+                <td>{{ user.authored_forms_total() }}</td>
             </tr>
             <tr>
                 <td>{%trans%}The replies to those forms{%endtrans%}</td>
@@ -47,10 +47,12 @@
         </div>
 
         <input class="btn-danger btn" type="submit" value="{%trans%}Delete account{%endtrans%}" />
-        <a class="btn btn-primary" role="button" href="/user/{{user.username}}">{%trans%}Cancel{%endtrans%}</a>
+        <a class="btn btn-primary" role="button" href="/user/{{user.username}}">
+          {%trans%}Cancel{%endtrans%}
+        </a>
         </div>
         </form>
-        
+
 
     </div>
 </div>

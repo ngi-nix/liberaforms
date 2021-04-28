@@ -6,64 +6,58 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-        
-    <div class="title_1 delimited">{{ site.hostname }}</div>
 
-    <table class="table table-striped table-sm">
-        <tr>
-            <td>{%trans%}Hostname{%endtrans%}</td>
-            <td>{{ site.hostname }}</td>
-        </tr>
-        <tr>
-            <td>{%trans%}Sitename{%endtrans%}</td>
-            <td>{{ site.siteName }}</td>
-        </tr>
-        <tr>
-            <td>{%trans%}Users{%endtrans%}</td>
-            <td>{{ site.get_users(hostname=site.hostname).count() }}</td>
-        </tr>
-        <tr>
-            <td>{%trans%}Forms{%endtrans%}</td>
-            <td>{{ site.get_forms(hostname=site.hostname).count() }}</td>
-        </tr>
-        <tr>
-            <td>{%trans%}Invitation only{%endtrans%}</td>
-            <td>{{ site.invitationOnly }}</td>
-        </tr>
-    </table>
-    
-    <div class="title_2">{%trans%}Public link creation{%endtrans%}</div>
-
-    <div class="title_3 link">
-        <span id="site_scheme">{{site.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.port %}style="display:none"{% endif %}>:{{ site.port }}</span>/xxxx
-        </span>
+    <div class="title_1 delimited">
+      {%trans%}Public link creation{%endtrans%}
     </div>
-    <table class="table table-sm">
-        <tr>
-            <td>{%trans%}Scheme{%endtrans%}</td>
-            <td class="text-right">
-                <div id="toggle_scheme" class="btn-group btn-toggle">
-                <button id="site_scheme_http" class="btn btn-xs btn-default {% if site.scheme=='http' %}btn-primary{% endif %}">HTTP</button>
-                <button id="site_scheme_https" class="btn btn-xs btn-default {% if site.scheme=='https' %}btn-primary{% endif %}">HTTPS</button>
-                </div>
-            </td>
-        </tr>    
+
+    <div class="title_2 link">
+        <span id="site_scheme">{{site.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.port %}style="display:none"{% endif %}>:{{ site.port }}</span>/xxxx
+    </div>
+    <table class="table table-sm" style="margin-top: 2em">
+      <tr>
+        <td>
+          {%trans%}Scheme{%endtrans%}
+        </td>
+        <td class="text-right">
+          <div id="toggle_scheme" class="btn-group btn-toggle">
+          <button id="site_scheme_http"
+                  class="btn btn-xs btn-default {% if site.scheme=='http' %}btn-primary{% endif %}"
+                  >
+                  HTTP
+          </button>
+          <button id="site_scheme_https"
+                  class="btn btn-xs btn-default {% if site.scheme=='https' %}btn-primary{% endif %}"
+                  >
+                  HTTPS
+          </button>
+          </div>
+        </td>
+      </tr>
     </table>
 
     <div class="input-group input-group-sm mb-3">
       <div class="input-group-prepend">
         <span class="input-group-text" id="basic-addon1">Port</span>
       </div>
-      <input id="port" type="text" class="form-control" value="{% if site.port %}{{site.port}}{% endif %}" aria-label="Port" aria-describedby="basic-addon1">
+      <input id="port"
+             type="text"
+             class="form-control"
+             value="{% if site.port %}{{site.port}}{% endif %}"
+             aria-label="Port"
+             aria-describedby="basic-addon1">
       <div class="input-group-append">
-        <input id="port_button" class="btn-primary btn btn-md" type="button" value="{%trans%}Change{%endtrans%}" >
+        <input id="port_button"
+               class="btn-primary btn btn-md"
+               type="button"
+               value="{%trans%}Change{%endtrans%}" >
       </div>
     </div>
 
     <div class="form-actions">
-    <a class="btn btn-warning" role="button" href="/site/delete/{{ site.hostname }}">{%trans%}Delete{%endtrans%}</a>
-    <a class="btn btn-primary" role="button" href="/admin#root_user_settings">{%trans%}Go back{%endtrans%}</a>
-
+      <a class="btn btn-primary" role="button" href="/admin">
+        {%trans%}Go back{%endtrans%}
+      </a>
     </div>
     </div>
 </div>
@@ -73,7 +67,7 @@
 var csrftoken = "{{ csrf_token() }}";
 document.getElementById('toggle_scheme').addEventListener('click', function(evt){
     $.ajax({
-        url : "/site/toggle-scheme/{{site.hostname}}",
+        url : "/site/toggle-scheme",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -97,7 +91,7 @@ document.getElementById('toggle_scheme').addEventListener('click', function(evt)
 });
 document.getElementById('port_button').addEventListener('click', function(evt){
     $.ajax({
-        url : "/site/change-port/{{site.hostname}}/"+$('#port').val(),
+        url : "/site/change-port/"+$('#port').val(),
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -114,7 +108,7 @@ document.getElementById('port_button').addEventListener('click', function(evt){
                 $('#port').val(data.port)
                 $('#site_port').html(":"+data.port);
                 $('#site_port').show();
-            }            
+            }
         }
     });
 });

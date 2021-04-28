@@ -12,9 +12,11 @@ from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
 from liberaforms import app
-from liberaforms.models.site import Site, Invite, Installation
+from liberaforms.models.site import Site
+from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
+from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email import EmailServer
 import liberaforms.utils.wtf as wtf
@@ -28,7 +30,7 @@ site_bp = Blueprint('site_bp', __name__,
 @site_bp.route('/site/save-blurb', methods=['POST'])
 @admin_required
 def save_blurb():
-    if 'editor' in request.form:            
+    if 'editor' in request.form:
         g.site.save_blurb(request.form['editor'])
         flash(gettext("Text saved OK"), 'success')
     return redirect(make_url_for('main_bp.index'))
@@ -44,7 +46,7 @@ def recover_password(token=None):
         if not user:
             flash(gettext("Couldn't find that token"), 'warning')
             return redirect(make_url_for('main_bp.index'))
-        if not validators.is_valid_token(user.token):
+        if validators.has_token_expired(user.token):
             flash(gettext("Your petition has expired"), 'warning')
             user.delete_token()
             return redirect(make_url_for('main_bp.index'))
@@ -58,7 +60,7 @@ def recover_password(token=None):
         # login the user
         session['user_id']=str(user.id)
         return redirect(make_url_for('user_bp.reset_password'))
-    
+
     wtform=wtf.GetEmail()
     if wtform.validate_on_submit():
         user = User.find(email=wtform.email.data, blocked=False)
@@ -66,12 +68,15 @@ def recover_password(token=None):
             user.set_token()
             EmailServer().sendRecoverPassword(user)
         if not user and wtform.email.data in app.config['ROOT_USERS']:
-            # root_user emails are only good for one account, across all sites.
-            if not Installation.is_user(wtform.email.data):
-                # auto invite root users
-                message="New root user at %s." % g.site.hostname
-                invite=Invite.create(g.site.hostname, wtform.email.data, message, True)
-                return redirect(make_url_for('user_bp.new_user', token=invite.token['token']))
+            if User.query.count() == 0:
+                # auto invite first root user
+                invite=Invite(  email=wtform.email.data,
+                                message="New root user",
+                                token=utils.create_token(Invite),
+                                admin=True)
+                invite.save()
+                return redirect(make_url_for('user_bp.new_user',
+                                             token=invite.token['token']))
         flash(gettext("We may have sent you an email"), 'info')
         return redirect(make_url_for('main_bp.index'))
     return render_template('recover-password.html', wtform=wtform)
@@ -86,11 +91,16 @@ def consent():
 @site_bp.route('/site/save-consent/<string:id>', methods=['POST'])
 @admin_required
 def save_consent(id):
-    if 'markdown' in request.form and "label" in request.form and "required" in request.form:
-        consent = g.site.save_consent(id, data=request.form.to_dict(flat=True))
+    if 'markdown' in request.form \
+        and "label" in request.form \
+        and "required" in request.form:
+        data = request.form.to_dict(flat=True)
+        consent = g.site.save_consent(id, data=data)
         if consent:
             return JsonResponse(json.dumps(consent))
-    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}))
+    return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % (
+                                                gettext("An error occured")),
+                                    "label":""}))
 
 
 
@@ -127,7 +137,8 @@ def change_siteName():
 @admin_required
 def change_default_language():
     if request.method == 'POST':
-        if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
+        if 'language' in request.form \
+            and request.form['language'] in app.config['LANGUAGES']:
             g.site.defaultLanguage=request.form['language']
             g.site.save()
             flash(gettext("Language updated OK"), 'success')
@@ -166,7 +177,7 @@ def reset_site_favicon():
 
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
 @admin_required
-def toggle_invitation_only(): 
+def toggle_invitation_only():
     return JsonResponse(json.dumps({'invite': g.site.toggle_invitation_only()}))
 
 
@@ -175,17 +186,23 @@ def toggle_invitation_only():
 def smtp_config():
     wtf_smtp=wtf.smtpConfig(**g.site.smtpConfig)
     if wtf_smtp.validate_on_submit():
+        if not wtf_smtp.encryption.data == "None":
+            encryption = wtf_smtp.encryption.data
+        else:
+            encryption = ""
         config={}
         config['host'] = wtf_smtp.host.data
         config['port'] = wtf_smtp.port.data
-        config['encryption']=wtf_smtp.encryption.data if not wtf_smtp.encryption.data=="None" else ""
+        config['encryption'] = encryption
         config['user'] = wtf_smtp.user.data
         config['password'] = wtf_smtp.password.data
         config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
         g.site.save_smtp_config(**config)
         flash(gettext("Confguration saved OK"), 'success')
     wtf_email=wtf.GetEmail()
-    return render_template('smtp-config.html', wtf_smtp=wtf_smtp, wtf_email=wtf_email)
+    return render_template('smtp-config.html',
+                            wtf_smtp=wtf_smtp,
+                            wtf_email=wtf_email)
 
 
 @site_bp.route('/site/email/test-config', methods=['POST'])
@@ -200,10 +217,10 @@ def test_smtp():
     return redirect(make_url_for('site_bp.smtp_config'))
 
 
-@site_bp.route('/site/edit/<string:hostname>', methods=['GET'])
+@site_bp.route('/site/edit', methods=['GET'])
 @rootuser_required
-def edit_site(hostname):
-    queriedSite=Site.find(hostname=hostname)
+def edit_site():
+    queriedSite=Site.find()
     return render_template('edit-site.html', site=queriedSite)
 
 @site_bp.route('/site/change-menu-color', methods=['GET', 'POST'])
@@ -221,69 +238,22 @@ def menu_color():
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():
-    sites = Installation.get_sites() if g.is_root_user_enabled else []
-    return render_template('stats.html', site=g.site, sites=sites)
+    return render_template('stats.html', site=g.site)
 
 
-@site_bp.route('/site/toggle-scheme/<string:hostname>', methods=['POST'])
+@site_bp.route('/site/toggle-scheme', methods=['POST'])
 @rootuser_required
-def toggle_site_scheme(hostname): 
-    queriedSite=Site.find(hostname=hostname)
-    return json.dumps({'scheme': queriedSite.toggle_scheme()})
+def toggle_site_scheme():
+    return json.dumps({'scheme': g.site.toggle_scheme()})
 
 
-@site_bp.route('/site/change-port/<string:hostname>/', methods=['POST'])
-@site_bp.route('/site/change-port/<string:hostname>/<string:port>', methods=['POST'])
+@site_bp.route('/site/change-port/', methods=['POST'])
+@site_bp.route('/site/change-port/<int:port>', methods=['POST'])
 @rootuser_required
-def change_site_port(hostname, port=None):
-    queriedSite=Site.find(hostname=hostname)
-    if not port:
-        queriedSite.port=None
-    else:
-        try:
-            int(port)
-            queriedSite.port=port
-        except:
-            pass
-    queriedSite.save()
-    return json.dumps({'port': queriedSite.port})
-    
-
-@site_bp.route('/site/delete/<string:hostname>', methods=['GET', 'POST'])
-@rootuser_required
-def delete_site(hostname):
-    queriedSite=Site.find(hostname=hostname)
-    if not queriedSite:
-        flash(gettext("Site not found"), 'warning')
-        return redirect(make_url_for('admin_bp.site_admin'))
-    if request.method == 'POST' and 'hostname' in request.form:
-        if queriedSite.hostname == request.form['hostname']:
-            if g.site.hostname == queriedSite.hostname:
-                flash(gettext("Cannot delete current site"), 'warning')
-                return redirect(make_url_for('admin_bp.site_admin'))
-            queriedSite.delete_site()
-            flash(gettext("Deleted %s" % queriedSite.host_url), 'success')
-            return redirect(make_url_for('admin_bp.site_admin'))
-        else:
-            flash(gettext("Site name does not match"), 'warning')
-    return render_template('delete-site.html', site=queriedSite)
-
-
-@site_bp.route('/site/admins', methods=['GET'])
-@admin_required
-def list_admins():
-    return render_template('list-admins.html', admins=g.site.get_admins())
-
-
-@site_bp.route('/site/admins/csv', methods=['GET'])
-@rootuser_required
-def csv_admin():
-    csv_file = Installation.write_admins_csv()
-    @after_this_request 
-    def remove_file(response): 
-        os.remove(csv_file) 
-        return response
-    return send_file(csv_file, mimetype="text/csv", as_attachment=True)
+def change_site_port(port=None):
+    g.site.port=port
+    g.site.save()
+    return json.dumps({'port': g.site.port})
 
 
 @site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])

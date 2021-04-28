@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 
 def sanitize_string(string):
     string = unidecode(string)
-    string = string.replace(" ", "") 
+    string = string.replace(" ", "")
     return re.sub('[^A-Za-z0-9\-]', '', string)
 
 def sanitize_slug(slug):
@@ -21,7 +21,7 @@ def sanitize_slug(slug):
 
 def sanitize_username(username):
     return sanitize_string(username)
-    
+
 def escape_markdown(MDtext):
     #removed html tags
     TAG_RE = re.compile(r'<[^>]+>')
@@ -33,13 +33,13 @@ def markdown2HTML(MDtext):
 
 def strip_html_tags(text):
     # removes tags and tag content
-    text=html.unescape(text) 
+    text=html.unescape(text)
     soup=BeautifulSoup(text, features="html.parser")
     return soup.get_text()
-    
+
 def clean_label(text):
     # We should change this to use a whitelist
-    text=html.unescape(text) 
+    text=html.unescape(text)
     soup=BeautifulSoup(text, features="html.parser")
     for script in soup.find_all("script"):
         script.decompose()
@@ -50,7 +50,7 @@ def clean_label(text):
 def remove_newlines(string):
     string = string.replace("\n", "")
     return string.replace("\r", "")
-    
+
 def remove_first_and_last_newlines(string):
     RE="^[\r\n]+|[\r\n]+$"
     return re.sub(RE, '', string)
@@ -69,7 +69,7 @@ def isSaneSlug(slug):
     return False
 """
 """
-def sanitizeHexidecimal(string): 
+def sanitizeHexidecimal(string):
     return re.sub('[^A-Fa-f0-9]', '', string)
 """
 """

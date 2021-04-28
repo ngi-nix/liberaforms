@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-    
+
     <div class="returnToForm">
         <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
         {{ form.slug }}
@@ -35,18 +35,18 @@
     <div class="title_1">
         {%trans%}Expiration conditions{%endtrans%}
     </div>
-    
+
     <div class="title_2">
         {%trans%}Date / Time{%endtrans%}
     </div>
-    
+
     <form id="date-form" method="POST" style="padding:0.5em">
         <div class="row">
             <div class="col-auto">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
                 <div class="mr-2"></div>
-                
+
             </div>
             <div class="col">
                 <input id="time" name="time" type="time" class="form-control">
@@ -68,8 +68,8 @@
         <div class="title_2" style="margin-top:1em">
             {%trans%}Fields{%endtrans%}
         </div>
-        
-        {% for field_name, values in form.get_available_number_type_fields().items() %}        
+
+        {% for field_name, values in form.get_available_number_type_fields().items() %}
             <div class="input-group input-group-sm mb-3 flex-nowrap" style="padding:0.5em;">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="addon-{{field_name}}">
@@ -104,7 +104,7 @@
                     {%trans%}The form will expire after{%endtrans%}
                 </span>
               </div>
-              {% set total_entries = form.expiry_conditions['totalEntries'] %}
+              {% set total_entries = form.expiryConditions['totalEntries'] %}
               {% if total_entries == 0 %}
                     {% set total_entries = "" %}
               {% endif %}
@@ -121,11 +121,11 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-md-3"></div>
         <div class="col-md-6">
-       
+
         <div class="title_1 delimited" style="margin-top:2em">
             {%trans%}When the form has expired{%endtrans%}
             <div style="float:right">
@@ -216,7 +216,7 @@ document.getElementById('toggle_notification').addEventListener('click', functio
 jQuery(function($) {
     var savedDate={{form.expiryConditions['expireDate']|tojson}};
     if (savedDate != false){
-        fields=savedDate.split(' '); 
+        fields=savedDate.split(' ');
         $('#date').val(fields[0]);
         $('#time').val(fields[1].slice(0, 5));    // remove seconds for type="time"
     }
@@ -284,7 +284,7 @@ function setTotalEntries(id){
 }
 // expired text editor
 $(document).ready(function() {
-    var expiredMDE = new SimpleMDE({ 
+    var expiredMDE = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
@@ -337,5 +337,5 @@ function fadeOutHighlight(element){
     element.animate({ backgroundColor: "white" }, 2000)
 }
 </script>
-  
+
 {% endblock %}
