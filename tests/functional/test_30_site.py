@@ -50,13 +50,13 @@ class TestSiteConfig():
         """ Tests unavailable language and available language
             as defined in ./liberaforms/config.py
         """
+        initial_language = site.defaultLanguage
         response = client.get(
                         "/site/change-default-language",
                         follow_redirects=True,
                     )
         html = response.data.decode()
         assert '<!-- change_language_page -->' in html
-        language = site.defaultLanguage
         unavailable_language = 'af' # Afrikaans
         response = client.post(
                         "/site/change-default-language",
@@ -66,7 +66,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.defaultLanguage == language
+        assert site.defaultLanguage == initial_language
         available_language = 'ca'
         response = client.post(
                         "/site/change-default-language",
@@ -76,7 +76,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.defaultLanguage != language
+        assert site.defaultLanguage != initial_language
 
     def test_toggle_invitation_only(cls, site, client):
         invitation_only = site.invitationOnly
@@ -242,7 +242,7 @@ class TestSiteConfig():
     def test_save_smtp_config(self, site, client):
         """ Tests invalid and valid smtp configuration
         """
-        # TODO: test invalid smtp config
+        initial_smtp_config = site.smtpConfig
         response = client.get(
                         "/site/email/config",
                         follow_redirects=True,
@@ -263,7 +263,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.smtpConfig != invalid_smtp_conf
+        assert site.smtpConfig == initial_smtp_config
         html = response.data.decode()
         assert '<form method="POST" action="/site/email/config">' in html
         valid_smtp_conf = {
@@ -280,9 +280,15 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.smtpConfig == valid_smtp_conf
+        assert site.smtpConfig != initial_smtp_config
 
+
+    @pytest.mark.skip(os.environ['SEND_TEST_EMAILS'] == 'False',
+                      reason="SEND_TEST_EMAILS=False in test.env")
     def test_test_smtp_config(self, site, client):
+        if os.environ['SEND_TEST_EMAILS'] == 'False':
+            print("SMTP not tested")
+            return
         response = client.post(
                         "site/email/test-config",
                         data = {
