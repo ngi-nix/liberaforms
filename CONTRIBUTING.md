@@ -57,6 +57,17 @@ Fixes #21
 >   + These are translation files for each language. They are created from .POT and on these only the translations are made.
 > + **MO** (Machine Object)
 >   + Binary files generated from each .PO, computer-readable.
+>   
+> **JS** and **LANG** format translation files are also used. _These are translations coming from [FormBuilder](https://github.com/kevinchappell/formBuilder)_
+> 
+> **Current directories with translation files:**  
+> + Gettext
+>   + ~/liberaforms/translations
+>   + ~/liberaforms/form_templates/translations 
+> + JS
+>   + ~/liberaforms/static/dataTables-languages  
+> + LANG
+>   + ~/liberaforms/static/formBuilder-languages   
 
 ### Translating files
 #### With PoEdit and Lokalize
@@ -68,7 +79,8 @@ Fixes #21
 * [GNOME Translation Editor](https://wiki.gnome.org/Apps/Gtranslator)
 
 #### By hand
-PO files have this kind of structure:
+##### PO files
+They have this kind of structure:
 ```
 #: models/form.py:690  
 msgid "Context"
@@ -77,6 +89,33 @@ msgstr "Testuingurua"
 > You can copy and rename an existing, updated PO file (use another language's file). <!-- Use the corresponding [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code to rename your file. -->
 
 Once having your language's file, just edit the content of `msgstr` lines for each block, edit the metadata and save your file.
+
+##### JS files
+They have this kind of structure:
+```
+{
+"sProcessing":     "Prozesatzen...",
+[...] }
+```
+> You can copy and rename an existing, updated JS file (use another language's file). Use the corresponding [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code to rename your file.
+
+Once having your language's file, just edit the content of the second part of each line.
+
+##### LANG files
+They have this kind of structure:
+```
+NATIVE_NAME = Dansk
+ENGLISH_NAME = Danish
+
+addOption = Tilføj valgmulighed +
+allFieldsRemoved = Alle felter blev fjernet.
+[...]
+```
+> You can copy and rename an existing, updated LANG file (use another language's file). Use the corresponding [ISO 639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code to rename your file and specify it's country variant.
+
+Once having your language's file, just edit the content of the second part of each line.
+
+
 
 ### Sending changes
 You can send the created or changed files via **email** to porru@liberaforms.org address or via **git** with [Merge Requests](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
