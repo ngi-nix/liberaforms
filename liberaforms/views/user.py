@@ -20,9 +20,9 @@ from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
-from liberaforms.utils.email import EmailServer
+from liberaforms.utils.email.dispatcher import Dispatcher
 from liberaforms.utils import validators
-import liberaforms.utils.wtf as wtf
+from liberaforms.utils import wtf
 
 from pprint import pprint
 
@@ -78,15 +78,11 @@ def new_user(token=None):
         try:
             new_user.save()
         except:
-            flash(gettext("Opps! An error ocurred when creating the user"),
-                  'error')
+            flash(gettext("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
         if invite:
             invite.delete()
-
-        thread = Thread(target=EmailServer().sendNewUserNotification(new_user))
-        thread.start()
-
+        Dispatcher().send_new_user_notification(new_user)
         session["user_id"]=str(new_user.id)
         g.current_user = new_user
         babel_refresh()
@@ -121,12 +117,17 @@ def statistics(username):
     return render_template('user/statistics.html', user=g.current_user)
 
 
-@user_bp.route('/user/send-validation', methods=['GET'])
+@user_bp.route('/user/send-email-validation', methods=['GET'])
 @login_required
-def send_validation_email():
+def send_email_validation():
     g.current_user.set_token(email=g.current_user.email)
-    EmailServer().sendConfirmEmail(g.current_user, g.current_user.email)
-    flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
+    status = Dispatcher().send_email_address_confirmation(g.current_user,
+                                                          g.current_user.email)
+    if status['email_sent'] == True:
+        flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
+    else:
+        flash(status['msg'], 'warning')
+        logging.warning(status['msg'])
     return redirect(make_url_for('user_bp.user_settings',
                                  username=g.current_user.username))
 
@@ -155,8 +156,13 @@ def change_email():
     wtform=wtf.ChangeEmail()
     if wtform.validate_on_submit():
         g.current_user.set_token(email=wtform.email.data)
-        EmailServer().sendConfirmEmail(g.current_user, wtform.email.data)
-        flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
+        status = Dispatcher().send_email_address_confirmation(g.current_user,
+                                                              wtform.email.data)
+        if status['email_sent'] == True:
+            flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
+        else:
+            # TODO: Tell the user that the email has not been sent
+            pass
         return redirect(make_url_for('user_bp.user_settings',
                                      username=g.current_user.username))
     return render_template('change-email.html', wtform=wtform)
@@ -208,6 +214,8 @@ def toggle_new_entry_notification_default():
 """
 This may be used to validate a New user's email,
 or an existing user's Change email request
+
+A user has already recieved an email including this link.
 """
 @user_bp.route('/user/validate-email/<string:token>', methods=['GET'])
 @sanitized_token

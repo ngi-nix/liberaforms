@@ -17,7 +17,7 @@ from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
-from liberaforms.utils.email import EmailServer
+from liberaforms.utils.email.dispatcher import Dispatcher
 import liberaforms.utils.wtf as wtf
 
 #from pprint import pprint as pp
@@ -65,7 +65,7 @@ def recover_password(token=None):
         user = User.find(email=wtform.email.data, blocked=False)
         if user:
             user.set_token()
-            EmailServer().sendRecoverPassword(user)
+            Dispatcher().send_account_recovery(user)
         if not user and wtform.email.data in os.environ['ROOT_USERS']:
             if not User.find(email=wtform.email.data):
                 # auto invite root user
@@ -207,8 +207,11 @@ def smtp_config():
 def test_smtp():
     wtform=wtf.GetEmail()
     if wtform.validate_on_submit():
-        if EmailServer().sendTestEmail(wtform.email.data):
+        status = Dispatcher().send_test_email(wtform.email.data)
+        if status['email_sent'] == True:
             flash(gettext("SMTP config works!"), 'success')
+        else:
+            flash(status['msg'], 'warning')
     else:
         flash("Email not valid", 'warning')
     return redirect(make_url_for('site_bp.smtp_config'))
