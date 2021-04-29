@@ -24,6 +24,11 @@ pytest -v unit
 pytest -v functional
 ```
 
+## Testing emails notifications
+
+You will need two valid email accounts. One for `admin` and one for `dummy user`
+
+You can skip send mail setting `SKIP_EMAILS` to `True` in `test.env`
 
 # List of tests
 

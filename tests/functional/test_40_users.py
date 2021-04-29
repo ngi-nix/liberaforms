@@ -10,6 +10,7 @@ import ast
 import pytest
 from urllib.parse import urlparse
 from liberaforms.models.user import User
+from liberaforms.utils import validators
 
 from tests.unit.conftest import dummy_user
 
@@ -19,15 +20,15 @@ class TestUser():
 
     def test_save_new_user(self, db, dummy_user, users):
         dummy_user.save()
-        users['dummy']=dummy_user
-        assert users['dummy'].id != None
+        users['test_user']=dummy_user
+        assert users['test_user'].id != None
 
     def test_login(self, client, users):
         """ Tests bad credentials and good credentials """
         response = client.post(
                         "/user/login",
                         data = {
-                            "username": users['dummy'].username,
+                            "username": users['test_user'].username,
                             "password": os.environ['TEST_USER_PASSWORD']+'*',
                         },
                         follow_redirects=True,
@@ -38,7 +39,7 @@ class TestUser():
         response = client.post(
                         "/user/login",
                         data = {
-                            "username": users['dummy'].username,
+                            "username": users['test_user'].username,
                             "password": os.environ['TEST_USER_PASSWORD'],
                         },
                         follow_redirects=True,
@@ -61,7 +62,7 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert users['dummy'].preferences['language'] != unavailable_language
+        assert users['test_user'].preferences['language'] != unavailable_language
         available_language = 'ca'
         response = client.post(
                         "/user/change-language",
@@ -71,14 +72,14 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert users['dummy'].preferences['language'] == available_language
-        users['dummy'].save()
+        assert users['test_user'].preferences['language'] == available_language
+        users['test_user'].save()
 
     def test_change_password(self, users, client):
         """ Tests bad password and good password
             as defined in ./liberaforms/utils/validators.py
         """
-        password_hash = users['dummy'].password_hash
+        password_hash = users['test_user'].password_hash
         bad_password="1234"
         response = client.post(
                         "/user/reset-password",
@@ -89,7 +90,7 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert users['dummy'].password_hash == password_hash
+        assert users['test_user'].password_hash == password_hash
         valid_password="this is a valid password"
         response = client.post(
                         "/user/reset-password",
@@ -100,7 +101,11 @@ class TestUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert users['dummy'].password_hash != password_hash
+        assert users['test_user'].password_hash != password_hash
+        # reset the password to the value defined in ./tests/test.env. Required by other tests
+        password_hash = validators.hash_password(os.environ['TEST_USER_PASSWORD'])
+        users['test_user'].password_hash = password_hash
+        users['test_user'].save()
 
     @pytest.mark.skip(reason="No way of currently testing this")
     def test_change_email(self, client):
@@ -108,13 +113,14 @@ class TestUser():
         pass
 
     def test_toggle_new_answer_notification(self, users, client):
-        current_default = users['dummy'].preferences["newEntryNotification"]
+        current_default = users['test_user'].preferences["newEntryNotification"]
         response = client.post(
                         "/user/toggle-new-entry-notification",
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert users['dummy'].preferences["newEntryNotification"] != current_default
+        assert response.is_json == True
+        assert users['test_user'].preferences["newEntryNotification"] != current_default
 
     def test_logout(self, client):
         response = client.post(

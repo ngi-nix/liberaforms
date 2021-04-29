@@ -32,6 +32,7 @@ fieldIndex: List of dictionaries. Each dict contains one formbuider field info.
 """
 class Form(db.Model, CRUD):
     __tablename__ = "forms"
+    _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
@@ -51,9 +52,9 @@ class Form(db.Model, CRUD):
     expiredText = db.Column(JSONB, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
-    answers = db.relationship("Answer", cascade = "all, delete, delete-orphan")
-    log = db.relationship("FormLog", cascade = "all, delete, delete-orphan")
-    _site=None
+    answers = db.relationship("Answer", cascade="all, delete, delete-orphan")
+    log = db.relationship("FormLog", lazy='dynamic',
+                                     cascade="all, delete, delete-orphan")
 
     def __init__(self, author, **kwargs):
         self.created = datetime.datetime.now().isoformat()

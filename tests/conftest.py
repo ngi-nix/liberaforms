@@ -54,7 +54,7 @@ def client(app):
 @pytest.fixture(scope='session')
 def users():
     return {
-        "dummy": None,
+        "test_user": None,
         "admin": None,
         "admin_password": "this is a valid password"
     }

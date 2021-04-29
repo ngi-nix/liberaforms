@@ -80,6 +80,7 @@ class EmailServer():
 
     def send_mail(self, msg):
         if 'SKIP_EMAILS' in os.environ and os.environ['SKIP_EMAILS'] == 'True':
+            # TESTING environment sets 'SKIP_EMAILS'
             return {
                 "email_sent": True
             }

@@ -8,9 +8,14 @@ This file is part of LiberaForms.
 import os
 import pytest
 from liberaforms.models.site import Site
-from tests.unit.conftest import dummy_user as _dummy_user
 
 
 @pytest.fixture(scope="class")
 def site(db):
     return Site.find()
+
+@pytest.fixture(scope="module")
+def forms():
+    return {
+        'test_form': None,
+    }

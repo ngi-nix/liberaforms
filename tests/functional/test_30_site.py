@@ -15,7 +15,7 @@ class TestSiteConfig():
     def test_login_admin(cls, users, client):
         response = client.get(
                         "/user/login",
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         assert response.status_code == 200
         html = response.data.decode()
@@ -53,7 +53,7 @@ class TestSiteConfig():
         initial_language = site.defaultLanguage
         response = client.get(
                         "/site/change-default-language",
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         html = response.data.decode()
         assert '<!-- change_language_page -->' in html
@@ -96,7 +96,7 @@ class TestSiteConfig():
         """
         response = client.get(
                         "/site/change-menu-color",
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         html = response.data.decode()
         assert '<div class="menu-color-options">' in html
@@ -131,7 +131,7 @@ class TestSiteConfig():
         """
         response = client.get(
                     '/site/change-icon',
-                    follow_redirects=True,
+                    follow_redirects=False,
                 )
         html = response.data.decode()
         assert '<form method="POST" enctype=multipart/form-data >' in html
@@ -195,7 +195,7 @@ class TestSiteConfig():
         """
         response = client.get(
                         "/site/edit",
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         assert response.status_code == 200
         html = response.data.decode()
@@ -245,7 +245,7 @@ class TestSiteConfig():
         initial_smtp_config = site.smtpConfig
         response = client.get(
                         "/site/email/config",
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         html = response.data.decode()
         assert '<form method="POST" action="/site/email/config">' in html
@@ -285,11 +285,13 @@ class TestSiteConfig():
 
     @pytest.mark.skipif(os.environ['SKIP_EMAILS'] == 'True',
                         reason="SKIP_EMAILS=True in test.env")
-    def test_test_smtp_config(self, site, client):
+    def test_test_smtp_config(self, site, client, users):
+        """ Sends a test email to admin user
+        """
         response = client.post(
                         "site/email/test-config",
                         data = {
-                            'email': os.environ['TEST_USER_EMAIL'],
+                            'email': users['admin'].email,
                         },
                         follow_redirects=True,
                     )
