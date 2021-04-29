@@ -83,12 +83,29 @@ You can send the created or changed files via **email** to porru@liberaforms.org
 
 # Handy commands
 ## Update translation files
-We use `pybabel` python module to manage this:
+We use `pybabel` python module to manage this
+
 ### Compiling
+> Compiles all existing .po files into .mo files
+
+`pybabel compile -d ./translations`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#compile)
+
 ### Extracting
+> Updates .pot file from code
+
+`pybabel extract -F babel/messages.cfg -o translations/messages.pot ./`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#extract)
+
 ### Creating
+> Creates new .po file from .pot.  
+_You must specify the target language adding its [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code at the end of command_
+
+`pybabel init -i ./translations/messages.pot -d ./translations -l eo`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#init)
+
 ### Updating
-[Read more](http://babel.pocoo.org/en/latest/cmdline.html#update)
+> Updates .po files according to .pot.  
+_You must specify the target language adding its [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code at the end of command_
+> 
+`pybabel update -i ./translations/messages.pot -d ./translations -l es`[Read more](http://babel.pocoo.org/en/latest/cmdline.html#update)
