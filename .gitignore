@@ -5,3 +5,4 @@ flask_session
 *.pyc
 static/node_modules
 __pycache__
+*.backup
