@@ -4,4 +4,5 @@ gunicorn.py
 notes.txt
 flask_session
 __pycache__
+*.backup
 .pytest_cache
