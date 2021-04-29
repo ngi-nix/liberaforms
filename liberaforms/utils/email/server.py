@@ -79,6 +79,10 @@ class EmailServer():
             self.connection = None
 
     def send_mail(self, msg):
+        if 'SKIP_EMAILS' in os.environ and os.environ['SKIP_EMAILS'] == 'True':
+            return {
+                "email_sent": True
+            }
         exception = self.open_connection()
         if exception:
             return {

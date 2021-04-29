@@ -283,12 +283,9 @@ class TestSiteConfig():
         assert site.smtpConfig != initial_smtp_config
 
 
-    @pytest.mark.skip(os.environ['SEND_TEST_EMAILS'] == 'False',
-                      reason="SEND_TEST_EMAILS=False in test.env")
+    @pytest.mark.skipif(os.environ['SKIP_EMAILS'] == 'True',
+                        reason="SKIP_EMAILS=True in test.env")
     def test_test_smtp_config(self, site, client):
-        if os.environ['SEND_TEST_EMAILS'] == 'False':
-            print("SMTP not tested")
-            return
         response = client.post(
                         "site/email/test-config",
                         data = {
@@ -297,3 +294,5 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="success flash_message">' in html
