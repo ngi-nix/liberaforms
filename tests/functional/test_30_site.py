@@ -240,7 +240,7 @@ class TestSiteConfig():
         assert '<h1>Tested !!</h1>' in html
 
     def test_save_smtp_config(self, site, client):
-        """ Tests valid smtp config
+        """ Tests invalid and valid smtp configuration
         """
         # TODO: test invalid smtp config
         response = client.get(
@@ -249,13 +249,30 @@ class TestSiteConfig():
                     )
         html = response.data.decode()
         assert '<form method="POST" action="/site/email/config">' in html
-        valid_smtp_conf = {
+        invalid_smtp_conf = {
             'host': 'smtp.example.com',
-            'port': 25,
+            'port': "i_am_a_string",
             'encryption': 'SSL',
             'user': 'username',
             'password': 'password',
             'noreplyAddress': 'noreply@example.com'
+        }
+        response = client.post(
+                        "/site/email/config",
+                        data = invalid_smtp_conf,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        assert site.smtpConfig != invalid_smtp_conf
+        html = response.data.decode()
+        assert '<form method="POST" action="/site/email/config">' in html
+        valid_smtp_conf = {
+            'host': os.environ['TEST_SMTP_HOST'],
+            'port': int(os.environ['TEST_SMTP_PORT']),
+            'encryption': os.environ['TEST_SMTP_ENCRYPTION'],
+            'user': os.environ['TEST_SMTP_USERNAME'],
+            'password': os.environ['TEST_SMTP_USER_PASSWORD'],
+            'noreplyAddress': os.environ['TEST_SMTP_NO_REPLY']
         }
         response = client.post(
                         "/site/email/config",
@@ -264,9 +281,13 @@ class TestSiteConfig():
                     )
         assert response.status_code == 200
         assert site.smtpConfig == valid_smtp_conf
-        html = response.data.decode()
-        assert '<form method="POST" action="/site/email/config">' in html
 
-    @pytest.mark.skip(reason="No way of currently testing this")
     def test_test_smtp_config(self, site, client):
-        pass
+        response = client.post(
+                        "site/email/test-config",
+                        data = {
+                            'email': os.environ['TEST_USER_EMAIL'],
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
