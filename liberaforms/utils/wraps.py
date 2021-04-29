@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 from functools import wraps
 from flask import current_app, g
 from flask import redirect, url_for, render_template, flash
+from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 
@@ -63,7 +64,7 @@ def queriedForm_editor_required(f):
     def wrap(*args, **kwargs):
         queriedForm=models.Form.find(id=kwargs['id'], editor_id=str(g.current_user.id))
         if not queriedForm:
-            flash(gettext("Form is not available. 404"), 'warning')
+            flash(_("Form is not available. 404"), 'warning')
             return redirect(make_url_for('forms_bp.my_forms'))
         kwargs['queriedForm']=queriedForm
         return f(*args, **kwargs)
@@ -93,7 +94,7 @@ def sanitized_key_required(f):
     def wrap(*args, **kwargs):
         if not ('key' in kwargs and kwargs['key'] == sanitizers.sanitize_string(kwargs['key'])):
             if g.current_user:
-                flash(gettext("That's a nasty key!"), 'warning')
+                flash(_("That's a nasty key!"), 'warning')
             return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)
@@ -104,7 +105,7 @@ def sanitized_token(f):
     def wrap(*args, **kwargs):
         if 'token' in kwargs and not validators.is_valid_UUID(kwargs['token']):
             if g.current_user:
-                flash(gettext("That's a nasty token!"), 'warning')
+                flash(_("That's a nasty token!"), 'warning')
             return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)

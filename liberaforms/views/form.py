@@ -20,7 +20,7 @@ from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
-from liberaforms.utils.email import EmailServer
+from liberaforms.utils.email.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
 import liberaforms.utils.wtf as wtf
@@ -202,8 +202,7 @@ def save_form(id=None):
         new_form.add_log(gettext("Form created"))
         flash(gettext("Saved form OK"), 'success')
         # notify admins
-        thread = Thread(target=EmailServer().sendNewFormNotification(new_form))
-        thread.start()
+        Dispatcher().send_new_form_notification(new_form)
         return redirect(make_url_for('form_bp.inspect_form', id=new_form.id))
 
 
@@ -596,40 +595,31 @@ def view_form(slug):
                     if user and user.enabled:
                         emails.append(user.email)
             if emails:
-                def sendExpiredFormNotification():
-                    EmailServer().sendExpiredFormNotification(emails, queriedForm)
-                thread = Thread(target=sendExpiredFormNotification())
-                thread.start()
+                Dispatcher().send_expired_form_notification(emails, queriedForm)
         queriedForm.save()
 
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
             confirmationEmail=queriedForm.get_confirmation_email_address(entry)
             if confirmationEmail and validators.is_valid_email(confirmationEmail):
-                def sendConfirmation():
-                    EmailServer().sendConfirmation(confirmationEmail, queriedForm)
-                thread = Thread(target=sendConfirmation())
-                thread.start()
+                Dispatcher().send_answer_confirmation(confirmationEmail, queriedForm)
 
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
-            if preferences["notification"]["newEntry"]:
+            if preferences["notification"]["newEntry"] == True:
                 user=User.find(id=editor_id)
                 if user and user.enabled:
                     emails.append(user.email)
         if emails:
-            def sendEntryNotification():
-                data=[]
-                for field in queriedForm.get_field_index_for_data_display():
-                    if field['name'] in entry:
-                        if field['name']=="marked":
-                            continue
-                        data.append( (field['label'], entry[field['name']]) )
-                EmailServer().sendNewFormEntryNotification( emails,
-                                                            data,
-                                                            queriedForm.slug)
-            thread = Thread(target=sendEntryNotification())
-            thread.start()
+            data=[]
+            for field in queriedForm.get_field_index_for_data_display():
+                if field['name'] in entry:
+                    if field['name']=="marked":
+                        continue
+                    data.append( (field['label'], entry[field['name']]) )
+            Dispatcher().send_new_answer_notification(  emails,
+                                                        data,
+                                                        queriedForm.slug)
         return render_template('thankyou.html', form=queriedForm, navbar=False)
     return render_template('view-form.html', form=queriedForm,
                                              navbar=False,

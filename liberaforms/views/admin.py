@@ -18,8 +18,8 @@ from liberaforms.models.invite import Invite
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
-from liberaforms.utils.email import EmailServer
-import liberaforms.utils.wtf as wtf
+from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils import wtf
 
 from pprint import pprint
 
@@ -188,15 +188,18 @@ def new_invite():
     if wtform.validate_on_submit():
         message=wtform.message.data
         token = utils.create_token(Invite)
-        pprint(token)
+        #pprint(token)
         new_invite=Invite(  email=wtform.email.data,
                             message=message,
                             token=token,
                             admin=wtform.admin.data)
         new_invite.save()
-        EmailServer().sendInvite(new_invite)
-        flash_text = gettext("We've sent an invitation to %s" % new_invite.email)
-        flash(flash_text, 'success')
+        status = Dispatcher().send_invitation(new_invite)
+        if status['email_sent'] == True:
+            flash_text = gettext("We've sent an invitation to %s" % new_invite.email)
+            flash(flash_text, 'success')
+        else:
+            flash(status['msg'], 'warning')
         return redirect(make_url_for('admin_bp.list_invites'))
     wtform.message.data=Invite.default_message()
     return render_template('new-invite.html',
