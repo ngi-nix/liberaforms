@@ -5,14 +5,15 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import datetime, json
+import os, datetime, json
 from threading import Thread
 from flask import g, request, render_template, redirect
-from flask import session, flash, Blueprint
+from flask import Blueprint, current_app
+from flask import session, flash
 from flask_babel import gettext
 from flask_babel import refresh as babel_refresh
 
-from liberaforms import app
+#from liberaforms import app
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
@@ -23,10 +24,10 @@ from liberaforms.utils.email import EmailServer
 from liberaforms.utils import validators
 import liberaforms.utils.wtf as wtf
 
-
 from pprint import pprint
 
-user_bp = Blueprint('user_bp', __name__,
+user_bp = Blueprint('user_bp',
+                    __name__,
                     template_folder='../templates/user')
 
 
@@ -62,17 +63,15 @@ def new_user(token=None):
                 # a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.get_admins():
                     validatedEmail=True
-        if wtform.email.data in app.config['ROOT_USERS']:
+        if wtform.email.data in os.environ['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
 
         new_user = User(
             username = wtform.username.data,
             email =  wtform.email.data,
-            password_hash = validators.hash_password(wtform.password.data),
-            preferences = { "language": g.site.defaultLanguage,
-                            "newEntryNotification": True},
-            hostname = g.site.hostname,
+            password = wtform.password.data,
+            preferences = User.default_user_preferences(g.site),
             admin = adminSettings,
             validatedEmail = validatedEmail,
         )
@@ -138,7 +137,8 @@ def send_validation_email():
 @login_required
 def change_language():
     if request.method == 'POST':
-        if 'language' in request.form and request.form['language'] in app.config['LANGUAGES']:
+        if 'language' in request.form and \
+            request.form['language'] in current_app.config['LANGUAGES']:
             g.current_user.preferences["language"]=request.form['language']
             g.current_user.save()
             babel_refresh()
@@ -250,7 +250,7 @@ def consent(username):
 def login():
     logout_user()
     wtform=wtf.Login()
-    if wtform.validate():
+    if wtform.validate_on_submit():
         user=User.find(username=wtform.username.data, blocked=False)
         if not user and validators.is_valid_email(wtform.username.data):
             user=User.find(email=wtform.username.data, blocked=False)

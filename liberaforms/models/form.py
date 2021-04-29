@@ -11,7 +11,7 @@ import unicodecsv as csv
 from flask import g
 from flask_babel import gettext
 
-from liberaforms import app, db
+from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
@@ -674,7 +674,7 @@ class Form(db.Model, CRUD):
         for field in self.get_field_index_for_data_display(with_deleted_columns):
             fieldnames.append(field['name'])
             fieldheaders[field['name']]=field['label']
-        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.slug}.csv")
+        csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.slug}.csv")
         with open(csv_name, mode='wb') as csv_file:
             writer = csv.DictWriter(csv_file,
                                     fieldnames=fieldnames,

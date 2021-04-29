@@ -5,9 +5,9 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import datetime
+import os, datetime
 from dateutil.relativedelta import relativedelta
-from liberaforms import app, db
+from liberaforms import db
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.ext.mutable import MutableDict
 #from sqlalchemy.orm.attributes import flag_modified
@@ -39,7 +39,7 @@ class User(db.Model, CRUD):
         self.created = datetime.datetime.now().isoformat()
         self.username = kwargs["username"]
         self.email = kwargs["email"]
-        self.password_hash = kwargs["password_hash"]
+        self.password_hash = validators.hash_password(kwargs["password"])
         self.preferences = kwargs["preferences"]
         self.blocked = False
         self.admin = kwargs["admin"]
@@ -110,7 +110,7 @@ class User(db.Model, CRUD):
         return True if self.admin['isAdmin']==True else False
 
     def is_root_user(self):
-        return True if self.email in app.config['ROOT_USERS'] else False
+        return True if self.email in os.environ['ROOT_USERS'] else False
 
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
@@ -153,6 +153,15 @@ class User(db.Model, CRUD):
         self.admin['isAdmin']=False if self.is_admin() else True
         self.save()
         return self.is_admin()
+
+    @staticmethod
+    def default_user_preferences(site=None):
+        if site:
+            default_language = site.defaultLanguage
+        else:
+            default_language = os.environ['DEFAULT_LANGUAGE']
+        return { "language": default_language,
+                 "newEntryNotification": True}
 
     @staticmethod
     def default_admin_settings():

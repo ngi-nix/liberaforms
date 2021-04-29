@@ -6,8 +6,8 @@ This file is part of LiberaForms.
 """
 
 from functools import wraps
-from flask import g, redirect, url_for, render_template, flash
-from liberaforms import app
+from flask import current_app, g
+from flask import redirect, url_for, render_template, flash
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 
@@ -77,7 +77,7 @@ def sanitized_slug_required(f):
             if g.current_user:
                 flash("No slug found!", 'error')
             return render_template('page-not-found.html'), 404
-        if kwargs['slug'] in app.config['RESERVED_SLUGS']:
+        if kwargs['slug'] in current_app.config['RESERVED_SLUGS']:
             if g.current_user:
                 flash("Reserved slug!", 'warning')
             return render_template('page-not-found.html'), 404

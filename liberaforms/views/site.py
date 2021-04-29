@@ -7,11 +7,10 @@ This file is part of LiberaForms.
 
 import os, json
 from flask import g, request, render_template, redirect
+from flask import Blueprint, current_app
 from flask import session, flash
-from flask import Blueprint, send_file, after_this_request
 from flask_babel import gettext
 
-from liberaforms import app
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
@@ -67,9 +66,9 @@ def recover_password(token=None):
         if user:
             user.set_token()
             EmailServer().sendRecoverPassword(user)
-        if not user and wtform.email.data in app.config['ROOT_USERS']:
-            if User.query.count() == 0:
-                # auto invite first root user
+        if not user and wtform.email.data in os.environ['ROOT_USERS']:
+            if not User.find(email=wtform.email.data):
+                # auto invite root user
                 invite=Invite(  email=wtform.email.data,
                                 message="New root user",
                                 token=utils.create_token(Invite),
@@ -138,7 +137,7 @@ def change_siteName():
 def change_default_language():
     if request.method == 'POST':
         if 'language' in request.form \
-            and request.form['language'] in app.config['LANGUAGES']:
+            and request.form['language'] in current_app.config['LANGUAGES']:
             g.site.defaultLanguage=request.form['language']
             g.site.save()
             flash(gettext("Language updated OK"), 'success')
@@ -147,24 +146,22 @@ def change_default_language():
                             current_language=g.site.defaultLanguage,
                             go_back_to_admin_panel=True)
 
-@site_bp.route('/site/change-favicon', methods=['GET', 'POST'])
+@site_bp.route('/site/change-icon', methods=['GET', 'POST'])
 @admin_required
-def change_site_favicon():
+def change_icon():
     if request.method == 'POST':
         if not request.files['file']:
             flash(gettext("Required file is missing"), 'warning')
-            return render_template('change-site-favicon.html')
+            return render_template('change-icon.html')
         file=request.files['file']
-        # need to lower filename
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
-            filename="%s_favicon.png" % g.site.hostname
-            file.save(os.path.join(app.config['FAVICON_FOLDER'], filename))
+            file.save(os.path.join(current_app.config['BRAND_DIR'], 'favicon.png'))
         else:
             flash(gettext("Bad file name. PNG only"), 'warning')
-            return render_template('change-site-favicon.html')
-        flash(gettext("Favicon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+            return render_template('change-icon.html')
+        flash(gettext("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
-    return render_template('change-site-favicon.html')
+    return render_template('change-icon.html')
 
 
 @site_bp.route('/site/reset-favicon', methods=['GET'])
@@ -209,7 +206,7 @@ def smtp_config():
 @admin_required
 def test_smtp():
     wtform=wtf.GetEmail()
-    if wtform.validate():
+    if wtform.validate_on_submit():
         if EmailServer().sendTestEmail(wtform.email.data):
             flash(gettext("SMTP config works!"), 'success')
     else:
@@ -229,10 +226,11 @@ def menu_color():
     wtform=wtf.ChangeMenuColor()
     if request.method == 'GET':
         wtform.hex_color.data=g.site.menuColor
-    if wtform.validate():
+    if wtform.validate_on_submit():
         g.site.menuColor=wtform.hex_color.data
         g.site.save()
         flash(gettext("Color changed OK"), 'success')
+        return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('menu-color.html', wtform=wtform)
 
 @site_bp.route('/site/stats', methods=['GET'])

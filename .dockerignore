@@ -1,0 +1,6 @@
+*.env
+gunicorn.py
+/flask_session
+/docs
+/docker
+**/__pycache__

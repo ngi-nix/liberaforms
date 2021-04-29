@@ -1,63 +1,82 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-from flask import Flask, session
+import os, logging
+from datetime import datetime
+
+#import sys
+from flask import Flask, request
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
-import sys, os
 
-from liberaforms import config
+from liberaforms.config import config
+from liberaforms.utils.logging import LogSetup
 
-app = Flask(__name__)
-
-# Load defaults
-app.config.from_object(config.DefaultConfig)
-# User overrides
-app.config.from_pyfile("../config.cfg")
-# Force internal configuration
-app.config.from_object(config.InternalConfig)
-# Merge extra configuration as/if necessary
-for cfg_item in ["RESERVED_SLUGS", "RESERVED_USERNAMES"]:
-    app.config[cfg_item].extend(app.config["EXTRA_{}".format(cfg_item)])
-
-db = SQLAlchemy(app)
-babel = Babel(app)
-
-from liberaforms.utils import database
-database.create_tables()
-
-app.secret_key = app.config["SECRET_KEY"]
-app.session_type = app.config["SESSION_TYPE"]
-Session(app)
-
+db = SQLAlchemy()
+babel = Babel()
+session = Session()
 csrf = CSRFProtect()
-csrf.init_app(app)
+logs = LogSetup()
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
+#sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
+
+def create_app():
+    app = Flask(__name__.split(".")[0])
+    config_name = os.getenv('FLASK_CONFIG') or 'default'
+    app.config.from_object(config[config_name])
+    config[config_name].init_app(app)
+
+    logs.init_app(app)
+    db.init_app(app)
+    babel.init_app(app)
+    session.init_app(app)
+    csrf.init_app(app)
+
+    from liberaforms.commands import register_commands
+    register_commands(app)
+    register_blueprints(app)
+
+    @app.after_request
+    def after_request(response):
+        """ Logging after every request. """
+        logger = logging.getLogger("app.access")
+        logger.info(
+            "[%s] %s %s %s %s %s %s %s",
+            datetime.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+            request.method,
+            request.path,
+            request.scheme,
+            response.status,
+            response.content_length,
+            request.referrer,
+            request.user_agent,
+        )
+        return response
+
+    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+    return app
 
 
-from liberaforms.views.main import main_bp
-from liberaforms.views.user import user_bp
-from liberaforms.views.form import form_bp
-from liberaforms.views.site import site_bp
-from liberaforms.views.admin import admin_bp
-from liberaforms.views.entries import entries_bp
+def register_blueprints(app):
+    from liberaforms.views.errors import errors_bp
+    from liberaforms.views.main import main_bp
+    from liberaforms.views.user import user_bp
+    from liberaforms.views.form import form_bp
+    from liberaforms.views.site import site_bp
+    from liberaforms.views.admin import admin_bp
+    from liberaforms.views.entries import entries_bp
 
-app.register_blueprint(main_bp)
-app.register_blueprint(user_bp)
-app.register_blueprint(form_bp)
-app.register_blueprint(site_bp)
-app.register_blueprint(admin_bp)
-app.register_blueprint(entries_bp)
-
-
-app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-
-if __name__ == '__main__':
-    app.run()
+    app.register_blueprint(errors_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(user_bp)
+    app.register_blueprint(form_bp)
+    app.register_blueprint(site_bp)
+    app.register_blueprint(admin_bp)
+    app.register_blueprint(entries_bp)
+    return None

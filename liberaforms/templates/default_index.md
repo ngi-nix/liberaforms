@@ -1,4 +1,4 @@
-# Libera forms
+# LiberaForms
 
 We have built this software with the hope it will be used by our neighbours, friends, and anyone else who feels GAFAM already has way too much data on all of us.
 

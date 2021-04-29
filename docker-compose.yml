@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:13.1-alpine
+    container_name: ${DB_HOST}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "${POSTGRES_ROOT_USER}"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+    expose:
+      - 5432
+    environment:
+      POSTGRES_USER: ${POSTGRES_ROOT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - db_net
+
+  liberaforms:
+    image: liberaforms
+    container_name: liberaforms-app
+    depends_on:
+      - db
+    ports:
+      - 5000:5000
+    environment:
+      FLASK_ENV: ${FLASK_ENV}
+      FLASK_CONFIG: ${FLASK_CONFIG}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      ROOT_USERS: ${ROOT_USERS}
+      DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
+      SECRET_KEY: ${SECRET_KEY}
+      SESSION_TYPE: ${SESSION_TYPE}
+      TOKEN_EXPIRATION: ${TOKEN_EXPIRATION}
+    networks:
+      - db_net
+    ## For development
+    #volumes:
+    #  - ./:/app
+    #command: flask run --host 0.0.0.0
+    ## For production
+    command: gunicorn --bind 0.0.0.0:5000 --workers 3 wsgi:app
+
+
+volumes:
+  db_data:
+    name: LF_db_data
+
+networks:
+  db_net:
+    name: LF_db_net
+    driver: bridge

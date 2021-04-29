@@ -5,14 +5,14 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import json, datetime
+import os, json, datetime
 from threading import Thread
+from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
 from flask import session, flash, send_file, after_this_request
-from flask import Blueprint
 from flask_babel import gettext
 
-from liberaforms import app, csrf
+from liberaforms import csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
 from liberaforms.models.answer import Answer
@@ -104,7 +104,7 @@ def is_slug_available():
         available = False
     elif Form.find(slug=slug):
         available = False
-    elif slug in app.config['RESERVED_SLUGS']:
+    elif slug in current_app.config['RESERVED_SLUGS']:
         available = False
     # we return a sanitized slug as a suggestion for the user.
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
@@ -326,7 +326,7 @@ def add_editor(id):
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
-    if wtform.validate():
+    if wtform.validate_on_submit():
         newEditor=User.find(email=wtform.email.data)
         if not newEditor or newEditor.enabled==False:
             flash(gettext("Can't find a user with that email"), 'warning')
