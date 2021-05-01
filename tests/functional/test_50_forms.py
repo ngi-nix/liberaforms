@@ -59,7 +59,7 @@ class TestNewForm():
         forms['test_form'] = Form.find(slug=slug)
         assert forms['test_form'].log.count() == 1
 
-    @pytest.mark.skip(reason="TODO")
+    @pytest.mark.skip(reason="TODO") # unit test
     def test_valid_slug(self, client):
         initial_slug = forms['test_form'].slug
 
@@ -76,4 +76,79 @@ class TestNewForm():
         assert response.is_json == True
         assert forms['test_form'].enabled != initial_enabled
         assert response.json['enabled'] == forms['test_form'].enabled
-        assert forms['test_form'].log.count() != initial_log_count
+        assert forms['test_form'].log.count() == initial_log_count + 1
+
+    def test_add_editor(self, client, users, forms):
+        form_id=forms['test_form'].id
+        response = client.get(
+                        f"/forms/share/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert f'"/forms/add-editor/{form_id}" method="POST"' in html
+        assert '<div id="enabled_links" style="display:None">' in html
+        initial_log_count = forms['test_form'].log.count()
+        nonexistent_user_email = "nonexistent@example.com"
+        response = client.post(
+                        f"/forms/add-editor/{form_id}",
+                        data = {
+                            "email": nonexistent_user_email,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert f'"/forms/add-editor/{form_id}" method="POST"' in html
+        assert forms['test_form'].log.count() == initial_log_count
+        # use the test admin user as a new editor
+        existent_user_email = users['admin'].email
+        response = client.post(
+                        f"/forms/add-editor/{form_id}",
+                        data = {
+                            "email": existent_user_email,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert f'"/forms/add-editor/{form_id}" method="POST"' in html
+        assert existent_user_email in html
+        assert forms['test_form'].log.count() == initial_log_count + 1
+
+    def test_toggle_shared_answers(self, client, users, forms):
+        form_id=forms['test_form'].id
+        initial_enabled = forms['test_form'].sharedEntries['enabled']
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/form/toggle-shared-entries/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert forms['test_form'].sharedEntries['enabled'] != initial_enabled
+        assert response.json['enabled'] == forms['test_form'].sharedEntries['enabled']
+        assert forms['test_form'].log.count() == initial_log_count + 1
+
+    def test_toggle_expiration_notification(self, client, users, forms):
+        form_id=forms['test_form'].id
+        response = client.get(
+                        f"/forms/expiration/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert "<!-- form_expiration_page -->" in html
+        initial_preference = forms['test_form'] \
+                             .editors[str(users['test_user'].id)] \
+                             ['notification']['expiredForm']
+        response = client.post(
+                        f"/form/toggle-expiration-notification/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['notification'] != initial_preference
+        assert initial_preference != forms['test_form'] \
+                                    .editors[str(users['test_user'].id)] \
+                                    ['notification']['expiredForm']
