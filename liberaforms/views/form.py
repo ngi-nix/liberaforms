@@ -221,6 +221,7 @@ def save_data_consent(form_id, consent_id):
                                             data=request.form.to_dict(flat=True)
                                             )
         if consent:
+            queriedForm.add_log(gettext("Edited GDPR text"))
             return JsonResponse(json.dumps(consent))
     pay_load = {'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}
     return JsonResponse(json.dumps(pay_load))
@@ -245,6 +246,7 @@ def save_after_submit_text(id):
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.save_after_submit_text(request.form['markdown'])
+        queriedForm.add_log(gettext("Edited Thankyou text"))
         pay_load = {'html':queriedForm.after_submit_text_html,
                     'markdown': queriedForm.after_submit_text_markdown}
         return JsonResponse(json.dumps(pay_load))

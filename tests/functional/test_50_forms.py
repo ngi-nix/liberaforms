@@ -130,6 +130,20 @@ class TestNewForm():
         assert response.json['enabled'] == forms['test_form'].sharedEntries['enabled']
         assert forms['test_form'].log.count() == initial_log_count + 1
 
+    def test_toggle_restricted_form_access(self, client, forms):
+        form_id=forms['test_form'].id
+        initial_restriced_access = forms['test_form'].restrictedAccess
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/form/toggle-restricted-access/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['restricted'] == True
+        assert forms['test_form'].restrictedAccess == True
+        assert forms['test_form'].log.count() == initial_log_count + 1
+
     def test_toggle_expiration_notification(self, client, users, forms):
         form_id=forms['test_form'].id
         response = client.get(
@@ -260,5 +274,105 @@ class TestNewForm():
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert "<h1>Hello</h1>" in response.json['html']
+        assert response.json['html'] == "<h1>Hello</h1>"
+        assert forms['test_form'].expired_text_html == response.json['html']
         assert forms['test_form'].log.count() != initial_log_count
+
+    def test_save_after_submit_text(self, client, forms):
+        form_id=forms['test_form'].id
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/forms/save-after-submit-text/{form_id}",
+                        data = {
+                            "markdown": "# Hello",
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['html'] == "<h1>Hello</h1>"
+        assert forms['test_form'].after_submit_text_html == response.json['html']
+        assert forms['test_form'].log.count() != initial_log_count
+
+    def test_toggle_GDPR_consent(self, client, forms):
+        form_id=forms['test_form'].id
+        initial_GDPR_state = forms['test_form'].data_consent['enabled']
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/form/toggle-data-consent/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert forms['test_form'].data_consent['enabled'] == response.json['enabled']
+        assert forms['test_form'].data_consent['enabled'] != initial_GDPR_state
+        assert forms['test_form'].log.count() != initial_log_count
+
+    def test_recover_GDPR_default_text(self, client, forms):
+        form_id=forms['test_form'].id
+        text_id=forms['test_form'].data_consent['id']
+        initial_log_count = forms['test_form'].log.count()
+        response = client.get(
+                        f"/forms/default-consent/{form_id}/{text_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert "<h6>" in response.json['html']
+
+    def test_save_GDPR_text(self, client, forms):
+        form_id=forms['test_form'].id
+        text_id=forms['test_form'].data_consent['id']
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/forms/save-consent/{form_id}/{text_id}",
+                        data = {
+                            "markdown": "# Hello!",
+                            "label": "",
+                            "required": True
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['html'] == "<h1>Hello!</h1>"
+        assert forms['test_form'].data_consent['html'] == response.json['html']
+        assert forms['test_form'].log.count() != initial_log_count
+        # Test empty markdown input
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/forms/save-consent/{form_id}/{text_id}",
+                        data = {
+                            "markdown": "",
+                            "label": "",
+                            "required": True
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert "<h6>" in response.json['html']
+        assert forms['test_form'].data_consent['html'] == ""
+        assert forms['test_form'].log.count() != initial_log_count
+
+    def test_view_log(self, client, forms):
+        form_id=forms['test_form'].id
+        response = client.get(
+                        f"/forms/log/list/{form_id}",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert "<!-- log_list_page -->" in html
+
+    def test_duplicate_form(self, client, forms):
+        form_id=forms['test_form'].id
+        response = client.get(
+                        f"/forms/duplicate/{form_id}",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="info flash_message">' in html
+        assert forms['test_form'].introductionText['markdown'] in html
+        assert '<input  id="slug" value=""' in html
