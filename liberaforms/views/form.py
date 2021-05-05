@@ -261,6 +261,7 @@ def save_expired_text(id):
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.save_expired_text(request.form['markdown'])
+        queriedForm.add_log(gettext("Edited expiry text"))
         pay_load = {'html': queriedForm.expired_text_html,
                     'markdown': queriedForm.expired_text_markdown}
         return JsonResponse(json.dumps(pay_load))
@@ -421,6 +422,8 @@ def set_expiry_total_entries(id):
             if total_entries < 0:
                 total_entries = 0
             queriedForm.save_expiry_total_entries(total_entries)
+            # TRANSLATION EXAMPLE: Total answers set to: 3
+            queriedForm.add_log(gettext("Total answers set to: %s" % total_entries))
         except:
             total_entries = queriedForm.expiryConditions['totalEntries']
             return JsonResponse(json.dumps({'expired': False,

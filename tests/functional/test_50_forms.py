@@ -152,3 +152,113 @@ class TestNewForm():
         assert initial_preference != forms['test_form'] \
                                     .editors[str(users['test_user'].id)] \
                                     ['notification']['expiredForm']
+
+    def test_set_expiration_date(self, client, forms):
+        form_id=forms['test_form'].id
+        initial_log_count = forms['test_form'].log.count()
+        invalid_date="2021-00-00"
+        response = client.post(
+                        f"/forms/set-expiration-date/{form_id}",
+                        data = {
+                            "date": invalid_date,
+                            "time": "00:00"
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['expired'] == False
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == False
+        assert forms['test_form'].log.count() == initial_log_count
+        valid_past_date="2021-01-01"
+        response = client.post(
+                        f"/forms/set-expiration-date/{form_id}",
+                        data = {
+                            "date": valid_past_date,
+                            "time": "00:00"
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['expired'] == True
+        assert forms['test_form'].has_expired() == True
+        assert forms['test_form'].can_expire() == True
+        assert forms['test_form'].log.count() != initial_log_count
+        initial_log_count = forms['test_form'].log.count()
+        valid_future_date="2121-05-05"
+        response = client.post(
+                        f"/forms/set-expiration-date/{form_id}",
+                        data = {
+                            "date": valid_future_date,
+                            "time": "00:00"
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['expired'] == False
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == True
+        assert forms['test_form'].log.count() != initial_log_count
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/forms/set-expiration-date/{form_id}",
+                        data = {
+                            "date": "",
+                            "time": ""
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['expired'] == False
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == False
+        assert forms['test_form'].log.count() != initial_log_count
+
+    def test_set_max_answers_expiration(self, client, forms):
+        form_id=forms['test_form'].id
+        initial_log_count = forms['test_form'].log.count()
+        invalid_max_answers = "a"
+        response = client.post(
+                        f"/forms/set-expiry-total-entries/{form_id}",
+                        data = {
+                            "total_entries": invalid_max_answers,
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == False
+        assert forms['test_form'].log.count() == initial_log_count
+        valid_max_answers = 3
+        response = client.post(
+                        f"/forms/set-expiry-total-entries/{form_id}",
+                        data = {
+                            "total_entries": valid_max_answers,
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == True
+        assert forms['test_form'].log.count() != initial_log_count
+
+    def test_save_expired_text(self, client, forms):
+        form_id=forms['test_form'].id
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/forms/save-expired-text/{form_id}",
+                        data = {
+                            "markdown": "# Hello",
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert "<h1>Hello</h1>" in response.json['html']
+        assert forms['test_form'].log.count() != initial_log_count
