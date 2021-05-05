@@ -14,7 +14,7 @@ from liberaforms.models.site import Site
 def site(db):
     return Site.find()
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def forms():
     return {
         'test_form': None,

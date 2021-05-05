@@ -264,6 +264,20 @@ class TestNewForm():
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == True
         assert forms['test_form'].log.count() != initial_log_count
+        initial_log_count = forms['test_form'].log.count()
+        response = client.post(
+                        f"/forms/set-expiry-total-entries/{form_id}",
+                        data = {
+                            "total_entries": 0,
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == False
+        assert forms['test_form'].log.count() != initial_log_count
+
 
     def test_save_expired_text(self, client, forms):
         form_id=forms['test_form'].id

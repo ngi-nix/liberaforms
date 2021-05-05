@@ -559,7 +559,7 @@ def view_form(slug):
             flash(gettext("Can't find that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
-            return render_template('page-not-found.html'), 400
+            return render_template('page-not-found.html'), 404
     if not queriedForm.is_public():
         if g.current_user:
             if queriedForm.expired:
@@ -570,11 +570,11 @@ def view_form(slug):
         if queriedForm.expired:
             return render_template('form-has-expired.html',
                                     form=queriedForm,
-                                    navbar=False, no_bot=True), 400
+                                    navbar=False, no_bot=True), 200
         else:
-            return render_template('page-not-found.html'), 400
+            return render_template('page-not-found.html'), 404
     if queriedForm.restrictedAccess and not g.current_user:
-        return render_template('page-not-found.html'), 400
+        return render_template('page-not-found.html'), 404
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
