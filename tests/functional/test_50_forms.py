@@ -37,10 +37,13 @@ class TestNewForm():
         html = response.data.decode()
         assert '<form id="result" method="POST" action="/forms/edit" >' in html
         slug = "a-valid-slug"
+        with open("./assets/valid_form_structure.json", 'r') as structure:
+            valid_structure = structure.read()
+        print(valid_structure)
         response = client.post(
                         "/forms/edit",
                         data = {
-                            "structure": json.dumps({}),
+                            "structure": valid_structure,
                             "introductionTextMD": "hello",
                             "slug": slug,
                         },
