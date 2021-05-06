@@ -9,10 +9,10 @@ pip install pytest-dotenv
 #pip install pytest-pythonpath
 ```
 
-Create `test.env` and edit
+Create `test.ini` and edit
 ```
 cd ./tests
-cp test.env.example test.env
+cp test.ini.example test.ini
 ```
 
 Run all tests, unit tests, functional tests
@@ -24,28 +24,46 @@ pytest -v unit
 pytest -v functional
 ```
 
+See more output
+
+```
+pytest -v -s
+```
+
 ## Testing emails notifications
 
 You will need two valid email accounts. One for `admin` and one for `dummy user`
 
-You can skip send mail setting `SKIP_EMAILS` to `True` in `test.env`
+You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
 
 # List of tests
 
 ## Database
   * create tables with alembic migrations. fixture[✔]
 
+## Site
+  * create a new site. unit[✔]
+  * set site name. functional[✔]
+  * set default language. functional[✔]
+  * toggle 'inviation only'. functional[✔]
+  * set/restore favicon. functional[✔]
+  * set menu colour. functional[✔]
+  * configure smtp. functional[✔]
+  * test smtp. functional[✔]
+  * set public link creation. functional[✔]
+
 ## Users
   * create first admin user with ROOT_USERS email. functional[✔]
   * create user. unit[✔]
+  * change email
+  * change password. functional[✔]
+  * change language. functional[✔]
+  * set New answer notification default. functional[✔]
   * create new user with new user form
     * with RESERVED_USERNAMES
   * invite new user
     * with admin permission
     * respond to invitation
-
-## Site
-  * create a new site. unit[✔]
 
 ## Site configuration
   * save and restore favicon. functional[✔]
@@ -60,43 +78,33 @@ You can skip send mail setting `SKIP_EMAILS` to `True` in `test.env`
   * config SMTP functional[✔]
   * test SMTP functional[✔]
 
-
-
 ## Forms
-### Create form
-  * with RESERVED_SLUGS
-  * with RESERVED_FORM_ELEMENT_NAMES
-
-### Answers
-  * make an answer. functional[✔]
-  * delete/undo answer
-  * edit a answer
-  * delete all answer
-
-### Exipry conditions
-  * Set date expiry in past and future. functional[✔]
+  * create a form. functional[✔]
+    * with RESERVED_SLUGS
+    * with RESERVED_FORM_ELEMENT_NAMES
+  * set date expiry in past and future. functional[✔]
   * set number field max total
   * set max answers. functional[✔]
-
-### Share a form
   * add an editor. functional[✔]
+  * share answers. functional[✔]
+    * check the links
+  * modify post submit text. functional[✔]
+  * modify expity text. functional[✔]
+  * check if user receives confirmation email.
+  * activate GDPR consent. functional[✔]
+    * and try to submit a form with out checkbox.
+  * duplicate form. functional[✔]
+  * test embedded form
+  * change author
+  * delete form and answers. functional[✔]
 
-### Shared results.
-  * share the results and check the links
+## Answers
+  * make an answer. functional[✔]
+  * delete an answer. functional[✔]
+  * undo delete
+  * edit a answer
+  * delete all answers. functional[✔]
+  * export CSV. functional[✔]
+  * export CSV with deleted columns
 
-### Post submit text
-  * Modify the text. functional[✔]
-  * Check if user receives confirmation email.
-
-7. CSV
-  * export
-  * export with deleted columns
-
-8. Activate GDPR and try to submit a form with out checkbox.
-9. Test embedded form
-10. Duplicate form
-11. Change author
-
-12. Delete form and entries
-
-13. Drop database and restore copy
+Drop database and restore copy
