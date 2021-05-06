@@ -11,27 +11,6 @@ import werkzeug
 from io import BytesIO
 
 class TestSiteConfig():
-    def test_login_admin(cls, users, admin_client):
-        response = admin_client.get(
-                        "/user/login",
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<form action="/user/login" method="POST"' in html
-        response = admin_client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['admin'].username,
-                            "password": users["admin_password"],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert "<!-- my_forms_page -->" in html
-        assert '<a class="nav-link" href="/user/logout">' in html
-
     def test_change_sitename(cls, site, admin_client, anon_client):
         url = "/site/change-sitename"
         response = anon_client.get(

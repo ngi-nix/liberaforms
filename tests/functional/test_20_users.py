@@ -129,5 +129,5 @@ class TestUser():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div id="blurb" class="marked-up">' in html
+        assert '<!-- site_index_page -->' in html
         assert '<a class="nav-link" href="/user/login">' in html

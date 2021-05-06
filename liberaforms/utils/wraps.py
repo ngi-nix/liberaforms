@@ -36,8 +36,11 @@ def admin_required(f):
     def wrap(*args, **kwargs):
         if g.is_admin:
             return f(*args, **kwargs)
+        elif g.current_user:
+            current_app.logger.info(f'Logged user denied: {request.path}')
         else:
-            return redirect(url_for('main_bp.index'))
+            current_app.logger.info(f'Anon user denied: {request.path}')
+        return redirect(url_for('main_bp.index'))
     return wrap
 
 def rootuser_required(f):
