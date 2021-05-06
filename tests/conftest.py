@@ -52,6 +52,16 @@ def client(app):
         yield client
 
 @pytest.fixture(scope='session')
+def admin_client(app):
+    with app.test_client() as client:
+        yield client
+
+@pytest.fixture(scope='class')
+def anon_client(app):
+    with app.test_client() as client:
+        yield client
+
+@pytest.fixture(scope='session')
 def users():
     return {
         "test_user": None,
