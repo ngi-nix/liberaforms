@@ -282,7 +282,7 @@ def delete_form(id):
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
             entry_cnt = queriedForm.get_entries().count()
-            queriedForm.delete_form()
+            queriedForm.delete()
             flash_text = gettext("Deleted '%s' and %s entries" % (
                                                         queriedForm.slug,
                                                         entry_cnt))

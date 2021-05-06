@@ -30,6 +30,7 @@ class TestAnswers():
                     )
         assert response.status_code == 200
         html = response.data.decode()
+        assert '<!-- list_entries_page -->' in html
         assert '<table  id="entriesTable"' in html
 
     def test_show_answers_stats(self, client, forms):
@@ -39,6 +40,7 @@ class TestAnswers():
                     )
         assert response.status_code == 200
         html = response.data.decode()
+        assert '<!-- chart_entries_page -->' in html
         assert '<canvas id="time_chart" height="100"></canvas>' in html
 
     def test_answers_enable_edition(self, client, forms):
@@ -117,5 +119,8 @@ class TestAnswers():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="success flash_message">' in html
+        assert '<!-- list_entries_page -->' in html
         assert forms['test_form'].answers.count() == 0
         assert forms['test_form'].log.count() == initial_log_count + 1

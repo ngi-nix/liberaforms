@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- list_entries_page -->
+
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
 {% set responses = form.get_entries_for_display() %}
 {% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
