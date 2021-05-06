@@ -112,7 +112,7 @@ class TestUser():
         """ Not impletmented """
         pass
 
-    def test_toggle_new_answer_notification(self, users, client):
+    def test_toggle_new_answer_default_notification(self, users, client):
         current_default = users['test_user'].preferences["newEntryNotification"]
         response = client.post(
                         "/user/toggle-new-entry-notification",

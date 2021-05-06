@@ -52,7 +52,8 @@ class Form(db.Model, CRUD):
     expiredText = db.Column(JSONB, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
-    answers = db.relationship("Answer", cascade="all, delete, delete-orphan")
+    answers = db.relationship("Answer", lazy='dynamic',
+                                        cascade="all, delete, delete-orphan")
     log = db.relationship("FormLog", lazy='dynamic',
                                      cascade="all, delete, delete-orphan")
 

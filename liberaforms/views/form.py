@@ -424,8 +424,8 @@ def set_expiry_total_entries(id):
             if total_entries < 0:
                 total_entries = 0
             queriedForm.save_expiry_total_entries(total_entries)
-            # TRANSLATION EXAMPLE: Total answers set to: 3
-            queriedForm.add_log(gettext("Total answers set to: %s" % total_entries))
+            # TRANSLATION EXAMPLE: Expire when total answers set: 3
+            queriedForm.add_log(gettext("Expire when total answers set: %s" % total_entries))
         except:
             total_entries = queriedForm.expiryConditions['totalEntries']
             return JsonResponse(json.dumps({'expired': False,

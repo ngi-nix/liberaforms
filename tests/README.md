@@ -4,7 +4,7 @@
 source ./venv/bin/activate
 pip install pytest
 pip install pytest-dotenv
-pip install pytest-order
+#pip install pytest-order
 #pip install pytest-dependency
 #pip install pytest-pythonpath
 ```
@@ -68,24 +68,24 @@ You can skip send mail setting `SKIP_EMAILS` to `True` in `test.env`
   * with RESERVED_FORM_ELEMENT_NAMES
 
 ### Answers
-  * make a answer
+  * make an answer. functional[✔]
   * delete/undo answer
   * edit a answer
   * delete all answer
 
 ### Exipry conditions
-  * Set date expiry in past
+  * Set date expiry in past and future. functional[✔]
   * set number field max total
-  * set max answers
+  * set max answers. functional[✔]
 
 ### Share a form
-  * add an editor
+  * add an editor. functional[✔]
 
 ### Shared results.
   * share the results and check the links
 
 ### Post submit text
-  * Modify  the text
+  * Modify the text. functional[✔]
   * Check if user receives confirmation email.
 
 7. CSV

@@ -10,7 +10,7 @@ import pytest
 import json
 from liberaforms.models.form import Form
 
-class TestNewForm():
+class TestForm():
     def test_login(self, client, users):
         response = client.post(
                         "/user/login",
@@ -393,3 +393,19 @@ class TestNewForm():
         assert '<div class="info flash_message">' in html
         assert forms['test_form'].introductionText['markdown'] in html
         assert '<input  id="slug" value=""' in html
+
+    def test_toggle_new_answer_notification(self, client, users, forms):
+        form_id=forms['test_form'].id
+        initial_preference = forms['test_form'] \
+                             .editors[str(users['test_user'].id)] \
+                             ['notification']['newEntry']
+        response = client.post(
+                        f"/form/toggle-notification/{form_id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert initial_preference != response.json['notification']
+        assert initial_preference != forms['test_form'] \
+                                     .editors[str(users['test_user'].id)] \
+                                     ['notification']['newEntry']

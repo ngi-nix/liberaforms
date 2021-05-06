@@ -8,7 +8,7 @@
 
 <div class="container">
 <div class="row" style="font-size:1.5em">
-    
+
     {% if shared %}
     <div class="col">
     {{ form.slug }}
@@ -61,7 +61,7 @@
         <div class="col-md-12" style="margin-top:2rem;">
         <div class="title_1 delimited">{%trans%}Multiple choice{%endtrans%}</div>
         </div>
-        
+
         {% for field in chart_data['multi_choice'] %}
         <div class="col-md-4" height="100" style="margin-top:2em">
         <canvas id="{{ loop.index }}_multi_choice_chart"></canvas>
@@ -84,7 +84,7 @@ var time_chart = new Chart(ctx, {
             {
                 label: "{%trans%}Entries{%endtrans%}",
                 data: {{ chart_data['time_chart']['entries']|tojson }},
-                borderColor: ["rgba(0, 190, 0)"],                
+                borderColor: ["rgba(0, 190, 0)"],
                 fill: false,
                 borderWidth: 3,
                 lineTension: 0.1,

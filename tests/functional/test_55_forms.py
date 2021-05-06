@@ -5,10 +5,10 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
 import pytest
 
-class TestForm():
+
+class TestPublicForm():
     def test_display_form(self, client, forms):
         # test without client login. aka anonymous user
         forms['test_form'].restrictedAccess = False
@@ -36,28 +36,19 @@ class TestForm():
 
     def test_submit_form(self, client, forms):
         form_url = forms['test_form'].url
-        response = client.post(
-                        form_url,
-                        data = {
-                            "text-1620232883208": "john",
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert "<!-- thank_you_page -->" in html
-        answer = forms['test_form'].answers[-1]
-        assert vars(answer)['data']['text-1620232883208'] == "john"
-
-    def test_login(self, client, users):
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
+        # submit 4 answers
+        names = ["Julia", "Stella", "Jackie", "Vicky"]
+        for name in names:
+            response = client.post(
+                            form_url,
+                            data = {
+                                "text-1620232883208": name,
+                            },
+                            follow_redirects=True,
+                        )
+            assert response.status_code == 200
+            html = response.data.decode()
+            assert "<!-- thank_you_page -->" in html
+            answer = forms['test_form'].answers[-1]
+            assert vars(answer)['data']['text-1620232883208'] == name
+        assert vars(answer)['marked'] == False
