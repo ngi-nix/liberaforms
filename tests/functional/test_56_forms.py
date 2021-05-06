@@ -36,6 +36,18 @@ class TestForm():
         html = response.data.decode()
         assert '<!-- delete_form_page -->' in html
         assert f'<span class="highlightedText">{initial_answers_count}' in html
+        # test incorrect slug
+        response = client.post(
+                        f"/forms/delete/{forms['test_form'].id}",
+                        data = {
+                            "slug": f"{forms['test_form'].slug}-wrong"
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- delete_form_page -->' in html
+        # test correct slug
         response = client.post(
                         f"/forms/delete/{forms['test_form'].id}",
                         data = {
