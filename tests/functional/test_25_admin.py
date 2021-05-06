@@ -51,7 +51,7 @@ class TestNewRootUser():
         users['admin']=user
 
 class TestAdmin():
-    def test_login_admin(cls, users, admin_client):
+    def test_login(cls, users, admin_client):
         response = admin_client.get(
                         "/user/login",
                         follow_redirects=False,

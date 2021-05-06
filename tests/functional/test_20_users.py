@@ -14,10 +14,8 @@ from liberaforms.utils import validators
 
 from tests.unit.conftest import dummy_user
 
-#@pytest.mark.usefixtures('users')
-#@pytest.mark.order(after="TestAdmin")
-class TestUser():
 
+class TestUser():
     def test_save_new_user(self, db, dummy_user, users):
         dummy_user.save()
         users['test_user']=dummy_user
@@ -48,14 +46,29 @@ class TestUser():
         html = response.data.decode()
         assert '<a class="nav-link" href="/user/logout">' in html
 
-    def test_change_language(self, users, client):
+    def test_change_language(self, users, client, anon_client):
         """ Tests unavailable language and available language
             as defined in ./liberaforms/config.py
+            Tests permission
         """
-        #with caplog.at_level(logging.WARNING, logger="app.access"):
+        url = "/user/change-language"
+        response = anon_client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        response = client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- change_language_page -->' in html
         unavailable_language = 'af' # Afrikaans
         response = client.post(
-                        "/user/change-language",
+                        url,
                         data = {
                             "language": unavailable_language
                         },
@@ -65,7 +78,7 @@ class TestUser():
         assert users['test_user'].preferences['language'] != unavailable_language
         available_language = 'ca'
         response = client.post(
-                        "/user/change-language",
+                        url,
                         data = {
                             "language": available_language
                         },
@@ -75,17 +88,33 @@ class TestUser():
         assert users['test_user'].preferences['language'] == available_language
         users['test_user'].save()
 
-    def test_change_password(self, users, client):
+    def test_change_password(self, users, client, anon_client):
         """ Tests bad password and good password
             as defined in ./liberaforms/utils/validators.py
+            Tests permission
         """
+        url = "/user/reset-password"
+        response = anon_client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        response = client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- reset_password_page -->' in html
         password_hash = users['test_user'].password_hash
-        bad_password="1234"
+        invalid_password="1234"
         response = client.post(
-                        "/user/reset-password",
+                        url,
                         data = {
-                            "password": bad_password,
-                            "password2": bad_password
+                            "password": invalid_password,
+                            "password2": invalid_password
                         },
                         follow_redirects=True,
                     )
@@ -93,7 +122,7 @@ class TestUser():
         assert users['test_user'].password_hash == password_hash
         valid_password="this is a valid password"
         response = client.post(
-                        "/user/reset-password",
+                        url,
                         data = {
                             "password": valid_password,
                             "password2": valid_password
@@ -112,10 +141,27 @@ class TestUser():
         """ Not impletmented """
         pass
 
-    def test_toggle_new_answer_default_notification(self, users, client):
+    def test_toggle_new_answer_default_notification(self, users, client, anon_client):
+        """ Tests permission
+            # Tests POST only
+            Tests toggle bool
+        """
+        url = "/user/toggle-new-entry-notification"
+        response = anon_client.post(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        #response = client.get(
+        #                url,
+        #                follow_redirects=True,
+        #            )
+        #assert response.status_code == 405
         current_default = users['test_user'].preferences["newEntryNotification"]
         response = client.post(
-                        "/user/toggle-new-entry-notification",
+                        url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
