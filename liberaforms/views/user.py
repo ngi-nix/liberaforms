@@ -92,7 +92,6 @@ def new_user(token=None):
         else:
             return redirect(make_url_for('user_bp.user_settings',
                                          username=new_user.username))
-    print(wtform.errors)
     if "user_id" in session:
         session.pop("user_id")
     if not wtform.email.data and invite:
