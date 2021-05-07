@@ -62,11 +62,10 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * change password. functional[✔]
   * change language. functional[✔]
   * set New answer notification default. functional[✔]
-  * create new user with new user form
+  * create new user with new user form. functional[✔]
     * with RESERVED_USERNAMES
-  * invite new user
+  * invite new user. functional[✔]
     * with admin permission
-    * respond to invitation
 
 ## Forms
   * create a form. functional[✔]

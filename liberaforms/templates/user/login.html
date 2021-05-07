@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- user_login_page -->
 
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-    
+
     <div class="title_1 delimited">{%trans%}Login{%endtrans%}</div>
-    
+
     <form action="/user/login" method="POST" style="margin-top:1.5em">
         {{ wtform.csrf_token }}
         <p>
             {{ wtform.username.label }}<br />
             {{ wtform.username(class_="form-control") }}
-        </p>    
+        </p>
         <p>
             {{ wtform.password.label }}<br />
             {{ wtform.password(class_="form-control") }}
@@ -24,7 +25,7 @@
         <a href="/site/recover-password">{%trans%}Forgot your password?{%endtrans%}</a>
         </div>
     </form>
-    
+
     </div>
 
 </div>

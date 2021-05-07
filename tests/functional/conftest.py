@@ -19,3 +19,9 @@ def forms():
     return {
         'test_form': None,
     }
+
+@pytest.fixture(scope="module")
+def invite():
+    return {
+        'token': None,
+    }
