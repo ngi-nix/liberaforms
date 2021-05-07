@@ -23,5 +23,6 @@ def forms():
 @pytest.fixture(scope="module")
 def invite():
     return {
+        'id': None,
         'token': None,
     }

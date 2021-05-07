@@ -6,9 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os
-import ast
 import pytest
-from urllib.parse import urlparse
 from liberaforms.models.user import User
 from liberaforms.utils import validators
 
@@ -16,12 +14,6 @@ from tests.unit.conftest import test_user
 
 
 class TestNewUser():
-    """
-    def test_save_new_user(self, db, client, test_user, users):
-        test_user.save()
-        users['test_user']=test_user
-        assert users['test_user'].id != None
-    """
     def test_new_user_form(self, client, site, users):
         """ Tests new user form
             Test site.invitationOnly
@@ -110,7 +102,7 @@ class TestNewUser():
         users['test_user'].save()
 
     def test_change_password(self, users, client, anon_client):
-        """ Tests bad password and good password
+        """ Tests invalid and valid password
             as defined in ./liberaforms/utils/validators.py
             Tests permission
         """
@@ -189,6 +181,7 @@ class TestNewUser():
         #assert response.is_json == True
         assert users['test_user'].preferences["newEntryNotification"] != current_default
 
+class TestUserLogout():
     def test_logout(self, client):
         response = client.post(
                         "/user/logout",

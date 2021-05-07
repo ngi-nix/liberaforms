@@ -6,19 +6,42 @@ This file is part of LiberaForms.
 """
 
 import os
-import ast
 import pytest
-from urllib.parse import urlparse
 from liberaforms.models.user import User
 from liberaforms.models.invite import Invite
-from liberaforms.utils import validators
 
 class TestInvites():
-    def test_create_invite(self, admin_client, users, invite):
-        """ Test token creation for non admin user
+    def test_create_invite_1(self, client, anon_client,
+                             admin_client, users, invite):
+        """ Test invitation for non admin user
+            Test permissions
         """
         url = "/admin/invites/new"
-        # we create the test_user again, but this time with an invite token
+        response = anon_client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        response = client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        response = admin_client.get(
+                        url,
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- new_invite_page -->' in html
+
+        # TODO: test invitation to existing email
+
+        # delete the test_user and invite
         users['test_user'].delete()
         response = admin_client.post(
                         url,
@@ -34,6 +57,37 @@ class TestInvites():
         assert '<!-- list_invites_page -->' in html
         new_invite = Invite.find(email=os.environ['TEST_USER_EMAIL'])
         assert new_invite != None
+        invite['id'] = new_invite.id
+        invite['token'] = new_invite.token['token']
+
+    def test_delete_invite_1(self, admin_client, invite):
+        url = f"/admin/invites/delete/{invite['id']}"
+        response = admin_client.get(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="success flash_message">' in html
+        assert '<!-- list_invites_page -->' in html
+
+    def test_create_invite_2(self, admin_client, users, invite):
+        """ Test invitation for non admin user
+        """
+        url = "/admin/invites/new"
+        response = admin_client.post(
+                        url,
+                        data = {
+                            "message": "Hello",
+                            "email": os.environ['TEST_USER_EMAIL'],
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        new_invite = Invite.find(email=os.environ['TEST_USER_EMAIL'])
+        assert new_invite != None
+        invite['id'] = new_invite.id
         invite['token'] = new_invite.token['token']
 
     def test_new_user_form_with_invitation(self, client, users, invite):
@@ -65,30 +119,9 @@ class TestInvites():
         """ Test token creation for new admin user
             Test permissions
         """
-        url = "/admin/invites/new"
-        response = anon_client.get(
-                        url,
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<!-- site_index_page -->' in html
-        response = client.get(
-                        url,
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<!-- site_index_page -->' in html
-        response = admin_client.get(
-                        url,
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<!-- new_invite_page -->' in html
-        # we create the test_user again, but this time with an invite admin token
+        # delete test_user again, and this time send an invite admin token
         users['test_user'].delete()
+        url = "/admin/invites/new"
         response = admin_client.post(
                         url,
                         data = {
