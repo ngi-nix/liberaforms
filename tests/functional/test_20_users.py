@@ -12,14 +12,17 @@ from urllib.parse import urlparse
 from liberaforms.models.user import User
 from liberaforms.utils import validators
 
-from tests.unit.conftest import dummy_user
+from tests.unit.conftest import test_user
 
 
 class TestUser():
-    def test_save_new_user(self, db, dummy_user, users):
-        dummy_user.save()
-        users['test_user']=dummy_user
+    def test_save_new_user(self, db, test_user, users):
+        test_user.save()
+        users['test_user']=test_user
         assert users['test_user'].id != None
+
+    def test_new_user_form(self, test_user):
+        pass
 
     def test_login(self, client, users):
         """ Tests bad credentials and good credentials """

@@ -41,15 +41,18 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
 ## Database
   * create tables with alembic migrations. fixture[✔]
 
-## Site
-  * create a new site. unit[✔]
-  * set site name. functional[✔]
-  * set default language. functional[✔]
-  * toggle 'inviation only'. functional[✔]
-  * set/restore favicon. functional[✔]
-  * set menu colour. functional[✔]
-  * configure smtp. functional[✔]
-  * test smtp. functional[✔]
+## Site configuration
+  * save and restore favicon. functional[✔]
+  * change colour. functional[✔]
+  * change site name. functional[✔]
+  * change default language. functional[✔]
+  * change 'only invitations'. functional[✔]
+  * change port. functional[✔]
+  * change scheme. functional[✔]
+  * edit landing page. functional[✔]
+  * add/edit/delete consentment texts
+  * config SMTP functional[✔]
+  * test SMTP functional[✔]
   * set public link creation. functional[✔]
 
 ## Users
@@ -64,19 +67,6 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * invite new user
     * with admin permission
     * respond to invitation
-
-## Site configuration
-  * save and restore favicon. functional[✔]
-  * change colour. functional[✔]
-  * change site name. functional[✔]
-  * change default language. functional[✔]
-  * change 'only invitations'. functional[✔]
-  * change port. functional[✔]
-  * change scheme. functional[✔]
-  * edit landing page. functional[✔]
-  * add/edit/delete consentment texts
-  * config SMTP functional[✔]
-  * test SMTP functional[✔]
 
 ## Forms
   * create a form. functional[✔]
@@ -107,4 +97,5 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * export CSV. functional[✔]
   * export CSV with deleted columns
 
+# Backups
 Drop database and restore copy

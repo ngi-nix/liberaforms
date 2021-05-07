@@ -11,7 +11,7 @@ import pytest
 from urllib.parse import urlparse
 from liberaforms.models.user import User
 
-from tests.unit.conftest import dummy_user
+from tests.unit.conftest import test_user
 
 
 class TestNewRootUser():
