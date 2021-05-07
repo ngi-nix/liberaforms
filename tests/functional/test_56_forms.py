@@ -11,7 +11,7 @@ from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
 from liberaforms.models.log import FormLog
 
-class TestForm():
+class TestDeleteForm():
     def test_login(self, client, users):
         response = client.post(
                         "/user/login",

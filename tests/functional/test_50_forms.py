@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 import os
 import pytest
 import json
+from flask import current_app
 from liberaforms.models.form import Form
 
 class TestForm():
@@ -409,3 +410,78 @@ class TestForm():
         assert initial_preference != forms['test_form'] \
                                      .editors[str(users['test_user'].id)] \
                                      ['notification']['newEntry']
+
+class TestSlugAvailability():
+    def test_slug_availability(self, client, forms):
+        reserved_slug = current_app.config['RESERVED_SLUGS'][0]
+        response = client.post(
+                        "/forms/check-slug-availability",
+                        data = {
+                            "slug": reserved_slug,
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['available'] == False
+        unavailable_slug = forms['test_form'].slug
+        response = client.post(
+                        "/forms/check-slug-availability",
+                        data = {
+                            "slug": unavailable_slug,
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['available'] == False
+
+    def test_save_form_with_reserved_slug(self, client):
+        reserved_slug = current_app.config['RESERVED_SLUGS'][0]
+        with open("./assets/valid_form_structure.json", 'r') as structure:
+            valid_structure = structure.read()
+        response = client.post(
+                        "/forms/edit",
+                        data = {
+                            "structure": valid_structure,
+                            "introductionTextMD": "hello",
+                            "slug": reserved_slug,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<form action="/forms/save" method="post">' in html
+        response = client.post(
+                        "/forms/save",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="error flash_message">' in html
+        assert '<!-- edit_form_page -->' in html
+
+    def test_save_form_with_unavailable_slug(self, client, forms):
+        unavailable_slug = forms['test_form'].slug
+        with open("./assets/valid_form_structure.json", 'r') as structure:
+            valid_structure = structure.read()
+        response = client.post(
+                        "/forms/edit",
+                        data = {
+                            "structure": valid_structure,
+                            "introductionTextMD": "hello",
+                            "slug": unavailable_slug,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<form action="/forms/save" method="post">' in html
+        response = client.post(
+                        "/forms/save",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="error flash_message">' in html
+        assert '<!-- edit_form_page -->' in html

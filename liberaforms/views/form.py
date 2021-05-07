@@ -173,6 +173,10 @@ def save_form(id=None):
         if Form.find(slug=session['slug']):
             flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
+        if session['slug'] in current_app.config['RESERVED_SLUGS']:
+            # TRANSLATION: Slug is reserved. <a_word>
+            flash(gettext("Slug is reserved. %s" % (session['slug'])), 'error')
+            return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
             # this new form is a duplicate
             consentTexts=session['consentTexts']
