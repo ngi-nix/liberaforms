@@ -26,3 +26,8 @@ def invite():
         'id': None,
         'token': None,
     }
+
+# value used to test number field expiration
+@pytest.fixture(scope="module")
+def number_field_max():
+    return 7
