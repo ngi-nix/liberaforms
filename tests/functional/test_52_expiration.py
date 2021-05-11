@@ -45,7 +45,7 @@ class TestFormExpiration():
                                     .editors[str(users['test_user'].id)] \
                                     ['notification']['expiredForm']
 
-    def test_set_expiration_date(self, client, forms):
+    def test_set_expiration_date(self, client, anon_client, forms):
         form_id=forms['test_form'].id
         initial_log_count = forms['test_form'].log.count()
         invalid_date="2021-00-00"
@@ -77,7 +77,7 @@ class TestFormExpiration():
         assert response.json['expired'] == True
         assert forms['test_form'].has_expired() == True
         assert forms['test_form'].can_expire() == True
-        assert forms['test_form'].log.count() != initial_log_count
+        assert forms['test_form'].log.count() == initial_log_count +1
         initial_log_count = forms['test_form'].log.count()
         valid_future_date="2121-05-05"
         response = client.post(
@@ -93,7 +93,7 @@ class TestFormExpiration():
         assert response.json['expired'] == False
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == True
-        assert forms['test_form'].log.count() != initial_log_count
+        assert forms['test_form'].log.count() == initial_log_count +1
         initial_log_count = forms['test_form'].log.count()
         response = client.post(
                         f"/forms/set-expiration-date/{form_id}",
@@ -108,10 +108,28 @@ class TestFormExpiration():
         assert response.json['expired'] == False
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == False
-        assert forms['test_form'].log.count() != initial_log_count
+        assert forms['test_form'].log.count() == initial_log_count +1
 
     def test_set_max_answers_expiration(self, client, forms):
+        """ Tests valid max answers exipry condition value
+            Tests invalid max answers exipry condition value
+        """
         form_id=forms['test_form'].id
+        initial_log_count = forms['test_form'].log.count()
+        valid_max_answers = 12
+        response = client.post(
+                        f"/forms/set-expiry-total-entries/{form_id}",
+                        data = {
+                            "total_entries": valid_max_answers,
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['total_entries'] == valid_max_answers
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == True
+        assert forms['test_form'].log.count() == initial_log_count +1
         initial_log_count = forms['test_form'].log.count()
         invalid_max_answers = "invalid_integer"
         response = client.post(
@@ -123,27 +141,16 @@ class TestFormExpiration():
                     )
         assert response.status_code == 200
         assert response.is_json == True
+        assert response.json['total_entries'] == 0
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == False
-        assert forms['test_form'].log.count() == initial_log_count
-        valid_max_answers = 3
-        response = client.post(
-                        f"/forms/set-expiry-total-entries/{form_id}",
-                        data = {
-                            "total_entries": valid_max_answers,
-                        },
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert forms['test_form'].has_expired() == False
-        assert forms['test_form'].can_expire() == True
-        assert forms['test_form'].log.count() != initial_log_count
+        assert forms['test_form'].expiryConditions['totalEntries'] == 0
+        assert forms['test_form'].log.count() == initial_log_count +1
         initial_log_count = forms['test_form'].log.count()
         response = client.post(
                         f"/forms/set-expiry-total-entries/{form_id}",
                         data = {
-                            "total_entries": 0,
+                            "total_entries": invalid_max_answers,
                         },
                         follow_redirects=False,
                     )
@@ -151,15 +158,16 @@ class TestFormExpiration():
         assert response.is_json == True
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == False
-        assert forms['test_form'].log.count() != initial_log_count
+        assert forms['test_form'].log.count() == initial_log_count +1
 
     # ./tests/assets/valid_form_structure.json contains a number field
     # with id number-1620224716308
-    def test_set_max_number_field_expiration(self, client, forms, number_field_max):
-        """ Tests max number fields exipry condition
+    def test_set_max_number_field_expiration(self, client, forms):
+        """ Tests for max_number_field input in html
+            Tests valid max answers exipry condition value
+            Tests invalid max answers exipry condition value
         """
         form_id = forms['test_form'].id
-        initial_log_count = forms['test_form'].log.count()
         number_field_id = "number-1620224716308"
         response = client.get(
                         f"/forms/expiration/{form_id}",
@@ -167,19 +175,67 @@ class TestFormExpiration():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<input    id="number-1620224716308" type="number"' in html
+        assert f'<input    id="{number_field_id}" type="number"' in html
+        url = f"/forms/set-expiry-field-condition/{form_id}"
+        initial_log_count = forms['test_form'].log.count()
+        valid_max_number = 31
         response = client.post(
-                        f"/forms/set-expiry-field-condition/{form_id}",
+                        url,
                         data = {
                             "field_name": number_field_id,
-                            "condition": number_field_max
+                            "condition": valid_max_number
                         },
                         follow_redirects=False,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert response.json['condition'] == str(number_field_max)
+        assert response.json['condition'] == str(valid_max_number)
         assert response.json['expired'] == False
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == True
+        field_condition = {'type': 'number', 'condition': valid_max_number}
+        assert forms['test_form'].expiryConditions['fields'][number_field_id] == field_condition
         assert forms['test_form'].log.count() == initial_log_count + 1
+        initial_log_count = forms['test_form'].log.count()
+        invalid_max_number = "invalid_integer"
+        response = client.post(
+                        url,
+                        data = {
+                            "field_name": number_field_id,
+                            "condition": invalid_max_number
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['condition'] == 0
+        assert response.json['expired'] == False
+        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].can_expire() == False
+        assert forms['test_form'].expiryConditions['fields'] == {}
+        assert forms['test_form'].log.count() == initial_log_count + 1
+
+    def test_set_expirations(self, client, forms, max_answers, number_field_max):
+        """ Set up expiration conditions for submit tests to be made later
+            No assertions are made in this function. (previously tested)
+            This is the last function in this module.
+        """
+        form_id = forms['test_form'].id
+        number_field_id = "number-1620224716308"
+        valid_max_answers = max_answers
+        response = client.post(
+                        f"/forms/set-expiry-total-entries/{form_id}",
+                        data = {
+                            "total_entries": valid_max_answers,
+                        },
+                        follow_redirects=False,
+                    )
+        valid_max_number = number_field_max
+        response = client.post(
+                        f"/forms/set-expiry-field-condition/{form_id}",
+                        data = {
+                            "field_name": number_field_id,
+                            "condition": valid_max_number
+                        },
+                        follow_redirects=False,
+                    )

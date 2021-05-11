@@ -394,10 +394,16 @@ class Form(db.Model, CRUD):
         self.save()
 
     def save_expiry_total_entries(self, total_entries):
+        try:
+            total_entries = int(total_entries)
+        except:
+            total_entries = 0
+        total_entries = 0 if total_entries < 0 else total_entries
         self.expiryConditions['totalEntries']=total_entries
         self.expired = self.has_expired()
         flag_modified(self, "expiryConditions")
         self.save()
+        return self.expiryConditions['totalEntries']
 
     def save_expiry_field_condition(self, field_name, condition):
         available_fields=self.get_available_number_type_fields()
@@ -415,12 +421,14 @@ class Form(db.Model, CRUD):
             try:
                 condition_dict = {"type": field_type, "condition": int(condition)}
                 self.expiryConditions['fields'][field_name] = condition_dict
-                self.expired=self.has_expired()
-                flag_modified(self, "expiryConditions")
-                self.save()
-                return condition
             except:
-                return False
+                condition = False
+                if field_name in self.expiryConditions['fields']:
+                    del self.expiryConditions['fields'][field_name]
+            self.expired=self.has_expired()
+            flag_modified(self, "expiryConditions")
+            self.save()
+            return condition
         return False
 
     def update_expiryConditions(self):
@@ -479,7 +487,7 @@ class Form(db.Model, CRUD):
         if not self.can_expire():
             return False
         if self.expiryConditions["totalEntries"] and \
-            self.get_entries().count() >= self.expiryConditions["totalEntries"]:
+            self.answers.count() >= self.expiryConditions["totalEntries"]:
             return True
         if self.expiryConditions["expireDate"] and not \
             validators.is_future_date(self.expiryConditions["expireDate"]):

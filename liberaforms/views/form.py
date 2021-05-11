@@ -420,22 +420,12 @@ def set_expiry_field_condition(id):
 @enabled_user_required
 def set_expiry_total_entries(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
-    if not queriedForm:
+    if not (queriedForm and 'total_entries' in request.form):
         return JsonResponse(json.dumps({'expired': False, 'total_entries':0}))
-    if 'total_entries' in request.form:
-        try:
-            total_entries = int(request.form['total_entries'])
-            if total_entries < 0:
-                total_entries = 0
-            queriedForm.save_expiry_total_entries(total_entries)
-            # TRANSLATION EXAMPLE: Expire when total answers set: 3
-            queriedForm.add_log(gettext("Expire when total answers set: %s" % total_entries))
-        except:
-            total_entries = queriedForm.expiryConditions['totalEntries']
-            return JsonResponse(json.dumps({'expired': False,
-                                            'total_entries': total_entries,
-                                            "error": True}))
-    total_entries = queriedForm.expiryConditions['totalEntries']
+    total_entries = request.form['total_entries']
+    total_entries = queriedForm.save_expiry_total_entries(total_entries)
+    # TRANSLATION: Expire when total answers set to: 3
+    queriedForm.add_log(gettext("Expire when total answers set to: %s" % total_entries))
     return JsonResponse(json.dumps({'expired': queriedForm.expired,
                                     'total_entries':total_entries}))
 

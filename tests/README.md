@@ -74,9 +74,10 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
     * with unavailable slugs. functional[✔]
     * with RESERVED_FORM_ELEMENT_NAMES
   * set date expiry in past and future. functional[✔]
-  * set number field max total. functional[✔]
-  * test number field max total. functional[✔]
-  * set max answers. functional[✔]
+  * set and test number field max total. functional[✔]
+  * test number field max total expiry. functional[✔]
+  * set and test max answers. functional[✔]
+  * test max answers expiry. functional[✔]
   * add an editor. functional[✔]
   * share answers. functional[✔]
     * check the links

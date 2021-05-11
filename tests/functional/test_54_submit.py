@@ -5,8 +5,8 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+import os
 import pytest
-
 
 class TestPublicForm():
     def test_display_form(self, anon_client, forms):
@@ -52,6 +52,7 @@ class TestPublicForm():
         assert vars(answer)['marked'] == False
 
     def test_max_number_field_expiration(self, anon_client, forms, number_field_max):
+        os.environ['SKIP_EMAILS'] = 'True'
         form_url = forms['test_form'].url
         number_field_id = "number-1620224716308"
         number_to_submit = 2
@@ -89,9 +90,61 @@ class TestPublicForm():
         assert "<!-- thank_you_page -->" in html
         assert forms['test_form'].has_expired() == True
 
-    def test_submit_expired_form(self, anon_client, forms):
+    def test_number_field(self, client, users, anon_client, forms):
+        os.environ['SKIP_EMAILS'] = 'True'
+        assert forms['test_form'].expired == True
         form_url = forms['test_form'].url
         name = "Rita"
+        response = anon_client.post(
+                        form_url,
+                        data = {
+                            "text-1620232883208": name,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert "<!-- form_has_expired_page -->" in html
+        # Remove the max number_field expiry condition for the next test
+        client.post(
+            "/user/login",
+            data = {
+                "username": users['test_user'].username,
+                "password": os.environ['TEST_USER_PASSWORD'],
+            },
+        )
+        form_id = forms['test_form'].id
+        number_field_id = "number-1620224716308"
+        response = client.post(
+                        f"/forms/set-expiry-field-condition/{form_id}",
+                        data = {
+                            "field_name": number_field_id,
+                            "condition": ""
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert forms['test_form'].has_expired() == False
+
+    def test_max_answers(self, anon_client, forms, max_answers):
+        os.environ['SKIP_EMAILS'] = 'True'
+        form_url = forms['test_form'].url
+        assert forms['test_form'].answers.count() < max_answers
+        while forms['test_form'].answers.count() < max_answers:
+            assert forms['test_form'].has_expired() == False
+            name = "Julia"
+            response = anon_client.post(
+                            form_url,
+                            data = {
+                                "text-1620232883208": name,
+                            },
+                            follow_redirects=True,
+                        )
+            assert response.status_code == 200
+            html = response.data.decode()
+            assert "<!-- thank_you_page -->" in html
+        assert forms['test_form'].answers.count() == max_answers
+        assert forms['test_form'].has_expired() == True
         response = anon_client.post(
                         form_url,
                         data = {

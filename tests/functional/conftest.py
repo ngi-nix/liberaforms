@@ -31,3 +31,7 @@ def invite():
 @pytest.fixture(scope="module")
 def number_field_max():
     return 7
+
+@pytest.fixture(scope="module")
+def max_answers():
+    return 10
