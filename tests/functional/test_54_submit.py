@@ -47,6 +47,7 @@ class TestPublicForm():
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- thank_you_page -->" in html
+        assert forms['test_form'].after_submit_text_html in html
         answer = forms['test_form'].answers[-1]
         assert vars(answer)['data']['text-1620232883208'] == name
         assert vars(answer)['marked'] == False
@@ -93,8 +94,6 @@ class TestPublicForm():
         os.environ['SKIP_EMAILS'] = original_skip_emails
 
     def test_number_field(self, client, users, anon_client, forms):
-        original_skip_emails = os.environ['SKIP_EMAILS']
-        os.environ['SKIP_EMAILS'] = 'True'
         assert forms['test_form'].expired == True
         form_url = forms['test_form'].url
         name = "Rita"
@@ -108,6 +107,7 @@ class TestPublicForm():
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- form_has_expired_page -->" in html
+        assert forms['test_form'].expired_text_html in html
         # Remove the max number_field expiry condition for the next test
         client.post(
             "/user/login",
@@ -128,7 +128,6 @@ class TestPublicForm():
                     )
         assert response.status_code == 200
         assert forms['test_form'].has_expired() == False
-        os.environ['SKIP_EMAILS'] = original_skip_emails
 
     def test_max_answers(self, anon_client, forms, max_answers):
         original_skip_emails = os.environ['SKIP_EMAILS']

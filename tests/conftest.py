@@ -46,7 +46,7 @@ def session(db):
     db.session = session
     yield session
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope='session')
 def client(app):
     with app.test_client() as client:
         yield client

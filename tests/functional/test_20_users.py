@@ -81,6 +81,7 @@ class TestNewUser():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- change_language_page -->' in html
+        initial_language = users['test_user'].preferences['language']
         unavailable_language = 'af' # Afrikaans
         response = client.post(
                         url,
@@ -90,7 +91,7 @@ class TestNewUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert users['test_user'].preferences['language'] != unavailable_language
+        assert users['test_user'].preferences['language'] == initial_language
         available_language = 'ca'
         response = client.post(
                         url,
@@ -135,7 +136,7 @@ class TestNewUser():
                     )
         assert response.status_code == 200
         assert users['test_user'].password_hash == password_hash
-        valid_password="this is a valid password"
+        valid_password="this is another valid password"
         response = client.post(
                         url,
                         data = {
@@ -145,6 +146,7 @@ class TestNewUser():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
+        # assert users['test_user'].password_hash == validators.hash_password(valid_password)
         assert users['test_user'].password_hash != password_hash
         # reset the password to the value defined in ./tests/test.env. Required by other tests
         password_hash = validators.hash_password(os.environ['TEST_USER_PASSWORD'])
@@ -174,14 +176,15 @@ class TestNewUser():
         #                follow_redirects=True,
         #            )
         #assert response.status_code == 405
-        current_default = users['test_user'].preferences["newEntryNotification"]
+        initial_default = users['test_user'].preferences["newEntryNotification"]
         response = client.post(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        #assert response.is_json == True
-        assert users['test_user'].preferences["newEntryNotification"] != current_default
+        assert response.is_json == True
+        assert users['test_user'].preferences["newEntryNotification"] != initial_default
+        assert type(users['test_user'].preferences["newEntryNotification"]) == type(bool())
 
 class TestUserLogout():
     def test_logout(self, client):

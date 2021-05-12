@@ -33,6 +33,7 @@ class TestAdmin():
         response = admin_client.post(url)
         assert response.status_code == 200
         assert users['admin'].admin["notifyNewUser"] != notification
+        assert type(users['admin'].admin["notifyNewUser"]) == type(bool())
 
     def test_toggle_new_form_notification(self, users, admin_client, anon_client):
         """ Tests admin permission
@@ -56,3 +57,4 @@ class TestAdmin():
         response = admin_client.post(url)
         assert response.status_code == 200
         assert users['admin'].admin["notifyNewForm"] != notification
+        assert type(users['admin'].admin["notifyNewForm"]) == type(bool())

@@ -78,7 +78,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.defaultLanguage != initial_language
+        assert site.defaultLanguage == available_language
 
     def test_toggle_invitation_only(cls, site, admin_client, anon_client):
         url = "/site/toggle-invitation-only"
@@ -334,11 +334,15 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.smtpConfig != initial_smtp_config
-
+        assert site.smtpConfig['host'] == os.environ['TEST_SMTP_HOST']
+        assert site.smtpConfig['port'] == int(os.environ['TEST_SMTP_PORT'])
+        assert site.smtpConfig['encryption'] == os.environ['TEST_SMTP_ENCRYPTION']
+        assert site.smtpConfig['user'] == os.environ['TEST_SMTP_USERNAME']
+        assert site.smtpConfig['password'] == os.environ['TEST_SMTP_USER_PASSWORD']
+        assert site.smtpConfig['noreplyAddress'] == os.environ['TEST_SMTP_NO_REPLY']
 
     @pytest.mark.skipif(os.environ['SKIP_EMAILS'] == 'True',
-                        reason="SKIP_EMAILS=True in test.env")
+                        reason="SKIP_EMAILS=True in test.ini")
     def test_test_smtp_config(self, site, admin_client, users):
         """ Sends a test email to admin user
         """

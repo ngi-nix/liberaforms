@@ -188,6 +188,7 @@ class TestForm():
         assert response.is_json == True
         assert forms['test_form'].data_consent['enabled'] == response.json['enabled']
         assert forms['test_form'].data_consent['enabled'] != initial_GDPR_state
+        assert type(forms['test_form'].data_consent['enabled']) == type(bool())
         assert forms['test_form'].log.count() != initial_log_count
 
     def test_recover_GDPR_default_text(self, client, forms):
@@ -271,9 +272,12 @@ class TestForm():
         assert response.status_code == 200
         assert response.is_json == True
         assert initial_preference != response.json['notification']
-        assert initial_preference != forms['test_form'] \
-                                     .editors[str(users['test_user'].id)] \
-                                     ['notification']['newEntry']
+        saved_preference = forms['test_form'] \
+                           .editors[str(users['test_user'].id)] \
+                           ['notification']['newEntry']
+        assert saved_preference != initial_preference
+        assert type(saved_preference) == type(bool())
+
 
 class TestSlugAvailability():
     def test_slug_availability(self, client, forms):
