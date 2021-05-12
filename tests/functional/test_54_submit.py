@@ -52,6 +52,7 @@ class TestPublicForm():
         assert vars(answer)['marked'] == False
 
     def test_max_number_field_expiration(self, anon_client, forms, number_field_max):
+        original_skip_emails = os.environ['SKIP_EMAILS']
         os.environ['SKIP_EMAILS'] = 'True'
         form_url = forms['test_form'].url
         number_field_id = "number-1620224716308"
@@ -89,8 +90,10 @@ class TestPublicForm():
         html = response.data.decode()
         assert "<!-- thank_you_page -->" in html
         assert forms['test_form'].has_expired() == True
+        os.environ['SKIP_EMAILS'] = original_skip_emails
 
     def test_number_field(self, client, users, anon_client, forms):
+        original_skip_emails = os.environ['SKIP_EMAILS']
         os.environ['SKIP_EMAILS'] = 'True'
         assert forms['test_form'].expired == True
         form_url = forms['test_form'].url
@@ -125,14 +128,16 @@ class TestPublicForm():
                     )
         assert response.status_code == 200
         assert forms['test_form'].has_expired() == False
+        os.environ['SKIP_EMAILS'] = original_skip_emails
 
     def test_max_answers(self, anon_client, forms, max_answers):
+        original_skip_emails = os.environ['SKIP_EMAILS']
         os.environ['SKIP_EMAILS'] = 'True'
         form_url = forms['test_form'].url
         assert forms['test_form'].answers.count() < max_answers
+        name = "Julia"
         while forms['test_form'].answers.count() < max_answers:
             assert forms['test_form'].has_expired() == False
-            name = "Julia"
             response = anon_client.post(
                             form_url,
                             data = {
@@ -155,3 +160,4 @@ class TestPublicForm():
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- form_has_expired_page -->" in html
+        os.environ['SKIP_EMAILS'] = original_skip_emails

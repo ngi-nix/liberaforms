@@ -227,7 +227,8 @@ class Form(db.Model, CRUD):
         return result
 
     def get_total_entries(self):
-        return Answer.find_all(form_id=self.id).count()
+        return self.answers.count()
+        #return Answer.find_all(form_id=self.id).count()
 
     def get_last_entry_date(self):
         last_entry = Answer.find(form_id=self.id)
@@ -269,11 +270,11 @@ class Form(db.Model, CRUD):
 
     @property
     def url(self):
-        return "%s%s" % (self.site.host_url, self.slug)
+        return f"{self.site.host_url}{self.slug}"
 
     @property
     def embed_url(self):
-        return "%sembed/%s" % (self.site.host_url, self.slug)
+        return f"{self.site.host_url}embed/{self.slug}"
 
     @property
     def data_consent(self):
@@ -307,7 +308,7 @@ class Form(db.Model, CRUD):
     @staticmethod
     def default_expired_text():
         text=gettext("Sorry, this form has expired.")
-        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+        return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
     def expired_text_html(self):
@@ -335,7 +336,7 @@ class Form(db.Model, CRUD):
     @staticmethod
     def defaultAfterSubmitText():
         text=gettext("Thank you!!")
-        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+        return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
     def after_submit_text_html(self):
