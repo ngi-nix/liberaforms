@@ -83,7 +83,6 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * test max answers expiry. functional[✔]
   * add an editor. functional[✔]
   * set shared answers. functional[✔]
-  * test shared answers links. functional[✔]
   * modify post submit text. functional[✔]
   * modify expity text. functional[✔]
   * check if user receives confirmation email.
@@ -91,7 +90,7 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
     * and try to submit a form with out checkbox.
   * duplicate form. functional[✔]
   * test embedded form. functional[✔]
-  * change author
+  * change author. functional[✔]
   * delete form and answers. functional[✔]
 
 ## Answers
@@ -102,6 +101,7 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * delete all answers. functional[✔]
   * export CSV. functional[✔]
   * export CSV with deleted columns
+  * test shared answers links. functional[✔]
 
 # Backups
 Drop database and restore copy

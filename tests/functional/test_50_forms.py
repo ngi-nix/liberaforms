@@ -65,7 +65,7 @@ class TestForm():
         assert '<!-- inspect_form_page -->' in html
         assert forms['test_form'].log.count() == 1
 
-    def test_initial_values(self, forms, client):
+    def test_initial_values(self, forms):
         assert forms['test_form'].enabled == False
         assert forms['test_form'].sharedEntries['enabled'] == False
         assert validators.is_valid_UUID(forms['test_form'].sharedEntries['key']) == True
