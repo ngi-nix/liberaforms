@@ -7,10 +7,10 @@ DEFAULT_LANGUAGE=en
 SECRET_KEY=a_secret_key
 ROOT_USERS=['dave@example.com']
 
-DB_HOST=localhost
-DB_NAME=test_db
-DB_USER=db_user
-DB_PASSWORD="db_password"
+TEST_DB_HOST=localhost
+TEST_DB_NAME=test_db
+TEST_DB_USER=db_user
+TEST_DB_PASSWORD="db_password"
 
 TOKEN_EXPIRATION=604800
 SESSION_TYPE=filesystem
@@ -23,7 +23,6 @@ TEST_USER_PASSWORD=""
 TEST_USER_EMAIL= # YOUR_EMAIL_ADDRESS
 
 # Valid SMTP configuration. Tests will send emails with this config.
-
 TEST_SMTP_HOST=
 TEST_SMTP_PORT=
 TEST_SMTP_ENCRYPTION= #['', 'SSL', 'STARTTLS']

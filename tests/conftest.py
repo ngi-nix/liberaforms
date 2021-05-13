@@ -6,11 +6,17 @@ This file is part of LiberaForms.
 """
 
 import os
+
+os.environ['FLASK_CONFIG'] = 'testing'
+os.environ['DB_USER'] = os.environ['TEST_DB_USER']
+os.environ['DB_PASSWORD'] = os.environ['TEST_DB_PASSWORD']
+os.environ['DB_HOST'] = os.environ['TEST_DB_HOST']
+os.environ['DB_NAME'] = os.environ['TEST_DB_NAME']
+
 import pytest
 from flask_migrate import Migrate, upgrade, stamp
 from liberaforms import create_app
 from liberaforms import db as _db
-
 
 """
 Returns app
