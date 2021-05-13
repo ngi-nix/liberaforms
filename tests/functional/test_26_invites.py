@@ -70,10 +70,9 @@ class TestInvites():
         html = response.data.decode()
         assert '<div class="success flash_message">' in html
         assert '<!-- list_invites_page -->' in html
+        assert Invite.find_all().count() == 0
 
     def test_create_invite_2(self, admin_client, users, invite):
-        """ Test invitation for non admin user
-        """
         url = "/admin/invites/new"
         response = admin_client.post(
                         url,
@@ -93,10 +92,11 @@ class TestInvites():
     def test_new_user_form_with_invitation(self, client, users, invite):
         token = invite['token']
         url = f"/user/new/{token}"
+        tmp_username = "WillBeDeleted"
         response = client.post(
                         url,
                         data = {
-                            "username": os.environ['TEST_USERNAME'],
+                            "username": tmp_username,
                             "email": os.environ['TEST_USER_EMAIL'],
                             "password": os.environ['TEST_USER_PASSWORD'],
                             "password2": os.environ['TEST_USER_PASSWORD'],
@@ -105,22 +105,22 @@ class TestInvites():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert Invite.find_all().count() == 0
-        users['test_user'] = User.find(username=os.environ['TEST_USERNAME'])
+        assert Invite.find(id=invite['id']) == None
+        users['test_user'] = User.find(username=tmp_username)
         assert users['test_user'] != None
         assert users['test_user'].validatedEmail == True
         assert users['test_user'].admin['isAdmin'] == False
         html = response.data.decode()
         assert '<!-- my_forms_page -->' in html
         assert '<a class="nav-link" href="/user/logout">' in html
+        # delete test_user to continue testing
+        users['test_user'].delete()
+        assert User.find(id=users['test_user'].id) == None
 
     def test_create_invite_new_admin(self, anon_client, client,
                                      admin_client, users, invite):
         """ Test token creation for new admin user
-            Test permissions
         """
-        # delete test_user again, and this time send an invite admin token
-        users['test_user'].delete()
         url = "/admin/invites/new"
         response = admin_client.post(
                         url,
@@ -165,3 +165,5 @@ class TestInvites():
         # remove admin permission from test user to continue testing
         users['test_user'].admin['isAdmin'] = False
         users['test_user'].save()
+
+        #pytest.exit("invite tests completed")

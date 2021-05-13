@@ -50,7 +50,7 @@ class TestFormAdminSettings():
 
     def test_change_author(self, client, admin_client, anon_client, forms, users):
         """ Tests nonexistent username and valid username
-            Test permission
+            Tests permission
         """
         form_id = forms['test_form'].id
         url = f"/admin/forms/change-author/{form_id}"
@@ -110,6 +110,5 @@ class TestFormAdminSettings():
                             data = {
                                 "old_author_username": users['admin'].username,
                                 "new_author_username": initial_author.username,
-                            },
-                            follow_redirects=True
+                            }
                         )

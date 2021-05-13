@@ -104,11 +104,11 @@ class EmailServer():
                 logging.warning(traceback.format_exc())
                 return {
                     "email_sent": False,
-                    "error": str(error)
+                    "msg": str(error)
                 }
         return {
             "email_sent": False,
-            "error": "Cannot connect to {}".format(self.host)
+            "msg": f"Cannot connect to {self.host}"
         }
 
     def send_mail_async(self, app, msg):
