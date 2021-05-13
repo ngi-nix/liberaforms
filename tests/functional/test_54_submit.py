@@ -59,7 +59,6 @@ class TestPublicForm():
         response = anon_client.get(embedded_form_url)
         assert response.status_code == 200
         html = response.data.decode()
-
         assert '"label": "Name", "name": "text-1620232883208"' in html
         name = "Felicitat"
         response = anon_client.post(

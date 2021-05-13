@@ -7,17 +7,17 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+from flask import current_app
 from liberaforms.models.user import User
 from liberaforms.utils import validators
-
-
 
 
 class TestNewUser():
     def test_new_user_form(self, client, site, users):
         """ Tests new user form
-            Test site.invitationOnly
-            Creates test_user
+            Tests site.invitationOnly
+            Tests RESERVED_USERNAMES
+            Tests invalid email and passwords
         """
         url = "/user/new"
         site.invitationOnly = True
@@ -39,6 +39,25 @@ class TestNewUser():
         html = response.data.decode()
         assert '<!-- new_user_form_page -->' in html
         assert '<a class="nav-link" href="/user/login">' in html
+        reserved_username = current_app.config['RESERVED_USERNAMES'][0]
+        response = client.post(
+                        url,
+                        data = {
+                            "username": reserved_username,
+                            "email": "invalid_email_string",
+                            "password": "invalidpassword",
+                            "password2": "valid password",
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- new_user_form_page -->' in html
+        assert '<a class="nav-link" href="/user/login">' in html
+        assert html.count('<span class="formError">') == 4
+
+    def test_create_user_account(self, client, users):
+        url = "/user/new"
         response = client.post(
                         url,
                         data = {
