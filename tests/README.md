@@ -57,6 +57,7 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
 
 ## Users
   * create first admin user with ROOT_USERS email. functional[✔]
+  * test admin preferneces. functional[✔]
   * create user. unit[✔]
   * change email
   * change password. functional[✔]
@@ -87,7 +88,7 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * activate GDPR consent. functional[✔]
     * and try to submit a form with out checkbox.
   * duplicate form. functional[✔]
-  * test embedded form
+  * test embedded form. functional[✔]
   * change author
   * delete form and answers. functional[✔]
 

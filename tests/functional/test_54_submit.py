@@ -52,6 +52,31 @@ class TestPublicForm():
         assert vars(answer)['data']['text-1620232883208'] == name
         assert vars(answer)['marked'] == False
 
+    def test_sumbit_embedded_form(self, anon_client, forms):
+        original_skip_emails = os.environ['SKIP_EMAILS']
+        os.environ['SKIP_EMAILS'] = 'True'
+        embedded_form_url = forms['test_form'].embed_url
+        response = anon_client.get(embedded_form_url)
+        assert response.status_code == 200
+        html = response.data.decode()
+
+        assert '"label": "Name", "name": "text-1620232883208"' in html
+        name = "Felicitat"
+        response = anon_client.post(
+                        embedded_form_url,
+                        data = {
+                            "text-1620232883208": name,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert "<!-- thank_you_page -->" in html
+        assert forms['test_form'].after_submit_text_html in html
+        answer = forms['test_form'].answers[-1]
+        assert vars(answer)['data']['text-1620232883208'] == name
+        os.environ['SKIP_EMAILS'] = original_skip_emails
+
     def test_max_number_field_expiration(self, anon_client, forms, number_field_max):
         original_skip_emails = os.environ['SKIP_EMAILS']
         os.environ['SKIP_EMAILS'] = 'True'

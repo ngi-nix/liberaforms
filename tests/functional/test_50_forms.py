@@ -58,9 +58,10 @@ class TestForm():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
+        forms['test_form'] = Form.find(slug=slug)
+        assert forms['test_form'] != None
         html = response.data.decode()
         assert '<!-- inspect_form_page -->' in html
-        forms['test_form'] = Form.find(slug=slug)
         assert forms['test_form'].log.count() == 1
 
     def test_toggle_public(self, client, forms):
@@ -353,3 +354,13 @@ class TestSlugAvailability():
         html = response.data.decode()
         assert '<div class="error flash_message">' in html
         assert '<!-- edit_form_page -->' in html
+
+    def test_embed_form_html_code(self, client, anon_client, forms):
+        form_id = forms['test_form'].id
+        response = client.get(
+                        f"/forms/view/{form_id}",
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert forms['test_form'].embed_url in html
