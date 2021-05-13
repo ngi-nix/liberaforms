@@ -176,7 +176,7 @@ def delete_entries(id):
 @sanitized_key_required
 def view_entries(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -188,7 +188,7 @@ def view_entries(slug, key):
 @sanitized_key_required
 def view_stats(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -200,7 +200,7 @@ def view_stats(slug, key):
 @sanitized_key_required
 def view_csv(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -218,7 +218,7 @@ def view_csv(slug, key):
 @sanitized_key_required
 def view_json(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return JsonResponse(json.dumps({}), 404)
     if queriedForm.restrictedAccess and not g.current_user:
         return JsonResponse(json.dumps({}), 404)

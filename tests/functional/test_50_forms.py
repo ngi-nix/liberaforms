@@ -10,6 +10,7 @@ import pytest
 import json
 from flask import current_app
 from liberaforms.models.form import Form
+from liberaforms.utils import validators
 
 class TestForm():
     def test_login(self, client, users):
@@ -63,6 +64,11 @@ class TestForm():
         html = response.data.decode()
         assert '<!-- inspect_form_page -->' in html
         assert forms['test_form'].log.count() == 1
+
+    def test_initial_values(self, forms, client):
+        assert forms['test_form'].enabled == False
+        assert forms['test_form'].sharedEntries['enabled'] == False
+        assert validators.is_valid_UUID(forms['test_form'].sharedEntries['key']) == True
 
     def test_toggle_public(self, client, forms):
         """ Tests Form.enabled bool and tests for a new FormLog

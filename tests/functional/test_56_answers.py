@@ -124,3 +124,30 @@ class TestAnswers():
         assert '<!-- list_entries_page -->' in html
         assert forms['test_form'].answers.count() == 0
         assert forms['test_form'].log.count() == initial_log_count + 1
+
+    def test_shared_answers_link(self, anon_client, forms):
+        """ Tests shared answers enabled
+            Tests shared answers links
+        """
+        forms['test_form'].sharedEntries['enabled'] = False
+        forms['test_form'].save()
+        url = forms['test_form'].get_shared_entries_url()
+        response = anon_client.get(url, follow_redirects=True)
+        assert response.status_code == 400
+        html = response.data.decode()
+        assert '<!-- page_not_found_404 -->' in html
+        forms['test_form'].sharedEntries['enabled'] = True
+        forms['test_form'].save()
+        url = forms['test_form'].get_shared_entries_url()
+        response = anon_client.get(url, follow_redirects=True)
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- shared_view_results_page -->' in html
+        url = forms['test_form'].get_shared_entries_url('json')
+        response = anon_client.get(url, follow_redirects=True)
+        assert response.status_code == 200
+        assert response.is_json == True
+        url = forms['test_form'].get_shared_entries_url('csv')
+        response = anon_client.get(url, follow_redirects=True)
+        assert response.status_code == 200
+        assert response.mimetype == 'text/csv'

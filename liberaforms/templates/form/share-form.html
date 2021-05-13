@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-7">
-        
+
         <div class="returnToForm">
             <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
             {{ form.slug }}
@@ -37,7 +37,7 @@
             </tr>
         {% endfor %}
         </table>
-            
+
         <form action="/forms/add-editor/{{form.id}}" method="POST">
             {{ wtform.csrf_token }}
             <div class="input-group input-group-sm mb-3">
@@ -50,7 +50,7 @@
     </div>
 </div>
 <div class="row">
-    
+
     <div class="col-md-3"></div>
     <div class="col-md-9">
         <br />
@@ -81,14 +81,14 @@
             <br />
             <span class="badge badge-secondary">WEB</span>
             <a href="{{ form.get_shared_entries_url() }}">{{ form.get_shared_entries_url() }}</a>
-        </div>        
+        </div>
     </div>
 </div>
 <p>&nbsp;</p>
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-9">
-        
+
         <div id="restricted_access" class="title_1">{%trans%}Restricted access{%endtrans%}</div>
         <p>{%trans%}Only visible to people with a user account (login required){%endtrans%}</p>
         <div>
@@ -173,5 +173,5 @@ document.getElementById('toggle_restrictedAccess').addEventListener('click', fun
     });
 });
 </script>
-  
+
 {% endblock %}

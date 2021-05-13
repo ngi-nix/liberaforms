@@ -32,7 +32,7 @@ pytest -v -s
 
 ## Testing emails notifications
 
-You will need two valid email accounts. One for `admin` and one for `dummy user`
+You will need two valid email accounts. One for `admin` and one for `test_user`
 
 You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
 
@@ -82,8 +82,8 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * set and test max answers. functional[✔]
   * test max answers expiry. functional[✔]
   * add an editor. functional[✔]
-  * share answers. functional[✔]
-    * check the links
+  * set shared answers. functional[✔]
+  * test shared answers links. functional[✔]
   * modify post submit text. functional[✔]
   * modify expity text. functional[✔]
   * check if user receives confirmation email.
