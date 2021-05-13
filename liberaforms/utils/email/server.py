@@ -36,14 +36,15 @@ class EmailServer():
                 logging.warning(traceback.format_exc())
                 self.connection = None
                 return error
-        # fix: STARTTLS does not always work
         elif self.use_tls:
             try:
-                self.connection = smtplib.SMTP_SSL( host=self.host,
-                                                    port=self.port,
-                                                    timeout=self.timeout)
+                self.connection = smtplib.SMTP( host=self.host,
+                                                port=self.port,
+                                                timeout=self.timeout)
                 context = ssl.create_default_context()
+                self.connection.ehlo()
                 self.connection.starttls(context=context)
+                self.connection.ehlo()
                 self.connection.login(self.username, self.password)
             except Exception as error:
                 logging.warning(traceback.format_exc())
