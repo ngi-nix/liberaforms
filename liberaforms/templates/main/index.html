@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- site_index_page -->
 
 {% if g.is_admin %}
 <script src="/static/simplemde/simplemde.min.js"></script>
@@ -19,7 +20,7 @@
         <p></p>
         <hr />
         <input id="show-editor" class="btn-success btn" type="button" value="{%trans%}Edit text{%endtrans%}" />
-        {% endif %}        
+        {% endif %}
     </div>
 
     {% if g.is_admin %}
@@ -48,7 +49,7 @@ $(document).ready(function() {
 <script>
 $(document).ready(function() {
 
-    var simplemde = new SimpleMDE({ 
+    var simplemde = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,

@@ -67,16 +67,16 @@ def csv_form(id):
 def delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and "id" in request.json):
-        return json.dumps({'deleted': False})
+        return JsonResponse(json.dumps({'deleted': False}))
     answer = Answer.find(id=request.json["id"], form_id=queriedForm.id)
     if not answer:
-        return json.dumps({'deleted': False})
+        return JsonResponse(json.dumps({'deleted': False}))
     answer.delete()
 
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
     queriedForm.add_log(gettext("Deleted an entry"))
-    return json.dumps({'deleted': True})
+    return JsonResponse(json.dumps({'deleted': True}))
 
 
 @entries_bp.route('/forms/undo-delete-entry/<int:id>', methods=['POST'])
@@ -84,7 +84,7 @@ def delete_entry(id):
 def undo_delete_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        return json.dumps({'undone': False, 'new_id': None})
+        return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
     entry_data={}
     for field in request.json:
         entry_data[field["name"]]=field["value"]
@@ -95,9 +95,10 @@ def undo_delete_entry(id):
         queriedForm.expired = queriedForm.has_expired()
         queriedForm.save()
         queriedForm.add_log(gettext("Undeleted an entry"))
-        return json.dumps({'undone': True, 'new_id': str(recovered_answer.id)})
+        return JsonResponse(json.dumps({'undone': True,
+                                        'new_id': str(recovered_answer.id)}))
     else:
-        return json.dumps({'undone': False, 'new_id': None})
+        return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
 
 
 @entries_bp.route('/forms/toggle-marked-entry/<int:id>', methods=['POST'])
@@ -105,13 +106,17 @@ def undo_delete_entry(id):
 def toggle_marked_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and 'id' in request.json):
-        return json.dumps({'marked': False})
-    answer = Answer.find(id=request.json["id"], form_id=queriedForm.id)
+        return JsonResponse(json.dumps({'marked': False}))
+    try:
+        answer_id = int(request.json['id'])
+        answer = Answer.find(id=answer_id, form_id=queriedForm.id)
+    except:
+        answer = None
     if not answer:
-        return json.dumps({'marked': False})
+        return JsonResponse(json.dumps({'marked': False}))
     answer.marked = False if answer.marked == True else True
     answer.save()
-    return json.dumps({'marked': answer.marked})
+    return JsonResponse(json.dumps({'marked': answer.marked}))
 
 
 @entries_bp.route('/forms/change-entry-field-value/<int:id>', methods=['POST'])
@@ -119,20 +124,24 @@ def toggle_marked_entry(id):
 def change_entry(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and 'id' in request.json):
-        return json.dumps({'saved': False})
-    response = queriedForm.find_entry(request.json['id'])
-    if not response:
-        return json.dumps({'saved': False})
-    response.data = {}
+        return JsonResponse(json.dumps({'saved': False}))
+    try:
+        answer_id = int(request.json['id'])
+        answer = Answer.find(id=answer_id, form_id=queriedForm.id)
+    except:
+        answer = None
+    if not answer:
+        return JsonResponse(json.dumps({'saved': False}))
+    answer.data = {}
     for field in request.json['data']:
         if field['name'] == 'marked' or field['name'] == 'created':
             continue
-        response.data[field['name']] = field['value']
-    response.save()
+        answer.data[field['name']] = field['value']
+    answer.save()
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
     queriedForm.add_log(gettext("Modified an entry"))
-    return json.dumps({'saved': True})
+    return JsonResponse(json.dumps({'saved': True}))
 
 
 @entries_bp.route('/forms/delete-entries/<int:id>', methods=['GET', 'POST'])
@@ -150,11 +159,13 @@ def delete_entries(id):
             return render_template('delete-entries.html', form=queriedForm)
         if queriedForm.get_total_entries() == totalEntries:
             queriedForm.delete_entries()
+            queriedForm.add_log(gettext("Deleted all entries"))
             if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
                 queriedForm.save()
             flash(gettext("Deleted %s entries" % totalEntries), 'success')
-            return redirect(make_url_for('entries_bp.list_entries', id=queriedForm.id))
+            return redirect(make_url_for('entries_bp.list_entries',
+                                         id=queriedForm.id))
         else:
             flash(gettext("Number of entries does not match"), 'warning')
     return render_template('delete-entries.html', form=queriedForm)
@@ -165,7 +176,7 @@ def delete_entries(id):
 @sanitized_key_required
 def view_entries(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -177,7 +188,7 @@ def view_entries(slug, key):
 @sanitized_key_required
 def view_stats(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -189,7 +200,7 @@ def view_stats(slug, key):
 @sanitized_key_required
 def view_csv(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -207,7 +218,7 @@ def view_csv(slug, key):
 @sanitized_key_required
 def view_json(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not queriedForm or not queriedForm.are_entries_shared():
+    if not (queriedForm and queriedForm.are_entries_shared()):
         return JsonResponse(json.dumps({}), 404)
     if queriedForm.restrictedAccess and not g.current_user:
         return JsonResponse(json.dumps({}), 404)

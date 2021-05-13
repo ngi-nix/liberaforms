@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+
 <script src="/static/formBuilder/form-render.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
@@ -18,7 +19,7 @@
             </div>
             <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
             <div id="fb-render"></div>
-            
+
             <div class="form-actions">
             <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}" disabled />
             </div>
@@ -72,5 +73,5 @@ jQuery(function($) {
 {% include '_post-render-scripts.js' %}
 {% endwith %}
 </script>
-  
+
 {% endblock %}

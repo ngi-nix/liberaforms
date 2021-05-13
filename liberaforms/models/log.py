@@ -24,3 +24,11 @@ class FormLog(db.Model, CRUD):
         self.user_id = kwargs['user_id']
         self.form_id = kwargs['form_id']
         self.message = kwargs['message']
+
+    @classmethod
+    def find(cls, **kwargs):
+        return cls.find_all(**kwargs).first()
+
+    @classmethod
+    def find_all(cls, **kwargs):
+        return cls.query.filter_by(**kwargs)

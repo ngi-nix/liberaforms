@@ -32,6 +32,7 @@ fieldIndex: List of dictionaries. Each dict contains one formbuider field info.
 """
 class Form(db.Model, CRUD):
     __tablename__ = "forms"
+    _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
@@ -51,9 +52,10 @@ class Form(db.Model, CRUD):
     expiredText = db.Column(JSONB, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
-    answers = db.relationship("Answer", cascade = "all, delete, delete-orphan")
-    log = db.relationship("FormLog", cascade = "all, delete, delete-orphan")
-    _site=None
+    answers = db.relationship("Answer", lazy='dynamic',
+                                        cascade="all, delete, delete-orphan")
+    log = db.relationship("FormLog", lazy='dynamic',
+                                     cascade="all, delete, delete-orphan")
 
     def __init__(self, author, **kwargs):
         self.created = datetime.datetime.now().isoformat()
@@ -225,7 +227,8 @@ class Form(db.Model, CRUD):
         return result
 
     def get_total_entries(self):
-        return Answer.find_all(form_id=self.id).count()
+        return self.answers.count()
+        #return Answer.find_all(form_id=self.id).count()
 
     def get_last_entry_date(self):
         last_entry = Answer.find(form_id=self.id)
@@ -267,11 +270,11 @@ class Form(db.Model, CRUD):
 
     @property
     def url(self):
-        return "%s%s" % (self.site.host_url, self.slug)
+        return f"{self.site.host_url}{self.slug}"
 
     @property
     def embed_url(self):
-        return "%sembed/%s" % (self.site.host_url, self.slug)
+        return f"{self.site.host_url}embed/{self.slug}"
 
     @property
     def data_consent(self):
@@ -305,7 +308,7 @@ class Form(db.Model, CRUD):
     @staticmethod
     def default_expired_text():
         text=gettext("Sorry, this form has expired.")
-        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+        return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
     def expired_text_html(self):
@@ -333,7 +336,7 @@ class Form(db.Model, CRUD):
     @staticmethod
     def defaultAfterSubmitText():
         text=gettext("Thank you!!")
-        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+        return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
     def after_submit_text_html(self):
@@ -392,10 +395,16 @@ class Form(db.Model, CRUD):
         self.save()
 
     def save_expiry_total_entries(self, total_entries):
+        try:
+            total_entries = int(total_entries)
+        except:
+            total_entries = 0
+        total_entries = 0 if total_entries < 0 else total_entries
         self.expiryConditions['totalEntries']=total_entries
         self.expired = self.has_expired()
         flag_modified(self, "expiryConditions")
         self.save()
+        return self.expiryConditions['totalEntries']
 
     def save_expiry_field_condition(self, field_name, condition):
         available_fields=self.get_available_number_type_fields()
@@ -413,12 +422,14 @@ class Form(db.Model, CRUD):
             try:
                 condition_dict = {"type": field_type, "condition": int(condition)}
                 self.expiryConditions['fields'][field_name] = condition_dict
-                self.expired=self.has_expired()
-                flag_modified(self, "expiryConditions")
-                self.save()
-                return condition
             except:
-                return False
+                condition = False
+                if field_name in self.expiryConditions['fields']:
+                    del self.expiryConditions['fields'][field_name]
+            self.expired=self.has_expired()
+            flag_modified(self, "expiryConditions")
+            self.save()
+            return condition
         return False
 
     def update_expiryConditions(self):
@@ -477,7 +488,7 @@ class Form(db.Model, CRUD):
         if not self.can_expire():
             return False
         if self.expiryConditions["totalEntries"] and \
-            self.get_entries().count() >= self.expiryConditions["totalEntries"]:
+            self.answers.count() >= self.expiryConditions["totalEntries"]:
             return True
         if self.expiryConditions["expireDate"] and not \
             validators.is_future_date(self.expiryConditions["expireDate"]):

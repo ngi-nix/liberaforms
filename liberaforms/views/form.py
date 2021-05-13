@@ -173,6 +173,10 @@ def save_form(id=None):
         if Form.find(slug=session['slug']):
             flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
+        if session['slug'] in current_app.config['RESERVED_SLUGS']:
+            # TRANSLATION: Slug is reserved. <a_word>
+            flash(gettext("Slug is reserved. %s" % (session['slug'])), 'error')
+            return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
             # this new form is a duplicate
             consentTexts=session['consentTexts']
@@ -221,6 +225,7 @@ def save_data_consent(form_id, consent_id):
                                             data=request.form.to_dict(flat=True)
                                             )
         if consent:
+            queriedForm.add_log(gettext("Edited GDPR text"))
             return JsonResponse(json.dumps(consent))
     pay_load = {'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}
     return JsonResponse(json.dumps(pay_load))
@@ -245,6 +250,7 @@ def save_after_submit_text(id):
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.save_after_submit_text(request.form['markdown'])
+        queriedForm.add_log(gettext("Edited Thankyou text"))
         pay_load = {'html':queriedForm.after_submit_text_html,
                     'markdown': queriedForm.after_submit_text_markdown}
         return JsonResponse(json.dumps(pay_load))
@@ -261,6 +267,7 @@ def save_expired_text(id):
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.save_expired_text(request.form['markdown'])
+        queriedForm.add_log(gettext("Edited expiry text"))
         pay_load = {'html': queriedForm.expired_text_html,
                     'markdown': queriedForm.expired_text_markdown}
         return JsonResponse(json.dumps(pay_load))
@@ -279,7 +286,7 @@ def delete_form(id):
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
             entry_cnt = queriedForm.get_entries().count()
-            queriedForm.delete_form()
+            queriedForm.delete()
             flash_text = gettext("Deleted '%s' and %s entries" % (
                                                         queriedForm.slug,
                                                         entry_cnt))
@@ -413,20 +420,12 @@ def set_expiry_field_condition(id):
 @enabled_user_required
 def set_expiry_total_entries(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
-    if not queriedForm:
+    if not (queriedForm and 'total_entries' in request.form):
         return JsonResponse(json.dumps({'expired': False, 'total_entries':0}))
-    if 'total_entries' in request.form:
-        try:
-            total_entries = int(request.form['total_entries'])
-            if total_entries < 0:
-                total_entries = 0
-            queriedForm.save_expiry_total_entries(total_entries)
-        except:
-            total_entries = queriedForm.expiryConditions['totalEntries']
-            return JsonResponse(json.dumps({'expired': False,
-                                            'total_entries': total_entries,
-                                            "error": True}))
-    total_entries = queriedForm.expiryConditions['totalEntries']
+    total_entries = request.form['total_entries']
+    total_entries = queriedForm.save_expiry_total_entries(total_entries)
+    # TRANSLATION: Expire when total answers set to: 3
+    queriedForm.add_log(gettext("Expire when total answers set to: %s" % total_entries))
     return JsonResponse(json.dumps({'expired': queriedForm.expired,
                                     'total_entries':total_entries}))
 
@@ -554,7 +553,7 @@ def view_form(slug):
             flash(gettext("Can't find that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
-            return render_template('page-not-found.html'), 400
+            return render_template('page-not-found.html'), 404
     if not queriedForm.is_public():
         if g.current_user:
             if queriedForm.expired:
@@ -565,11 +564,11 @@ def view_form(slug):
         if queriedForm.expired:
             return render_template('form-has-expired.html',
                                     form=queriedForm,
-                                    navbar=False, no_bot=True), 400
+                                    navbar=False, no_bot=True), 200
         else:
-            return render_template('page-not-found.html'), 400
+            return render_template('page-not-found.html'), 404
     if queriedForm.restrictedAccess and not g.current_user:
-        return render_template('page-not-found.html'), 400
+        return render_template('page-not-found.html'), 404
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)

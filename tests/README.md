@@ -4,15 +4,15 @@
 source ./venv/bin/activate
 pip install pytest
 pip install pytest-dotenv
-pip install pytest-order
+#pip install pytest-order
 #pip install pytest-dependency
 #pip install pytest-pythonpath
 ```
 
-Create `test.env` and edit
+Create `test.ini` and edit
 ```
 cd ./tests
-cp test.env.example test.env
+cp test.ini.example test.ini
 ```
 
 Run all tests, unit tests, functional tests
@@ -24,23 +24,22 @@ pytest -v unit
 pytest -v functional
 ```
 
+See more output
+
+```
+pytest -v -s
+```
+
+## Testing emails notifications
+
+You will need two valid email accounts. One for `admin` and one for `test_user`
+
+You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
 
 # List of tests
 
 ## Database
   * create tables with alembic migrations. fixture[✔]
-
-## Users
-  * create first admin user with ROOT_USERS email. functional[✔]
-  * create user. unit[✔]
-  * create new user with new user form
-    * with RESERVED_USERNAMES
-  * invite new user
-    * with admin permission
-    * respond to invitation
-
-## Site
-  * create a new site. unit[✔]
 
 ## Site configuration
   * save and restore favicon. functional[✔]
@@ -52,46 +51,57 @@ pytest -v functional
   * change scheme. functional[✔]
   * edit landing page. functional[✔]
   * add/edit/delete consentment texts
-  * config SMTP functional[✔] (partially)
-  * test SMTP
+  * config SMTP functional[✔]
+  * test SMTP functional[✔]
+  * set public link creation. functional[✔]
 
-
+## Users
+  * create first admin user with ROOT_USERS email. functional[✔]
+  * test admin preferneces. functional[✔]
+  * test new user form. functional[✔]
+    * with invalid email/password. functional[✔]
+    * with RESERVED_USERNAMES. functional[✔]
+    * unique username/email. functional[✔]
+  * create user. unit[✔]
+  * change email
+  * change password. functional[✔]
+  * change language. functional[✔]
+  * set New answer notification default. functional[✔]
+  * invite new user. functional[✔]
+    * delete invite. functional[✔]
+    * with admin permission. functional[✔]
 
 ## Forms
-### Create form
-  * with RESERVED_SLUGS
-  * with RESERVED_FORM_ELEMENT_NAMES
+  * create a form. functional[✔]
+    * with RESERVED_SLUGS. functional[✔]
+    * with unavailable slugs. functional[✔]
+    * with RESERVED_FORM_ELEMENT_NAMES
+  * set date expiry in past and future. functional[✔]
+  * set and test number field max total. functional[✔]
+  * test number field max total expiry. functional[✔]
+  * set and test max answers. functional[✔]
+  * test max answers expiry. functional[✔]
+  * add an editor. functional[✔]
+  * set shared answers. functional[✔]
+  * modify post submit text. functional[✔]
+  * modify expity text. functional[✔]
+  * check if user receives confirmation email.
+  * activate GDPR consent. functional[✔]
+    * and try to submit a form with out checkbox.
+  * duplicate form. functional[✔]
+  * test embedded form. functional[✔]
+  * change author. functional[✔]
+  * delete form and answers. functional[✔]
 
-### Answers
-  * make a answer
-  * delete/undo answer
+## Answers
+  * make an answer. functional[✔]
+  * delete an answer. functional[✔]
+  * undo delete
   * edit a answer
-  * delete all answer
+  * delete all answers. functional[✔]
+  * export CSV. functional[✔]
+  * export CSV with deleted columns
+  * test shared answers links. functional[✔]
 
-### Exipry conditions
-  * Set date expiry in past
-  * set number field max total
-  * set max answers
-
-### Share a form
-  * add an editor
-
-### Shared results.
-  * share the results and check the links
-
-### Post submit text
-  * Modify  the text
-  * Check if user receives confirmation email.
-
-7. CSV
-  * export
-  * export with deleted columns
-
-8. Activate GDPR and try to submit a form with out checkbox.
-9. Test embedded form
-10. Duplicate form
-11. Change author
-
-12. Delete form and entries
-
-13. Drop database and restore copy
+# Backups
+Drop database and restore copy

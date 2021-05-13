@@ -213,7 +213,8 @@ def delete_invite(id):
     invite=Invite.find(id=id)
     if invite:
         invite.delete()
-        flash(gettext("Invitation to {} deleted OK".format(invite.email)), 'success')
+        # TRANSLATION: Invitation to dave@example.com deleted OK
+        flash(gettext("Invitation to %s deleted OK" % invite.email), 'success')
     else:
         flash(gettext("Opps! We can't find that invitation"), 'error')
     return redirect(make_url_for('admin_bp.list_invites'))

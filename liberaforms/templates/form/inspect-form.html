@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- inspect_form_page -->
+
 <script src="/static/formBuilder/form-render.min.js"></script>
 <script src="/static/simplemde/simplemde.min.js"></script>
 <script src="/static/jquery/jquery.color-2.1.2.min.js"></script>
@@ -13,9 +15,9 @@
 {% set current_user_is_editor = form.is_editor(g.current_user) %}
 
 <div class="container">
-<div class="row">    
+<div class="row">
     <div class="col-md-6">
-        
+
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
             <div style="float:right">
@@ -78,7 +80,7 @@
                     <button id="enabled_false" class="btn btn-xs btn-default {% if not form.is_public() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
                    </div>
                {% else %}
-                    {{ form.is_public() }}              
+                    {{ form.is_public() }}
                {% endif %}
                </td>
             </tr>
@@ -158,7 +160,7 @@
                     &nbsp;
                     <button id="show-DPL-text-button" class="btn btn-primary btn-xs">{%trans%}Edit text{%endtrans%}</button>
                 {% else %}
-                    {{ dataConsent['enabled'] }}            
+                    {{ dataConsent['enabled'] }}
                 {% endif %}
 
                </td>
@@ -173,13 +175,13 @@
                     {% set siteConsent = form.site.get_consent_for_display(dataConsent['id']) %}
                     {% set disabled = "disabled" if siteConsent.markdown == dataConsent.markdown else "" %}
                     <input id="default-DPL-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
-                    
+
                     <div style="margin-top:1em">
                     <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
                         <div id="{{consent_id}}-consent-editor" class="form-row">
                             <div class="form-group col">
-                            
-                            {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}                  
+
+                            {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}
                             <input id="dataConsent-label-input" class="form-control form-control-sm" type="text" placeholder="{{placeholder}}" value="{{form.data_consent['label']}}">
                             </div>
                         </div>
@@ -195,8 +197,8 @@
                <td>
                     {%trans%}Author{%endtrans%}
                     {% if not author.enabled %}
-                        <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>            
-                    {% endif %} 
+                        <span class="highlightedText text-lowercase">({%trans%}Disabled{%endtrans%})</span>
+                    {% endif %}
                </td>
                <td>
                {% if g.is_admin %}
@@ -242,7 +244,7 @@
             <textarea id="after-submit-mde">{{ form.after_submit_text_markdown }}</textarea>
         </div>
         {% endif %}
-        
+
         {% if form.can_expire() %}
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}When the form has expired{%endtrans%}
@@ -314,7 +316,7 @@
         </a>
         </div>
         {% endif %}
-        </div> 
+        </div>
 
         <div id="liberaform" class="liberaform">
             <div class="formIntroduction marked-up">
@@ -335,7 +337,7 @@
                 <div class="form-check">
                     <input id="dummy-consent-checkbox" type="checkbox" class="form-check-input consent" required />
                     <label id="DPL-label" for="dummy-consent-checkbox" class="form-check-label consent required">
-                    {{ dataConsent['label'] }}                    
+                    {{ dataConsent['label'] }}
                     <span class="required-dot">●</span>
                     </label>
                 </div>
@@ -470,7 +472,7 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
 // DPL editor
 var consent_cache = {}
 $(document).ready(function() {
-    var dpl_MDE = new SimpleMDE({ 
+    var dpl_MDE = new SimpleMDE({
                                 autosave: {enabled: false},
                                 spellChecker: false,
                                 autoDownloadFontAwesome: false,
@@ -532,7 +534,7 @@ $(document).ready(function() {
            $("#dataConsent-label-input").val(consent_cache['label'])
         } else {
             $("#dataConsent-label-input").val("")
-        }        
+        }
         $("#show-DPL-text-button").prop('disabled', false);
     });
     $("#default-DPL-button").click(function(){
@@ -567,7 +569,7 @@ $(document).ready(function() {
 });
 // after submit editor
 $(document).ready(function() {
-    var afterSubmitMDE = new SimpleMDE({ 
+    var afterSubmitMDE = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
@@ -615,7 +617,7 @@ $(document).ready(function() {
 });
 // expired text editor
 $(document).ready(function() {
-    var expiredMDE = new SimpleMDE({ 
+    var expiredMDE = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
@@ -666,5 +668,5 @@ function fadeOutHighlight(element){
 }
 {% endif %}
 </script>
-  
+
 {% endblock %}

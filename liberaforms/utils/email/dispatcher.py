@@ -30,7 +30,7 @@ class Dispatcher(EmailServer):
         return f"{self.site.host_url}/brand/emailheader.png"
 
     def create_HTML_body(self, template_file, **kwargs):
-        template_dir = f'{os.getcwd()}/liberaforms/utils/email/templates'
+        template_dir = os.path.join(current_app.root_path, 'utils/email/templates')
         j2_env = Environment(loader = FileSystemLoader(template_dir))
         j2_template = j2_env.get_template(template_file)
         kwargs['header_image_url'] = self.email_header_image_url()

@@ -6,11 +6,17 @@ This file is part of LiberaForms.
 """
 
 import os
+
+os.environ['FLASK_CONFIG'] = 'testing'
+os.environ['DB_USER'] = os.environ['TEST_DB_USER']
+os.environ['DB_PASSWORD'] = os.environ['TEST_DB_PASSWORD']
+os.environ['DB_HOST'] = os.environ['TEST_DB_HOST']
+os.environ['DB_NAME'] = os.environ['TEST_DB_NAME']
+
 import pytest
 from flask_migrate import Migrate, upgrade, stamp
 from liberaforms import create_app
 from liberaforms import db as _db
-
 
 """
 Returns app
@@ -46,15 +52,25 @@ def session(db):
     db.session = session
     yield session
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='session')
 def client(app):
+    with app.test_client() as client:
+        yield client
+
+@pytest.fixture(scope='session')
+def admin_client(app):
+    with app.test_client() as client:
+        yield client
+
+@pytest.fixture(scope='class')
+def anon_client(app):
     with app.test_client() as client:
         yield client
 
 @pytest.fixture(scope='session')
 def users():
     return {
-        "dummy": None,
+        "test_user": None,
         "admin": None,
         "admin_password": "this is a valid password"
     }

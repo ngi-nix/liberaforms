@@ -8,9 +8,30 @@ This file is part of LiberaForms.
 import os
 import pytest
 from liberaforms.models.site import Site
-from tests.unit.conftest import dummy_user as _dummy_user
 
 
 @pytest.fixture(scope="class")
 def site(db):
     return Site.find()
+
+@pytest.fixture(scope="session")
+def forms():
+    return {
+        'test_form': None,
+    }
+
+@pytest.fixture(scope="module")
+def invite():
+    return {
+        'id': None,
+        'token': None,
+    }
+
+# value used to test number field expiration
+@pytest.fixture(scope="module")
+def number_field_max():
+    return 7
+
+@pytest.fixture(scope="module")
+def max_answers():
+    return 10

@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- edit_form_page -->
+
 <script src="/static/formBuilder/form-builder.min.js"></script>
 <script src="/static/simplemde/simplemde.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
@@ -50,26 +52,26 @@
 
 <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-7">        
+    <div class="col-md-7">
         <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" id="structure" name="structure" />
             <input id="introduction-text" type="hidden" name="introductionTextMD" />
-            
+
         {% if not session['form_id'] %}
             <div class="title_2 delimited">
                 3. {%trans%}Your form will have this address{%endtrans%}
             </div>
-            
+
             <div class="input-group mb-3 input-group" style="margin-bottom: 0 !important;">
               <div class="input-group-prepend">
                 <span class="input-group-text" id="hostname-addon">{{host_url}}</span>
               </div>
-              <input    id="slug" type="text" class="form-control"
-                        name="slug" aria-label="Slug" aria-describedby="hostname-addon"
-                        value="{{ session['slug'] }}"
-                        {% if session['form_id'] %}disabled{% else %}required{% endif %}
-                        />
+              <input  id="slug" value="{{ session['slug'] }}"
+                      type="text" class="form-control"
+                      name="slug" aria-label="Slug" aria-describedby="hostname-addon"
+                      {% if session['form_id'] %}disabled{% else %}required{% endif %}
+              />
             </div>
             <div id="slug_not_available" class="formError" style="display:none">
                 {%trans%}This URL is not available. Try another!{%endtrans%}
@@ -94,14 +96,14 @@
 <script>
 var csrftoken = "{{ csrf_token() }}";
 jQuery(function($) {
-    var introduction_mde = new SimpleMDE({ 
+    var introduction_mde = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: false,
                                 spellChecker: false,
                                 autoDownloadFontAwesome: false,
                                 element: $("#introduction-editor")[0]
                              });
-    
+
     const fbEditor = document.getElementById("fb-editor");
     var disabledAttrs = {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }};
     disabledAttrs.push("name");
@@ -114,7 +116,7 @@ jQuery(function($) {
             locale: "{{ config['LANGUAGES'][g.current_user.language][1] }}",
             location: "{{host_url}}static/formBuilder-languages/"
         },
-        layoutTemplates: {        
+        layoutTemplates: {
             default: function(field, label, help, data) {
                 if (help) {
                     label=$("<span class='label-description'></span>");
@@ -131,7 +133,7 @@ jQuery(function($) {
 
     document.getElementById('result').addEventListener('submit', function(evt){
         evt.preventDefault();
-        loadFieldsWithValues();        
+        loadFieldsWithValues();
         if ( {{ session['form_id'] | tojson }} == null ){
             $.ajax({
                 url : "/forms/check-slug-availability",
@@ -164,7 +166,7 @@ jQuery(function($) {
     });
     {% if not session['form_id'] %}
     document.getElementById('slug').addEventListener('click', function(evt){
-        $('#slug_not_available').hide(); 
+        $('#slug_not_available').hide();
         $('#preview_form').val("{%trans%}Preview{%endtrans%}");
     });
     {% else %}
@@ -172,7 +174,7 @@ jQuery(function($) {
         loadFieldsWithValues()
         document.getElementById("result").action = "/forms/save/{{ session['form_id'] }}";
         document.getElementById("result").submit();
-    });    
+    });
     {% endif %}
     function loadFieldsWithValues(){
         $('#structure').val(formBuilder.actions.getData('json', true));
@@ -209,5 +211,5 @@ $("#fb-editor").on("click", "input[type=radio]", function (event) {
     }
 });
 </script>
-  
+
 {% endblock %}
