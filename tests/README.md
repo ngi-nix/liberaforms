@@ -58,9 +58,11 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
 ## Users
   * create first admin user with ROOT_USERS email. functional[✔]
   * test admin preferneces. functional[✔]
-  * test new user form with invalid params. functional[✔]
+  * test new user form. functional[✔]
+    * with invalid email/password. functional[✔]
     * with RESERVED_USERNAMES. functional[✔]
-  * create user. unit/functional[✔]
+    * unique username/email. functional[✔]
+  * create user. unit[✔]
   * change email
   * change password. functional[✔]
   * change language. functional[✔]
