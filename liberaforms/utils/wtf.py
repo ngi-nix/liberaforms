@@ -103,7 +103,7 @@ class smtpConfig(FlaskForm):
     encryption = SelectField(_("Encryption"), choices=[
                                                     ('None', 'None'),
                                                     ('SSL', 'SSL'),
-                                                    ('STARTTLS', 'STARTTLS (maybe)')
+                                                    ('STARTTLS', 'STARTTLS')
                                                     ])
     user = StringField(_("User"))
     password = StringField(_("Password"))
