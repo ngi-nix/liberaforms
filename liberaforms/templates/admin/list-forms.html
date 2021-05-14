@@ -26,8 +26,8 @@
             <th>{%trans%}Created{%endtrans%}</th>
             <th>{%trans%}Author{%endtrans%}</th>
             <th>{%trans%}Public{%endtrans%}</th>
-            <th>{%trans%}Last entry{%endtrans%}</th>
-            <th>{%trans%}Entries{%endtrans%}</th>
+            <th>{%trans%}Last answer{%endtrans%}</th>
+            <th>{%trans%}Answers{%endtrans%}</th>
             {% if g.is_root_user_enabled %}
                 <th>{%trans%}Hostname{%endtrans%}</th>
             {% endif %}
@@ -40,8 +40,8 @@
             <td>{{form.created}}</td>
             <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
             <td>{{form.is_public()}}</td>
-            <td>{{form.get_last_entry_date()}}</td>
-            <td>{{form.get_entries().count()}}</td>
+            <td>{{form.get_last_answer_date()}}</td>
+            <td>{{form.get_answers().count()}}</td>
             {% if g.is_root_user_enabled %}
                 <td>{{form.hostname}}</td>
             {% endif %}

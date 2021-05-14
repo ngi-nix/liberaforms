@@ -67,8 +67,8 @@ class TestForm():
 
     def test_initial_values(self, forms):
         assert forms['test_form'].enabled == False
-        assert forms['test_form'].sharedEntries['enabled'] == False
-        assert validators.is_valid_UUID(forms['test_form'].sharedEntries['key']) == True
+        assert forms['test_form'].sharedAnswers['enabled'] == False
+        assert validators.is_valid_UUID(forms['test_form'].sharedAnswers['key']) == True
 
     def test_toggle_public(self, client, forms):
         """ Tests Form.enabled bool and tests for a new FormLog
@@ -125,16 +125,16 @@ class TestForm():
 
     def test_toggle_shared_answers(self, client, users, forms):
         form_id=forms['test_form'].id
-        initial_enabled = forms['test_form'].sharedEntries['enabled']
+        initial_enabled = forms['test_form'].sharedAnswers['enabled']
         initial_log_count = forms['test_form'].log.count()
         response = client.post(
-                        f"/form/toggle-shared-entries/{form_id}",
+                        f"/form/toggle-shared-answers/{form_id}",
                         follow_redirects=False,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert forms['test_form'].sharedEntries['enabled'] != initial_enabled
-        assert response.json['enabled'] == forms['test_form'].sharedEntries['enabled']
+        assert forms['test_form'].sharedAnswers['enabled'] != initial_enabled
+        assert response.json['enabled'] == forms['test_form'].sharedAnswers['enabled']
         assert forms['test_form'].log.count() == initial_log_count + 1
 
     def test_toggle_restricted_form_access(self, client, forms):
@@ -271,7 +271,7 @@ class TestForm():
         form_id=forms['test_form'].id
         initial_preference = forms['test_form'] \
                              .editors[str(users['test_user'].id)] \
-                             ['notification']['newEntry']
+                             ['notification']['newAnswer']
         response = client.post(
                         f"/form/toggle-notification/{form_id}",
                         follow_redirects=False,
@@ -281,7 +281,7 @@ class TestForm():
         assert initial_preference != response.json['notification']
         saved_preference = forms['test_form'] \
                            .editors[str(users['test_user'].id)] \
-                           ['notification']['newEntry']
+                           ['notification']['newAnswer']
         assert saved_preference != initial_preference
         assert type(saved_preference) == type(bool())
 

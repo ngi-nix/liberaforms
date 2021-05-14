@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- list_entries_page -->
+<!-- list_answers_page -->
 
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
-{% set responses = form.get_entries_for_display() %}
+{% set responses = form.get_answers_for_display() %}
 {% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
@@ -25,7 +25,7 @@
     </div>
 
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/stats/{{form.id}}">
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/answers/stats/{{form.id}}">
         {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
     </a>
     {% if with_deleted_columns %}
@@ -40,7 +40,7 @@
 
     {% if responses|length %}
         {% if edit_mode %}
-            <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">
+            <a class="btn btn-success btn-sm" role="button" href="/forms/answers/{{form.id}}">
                 {%trans%}Disable edition{%endtrans%}
             </a>
         {% else %}
@@ -50,7 +50,7 @@
         {% endif %}
         {% if form.has_removed_fields() %}
             {% if with_deleted_columns %}
-                <a class="btn btn-success btn-sm" role="button" href="/forms/entries/{{form.id}}">
+                <a class="btn btn-success btn-sm" role="button" href="/forms/answers/{{form.id}}">
                     {%trans%}Hide deleted columns{%endtrans%}
                 </a>
             {% else %}
@@ -59,7 +59,7 @@
                 </a>
             {% endif %}
         {% endif %}
-        <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-entries/{{form.id}}">
+        <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-answers/{{form.id}}">
             {%trans%}Delete all{%endtrans%}
         </a>
     {%endif%}
@@ -72,16 +72,16 @@
 
     {% if form.editors[g.current_user.id|string] is defined %}
         <div id="toggle_notification" class="btn-group btn-toggle">
-            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
         </div>
-        {%trans%}Notify me on each new entry{%endtrans%}
+        {%trans%}Notify me on each new answer{%endtrans%}
     {% endif %}
 
     <p>&nbsp;</p>
 
-    <table  id="entriesTable" style="display:none"
-            class="table table-bordered table-striped table-sm entries-table {%if not edit_mode%}nowrap{%endif%}">
+    <table  id="answersTable" style="display:none"
+            class="table table-bordered table-striped table-sm answers-table {%if not edit_mode%}nowrap{%endif%}">
         <thead>
             <tr>
             <th></th>
@@ -100,7 +100,7 @@
             {% endfor %}
             </tr>
         </thead>
-        <tbody {% if edit_mode %}class="entryCellHighlighter"{% endif %} >
+        <tbody {% if edit_mode %}class="answerCellHighlighter"{% endif %} >
         <!-- Keep the data TD on one line! -->
         {% for response in responses %}
         <tr _id="{{ response['id'] }}" class="td-controls">
@@ -116,9 +116,9 @@
                 {% if field['name'] == "marked" %}
                     {% if not edit_mode %}
                         {% if response[field['name']] == True %}
-                        <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_entry">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
+                        <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                         {% else %}
-                        <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_entry">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
+                        <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                         {% endif %}
                     {% else %}
                         {% if response[field['name']] == True %}
@@ -146,7 +146,7 @@ var fieldIndex={{fieldIndex|tojson}};
 var editMode = false;
 var tallyColumns = {{tallyColumns|tojson}};
 
-function getEntryID($row){
+function getAnswerID($row){
     return $row.attr('_id')
 }
 function getFieldValueInRow(fieldName, $row){
@@ -172,11 +172,11 @@ function getRowData($row) {
         }
         rowData.push({"name": fieldIndex[loop]["name"], "value": $row.children('td').eq(loop+1).html()})
     }
-    //rowData.push({"name":"id", "value":getEntryID($row)})
+    //rowData.push({"name":"id", "value":getAnswerID($row)})
     return rowData;
 }
 $(document).ready(function() {
-    var table = $('#entriesTable').DataTable({
+    var table = $('#answersTable').DataTable({
         {% if not edit_mode %}
         "responsive": true,
         //"scrollY": "50vh",
@@ -191,7 +191,7 @@ $(document).ready(function() {
             tallyColumns.forEach(function(column) {
                 col=column+1
                 sum=table.column( col ).data().sum();
-                $("#entriesTable th:nth-child("+ (col+1) +")").append(" <span class='col_sum'>("+sum+")</span>");
+                $("#answersTable th:nth-child("+ (col+1) +")").append(" <span class='col_sum'>("+sum+")</span>");
             });
             $(".dataTable").show();
         },
@@ -202,20 +202,20 @@ $(document).ready(function() {
         ],
         "pageLength": 100
     });
-    $('.delete-row-icon').attr('title', "{%trans%}Delete entry{%endtrans%}");
+    $('.delete-row-icon').attr('title', "{%trans%}Delete answer{%endtrans%}");
 });
 
 {% if not edit_mode %}
 // toggle marked field
-$('#entriesTable tbody').on('click', '.mark_entry', function () {
+$('#answersTable tbody').on('click', '.mark_answer', function () {
     var $row = $(this).parents('tr');
     var button=$(this)
     $.ajax({
-        url : "/forms/toggle-marked-entry/{{ form.id }}",
+        url : "/forms/toggle-marked-answer/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify({"id": getEntryID($row)} ),
+        data: JSON.stringify({"id": getAnswerID($row)} ),
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken)
@@ -239,7 +239,7 @@ $('#entriesTable tbody').on('click', '.mark_entry', function () {
 
 {% if edit_mode %}
 // Edit cell
-$('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode)", function () {
+$('#answersTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode)", function () {
     $(this).addClass('cellEditionMode');
     var cellValue = $(this).html();
     var $editor = $("<div class='cell-editor' initial_value=\""+ cellValue +"\"></div>");
@@ -249,24 +249,24 @@ $('#entriesTable tbody').on('click', "td:not(.deleted-row):not(:nth-child(-n+3))
     $(this).html($editor);
 });
 // Cancel edition
-$('#entriesTable tbody').on('click', '.cancelCellEdition', function () {
+$('#answersTable tbody').on('click', '.cancelCellEdition', function () {
     $(this).parents("td").removeClass('cellEditionMode');
     var initialValue = $(this).parent("div").attr("initial_value")
     $(this).parents("td").html(initialValue);
 });
 // Save edition
-$('#entriesTable tbody').on('click', '.saveCellEdition', function () {
+$('#answersTable tbody').on('click', '.saveCellEdition', function () {
     var initialValue = $(this).parent("div").attr("initial_value");
     var newValue = $(this).parent("div").find('input').val();
     var $row = $(this).parents('tr');
     var $cell = $(this).parents("td");
     $cell.html(newValue);
     $.ajax({
-        url : "/forms/change-entry-field-value/{{ form.id }}",
+        url : "/forms/change-answer-field-value/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify({'id': getEntryID($row), 'data':getRowData($row)}),
+        data: JSON.stringify({'id': getAnswerID($row), 'data':getRowData($row)}),
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken)
@@ -284,17 +284,17 @@ $('#entriesTable tbody').on('click', '.saveCellEdition', function () {
         }
     });
 });
-$('#entriesTable tbody').on('click', '.delete-row-icon', function () {
+$('#answersTable tbody').on('click', '.delete-row-icon', function () {
     var $row=$(this).parents('tr');
     if ($row.find(".cellEditionMode").length == 1){
         return
     }
     $.ajax({
-        url : "/forms/delete-entry/{{ form.id }}",
+        url : "/forms/delete-answer/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify({"id": getEntryID($row)}),
+        data: JSON.stringify({"id": getAnswerID($row)}),
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken)
@@ -310,10 +310,10 @@ $('#entriesTable tbody').on('click', '.delete-row-icon', function () {
         }
     });
 });
-$('#entriesTable tbody').on('click', '.undo-delete-row', function () {
+$('#answersTable tbody').on('click', '.undo-delete-row', function () {
     var $row = $(this).parents('tr');
     $.ajax({
-        url : "/forms/undo-delete-entry/{{ form.id }}",
+        url : "/forms/undo-delete-answer/{{ form.id }}",
         type: "POST",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8',

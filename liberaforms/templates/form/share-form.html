@@ -7,7 +7,11 @@
     <div class="col-md-7">
 
         <div class="returnToForm">
-            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
+            <a class="btn btn-primary btn-sm"
+               role="button"
+               href="/forms/view/{{form.id}}">
+              {%trans%}Return to form{%endtrans%}
+            </a>
             {{ form.slug }}
         </div>
     </div>
@@ -31,7 +35,9 @@
                         {%trans%}Author{%endtrans%}
                     </span>
                 {% else %}
-                    <input class="btn btn-xs btn-danger" type="button" value="{%trans%}Remove{%endtrans%}" onClick="js:removeEditor('{{editor.id}}');">
+                    <input class="btn btn-xs btn-danger"
+                           type="button" value="{%trans%}Remove{%endtrans%}"
+                           onClick="js:removeEditor('{{editor.id}}');">
                 {% endif %}
                 </td>
             </tr>
@@ -41,9 +47,16 @@
         <form action="/forms/add-editor/{{form.id}}" method="POST">
             {{ wtform.csrf_token }}
             <div class="input-group input-group-sm mb-3">
-              <input name="email" type="text" class="form-control" placeholder="person@example.com" aria-label="Recipient's username" aria-describedby="button-editor">
+              <input name="email"
+                     type="text"
+                     class="form-control"
+                     placeholder="person@example.com"
+                     aria-label="Recipient's username"
+                     aria-describedby="button-editor">
               <div class="input-group-append">
-                <button class="btn btn-primary" type="submit" id="button-editor">{%trans%}Add new editor{%endtrans%}</button>
+                <button class="btn btn-primary" type="submit" id="button-editor">
+                  {%trans%}Add new editor{%endtrans%}
+                </button>
               </div>
             </div>
         </form>
@@ -57,30 +70,48 @@
         <div class="title_1">{%trans%}Share results{%endtrans%}</div>
         <p>{%trans%}Readonly access for <b>anyone</b> with a copy of these links{%endtrans%}</p>
 
-        <div id="toggle_sharedEntries" class="btn-group btn-toggle">
-            <button id="sharedEntries_true" class="btn btn-sm btn-default {% if form.are_entries_shared() %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-            <button id="sharedEntries_false" class="btn btn-sm btn-default {% if not form.are_entries_shared() %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
+        <div id="toggle_sharedAnswers" class="btn-group btn-toggle">
+            <button id="sharedAnswers_true"
+                    class="btn btn-sm btn-default {% if form.are_answers_shared() %}btn-success{% endif %}">
+              {%trans%}Enabled{%endtrans%}
+            </button>
+            <button id="sharedAnswers_false"
+                    class="btn btn-sm btn-default {% if not form.are_answers_shared() %}btn-primary{% endif %}">
+                {%trans%}Disabled{%endtrans%}
+            </button>
         </div>
         <p></p>
-        <div id="disabled_links" {%if form.are_entries_shared()%}style="display:None"{%endif%}>
+        <div id="disabled_links" {%if form.are_answers_shared()%}style="display:None"{%endif%}>
             <span class="badge badge-secondary">CSV</span>
-            <span style="text-decoration:line-through;">{{ form.get_shared_entries_url('csv') }}</span>
+            <span style="text-decoration:line-through;">
+              {{ form.get_shared_answers_url('csv') }}
+            </span>
             <br />
             <span class="badge badge-secondary">JSON</span>
-            <span style="text-decoration:line-through;">{{ form.get_shared_entries_url('json') }}</span>
+            <span style="text-decoration:line-through;">
+              {{ form.get_shared_answers_url('json') }}
+            </span>
             <br />
             <span class="badge badge-secondary">WEB</span>
-            <span style="text-decoration:line-through;">{{ form.get_shared_entries_url() }}</span>
+            <span style="text-decoration:line-through;">
+              {{ form.get_shared_answers_url() }}
+            </span>
         </div>
-        <div id="enabled_links" {%if not form.are_entries_shared()%}style="display:None"{%endif%}>
+        <div id="enabled_links" {%if not form.are_answers_shared()%}style="display:None"{%endif%}>
             <span class="badge badge-secondary">CSV</span>
-            <a href="{{ form.get_shared_entries_url('csv') }}">{{ form.get_shared_entries_url('csv') }}</a>
+            <a href="{{ form.get_shared_answers_url('csv') }}">
+              {{ form.get_shared_answers_url('csv') }}
+            </a>
             <br />
             <span class="badge badge-secondary">JSON</span>
-            <a href="{{ form.get_shared_entries_url('json') }}">{{ form.get_shared_entries_url('json') }}</a>
+            <a href="{{ form.get_shared_answers_url('json') }}">
+              {{ form.get_shared_answers_url('json') }}
+            </a>
             <br />
             <span class="badge badge-secondary">WEB</span>
-            <a href="{{ form.get_shared_entries_url() }}">{{ form.get_shared_entries_url() }}</a>
+            <a href="{{ form.get_shared_answers_url() }}">
+              {{ form.get_shared_answers_url() }}
+            </a>
         </div>
     </div>
 </div>
@@ -93,8 +124,14 @@
         <p>{%trans%}Only visible to people with a user account (login required){%endtrans%}</p>
         <div>
             <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
-                <button id="restrictedAccess_true" class="btn btn-sm btn-default {% if form.restrictedAccess %}btn-success{% endif %}">{%trans%}Restricted{%endtrans%}</button>
-                <button id="restrictedAccess_false" class="btn btn-sm btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">{%trans%}Public form{%endtrans%}</button>
+                <button id="restrictedAccess_true"
+                        class="btn btn-sm btn-default {% if form.restrictedAccess %}btn-success{% endif %}">
+                  {%trans%}Restricted{%endtrans%}
+                </button>
+                <button id="restrictedAccess_false"
+                        class="btn btn-sm btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">
+                  {%trans%}Public form{%endtrans%}
+                </button>
             </span>
         </div>
     </div>
@@ -121,9 +158,9 @@ function removeEditor(editor_id){
         }
     });
 }
-document.getElementById('toggle_sharedEntries').addEventListener('click', function(evt){
+document.getElementById('toggle_sharedAnswers').addEventListener('click', function(evt){
     $.ajax({
-        url : "/form/toggle-shared-entries/{{ form.id }}",
+        url : "/form/toggle-shared-answers/{{ form.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -134,14 +171,14 @@ document.getElementById('toggle_sharedEntries').addEventListener('click', functi
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {
-                $('#sharedEntries_true').addClass('btn-success');
-                $('#sharedEntries_false').removeClass('btn-primary');
+                $('#sharedAnswers_true').addClass('btn-success');
+                $('#sharedAnswers_false').removeClass('btn-primary');
                 $('#enabled_links').show()
                 $('#disabled_links').hide()
             }
             else if (data.enabled == false) {
-                $('#sharedEntries_true').removeClass('btn-success');
-                $('#sharedEntries_false').addClass('btn-primary');
+                $('#sharedAnswers_true').removeClass('btn-success');
+                $('#sharedAnswers_false').addClass('btn-primary');
                 $('#enabled_links').hide()
                 $('#disabled_links').show()
             }

@@ -41,15 +41,15 @@ var time_chart = new Chart(ctx, {
         beginAtZero: true,
         datasets: [
             {
-                label: ["{{ _('Entries')}}"],
-                data: {{ stats['entries']|tojson }},
+                label: ["{{ _('Answers')}}"],
+                data: {{ stats['answers']|tojson }},
                 fill: true,
                 borderWidth: 0,
                 backgroundColor: "rgba(182, 0, 181, 0.7)",
             },
             {
-                label: ["{{ _('Total entries')}}"],
-                data: {{ stats['total_entries']|tojson }},
+                label: ["{{ _('Total answers')}}"],
+                data: {{ stats['total_answers']|tojson }},
                 fill: true,
                 hidden: true,
                 borderWidth: 0,
@@ -117,15 +117,15 @@ var time_chart = new Chart(ctx, {
         beginAtZero: true,
         datasets: [
             {
-                label: ["{{ _('Entries')}}"],
-                data: {{ stats['entries']|tojson }},
+                label: ["{{ _('Answers')}}"],
+                data: {{ stats['answers']|tojson }},
                 fill: true,
                 borderWidth: 0,
                 backgroundColor: "rgba(182, 0, 181, 0.7)",
             },
             {
-                label: ["{{ _('Total entries')}}"],
-                data: {{ stats['total_entries']|tojson }},
+                label: ["{{ _('Total answers')}}"],
+                data: {{ stats['total_answers']|tojson }},
                 fill: true,
                 hidden: true,
                 borderWidth: 0,

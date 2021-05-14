@@ -113,7 +113,7 @@ class TestUserPreferences():
             # Tests POST only
             Tests toggle bool
         """
-        url = "/user/toggle-new-entry-notification"
+        url = "/user/toggle-new-answer-notification"
         response = anon_client.post(
                         url,
                         follow_redirects=True,
@@ -126,15 +126,15 @@ class TestUserPreferences():
         #                follow_redirects=True,
         #            )
         #assert response.status_code == 405
-        initial_default = users['test_user'].preferences["newEntryNotification"]
+        initial_default = users['test_user'].preferences["newAnswerNotification"]
         response = client.post(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert users['test_user'].preferences["newEntryNotification"] != initial_default
-        assert type(users['test_user'].preferences["newEntryNotification"]) == type(bool())
+        assert users['test_user'].preferences["newAnswerNotification"] != initial_default
+        assert type(users['test_user'].preferences["newAnswerNotification"]) == type(bool())
 
 class TestUserLogout():
     def test_logout(self, client):

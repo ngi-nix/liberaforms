@@ -44,7 +44,7 @@ class Form(db.Model, CRUD):
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
-    sharedEntries = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
+    sharedAnswers = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     introductionText = db.Column(JSONB, nullable=False)
@@ -61,13 +61,13 @@ class Form(db.Model, CRUD):
         self.created = datetime.datetime.now().isoformat()
         self.author_id = author.id
         self.editors = {self.author_id: self.new_editor_preferences(author)}
-        self.expiryConditions = {"totalEntries": 0,
+        self.expiryConditions = {"totalAnswers": 0,
                                  "expireDate": False,
                                  "fields": {}}
         self.slug = kwargs["slug"]
         self.structure = kwargs["structure"]
         self.fieldIndex = kwargs["fieldIndex"]
-        self.sharedEntries = {  "enabled": False,
+        self.sharedAnswers = {  "enabled": False,
                                 "key": utils.gen_random_string(),
                                 "password": False,
                                 "expireDate": False}
@@ -100,7 +100,7 @@ class Form(db.Model, CRUD):
             filters.append(cls.editors.has_key(str(kwargs['editor_id'])))
             kwargs.pop('editor_id')
         if 'key' in kwargs:
-            filters.append(cls.sharedEntries.contains({'key': kwargs['key']}))
+            filters.append(cls.sharedAnswers.contains({'key': kwargs['key']}))
             kwargs.pop('key')
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
@@ -138,7 +138,7 @@ class Form(db.Model, CRUD):
         return index
 
     def update_field_index(self, newIndex):
-        if self.get_total_entries() == 0:
+        if self.get_total_answers() == 0:
             self.fieldIndex = newIndex
         else:
             deletedFieldsWithData=[]
@@ -157,7 +157,7 @@ class Form(db.Model, CRUD):
                     if can_delete:
                         # A pseudo delete.
                         # We drop the field (it's reference) from the index
-                        # (the empty field remains as is in each entry in the db)
+                        # (the empty field remains as is in each answer in the db)
                         pass
                     else:
                         # We don't delete this field from the index because it contains data
@@ -204,36 +204,36 @@ class Form(db.Model, CRUD):
         else:
             return False
 
-    def get_confirmation_email_address(self, entry):
+    def get_confirmation_email_address(self, answer):
         for element in self.structure:
             if Form.is_email_field(element):
-                if element["name"] in entry and entry[element["name"]]:
-                    return entry[element["name"]].strip()
+                if element["name"] in answer and answer[element["name"]]:
+                    return answer[element["name"]].strip()
         return False
 
-    def get_entries(self, oldest_first=False, **kwargs):
+    def get_answers(self, oldest_first=False, **kwargs):
         kwargs['oldest_first'] = oldest_first
         kwargs['form_id'] = self.id
         return Answer.find_all(**kwargs)
 
-    def get_entries_for_display(self, oldest_first=False):
-        entries = self.get_entries(oldest_first=oldest_first)
+    def get_answers_for_display(self, oldest_first=False):
+        answers = self.get_answers(oldest_first=oldest_first)
         result = []
-        for entry in entries:
-            result.append({ 'id': entry.id,
-                            'created': entry.created.strftime("%Y-%m-%d %H:%M:%S"),
-                            'marked': entry.marked,
-                            **entry.data})
+        for answer in answers:
+            result.append({ 'id': answer.id,
+                            'created': answer.created.strftime("%Y-%m-%d %H:%M:%S"),
+                            'marked': answer.marked,
+                            **answer.data})
         return result
 
-    def get_total_entries(self):
+    def get_total_answers(self):
         return self.answers.count()
         #return Answer.find_all(form_id=self.id).count()
 
-    def get_last_entry_date(self):
-        last_entry = Answer.find(form_id=self.id)
-        if last_entry:
-            return last_entry.created.strftime('%Y-%m-%d %H:%M:%S')
+    def get_last_answer_date(self):
+        last_answer = Answer.find(form_id=self.id)
+        if last_answer:
+            return last_answer.created.strftime('%Y-%m-%d %H:%M:%S')
         return ""
 
     def is_enabled(self):
@@ -243,9 +243,9 @@ class Form(db.Model, CRUD):
 
     @classmethod
     def new_editor_preferences(cls, editor):
-        return {'notification': {   'newEntry': editor.preferences[
-                                                    "newEntryNotification"
-                                                ],
+        return {'notification': {   'newAnswer': editor.preferences[
+                                                "newAnswerNotification"
+                                                 ],
                                     'expiredForm': True }}
 
     def add_editor(self, editor):
@@ -394,17 +394,17 @@ class Form(db.Model, CRUD):
         flag_modified(self, "expiryConditions")
         self.save()
 
-    def save_expiry_total_entries(self, total_entries):
+    def save_expiry_total_answers(self, total_answers):
         try:
-            total_entries = int(total_entries)
+            total_answers = int(total_answers)
         except:
-            total_entries = 0
-        total_entries = 0 if total_entries < 0 else total_entries
-        self.expiryConditions['totalEntries']=total_entries
+            total_answers = 0
+        total_answers = 0 if total_answers < 0 else total_answers
+        self.expiryConditions['totalAnswers']=total_answers
         self.expired = self.has_expired()
         flag_modified(self, "expiryConditions")
         self.save()
-        return self.expiryConditions['totalEntries']
+        return self.expiryConditions['totalAnswers']
 
     def save_expiry_field_condition(self, field_name, condition):
         available_fields=self.get_available_number_type_fields()
@@ -453,7 +453,7 @@ class Form(db.Model, CRUD):
                         break
         return field_positions
 
-    def delete_entries(self):
+    def delete_answers(self):
         Answer.query.filter_by(form_id=self.id).delete()
         db.session.commit()
 
@@ -476,7 +476,7 @@ class Form(db.Model, CRUD):
         return editors
 
     def can_expire(self):
-        if self.expiryConditions["totalEntries"]:
+        if self.expiryConditions["totalAnswers"]:
             return True
         if self.expiryConditions["expireDate"]:
             return True
@@ -487,8 +487,8 @@ class Form(db.Model, CRUD):
     def has_expired(self):
         if not self.can_expire():
             return False
-        if self.expiryConditions["totalEntries"] and \
-            self.answers.count() >= self.expiryConditions["totalEntries"]:
+        if self.expiryConditions["totalAnswers"] and \
+            self.answers.count() >= self.expiryConditions["totalAnswers"]:
             return True
         if self.expiryConditions["expireDate"] and not \
             validators.is_future_date(self.expiryConditions["expireDate"]):
@@ -502,9 +502,9 @@ class Form(db.Model, CRUD):
 
     def tally_number_field(self, fieldName):
         total=0
-        for entry in self.get_entries():
+        for answer in self.get_answers():
             try:
-                total = total + int(entry.data[fieldName])
+                total = total + int(answer.data[fieldName])
             except:
                 continue
         return total
@@ -516,17 +516,17 @@ class Form(db.Model, CRUD):
             return True
 
     def is_shared(self):
-        if self.are_entries_shared():
+        if self.are_answers_shared():
             return True
         if len(self.editors) > 1:
             return True
         return False
 
-    def are_entries_shared(self):
-        return self.sharedEntries['enabled']
+    def are_answers_shared(self):
+        return self.sharedAnswers['enabled']
 
-    def get_shared_entries_url(self, part="results"):
-        return f"{self.url}/{part}/{self.sharedEntries['key']}"
+    def get_shared_answers_url(self, part="results"):
+        return f"{self.url}/{part}/{self.sharedAnswers['key']}"
 
     """
     Used when editing a form.
@@ -561,25 +561,25 @@ class Form(db.Model, CRUD):
                     return result
         return result
 
-    def get_entries_for_json(self):
+    def get_answers_for_json(self):
         result=[]
-        entries = self.get_entries_for_display(oldest_first=True)
-        for saved_entry in entries:
-            entry={}
+        answers = self.get_answers_for_display(oldest_first=True)
+        for saved_answer in answers:
+            answer={}
             for field in self.get_field_index_for_data_display():
-                #value=saved_entry[field['name']] if field['name'] in saved_entry else ""
-                if field['name'] in saved_entry:
-                    value = saved_entry[field['name']]
+                #value=saved_answer[field['name']] if field['name'] in saved_answer else ""
+                if field['name'] in saved_answer:
+                    value = saved_answer[field['name']]
                 else:
                     value = ""
-                entry[field['label']]=value
-            result.append(entry)
+                answer[field['label']]=value
+            result.append(answer)
         return result
 
     def get_chart_data(self):
         chartable_time_fields=[]
-        total={'entries':0}
-        time_data={'entries':[]}
+        total={'answers':0}
+        time_data={'answers':[]}
         for field in self.get_available_number_type_fields():
             label=self.get_field_label(field)
             total[label]=0
@@ -596,25 +596,25 @@ class Form(db.Model, CRUD):
             for value in field['values']:
                 field_for_chart['axis_1'].append(value['label'])
                 field_for_chart['axis_2'].append(0) #start counting at zero
-        for entry in self.get_entries_for_display(oldest_first=True):
-            total['entries']+=1
-            time_data['entries'].append({   'x': entry['created'],
-                                            'y': total['entries']})
+        for answer in self.get_answers_for_display(oldest_first=True):
+            total['answers']+=1
+            time_data['answers'].append({   'x': answer['created'],
+                                            'y': total['answers']})
             for field in chartable_time_fields:
                 try:
-                    total[field['label']]+=int(entry[field['name']])
-                    time_data[field['label']].append({'x': entry['created'],
+                    total[field['label']]+=int(answer[field['name']])
+                    time_data[field['label']].append({'x': answer['created'],
                                                       'y': total[field['label']]
                                                     })
                 except:
                     continue
             for field in multichoice_fields:
-                if not (field['name'] in entry and entry[field['name']]):
+                if not (field['name'] in answer and answer[field['name']]):
                     continue
                 field_for_chart=[item for item in multi_choice_for_chart if item["name"]==field['name']][0]
-                entry_values=entry[field['name']].split(', ')
+                answer_values=answer[field['name']].split(', ')
                 for idx, field_value in enumerate(field['values']):
-                    if field_value['value'] in entry_values:
+                    if field_value['value'] in answer_values:
                         field_for_chart['axis_2'][idx]+=1
         return {'multi_choice':multi_choice_for_chart,
                 'time_chart':time_data}
@@ -633,11 +633,11 @@ class Form(db.Model, CRUD):
         self.save()
         return self.adminPreferences['public']
 
-    def toggle_shared_entries(self):
-        enabled = self.sharedEntries['enabled']
-        self.sharedEntries['enabled'] = False if enabled else True
+    def toggle_shared_answers(self):
+        enabled = self.sharedAnswers['enabled']
+        self.sharedAnswers['enabled'] = False if enabled else True
         self.save()
-        return self.sharedEntries['enabled']
+        return self.sharedAnswers['enabled']
 
     def toggle_restricted_access(self):
         self.restrictedAccess = False if self.restrictedAccess else True
@@ -647,13 +647,13 @@ class Form(db.Model, CRUD):
     def toggle_notification(self, editor_id):
         editor_id = str(editor_id)
         if editor_id in self.editors:
-            if self.editors[editor_id]['notification']['newEntry']:
-                self.editors[editor_id]['notification']['newEntry']=False
+            if self.editors[editor_id]['notification']['newAnswer']:
+                self.editors[editor_id]['notification']['newAnswer']=False
             else:
-                self.editors[editor_id]['notification']['newEntry']=True
+                self.editors[editor_id]['notification']['newAnswer']=True
             flag_modified(self, 'editors')
             self.save()
-            return self.editors[editor_id]['notification']['newEntry']
+            return self.editors[editor_id]['notification']['newAnswer']
         return False
 
     def toggle_expiration_notification(self, editor_id):
@@ -691,9 +691,9 @@ class Form(db.Model, CRUD):
                                     fieldnames=fieldnames,
                                     extrasaction='ignore')
             writer.writerow(fieldheaders)
-            entries = self.get_entries_for_display(oldest_first=True)
-            for entry in entries:
-                writer.writerow(entry)
+            answers = self.get_answers_for_display(oldest_first=True)
+            for answer in answers:
+                writer.writerow(answer)
         return csv_name
 
     @staticmethod

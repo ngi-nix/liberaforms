@@ -126,11 +126,11 @@ label {
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
 }
-.entries-table {
+.answers-table {
   font-size: 14px;
 }
 /*
-.entries-table td:nth-child(-n+3), .entries-table th:nth-child(-n+3) {
+.answers-table td:nth-child(-n+3), .answers-table th:nth-child(-n+3) {
   max-width: 45px;
   white-space: nowrap;
 }
@@ -242,7 +242,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     text-decoration: line-through;
     cursor: auto;
 }
-.entryCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
+.answerCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
     background-color: #ffffcc;
     cursor: pointer;
 }

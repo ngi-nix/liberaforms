@@ -204,10 +204,10 @@ def delete_account(user_id):
                             user=g.current_user)
 
 
-@user_bp.route('/user/toggle-new-entry-notification', methods=['POST'])
+@user_bp.route('/user/toggle-new-answer-notification', methods=['POST'])
 @enabled_user_required
-def toggle_new_entry_notification_default():
-    default=g.current_user.toggle_new_entry_notification_default()
+def toggle_new_answer_notification_default():
+    default=g.current_user.toggle_new_answer_notification_default()
     return JsonResponse(json.dumps({'default': default}))
 
 

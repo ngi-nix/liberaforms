@@ -138,11 +138,11 @@ class Dispatcher(EmailServer):
 
 
     def send_new_answer_notification(self, emails, answer, slug):
-        body = _("New form entry in %s at %s\n" % (slug, self.site.siteName))
+        body = _("New form answer in %s at %s\n" % (slug, self.site.siteName))
         for data in answer:
             body = "%s\n%s: %s" % (body, data[0], data[1])
         body = "%s\n" % body
-        subject = Header(_("LiberaForms. New form entry")).encode()
+        subject = Header(_("LiberaForms. New form answer")).encode()
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
         message['Subject'] = subject
         for email in emails:
