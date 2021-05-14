@@ -32,8 +32,8 @@
     <thead>
     <tr>
         <th data-priority="1">{%trans%}Name{%endtrans%}</th>
-        <th data-priority="2">{%trans%}Entries{%endtrans%}</th>
-        <th>{%trans%}Last entry{%endtrans%}</th>
+        <th data-priority="2">{%trans%}Answers{%endtrans%}</th>
+        <th>{%trans%}Last answer{%endtrans%}</th>
         <th data-priority="10001">{%trans%}Created{%endtrans%}</th>
         <th>{%trans%}Public{%endtrans%}</th>
         <th>{%trans%}Shared{%endtrans%}</th>
@@ -43,10 +43,14 @@
     <tr>
        <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
        <td>
-           <a href="/forms/entries/stats/{{form.id}}"><i class="fa fa-bar-chart" aria-hidden="true"></i></a>
-           <a href="/forms/entries/{{form.id}}"><span>{{form.get_total_entries()}}</span></a>
+           <a href="/forms/answers/stats/{{form.id}}">
+             <i class="fa fa-bar-chart" aria-hidden="true"></i>
+           </a>
+           <a href="/forms/answers/{{form.id}}">
+             <span>{{form.get_total_answers()}}</span>
+           </a>
        </td>
-        <td>{{form.get_last_entry_date()}}</td>
+        <td>{{form.get_last_answer_date()}}</td>
         <td>{{form.created}}</td>
         <td>{{form.is_public()}}</td>
         <td>{{form.is_shared()}}</td>

@@ -229,7 +229,7 @@ class Site(db.Model, CRUD):
     def get_forms(self, **kwargs):
         return Form.find_all(**kwargs)
 
-    def get_entries(self, **kwargs):
+    def get_answers(self, **kwargs):
         return Answer.find_all(**kwargs)
 
     def get_users(self, **kwargs):
@@ -241,8 +241,8 @@ class Site(db.Model, CRUD):
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
-        result={    "labels":[], "entries":[], "forms":[], 'users':[],
-                    "total_entries":[], "total_forms": [], "total_users":[]}
+        result={    "labels":[], "answers":[], "forms":[], 'users':[],
+                    "total_answers":[], "total_forms": [], "total_users":[]}
         while 1:
             month = month +1
             if month == 13:
@@ -253,7 +253,7 @@ class Site(db.Model, CRUD):
             result['labels'].append(year_month)
             if year_month == today:
                 break
-        total_entries=0
+        total_answers=0
         total_forms=0
         total_users=0
         for year_month in result['labels']:
@@ -266,16 +266,16 @@ class Site(db.Model, CRUD):
             monthy_forms = Form.query.filter(
                                     Form.created >= start_date,
                                     Form.created < stop_date).count()
-            monthy_entries = Answer.query.filter(
+            monthy_answers = Answer.query.filter(
                                     Answer.created >= start_date,
                                     Answer.created < stop_date).count()
-            total_entries = total_entries + monthy_entries
+            total_answers = total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
             total_users = total_users + monthy_users
-            result['entries'].append(monthy_entries)
+            result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)
             result['users'].append(monthy_users)
-            result['total_entries'].append(total_entries)
+            result['total_answers'].append(total_answers)
             result['total_forms'].append(total_forms)
             result['total_users'].append(total_users)
         return result

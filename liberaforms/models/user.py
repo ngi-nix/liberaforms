@@ -103,8 +103,8 @@ class User(db.Model, CRUD):
         return self.preferences["language"]
 
     @property
-    def new_entry_notification_default(self):
-        return self.preferences["newEntryNotification"]
+    def new_answer_notification_default(self):
+        return self.preferences["newAnswerNotification"]
 
     def is_admin(self):
         return True if self.admin['isAdmin']==True else False
@@ -139,13 +139,13 @@ class User(db.Model, CRUD):
         self.save()
         return self.blocked
 
-    def toggle_new_entry_notification_default(self):
-        if self.preferences["newEntryNotification"]==True:
-            self.preferences["newEntryNotification"]=False
+    def toggle_new_answer_notification_default(self):
+        if self.preferences["newAnswerNotification"]==True:
+            self.preferences["newAnswerNotification"]=False
         else:
-            self.preferences["newEntryNotification"]=True
+            self.preferences["newAnswerNotification"]=True
         self.save()
-        return self.preferences["newEntryNotification"]
+        return self.preferences["newAnswerNotification"]
 
     def toggle_admin(self):
         if self.is_root_user():
@@ -161,7 +161,7 @@ class User(db.Model, CRUD):
         else:
             default_language = os.environ['DEFAULT_LANGUAGE']
         return { "language": default_language,
-                 "newEntryNotification": True}
+                 "newAnswerNotification": True}
 
     @staticmethod
     def default_admin_settings():
@@ -191,7 +191,7 @@ class User(db.Model, CRUD):
         self.save()
         return self.admin['notifyNewForm']
 
-    def get_entries(self, **kwargs):
+    def get_answers(self, **kwargs):
         kwargs['author_id']=str(self.id)
         return Answer.find_all(**kwargs)
 
@@ -201,8 +201,8 @@ class User(db.Model, CRUD):
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
-        result={    "labels":[], "entries":[], "forms":[],
-                    "total_entries":[], "total_forms": []}
+        result={    "labels":[], "answers":[], "forms":[],
+                    "total_answers":[], "total_forms": []}
         while 1:
             month = month +1
             if month == 13:
@@ -213,25 +213,25 @@ class User(db.Model, CRUD):
             result['labels'].append(year_month)
             if year_month == today:
                 break
-        total_entries=0
+        total_answers=0
         total_forms=0
-        entry_filter=[Answer.author_id == self.id]
+        answer_filter=[Answer.author_id == self.id]
         form_filter=[Form.author_id == self.id]
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
             start_date = datetime.datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
-            entries_filter = entry_filter + [Answer.created >= start_date]
-            entries_filter = entry_filter + [Answer.created < stop_date]
+            answers_filter = answer_filter + [Answer.created >= start_date]
+            answers_filter = answer_filter + [Answer.created < stop_date]
             forms_filter = form_filter + [Form.created >= start_date]
             forms_filter = form_filter + [Form.created < stop_date]
-            monthy_entries = Answer.query.filter(*entries_filter).count()
+            monthy_answers = Answer.query.filter(*answers_filter).count()
             monthy_forms = Form.query.filter(*forms_filter).count()
-            total_entries= total_entries + monthy_entries
+            total_answers= total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
-            result['entries'].append(monthy_entries)
+            result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)
-            result['total_entries'].append(total_entries)
+            result['total_answers'].append(total_answers)
             result['total_forms'].append(total_forms)
         return result
 

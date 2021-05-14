@@ -13,7 +13,9 @@
     <div class="col-md-8">
 
         <div class="returnToForm">
-            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
+            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">
+              {%trans%}Return to form{%endtrans%}
+            </a>
             {{ form.slug }}
         </div>
 
@@ -26,11 +28,11 @@
                 <th>{%trans%}Message{%endtrans%}</th>
             </tr>
         </thead>
-        {% for entry in form.log %}
+        {% for log in form.log %}
         <tr>
-            <td>{{entry.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
-            <td>{{entry.user.username}}</td>
-            <td>{{entry.message}}</td>
+            <td>{{log.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+            <td>{{log.user.username}}</td>
+            <td>{{log.message}}</td>
         </tr>
         {% endfor %}
         </table>

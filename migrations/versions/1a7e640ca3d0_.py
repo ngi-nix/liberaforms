@@ -73,7 +73,7 @@ def upgrade():
     sa.Column('expired', sa.Boolean(), nullable=True),
     sa.Column('sendConfirmation', sa.Boolean(), nullable=True),
     sa.Column('expiryConditions', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-    sa.Column('sharedEntries', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('sharedAnswers', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('restrictedAccess', sa.Boolean(), nullable=True),
     sa.Column('adminPreferences', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('introductionText', postgresql.JSONB(astext_type=sa.Text()), nullable=False),

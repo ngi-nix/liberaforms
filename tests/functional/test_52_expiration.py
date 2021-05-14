@@ -118,39 +118,39 @@ class TestFormExpiration():
         initial_log_count = forms['test_form'].log.count()
         valid_max_answers = 12
         response = client.post(
-                        f"/forms/set-expiry-total-entries/{form_id}",
+                        f"/forms/set-expiry-total-answers/{form_id}",
                         data = {
-                            "total_entries": valid_max_answers,
+                            "total_answers": valid_max_answers,
                         },
                         follow_redirects=False,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert response.json['total_entries'] == valid_max_answers
+        assert response.json['total_answers'] == valid_max_answers
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == True
         assert forms['test_form'].log.count() == initial_log_count +1
         initial_log_count = forms['test_form'].log.count()
         invalid_max_answers = "invalid_integer"
         response = client.post(
-                        f"/forms/set-expiry-total-entries/{form_id}",
+                        f"/forms/set-expiry-total-answers/{form_id}",
                         data = {
-                            "total_entries": invalid_max_answers,
+                            "total_answers": invalid_max_answers,
                         },
                         follow_redirects=False,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert response.json['total_entries'] == 0
+        assert response.json['total_answers'] == 0
         assert forms['test_form'].has_expired() == False
         assert forms['test_form'].can_expire() == False
-        assert forms['test_form'].expiryConditions['totalEntries'] == 0
+        assert forms['test_form'].expiryConditions['totalAnswers'] == 0
         assert forms['test_form'].log.count() == initial_log_count +1
         initial_log_count = forms['test_form'].log.count()
         response = client.post(
-                        f"/forms/set-expiry-total-entries/{form_id}",
+                        f"/forms/set-expiry-total-answers/{form_id}",
                         data = {
-                            "total_entries": invalid_max_answers,
+                            "total_answers": invalid_max_answers,
                         },
                         follow_redirects=False,
                     )
@@ -224,9 +224,9 @@ class TestFormExpiration():
         number_field_id = "number-1620224716308"
         valid_max_answers = max_answers
         response = client.post(
-                        f"/forms/set-expiry-total-entries/{form_id}",
+                        f"/forms/set-expiry-total-answers/{form_id}",
                         data = {
-                            "total_entries": valid_max_answers,
+                            "total_answers": valid_max_answers,
                         },
                         follow_redirects=False,
                     )

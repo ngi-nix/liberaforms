@@ -70,7 +70,7 @@ def register_blueprints(app):
     from liberaforms.views.form import form_bp
     from liberaforms.views.site import site_bp
     from liberaforms.views.admin import admin_bp
-    from liberaforms.views.entries import entries_bp
+    from liberaforms.views.answers import answers_bp
 
     app.register_blueprint(errors_bp)
     app.register_blueprint(main_bp)
@@ -78,5 +78,5 @@ def register_blueprints(app):
     app.register_blueprint(form_bp)
     app.register_blueprint(site_bp)
     app.register_blueprint(admin_bp)
-    app.register_blueprint(entries_bp)
+    app.register_blueprint(answers_bp)
     return None

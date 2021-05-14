@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- chart_entries_page -->
+<!-- chart_answers_page -->
 
 {% set chart_data = form.get_chart_data() %}
-{% set total_entries = form.get_total_entries() %}
+{% set total_answers = form.get_total_answers() %}
 
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
@@ -16,11 +16,11 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_entries_url()}}">
-        {%trans%}View entries{%endtrans%}
-        <span class="badge badge-light">{{total_entries}}</span>
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_answers_url()}}">
+        {%trans%}View answers{%endtrans%}
+        <span class="badge badge-light">{{total_answers}}</span>
     </a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{ form.get_shared_entries_url('csv')}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{ form.get_shared_answers_url('csv')}}">
         {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
     </a>
     </div>
@@ -30,9 +30,9 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
-        {%trans%}View entries{%endtrans%}
-        <span class="badge badge-light">{{total_entries}}</span>
+    <a class="btn btn-primary btn-sm" role="button" href="/forms/answers/{{form.id}}">
+        {%trans%}View answers{%endtrans%}
+        <span class="badge badge-light">{{total_answers}}</span>
     </a>
     <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
     </div>
@@ -46,10 +46,10 @@
     {% if not shared %}
     {% if form.editors[g.current_user.id|string] is defined %}
         <div id="toggle_notification" class="btn-group btn-toggle">
-            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newEntry'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
         </div>
-        {%trans%}Notify me on each new entry{%endtrans%}
+        {%trans%}Notify me on each new answer{%endtrans%}
     {% endif %}
     <p>&nbsp;</p>
     {% endif %}
@@ -84,14 +84,14 @@ var time_chart = new Chart(ctx, {
     data: {
         datasets: [
             {
-                label: "{%trans%}Entries{%endtrans%}",
-                data: {{ chart_data['time_chart']['entries']|tojson }},
+                label: "{%trans%}Answers{%endtrans%}",
+                data: {{ chart_data['time_chart']['answers']|tojson }},
                 borderColor: ["rgba(0, 190, 0)"],
                 fill: false,
                 borderWidth: 3,
                 lineTension: 0.1,
             },
-            {% if chart_data['time_chart'].pop('entries') %}{% endif %}
+            {% if chart_data['time_chart'].pop('answers') %}{% endif %}
             {% for label, data in chart_data['time_chart'].items() %}
             {
                 label: "{{ label }}",

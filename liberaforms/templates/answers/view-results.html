@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
 
 {% set fieldIndex=form.get_field_index_for_data_display() %}
-{% set responses = form.get_entries_for_display() %}
+{% set responses = form.get_answers_for_display() %}
 
 <div class="container">
 <div class="row" style="font-size:1.5em">
@@ -18,10 +18,10 @@
     {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_entries_url('stats')}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_answers_url('stats')}}">
         {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
     </a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_entries_url('csv')}}">
+    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_answers_url('csv')}}">
         {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
     </a>
     </div>
@@ -30,7 +30,7 @@
     <div class="col-md-12">
     <hr />
 
-    <table id="formEntries" style="display:none" class="table table-bordered table-striped table-sm entries-table nowrap">
+    <table id="formAnswers" style="display:none" class="table table-bordered table-striped table-sm answers-table nowrap">
     <thead>
         <tr>
         <th></th>
@@ -55,7 +55,7 @@
 
 <script>
 $(document).ready(function() {
-    $('#formEntries').DataTable({
+    $('#formAnswers').DataTable({
         "responsive": true,
         //"scrollY": "50vh",
         //"scrollCollapse": true,

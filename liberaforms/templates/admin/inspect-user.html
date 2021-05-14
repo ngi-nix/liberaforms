@@ -94,7 +94,7 @@
                 <th>{%trans%}Author{%endtrans%}</th>
                 <th>{%trans%}Editors{%endtrans%}</th>
                 <th>{%trans%}Public{%endtrans%}</th>
-                <th>{%trans%}Entries{%endtrans%}</th>
+                <th>{%trans%}Answers{%endtrans%}</th>
             </tr>
         </thead>
 
@@ -111,7 +111,7 @@
             </td>
            <td>{{form.editors|length}}</td>
            <td>{{form.is_public()}}</td>
-           <td>{{form.get_entries().count()}}</td>
+           <td>{{form.get_answers().count()}}</td>
         </tr>
         {% endfor %}
     </table>
@@ -188,8 +188,8 @@ var time_chart = new Chart(ctx, {
         beginAtZero: true,
         datasets: [
             {
-                label: ["{{ _('Entries')}}"],
-                data: {{ stats['entries']|tojson }},
+                label: ["{{ _('Answers')}}"],
+                data: {{ stats['answers']|tojson }},
                 fill: true,
                 borderWidth: 0,
                 backgroundColor: "rgba(182, 0, 181, 0.7)",

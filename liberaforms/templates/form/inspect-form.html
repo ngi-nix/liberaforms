@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
 {% set dataConsent = form.get_data_consent_for_display() %}
-{% set total_entries = form.get_total_entries() %}
+{% set total_answers = form.get_total_answers() %}
 {% set author = form.get_author() %}
 {% set current_user_is_editor = form.is_editor(g.current_user) %}
 
@@ -22,17 +22,17 @@
             {%trans%}Details{%endtrans%}
             <div style="float:right">
             {% if current_user_is_editor %}
-                <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/{{form.id}}">
-                    {%trans%}View entries{%endtrans%}
-                    <span class="badge badge-light">{{total_entries}}</span>
+                <a class="btn btn-primary btn-sm" role="button" href="/forms/answers/{{form.id}}">
+                    {%trans%}View answers{%endtrans%}
+                    <span class="badge badge-light">{{total_answers}}</span>
                 </a>
-                <a class="btn btn-primary btn-sm" role="button" href="/forms/entries/stats/{{form.id}}">
+                <a class="btn btn-primary btn-sm" role="button" href="/forms/answers/stats/{{form.id}}">
                     {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
                 </a>
             {% else %}
                 <button class="btn btn-primary btn-sm" disabled>
-                    {%trans%}Total entries{%endtrans%}
-                    <span class="badge badge-light">{{total_entries}}</span>
+                    {%trans%}Total answers{%endtrans%}
+                    <span class="badge badge-light">{{total_answers}}</span>
                 </button>
             {% endif %}
             </div>
@@ -43,13 +43,13 @@
                 <td>{{ form.slug }}</td>
             </tr>
             <tr>
-               <td>{%trans%}Last entry{%endtrans%}</td>
+               <td>{%trans%}Last answer{%endtrans%}</td>
                <td>
-                   {% if total_entries %}
+                   {% if total_answers %}
                         {% if current_user_is_editor %}
-                        <a href="/forms/entries/{{form.id}}">{{ form.get_last_entry_date() }}</a>
+                        <a href="/forms/answers/{{form.id}}">{{ form.get_last_answer_date() }}</a>
                         {% else %}
-                        {{ form.get_last_entry_date() }}
+                        {{ form.get_last_answer_date() }}
                         {% endif %}
                    {% endif %}
                </td>
@@ -284,10 +284,10 @@
         <a class="btn-primary btn btn-sm" role="button" href="/forms/duplicate/{{form.id}}">{%trans%}Duplicate form{%endtrans%}</a>
         <a class="btn-primary btn btn-sm" role="button" href="#!" onClick="js:$('#embed_snippet').show();">{%trans%}Embed form{%endtrans%}</a>
         </p>
-            {% if total_entries == 0 %}
+            {% if total_answers == 0 %}
             <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form{%endtrans%}</a>
             {% else %}
-            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and entries{%endtrans%}</a>
+            <a class="btn-warning btn btn-sm" role="button" href="/forms/delete/{{form.id}}">{%trans%}Delete form and answers{%endtrans%}</a>
             {% endif %}
         {% endif %}
 

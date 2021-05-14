@@ -18,35 +18,35 @@ from liberaforms.utils.utils import make_url_for, get_locale, JsonResponse
 
 #from pprint import pprint
 
-entries_bp = Blueprint('entries_bp', __name__,
-                    template_folder='../templates/entries')
+answers_bp = Blueprint('answers_bp', __name__,
+                        template_folder='../templates/answers')
 
-""" Form entries """
+""" Form answers """
 
-@entries_bp.route('/forms/entries/<int:id>', methods=['GET'])
+@answers_bp.route('/forms/answers/<int:id>', methods=['GET'])
 @enabled_user_required
-def list_entries(id):
+def list_answers(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    return render_template('list-entries.html',
+    return render_template('list-answers.html',
                             form=queriedForm,
                             with_deleted_columns=request.args.get('with_deleted_columns'),
                             edit_mode=request.args.get('edit_mode'))
 
 
-@entries_bp.route('/forms/entries/stats/<int:id>', methods=['GET'])
+@answers_bp.route('/forms/answers/stats/<int:id>', methods=['GET'])
 @enabled_user_required
-def entry_stats(id):
+def answer_stats(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    return render_template('chart-entries.html', form=queriedForm)
+    return render_template('chart-answers.html', form=queriedForm)
 
 
-@entries_bp.route('/forms/csv/<int:id>', methods=['GET'])
+@answers_bp.route('/forms/csv/<int:id>', methods=['GET'])
 @enabled_user_required
 def csv_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
@@ -62,9 +62,9 @@ def csv_form(id):
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
-@entries_bp.route('/forms/delete-entry/<int:id>', methods=['POST'])
+@answers_bp.route('/forms/delete-answer/<int:id>', methods=['POST'])
 @enabled_user_required
-def delete_entry(id):
+def delete_answer(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and "id" in request.json):
         return JsonResponse(json.dumps({'deleted': False}))
@@ -75,35 +75,35 @@ def delete_entry(id):
 
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.add_log(gettext("Deleted an entry"))
+    queriedForm.add_log(gettext("Deleted an answer"))
     return JsonResponse(json.dumps({'deleted': True}))
 
 
-@entries_bp.route('/forms/undo-delete-entry/<int:id>', methods=['POST'])
+@answers_bp.route('/forms/undo-delete-answer/<int:id>', methods=['POST'])
 @enabled_user_required
-def undo_delete_entry(id):
+def undo_delete_answer(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
-    entry_data={}
+    answer_data={}
     for field in request.json:
-        entry_data[field["name"]]=field["value"]
+        answer_data[field["name"]]=field["value"]
     recovered_answer = Answer.undo_delete(queriedForm.id,
                                           queriedForm.author_id,
-                                          entry_data)
+                                          answer_data)
     if recovered_answer:
         queriedForm.expired = queriedForm.has_expired()
         queriedForm.save()
-        queriedForm.add_log(gettext("Undeleted an entry"))
+        queriedForm.add_log(gettext("Undeleted an answer"))
         return JsonResponse(json.dumps({'undone': True,
                                         'new_id': str(recovered_answer.id)}))
     else:
         return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
 
 
-@entries_bp.route('/forms/toggle-marked-entry/<int:id>', methods=['POST'])
+@answers_bp.route('/forms/toggle-marked-answer/<int:id>', methods=['POST'])
 @enabled_user_required
-def toggle_marked_entry(id):
+def toggle_marked_answer(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and 'id' in request.json):
         return JsonResponse(json.dumps({'marked': False}))
@@ -119,9 +119,9 @@ def toggle_marked_entry(id):
     return JsonResponse(json.dumps({'marked': answer.marked}))
 
 
-@entries_bp.route('/forms/change-entry-field-value/<int:id>', methods=['POST'])
+@answers_bp.route('/forms/change-answer-field-value/<int:id>', methods=['POST'])
 @enabled_user_required
-def change_entry(id):
+def change_answer(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not (queriedForm and 'id' in request.json):
         return JsonResponse(json.dumps({'saved': False}))
@@ -140,67 +140,67 @@ def change_entry(id):
     answer.save()
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.add_log(gettext("Modified an entry"))
+    queriedForm.add_log(gettext("Modified an answer"))
     return JsonResponse(json.dumps({'saved': True}))
 
 
-@entries_bp.route('/forms/delete-entries/<int:id>', methods=['GET', 'POST'])
+@answers_bp.route('/forms/delete-answers/<int:id>', methods=['GET', 'POST'])
 @enabled_user_required
-def delete_entries(id):
+def delete_answers(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         try:
-            totalEntries = int(request.form['totalEntries'])
+            totalAnswers = int(request.form['totalAnswers'])
         except:
             flash(gettext("We expected a number"), 'warning')
-            return render_template('delete-entries.html', form=queriedForm)
-        if queriedForm.get_total_entries() == totalEntries:
-            queriedForm.delete_entries()
-            queriedForm.add_log(gettext("Deleted all entries"))
+            return render_template('delete-answers.html', form=queriedForm)
+        if queriedForm.get_total_answers() == totalAnswers:
+            queriedForm.delete_answers()
+            queriedForm.add_log(gettext("Deleted all answers"))
             if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
                 queriedForm.save()
-            flash(gettext("Deleted %s entries" % totalEntries), 'success')
-            return redirect(make_url_for('entries_bp.list_entries',
+            flash(gettext("Deleted %s answers" % totalAnswers), 'success')
+            return redirect(make_url_for('answers_bp.list_answers',
                                          id=queriedForm.id))
         else:
-            flash(gettext("Number of entries does not match"), 'warning')
-    return render_template('delete-entries.html', form=queriedForm)
+            flash(gettext("Number of answers does not match"), 'warning')
+    return render_template('delete-answers.html', form=queriedForm)
 
 
-@entries_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])
+@answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])
 @sanitized_slug_required
 @sanitized_key_required
-def view_entries(slug, key):
+def view_answers(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not (queriedForm and queriedForm.are_entries_shared()):
+    if not (queriedForm and queriedForm.are_answers_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
     return render_template('view-results.html', form=queriedForm, language=get_locale())
 
 
-@entries_bp.route('/<string:slug>/stats/<string:key>', methods=['GET'])
+@answers_bp.route('/<string:slug>/stats/<string:key>', methods=['GET'])
 @sanitized_slug_required
 @sanitized_key_required
 def view_stats(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not (queriedForm and queriedForm.are_entries_shared()):
+    if not (queriedForm and queriedForm.are_answers_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
-    return render_template('chart-entries.html', form=queriedForm, shared=True)
+    return render_template('chart-answers.html', form=queriedForm, shared=True)
 
 
-@entries_bp.route('/<string:slug>/csv/<string:key>', methods=['GET'])
+@answers_bp.route('/<string:slug>/csv/<string:key>', methods=['GET'])
 @sanitized_slug_required
 @sanitized_key_required
 def view_csv(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not (queriedForm and queriedForm.are_entries_shared()):
+    if not (queriedForm and queriedForm.are_answers_shared()):
         return render_template('page-not-found.html'), 400
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 400
@@ -213,13 +213,13 @@ def view_csv(slug, key):
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
 
-@entries_bp.route('/<string:slug>/json/<string:key>', methods=['GET'])
+@answers_bp.route('/<string:slug>/json/<string:key>', methods=['GET'])
 @sanitized_slug_required
 @sanitized_key_required
 def view_json(slug, key):
     queriedForm = Form.find(slug=slug, key=key)
-    if not (queriedForm and queriedForm.are_entries_shared()):
+    if not (queriedForm and queriedForm.are_answers_shared()):
         return JsonResponse(json.dumps({}), 404)
     if queriedForm.restrictedAccess and not g.current_user:
         return JsonResponse(json.dumps({}), 404)
-    return JsonResponse(json.dumps(queriedForm.get_entries_for_json()))
+    return JsonResponse(json.dumps(queriedForm.get_answers_for_json()))

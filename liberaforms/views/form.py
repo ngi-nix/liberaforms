@@ -285,11 +285,11 @@ def delete_form(id):
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
-            entry_cnt = queriedForm.get_entries().count()
+            answer_cnt = queriedForm.get_answers().count()
             queriedForm.delete()
-            flash_text = gettext("Deleted '%s' and %s entries" % (
+            flash_text = gettext("Deleted '%s' and %s answers" % (
                                                         queriedForm.slug,
-                                                        entry_cnt))
+                                                        answer_cnt))
             flash(flash_text, 'success')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
@@ -416,18 +416,18 @@ def set_expiry_field_condition(id):
     return JsonResponse(json.dumps({'condition': False}))
 
 
-@form_bp.route('/forms/set-expiry-total-entries/<int:id>', methods=['POST'])
+@form_bp.route('/forms/set-expiry-total-answers/<int:id>', methods=['POST'])
 @enabled_user_required
-def set_expiry_total_entries(id):
+def set_expiry_total_answers(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
-    if not (queriedForm and 'total_entries' in request.form):
-        return JsonResponse(json.dumps({'expired': False, 'total_entries':0}))
-    total_entries = request.form['total_entries']
-    total_entries = queriedForm.save_expiry_total_entries(total_entries)
+    if not (queriedForm and 'total_answers' in request.form):
+        return JsonResponse(json.dumps({'expired': False, 'total_answers':0}))
+    total_answers = request.form['total_answers']
+    total_answers = queriedForm.save_expiry_total_answers(total_answers)
     # TRANSLATION: Expire when total answers set to: 3
-    queriedForm.add_log(gettext("Expire when total answers set to: %s" % total_entries))
+    queriedForm.add_log(gettext("Expire when total answers set to: %s" % total_answers))
     return JsonResponse(json.dumps({'expired': queriedForm.expired,
-                                    'total_entries':total_entries}))
+                                    'total_answers': total_answers}))
 
 
 @form_bp.route('/forms/duplicate/<int:id>', methods=['GET'])
@@ -469,14 +469,14 @@ def toggle_form_enabled(id):
     return JsonResponse(json.dumps({'enabled': enabled}))
 
 
-@form_bp.route('/form/toggle-shared-entries/<int:id>', methods=['POST'])
+@form_bp.route('/form/toggle-shared-answers/<int:id>', methods=['POST'])
 @enabled_user_required
-def toggle_shared_entries(id):
+def toggle_shared_answers(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
         return JsonResponse(json.dumps())
-    shared=queriedForm.toggle_shared_entries()
-    queriedForm.add_log(gettext("Shared entries set to: %s" % shared))
+    shared=queriedForm.toggle_shared_answers()
+    queriedForm.add_log(gettext("Shared answers set to: %s" % shared))
     return JsonResponse(json.dumps({'enabled':shared}))
 
 
@@ -572,7 +572,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        entry = {'marked': False}
+        answer = {'marked': False}
         for key in formData:
             if key=='csrf_token':
                 continue
@@ -581,8 +581,8 @@ def view_form(slug):
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             value=sanitizers.remove_first_and_last_newlines(value.strip())
-            entry[key]=value
-        new_answer = Answer(queriedForm.id, queriedForm.author_id, entry)
+            answer[key]=value
+        new_answer = Answer(queriedForm.id, queriedForm.author_id, answer)
         new_answer.save()
 
         if not queriedForm.expired and queriedForm.has_expired():
@@ -599,23 +599,23 @@ def view_form(slug):
 
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
-            confirmationEmail=queriedForm.get_confirmation_email_address(entry)
+            confirmationEmail=queriedForm.get_confirmation_email_address(answer)
             if confirmationEmail and validators.is_valid_email(confirmationEmail):
                 Dispatcher().send_answer_confirmation(confirmationEmail, queriedForm)
 
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
-            if preferences["notification"]["newEntry"] == True:
+            if preferences["notification"]["newAnswer"] == True:
                 user=User.find(id=editor_id)
                 if user and user.enabled:
                     emails.append(user.email)
         if emails:
             data=[]
             for field in queriedForm.get_field_index_for_data_display():
-                if field['name'] in entry:
+                if field['name'] in answer:
                     if field['name']=="marked":
                         continue
-                    data.append( (field['label'], entry[field['name']]) )
+                    data.append( (field['label'], answer[field['name']]) )
             Dispatcher().send_new_answer_notification(  emails,
                                                         data,
                                                         queriedForm.slug)

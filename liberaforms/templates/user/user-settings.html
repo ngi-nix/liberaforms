@@ -35,7 +35,11 @@
                 {{ g.current_user.email }}
                 </td>
                 <td class="text-right">
-                <a class="btn btn-primary btn-xs" role="button" href="/user/change-email">{%trans%}Change{%endtrans%}</a>
+                  <a class="btn btn-primary btn-xs"
+                     role="button"
+                     href="/user/change-email">
+                     {%trans%}Change{%endtrans%}
+                  </a>
                 </td>
             </tr>
             <tr>
@@ -49,14 +53,22 @@
                     <i class="fa fa-asterisk" aria-hidden="true"></i>
                 </td>
                 <td class="text-right">
-                <a class="btn btn-primary btn-xs" role="button" href="/user/reset-password">{%trans%}Change{%endtrans%}</a>
+                  <a class="btn btn-primary btn-xs"
+                     role="button"
+                     href="/user/reset-password">
+                     {%trans%}Change{%endtrans%}
+                   </a>
                 </td>
             </tr>
             <tr>
                 <td>{%trans%}Preferred language{%endtrans%}</td>
                 <td>{{ config['LANGUAGES'][g.current_user.language][0] }}</td>
                 <td class="text-right">
-                <a class="btn btn-primary btn-xs" role="button" href="/user/change-language">{%trans%}Change{%endtrans%}</a>
+                  <a class="btn btn-primary btn-xs"
+                     role="button"
+                     href="/user/change-language">
+                     {%trans%}Change{%endtrans%}
+                   </a>
                 </td>
             </tr>
             <tr>
@@ -68,12 +80,19 @@
         <table class="table table-sm sparse-table">
             <tr>
                 <td>
-                    {%trans%}New entry notification default{%endtrans%}
+                  {%trans%}New answer notification default{%endtrans%}
                 </td>
                 <td class="text-right">
-                    <div id="toggle_new_entry_notification" class="btn-group btn-toggle">
-                    <button id="new_entry_notification_true" class="btn btn-xs btn-default {% if user.new_entry_notification_default %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="new_entry_notification_false" class="btn btn-xs btn-default {% if not user.new_entry_notification_default %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <div id="toggle_new_answer_notification"
+                         class="btn-group btn-toggle">
+                    <button id="new_answer_notification_true"
+                            class="btn btn-xs btn-default {% if user.new_answer_notification_default %}btn-success{% endif %}">
+                            {%trans%}True{%endtrans%}
+                    </button>
+                    <button id="new_answer_notification_false"
+                            class="btn btn-xs btn-default {% if not user.new_answer_notification_default %}btn-primary{% endif %}">
+                            {%trans%}False{%endtrans%}
+                    </button>
                     </div>
                 </td>
             </tr>
@@ -82,7 +101,10 @@
                     {%trans%}Consentment texts{%endtrans%}
                 </td>
                 <td class="text-right">
-                    <a href="/user/{{g.current_user.username}}/consent" class="btn btn-xs btn-primary">{%trans%}Edit{%endtrans%}</a>
+                  <a href="/user/{{g.current_user.username}}/consent"
+                     class="btn btn-xs btn-primary">
+                     {%trans%}Edit{%endtrans%}
+                  </a>
                 </td>
             </tr>
         </table>
@@ -134,9 +156,9 @@
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
-document.getElementById('toggle_new_entry_notification').addEventListener('click', function(evt){
+document.getElementById('toggle_new_answer_notification').addEventListener('click', function(evt){
     $.ajax({
-        url : "/user/toggle-new-entry-notification",
+        url : "/user/toggle-new-answer-notification",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -147,12 +169,12 @@ document.getElementById('toggle_new_entry_notification').addEventListener('click
         success: function(data, textStatus, jqXHR)
         {
             if (data.default == true) {
-                $('#new_entry_notification_true').addClass('btn-success');
-                $('#new_entry_notification_false').removeClass('btn-primary');
+                $('#new_answer_notification_true').addClass('btn-success');
+                $('#new_answer_notification_false').removeClass('btn-primary');
             }
             else if (data.default == false) {
-                $('#new_entry_notification_true').removeClass('btn-success');
-                $('#new_entry_notification_false').addClass('btn-primary');
+                $('#new_answer_notification_true').removeClass('btn-success');
+                $('#new_answer_notification_false').addClass('btn-primary');
             }
         }
     });

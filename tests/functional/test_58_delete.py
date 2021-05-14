@@ -13,6 +13,7 @@ from liberaforms.models.log import FormLog
 
 class TestDeleteForm():
     def test_login(self, client, users):
+        pytest.exit("stopped before deleting forms")
         response = client.post(
                         "/user/login",
                         data = {

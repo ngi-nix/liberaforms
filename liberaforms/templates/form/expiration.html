@@ -102,23 +102,23 @@
         </div>
             <div class="input-group input-group-sm mb-3 flex-nowrap" style="padding:0.5em;">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="addon-total-entries">
+                <span class="input-group-text" id="addon-total-answers">
                     {%trans%}The form will expire after{%endtrans%}
                 </span>
               </div>
-              {% set total_entries = form.expiryConditions['totalEntries'] %}
-              {% if total_entries == 0 %}
-                    {% set total_entries = "" %}
+              {% set total_answers = form.expiryConditions['totalAnswers'] %}
+              {% if total_answers == 0 %}
+                    {% set total_answers = "" %}
               {% endif %}
-              <input    id="total_entries" type="number" class="form-control pl-sm-3 condition"
-                        value="{{ total_entries }}"
+              <input    id="total_answers" type="number" class="form-control pl-sm-3 condition"
+                        value="{{ total_answers }}"
                         aria-label="{{ form.get_field_label(field_name) }}"
-                        aria-describedby="addon-total-entries">
+                        aria-describedby="addon-total-answers">
               <div class="input-group-append">
-                <input  id="button-total_entries"
+                <input  id="button-total_answers"
                         class="btn btn-success"
                         type="button" value="{%trans%}responses{%endtrans%}"
-                        onClick="js:setTotalEntries();" />
+                        onClick="js:setTotalAnswers();" />
               </div>
             </div>
         </div>
@@ -251,16 +251,16 @@ function setMaxValue(id){
     });
 }
 {% endif %}
-function setTotalEntries(id){
-    var value = $('#total_entries').val();
+function setTotalAnswers(id){
+    var value = $('#total_answers').val();
     if (value == "") {
         value = 0;
     }
     $.ajax({
-        url : "/forms/set-expiry-total-entries/{{ form.id }}",
+        url : "/forms/set-expiry-total-answers/{{ form.id }}",
         type: "POST",
         dataType: "json",
-        data: {"total_entries": value},
+        data: {"total_answers": value},
         beforeSend: function(xhr, settings) {
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken)
@@ -268,13 +268,13 @@ function setTotalEntries(id){
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.total_entries == 0){
-                data.total_entries = ""
+            if (data.total_answers == 0){
+                data.total_answers = ""
             }
-            $('#total_entries').val(data.total_entries);
-            $('#button-total_entries').blur()
+            $('#total_answers').val(data.total_answers);
+            $('#button-total_answers').blur()
             if (data.error === undefined) {
-                fadeOutHighlight($('#button-total_entries').closest(".input-group"))
+                fadeOutHighlight($('#button-total_answers').closest(".input-group"))
             }
             if (data.expired == true) {
                 $("#expired_alert").show()
