@@ -198,6 +198,21 @@ class Form(db.Model, CRUD):
     def has_email_field(self):
         return Form.structure_has_email_field(self.structure)
 
+    def get_field(self, field_name):
+        for field in self.structure:
+            if field["name"] == field_name:
+                return field
+        return None
+
+    def has_file_field(self, return_name=False):
+        for field in self.structure:
+            if "type" in field and field["type"] == "file":
+                if return_name == True:
+                    return field["name"]
+                else:
+                    return True
+        return False
+
     def might_send_confirmation_email(self):
         if self.sendConfirmation and self.has_email_field():
             return True
@@ -220,9 +235,16 @@ class Form(db.Model, CRUD):
         answers = self.get_answers(oldest_first=oldest_first)
         result = []
         for answer in answers:
+            files = []
+            for file in answer.files:
+                files.append({
+                    'name': file.file_name,
+                    'url': file.get_download_url()
+                })
             result.append({ 'id': answer.id,
                             'created': answer.created.strftime("%Y-%m-%d %H:%M:%S"),
                             'marked': answer.marked,
+                            'files': files,
                             **answer.data})
         return result
 

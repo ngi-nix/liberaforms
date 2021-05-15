@@ -4,7 +4,7 @@
 <!-- list_answers_page -->
 
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
-{% set responses = form.get_answers_for_display() %}
+{% set answers = form.get_answers_for_display() %}
 {% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
 
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
@@ -38,7 +38,7 @@
         </a>
     {% endif %}
 
-    {% if responses|length %}
+    {% if answers|length %}
         {% if edit_mode %}
             <a class="btn btn-success btn-sm" role="button" href="/forms/answers/{{form.id}}">
                 {%trans%}Disable edition{%endtrans%}
@@ -85,6 +85,7 @@
         <thead>
             <tr>
             <th></th>
+            {% set file_column_added = False %}
             {% for field in fieldIndex %}
                 {% if field['name'] == "DPL" %}
                     <th data-priority="10001">{{ field['label'] }}</th>
@@ -96,14 +97,19 @@
                     </th>
                     {% continue %}
                 {% endif %}
-                <th>{{ field['label'] }}</th>
+                {% if not field['name'].startswith('file-') %}
+                  <th>{{ field['label'] }}</th>
+                {% elif not file_column_added %}
+                  <th>{%trans%}Files{%endtrans%}</th>
+                  {% set file_column_added = True %}
+                {% endif %}
             {% endfor %}
             </tr>
         </thead>
         <tbody {% if edit_mode %}class="answerCellHighlighter"{% endif %} >
         <!-- Keep the data TD on one line! -->
-        {% for response in responses %}
-        <tr _id="{{ response['id'] }}" class="td-controls">
+        {% for answer in answers %}
+        <tr _id="{{ answer['id'] }}" class="td-controls">
             <td>
                 {% if edit_mode %}
                 <i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>
@@ -115,20 +121,26 @@
                 {% endif %}
                 {% if field['name'] == "marked" %}
                     {% if not edit_mode %}
-                        {% if response[field['name']] == True %}
+                        {% if answer[field['name']] == True %}
                         <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                         {% else %}
                         <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                         {% endif %}
                     {% else %}
-                        {% if response[field['name']] == True %}
+                        {% if answer[field['name']] == True %}
                         <td marked="1">{%trans%}True{%endtrans%}</td>
                         {% else %}
                         <td marked="0">{%trans%}False{%endtrans%}</td>
                         {% endif %}
                     {% endif %}
+                {% elif not field['name'].startswith('file-') %}
+                  <td>{{ answer[field['name']] }}</td>
                 {% else %}
-                    <td>{{ response[field['name']] }}</td>
+                  <td>
+                    {% for file in answer['files'] %}
+                      <a href="{{ file['url'] }}">{{ file['name'] }}</a><br  />
+                    {% endfor %}
+                  </td>
                 {% endif %}
             {% endfor %}
         </tr>
