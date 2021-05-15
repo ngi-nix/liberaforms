@@ -105,13 +105,13 @@
                 <div id="toggle_attachments_enabled" class="btn-group btn-toggle">
                 <button id="attachments_enabled_true"
                         class="btn btn-xs btn-default
-                              {% if site.enableAttachments %}btn-success{% endif %}
+                              {% if site.enabledAttachments %}btn-success{% endif %}
                         ">
                         {%trans%}True{%endtrans%}
                 </button>
                 <button id="attachments_enabled_false"
                         class="btn btn-xs btn-default
-                              {% if not site.enableAttachments %}btn-primary{% endif %}
+                              {% if not site.enabledAttachments %}btn-primary{% endif %}
                         ">
                         {%trans%}False{%endtrans%}
                 </button>
@@ -203,11 +203,11 @@ document.getElementById('toggle_attachments_enabled').addEventListener('click', 
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.invite == true) {
+            if (data.attachments == true) {
                 $('#attachments_enabled_true').addClass('btn-success');
                 $('#attachments_enabled_false').removeClass('btn-primary');
             }
-            else if (data.invite == false) {
+            else if (data.attachments == false) {
                 $('#attachments_enabled_true').removeClass('btn-success');
                 $('#attachments_enabled_false').addClass('btn-primary');
             }

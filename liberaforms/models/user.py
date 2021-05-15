@@ -31,6 +31,7 @@ class User(db.Model, CRUD):
     blocked = db.Column(db.Boolean, default=False)
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean, default=False)
+    attachmentsEnabled = db.Column(db.Boolean, default=False)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
@@ -44,6 +45,7 @@ class User(db.Model, CRUD):
         self.blocked = False
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
+        self.attachmentsEnabled = kwargs["attachmentsEnabled"]
         self.token = {}
         self.consentTexts = []
 
@@ -147,6 +149,13 @@ class User(db.Model, CRUD):
         self.save()
         return self.preferences["newAnswerNotification"]
 
+    def toggle_attachments_enabled(self):
+        if not self.site.attachmentsEnabled:
+            return False
+        self.attachmentsEnabled = False if self.attachmentsEnabled else True
+        self.save()
+        return self.attachmentsEnabled
+
     def toggle_admin(self):
         if self.is_root_user():
             return self.is_admin()
@@ -172,7 +181,9 @@ class User(db.Model, CRUD):
         }
 
     def attachments_enabled(self):
-        return self.site.attachmentsEnabled
+        if not self.site.attachmentsEnabled:
+            return False
+        return self.attachmentsEnabled
 
     """
     send this admin an email when a new user registers at the site

@@ -27,15 +27,6 @@
                 </tr>
             {% endif %}
             <tr>
-               <td>{%trans%}Is Admin{%endtrans%}</td>
-               <td>
-                   <div id="toggle_admin" class="btn-group btn-toggle">
-                    <button id="admin_true" class="btn btn-xs btn-default {% if user.is_admin() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.is_admin() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-                   </div>
-                </td>
-            </tr>
-            <tr>
                <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ user.created }}</td>
             </tr>
@@ -55,6 +46,48 @@
                     <span class="highlightedText">{%trans%}False{%endtrans%}</span>
                     {% endif %}
                 </td>
+            </tr>
+            <tr>
+              <td>{%trans%}Attachments enabled{%endtrans%}</td>
+              <td>
+                <div id="toggle_attachments_enabled" class="btn-group btn-toggle">
+                  <button id="attachments_enabled_true"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if user.attachments_enabled() %}btn-success{% endif %}
+                  ">
+                      {%trans%}True{%endtrans%}
+                  </button>
+                  <button id="attachments_enabled_false"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if not user.attachments_enabled() %}btn-primary{% endif %}
+                  ">
+                    {%trans%}False{%endtrans%}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>{%trans%}Is Admin{%endtrans%}</td>
+              <td>
+                <div id="toggle_admin" class="btn-group btn-toggle">
+                  <button id="admin_true"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if user.is_admin() %}btn-success{% endif %}
+                  ">
+                      {%trans%}True{%endtrans%}
+                  </button>
+                  <button id="admin_false"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if not user.is_admin() %}btn-primary{% endif %}
+                  ">
+                    {%trans%}False{%endtrans%}
+                  </button>
+                </div>
+              </td>
             </tr>
             <tr>
                <td>{%trans%}Blocked by admin{%endtrans%}</td>
@@ -153,6 +186,29 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
             else if (data.blocked == false) {
                 $('#blocked_true').removeClass('btn-success');
                 $('#blocked_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+document.getElementById('toggle_attachments_enabled').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/users/toggle-attachments-enabled/{{ user.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.attachments_enabled == true) {
+                $('#attachments_enabled_true').addClass('btn-success');
+                $('#attachments_enabled_false').removeClass('btn-primary');
+            }
+            else if (data.attachments_enabled == false) {
+                $('#attachments_enabled_true').removeClass('btn-success');
+                $('#attachments_enabled_false').addClass('btn-primary');
             }
         }
     });
