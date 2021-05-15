@@ -15,7 +15,7 @@ from flask_babel import gettext
 from liberaforms import csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
-from liberaforms.models.answer import Answer, AnswerUpload
+from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
@@ -585,16 +585,16 @@ def view_form(slug):
         new_answer = Answer(queriedForm.id, queriedForm.author_id, answer)
         new_answer.save()
 
-        pp(request.files)
         if request.files:
             for file_field_name in request.files.keys():
-                file_field = queriedForm.get_field(file_field_name)
-                if not file_field:
+                if not queriedForm.has_field(file_field_name):
                     continue
-                uploaded_file = request.files[file_field_name]
-                if uploaded_file.filename:
-                    upload = AnswerUpload(new_answer, uploaded_file)
+                file = request.files[file_field_name]
+                if file.filename:
+                    upload = AnswerAttachment(new_answer, file_field_name, file)
                     upload.save()
+                    link = f'<a href="{upload.get_url()}">{file.filename}</a>'
+                    new_answer.update_field(file_field_name, link)
 
         if not queriedForm.expired and queriedForm.has_expired():
             queriedForm.expired=True

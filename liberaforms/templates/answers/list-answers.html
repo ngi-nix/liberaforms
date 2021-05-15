@@ -71,81 +71,71 @@
     <hr />
 
     {% if form.editors[g.current_user.id|string] is defined %}
-        <div id="toggle_notification" class="btn-group btn-toggle">
-            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-        </div>
-        {%trans%}Notify me on each new answer{%endtrans%}
+      <div id="toggle_notification" class="btn-group btn-toggle">
+          <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
+          <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+      </div>
+      {%trans%}Notify me on each new answer{%endtrans%}
     {% endif %}
 
     <p>&nbsp;</p>
 
     <table  id="answersTable" style="display:none"
             class="table table-bordered table-striped table-sm answers-table {%if not edit_mode%}nowrap{%endif%}">
-        <thead>
-            <tr>
-            <th></th>
-            {% set file_column_added = False %}
-            {% for field in fieldIndex %}
-                {% if field['name'] == "DPL" %}
-                    <th data-priority="10001">{{ field['label'] }}</th>
-                    {% continue %}
-                {% endif %}
-                {% if field['name'] == "created" %}
-                    <th data-priority="10002">
-                      {{ field['label'] }}
-                    </th>
-                    {% continue %}
-                {% endif %}
-                {% if not field['name'].startswith('file-') %}
-                  <th>{{ field['label'] }}</th>
-                {% elif not file_column_added %}
-                  <th>{%trans%}Files{%endtrans%}</th>
-                  {% set file_column_added = True %}
-                {% endif %}
-            {% endfor %}
-            </tr>
-        </thead>
-        <tbody {% if edit_mode %}class="answerCellHighlighter"{% endif %} >
+      <thead>
+        <tr>
+        <th></th>
+        {% for field in fieldIndex %}
+          {% if field['name'] == "DPL" %}
+            <th data-priority="10001">{{ field['label'] }}</th>
+            {% continue %}
+          {% endif %}
+          {% if field['name'] == "created" %}
+            <th data-priority="10002">
+              {{ field['label'] }}
+            </th>
+            {% continue %}
+          {% endif %}
+          <th>{{ field['label'] }}</th>
+        {% endfor %}
+        </tr>
+      </thead>
+      <tbody {% if edit_mode %}class="answerCellHighlighter"{% endif %} >
         <!-- Keep the data TD on one line! -->
         {% for answer in answers %}
         <tr _id="{{ answer['id'] }}" class="td-controls">
-            <td>
-                {% if edit_mode %}
-                <i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>
-                {% endif %}
-            </td>
-            {% for field in fieldIndex %}
-                {% if field['name'] == "id" %}
-                    {% continue %}
-                {% endif %}
-                {% if field['name'] == "marked" %}
-                    {% if not edit_mode %}
-                        {% if answer[field['name']] == True %}
-                        <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
-                        {% else %}
-                        <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
-                        {% endif %}
-                    {% else %}
-                        {% if answer[field['name']] == True %}
-                        <td marked="1">{%trans%}True{%endtrans%}</td>
-                        {% else %}
-                        <td marked="0">{%trans%}False{%endtrans%}</td>
-                        {% endif %}
-                    {% endif %}
-                {% elif not field['name'].startswith('file-') %}
-                  <td>{{ answer[field['name']] }}</td>
+          <td>
+            {% if edit_mode %}
+            <i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>
+            {% endif %}
+          </td>
+          {% for field in fieldIndex %}
+            {% if field['name'] == "id" %}
+                {% continue %}
+            {% endif %}
+            {% if field['name'] == "marked" %}
+              {% if not edit_mode %}
+                {% if answer[field['name']] == True %}
+                <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                 {% else %}
-                  <td>
-                    {% for file in answer['files'] %}
-                      <a href="{{ file['url'] }}">{{ file['name'] }}</a><br  />
-                    {% endfor %}
-                  </td>
+                <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
                 {% endif %}
-            {% endfor %}
+              {% else %}
+                {% if answer[field['name']] == True %}
+                <td marked="1">{%trans%}True{%endtrans%}</td>
+                {% else %}
+                <td marked="0">{%trans%}False{%endtrans%}</td>
+                {% endif %}
+              {% endif %}
+            {% elif field['name'].startswith('file-') %}
+              <td>{{ answer[field['name']]|safe }}</td>
+            {% else %}
+              <td>{{ answer[field['name']] }}</td>
+            {% endif %}
+          {% endfor %}
         </tr>
         {% endfor %}
-        </tbody>
+      </tbody>
     </table>
     </div>
 </div>

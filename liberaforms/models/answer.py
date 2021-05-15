@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 import os, datetime
 from flask import current_app
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms import db
 from liberaforms.utils import utils
@@ -23,7 +24,7 @@ class Answer(db.Model, CRUD):
     marked = db.Column(db.Boolean, default=False)
     data = db.Column(JSONB, nullable=False)
     form = db.relationship("Form", viewonly=True)
-    files = db.relationship("AnswerUpload",
+    files = db.relationship("AnswerAttachment",
                             lazy='dynamic',
                             cascade="all, delete, delete-orphan")
 
@@ -53,6 +54,11 @@ class Answer(db.Model, CRUD):
             kwargs.pop('oldest_first')
         return cls.query.filter_by(**kwargs).order_by(order)
 
+    def update_field(self, field_name, field_value):
+        self.data[field_name] = field_value
+        flag_modified(self, "data")
+        self.save()
+
     @classmethod
     def undo_delete(cls, form_id, user_id, data):
         if not (data and 'created' in data and 'marked' in data):
@@ -73,19 +79,23 @@ class Answer(db.Model, CRUD):
             return None
 
 
-class AnswerUpload(db.Model, CRUD):
-    __tablename__ = "answer_uploads"
+class AnswerAttachment(db.Model, CRUD):
+    __tablename__ = "answer_attachments"
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.DateTime, nullable=False)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id'), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
     file_name = db.Column(db.String, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
-    answer = db.relationship("Answer", viewonly=True)
+    form_field_name = db.Column(db.String, nullable=False)
+    form = db.relationship("Form", viewonly=True)
 
-    def __init__(self, answer, file):
+    def __init__(self, answer, field_name, file):
         self.created = datetime.datetime.now().isoformat()
         self.file_name = file.filename
         self.answer_id = answer.id
+        self.form_field_name = field_name
+        self.form_id = answer.form.id
         self.storage_name = utils.gen_random_string()
         dir = os.path.join( current_app.config['UPLOAD_DIR'],
                             'forms',
@@ -102,13 +112,12 @@ class AnswerUpload(db.Model, CRUD):
     def find(cls, **kwargs):
         return cls.query.filter_by(**kwargs).first()
 
-    def get_file_path(self):
+    def get_directory(self):
         return os.path.join(current_app.config['UPLOAD_DIR'],
                             'forms',
-                            str(self.answer.form.id),
-                            self.storage_name)
+                            str(self.form.id))
 
-    def get_download_url(self):
-        host_url = self.answer.form.site.host_url
-        form_id = self.answer.form.id
+    def get_url(self):
+        host_url = self.form.site.host_url
+        form_id = self.form.id
         return f"{host_url}file/{form_id}/{self.storage_name}"
