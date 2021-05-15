@@ -171,6 +171,9 @@ class User(db.Model, CRUD):
             "notifyNewForm": False
         }
 
+    def attachments_enabled(self):
+        return self.site.attachmentsEnabled
+
     """
     send this admin an email when a new user registers at the site
     """

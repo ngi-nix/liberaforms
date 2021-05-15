@@ -49,7 +49,7 @@ def list_form_templates():
 def new_form(templateID=None):
     form_helper.clear_session_form_data()
     session['introductionTextMD'] = Form.default_introduction_text()
-    return render_template('edit-form.html', host_url=g.site.host_url)
+    return redirect(make_url_for('form_bp.edit_form'))
 
 
 @form_bp.route('/forms/edit', methods=['GET', 'POST'])
@@ -86,6 +86,7 @@ def edit_form(id=None):
     optionsWithData = {}
     if queriedForm:
         optionsWithData = queriedForm.get_multichoice_options_with_saved_data()
+    disabled_fields = current_app.config['FORMBUILDER_DISABLED_FIELDS']
     return render_template('edit-form.html',
                             host_url=g.site.host_url,
                             multichoiceOptionsWithSavedData=optionsWithData)

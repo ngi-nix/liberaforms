@@ -46,11 +46,15 @@
             <td class="text-right">
                 <div id="toggle_invitation_only" class="btn-group btn-toggle">
                 <button id="invitation_only_true"
-                        class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">
+                        class="btn btn-xs btn-default
+                              {% if site.invitationOnly %}btn-success{% endif %}
+                        ">
                         {%trans%}True{%endtrans%}
                 </button>
                 <button id="invitation_only_false"
-                        class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">
+                        class="btn btn-xs btn-default
+                              {% if not site.invitationOnly %}btn-primary{% endif %}
+                        ">
                         {%trans%}False{%endtrans%}
                 </button>
                 </div>
@@ -92,6 +96,26 @@
                  role="button" href="/site/change-menu-color">
                   {%trans%}Change{%endtrans%}
               </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Enable attachments{%endtrans%}</td>
+            <td></td>
+            <td class="text-right">
+                <div id="toggle_attachments_enabled" class="btn-group btn-toggle">
+                <button id="attachments_enabled_true"
+                        class="btn btn-xs btn-default
+                              {% if site.enableAttachments %}btn-success{% endif %}
+                        ">
+                        {%trans%}True{%endtrans%}
+                </button>
+                <button id="attachments_enabled_false"
+                        class="btn btn-xs btn-default
+                              {% if not site.enableAttachments %}btn-primary{% endif %}
+                        ">
+                        {%trans%}False{%endtrans%}
+                </button>
+                </div>
             </td>
           </tr>
           <tr>
@@ -163,6 +187,29 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
             else if (data.invite == false) {
                 $('#invitation_only_true').removeClass('btn-success');
                 $('#invitation_only_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+document.getElementById('toggle_attachments_enabled').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/site/toggle-enable-attachments",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.invite == true) {
+                $('#attachments_enabled_true').addClass('btn-success');
+                $('#attachments_enabled_false').removeClass('btn-primary');
+            }
+            else if (data.invite == false) {
+                $('#attachments_enabled_true').removeClass('btn-success');
+                $('#attachments_enabled_false').addClass('btn-primary');
             }
         }
     });

@@ -177,6 +177,10 @@ def reset_site_favicon():
 def toggle_invitation_only():
     return JsonResponse(json.dumps({'invite': g.site.toggle_invitation_only()}))
 
+@site_bp.route('/site/toggle-enable-attachments', methods=['POST'])
+@admin_required
+def toggle_attachments_enabled():
+    return JsonResponse(json.dumps({'invite': g.site.toggle_attachments_enabled()}))
 
 @site_bp.route('/site/email/config', methods=['GET', 'POST'])
 @admin_required
