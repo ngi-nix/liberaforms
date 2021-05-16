@@ -79,28 +79,6 @@ def delete_answer(id):
     return JsonResponse(json.dumps({'deleted': True}))
 
 
-@answers_bp.route('/forms/undo-delete-answer/<int:id>', methods=['POST'])
-@enabled_user_required
-def undo_delete_answer(id):
-    queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not queriedForm:
-        return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
-    answer_data={}
-    for field in request.json:
-        answer_data[field["name"]]=field["value"]
-    recovered_answer = Answer.undo_delete(queriedForm.id,
-                                          queriedForm.author_id,
-                                          answer_data)
-    if recovered_answer:
-        queriedForm.expired = queriedForm.has_expired()
-        queriedForm.save()
-        queriedForm.add_log(gettext("Undeleted an answer"))
-        return JsonResponse(json.dumps({'undone': True,
-                                        'new_id': str(recovered_answer.id)}))
-    else:
-        return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
-
-
 @answers_bp.route('/forms/toggle-marked-answer/<int:id>', methods=['POST'])
 @enabled_user_required
 def toggle_marked_answer(id):

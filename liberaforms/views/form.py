@@ -592,7 +592,7 @@ def view_form(slug):
                     continue
                 file = request.files[file_field_name]
                 if file.filename:
-                    upload = AnswerAttachment(new_answer, file_field_name, file)
+                    upload = AnswerAttachment(new_answer, file)
                     upload.save()
                     link = f'<a href="{upload.get_url()}">{file.filename}</a>'
                     new_answer.update_field(file_field_name, link)
