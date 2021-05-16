@@ -290,7 +290,7 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   height: 52px;
   cursor: pointer;
   color: white;
-  font-size: 34px; 
+  font-size: 34px;
   text-align: center;
   vertical-align: middle;
   margin-bottom: 4px;
@@ -355,4 +355,14 @@ button.newUserConsentTextToggle {
 }
 button.newUserConsentTextToggle > i {
   padding: 0;
+}
+
+/* ########## Modals ########## */
+.jc-question {
+  font-size: 1.4em !important;
+  font-weight: inherit !important;
+}
+.jc-small {
+  font-size: 11px !important;
+  padding: 0 !important;
 }

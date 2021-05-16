@@ -66,6 +66,9 @@ def new_user(token=None):
         if wtform.email.data in os.environ['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
+            attachmentsEnabled=True
+        else:
+            attachmentsEnabled=g.site.attachmentsEnabled
 
         new_user = User(
             username = wtform.username.data,
@@ -74,6 +77,7 @@ def new_user(token=None):
             preferences = User.default_user_preferences(g.site),
             admin = adminSettings,
             validatedEmail = validatedEmail,
+            attachmentsEnabled = attachmentsEnabled,
         )
         try:
             new_user.save()

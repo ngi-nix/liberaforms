@@ -13,7 +13,7 @@ from liberaforms.utils.database import CRUD
 from liberaforms import db
 from liberaforms.utils import utils
 
-#from pprint import pprint
+from pprint import pprint as pp
 
 class Answer(db.Model, CRUD):
     __tablename__ = "answers"
@@ -58,25 +58,6 @@ class Answer(db.Model, CRUD):
         self.data[field_name] = field_value
         flag_modified(self, "data")
         self.save()
-
-    @classmethod
-    def undo_delete(cls, form_id, user_id, data):
-        if not (data and 'created' in data and 'marked' in data):
-            return None
-        created = data['created']
-        data.pop('created')
-        marked = data['marked']
-        data.pop('marked')
-        recovered_answer = cls( form_id,
-                                user_id,
-                                data,
-                                marked=marked,
-                                created=created)
-        try:
-            recovered_answer.save()
-            return recovered_answer
-        except:
-            return None
 
 
 class AnswerAttachment(db.Model, CRUD):

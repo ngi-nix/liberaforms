@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, copy
+import os, datetime, copy, re
 import unicodecsv as csv
 
 from flask import g
@@ -705,6 +705,12 @@ class Form(db.Model, CRUD):
             writer.writerow(fieldheaders)
             answers = self.get_answers_for_display(oldest_first=True)
             for answer in answers:
+                for field_name in answer.keys():
+                    if field_name.startswith('file-'):
+                        url = re.search(r'https?:[\'"]?([^\'" >]+)',
+                                        answer[field_name])
+                        if url:
+                            answer[field_name] = url.group(0)
                 writer.writerow(answer)
         return csv_name
 
