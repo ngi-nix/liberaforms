@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.ext.mutable import MutableDict
-#from sqlalchemy.orm.attributes import flag_modified
+from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
@@ -31,7 +31,7 @@ class User(db.Model, CRUD):
     blocked = db.Column(db.Boolean, default=False)
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean, default=False)
-    attachmentsEnabled = db.Column(db.Boolean, default=False)
+    uploadsEnabled = db.Column(db.Boolean, default=False)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
@@ -45,7 +45,7 @@ class User(db.Model, CRUD):
         self.blocked = False
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
-        self.attachmentsEnabled = kwargs["attachmentsEnabled"]
+        self.uploadsEnabled = kwargs["uploadsEnabled"]
         self.token = {}
         self.consentTexts = []
 
@@ -149,12 +149,15 @@ class User(db.Model, CRUD):
         self.save()
         return self.preferences["newAnswerNotification"]
 
-    def toggle_attachments_enabled(self):
-        if not self.site.attachmentsEnabled:
+    def uploads_enabled(self):
+        if not current_app.config['ENABLE_UPLOADS']:
             return False
-        self.attachmentsEnabled = False if self.attachmentsEnabled else True
+        return self.uploadsEnabled
+
+    def toggle_uploads_enabled(self):
+        self.uploadsEnabled = False if self.uploadsEnabled else True
         self.save()
-        return self.attachmentsEnabled
+        return self.uploadsEnabled
 
     def toggle_admin(self):
         if self.is_root_user():
@@ -179,11 +182,6 @@ class User(db.Model, CRUD):
             "notifyNewUser": False,
             "notifyNewForm": False
         }
-
-    def attachments_enabled(self):
-        if not self.site.attachmentsEnabled:
-            return False
-        return self.attachmentsEnabled
 
     """
     send this admin an email when a new user registers at the site

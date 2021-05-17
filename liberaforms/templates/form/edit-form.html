@@ -108,7 +108,7 @@ jQuery(function($) {
     var disabledAttrs = {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }};
     disabledAttrs.push("name");
     var disabledFields = {{ config['FORMBUILDER_DISABLED_FIELDS'] | tojson }}
-    if ({{ g.current_user.attachments_enabled() | tojson }} !== true) {
+    if ({{ g.current_user.uploads_enabled() | tojson }} !== true) {
       disabledFields.push("file");
     }
     var options = {

@@ -79,6 +79,7 @@ class Config(object):
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
+    ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']

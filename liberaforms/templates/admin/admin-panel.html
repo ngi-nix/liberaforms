@@ -30,17 +30,6 @@
         </td>
       </tr>
       <tr>
-        <td>{%trans%}Default language{%endtrans%}</td>
-        <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
-        <td class="text-right">
-          <a class="btn btn-primary btn-xs"
-             role="button"
-             href="/site/change-default-language">
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      <tr>
         <td>{%trans%}Invitation only{%endtrans%}</td>
         <td></td>
         <td class="text-right">
@@ -99,26 +88,6 @@
         </td>
       </tr>
       <tr>
-        <td>{%trans%}Enable attachments{%endtrans%}</td>
-        <td></td>
-        <td class="text-right">
-          <div id="toggle_attachments_enabled" class="btn-group btn-toggle">
-          <button id="attachments_enabled_true"
-                  class="btn btn-xs btn-default
-                        {% if site.attachmentsEnabled %}btn-success{% endif %}
-                  ">
-                  {%trans%}True{%endtrans%}
-          </button>
-          <button id="attachments_enabled_false"
-                  class="btn btn-xs btn-default
-                        {% if not site.attachmentsEnabled %}btn-primary{% endif %}
-                  ">
-                  {%trans%}False{%endtrans%}
-          </button>
-          </div>
-        </td>
-      </tr>
-      <tr>
         <td>{%trans%}Email server{%endtrans%}</td>
         <td>{{g.site.smtpConfig["host"]}}</td>
         <td class="text-right">
@@ -136,6 +105,46 @@
           <input  class="btn-primary btn btn-xs"
                   type="button" value="{%trans%}Edit{%endtrans%}"
                   onClick="location.href='/site/edit'">
+        </td>
+      </tr>
+      {% endif %}
+    </table>
+
+    <p>&nbsp;</p>
+    <div id="site_settings" class="title_2">
+      {%trans%}New user{%endtrans%}
+    </div>
+    <table class="table table-sm">
+      <tr>
+        <td>{%trans%}Default language{%endtrans%}</td>
+        <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button"
+             href="/site/change-default-language">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      {% if config['ENABLE_UPLOADS'] %}
+      <tr>
+        <td>{%trans%}Enable form attachments{%endtrans%}</td>
+        <td></td>
+        <td class="text-right">
+          <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
+          <button id="uploads_enabled_true"
+                  class="btn btn-xs btn-default
+                        {% if site.newUserUploadsDefault %}btn-success{% endif %}
+                  ">
+                  {%trans%}True{%endtrans%}
+          </button>
+          <button id="uploads_enabled_false"
+                  class="btn btn-xs btn-default
+                        {% if not site.newUserUploadsDefault %}btn-primary{% endif %}
+                  ">
+                  {%trans%}False{%endtrans%}
+          </button>
+          </div>
         </td>
       </tr>
       {% endif %}
@@ -193,10 +202,11 @@ document.getElementById('toggle_invitation_only')
         }
     });
 });
-document.getElementById('toggle_attachments_enabled')
+{% if config['ENABLE_UPLOADS'] %}
+document.getElementById('toggle_uploads_enabled')
         .addEventListener('click', function(evt){
     $.ajax({
-        url : "/site/toggle-enable-attachments",
+        url : "/site/toggle-newuser-uploads-default",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -206,17 +216,18 @@ document.getElementById('toggle_attachments_enabled')
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.attachments == true) {
-                $('#attachments_enabled_true').addClass('btn-success');
-                $('#attachments_enabled_false').removeClass('btn-primary');
+            if (data.uploads == true) {
+                $('#uploads_enabled_true').addClass('btn-success');
+                $('#uploads_enabled_false').removeClass('btn-primary');
             }
-            else if (data.attachments == false) {
-                $('#attachments_enabled_true').removeClass('btn-success');
-                $('#attachments_enabled_false').addClass('btn-primary');
+            else if (data.uploads == false) {
+                $('#uploads_enabled_true').removeClass('btn-success');
+                $('#uploads_enabled_false').addClass('btn-primary');
             }
         }
     });
 });
+{% endif %}
 </script>
 
 {% endblock %}

@@ -47,27 +47,29 @@
                     {% endif %}
                 </td>
             </tr>
+            {% if config['ENABLE_UPLOADS'] %}
             <tr>
               <td>{%trans%}Attachments enabled{%endtrans%}</td>
               <td>
-                <div id="toggle_attachments_enabled" class="btn-group btn-toggle">
-                  <button id="attachments_enabled_true"
+                <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
+                  <button id="uploads_enabled_true"
                           class="btn btn-xs
                                  btn-default
-                                 {% if user.attachments_enabled() %}btn-success{% endif %}
+                                 {% if user.uploads_enabled() %}btn-success{% endif %}
                   ">
                       {%trans%}True{%endtrans%}
                   </button>
-                  <button id="attachments_enabled_false"
+                  <button id="uploads_enabled_false"
                           class="btn btn-xs
                                  btn-default
-                                 {% if not user.attachments_enabled() %}btn-primary{% endif %}
+                                 {% if not user.uploads_enabled() %}btn-primary{% endif %}
                   ">
                     {%trans%}False{%endtrans%}
                   </button>
                 </div>
               </td>
             </tr>
+            {% endif %}
             <tr>
               <td>{%trans%}Is Admin{%endtrans%}</td>
               <td>
@@ -190,9 +192,10 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
         }
     });
 });
-document.getElementById('toggle_attachments_enabled').addEventListener('click', function(evt){
+{% if config['ENABLE_UPLOADS'] %}
+document.getElementById('toggle_uploads_enabled').addEventListener('click', function(evt){
     $.ajax({
-        url : "/admin/users/toggle-attachments-enabled/{{ user.id }}",
+        url : "/admin/users/toggle-uploads-enabled/{{ user.id }}",
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -202,17 +205,18 @@ document.getElementById('toggle_attachments_enabled').addEventListener('click', 
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.attachments_enabled == true) {
-                $('#attachments_enabled_true').addClass('btn-success');
-                $('#attachments_enabled_false').removeClass('btn-primary');
+            if (data.uploads_enabled == true) {
+                $('#uploads_enabled_true').addClass('btn-success');
+                $('#uploads_enabled_false').removeClass('btn-primary');
             }
-            else if (data.attachments_enabled == false) {
-                $('#attachments_enabled_true').removeClass('btn-success');
-                $('#attachments_enabled_false').addClass('btn-primary');
+            else if (data.uploads_enabled == false) {
+                $('#uploads_enabled_true').removeClass('btn-success');
+                $('#uploads_enabled_false').addClass('btn-primary');
             }
         }
     });
 });
+{% endif %}
 document.getElementById('toggle_admin').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/users/toggle-admin/{{ user.id }}",

@@ -80,14 +80,14 @@ def toggle_admin(id):
         is_admin=user.toggle_admin()
     return JsonResponse(json.dumps({'admin':is_admin}))
 
-@admin_bp.route('/admin/users/toggle-attachments-enabled/<int:id>', methods=['POST'])
+@admin_bp.route('/admin/users/toggle-uploads-enabled/<int:id>', methods=['POST'])
 @admin_required
-def toggle_attachments_enabled(id):
+def toggle_uploads_enabled(id):
     user=User.find(id=id)
     if not user:
         return JsonResponse(json.dumps())
-    attachments_enabled=user.toggle_attachments_enabled()
-    return JsonResponse(json.dumps({'attachments_enabled':attachments_enabled}))
+    uploads_enabled=user.toggle_uploads_enabled()
+    return JsonResponse(json.dumps({'uploads_enabled':uploads_enabled}))
 
 @admin_bp.route('/admin/users/delete/<int:id>', methods=['GET', 'POST'])
 @admin_required

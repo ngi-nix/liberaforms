@@ -177,10 +177,10 @@ def reset_site_favicon():
 def toggle_invitation_only():
     return JsonResponse(json.dumps({'invite': g.site.toggle_invitation_only()}))
 
-@site_bp.route('/site/toggle-enable-attachments', methods=['POST'])
+@site_bp.route('/site/toggle-newuser-uploads-default', methods=['POST'])
 @admin_required
-def toggle_attachments_enabled():
-    return JsonResponse(json.dumps({'attachments': g.site.toggle_attachments_enabled()}))
+def toggle_newuser_uploads_default():
+    return JsonResponse(json.dumps({'uploads': g.site.toggle_newuser_uploads_default()}))
 
 @site_bp.route('/site/email/config', methods=['GET', 'POST'])
 @admin_required
@@ -259,18 +259,3 @@ def change_site_port(port=None):
     g.site.port=port
     g.site.save()
     return json.dumps({'port': g.site.port})
-
-
-@site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])
-@admin_required
-def toggle_enable_root():
-    if not g.current_user.is_root_user():
-        session["root_enabled"]=False
-        return JsonResponse(json.dumps({'enabled': False}))
-    if session["root_enabled"] == True:
-        session["root_enabled"]=False
-        flash(gettext("Root mode disabled"), 'success')
-    else:
-        session["root_enabled"]=True
-        flash(gettext("Root mode enabled"), 'success')
-    return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))
