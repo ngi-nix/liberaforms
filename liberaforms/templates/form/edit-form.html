@@ -107,9 +107,13 @@ jQuery(function($) {
     const fbEditor = document.getElementById("fb-editor");
     var disabledAttrs = {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }};
     disabledAttrs.push("name");
+    var disabledFields = {{ config['FORMBUILDER_DISABLED_FIELDS'] | tojson }}
+    if ({{ g.current_user.uploads_enabled() | tojson }} !== true) {
+      disabledFields.push("file");
+    }
     var options = {
         showActionButtons: false,
-        disableFields: {{ config['FORMBUILDER_DISABLE_FIELDS'] | tojson }},
+        disableFields: disabledFields,
         disabledAttrs: disabledAttrs,
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {

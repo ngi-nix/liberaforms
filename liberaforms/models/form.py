@@ -5,10 +5,11 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, copy
+import os, logging, datetime, re
+import shutil
 import unicodecsv as csv
 
-from flask import g
+from flask import current_app, g
 from flask_babel import gettext
 
 from liberaforms import db
@@ -197,6 +198,18 @@ class Form(db.Model, CRUD):
 
     def has_email_field(self):
         return Form.structure_has_email_field(self.structure)
+
+    def has_field(self, field_name):
+        for field in self.structure:
+            if "name" in field and field["name"] == field_name:
+                return True
+        return False
+
+    def has_file_field(self):
+        for field in self.structure:
+            if "type" in field and field["type"] == "file":
+                return True
+        return False
 
     def might_send_confirmation_email(self):
         if self.sendConfirmation and self.has_email_field():
@@ -453,9 +466,16 @@ class Form(db.Model, CRUD):
                         break
         return field_positions
 
+    def get_attachment_dir(self):
+        return os.path.join(current_app.config['UPLOAD_DIR'], 'forms', str(self.id))
+
     def delete_answers(self):
-        Answer.query.filter_by(form_id=self.id).delete()
-        db.session.commit()
+        self.answers.delete()
+        attachment_dir = self.get_attachment_dir()
+        if os.path.exists(attachment_dir):
+            shutil.rmtree(attachment_dir, ignore_errors=True)
+        else:
+            logging.warning(f"Attachment dir not found: {attachment_dir}")
 
     def is_author(self, user):
         return True if self.author_id == user.id else False
@@ -693,6 +713,13 @@ class Form(db.Model, CRUD):
             writer.writerow(fieldheaders)
             answers = self.get_answers_for_display(oldest_first=True)
             for answer in answers:
+                for field_name in answer.keys():
+                    if field_name.startswith('file-'):
+                        # extract attachment url
+                        url = re.search(r'https?:[\'"]?([^\'" >]+)',
+                                        answer[field_name])
+                        if url:
+                            answer[field_name] = url.group(0)
                 writer.writerow(answer)
         return csv_name
 

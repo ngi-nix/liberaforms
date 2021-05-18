@@ -66,7 +66,6 @@ def new_user(token=None):
         if wtform.email.data in os.environ['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
-
         new_user = User(
             username = wtform.username.data,
             email =  wtform.email.data,
@@ -74,6 +73,7 @@ def new_user(token=None):
             preferences = User.default_user_preferences(g.site),
             admin = adminSettings,
             validatedEmail = validatedEmail,
+            uploadsEnabled = g.site.newUserUploadsDefault,
         )
         try:
             new_user.save()

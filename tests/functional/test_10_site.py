@@ -284,13 +284,14 @@ class TestSiteConfig():
         response = admin_client.post(
                     url,
                     data = {
-                        'editor': "# Tested !!",
+                        'editor': "# Tested !!\nline1\nline2",
                     },
                     follow_redirects=True,
                 )
         assert response.status_code == 200
         html = response.data.decode()
         assert '<h1>Tested !!</h1>' in html
+        assert '<p>line1<br />\nline2</p>' in html
 
     def test_save_smtp_config(self, site, admin_client):
         """ Tests invalid and valid smtp configuration

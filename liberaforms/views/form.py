@@ -15,7 +15,7 @@ from flask_babel import gettext
 from liberaforms import csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
-from liberaforms.models.answer import Answer
+from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
@@ -25,7 +25,7 @@ from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
 import liberaforms.utils.wtf as wtf
 
-#from pprint import pprint as pp
+from pprint import pprint as pp
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -49,7 +49,7 @@ def list_form_templates():
 def new_form(templateID=None):
     form_helper.clear_session_form_data()
     session['introductionTextMD'] = Form.default_introduction_text()
-    return render_template('edit-form.html', host_url=g.site.host_url)
+    return redirect(make_url_for('form_bp.edit_form'))
 
 
 @form_bp.route('/forms/edit', methods=['GET', 'POST'])
@@ -86,6 +86,7 @@ def edit_form(id=None):
     optionsWithData = {}
     if queriedForm:
         optionsWithData = queriedForm.get_multichoice_options_with_saved_data()
+    disabled_fields = current_app.config['FORMBUILDER_DISABLED_FIELDS']
     return render_template('edit-form.html',
                             host_url=g.site.host_url,
                             multichoiceOptionsWithSavedData=optionsWithData)
@@ -584,6 +585,17 @@ def view_form(slug):
             answer[key]=value
         new_answer = Answer(queriedForm.id, queriedForm.author_id, answer)
         new_answer.save()
+
+        if request.files:
+            for file_field_name in request.files.keys():
+                if not queriedForm.has_field(file_field_name):
+                    continue
+                file = request.files[file_field_name]
+                if file.filename:
+                    upload = AnswerAttachment(new_answer, file)
+                    upload.save()
+                    link = f'<a href="{upload.get_url()}">{file.filename}</a>'
+                    new_answer.update_field(file_field_name, link)
 
         if not queriedForm.expired and queriedForm.has_expired():
             queriedForm.expired=True

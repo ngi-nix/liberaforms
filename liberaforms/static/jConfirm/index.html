@@ -1,0 +1,495 @@
+<!-- This page is admittedly lazy/crappy. Don't think the plugin shares it's quality, because it doesn't -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>jConfirm - jQuery Confirmation Tooltip</title>
+
+    <meta property="og:title" content="jConfirm - jQuery Confirmation Tooltip" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://htmlguyllc.github.io/jConfirm/" />
+    <meta property="og:image" content="example.png" />
+    <meta property="og:locale" content="en_US">
+
+    <meta name="twitter:site" content="@HTMLGuyLLC">
+
+    <meta name="description" content="Confirm user actions with a simple tooltip using jConfirm.">
+
+    <meta content="width=800, initial-scale=1" name="viewport">
+
+    <link href="example.png" rel="shortcut icon" type="image/x-icon">
+    <link href="example.png" rel="apple-touch-icon">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/darcula.min.css">
+    <link rel="stylesheet" href="jConfirm.css">
+    <style>
+        body,html
+        {
+            height: 100%;
+            margin: 0px;
+            font-family: Arial;
+        }
+    </style>
+</head>
+<body class="body text-center">
+
+    <!-- Page title -->
+    <div style="margin-top: 50px;">
+        <h1>jConfirm - Confirmation Tooltip</h1>
+        <a href="https://github.com/HTMLGuyLLC/jConfirm" class="btn btn-success">Docs and Code on Github</a>
+        <a href="https://htmlguy.com" target="_blank" class="btn btn-secondary">Created by HTMLGuy</a>
+        <br><br>
+        Related:
+        <a href="https://htmlguyllc.github.io/jTippy/">jTippy</a> |
+        <a href="https://htmlguyllc.github.io/jAlert/">jAlert</a> |
+        <a href="https://htmlguyllc.github.io/jTimeout/">jTimeout</a>
+    </div>
+
+    <div style="margin-top: 20px">
+        <form action="https://www.paypal.com/cgi-bin/webscr" id="paypal" method="post" target="_blank" style="font-size: .85em;line-height: 1.4em;margin-bottom: 10px;margin-top: 10px;"><input type="hidden" name="cmd" value="_s-xclick"><input type="hidden" name="hosted_button_id" value="9H3AX8KJJWS6J"><a href="#" onclick="javascript:getElementById('paypal').submit();" class="btn btn-sm"><i class="fa fa-beer"></i> Donations are appreciated (via PayPal)</a></form>
+    </div>
+
+    <div style="margin-top: 50px;">
+        Inspiration:<br>
+        <a href="#" data-toggle="confirm" class="btn btn-danger" data-question="This action cannot be undone" data-confirm_text="Ok" data-deny_text="Cancel"><i class="fa fa-trash-o"></i></a>
+        <a href="#" data-toggle="confirm" class="btn btn-success"><i class="fa fa-save"></i></a>
+        <a href="#" data-toggle="confirm" class="btn btn-secondary" data-question="Are you ready to send your message?" data-confirm_text="Yes, send now" data-deny_text="No, cancel"><i class="fa fa-envelope"></i></a>
+        <a href="#" class="btn btn-primary social-share-dummy" data-url-to-share="https://htmlguy.com"><i class="fa fa-share-square-o"></i></a>
+        <a href="#" class="btn btn-info bookmark-page-dummy"><i class="fa fa-bookmark"></i></a>
+    </div>
+
+    <div style="margin-top: 50px;">
+        Backdrops:<br>
+        <a href="#" data-toggle="confirm" data-backdrop="black" class="btn btn-secondary">Black</a>
+        <a href="#" data-toggle="confirm" data-backdrop="white" class="btn btn-secondary">White</a>
+        <a href="#" data-toggle="confirm" data-backdrop="blurred" class="btn btn-secondary">Blurred</a>
+    </div>
+
+    <div style="margin-top: 50px" class="text-center">
+        <table class="table" style="max-width: 500px; display: inline-block;">
+            <tr>
+                <th colspan="2"></th>
+                <th colspan="4" style="text-align: center;">Preferred Placement</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>Top</td>
+                <td>Bottom</td>
+                <td>Left</td>
+                <td>Right</td>
+            </tr>
+            <tr>
+                <th rowspan="4" style="vertical-align: middle">Sizes</th>
+                <td>Tiny</td>
+                <td><a href="#" data-toggle="confirm" data-size="tiny" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="tiny" data-position="bottom" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="tiny" data-position="left" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="tiny" data-position="right" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+            <tr>
+                <td>Small</td>
+                <td><a href="#" data-toggle="confirm" data-size="small" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="small" data-position="bottom" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="small" data-position="left" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="small" data-position="right" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+            <tr>
+                <td>Medium</td>
+                <td><a href="#" data-toggle="confirm" data-size="medium" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="medium" data-position="bottom" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="medium" data-position="left" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="medium" data-position="right" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+            <tr>
+                <td>Large</td>
+                <td><a href="#" data-toggle="confirm" data-size="large" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="large" data-position="bottom" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="large" data-position="left" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-size="large" data-position="right" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+        </table>
+
+        <table class="table table-inline" style="max-width: 500px; display: inline-block;">
+            <tr>
+                <th colspan="2"></th>
+                <th colspan="4" style="text-align: center;">Themes <small>(BS4 = Bootstrap 4)</small></th>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>Black</td>
+                <td>White</td>
+                <td>BS4</td>
+                <td>BS4 White</td>
+            </tr>
+            <tr>
+                <th rowspan="4" style="vertical-align: middle">Sizes</th>
+                <td>Tiny</td>
+                <td><a href="#" data-toggle="confirm" data-theme="black" data-size="tiny" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="white" data-size="tiny" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4" data-size="tiny" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4-white" data-size="tiny" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+            <tr>
+                <td>Small</td>
+                <td><a href="#" data-toggle="confirm" data-theme="black" data-size="small" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="white" data-size="small" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4" data-size="small" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4-white" data-size="small" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+            <tr>
+                <td>Medium</td>
+                <td><a href="#" data-toggle="confirm" data-theme="black" data-size="medium" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="white" data-size="medium" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4" data-size="medium" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4-white" data-size="medium" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+            <tr>
+                <td>Large</td>
+                <td><a href="#" data-toggle="confirm" data-theme="black" data-size="large" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="white" data-size="large" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4" data-size="large" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+                <td><a href="#" data-toggle="confirm" data-theme="bootstrap-4-white" data-size="large" data-position="top" class="btn btn-secondary"><i class="fa fa-hand-pointer-o"></i></a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div style="text-align: center;">
+        <br><br><hr>
+        <h2>Documentation</h2>
+        <hr><br>
+
+        <h4>All options and events with defaults:</h4>
+        <div>
+        <pre style="display:inline-block;width:800px;max-width:100%; text-align:left;"><code class="javascript">
+    $(function(){
+        $('[data-toggle="confirm"]').jConfirm({
+            //false|array: if provided, this will override the default confirm/deny buttons (see below for an example)
+            btns: false,
+            //string: question displayed to the user
+            question: 'Are you sure?',
+            //string: confirm button text
+            confirm_text: 'Yes',
+            //string: deny button text
+            deny_text: 'No',
+            //boolean: if true, when the confirm button is clicked the user will be redirected to the button's href location
+            follow_href: true,
+            //boolean: if true and follow_href is true, the href will be opened in a new window
+            open_new_tab: false,
+            //boolean: if true, the tooltip will be hidden if you click outside of it
+            hide_on_click: true,
+            //string ('auto','top','bottom','left','right'): preferred location of the tooltip (defaults to auto if no space)
+            position: 'auto',
+            //boolean: if true, the deny button will be shown
+            show_deny_btn: true,
+            //string ('black', 'white', 'bootstrap-4', 'bootstrap-4-white')
+            theme: 'black',
+            //string ('tiny', 'small', 'medium', 'large')
+            size: 'small',
+            //boolean: show the tooltip immediately on instantiation
+            show_now: false,
+            //string: class(es) to add to the tooltip
+            'class': ''
+        }).on('confirm', function(e){
+            var btn = $(this);
+            //do something on confirm
+        }).on('deny', function(e){
+            var btn = $(this);
+            //do something on deny
+        }).on('jc-show', function(e, tooltip){
+            //do something when tooltip is shown
+            //tooltip dom element is passed as the second parameter
+        }).on('jc-hide', function(e){
+            //do something when tooltip is hidden
+        });
+
+        //gets the currently displayed tooltip (if any)
+        var current_tooltip = $.jConfirm.current;
+        //gets the button that was clicked for the current tooltip
+        current_tooltip.dom;
+        //hides the current tooltip (remember to make sure there is one first)
+        //returns the original dom element
+        //you can pass false to disable triggering the hide event
+        current_tooltip.hide(false);
+    });
+        </code></pre>
+        </div>
+    </div>
+
+    <div style="margin-top: 10px; margin-bottom: 100px; text-align: center;">
+        <div style="max-width: 800px;display:inline-block; ">
+            <h4>All options can be set globally:</h4>
+            <div>
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="javascript">
+    $.jConfirm.defaults.question = 'Are you sure?';
+    $.jConfirm.defaults.confirm_text = 'Yes';
+    $.jConfirm.defaults.deny_text = 'No';
+    $.jConfirm.defaults.theme = 'black';
+            </code></pre>
+            </div>
+
+            <h4>All options can be set with data attributes:</h4>
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="html">
+    &lt;a href='#'
+       data-toggle="confirm"
+       data-question="Are you sure?"
+       data-confirm_text="Yes"
+       data-deny_text="No"
+       data-id="1">Delete it!&lt;/a>
+            </code></pre>
+            <div>
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="javascript">
+    $('[data-toggle="confirm"]').jConfirm().on('confirm', function(e){
+       var btn = $(this),
+            id = btn.data('id');
+       //do something
+    });
+            </code></pre>
+            </div>
+            <a href="https://github.com/HTMLGuyLLC/jConfirm" class="btn btn-success">Learn more on Github</a>
+
+            <br><br><hr>
+            <h2>Examples</h2>
+            <hr><br>
+
+            <h4>Delete Button:</h4>
+            <div>
+                <a href="#"
+                   class="btn btn-danger delete-record"
+                   data-record_id="1">
+                    <i class="fa fa-trash-o"></i>
+                </a>
+            </div><br>
+
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="html">
+    &lt;a href="#"
+       class="btn btn-danger delete-record"
+       data-record_id="1">
+        &lt;i class="fa fa-trash-o">&lt;/i>
+    &lt;/a>
+            </code></pre>
+            <div>
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="javascript">
+    $('.delete-record').jConfirm().on('confirm', function(e){
+        var btn = $(this),
+            record_id = btn.data('record_id');
+        alert('Deleting record: '+record_id);
+    });
+            </code></pre>
+            </div>
+
+            <br>
+            <h4>External Link Warning:</h4>
+            <div>
+                <a href="https://htmlguy.com"
+                   data-open_new_tab=true
+                   class="btn btn-secondary outside-link">
+                    Visit HTMLGuy.com
+                </a>
+            </div><br>
+
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="html">
+    &lt;a href="https://htmlguy.com"
+          data-open_new_tab=true
+          class="btn btn-secondary outside-link">
+        Visit HTMLGuy.com
+    &lt;/a>
+            </code></pre>
+            <div>
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="javascript">
+    $('.outside-link').jConfirm({
+        question:'You are about to visit an external site, are you sure you want to leave?',
+        confirm_text: 'Yes, let\'s go!',
+        deny_text:' No way!',
+        follow_href: true,
+    });
+            </code></pre>
+            </div>
+
+            <br>
+            <h4>Social Media Sharing:</h4>
+            <div>
+                <a href="#" class="btn btn-primary social-share" data-url-to-share="https://htmlguyllc.github.io/jConfirm/">
+                    <i class="fa fa-share-square-o"></i>
+                </a>
+            </div><br>
+
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="html">
+    &lt;a href="#"
+          class="btn btn-primary social-share"
+          data-url-to-share="https://htmlguyllc.github.io/jConfirm/">
+        &lt;i class="fa fa-share-square-o">&lt;/i>
+    &lt;/a>
+            </code></pre>
+            <div>
+            <pre style="text-align:left;width:800px;max-width:100%;"><code class="javascript">
+    $('.social-share').jConfirm({
+        //open in new tab
+        open_new_tab: true,
+        question: 'Share to your favorite social media sites!',
+        btns: [
+            {
+                text:'&lt;i class="fa fa-facebook">&lt;/i> Facebook',
+                event:'facebook-share',
+                data: {
+                    some_data_attr: 1
+                },
+                class:'facebook-btn'
+            },
+            {
+                text:'&lt;i class="fa fa-twitter">&lt;/i> Twitter',
+                event:'twitter-share',
+                data: {
+                    some_data_attr: 2
+                },
+                class:'twitter-btn'
+            }
+        ]
+    }).on('facebook-share', function(e, data){
+        var btn = $(this);
+        var data_attr = data.some_data_attr; //1
+        var url = 'http://www.facebook.com/sharer.php?u='+btn.data('url-to-share');
+        window.open(
+          url,
+          '_blank'
+        );
+    }).on('twitter-share', function(e, data){
+        var btn = $(this);
+        var data_attr = data.some_data_attr; //2
+        var url = 'http://twitter.com/share?text=This%20is%20the%20best!&url='+btn.data('url-to-share');
+        window.open(
+          url,
+          '_blank'
+        );
+    });
+            </code></pre>
+            </div>
+            <a href="https://github.com/HTMLGuyLLC/jConfirm" class="btn btn-success">Learn more on Github</a>
+        </div>
+    </div>
+
+
+    <!-- Buttons in each corner -->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; top: 50%; left: 0px;" class="btn btn-secondary"><i class="fa fa-caret-right"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; top: 50%; right: 0px;" class="btn btn-secondary"><i class="fa fa-caret-left"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; top: 0px; left: 50%;" class="btn btn-secondary"><i class="fa fa-caret-down"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; bottom: 0px; left: 50%;" class="btn btn-secondary"><i class="fa fa-caret-up"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; top: 0px; left: 50px;" class="btn btn-secondary"><i class="fa fa-caret-down"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; bottom: 0px; left: 50px;" class="btn btn-secondary"><i class="fa fa-caret-up"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; top: 0px; right: 50px;" class="btn btn-secondary"><i class="fa fa-caret-down"></i></a>-->
+    <!--<a href="#" data-toggle="confirm" style="position: fixed; bottom: 0px; right: 50px" class="btn btn-secondary"><i class="fa fa-caret-up"></i></a>-->
+
+    <!-- jQuery and script -->
+    <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="jConfirm.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <!-- Demos -->
+    <script>
+        $(function(){
+            $('.delete-record').jConfirm().on('confirm', function(e){
+                var btn = $(this),
+                    record_id = btn.data('record_id');
+                alert('Deleting record: '+record_id);
+            });
+
+            $('.outside-link').jConfirm({
+                question:'You are about to visit an external site, are you sure you want to leave?',
+                confirm_text: 'Yes, let\'s go!',
+                deny_text:' No way!',
+                follow_href: true,
+            });
+
+            $('.bookmark-page-dummy').jConfirm({
+                question: '',
+                btns: [
+                    {
+                        text:'Bookmark for Later',
+                        action: 'confirm'
+                    }
+                ]
+            }).on('confirm', function(){
+                console.log('bookmarked');
+            });
+
+            $('.social-share-dummy').jConfirm({
+                question: 'Share to your favorite social media sites!',
+                btns: [
+                    {
+                        text:'<i class="fa fa-facebook"></i> Facebook',
+                        event:'facebook-share',
+                        class:'facebook-btn'
+                    },
+                    {
+                        text:'<i class="fa fa-twitter"></i> Twitter',
+                        event:'twitter-share',
+                        class:'twitter-btn'
+                    }
+                ]
+            }).on('facebook-share', function(e){
+                var btn = $(this);
+                console.log('Sharing to facebook: '+btn.data('url-to-share'));
+            }).on('twitter-share', function(e){
+                var btn = $(this);
+                console.log('Sharing to twitter: '+btn.data('url-to-share'));
+            });
+
+            $('.social-share').jConfirm({
+                open_new_tab: true,
+                question: 'Share to your favorite social media sites!',
+                btns: [
+                    {
+                        text:'<i class="fa fa-facebook"></i> Facebook',
+                        event:'facebook-share',
+                        class:'facebook-btn'
+                    },
+                    {
+                        text:'<i class="fa fa-twitter"></i> Twitter',
+                        event:'twitter-share',
+                        class:'twitter-btn'
+                    }
+                ]
+            }).on('facebook-share', function(e){
+                var btn = $(this);
+                var url = 'http://www.facebook.com/sharer.php?u='+btn.data('url-to-share');
+                window.open(
+                    url,
+                    '_blank'
+                );
+            }).on('twitter-share', function(e){
+                var btn = $(this);
+                var url = 'http://twitter.com/share?text=This%20is%20the%20best!&url='+btn.data('url-to-share');
+                window.open(
+                    url,
+                    '_blank'
+                );
+            });
+
+            $('[data-toggle="confirm"]').jConfirm().on('confirm', function(e){
+                console.log("confirm");
+            }).on('deny', function(e){
+                console.log("deny");
+            }).on('jc-show', function(e, value){
+                console.log('js-show');
+            }).on('jc-hide', function(e){
+                console.log('js-hide');
+            });
+        });
+    </script>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-126490722-4"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-126490722-4');
+    </script>
+</body>
+</html>

@@ -4,147 +4,182 @@
 
 <div class="container">
 <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
 
-        <div class="title_1 delimited">
-          {%trans%}Administrator{%endtrans%}
-        </div>
-
-        <div id="site_settings" class="title_2">
-          {%trans%}Site settings{%endtrans%}
-        </div>
-
-        <table class="table table-sm">
-          <tr>
-            <td>{%trans%}Site name{%endtrans%}</td>
-            <td>
-            {{ site.siteName }}
-            </td>
-            <td class="text-right">
-              <a class="btn-primary btn btn-xs"
-                 role="button"
-                 href="/site/change-sitename">
-                  {%trans%}Change{%endtrans%}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Default language{%endtrans%}</td>
-            <td>{{config['LANGUAGES'][g.site.defaultLanguage][0]}}</td>
-            <td class="text-right">
-              <a class="btn btn-primary btn-xs"
-                 role="button"
-                 href="/site/change-default-language">
-                  {%trans%}Change{%endtrans%}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Invitation only{%endtrans%}</td>
-            <td></td>
-            <td class="text-right">
-                <div id="toggle_invitation_only" class="btn-group btn-toggle">
-                <button id="invitation_only_true"
-                        class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">
-                        {%trans%}True{%endtrans%}
-                </button>
-                <button id="invitation_only_false"
-                        class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">
-                        {%trans%}False{%endtrans%}
-                </button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Consent{%endtrans%}</td>
-            <td>
-              {%trans%}Terms and conditions{%endtrans%},
-              {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
-            </td>
-            <td class="text-right">
-              <a class="btn btn-primary btn-xs"
-                 role="button"
-                 href="/site/consent-texts">
-                  {%trans%}Edit{%endtrans%}
-                </a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              {%trans%}Icon{%endtrans%}
-            </td>
-            <td>
-              <img src="/favicon.png" width=18 height=18 />
-            </td>
-            <td class="text-right">
-              <input class="btn-primary btn btn-xs"
-                     type="button"
-                     value="{%trans%}Change{%endtrans%}"
-                     onClick="location.href='/site/change-icon'">
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Menu color{%endtrans%}</td>
-            <td>{{g.site.menuColor}}</td>
-            <td class="text-right">
-              <a class="btn btn-primary btn-xs"
-                 role="button" href="/site/change-menu-color">
-                  {%trans%}Change{%endtrans%}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Email server{%endtrans%}</td>
-            <td>{{g.site.smtpConfig["host"]}}</td>
-            <td class="text-right">
-              <input class="btn-primary btn btn-xs"
-                      type="button" value="{%trans%}Configure{%endtrans%}"
-                      onClick="location.href='/site/email/config'" />
-            </td>
-          </tr>
-          {% if g.current_user.is_root_user() %}
-          <tr>
-            <td colspan="2">
-              {%trans%}Public links{%endtrans%}
-            </td>
-            <td class="text-right">
-              <input  class="btn-primary btn btn-xs"
-                      type="button" value="{%trans%}Edit{%endtrans%}"
-                      onClick="location.href='/site/edit'">
-            </td>
-          </tr>
-          {% endif %}
-        </table>
-
-        <p>&nbsp;</p>
-        <div class="title_2">
-          {%trans%}Installation{%endtrans%}
-        </div>
-
-        <table class="table table-sm">
-        {% if g.current_user.is_root_user() %}
-        <tr>
-          <td>{%trans%}Created{%endtrans%}</td>
-          <td>{{site.created}}</td>
-        </tr>
-        {% endif %}
-        <tr>
-          <td>LiberaForms version</td>
-          <td>{{config['APP_VERSION']}}</td>
-        </tr>
-        <tr>
-          <td>Database schema version</td>
-          <td>1234</td>
-        </tr>
-        </table>
+    <div class="title_1 delimited">
+      {%trans%}Administrator{%endtrans%}
     </div>
+
+    <div id="site_settings" class="title_2">
+      {%trans%}Site settings{%endtrans%}
+    </div>
+
+    <table class="table table-sm">
+      <tr>
+        <td>{%trans%}Site name{%endtrans%}</td>
+        <td>
+        {{ site.siteName }}
+        </td>
+        <td class="text-right">
+          <a class="btn-primary btn btn-xs"
+             role="button"
+             href="/site/change-sitename">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td>{%trans%}Invitation only{%endtrans%}</td>
+        <td></td>
+        <td class="text-right">
+          <div id="toggle_invitation_only" class="btn-group btn-toggle">
+          <button id="invitation_only_true"
+                  class="btn btn-xs btn-default
+                        {% if site.invitationOnly %}btn-success{% endif %}
+                  ">
+                  {%trans%}True{%endtrans%}
+          </button>
+          <button id="invitation_only_false"
+                  class="btn btn-xs btn-default
+                        {% if not site.invitationOnly %}btn-primary{% endif %}
+                  ">
+                  {%trans%}False{%endtrans%}
+          </button>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>{%trans%}Consent{%endtrans%}</td>
+        <td>
+          {%trans%}Terms and conditions{%endtrans%},
+          {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button"
+             href="/site/consent-texts">
+            {%trans%}Edit{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          {%trans%}Icon{%endtrans%}
+        </td>
+        <td>
+          <img src="/favicon.png" width=18 height=18 />
+        </td>
+        <td class="text-right">
+          <input class="btn-primary btn btn-xs"
+                 type="button"
+                 value="{%trans%}Change{%endtrans%}"
+                 onClick="location.href='/site/change-icon'">
+        </td>
+      </tr>
+      <tr>
+        <td>{%trans%}Menu color{%endtrans%}</td>
+        <td>{{g.site.menuColor}}</td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button" href="/site/change-menu-color">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td>{%trans%}Email server{%endtrans%}</td>
+        <td>{{g.site.smtpConfig["host"]}}</td>
+        <td class="text-right">
+          <input class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Configure{%endtrans%}"
+                  onClick="location.href='/site/email/config'" />
+        </td>
+      </tr>
+      {% if g.current_user.is_root_user() %}
+      <tr>
+        <td colspan="2">
+          {%trans%}Public links{%endtrans%}
+        </td>
+        <td class="text-right">
+          <input  class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Edit{%endtrans%}"
+                  onClick="location.href='/site/edit'">
+        </td>
+      </tr>
+      {% endif %}
+    </table>
+
+    <p>&nbsp;</p>
+    <div id="site_settings" class="title_2">
+      {%trans%}New user{%endtrans%}
+    </div>
+    <table class="table table-sm">
+      <tr>
+        <td>{%trans%}Default language{%endtrans%}</td>
+        <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button"
+             href="/site/change-default-language">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      {% if config['ENABLE_UPLOADS'] %}
+      <tr>
+        <td>{%trans%}Enable form attachments{%endtrans%}</td>
+        <td></td>
+        <td class="text-right">
+          <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
+          <button id="uploads_enabled_true"
+                  class="btn btn-xs btn-default
+                        {% if site.newUserUploadsDefault %}btn-success{% endif %}
+                  ">
+                  {%trans%}True{%endtrans%}
+          </button>
+          <button id="uploads_enabled_false"
+                  class="btn btn-xs btn-default
+                        {% if not site.newUserUploadsDefault %}btn-primary{% endif %}
+                  ">
+                  {%trans%}False{%endtrans%}
+          </button>
+          </div>
+        </td>
+      </tr>
+      {% endif %}
+    </table>
+
+    <p>&nbsp;</p>
+    <div class="title_2">
+      {%trans%}Installation{%endtrans%}
+    </div>
+
+    <table class="table table-sm">
+    {% if g.current_user.is_root_user() %}
+    <tr>
+      <td>{%trans%}Created{%endtrans%}</td>
+      <td>{{site.created}}</td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>LiberaForms version</td>
+      <td>{{config['APP_VERSION']}}</td>
+    </tr>
+    <tr>
+      <td>Database schema version</td>
+      <td>1234</td>
+    </tr>
+    </table>
+
+  </div>
 </div>
 </div>
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
-document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
+document.getElementById('toggle_invitation_only')
+        .addEventListener('click', function(evt){
     $.ajax({
         url : "/site/toggle-invitation-only",
         type: "POST",
@@ -167,13 +202,32 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         }
     });
 });
-$(document).on('click', '#invites_table td:first-child', function(){
-    if($(this).parent().next('tr').is(":visible")){
-        $(this).parent().next('tr').hide()
-    }else{
-        $(this).parent().next('tr').show() // token message
-    }
+{% if config['ENABLE_UPLOADS'] %}
+document.getElementById('toggle_uploads_enabled')
+        .addEventListener('click', function(evt){
+    $.ajax({
+        url : "/site/toggle-newuser-uploads-default",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.uploads == true) {
+                $('#uploads_enabled_true').addClass('btn-success');
+                $('#uploads_enabled_false').removeClass('btn-primary');
+            }
+            else if (data.uploads == false) {
+                $('#uploads_enabled_true').removeClass('btn-success');
+                $('#uploads_enabled_false').addClass('btn-primary');
+            }
+        }
+    });
 });
+{% endif %}
 </script>
 
 {% endblock %}

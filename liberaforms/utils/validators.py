@@ -5,15 +5,21 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, logging
 import re, datetime, time, uuid
-from validate_email import validate_email
+from email_validator import validate_email, EmailNotValidError
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 
 
 def is_valid_email(email):
-    return validate_email(email)
+    try:
+        validate_email(email)
+        return True
+    except EmailNotValidError as e:
+        logging.warning(e)
+        return False
+
 
 pwd_policy = PasswordPolicy.from_names(
     length=8,  # min length: 8

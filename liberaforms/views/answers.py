@@ -8,15 +8,15 @@ This file is part of LiberaForms.
 import os, json
 from flask import g, request, render_template, redirect
 from flask import session, flash
-from flask import Blueprint, send_file, after_this_request
+from flask import Blueprint, send_file, send_from_directory, after_this_request
 from flask_babel import gettext
 
 from liberaforms.models.form import Form
-from liberaforms.models.answer import Answer
+from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, get_locale, JsonResponse
 
-#from pprint import pprint
+#from pprint import pprint as pp
 
 answers_bp = Blueprint('answers_bp', __name__,
                         template_folder='../templates/answers')
@@ -77,28 +77,6 @@ def delete_answer(id):
     queriedForm.save()
     queriedForm.add_log(gettext("Deleted an answer"))
     return JsonResponse(json.dumps({'deleted': True}))
-
-
-@answers_bp.route('/forms/undo-delete-answer/<int:id>', methods=['POST'])
-@enabled_user_required
-def undo_delete_answer(id):
-    queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not queriedForm:
-        return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
-    answer_data={}
-    for field in request.json:
-        answer_data[field["name"]]=field["value"]
-    recovered_answer = Answer.undo_delete(queriedForm.id,
-                                          queriedForm.author_id,
-                                          answer_data)
-    if recovered_answer:
-        queriedForm.expired = queriedForm.has_expired()
-        queriedForm.save()
-        queriedForm.add_log(gettext("Undeleted an answer"))
-        return JsonResponse(json.dumps({'undone': True,
-                                        'new_id': str(recovered_answer.id)}))
-    else:
-        return JsonResponse(json.dumps({'undone': False, 'new_id': None}))
 
 
 @answers_bp.route('/forms/toggle-marked-answer/<int:id>', methods=['POST'])
@@ -170,6 +148,21 @@ def delete_answers(id):
             flash(gettext("Number of answers does not match"), 'warning')
     return render_template('delete-answers.html', form=queriedForm)
 
+
+@answers_bp.route('/file/<int:form_id>/<string:key>', methods=['GET'])
+@enabled_user_required
+@sanitized_key_required
+def download_file(form_id, key):
+    queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
+    if not (queriedForm):
+        return render_template('page-not-found.html'), 400
+    file = AnswerAttachment.find(form_id=form_id, storage_name=key)
+    if not file:
+        return render_template('page-not-found.html'), 400
+    return send_from_directory( file.get_directory(),
+                                file.storage_name,
+                                attachment_filename=file.file_name,
+                                as_attachment=True)
 
 @answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])
 @sanitized_slug_required

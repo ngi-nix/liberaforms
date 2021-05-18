@@ -43,7 +43,8 @@ class Config(object):
         "sites",
         "update",
         "embed",
-        "api"
+        "api",
+        "file"
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
@@ -58,7 +59,7 @@ class Config(object):
     ]
     RESERVED_USERNAMES = ["system", "admin", "root"]
     FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access"]
-    FORMBUILDER_DISABLE_FIELDS = ["autocomplete", "hidden", "button", "file"]
+    FORMBUILDER_DISABLED_FIELDS = ["autocomplete", "hidden", "button"]
     FORMBUILDER_CONTROL_ORDER = ["header", "paragraph"]
     BABEL_TRANSLATION_DIRECTORIES = "translations;form_templates/translations"
     # http://www.lingoes.net/en/translator/langcode.htm
@@ -78,6 +79,7 @@ class Config(object):
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
+    ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
@@ -85,6 +87,7 @@ class Config(object):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     instancefiles = 'instancefiles'
     BRAND_DIR = os.path.join(base_dir, instancefiles, 'brand')
+    UPLOAD_DIR = os.path.join(base_dir, instancefiles, 'uploads')
     if 'FQDN' in os.environ:
         # LiberaForms' cluster project requires a unique directory
         brand_dir = os.path.join(   base_dir,

@@ -13,42 +13,59 @@
 
 <div class="container">
 <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
-        <div id="liberaform" class="liberaform">
-            <div class="formIntroduction marked-up">
-            {{ form.introductionText['html'] | safe }}
-            </div>
-            <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
-            <form method="POST">
-                {% if not g.embedded %}
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                {% endif %}
-                <div id="fb-render"></div>
-                {% if form.might_send_confirmation_email() %}
-                <div class="form-group form-check" >
-                    <input id="confirmation_checkbox" class="form-check-input send-confirmation" type="checkbox" name="send-confirmation" value="ok" disabled />
-                    <label for="confirmation_checkbox" class="form-check-label send-confirmation">
-                    {%trans%}Send me confirmation by mail{%endtrans%} <span id='confirmation_email'></span>
-                    </label>
-                </div>
-                {% endif %}
-                {% if dataConsent['enabled'] %}
-                <div class="consentText form-group">
-                    <div id="dataConsentText" >{{dataConsent['html']|safe}}</div>
-                    <div class="form-check">
-                        <input id="I_agree" type="checkbox" class="form-check-input consent" name="DPL" value="ok" required />
-                        <label for="I_agree" class="form-check-label consent required">
-                        {{ dataConsent['label'] }}
-                        <span class="required-dot">●</span>
-                        </label>
-                    </div>
-                </div>
-                {% endif %}
-                <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}">
-            </form>
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+    <div id="liberaform" class="liberaform">
+      <div class="formIntroduction marked-up">
+        {{ form.introductionText['html'] | safe }}
+      </div>
+      <div id='required_message' class='required' style="display:none">
+        ● {%trans%}Required fields{%endtrans%}
+      </div>
+      {% if form.has_file_field() %}
+      <form method="POST" enctype="multipart/form-data">
+      {% else %}
+      <form method="POST">
+      {% endif %}
+        {% if not g.embedded %}
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        {% endif %}
+        <div id="fb-render"></div>
+        {% if form.might_send_confirmation_email() %}
+        <div class="form-group form-check" >
+          <input id="confirmation_checkbox"
+                 class="form-check-input send-confirmation"
+                 type="checkbox"
+                 name="send-confirmation"
+                 value="ok"
+                 disabled />
+          <label for="confirmation_checkbox" class="form-check-label send-confirmation">
+            {%trans%}Send me confirmation by mail{%endtrans%}
+            <span id='confirmation_email'></span>
+          </label>
         </div>
+        {% endif %}
+        {% if dataConsent['enabled'] %}
+        <div class="consentText form-group">
+          <div id="dataConsentText" >{{dataConsent['html']|safe}}</div>
+          <div class="form-check">
+            <input id="I_agree"
+                   type="checkbox"
+                   class="form-check-input consent"
+                   name="DPL"
+                   value="ok"
+                   required />
+            <label for="I_agree" class="form-check-label consent required">
+            {{ dataConsent['label'] }}
+            <span class="required-dot">●</span>
+            </label>
+          </div>
+        </div>
+        {% endif %}
+        <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}">
+      </form>
     </div>
+  </div>
 </div>
 </div>
 

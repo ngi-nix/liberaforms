@@ -33,7 +33,7 @@ class TestForm():
         """
         response = client.get(
                         "/forms/new",
-                        follow_redirects=False,
+                        follow_redirects=True,
                     )
         assert response.status_code == 200
         html = response.data.decode()
