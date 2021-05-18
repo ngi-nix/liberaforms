@@ -51,7 +51,7 @@
                     <div class="sentTokenMessage">
                         {%trans%}Invitation message{%endtrans%}
                     </div>
-                    {{ invite.get_message() | replace("\n", "<br/>") | safe }}
+                    {{ invite.get_message().replace("\n", "<br/>") | safe }}
                 </td>
             </tr>
             {% endfor %}
