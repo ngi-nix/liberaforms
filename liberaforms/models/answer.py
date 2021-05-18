@@ -40,7 +40,7 @@ class Answer(db.Model, CRUD):
 
     @classmethod
     def find(cls, **kwargs):
-        return cls.query.filter_by(**kwargs).first()
+        return cls.find_all(**kwargs).first()
 
     @classmethod
     def find_all(cls, **kwargs):

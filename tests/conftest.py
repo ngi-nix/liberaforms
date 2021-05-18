@@ -36,6 +36,7 @@ def db(app):
     migrate = Migrate(app, _db, directory='../migrations')
     with app.app_context():
         _db.drop_all()
+        #pytest.exit("out")
         stamp(revision='base')
         upgrade()
         yield _db

@@ -7,7 +7,7 @@ This file is part of LiberaForms.
 
 import os
 import re, datetime, time, uuid
-from validate_email import validate_email
+from email_validator import validate_email
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
 
