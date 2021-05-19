@@ -86,8 +86,8 @@ class Config(object):
 
     base_dir = os.path.dirname(os.path.abspath(__file__))
     instancefiles = 'instancefiles'
-    BRAND_DIR = os.path.join(base_dir, instancefiles, 'brand')
-    UPLOAD_DIR = os.path.join(base_dir, instancefiles, 'uploads')
+    BRAND_DIR = os.path.join(base_dir, '../', instancefiles, 'brand')
+    UPLOAD_DIR = os.path.join(base_dir, '../', instancefiles, 'uploads')
     if 'FQDN' in os.environ:
         # LiberaForms' cluster project requires a unique directory
         brand_dir = os.path.join(   base_dir,

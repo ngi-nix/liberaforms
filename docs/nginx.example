@@ -22,7 +22,7 @@ server {
 
     location / {
         location /static/ {
-            alias  /path/to/liberaforms/static;
+            alias  /path/to/liberaforms/liberaforms/static;
         }
         location /favicon.png {
             alias  /path/to/liberaforms/instancesfiles/brand/favicon.png;
