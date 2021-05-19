@@ -84,22 +84,25 @@ class Config(object):
     LOG_DIR = os.environ['LOG_DIR']
     TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
+    root_dir = os.path.abspath(root_dir)
     instancefiles = 'instancefiles'
-    BRAND_DIR = os.path.join(base_dir, '../', instancefiles, 'brand')
-    UPLOAD_DIR = os.path.join(base_dir, '../', instancefiles, 'uploads')
+    BRAND_DIR = os.path.join(root_dir, instancefiles, 'brand')
+    UPLOAD_DIR = os.path.join(root_dir, instancefiles, 'uploads')
     if 'FQDN' in os.environ:
-        # LiberaForms' cluster project requires a unique directory
-        brand_dir = os.path.join(   base_dir,
-                                    instancefiles,
-                                    "hosts",
-                                    os.environ['FQDN'],
-                                    "brand")
-        if not os.path.isdir(brand_dir):
-            #os.mkdir(host_brand_dir)
-            shutil.copytree(BRAND_DIR, brand_dir)
-        BRAND_DIR = brand_dir
-
+        # LiberaForms cluster project requires a unique directory
+        fqdn_dir = os.path.join(root_dir,
+                                instancefiles,
+                                "hosts",
+                                os.environ['FQDN'])
+        fqdn_brand_dir = os.path.join(fqdn_dir, "brand")
+        if not os.path.isdir(fqdn_brand_dir):
+            shutil.copytree(BRAND_DIR, fqdn_brand_dir)
+        BRAND_DIR = fqdn_brand_dir
+        fqdn_uploads_dir = os.path.join(fqdn_dir, "uploads")
+        if not os.path.isdir(fqdn_uploads_dir):
+            shutil.copytree(UPLOAD_DIR, fqdn_uploads_dir)
+        UPLOAD_DIR = fqdn_uploads_dir
 
     @staticmethod
     def init_app(app):
