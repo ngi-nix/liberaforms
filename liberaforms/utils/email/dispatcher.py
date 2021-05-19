@@ -163,12 +163,12 @@ class Dispatcher(EmailServer):
         state = self.send_mail(message)
         return state
 
-    def send_expired_form_notification(self, editorEmails, form):
+    def send_expired_form_notification(self, emails, form):
         body = _("The form '%s' has expired at %s" % (form.slug, self.site.siteName))
         subject = Header(_("LiberaForms. A form has expired")).encode()
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
         message['Subject'] = subject
-        for email in editorEmails:
+        for email in emails:
             message['To'] = email
             thr = Thread(
                     target=self.send_mail_async,
