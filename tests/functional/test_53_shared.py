@@ -76,6 +76,7 @@ class TestSharedForm():
         html = response.data.decode()
         assert '<!-- share_form_page -->' in html
         assert valid_email not in html
+        initial_log_count = forms['test_form'].log.count()
         response = client.post(
                         url,
                         data = {
@@ -87,9 +88,11 @@ class TestSharedForm():
         html = response.data.decode()
         assert '<!-- share_form_page -->' in html
         assert valid_email in html
+        assert forms['test_form'].log.count() == initial_log_count + 1
 
     def test_remove_shared_notification(self, anon_client, client, users, forms):
         form_id=forms['test_form'].id
+        initial_log_count = forms['test_form'].log.count()
         url = f"/forms/remove-shared-notification/{form_id}"
         shared_with_email = forms['test_form'].sharedNotifications[0]
         response = client.post(
@@ -102,6 +105,7 @@ class TestSharedForm():
         assert response.status_code == 200
         assert response.is_json == True
         assert response.json == True
+        assert forms['test_form'].log.count() == initial_log_count + 1
 
     def test_toggle_shared_answers(self, client, users, forms):
         form_id=forms['test_form'].id

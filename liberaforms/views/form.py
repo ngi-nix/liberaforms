@@ -370,10 +370,12 @@ def add_shared_notification(id):
     wtform=wtf.GetEmail()
     if request.method == 'POST':
         if wtform.validate():
+            email = wtform.email.data
             if not queriedForm.sharedNotifications:
                 queriedForm.sharedNotifications = []
             if not wtform.email.data in queriedForm.sharedNotifications:
-                queriedForm.sharedNotifications.append(wtform.email.data)
+                queriedForm.sharedNotifications.append(email)
+                queriedForm.add_log(gettext(f"Added shared notification: {email}"))
                 queriedForm.save()
     return redirect(make_url_for('form_bp.share_form',
                                  id=queriedForm.id,
@@ -391,6 +393,7 @@ def remove_shared_notification(id):
         return JsonResponse(json.dumps(False))
     if email in queriedForm.sharedNotifications:
         queriedForm.sharedNotifications.remove(email)
+        queriedForm.add_log(gettext(f"Removed shared notification: {email}"))
         queriedForm.save()
         return JsonResponse(json.dumps(True))
     return JsonResponse(json.dumps(False))
