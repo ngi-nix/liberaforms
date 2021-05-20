@@ -53,7 +53,9 @@
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-7">
-        <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
+        <form id="result"
+              method="POST"
+              action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" id="structure" name="structure" />
             <input id="introduction-text" type="hidden" name="introductionTextMD" />
@@ -79,12 +81,26 @@
         {% endif %}
 
             <div class="form-actions">
-            <input id="preview_form" class="btn-success btn" type="submit" value="{%trans%}Preview{%endtrans%}" />
+            <input id="preview_form"
+                   class="btn-success btn"
+                   type="submit"
+                   value="{%trans%}Preview{%endtrans%}" />
             {% if session['form_id'] %}
-                <button id="save_form" class="btn btn-success">{%trans%}Save{%endtrans%}</button>
-                <a class="btn btn-primary" role="button" href="/forms/view/{{session['form_id']}}">{%trans%}Cancel{%endtrans%}</a>
+                <button id="save_form"
+                        class="btn btn-success">
+                    {%trans%}Save{%endtrans%}
+                </button>
+                <a class="btn btn-primary"
+                   role="button"
+                   href="/forms/view/{{session['form_id']}}">
+                  {%trans%}Cancel{%endtrans%}
+                </a>
             {% else %}
-                <a class="btn btn-primary" role="button" href="/forms">{%trans%}Cancel{%endtrans%}</a>
+                <a class="btn btn-primary"
+                   role="button"
+                   href="/forms">
+                   {%trans%}Cancel{%endtrans%}
+                </a>
             {% endif %}
             </div>
         </form>

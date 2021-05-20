@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, shutil
+import os, shutil, ast
 import logging
 
 def get_SQLALCHEMY_DATABASE_URI():
@@ -75,21 +75,29 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_TYPE = os.environ['SESSION_TYPE']
+    TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
     if SESSION_TYPE == "memcached":
         import pylibmc as memcache
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
+    ALLOWED_FILE_TYPES = ast.literal_eval(os.environ['ALLOWED_FILE_TYPES'])
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
-    TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
     root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
     root_dir = os.path.abspath(root_dir)
     instancefiles = 'instancefiles'
     BRAND_DIR = os.path.join(root_dir, instancefiles, 'brand')
     UPLOAD_DIR = os.path.join(root_dir, instancefiles, 'uploads')
+    if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
+        ENABLE_REMOTE_STORAGE = True
+    else:
+        ENABLE_REMOTE_STORAGE = False
+    MINIO_HOST = os.environ['MINIO_HOST']
+    MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
+    MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
     if 'FQDN' in os.environ:
         # LiberaForms cluster project requires a unique directory
         fqdn_dir = os.path.join(root_dir,
@@ -104,13 +112,6 @@ class Config(object):
         if not os.path.isdir(fqdn_uploads_dir):
             shutil.copytree(UPLOAD_DIR, fqdn_uploads_dir)
         UPLOAD_DIR = fqdn_uploads_dir
-    if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
-        ENABLE_REMOTE_STORAGE = True
-    else:
-        ENABLE_REMOTE_STORAGE = False
-    MINIO_HOST = os.environ['MINIO_HOST']
-    MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
-    MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
 
 
     @staticmethod

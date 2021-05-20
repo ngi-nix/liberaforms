@@ -7,7 +7,10 @@
 {% block content %}
 
 <script src="/static/formBuilder/form-render.min.js"></script>
+<script src="/static/parsley/parsley.min.js"></script>
+<script src="/static/parsley/i18n/{{ g.current_user.language }}.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
+<link rel="stylesheet" type="text/css" href="/static/parsley/css/parsley.css">
 
 {% set dataConsent = form.get_data_consent_for_display() %}
 
@@ -15,31 +18,39 @@
 <div class="row">
   <div class="col-md-3"></div>
   <div class="col-md-6">
-    <div id="liberaform" class="liberaform">
-      <div class="formIntroduction marked-up">
+    <div id="liberaform" class="liberaform" >
+      <div class="formIntroduction marked-up" >
         {{ form.introductionText['html'] | safe }}
       </div>
+
       <div id='required_message' class='required' style="display:none">
         ● {%trans%}Required fields{%endtrans%}
       </div>
+
       {% if form.has_file_field() %}
-      <form method="POST" enctype="multipart/form-data">
+      <form id="form" method="POST" enctype="multipart/form-data">
       {% else %}
-      <form method="POST">
+      <form id="form" method="POST">
       {% endif %}
         {% if not g.embedded %}
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}" />
         {% endif %}
-        <div id="fb-render"></div>
+        <div id="fb-render">
+        </div>
         {% if form.might_send_confirmation_email() %}
-        <div class="form-group form-check" >
+        <div class="form-group form-check"
+        >
           <input id="confirmation_checkbox"
                  class="form-check-input send-confirmation"
                  type="checkbox"
                  name="send-confirmation"
                  value="ok"
-                 disabled />
-          <label for="confirmation_checkbox" class="form-check-label send-confirmation">
+                 disabled
+          />
+          <label for="confirmation_checkbox"
+                 class="form-check-label send-confirmation">
             {%trans%}Send me confirmation by mail{%endtrans%}
             <span id='confirmation_email'></span>
           </label>
@@ -62,7 +73,12 @@
           </div>
         </div>
         {% endif %}
-        <input class="btn btn-lg btn-success" type="submit" value="{%trans%}Send{%endtrans%}">
+        <input class="btn
+                      btn-lg
+                      btn-success"
+               type="submit"
+               value="{%trans%}Send{%endtrans%}"
+        >
       </form>
     </div>
   </div>
@@ -91,6 +107,7 @@ jQuery(function($) {
         notify: {
             success: function(message) {
                 postFormRender();
+                $('#form').parsley();
                 return;
             }
         }
@@ -100,6 +117,42 @@ jQuery(function($) {
 {% with form=form %}
 {% include '_post-render-scripts.js' %}
 {% endwith %}
+
+
+$(function () {
+  $('#form').parsley().on('field:validated', function() {
+    var ok = $('.parsley-error').length === 0;
+    $('.bs-callout-info').toggleClass('hidden', !ok);
+    $('.bs-callout-warning').toggleClass('hidden', ok);
+  })
+  .on('form:submit', function() {
+    return false; // Don't submit form for this demo
+  });
+});
+
+/*
+const form = document.querySelector('form')
+form.addEventListener('submit', event => {
+  event.preventDefault()
+  // trim white space
+  var required_fields = $('input, textarea').filter('[required]:visible');
+  var trimmed_fields = false
+
+  required_fields.each(function(idx, field) {
+    var value = field.value
+    value = value.trim();
+    if (value.length === 0) {
+      field.value = ""
+      field.reportValidity();
+      trimmed_fields = true
+    }
+  });
+  if (trimmed_fields == true) {
+    return
+  }
+  form.submit();
+})
+*/
 </script>
 
 {% endblock %}
