@@ -104,14 +104,13 @@ class Config(object):
         if not os.path.isdir(fqdn_uploads_dir):
             shutil.copytree(UPLOAD_DIR, fqdn_uploads_dir)
         UPLOAD_DIR = fqdn_uploads_dir
-    ENABLE_REMOTE_STORAGE = False
     if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
-         ENABLE_REMOTE_STORAGE = True
-         MINIO_HOST = os.environ['MINIO_HOST']
-         MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
-         MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
-
-
+        ENABLE_REMOTE_STORAGE = True
+    else:
+        ENABLE_REMOTE_STORAGE = False
+    MINIO_HOST = os.environ['MINIO_HOST']
+    MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
+    MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
 
 
     @staticmethod

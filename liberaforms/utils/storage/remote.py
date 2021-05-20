@@ -7,8 +7,10 @@ This file is part of LiberaForms.
 
 import sys, os, logging
 from io import BytesIO
+from threading import Thread
 from flask import current_app
 from minio import Minio
+from minio.deleteobjects import DeleteObject
 from minio.error import S3Error
 from liberaforms.utils import utils
 
@@ -82,3 +84,27 @@ class RemoteStorage():
         except S3Error as error:
             logging.error(error)
             return False
+
+    def delete_objects(self, app, prefix):
+        with app.app_context():
+            delete_object_list = map(
+                lambda x: DeleteObject(x.object_name),
+                self.client.list_objects(
+                            bucket_name=self.bucket_name,
+                            prefix=prefix,
+                            recursive=True
+                        )
+            )
+            errors = self.client.remove_objects(
+                            bucket_name=self.bucket_name,
+                            delete_object_list=delete_object_list,
+                        )
+            for error in errors:
+                logging.error(error)
+
+    def remove_directory(self, prefix):
+        thr = Thread(
+                target=self.delete_objects,
+                args=[current_app._get_current_object(), prefix]
+        )
+        thr.start()

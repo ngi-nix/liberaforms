@@ -68,6 +68,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
     file_name = db.Column(db.String, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
+    local_filesystem = db.Column(db.Boolean, default=True) #Remote storage = False
     form = db.relationship("Form", viewonly=True)
 
     def __init__(self, answer):

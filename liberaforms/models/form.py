@@ -18,7 +18,8 @@ from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms.models.log import FormLog
-from liberaforms.models.answer import Answer
+from liberaforms.models.answer import Answer, AnswerAttachment
+from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
@@ -467,15 +468,19 @@ class Form(db.Model, CRUD):
         return field_positions
 
     def get_attachment_dir(self):
-        return os.path.join(current_app.config['UPLOAD_DIR'], 'forms', str(self.id))
+        return os.path.join('forms', str(self.id))
 
     def delete_answers(self):
         self.answers.delete()
-        attachment_dir = self.get_attachment_dir()
+        attachment_dir = os.path.join(current_app.config['UPLOAD_DIR'],
+                                      self.get_attachment_dir())
         if os.path.exists(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
         else:
             logging.warning(f"Attachment dir not found: {attachment_dir}")
+        if current_app.config['ENABLE_UPLOADS']:
+            prefix = self.get_attachment_dir()
+            RemoteStorage().remove_directory(prefix)
 
     def is_author(self, user):
         return True if self.author_id == user.id else False
