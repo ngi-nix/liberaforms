@@ -9,8 +9,9 @@ import os, logging, datetime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import event
-from liberaforms.utils.database import CRUD
 from liberaforms import db
+from liberaforms.utils.storage.storage import Storage
+from liberaforms.utils.database import CRUD
 from liberaforms.utils import utils
 
 from pprint import pprint as pp
@@ -57,7 +58,7 @@ class Answer(db.Model, CRUD):
         self.save()
 
 
-class AnswerAttachment(db.Model, CRUD):
+class AnswerAttachment(db.Model, CRUD, Storage):
     __tablename__ = "answer_attachments"
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.DateTime, nullable=False)
@@ -69,17 +70,12 @@ class AnswerAttachment(db.Model, CRUD):
     storage_name = db.Column(db.String, nullable=False)
     form = db.relationship("Form", viewonly=True)
 
-    def __init__(self, answer, file):
+    def __init__(self, answer):
+        Storage.__init__(self)
         self.created = datetime.datetime.now().isoformat()
-        self.file_name = file.filename
         self.answer_id = answer.id
         self.form_id = answer.form.id
         self.storage_name = utils.gen_random_string()
-        dir = answer.form.get_attachment_dir()
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-        storage_path = os.path.join(dir, self.storage_name)
-        file.save(storage_path)
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -92,19 +88,24 @@ class AnswerAttachment(db.Model, CRUD):
     def find_all(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
 
-    def get_directory(self):
-        return self.form.get_attachment_dir()
+    @property
+    def directory(self):
+        return "forms/{}".format(self.form_id)
+
+    def save_attachment(self, file):
+        self.file_name = file.filename
+        saved = super().save_file(file, self.directory, self.storage_name)
+        self.save()
+        return saved
+
+    def delete_attachment(self):
+        return super().delete_file(self.directory, self.storage_name)
 
     def get_url(self):
         host_url = self.form.site.host_url
-        form_id = self.form.id
-        return f"{host_url}file/{form_id}/{self.storage_name}"
+        return f"{host_url}file/{self.form_id}/{self.storage_name}"
 
 
 @event.listens_for(AnswerAttachment, "after_delete")
 def delete_answer_attachment(mapper, connection, target):
-    attachment_path = os.path.join(target.get_directory(), target.storage_name)
-    if os.path.exists(attachment_path):
-        os.remove(attachment_path)
-    else:
-        logging.warning(f"Attachment not found at: {attachment_path}")
+    deleted = target.delete_attachment()

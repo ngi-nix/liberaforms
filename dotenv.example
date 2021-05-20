@@ -24,10 +24,15 @@ SESSION_TYPE = "filesystem"
 # See docs/Uploads.md
 ENABLE_UPLOADS = False
 
+ENABLE_REMOTE_STORAGE=False
+# MINIO_HOST = FQDN[:PORT]
+MINIO_HOST=
+MINIO_ACCESS_KEY=
+MINIO_SECRET_KEY=
+
 # Logging [watched|stream]
 LOG_TYPE=watched
 LOG_DIR=./logs
-
 
 # FLASK_ENV
 # this sets the Flask running mode
