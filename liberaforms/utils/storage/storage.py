@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os
+from io import BytesIO
 import logging
 from flask import current_app
 from liberaforms.utils.storage.remote import RemoteStorage
@@ -27,6 +28,23 @@ class Storage:
         if uploaded:
             os.remove(file_path)
         return True
+
+    def get_file(self, sub_dir, storage_name):
+        storage_dir = self.storage_directory_path(sub_dir)
+        file_path = os.path.join(storage_dir, storage_name)
+        if current_app.config['ENABLE_REMOTE_STORAGE']:
+            tmp_file_path = RemoteStorage().get_object(sub_dir, storage_name)
+            if os.path.exists(file_path):
+                with open(tmp_file_path, 'rb') as file:
+                    bytes = BytesIO(file.read())
+                os.remove(tmp_file_path)
+                return bytes
+            return False
+        else:
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as file:
+                    return BytesIO(file.read())
+        return False
 
     def delete_file(self, sub_dir, storage_name):
         removed = False

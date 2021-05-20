@@ -105,6 +105,10 @@ class AnswerAttachment(db.Model, CRUD, Storage):
         host_url = self.form.site.host_url
         return f"{host_url}file/{self.form_id}/{self.storage_name}"
 
+    def get_attachment(self):
+        bytes = super().get_file(self.directory, self.storage_name)
+        return bytes, self.file_name
+
 
 @event.listens_for(AnswerAttachment, "after_delete")
 def delete_answer_attachment(mapper, connection, target):

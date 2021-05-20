@@ -56,6 +56,22 @@ class RemoteStorage():
             logging.error(error)
             return False
 
+    def get_object(self, directory, storage_name):
+        if not self.client:
+            return False
+        try:
+            tmp_dir = current_app.config['TMP_DIR']
+            file_path = f"{tmp_dir}/{storage_name}"
+            self.client.fget_object(
+                            bucket_name=self.bucket_name,
+                            object_name=f"{directory}/{storage_name}",
+                            file_path=file_path
+            )
+            return file_path
+        except S3Error as error:
+            logging.error(error)
+            return False
+
     def remove_object(self, directory, storage_name):
         try:
             self.client.remove_object(

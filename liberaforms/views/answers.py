@@ -152,17 +152,17 @@ def delete_answers(id):
 @answers_bp.route('/file/<int:form_id>/<string:key>', methods=['GET'])
 @enabled_user_required
 @sanitized_key_required
-def download_file(form_id, key):
+def download_attachment(form_id, key):
     queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
     if not (queriedForm):
         return render_template('page-not-found.html'), 400
-    file = AnswerAttachment.find(form_id=form_id, storage_name=key)
-    if not file:
+    attachment = AnswerAttachment.find(form_id=form_id, storage_name=key)
+    if not attachment:
         return render_template('page-not-found.html'), 400
-    return send_from_directory( file.get_directory(),
-                                file.storage_name,
-                                attachment_filename=file.file_name,
-                                as_attachment=True)
+    (bytes, file_name) = attachment.get_attachment()
+    return send_file(bytes,
+                     attachment_filename=file_name,
+                     as_attachment=True)
 
 @answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])
 @sanitized_slug_required
