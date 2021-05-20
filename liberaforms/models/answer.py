@@ -91,12 +91,13 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     @property
     def directory(self):
-        return "forms/{}".format(self.form_id)
+        return "answers/{}".format(self.form_id)
 
     def save_attachment(self, file):
         self.file_name = file.filename
         saved = super().save_file(file, self.directory, self.storage_name)
-        self.save()
+        if saved:
+            self.save()
         return saved
 
     def delete_attachment(self):

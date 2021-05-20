@@ -468,7 +468,7 @@ class Form(db.Model, CRUD):
         return field_positions
 
     def get_attachment_dir(self):
-        return os.path.join('forms', str(self.id))
+        return os.path.join('answers', str(self.id))
 
     def delete_answers(self):
         self.answers.delete()
