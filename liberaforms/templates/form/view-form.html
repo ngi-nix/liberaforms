@@ -50,15 +50,19 @@
                  disabled
           />
           <label for="confirmation_checkbox"
-                 class="form-check-label send-confirmation">
+                 class="form-check-label
+                        send-confirmation">
             {%trans%}Send me confirmation by mail{%endtrans%}
             <span id='confirmation_email'></span>
           </label>
         </div>
         {% endif %}
         {% if dataConsent['enabled'] %}
-        <div class="consentText form-group">
-          <div id="dataConsentText" >{{dataConsent['html']|safe}}</div>
+        <div class="consentText
+                    form-group">
+          <div id="dataConsentText" >
+            {{ dataConsent['html'] | safe }}
+          </div>
           <div class="form-check">
             <input id="I_agree"
                    type="checkbox"
@@ -66,7 +70,9 @@
                    name="DPL"
                    value="ok"
                    required />
-            <label for="I_agree" class="form-check-label consent required">
+            <label for="I_agree"
+                   class="form-check-label
+                          consent required">
             {{ dataConsent['label'] }}
             <span class="required-dot">●</span>
             </label>
@@ -107,6 +113,10 @@ jQuery(function($) {
         notify: {
             success: function(message) {
                 postFormRender();
+                $('input[type=file]').each(function() {
+                  $(this).attr('data-parsley-max-file-size',
+                               {{ config['MAX_FILE_UPLOAD_SIZE'] }});
+                });
                 $('#form').parsley();
                 return;
             }
@@ -118,7 +128,6 @@ jQuery(function($) {
 {% include '_post-render-scripts.js' %}
 {% endwith %}
 
-
 $(function () {
   $('#form').parsley().on('field:validated', function() {
     var ok = $('.parsley-error').length === 0;
@@ -126,33 +135,27 @@ $(function () {
     $('.bs-callout-warning').toggleClass('hidden', ok);
   })
   .on('form:submit', function() {
-    return false; // Don't submit form for this demo
+    //return; // Don't submit form for this demo
   });
-});
-
-/*
-const form = document.querySelector('form')
-form.addEventListener('submit', event => {
-  event.preventDefault()
-  // trim white space
-  var required_fields = $('input, textarea').filter('[required]:visible');
-  var trimmed_fields = false
-
-  required_fields.each(function(idx, field) {
-    var value = field.value
-    value = value.trim();
-    if (value.length === 0) {
-      field.value = ""
-      field.reportValidity();
-      trimmed_fields = true
+  {% if form.has_file_field() %}
+  window.Parsley.addValidator('maxFileSize', {
+    validateString: function(_value, maxSize, parsleyInstance) {
+      if (!window.FormData) {
+        //alert('You are making all developpers in the world cringe. Upgrade your browser!');
+        return true;
+      }
+      var files = parsleyInstance.$element[0].files;
+      return files.length != 1  || files[0].size <= maxSize * 1024;
+    },
+    requirementType: 'integer',
+    messages: {
+      en: 'This file should not be larger than %s Kb',
+      ca: 'El fitxer no ha de ser més gran que %s Kb',
+      fr: 'Ce fichier est plus grand que %s Kb.'
     }
   });
-  if (trimmed_fields == true) {
-    return
-  }
-  form.submit();
-})
-*/
+  {% endif %}
+});
 </script>
 
 {% endblock %}

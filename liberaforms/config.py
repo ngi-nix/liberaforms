@@ -83,6 +83,7 @@ class Config(object):
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     ALLOWED_FILE_TYPES = ast.literal_eval(os.environ['ALLOWED_FILE_TYPES'])
+    MAX_FILE_UPLOAD_SIZE = os.environ['MAX_FILE_UPLOAD_SIZE']
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
 
