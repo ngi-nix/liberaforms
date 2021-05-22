@@ -31,7 +31,7 @@ class User(db.Model, CRUD):
     blocked = db.Column(db.Boolean, default=False)
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean, default=False)
-    uploadsEnabled = db.Column(db.Boolean, default=False)
+    uploads_enabled = db.Column(db.Boolean, default=False, nullable=False)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
@@ -45,7 +45,7 @@ class User(db.Model, CRUD):
         self.blocked = False
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
-        self.uploadsEnabled = kwargs["uploadsEnabled"]
+        self.uploads_enabled = kwargs["uploads_enabled"]
         self.token = {}
         self.consentTexts = []
 
@@ -149,15 +149,15 @@ class User(db.Model, CRUD):
         self.save()
         return self.preferences["newAnswerNotification"]
 
-    def uploads_enabled(self):
+    def get_uploads_enabled(self):
         if not current_app.config['ENABLE_UPLOADS']:
             return False
-        return self.uploadsEnabled
+        return self.uploads_enabled
 
     def toggle_uploads_enabled(self):
-        self.uploadsEnabled = False if self.uploadsEnabled else True
+        self.uploads_enabled = False if self.uploads_enabled else True
         self.save()
-        return self.uploadsEnabled
+        return self.uploads_enabled
 
     def toggle_admin(self):
         if self.is_root_user():

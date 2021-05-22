@@ -149,15 +149,13 @@
           <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
           <button id="uploads_enabled_true"
                   class="btn btn-xs btn-default
-                        {% if site.newUserUploadsDefault %}btn-success{% endif %}
-                  ">
-                  {%trans%}True{%endtrans%}
+                        {% if site.newuser_uploadsdefault %}btn-success{% endif %}">
+              {%trans%}True{%endtrans%}
           </button>
           <button id="uploads_enabled_false"
                   class="btn btn-xs btn-default
-                        {% if not site.newUserUploadsDefault %}btn-primary{% endif %}
-                  ">
-                  {%trans%}False{%endtrans%}
+                        {% if not site.newuser_uploadsdefault %}btn-primary{% endif %}">
+              {%trans%}False{%endtrans%}
           </button>
           </div>
         </td>

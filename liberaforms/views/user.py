@@ -73,7 +73,7 @@ def new_user(token=None):
             preferences = User.default_user_preferences(g.site),
             admin = adminSettings,
             validatedEmail = validatedEmail,
-            uploadsEnabled = g.site.newUserUploadsDefault,
+            uploads_enabled = g.site.newuser_uploadsdefault,
         )
         try:
             new_user.save()

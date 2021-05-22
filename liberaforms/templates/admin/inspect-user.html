@@ -55,14 +55,14 @@
                   <button id="uploads_enabled_true"
                           class="btn btn-xs
                                  btn-default
-                                 {% if user.uploads_enabled() %}btn-success{% endif %}
+                                 {% if user.get_uploads_enabled() %}btn-success{% endif %}
                   ">
                       {%trans%}True{%endtrans%}
                   </button>
                   <button id="uploads_enabled_false"
                           class="btn btn-xs
                                  btn-default
-                                 {% if not user.uploads_enabled() %}btn-primary{% endif %}
+                                 {% if not user.get_uploads_enabled() %}btn-primary{% endif %}
                   ">
                     {%trans%}False{%endtrans%}
                   </button>
@@ -77,15 +77,13 @@
                   <button id="admin_true"
                           class="btn btn-xs
                                  btn-default
-                                 {% if user.is_admin() %}btn-success{% endif %}
-                  ">
+                                 {% if user.is_admin() %}btn-success{% endif %}">
                       {%trans%}True{%endtrans%}
                   </button>
                   <button id="admin_false"
                           class="btn btn-xs
                                  btn-default
-                                 {% if not user.is_admin() %}btn-primary{% endif %}
-                  ">
+                                 {% if not user.is_admin() %}btn-primary{% endif %}">
                     {%trans%}False{%endtrans%}
                   </button>
                 </div>
@@ -94,18 +92,39 @@
             <tr>
                <td>{%trans%}Blocked by admin{%endtrans%}</td>
                <td>
-                   <div id="toggle_blocked" class="btn-group btn-toggle">
-                    <button id="blocked_true" class="btn btn-xs btn-default {% if user.blocked %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="blocked_false" class="btn btn-xs btn-default {% if not user.blocked %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                   <div id="toggle_blocked"
+                        class="btn-group btn-toggle">
+                      <button id="blocked_true"
+                              class="btn
+                                     btn-xs
+                                     btn-default
+                                     {% if user.blocked %}btn-success{% endif %}">
+                            {%trans%}True{%endtrans%}
+                      </button>
+                      <button id="blocked_false"
+                              class="btn
+                                     btn-xs
+                                     btn-default
+                                     {% if not user.blocked %}btn-primary{% endif %}">
+                            {%trans%}False{%endtrans%}
+                      </button>
                    </div>
                 </td>
             </tr>
         </table>
         {% if not user.id == g.current_user.id %}
             {% if forms.count() %}
-            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
+            <input class="btn-warning
+                          btn btn-sm"
+                   type="button"
+                   value="{%trans%}Delete user and authored forms{%endtrans%}"
+                   onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
-            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
+            <input class="btn-warning
+                          btn btn-sm"
+                   type="button"
+                   value="{%trans%}Delete user{%endtrans%}"
+                   onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% endif %}
         {% endif %}
 
