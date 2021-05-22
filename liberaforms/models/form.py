@@ -47,6 +47,7 @@ class Form(db.Model, CRUD):
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
     sharedAnswers = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
+    sharedNotifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     introductionText = db.Column(JSONB, nullable=False)

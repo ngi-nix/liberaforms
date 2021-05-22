@@ -358,7 +358,46 @@ def remove_editor(form_id, editor_id):
         queriedForm.remove_editor(editor)
         queriedForm.add_log(gettext("Removed editor %s" % editor.email))
         return json.dumps(str(editor.id))
-    return json.dumps(False)
+    return JsonResponse(json.dumps(False))
+
+
+@form_bp.route('/forms/add-shared-notification/<int:id>', methods=['POST'])
+@enabled_user_required
+def add_shared_notification(id):
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+    if not queriedForm:
+        flash(gettext("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    wtform=wtf.GetEmail()
+    if request.method == 'POST':
+        if wtform.validate():
+            email = wtform.email.data
+            if not queriedForm.sharedNotifications:
+                queriedForm.sharedNotifications = []
+            if not wtform.email.data in queriedForm.sharedNotifications:
+                queriedForm.sharedNotifications.append(email)
+                queriedForm.add_log(gettext(f"Added shared notification: {email}"))
+                queriedForm.save()
+    return redirect(make_url_for('form_bp.share_form',
+                                 id=queriedForm.id,
+                                 _anchor='notifications'))
+
+
+@form_bp.route('/forms/remove-shared-notification/<int:id>', methods=['POST'])
+@enabled_user_required
+def remove_shared_notification(id):
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+    if not (queriedForm and 'email' in request.form):
+        return JsonResponse(json.dumps(False))
+    email = request.form.get('email')
+    if not validators.is_valid_email(email):
+        return JsonResponse(json.dumps(False))
+    if email in queriedForm.sharedNotifications:
+        queriedForm.sharedNotifications.remove(email)
+        queriedForm.add_log(gettext(f"Removed shared notification: {email}"))
+        queriedForm.save()
+        return JsonResponse(json.dumps(True))
+    return JsonResponse(json.dumps(False))
 
 
 @form_bp.route('/forms/expiration/<int:id>', methods=['GET'])
@@ -613,6 +652,7 @@ def view_form(slug):
                     user=User.find(id=editor_id)
                     if user and user.enabled:
                         emails.append(user.email)
+            emails = list(set(emails + queriedForm.sharedNotifications))
             if emails:
                 Dispatcher().send_expired_form_notification(emails, queriedForm)
         queriedForm.save()
@@ -629,6 +669,7 @@ def view_form(slug):
                 user=User.find(id=editor_id)
                 if user and user.enabled:
                     emails.append(user.email)
+        emails = list(set(emails + queriedForm.sharedNotifications))
         if emails:
             data=[]
             for field in queriedForm.get_field_index_for_data_display():
