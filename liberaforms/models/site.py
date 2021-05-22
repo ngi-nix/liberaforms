@@ -13,6 +13,7 @@ from flask_babel import gettext
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
@@ -40,6 +41,7 @@ class Site(db.Model, CRUD):
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
     newUserUploadsDefault = db.Column(db.Boolean, default=False)
+    allowed_mimetypes = db.Column(JSONB, nullable=True)
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
@@ -58,13 +60,19 @@ class Site(db.Model, CRUD):
                                             name="DPL")
                             ]
         self.newUserConsentment = []
-        self.smtpConfig = { "host": f"smtp.{hostname}",
-                            "port": 25,
-                            "encryption": "",
-                            "user": "",
-                            "password": "",
-                            "noreplyAddress": f"no-reply@{hostname}"
-                          }
+        self.allowed_mimetypes = {
+                "pdf": "application/pdf",
+                "png": "image/png",
+                "odt": "application/vnd.oasis.opendocument.text"
+        }
+        self.smtpConfig = {
+                "host": f"smtp.{hostname}",
+                "port": 25,
+                "encryption": "",
+                "user": "",
+                "password": "",
+                "noreplyAddress": f"no-reply@{hostname}"
+        }
         blurb = os.path.join(current_app.root_path, 'templates/default_index.md')
         with open(blurb, 'r') as default_blurb:
             default_MD = default_blurb.read()
@@ -96,6 +104,13 @@ class Site(db.Model, CRUD):
         if self.port:
             url = f"{url}:{self.port}"
         return url+'/'
+
+    def get_mimetypes(self):
+        mimetypes = []
+        for mimetype in self.allowed_mimetypes.values():
+            if not mimetype in mimetypes:
+                mimetypes.append(mimetype)
+        return mimetypes
 
     def delete_favicon(self):
         favicon_path = f"{current_app.config['BRAND_DIR']}/favicon.png"

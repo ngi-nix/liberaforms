@@ -96,6 +96,21 @@
                   onClick="location.href='/site/email/config'" />
         </td>
       </tr>
+      {% if config['ENABLE_UPLOADS'] %}
+      <tr>
+        <td>
+          {%trans%}Allowed file types{%endtrans%}
+        </td>
+        <td>
+          {{ ', '.join(g.site.allowed_mimetypes.keys()) }}
+        </td>
+        <td class="text-right">
+          <input  class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Edit{%endtrans%}"
+                  onClick="location.href='/site/edit-mimetypes'">
+        </td>
+      </tr>
+      {% endif %}
       {% if g.current_user.is_root_user() %}
       <tr>
         <td colspan="2">

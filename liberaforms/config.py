@@ -69,6 +69,7 @@ class Config(object):
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
     }
+    #ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     TMP_DIR = os.environ['TMP_DIR']
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
     SECRET_KEY = os.environ['SECRET_KEY']
@@ -82,7 +83,6 @@ class Config(object):
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
-    ALLOWED_FILE_TYPES = ast.literal_eval(os.environ['ALLOWED_FILE_TYPES'])
     MAX_FILE_UPLOAD_SIZE = os.environ['MAX_FILE_UPLOAD_SIZE']
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']

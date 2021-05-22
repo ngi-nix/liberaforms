@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os, re
+import mimetypes
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField, IntegerField, SelectField, PasswordField, BooleanField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
@@ -127,3 +128,14 @@ class ChangeMenuColor(FlaskForm):
     def validate_hex_color(self, hex_color):
         if not validators.is_hex_color(hex_color.data):
             raise ValidationError(_("Not a valid HTML color code"))
+
+
+class FileExtensions(FlaskForm):
+    extensions = TextAreaField(_("File types"), validators=[DataRequired()])
+    def validate_extensions(self, extensions):
+        mimetypes.init()
+        for ext in extensions.data.splitlines():
+            if not ext:
+                continue
+            if not f".{ext}" in mimetypes.types_map:
+                raise ValidationError(_(f"Unknown file type: %s" % ext))

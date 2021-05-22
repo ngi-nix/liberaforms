@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+
+    <div class="col-md-5">
+      <div class="title_1 delimited">
+        {%trans%}Allowed file types{%endtrans%}
+      </div>
+
+      <form method="POST">
+        {{ wtform.csrf_token }}
+        {{ wtform.extensions.label }} <span class='required'>●</span><br />
+        {{trans}}A list of file types. One per line.{{endtrans}}
+        {{ wtform.extensions(class_="form-control", rows="7") }}
+        {% for error in wtform.extensions.errors %}
+            <span class="formError">{{ error }}</span><br />
+        {% endfor %}
+        <div class="form-actions">
+          <input class="btn-success btn"
+                 type="submit"
+                 value="{%trans%}Submit{%endtrans%}">
+          <a class="btn
+                    btn-primary"
+             role="button"
+             href="/admin">
+             {%trans%}Cancel{%endtrans%}
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
