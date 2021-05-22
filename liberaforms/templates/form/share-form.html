@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- share_form_page -->
+
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
@@ -20,8 +22,14 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-        <div class="title_1">{%trans%}Editors{%endtrans%}</div>
-        <p>{%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}</p>
+        <br />
+        <div class="title_1"
+             style="margin-bottom:0">
+             {%trans%}Editors{%endtrans%}
+        </div>
+        <p>
+          {%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}
+        </p>
 
         <table class="table table-sm">
         {% for editor in form.get_editors() %}
@@ -45,21 +53,68 @@
         </table>
 
         <form action="/forms/add-editor/{{form.id}}" method="POST">
-            {{ wtform.csrf_token }}
-            <div class="input-group input-group-sm mb-3">
-              <input name="email"
-                     type="text"
-                     class="form-control"
-                     placeholder="person@example.com"
-                     aria-label="Recipient's username"
-                     aria-describedby="button-editor">
-              <div class="input-group-append">
-                <button class="btn btn-primary" type="submit" id="button-editor">
-                  {%trans%}Add new editor{%endtrans%}
-                </button>
-              </div>
+          {{ wtform.csrf_token }}
+          <div class="input-group input-group-sm mb-3">
+            <input name="email"
+                   type="text"
+                   class="form-control"
+                   placeholder="person@example.com"
+                   aria-label="Recipient's username"
+                   aria-describedby="button-editor">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="submit" id="button-editor">
+                {%trans%}Add new editor{%endtrans%}
+              </button>
             </div>
+          </div>
         </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3"></div>
+    <div id="notifications" class="col-md-6">
+      <br />
+      <div class="title_1"
+           style="margin-bottom:0">
+           {%trans%}Share notifications{%endtrans%}
+      </div>
+      <p style="margin">
+        {%trans%}Send 'new answer' and expiry notifications to these other addresses{%endtrans%}
+      </p>
+
+      {% if form.sharedNotifications %}
+      <table class="table table-sm">
+      {% for email in form.sharedNotifications  %}
+        <tr id="shared_notification_{{loop.index}}">
+          <td>
+            {{ email }}
+          </td>
+          <td class="text-right">
+            <input class="btn btn-xs btn-danger"
+                   type="button" value="{%trans%}Remove{%endtrans%}"
+                   onClick="js:removeSharedNotification({{loop.index}}, '{{email}}');">
+          </td>
+        </tr>
+      {% endfor %}
+      </table>
+      {% endif %}
+
+      <form action="/forms/add-shared-notification/{{form.id}}" method="POST">
+          {{ wtform.csrf_token }}
+          <div class="input-group input-group-sm mb-3">
+            <input name="email"
+                   type="text"
+                   class="form-control"
+                   placeholder="person@example.com"
+                   aria-label="Recipient's email address"
+                   aria-describedby="button-email">
+            <div class="input-group-append">
+              <button class="btn btn-primary" type="submit" id="button-email">
+                {%trans%}Add address{%endtrans%}
+              </button>
+            </div>
+          </div>
+      </form>
     </div>
 </div>
 <div class="row">
@@ -67,7 +122,10 @@
     <div class="col-md-3"></div>
     <div class="col-md-9">
         <br />
-        <div class="title_1">{%trans%}Share results{%endtrans%}</div>
+        <div class="title_1"
+             style="margin-bottom:0">
+             {%trans%}Share results{%endtrans%}
+        </div>
         <p>{%trans%}Readonly access for <b>anyone</b> with a copy of these links{%endtrans%}</p>
 
         <div id="toggle_sharedAnswers" class="btn-group btn-toggle">
@@ -157,6 +215,25 @@ function removeEditor(editor_id){
             }
         }
     });
+}
+function removeSharedNotification(id, email) {
+  $.ajax({
+      url : "/forms/remove-shared-notification/{{form.id}}",
+      type: "POST",
+      dataType: "json",
+      data: {"email": email},
+      beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken)
+          }
+      },
+      success: function(data, textStatus, jqXHR)
+      {
+          if (data == true) {
+              $('#shared_notification_'+id).hide();
+          }
+      }
+  });
 }
 document.getElementById('toggle_sharedAnswers').addEventListener('click', function(evt){
     $.ajax({
