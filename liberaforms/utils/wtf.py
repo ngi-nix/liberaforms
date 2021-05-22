@@ -131,11 +131,11 @@ class ChangeMenuColor(FlaskForm):
 
 
 class FileExtensions(FlaskForm):
-    extensions = TextAreaField(_("File types"), validators=[DataRequired()])
+    extensions = TextAreaField(_("Extensions"), validators=[DataRequired()])
     def validate_extensions(self, extensions):
         mimetypes.init()
         for ext in extensions.data.splitlines():
             if not ext:
                 continue
             if not f".{ext}" in mimetypes.types_map:
-                raise ValidationError(_(f"Unknown file type: %s" % ext))
+                raise ValidationError(_(f"Unknown file extension: %s" % ext))

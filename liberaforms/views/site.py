@@ -189,7 +189,7 @@ def edit_mimetypes():
         g.site.allowed_mimetypes = mime_types
         g.site.save()
         g.site.get_mimetypes()
-        flash(gettext("Allowed file types updated OK"), 'success')
+        flash(gettext("Enabled file extensions updated OK"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
     if request.method == 'GET':
         wtform.extensions.data = '\n'.join(g.site.allowed_mimetypes.keys())

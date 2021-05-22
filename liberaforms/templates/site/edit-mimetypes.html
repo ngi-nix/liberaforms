@@ -8,17 +8,18 @@
 
     <div class="col-md-5">
       <div class="title_1 delimited">
-        {%trans%}Allowed file types{%endtrans%}
+        {%trans%}File extensions{%endtrans%}
       </div>
 
       <form method="POST">
         {{ wtform.csrf_token }}
         {{ wtform.extensions.label }} <span class='required'>●</span><br />
-        {{trans}}A list of file types. One per line.{{endtrans}}
+        {{trans}}A list of file extensions. One per line.{{endtrans}}
         {{ wtform.extensions(class_="form-control", rows="7") }}
         {% for error in wtform.extensions.errors %}
             <span class="formError">{{ error }}</span><br />
         {% endfor %}
+
         <div class="form-actions">
           <input class="btn-success btn"
                  type="submit"
@@ -31,6 +32,39 @@
           </a>
         </div>
       </form>
+
+      <p>&nbsp</p>
+
+      <div class="title_2">
+        {%trans%}Enabled extensions{%endtrans%}
+      </div>
+
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>{%trans%}Extension{%endtrans%}</th>
+            <th>Mimetype</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% set ns = namespace(keys=[]) %}
+        {% for mimetype in g.site.allowed_mimetypes.values() %}
+          {% for (key, value) in g.site.allowed_mimetypes.items() if value == mimetype %}
+            {% if not key in ns.keys %}
+              <tr>
+                <td>
+                  {{ key }}
+                </td>
+                <td>
+                  {{ value }}
+                </td>
+              </tr>
+              {% set ns.keys = ns.keys + [key] %}
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
