@@ -39,14 +39,16 @@ class Storage:
             logging.error(f"Upload failed. Cannot save to tmp_file. : {tmp_file_path}")
             return False
         if current_app.config['ENABLE_REMOTE_STORAGE']:
-            saved = RemoteStorage().add_object(tmp_file_path,
-                                               sub_dir,
-                                               storage_name)
-            if saved == True:
-                self.local_filesystem = False
-                os.remove(tmp_file_path)
-                return True
-            else:
+            try:
+                saved = RemoteStorage().add_object(tmp_file_path,
+                                                   sub_dir,
+                                                   storage_name)
+                if saved == True:
+                    self.local_filesystem = False
+                    os.remove(tmp_file_path)
+                    return True
+            except Exception as error:
+                logging.error(error)
                 logging.warning(f"Failed to save remote object. Saving to local filesystem.")
                 saved = self.save_to_disk(tmp_file_path, sub_dir, storage_name)
                 if saved == True:
@@ -97,7 +99,11 @@ class Storage:
                 logging.error(f"Failed to delete file from local filesystem: {file_path}")
             return False
         else:
-            removed = RemoteStorage().delete_file(sub_dir, storage_name)
-            if not removed:
-                logging.error(f"Failed to remove remote object: {file_path}")
-            return removed
+            try:
+                removed = RemoteStorage().delete_file(sub_dir, storage_name)
+                if not removed:
+                    logging.error(f"Failed to remove remote object: {file_path}")
+                return removed
+            except Exception as error:
+                logging.error(error)
+                return False

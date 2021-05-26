@@ -477,9 +477,9 @@ class Form(db.Model, CRUD):
                                       self.get_attachment_dir())
         if os.path.exists(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
-        else:
+        elif not current_app.config['ENABLE_REMOTE_STORAGE']:
             logging.warning(f"Attachment dir not found: {attachment_dir}")
-        if current_app.config['ENABLE_UPLOADS']:
+        if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
             prefix = self.get_attachment_dir()
             RemoteStorage().remove_directory(prefix)
 

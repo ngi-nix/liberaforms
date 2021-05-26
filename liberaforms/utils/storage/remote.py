@@ -15,6 +15,42 @@ from minio.error import S3Error
 from liberaforms.utils import utils
 
 #https://docs.min.io/docs/python-client-api-reference.html
+#https://urllib3.readthedocs.io/en/latest/reference/urllib3.exceptions.html
+
+def get_minio_client():
+    try:
+        return Minio(
+                f"{current_app.config['MINIO_HOST']}:9000",
+                access_key=current_app.config['MINIO_ACCESS_KEY'],
+                secret_key=current_app.config['MINIO_SECRET_KEY'],
+                #region=self.region,
+                secure=False,
+                http_client=urllib3.PoolManager(
+                    timeout=2,
+                    #timeout=urllib3.Timeout.DEFAULT_TIMEOUT,
+                    #cert_reqs="CERT_REQUIRED",
+                    retries=urllib3.Retry(
+                        total=2,
+                        backoff_factor=0.2,
+                        status_forcelist=[500, 502, 503, 504],
+                    ),
+                )
+        )
+    except S3Error as error:
+        logging.error(error)
+    except HTTPError:
+        logging.error(error)
+    except urllib3.exceptions.ConnectTimeoutError as error:
+        logging.error(error)
+    except urllib3.exceptions.MaxRetryError as error:
+        logging.error(error)
+    except urllib3.exceptions.NewConnectionError as error:
+        logging.error(error)
+    except urllib3.exceptions.ProtocolError as error:
+        logging.error(error)
+    except Exception as error:
+        logging.error(error)
+    return None
 
 class RemoteStorage():
     client = None
@@ -22,44 +58,14 @@ class RemoteStorage():
     region = None
 
     def __init__(self):
-        self.region = 'eu-central-1'
-        try:
-            self.client = Minio(
-                    f"{current_app.config['MINIO_HOST']}:9000",
-                    access_key=current_app.config['MINIO_ACCESS_KEY'],
-                    secret_key=current_app.config['MINIO_SECRET_KEY'],
-                    #region=self.region,
-                    secure=False,
-                    http_client=urllib3.PoolManager(
-                        #"https://PROXYSERVER:PROXYPORT/",
-                        timeout=2,
-                        #timeout=urllib3.Timeout.DEFAULT_TIMEOUT,
-                        #cert_reqs="CERT_REQUIRED",
-                        retries=urllib3.Retry(
-                            total=3,
-                            backoff_factor=0.2,
-                            status_forcelist=[500, 502, 503, 504],
-                        ),
-                    )
-            )
-        except S3Error as error:
-            logging.error(error)
-            self.client = None
-            return
         from liberaforms.models.site import Site
+        self.region = 'eu-central-1'
         self.bucket_name = Site.find().hostname
-        try:
-            if not self.client.bucket_exists(self.bucket_name):
-                self.client.make_bucket(self.bucket_name)
-        except S3Error as error:
-            logging.error(error)
-            self.client = None
 
     def add_object(self, file_path, directory, storage_name):
-        if not self.client:
-            return False
         try:
-            result = self.client.fput_object(
+            client = get_minio_client()
+            result =client.fput_object(
                             bucket_name=self.bucket_name,
                             object_name=f"{directory}/{storage_name}",
                             file_path=file_path
@@ -70,12 +76,11 @@ class RemoteStorage():
             return False
 
     def get_object(self, directory, storage_name):
-        if not self.client:
-            return False
         try:
             tmp_dir = current_app.config['TMP_DIR']
             file_path = f"{tmp_dir}/{storage_name}"
-            self.client.fget_object(
+            client = get_minio_client()
+            client.fget_object(
                             bucket_name=self.bucket_name,
                             object_name=f"{directory}/{storage_name}",
                             file_path=file_path
@@ -87,10 +92,9 @@ class RemoteStorage():
 
     def remove_object(self, app, directory, storage_name):
         with app.app_context():
-            if not self.client:
-                return False
             try:
-                self.client.remove_object(
+                client = get_minio_client()
+                client.remove_object(
                                 bucket_name=self.bucket_name,
                                 object_name=f"{directory}/{storage_name}",
                             )
@@ -108,15 +112,16 @@ class RemoteStorage():
 
     def delete_objects(self, app, prefix):
         with app.app_context():
+            client = get_minio_client()
             delete_object_list = map(
                 lambda x: DeleteObject(x.object_name),
-                self.client.list_objects(
+                client.list_objects(
                             bucket_name=self.bucket_name,
                             prefix=prefix,
                             recursive=True
                         )
             )
-            errors = self.client.remove_objects(
+            errors = client.remove_objects(
                             bucket_name=self.bucket_name,
                             delete_object_list=delete_object_list,
                         )
