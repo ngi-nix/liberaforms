@@ -94,7 +94,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     def save_attachment(self, file):
         self.file_name = file.filename
-        self.storage_name = str(self.answer_id) #utils.gen_random_string()
+        self.storage_name = f"{utils.gen_random_string()}.{str(self.answer_id)}"
         saved = super().save_file(file, self.directory, self.storage_name)
         if saved:
             self.save()
