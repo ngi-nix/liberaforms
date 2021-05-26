@@ -613,7 +613,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        answer = {'marked': False}
+        answer_data = {'marked': False}
         for key in formData:
             if key=='csrf_token':
                 continue
@@ -622,30 +622,32 @@ def view_form(slug):
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             value=sanitizers.remove_first_and_last_newlines(value.strip())
-            answer[key]=value
-        new_answer = Answer(queriedForm.id, queriedForm.author_id, answer)
-        new_answer.save()
+            answer_data[key]=value
+        answer = Answer(queriedForm.id, queriedForm.author_id, answer_data)
+        answer.save()
 
         if request.files:
             for file_field_name in request.files.keys():
                 if not queriedForm.has_field(file_field_name):
                     continue
                 file = request.files[file_field_name]
+                # TODO: check size and mimetype
                 if file.filename:
-                    attachment = AnswerAttachment(new_answer)
+                    attachment = AnswerAttachment(answer)
                     try:
                         saved = attachment.save_attachment(file)
                         if saved:
                             url = attachment.get_url()
                             link = f'<a href="{url}">{file.filename}</a>'
-                            new_answer.update_field(file_field_name, link)
+                            answer.update_field(file_field_name, link)
                     except:
                         err = "Failed to save attachment: form:{}, answer:{}" \
-                              .format(queriedForm.slug, new_answer.id)
+                              .format(queriedForm.slug, answer.id)
                         logging.error(err)
 
         if not queriedForm.expired and queriedForm.has_expired():
             queriedForm.expired=True
+            queriedForm.save()
             emails=[]
             for editor_id, preferences in queriedForm.editors.items():
                 if preferences["notification"]["expiredForm"]:
@@ -655,13 +657,12 @@ def view_form(slug):
             emails = list(set(emails + queriedForm.sharedNotifications))
             if emails:
                 Dispatcher().send_expired_form_notification(emails, queriedForm)
-        queriedForm.save()
 
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
-            confirmationEmail=queriedForm.get_confirmation_email_address(answer)
-            if confirmationEmail and validators.is_valid_email(confirmationEmail):
-                Dispatcher().send_answer_confirmation(confirmationEmail, queriedForm)
+            email=queriedForm.get_confirmation_email_address(answer)
+            if email and validators.is_valid_email(email):
+                Dispatcher().send_answer_confirmation(email, queriedForm)
 
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
@@ -673,14 +674,16 @@ def view_form(slug):
         if emails:
             data=[]
             for field in queriedForm.get_field_index_for_data_display():
-                if field['name'] in answer:
+                if field['name'] in answer.data:
                     if field['name']=="marked":
                         continue
-                    data.append( (field['label'], answer[field['name']]) )
+                    data.append( (field['label'], answer.data[field['name']]) )
             Dispatcher().send_new_answer_notification(  emails,
                                                         data,
                                                         queriedForm.slug)
-        return render_template('thankyou.html', form=queriedForm, navbar=False)
+        return render_template('thankyou.html',
+                                form=queriedForm,
+                                navbar=False)
     return render_template('view-form.html', form=queriedForm,
                                              navbar=False,
                                              no_bot=True)

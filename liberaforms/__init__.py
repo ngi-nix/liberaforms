@@ -42,22 +42,6 @@ def create_app():
     register_commands(app)
     register_blueprints(app)
 
-    @app.after_request
-    def after_request(response):
-        """ Logging after every request. """
-        logger = logging.getLogger("app.access")
-        logger.info(
-            "[%s] %s %s %s %s %s %s %s",
-            datetime.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
-            request.method,
-            request.path,
-            request.scheme,
-            response.status,
-            response.content_length,
-            request.referrer,
-            request.user_agent,
-        )
-        return response
 
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
     return app
@@ -80,3 +64,21 @@ def register_blueprints(app):
     app.register_blueprint(admin_bp)
     app.register_blueprint(answers_bp)
     return None
+
+
+    #@app.after_request
+    def after_request(response):
+        """ Logging after every request. """
+        logger = logging.getLogger("app.access")
+        logger.info(
+            "[%s] %s %s %s %s %s %s %s",
+            datetime.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+            request.method,
+            request.path,
+            request.scheme,
+            response.status,
+            response.content_length,
+            request.referrer,
+            request.user_agent,
+        )
+        return response

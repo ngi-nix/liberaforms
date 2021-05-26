@@ -31,6 +31,10 @@ textarea.parsley-error {
   -webkit-transition: all .3s ease-in;
 }
 
+.parsley-errors-list li {
+  padding: 0.1em 0 0.35em 0;
+}
+
 .parsley-errors-list.filled {
   opacity: 1;
 }

@@ -76,7 +76,6 @@ class AnswerAttachment(db.Model, CRUD, Storage):
         self.created = datetime.datetime.now().isoformat()
         self.answer_id = answer.id
         self.form_id = answer.form.id
-        self.storage_name = utils.gen_random_string()
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -95,6 +94,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     def save_attachment(self, file):
         self.file_name = file.filename
+        self.storage_name = str(self.answer_id) #utils.gen_random_string()
         saved = super().save_file(file, self.directory, self.storage_name)
         if saved:
             self.save()

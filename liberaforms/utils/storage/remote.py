@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import sys, os, logging
-from io import BytesIO
+import urllib3
 from threading import Thread
 from flask import current_app
 from minio import Minio
@@ -30,6 +30,17 @@ class RemoteStorage():
                     secret_key=current_app.config['MINIO_SECRET_KEY'],
                     #region=self.region,
                     secure=False,
+                    http_client=urllib3.PoolManager(
+                        #"https://PROXYSERVER:PROXYPORT/",
+                        timeout=2,
+                        #timeout=urllib3.Timeout.DEFAULT_TIMEOUT,
+                        #cert_reqs="CERT_REQUIRED",
+                        retries=urllib3.Retry(
+                            total=3,
+                            backoff_factor=0.2,
+                            status_forcelist=[500, 502, 503, 504],
+                        ),
+                    )
             )
         except S3Error as error:
             logging.error(error)
@@ -74,16 +85,26 @@ class RemoteStorage():
             logging.error(error)
             return False
 
-    def remove_object(self, directory, storage_name):
-        try:
-            self.client.remove_object(
-                            bucket_name=self.bucket_name,
-                            object_name=f"{directory}/{storage_name}",
-                        )
-            return True
-        except S3Error as error:
-            logging.error(error)
-            return False
+    def remove_object(self, app, directory, storage_name):
+        with app.app_context():
+            if not self.client:
+                return False
+            try:
+                self.client.remove_object(
+                                bucket_name=self.bucket_name,
+                                object_name=f"{directory}/{storage_name}",
+                            )
+                return True
+            except S3Error as error:
+                logging.error(error)
+                return False
+
+    def delete_file(self, directory, storage_name):
+        thr = Thread(
+                target=self.remove_object,
+                args=[current_app._get_current_object(), directory, storage_name]
+        )
+        thr.start()
 
     def delete_objects(self, app, prefix):
         with app.app_context():
