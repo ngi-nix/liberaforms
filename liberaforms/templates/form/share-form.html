@@ -82,9 +82,9 @@
         {%trans%}Send 'new answer' and expiry notifications to these other addresses{%endtrans%}
       </p>
 
-      {% if form.sharedNotifications %}
+      {% if form.shared_notifications %}
       <table class="table table-sm">
-      {% for email in form.sharedNotifications  %}
+      {% for email in form.shared_notifications  %}
         <tr id="shared_notification_{{loop.index}}">
           <td>
             {{ email }}

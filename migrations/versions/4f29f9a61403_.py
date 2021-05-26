@@ -41,7 +41,10 @@ def upgrade():
     op.execute("UPDATE site SET newuser_uploadsdefault = false")
     op.alter_column('site', 'newuser_uploadsdefault', nullable=False)
 
+
+
     op.execute("UPDATE site SET allowed_mimetypes = '{\"pdf\":\"application/pdf\",\"png\":\"image/png\", \"odt\":\"application/vnd.oasis.opendocument.text\"}'")
+    #op.execute("UPDATE site SET allowed_mimetypes = '{\"extensions\":[\"pdf\",\"png\",\"odt\"], \"mimetypes\":[\"application/pdf\",\"image/png\",\"application/vnd.oasis.opendocument.text\"]}'")
     op.alter_column('site', 'allowed_mimetypes', nullable=False)
     # ### end Alembic commands ###
 

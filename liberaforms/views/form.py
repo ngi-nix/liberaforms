@@ -372,10 +372,8 @@ def add_shared_notification(id):
     if request.method == 'POST':
         if wtform.validate():
             email = wtform.email.data
-            if not queriedForm.sharedNotifications:
-                queriedForm.sharedNotifications = []
-            if not wtform.email.data in queriedForm.sharedNotifications:
-                queriedForm.sharedNotifications.append(email)
+            if not wtform.email.data in queriedForm.shared_notifications:
+                queriedForm.shared_notifications.append(email)
                 queriedForm.add_log(gettext(f"Added shared notification: {email}"))
                 queriedForm.save()
     return redirect(make_url_for('form_bp.share_form',
@@ -392,8 +390,8 @@ def remove_shared_notification(id):
     email = request.form.get('email')
     if not validators.is_valid_email(email):
         return JsonResponse(json.dumps(False))
-    if email in queriedForm.sharedNotifications:
-        queriedForm.sharedNotifications.remove(email)
+    if email in queriedForm.shared_notifications:
+        queriedForm.shared_notifications.remove(email)
         queriedForm.add_log(gettext(f"Removed shared notification: {email}"))
         queriedForm.save()
         return JsonResponse(json.dumps(True))
@@ -654,7 +652,7 @@ def view_form(slug):
                     user=User.find(id=editor_id)
                     if user and user.enabled:
                         emails.append(user.email)
-            emails = list(set(emails + queriedForm.sharedNotifications))
+            emails = list(set(emails + queriedForm.shared_notifications))
             if emails:
                 Dispatcher().send_expired_form_notification(emails, queriedForm)
 
@@ -670,7 +668,7 @@ def view_form(slug):
                 user=User.find(id=editor_id)
                 if user and user.enabled:
                     emails.append(user.email)
-        emails = list(set(emails + queriedForm.sharedNotifications))
+        emails = list(set(emails + queriedForm.shared_notifications))
         if emails:
             data=[]
             for field in queriedForm.get_field_index_for_data_display():

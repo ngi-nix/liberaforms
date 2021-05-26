@@ -47,7 +47,7 @@ class Form(db.Model, CRUD):
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
     sharedAnswers = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
-    sharedNotifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), default=[])
+    shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     introductionText = db.Column(JSONB, nullable=False)
@@ -74,6 +74,7 @@ class Form(db.Model, CRUD):
                                 "key": utils.gen_random_string(),
                                 "password": False,
                                 "expireDate": False}
+        self.shared_notifications = []
         self.introductionText = kwargs["introductionText"]
         self.consentTexts = kwargs["consentTexts"]
         self.afterSubmitText = kwargs["afterSubmitText"]
