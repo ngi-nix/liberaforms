@@ -21,15 +21,11 @@ SESSION_TYPE = "filesystem"
 #MEMCACHED_HOST=
 #SESSION_KEY_PREFIX=
 
-# See docs/Uploads.md
+# See docs/upload.md
 ENABLE_UPLOADS = False
 MAX_FILE_UPLOAD_SIZE=50 # Kb
-
 ENABLE_REMOTE_STORAGE=False
-# MINIO_HOST = FQDN[:PORT]
-MINIO_HOST=
-MINIO_ACCESS_KEY=
-MINIO_SECRET_KEY=
+
 
 # Logging [watched|stream]
 LOG_TYPE=watched
