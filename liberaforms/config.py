@@ -92,6 +92,16 @@ class Config(object):
     instancefiles = 'instancefiles'
     BRAND_DIR = os.path.join(root_dir, instancefiles, 'brand')
     UPLOAD_DIR = os.path.join(root_dir, instancefiles, 'uploads')
+    if 'FQDN' in os.environ:
+        # LiberaForms cluster project requires a unique directory
+        fqdn_brand_dir = os.path.join(BRAND_DIR, "hosts", os.environ['FQDN'])
+        if not os.path.isdir(fqdn_brand_dir):
+            shutil.copytree(BRAND_DIR, fqdn_brand_dir)
+        BRAND_DIR = fqdn_brand_dir
+        fqdn_uploads_dir = os.path.join(UPLOAD_DIR, "hosts", os.environ['FQDN'])
+        if not os.path.isdir(fqdn_uploads_dir):
+            shutil.copytree(UPLOAD_DIR, fqdn_uploads_dir)
+        UPLOAD_DIR = fqdn_uploads_dir
     if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
         ENABLE_REMOTE_STORAGE = True
     else:
@@ -99,21 +109,6 @@ class Config(object):
     MINIO_HOST = os.environ['MINIO_HOST']
     MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
     MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
-    if 'FQDN' in os.environ:
-        # LiberaForms cluster project requires a unique directory
-        fqdn_dir = os.path.join(root_dir,
-                                instancefiles,
-                                "hosts",
-                                os.environ['FQDN'])
-        fqdn_brand_dir = os.path.join(fqdn_dir, "brand")
-        if not os.path.isdir(fqdn_brand_dir):
-            shutil.copytree(BRAND_DIR, fqdn_brand_dir)
-        BRAND_DIR = fqdn_brand_dir
-        fqdn_uploads_dir = os.path.join(fqdn_dir, "uploads")
-        if not os.path.isdir(fqdn_uploads_dir):
-            shutil.copytree(UPLOAD_DIR, fqdn_uploads_dir)
-        UPLOAD_DIR = fqdn_uploads_dir
-
 
     @staticmethod
     def init_app(app):
