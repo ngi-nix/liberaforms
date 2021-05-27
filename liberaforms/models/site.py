@@ -288,12 +288,12 @@ class Site(db.Model, CRUD):
 
     def write_users_csv(self):
         fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
-        fieldheaders={  "username": gettext("Username"),
-                        "created": gettext("Created"),
-                        "enabled": gettext("Enabled"),
-                        "email": gettext("Email"),
-                        "forms": gettext("Forms"),
-                        "admin": gettext("Admin")
+        fieldheaders={  "username": _("Username"),
+                        "created": _("Created"),
+                        "enabled": _("Enabled"),
+                        "email": _("Email"),
+                        "forms": _("Forms"),
+                        "admin": _("Admin")
                         }
         csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
         with open(csv_name, mode='wb') as csv_file:
@@ -302,8 +302,8 @@ class Site(db.Model, CRUD):
                                     extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in self.get_users():
-                is_enabled = gettext("True") if user.enabled else gettext("False")
-                is_admin = gettext("True") if user.is_admin() else gettext("False")
+                is_enabled = _("True") if user.enabled else _("False")
+                is_admin = _("True") if user.is_admin() else _("False")
                 row = { "username": user.username,
                         "created": user.created.strftime("%Y-%m-%d"),
                         "enabled": is_enabled,

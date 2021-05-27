@@ -28,7 +28,7 @@ answers_bp = Blueprint('answers_bp', __name__,
 def list_answers(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('list-answers.html',
                             form=queriedForm,
@@ -41,7 +41,7 @@ def list_answers(id):
 def answer_stats(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('chart-answers.html', form=queriedForm)
 
@@ -51,7 +51,7 @@ def answer_stats(id):
 def csv_form(id):
     queriedForm = Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     csv_file=queriedForm.write_csv(with_deleted_columns=request.args.get('with_deleted_columns'))
 
@@ -75,7 +75,7 @@ def delete_answer(id):
 
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.add_log(gettext("Deleted an answer"))
+    queriedForm.add_log(_("Deleted an answer"))
     return JsonResponse(json.dumps({'deleted': True}))
 
 
@@ -118,7 +118,7 @@ def change_answer(id):
     answer.save()
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
-    queriedForm.add_log(gettext("Modified an answer"))
+    queriedForm.add_log(_("Modified an answer"))
     return JsonResponse(json.dumps({'saved': True}))
 
 
@@ -127,25 +127,25 @@ def change_answer(id):
 def delete_answers(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         try:
             totalAnswers = int(request.form['totalAnswers'])
         except:
-            flash(gettext("We expected a number"), 'warning')
+            flash(_("We expected a number"), 'warning')
             return render_template('delete-answers.html', form=queriedForm)
         if queriedForm.get_total_answers() == totalAnswers:
             queriedForm.delete_answers()
-            queriedForm.add_log(gettext("Deleted all answers"))
+            queriedForm.add_log(_("Deleted all answers"))
             if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
                 queriedForm.save()
-            flash(gettext("Deleted %s answers" % totalAnswers), 'success')
+            flash(_("Deleted %s answers" % totalAnswers), 'success')
             return redirect(make_url_for('answers_bp.list_answers',
                                          id=queriedForm.id))
         else:
-            flash(gettext("Number of answers does not match"), 'warning')
+            flash(_("Number of answers does not match"), 'warning')
     return render_template('delete-answers.html', form=queriedForm)
 
 

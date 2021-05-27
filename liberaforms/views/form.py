@@ -59,12 +59,12 @@ def edit_form(id=None):
     queriedForm=None
     if id:
         if session['form_id'] != str(id):
-            flash_text = gettext("Something went wrong. id does not match session['form_id']")
+            flash_text = _("Something went wrong. id does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
         queriedForm = Form.find(id=id, editor_id=g.current_user.id)
         if not queriedForm:
-            flash(gettext("You can't edit that form"), 'warning')
+            flash(_("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         if queriedForm:
@@ -72,7 +72,7 @@ def edit_form(id=None):
         elif 'slug' in request.form:
             session['slug'] = sanitizers.sanitize_slug(request.form['slug'])
         if not session['slug']:
-            flash(gettext("Something went wrong. No slug!"), 'error')
+            flash(_("Something went wrong. No slug!"), 'error')
             return redirect(make_url_for('form_bp.my_forms'))
         structure = form_helper.repair_form_structure(
                                         json.loads(request.form['structure'])
@@ -127,7 +127,7 @@ def preview_form():
 def conditions_form(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     #pp(queriedForm.structure)
     return render_template('conditions.html', form=queriedForm)
@@ -147,7 +147,7 @@ def save_form(id=None):
         session['introductionTextMD'] = md_text
     formStructure = json.loads(session['formStructure'])
     if not formStructure:
-        formStructure=[{'label': gettext("Form"),
+        formStructure=[{'label': _("Form"),
                         'subtype': 'h1',
                         'type': 'header'}]
     md_text = sanitizers.escape_markdown(session['introductionTextMD'])
@@ -163,20 +163,20 @@ def save_form(id=None):
         queriedForm.introductionText=introductionText
         queriedForm.save()
         form_helper.clear_session_form_data()
-        flash(gettext("Updated form OK"), 'success')
-        queriedForm.add_log(gettext("Form edited"))
+        flash(_("Updated form OK"), 'success')
+        queriedForm.add_log(_("Form edited"))
         return redirect(make_url_for('form_bp.inspect_form', id=queriedForm.id))
     else:
         # this is a new form
         if not session['slug']:
-            flash(gettext("Slug is missing."), 'error')
+            flash(_("Slug is missing."), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if Form.find(slug=session['slug']):
-            flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
+            flash(_("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['slug'] in current_app.config['RESERVED_SLUGS']:
             # TRANSLATION: Slug is reserved. <a_word>
-            flash(gettext("Slug is reserved. %s" % (session['slug'])), 'error')
+            flash(_("Slug is reserved. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
             # this new form is a duplicate
@@ -201,11 +201,11 @@ def save_form(id=None):
             new_form = Form(g.current_user, **new_form_data)
             new_form.save()
         except:
-            flash(gettext("Failed to save form"), 'error')
+            flash(_("Failed to save form"), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         form_helper.clear_session_form_data()
-        new_form.add_log(gettext("Form created"))
-        flash(gettext("Saved form OK"), 'success')
+        new_form.add_log(_("Form created"))
+        flash(_("Saved form OK"), 'success')
         # notify admins
         Dispatcher().send_new_form_notification(new_form)
         return redirect(make_url_for('form_bp.inspect_form', id=new_form.id))
@@ -226,9 +226,9 @@ def save_data_consent(form_id, consent_id):
                                             data=request.form.to_dict(flat=True)
                                             )
         if consent:
-            queriedForm.add_log(gettext("Edited GDPR text"))
+            queriedForm.add_log(_("Edited GDPR text"))
             return JsonResponse(json.dumps(consent))
-    pay_load = {'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}
+    pay_load = {'html': "<h1>%s</h1>" % _("An error occured"),"label":""}
     return JsonResponse(json.dumps(pay_load))
 
 
@@ -239,7 +239,7 @@ def default_consent_text(form_id, consent_id):
     if queriedForm:
         pay_load = json.dumps(g.site.get_consent_for_display(consent_id))
         return JsonResponse(pay_load)
-    pay_load = {'html': "<h1>%s</h1>" % gettext("An error occured"),"label":""}
+    pay_load = {'html': "<h1>%s</h1>" % _("An error occured"),"label":""}
     return JsonResponse(json.dumps(pay_load))
 
 
@@ -251,11 +251,11 @@ def save_after_submit_text(id):
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.save_after_submit_text(request.form['markdown'])
-        queriedForm.add_log(gettext("Edited Thankyou text"))
+        queriedForm.add_log(_("Edited Thankyou text"))
         pay_load = {'html':queriedForm.after_submit_text_html,
                     'markdown': queriedForm.after_submit_text_markdown}
         return JsonResponse(json.dumps(pay_load))
-    pay_load = {'html': "<h1>%s</h1>" % gettext("An error occured"),
+    pay_load = {'html': "<h1>%s</h1>" % _("An error occured"),
                 'markdown': ""}
     return JsonResponse(json.dumps(pay_load))
 
@@ -268,11 +268,11 @@ def save_expired_text(id):
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
         queriedForm.save_expired_text(request.form['markdown'])
-        queriedForm.add_log(gettext("Edited expiry text"))
+        queriedForm.add_log(_("Edited expiry text"))
         pay_load = {'html': queriedForm.expired_text_html,
                     'markdown': queriedForm.expired_text_markdown}
         return JsonResponse(json.dumps(pay_load))
-    pay_load = {'html': "<h1>%s</h1>" % gettext("An error occured"),
+    pay_load = {'html': "<h1>%s</h1>" % _("An error occured"),
                 'markdown': ""}
     return JsonResponse(json.dumps(pay_load))
 
@@ -282,19 +282,19 @@ def save_expired_text(id):
 def delete_form(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if request.method == 'POST':
         if queriedForm.slug == request.form['slug']:
             answer_cnt = queriedForm.get_answers().count()
             queriedForm.delete()
-            flash_text = gettext("Deleted '%s' and %s answers" % (
+            flash_text = _("Deleted '%s' and %s answers" % (
                                                         queriedForm.slug,
                                                         answer_cnt))
             flash(flash_text, 'success')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
-            flash(gettext("Form name does not match"), 'warning')
+            flash(_("Form name does not match"), 'warning')
     return render_template('delete-form.html', form=queriedForm)
 
 
@@ -303,10 +303,10 @@ def delete_form(id):
 def inspect_form(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     if not g.current_user.can_inspect_form(queriedForm):
-        flash(gettext("Permission needed to view form"), 'warning')
+        flash(_("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     # prepare the session for possible form edit
     form_helper.populate_session_with_form(queriedForm)
@@ -318,7 +318,7 @@ def inspect_form(id):
 def share_form(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('share-form.html',
                             form=queriedForm,
@@ -330,21 +330,21 @@ def share_form(id):
 def add_editor(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
     if wtform.validate_on_submit():
         newEditor=User.find(email=wtform.email.data)
         if not newEditor or newEditor.enabled==False:
-            flash(gettext("Can't find a user with that email"), 'warning')
+            flash(_("Can't find a user with that email"), 'warning')
             return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
         if str(newEditor.id) in queriedForm.editors:
             flash(gettext("%s is already an editor" % newEditor.email), 'warning')
             return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
 
         if queriedForm.add_editor(newEditor):
-            flash(gettext("New editor added ok"), 'success')
-            queriedForm.add_log(gettext("Added editor %s" % newEditor.email))
+            flash(_("New editor added ok"), 'success')
+            queriedForm.add_log(_("Added editor %s" % newEditor.email))
     return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
 
 
@@ -355,7 +355,7 @@ def remove_editor(form_id, editor_id):
     editor = User.find(id=editor_id)
     if queriedForm and editor and not queriedForm.is_author(editor):
         queriedForm.remove_editor(editor)
-        queriedForm.add_log(gettext("Removed editor %s" % editor.email))
+        queriedForm.add_log(_("Removed editor %s" % editor.email))
         return json.dumps(str(editor.id))
     return JsonResponse(json.dumps(False))
 
@@ -365,7 +365,7 @@ def remove_editor(form_id, editor_id):
 def add_shared_notification(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
     if request.method == 'POST':
@@ -404,7 +404,7 @@ def remove_shared_notification(id):
 def expiration(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('expiration.html', form=queriedForm)
 
@@ -419,18 +419,18 @@ def set_expiration_date(id):
         if request.form['date'] and request.form['time']:
             expireDate="%s %s:00" % (request.form['date'], request.form['time'])
             if not validators.is_valid_date(expireDate):
-                pay_load = {'error': gettext("Date-time is not valid"),
+                pay_load = {'error': _("Date-time is not valid"),
                             'expired': queriedForm.has_expired()}
                 return JsonResponse(json.dumps(pay_load))
             else:
                 queriedForm.save_expiry_date(expireDate)
-                queriedForm.add_log(gettext("Expiry date set to: %s" % expireDate))
+                queriedForm.add_log(_("Expiry date set to: %s" % expireDate))
         elif not request.form['date'] and not request.form['time']:
             if queriedForm.expiryConditions['expireDate']:
                 queriedForm.save_expiry_date(False)
-                queriedForm.add_log(gettext("Expiry date cancelled"))
+                queriedForm.add_log(_("Expiry date cancelled"))
         else:
-            pay_load = {'error': gettext("Missing date or time"),
+            pay_load = {'error': _("Missing date or time"),
                         'expired': queriedForm.has_expired()}
             return JsonResponse(json.dumps(pay_load))
         return JsonResponse(json.dumps({'expired': queriedForm.has_expired()}))
@@ -447,7 +447,7 @@ def set_expiry_field_condition(id):
                                                     request.form['field_name'],
                                                     request.form['condition'])
         field_label = queriedForm.get_field_label(request.form['field_name'])
-        queriedForm.add_log(gettext("Field '%s' expiry set to: %s" % (
+        queriedForm.add_log(_("Field '%s' expiry set to: %s" % (
                                                     field_label,
                                                     request.form['condition']))
                                     )
@@ -465,7 +465,7 @@ def set_expiry_total_answers(id):
     total_answers = request.form['total_answers']
     total_answers = queriedForm.save_expiry_total_answers(total_answers)
     # TRANSLATION: Expire when total answers set to: 3
-    queriedForm.add_log(gettext("Expire when total answers set to: %s" % total_answers))
+    queriedForm.add_log(_("Expire when total answers set to: %s" % total_answers))
     return JsonResponse(json.dumps({'expired': queriedForm.expired,
                                     'total_answers': total_answers}))
 
@@ -475,13 +475,13 @@ def set_expiry_total_answers(id):
 def duplicate_form(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     form_helper.populate_session_with_form(queriedForm)
     session['slug']=""
     session['form_id']=None
     session['duplication_in_progress'] = True
-    flash(gettext("You can edit the duplicate now"), 'info')
+    flash(_("You can edit the duplicate now"), 'info')
     return render_template('edit-form.html', host_url=g.site.host_url)
 
 
@@ -490,7 +490,7 @@ def duplicate_form(id):
 def list_log(id):
     queriedForm = Form.find(id=id, editor_id=g.current_user.id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     return render_template('list-log.html', form=queriedForm)
 
@@ -505,7 +505,7 @@ def toggle_form_enabled(id):
     if not queriedForm:
         return JsonResponse(json.dumps())
     enabled=queriedForm.toggle_enabled()
-    queriedForm.add_log(gettext("Public set to: %s" % enabled))
+    queriedForm.add_log(_("Public set to: %s" % enabled))
     return JsonResponse(json.dumps({'enabled': enabled}))
 
 
@@ -516,7 +516,7 @@ def toggle_shared_answers(id):
     if not queriedForm:
         return JsonResponse(json.dumps())
     shared=queriedForm.toggle_shared_answers()
-    queriedForm.add_log(gettext("Shared answers set to: %s" % shared))
+    queriedForm.add_log(_("Shared answers set to: %s" % shared))
     return JsonResponse(json.dumps({'enabled':shared}))
 
 
@@ -527,7 +527,7 @@ def toggle_restricted_access(id):
     if not queriedForm:
         return JsonResponse(json.dumps())
     access=queriedForm.toggle_restricted_access()
-    queriedForm.add_log(gettext("Restricted access set to: %s" % access))
+    queriedForm.add_log(_("Restricted access set to: %s" % access))
     return JsonResponse(json.dumps({'restricted':access}))
 
 
@@ -549,7 +549,7 @@ def toggle_form_dataconsent(id):
     if not queriedForm:
         return JsonResponse(json.dumps())
     dataConsentBool=queriedForm.toggle_data_consent_enabled()
-    queriedForm.add_log(gettext("Data protection consent set to: %s" % dataConsentBool))
+    queriedForm.add_log(_("Data protection consent set to: %s" % dataConsentBool))
     return JsonResponse(json.dumps({'enabled':dataConsentBool}))
 
 
@@ -560,7 +560,7 @@ def toggle_form_sendconfirmation(id):
     if not queriedForm:
         return JsonResponse(json.dumps())
     sendConfirmationBool=queriedForm.toggle_send_confirmation()
-    queriedForm.add_log(gettext("Send Confirmation set to: %s" % sendConfirmationBool))
+    queriedForm.add_log(_("Send Confirmation set to: %s" % sendConfirmationBool))
     return JsonResponse(json.dumps({'confirmation':sendConfirmationBool}))
 
 
@@ -590,16 +590,16 @@ def view_form(slug):
     queriedForm = Form.find(slug=slug)
     if not queriedForm:
         if g.current_user:
-            flash(gettext("Can't find that form"), 'warning')
+            flash(_("Can't find that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
         else:
             return render_template('page-not-found.html'), 404
     if not queriedForm.is_public():
         if g.current_user:
             if queriedForm.expired:
-                flash(gettext("That form has expired"), 'warning')
+                flash(_("That form has expired"), 'warning')
             else:
-                flash(gettext("That form is not public"), 'warning')
+                flash(_("That form is not public"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
         if queriedForm.expired:
             return render_template('form-has-expired.html',

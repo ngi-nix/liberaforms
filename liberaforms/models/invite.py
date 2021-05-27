@@ -59,4 +59,4 @@ class Invite(db.Model, CRUD):
 
     @staticmethod
     def default_message():
-        return gettext("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")
+        return _("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")
