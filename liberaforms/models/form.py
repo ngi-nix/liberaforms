@@ -10,7 +10,7 @@ import shutil
 import unicodecsv as csv
 
 from flask import current_app, g
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY

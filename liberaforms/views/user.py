@@ -10,7 +10,7 @@ from threading import Thread
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import session, flash
-from flask_babel import gettext
+from flask_babel import gettext as _
 from flask_babel import refresh as babel_refresh
 
 #from liberaforms import app

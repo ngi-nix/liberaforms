@@ -9,7 +9,7 @@ import os, json
 from flask import g, request, render_template, redirect
 from flask import session, flash, Blueprint
 from flask import send_file, after_this_request
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms.models.user import User
 from liberaforms.models.form import Form

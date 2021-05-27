@@ -7,7 +7,7 @@ This file is part of LiberaForms.
 
 import json
 from flask import session
-from flask_babel import gettext
+from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
 
 

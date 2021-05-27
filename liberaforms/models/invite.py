@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import datetime
-from flask_babel import gettext
+from flask_babel import gettext as _
 from sqlalchemy.dialects.postgresql import JSONB
 from liberaforms.utils.database import CRUD
 from liberaforms import db

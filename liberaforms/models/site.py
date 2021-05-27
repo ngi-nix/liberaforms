@@ -9,7 +9,7 @@ import os, datetime, markdown, shutil
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
 from flask import current_app
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY

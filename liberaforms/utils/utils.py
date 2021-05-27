@@ -10,7 +10,7 @@ from pprint import pformat
 
 from flask import Response, redirect, request, url_for
 from flask import current_app, g, session
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import babel
 

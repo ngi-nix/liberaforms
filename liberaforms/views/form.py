@@ -10,7 +10,7 @@ from threading import Thread
 from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
 from flask import session, flash, send_file, after_this_request
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import csrf
 from liberaforms.models.form import Form

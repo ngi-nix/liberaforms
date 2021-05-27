@@ -9,7 +9,7 @@ import os, json
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import session, flash
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
