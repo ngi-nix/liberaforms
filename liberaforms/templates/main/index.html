@@ -9,33 +9,49 @@
 <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
 {% endif %}
 
+{% if g.is_admin and request.args.get('edit') %}
+  {% set show_editor = True %}
+{% endif %}
 
 <div class="container">
 <div class="row">
-    <div class="col-md-1"></div>
-    <div class="col-md-10">
-    <div id="blurb" class="marked-up">
+  <div class="col-md-1"></div>
+  <div class="col-md-10">
+
+  {% if g.is_admin %}
+    <div id="edit_mode"
+         style="{% if show_editor != True %}display:none{% endif %}">
+      <input id="save-edit"
+             class="btn-success btn"
+             type="button"
+             value="{%trans%}Save{%endtrans%}" />
+      <input id="cancel-edit"
+             class="btn-primary btn"
+             type="button"
+             value="{%trans%}Cancel{%endtrans%}" />
+      <hr />
+      <form id="editor-form" action="/site/save-blurb" method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <textarea id="sm-editor" name="editor">{{ site.blurb['markdown'] }}</textarea>
+      </form>
+    </div>
+    <div id="display_mode"
+         style="{% if show_editor == True %}display:none{% endif %}">
+      <input id="show-editor"
+            class="btn-success btn"
+            type="button"
+            value="{%trans%}Edit text{%endtrans%}" />
+      <hr />
+      <div id="blurb" class="marked-up">
         {{ site.blurb['html']|safe }}
-        {% if g.is_admin %}
-        <p></p>
-        <hr />
-        <input id="show-editor" class="btn-success btn" type="button" value="{%trans%}Edit text{%endtrans%}" />
-        {% endif %}
+      </div>
     </div>
-
-    {% if g.is_admin %}
-    <div id="editor" style="display:none">
-        <input id="save-edit" class="btn-success btn" type="button" value="{%trans%}Save{%endtrans%}" />
-        <input id="cancel-edit" class="btn-primary btn" type="button" value="{%trans%}Cancel{%endtrans%}" />
-        <p></p>
-        <form id="editor-form" action="/site/save-blurb" method="post">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <textarea id="sm-editor" name="editor">{{ site.blurb['markdown'] }}</textarea>
-        </form>
-    </div>
-    {% endif %}
-
-    </div>
+  {% else %}
+      <div id="blurb" class="marked-up">
+        {{ site.blurb['html']|safe }}
+      </div>
+  {% endif %}
+  </div>
 </div>
 </div>
 
@@ -58,20 +74,20 @@ $(document).ready(function() {
                              });
 
     $("#show-editor").click(function(){
-        $('#blurb').hide();
-        $('#editor').show();
+        $('#display_mode').hide();
+        $('#edit_mode').show();
         $('.flash_message').hide();
         simplemde.value($("#sm-editor").val())
         window.scrollTo(0,0);
     });
     $("#save-edit").click(function(){
-        $('#editor').hide();
+        $('#edit_mode').hide();
         simplemde.toTextArea();
         $("#editor-form").submit();
     });
     $("#cancel-edit").click(function(){
-        $('#editor').hide();
-        $('#blurb').show();
+        $('#edit_mode').hide();
+        $('#display_mode').show();
     });
 });
 </script>
