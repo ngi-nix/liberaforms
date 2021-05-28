@@ -226,6 +226,28 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
+    def test_toggle_newuser_uploadsdefault(self, site, admin_client, anon_client):
+        """ Tests permissions
+            Tests toggle
+        """
+        url = "/site/toggle-newuser-uploads-default"
+        response = anon_client.post(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        initial_newuser_uploadsdefault = site.newuser_uploadsdefault
+        response = admin_client.post(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json == {"uploads": site.newuser_uploadsdefault}
+        assert initial_newuser_uploadsdefault != site.newuser_uploadsdefault
+
     def test_edit_public_link_creation(self, site, admin_client, anon_client):
         """ Tests valid and invalid ports
             Tests admin permission

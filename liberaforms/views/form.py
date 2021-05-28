@@ -54,16 +54,16 @@ def new_form(templateID=None):
 
 
 @form_bp.route('/forms/edit', methods=['GET', 'POST'])
-@form_bp.route('/forms/edit/<int:id>', methods=['GET', 'POST'])
+@form_bp.route('/forms/edit/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required
-def edit_form(id=None):
+def edit_form(form_id=None):
     queriedForm=None
-    if id:
-        if session['form_id'] != str(id):
+    if form_id:
+        if session['form_id'] != str(form_id):
             flash_text = gettext("Something went wrong. id does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
-        queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+        queriedForm = Form.find(id=form_id, editor_id=g.current_user.id)
         if not queriedForm:
             flash(gettext("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
@@ -72,9 +72,16 @@ def edit_form(id=None):
             session['slug'] = queriedForm.slug
         elif 'slug' in request.form:
             session['slug'] = sanitizers.sanitize_slug(request.form['slug'])
+            if not form_helper.is_slug_available(session['slug']):
+                flash(gettext("Something went wrong. Slug not unique!"), 'error')
+                return redirect(make_url_for('form_bp.edit_form'))
         if not session['slug']:
             flash(gettext("Something went wrong. No slug!"), 'error')
             return redirect(make_url_for('form_bp.my_forms'))
+
+        #if form_id and not form_helper.is_slug_available(session['slug']):
+        #    flash(gettext("Something went wrong. slug is not unique."), 'error')
+        #    return redirect(make_url_for('form_bp.edit_form'))
         structure = form_helper.repair_form_structure(
                                         json.loads(request.form['structure'])
                                 )
@@ -102,12 +109,8 @@ def is_slug_available():
         return JsonResponse(json.dumps({'slug':"", 'available':False}))
     available = True
     slug=sanitizers.sanitize_slug(slug)
-    if not slug:
-        available = False
-    elif Form.find(slug=slug):
-        available = False
-    elif slug in current_app.config['RESERVED_SLUGS']:
-        available = False
+    if not (slug and form_helper.is_slug_available(slug)):
+        return JsonResponse(json.dumps({'slug':slug, 'available': False}))
     # we return a sanitized slug as a suggestion for the user.
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
 
@@ -172,12 +175,9 @@ def save_form(id=None):
         if not session['slug']:
             flash(gettext("Slug is missing."), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
-        if Form.find(slug=session['slug']):
-            flash(gettext("Slug is not unique. %s" % (session['slug'])), 'error')
-            return redirect(make_url_for('form_bp.edit_form'))
-        if session['slug'] in current_app.config['RESERVED_SLUGS']:
-            # TRANSLATION: Slug is reserved. <a_word>
-            flash(gettext("Slug is reserved. %s" % (session['slug'])), 'error')
+        if not form_helper.is_slug_available(session['slug']):
+            # TRANSLATION: Slug is not available. <a_word>
+            flash(gettext("Slug is not available. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
             # this new form is a duplicate
@@ -310,6 +310,7 @@ def inspect_form(id):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     # prepare the session for possible form edit
+    pp(queriedForm.structure)
     form_helper.populate_session_with_form(queriedForm)
     return render_template('inspect-form.html', form=queriedForm)
 

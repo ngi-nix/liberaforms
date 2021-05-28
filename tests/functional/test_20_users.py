@@ -75,6 +75,8 @@ class TestNewUser():
         users['test_user'] = User.find(username=os.environ['TEST_USERNAME'])
         assert users['test_user'] != None
         assert users['test_user'].validatedEmail == False
+        # site.newuser_uploadsdefault has been set to True
+        users['test_user'].uploads_enabled == True
         # enable the user. validate the email to continue tests in this module
         users['test_user'].validatedEmail = True
         users['test_user'].save()

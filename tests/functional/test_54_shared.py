@@ -94,7 +94,7 @@ class TestSharedForm():
         form_id=forms['test_form'].id
         initial_log_count = forms['test_form'].log.count()
         url = f"/forms/remove-shared-notification/{form_id}"
-        shared_with_email = forms['test_form'].sharedNotifications[0]
+        shared_with_email = forms['test_form'].shared_notifications[0]
         response = client.post(
                         url,
                         data = {

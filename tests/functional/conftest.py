@@ -18,6 +18,7 @@ def site(db):
 def forms():
     return {
         'test_form': None,
+        'test_form_2': None,
     }
 
 @pytest.fixture(scope="module")

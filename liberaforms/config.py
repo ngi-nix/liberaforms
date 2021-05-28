@@ -104,11 +104,11 @@ class Config(object):
         UPLOAD_DIR = fqdn_uploads_dir
     if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
         ENABLE_REMOTE_STORAGE = True
+        MINIO_HOST = os.environ['MINIO_HOST']
+        MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
+        MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
     else:
         ENABLE_REMOTE_STORAGE = False
-    MINIO_HOST = os.environ['MINIO_HOST']
-    MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
-    MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
 
     @staticmethod
     def init_app(app):

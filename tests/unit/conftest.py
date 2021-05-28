@@ -32,6 +32,6 @@ def test_user():
         preferences = User.default_user_preferences(),
         admin = User.default_admin_settings(),
         validatedEmail = True,
-        uploadsEnabled = False
+        uploads_enabled = os.environ['ENABLE_UPLOADS']
     )
     return user

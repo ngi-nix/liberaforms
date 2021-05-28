@@ -53,9 +53,7 @@
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-7">
-        <form id="result"
-              method="POST"
-              action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
+        <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <input type="hidden" id="structure" name="structure" />
             <input id="introduction-text" type="hidden" name="introductionTextMD" />

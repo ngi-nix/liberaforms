@@ -15,8 +15,10 @@ TEST_DB_PASSWORD="db_password"
 TOKEN_EXPIRATION=604800
 SESSION_TYPE=filesystem
 
-# See docs/Uploads.md
+# See docs/upload.md
 ENABLE_UPLOADS = False
+MAX_FILE_UPLOAD_SIZE=50 # Kb
+ENABLE_REMOTE_STORAGE=False
 
 LOG_TYPE=stream
 LOG_DIR=./logs
