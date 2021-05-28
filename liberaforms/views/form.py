@@ -26,7 +26,7 @@ from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
 import liberaforms.utils.wtf as wtf
 
-from pprint import pprint as pp
+#from pprint import pprint
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -133,7 +133,7 @@ def conditions_form(id):
     if not queriedForm:
         flash(gettext("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #pp(queriedForm.structure)
+    #pprint(queriedForm.structure)
     return render_template('conditions.html', form=queriedForm)
 
 
@@ -188,7 +188,7 @@ def save_form(id=None):
             consentTexts=[Form.new_data_consent()]
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
-        #pp(formStructure)
+        #pprint(formStructure)
         new_form_data={
                         "slug": session['slug'],
                         "structure": formStructure,
@@ -310,7 +310,7 @@ def inspect_form(id):
         flash(gettext("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     # prepare the session for possible form edit
-    pp(queriedForm.structure)
+    #pprint(queriedForm.structure)
     form_helper.populate_session_with_form(queriedForm)
     return render_template('inspect-form.html', form=queriedForm)
 
