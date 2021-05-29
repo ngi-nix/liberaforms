@@ -149,7 +149,7 @@ def delete_answers(id):
     return render_template('delete-answers.html', form=queriedForm)
 
 
-@answers_bp.route('/file/<int:form_id>/<string:key>', methods=['GET'])
+@answers_bp.route('/attachment/<int:form_id>/<string:key>', methods=['GET'])
 @enabled_user_required
 @sanitized_key_required
 def download_attachment(form_id, key):

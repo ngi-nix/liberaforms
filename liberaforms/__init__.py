@@ -67,6 +67,7 @@ def register_blueprints(app):
     from liberaforms.views.errors import errors_bp
     from liberaforms.views.main import main_bp
     from liberaforms.views.user import user_bp
+    from liberaforms.views.media import media_bp
     from liberaforms.views.form import form_bp
     from liberaforms.views.site import site_bp
     from liberaforms.views.admin import admin_bp
@@ -75,6 +76,7 @@ def register_blueprints(app):
     app.register_blueprint(errors_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(media_bp)
     app.register_blueprint(form_bp)
     app.register_blueprint(site_bp)
     app.register_blueprint(admin_bp)

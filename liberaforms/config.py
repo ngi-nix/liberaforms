@@ -88,20 +88,19 @@ class Config(object):
     LOG_DIR = os.environ['LOG_DIR']
 
     root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
-    root_dir = os.path.abspath(root_dir)
-    instancefiles = 'instancefiles'
-    BRAND_DIR = os.path.join(root_dir, instancefiles, 'brand')
-    UPLOAD_DIR = os.path.join(root_dir, instancefiles, 'uploads')
+    uploads_dir = os.path.abspath(os.path.join(root_dir, 'uploads'))
+    MEDIA_DIR = os.path.join(uploads_dir, 'media')
+    BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
+    ATTACHMENT_DIR = os.path.join(uploads_dir, 'attachments')
     if 'FQDN' in os.environ:
         # LiberaForms cluster project requires a unique directory
-        fqdn_brand_dir = os.path.join(BRAND_DIR, "hosts", os.environ['FQDN'])
+        MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
+        fqdn_brand_dir = os.path.join(MEDIA_DIR, "brand")
         if not os.path.isdir(fqdn_brand_dir):
             shutil.copytree(BRAND_DIR, fqdn_brand_dir)
         BRAND_DIR = fqdn_brand_dir
-        fqdn_uploads_dir = os.path.join(UPLOAD_DIR, "hosts", os.environ['FQDN'])
-        if not os.path.isdir(fqdn_uploads_dir):
-            shutil.copytree(UPLOAD_DIR, fqdn_uploads_dir)
-        UPLOAD_DIR = fqdn_uploads_dir
+        ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
+
     if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
         ENABLE_REMOTE_STORAGE = True
         MINIO_HOST = os.environ['MINIO_HOST']

@@ -1,0 +1,95 @@
+<!-- Modal -->
+<style>
+  .form-text { margin-top:0; }
+</style>
+
+<div class="modal fade"
+     id="insert_image_modal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="insert_image_modalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="insert_image_modalLabel">
+          {{trans}}Insert image{{endtrans}}
+        </h5>
+        <button type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="{{trans}}Cancel{{endtrans}}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="insert_image_form" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="image_alt_text">
+              {{trans}}Alternative text{{endtrans}}
+            </label>
+            <small id="imageAltTextHelp"
+                   class="form-text text-muted">
+              {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
+            </small>
+            <input type="text"
+                  class="form-control"
+                  id="image_alt_text"
+                  aria-describedby="imageAltTextHelp"
+                  placeholder="{{trans}}A photo of a horse galloping on the beach{{endtrans}}" />
+          </div>
+
+          <div class="form-group">
+            <label for="image_url">
+              {{trans}}Image URL{{endtrans}}
+            </label>
+            <small id="imageAltTextHelp"
+                   class="form-text text-muted">
+              {{trans}}An image available on the Internet.{{endtrans}}
+            </small>
+            <input type="url"
+                  class="form-control"
+                  id="image_url"
+                  placeholder="https://" />
+          </div>
+          {% if config['ENABLE_UPLOADS'] == True %}
+          <div class="form-group">
+            <label for="new_image_file">
+              {{trans}}Or upload an image{{endtrans}}
+            </label>
+            <input type="file"
+                   class="form-control-file"
+                   id="new_image_file">
+            <span id="new_image_file_error"
+                  class="help-block"
+                  style="color:#B94A48; display:none">
+              {{trans}}The file is not an image.{{endtrans}}
+            </span>
+          </div>
+          {% endif %}
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="imageModalSaveButton"
+                type="submit"
+                class="btn btn-success">
+            {{trans}}Insert{{endtrans}}
+        </button>
+        <button type="button"
+                class="btn btn-primary"
+                data-dismiss="modal">
+            {{trans}}Cancel{{endtrans}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+jQuery(function($) {
+  $("#insert_image_form").on('change', '#new_image_file', function(){
+    $('#new_image_file_error').hide()
+  });
+});
+</script>

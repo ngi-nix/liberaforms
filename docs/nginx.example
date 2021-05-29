@@ -25,10 +25,13 @@ server {
             alias  /path/to/liberaforms/liberaforms/static;
         }
         location /favicon.png {
-            alias  /path/to/liberaforms/instancesfiles/brand/favicon.png;
+            alias  /path/to/liberaforms/uploads/media/brand/favicon.png;
         }
         location /brand/emailheader.png {
-            alias  /path/to/liberaforms/instancesfiles/brand/emailheader.png;
+            alias  /path/to/liberaforms/uploads/media/emailheader.png;
+        }
+        location /media/ {
+            alias /path/to/liberaforms/uploads/media/;
         }
         proxy_pass          http://liberaforms:5000;
         proxy_set_header    Host    $host;

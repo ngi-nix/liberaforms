@@ -72,7 +72,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     form = db.relationship("Form", viewonly=True)
 
     def __init__(self, answer):
-        Storage.__init__(self)
+        Storage.__init__(self, public=False)
         self.created = datetime.datetime.now().isoformat()
         self.answer_id = answer.id
         self.form_id = answer.form.id
@@ -90,25 +90,25 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     @property
     def directory(self):
-        return "answers/{}".format(self.form_id)
+        return str(self.form_id)
 
     def save_attachment(self, file):
         self.file_name = file.filename
         self.storage_name = f"{utils.gen_random_string()}.{str(self.answer_id)}"
-        saved = super().save_file(file, self.directory, self.storage_name)
+        saved = super().save_file(file, self.storage_name, self.directory)
         if saved:
             self.save()
         return saved
 
     def delete_attachment(self):
-        return super().delete_file(self.directory, self.storage_name)
+        return super().delete_file(self.storage_name, self.directory)
 
     def get_url(self):
         host_url = self.form.site.host_url
-        return f"{host_url}file/{self.form_id}/{self.storage_name}"
+        return f"{host_url}attachment/{self.form_id}/{self.storage_name}"
 
     def get_attachment(self):
-        bytes = super().get_file(self.directory, self.storage_name)
+        bytes = super().get_file(self.storage_name, self.directory)
         return bytes, self.file_name
 
 

@@ -470,11 +470,11 @@ class Form(db.Model, CRUD):
         return field_positions
 
     def get_attachment_dir(self):
-        return os.path.join('answers', str(self.id))
+        return str(self.id)
 
     def delete_answers(self):
         self.answers.delete()
-        attachment_dir = os.path.join(current_app.config['UPLOAD_DIR'],
+        attachment_dir = os.path.join(current_app.config['ATTACHMENT_DIR'],
                                       self.get_attachment_dir())
         if os.path.exists(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)

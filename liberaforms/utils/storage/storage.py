@@ -1,7 +1,7 @@
 """
 This file is part of LiberaForms.
 
-# SPDX-FileCopyrightText: 2020 LiberaForms.org
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
@@ -13,9 +13,15 @@ from liberaforms.utils.storage.remote import RemoteStorage
 
 
 class Storage:
+    public = False
+    def __init__(self, public=False):
+        self.public = public
 
     def storage_directory_path(self, sub_dir):
-        return os.path.join(current_app.config['UPLOAD_DIR'], sub_dir)
+        if self.public:
+            return os.path.join(current_app.config['MEDIA_DIR'], sub_dir)
+        else:
+            return os.path.join(current_app.config['ATTACHMENT_DIR'], sub_dir)
 
     def save_to_disk(self, tmp_file_path, sub_dir, storage_name):
         local_storage_dir = self.storage_directory_path(sub_dir)
@@ -30,7 +36,7 @@ class Storage:
             logging.error(f"{error}: {file_path}")
             return False
 
-    def save_file(self, file, sub_dir, storage_name):
+    def save_file(self, file, storage_name, sub_dir=""):
         tmp_dir = current_app.config['TMP_DIR']
         tmp_file_path = f"{tmp_dir}/{storage_name}"
         try:
@@ -66,7 +72,7 @@ class Storage:
                 logging.error(f"Upload failed. Did not save file: {file_path}")
                 return False
 
-    def get_file(self, sub_dir, storage_name):
+    def get_file(self, storage_name, sub_dir=""):
         if self.local_filesystem:
             local_storage_dir = self.storage_directory_path(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)
@@ -88,7 +94,7 @@ class Storage:
                 logging.error(f"Failed to retreive remote object: {file_path}")
                 return False
 
-    def delete_file(self, sub_dir, storage_name):
+    def delete_file(self, storage_name, sub_dir=""):
         if self.local_filesystem:
             local_storage_dir = self.storage_directory_path(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)

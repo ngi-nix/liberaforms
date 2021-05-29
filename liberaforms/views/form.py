@@ -17,6 +17,7 @@ from liberaforms import csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
 from liberaforms.models.answer import Answer, AnswerAttachment
+from liberaforms.models.media import Media
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
