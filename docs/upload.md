@@ -2,9 +2,10 @@
 
 ## ENABLE_UPLOADS
 
-When set to `True` users can include a 'upload a file' field in their forms.
+When set to `True` users can
+* include a file attachment field in their forms. Attachments are saved as `./uploads/attachments/<form_id>/<random_string>.<answer_id>`
+* upload images to include in the form's 'Introduction text'. Images are saved as `./uploads/media/<random_string>.<extension>`
 
-Form attachments are saved like this: `./answers/<form_id>/<random_string>.<answer_id>`
 
 ## MAX_FILE_UPLOAD_SIZE
 
@@ -13,7 +14,7 @@ The maximum size in Kbytes of the uploaded files
 ## ENABLE_REMOTE_STORAGE
 
 `False`: uploaded files are saved on your server's filesystem in the
-directory `instancefiles/uploads`
+directory `./uploads`
 
 `True`: files are saved on an Object Storage Server. LiberaForms uses the Minio client library which uses the S3 protocol.
 Minio server software is free software. You will need an account on a server to use this option.
@@ -38,5 +39,5 @@ MINIO_SECRET_KEY=
 
 If remote storage is configured and LiberaForms is unable to use the server (temporarily unavailable, network issues, etc), then:
 
-* uploaded files are saved to `instancefiles/uploads`
+* uploaded files are saved locally on the server at `./uploads`
 * the problem is logged

@@ -6,9 +6,13 @@ This file is part of LiberaForms.
 """
 
 import os, logging, datetime
+import pathlib
+from PIL import Image
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.attributes import flag_modified
 #from sqlalchemy import event
+from werkzeug.datastructures import FileStorage
+from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
 from liberaforms.utils.database import CRUD
@@ -43,14 +47,19 @@ class Media(db.Model, CRUD, Storage):
     def find_all(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
 
-    def save_media(self, user, file, alt_text):
+    def save_media(self, user, file, alt_text, storage_name=None):
         self.user_id = user.id
         self.alt_text = alt_text
         self.file_name = file.filename
-        self.storage_name = utils.gen_random_string()
+        if not storage_name:
+            extension = pathlib.Path(self.file_name).suffix
+            self.storage_name = f"{utils.gen_random_string()}{extension}"
+        else:
+            self.storage_name = storage_name
         saved = super().save_file(file, self.storage_name)
         if saved:
             self.save()
+            self.save_thumbnail()
         return saved
 
     def delete_media(self):
@@ -58,11 +67,33 @@ class Media(db.Model, CRUD, Storage):
 
     def get_url(self):
         host_url = self.user.site.host_url
-        return f"{host_url}media/{self.storage_name}"
+        return f"{host_url}file/{self.storage_name}"
 
     def get_media(self):
         bytes = super().get_file(self.storage_name)
         return bytes, self.file_name
+
+    def save_thumbnail(self):
+        try:
+            storage_name = f"tn-{self.storage_name}"
+            tmp_thumbnail_path = os.path.join(current_app.config['TMP_DIR'],
+                                              storage_name)
+            (stream, file_name) = self.get_media()
+            with open(tmp_thumbnail_path, "wb") as outfile:
+                #Copy the BytesIO stream to the output file
+                outfile.write(stream.getbuffer())
+            image = Image.open(tmp_thumbnail_path)
+            image.thumbnail((50,50))
+            image.save(tmp_thumbnail_path)
+            storage = Storage(public=True)
+            storage.save_file(tmp_thumbnail_path, storage_name, sub_dir="")
+        except Exception as error:
+            logging.warning(f"Could not create thumbnail: {error}")
+
+    def get_thumbnail_url(self):
+        host_url = self.user.site.host_url
+        storage_name = f"tn-{self.storage_name}"
+        return f"{host_url}file/{storage_name}"
 
 
 #@event.listens_for(AnswerAttachment, "after_delete")

@@ -5,9 +5,8 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, shutil
+import os, logging, shutil
 from io import BytesIO
-import logging
 from flask import current_app
 from liberaforms.utils.storage.remote import RemoteStorage
 
@@ -28,22 +27,24 @@ class Storage:
         try:
             if not os.path.exists(local_storage_dir):
                 os.makedirs(local_storage_dir)
-            file_path = os.path.join(local_storage_dir, storage_name)
-            shutil.copyfile(tmp_file_path, file_path)
+            dest_file_path = os.path.join(local_storage_dir, storage_name)
+            shutil.move(tmp_file_path, dest_file_path)
             return True
         except Exception as error:
             #logging.error(f"Failed to save file to local filesystem: {file_path}")
-            logging.error(f"{error}: {file_path}")
+            logging.error(f"Failed to save file to local filesystem: {error}: {file_path}")
+            os.remove(tmp_file_path)
             return False
 
     def save_file(self, file, storage_name, sub_dir=""):
         tmp_dir = current_app.config['TMP_DIR']
         tmp_file_path = f"{tmp_dir}/{storage_name}"
-        try:
-            file.save(tmp_file_path)
-        except:
-            logging.error(f"Upload failed. Cannot save to tmp_file. : {tmp_file_path}")
-            return False
+        if not os.path.exists(tmp_file_path):
+            try:
+                file.save(tmp_file_path)
+            except Exception as error:
+                logging.error(f"Cannot save to tmp_file. : {error}")
+                return False
         if current_app.config['ENABLE_REMOTE_STORAGE']:
             try:
                 saved = RemoteStorage().add_object(tmp_file_path,
@@ -61,7 +62,7 @@ class Storage:
                     return True
                 else:
                     file_path = f"{sub_dir}/{storage_name}"
-                    logging.error(f"Upload failed. Did not save file: {file_path}")
+                    logging.error(f"Did not save file: {file_path}")
                     return False
         else:
             saved = self.save_to_disk(tmp_file_path, sub_dir, storage_name)

@@ -30,7 +30,7 @@ server {
         location /brand/emailheader.png {
             alias  /path/to/liberaforms/uploads/media/emailheader.png;
         }
-        location /media/ {
+        location /file/ {
             alias /path/to/liberaforms/uploads/media/;
         }
         proxy_pass          http://liberaforms:5000;

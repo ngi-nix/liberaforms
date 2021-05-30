@@ -25,20 +25,20 @@ media_bp = Blueprint('media_bp',
 
 @media_bp.route('/media/save', methods=['POST'])
 @enabled_user_required
-def save_image():
+def save_media():
     if not (current_app.config['ENABLE_UPLOADS'] and request.files['file']):
         return JsonResponse(json.dumps({"image_url": ""}))
+    file = request.files['file']
     # TODO: check mimetype and size first
     media = Media()
     saved = media.save_media(g.current_user,
-                             request.files['file'],
+                             file,
                              request.form['alt_text'])
-    url = media.get_url()
-
-    return JsonResponse(json.dumps({"image_url": url}))
+    return JsonResponse(json.dumps({"image_url": media.get_url()}))
 
 
-@media_bp.route('/media/list/<string:username>', methods=['GET'])
+@media_bp.route('/media/list', methods=['GET'])
 @enabled_user_required
-def list_media(username):
-    return render_template('list-media.html')
+def list_media():
+    media = Media.find_all(user_id=g.current_user.id)
+    return render_template('list-media.html', media=media)

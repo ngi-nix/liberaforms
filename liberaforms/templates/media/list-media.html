@@ -2,6 +2,12 @@
 {% block content %}
 
 
+<style>
+  .table > tbody > tr > td {
+       vertical-align: middle;
+  }
+</style>
+
 <div class="container">
 <div class="row">
   <div class="col-md-3"></div>
@@ -11,10 +17,30 @@
       {%trans%}My media{%endtrans%}
     </div>
 
-
+    <table class="table table-sm">
+      <tbody>
+        {% for image in media %}
+        <tr>
+          <td>
+            <img src="{{ image.get_thumbnail_url() }}" />
+          </td>
+          <td>
+            {{ image.file_name }}
+          </td>
+          <td>
+            <input class="btn btn-xs btn-danger"
+                   type="button" value="{%trans%}Remove{%endtrans%}"
+                   onClick="js:removeEditor('{{image.id}}');"
+            />
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
 </div>
+
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
