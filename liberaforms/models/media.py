@@ -47,16 +47,17 @@ class Media(db.Model, CRUD, Storage):
     def find_all(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
 
-    def save_media(self, user, file, alt_text, storage_name=None):
+    @property
+    def directory(self):
+        return str(self.user_id)
+
+    def save_media(self, user, file, alt_text):
         self.user_id = user.id
         self.alt_text = alt_text
         self.file_name = file.filename
-        if not storage_name:
-            extension = pathlib.Path(self.file_name).suffix
-            self.storage_name = f"{utils.gen_random_string()}{extension}"
-        else:
-            self.storage_name = storage_name
-        saved = super().save_file(file, self.storage_name)
+        extension = pathlib.Path(self.file_name).suffix
+        self.storage_name = f"{utils.gen_random_string()}{extension}"
+        saved = super().save_file(file, self.storage_name, self.directory)
         if saved:
             self.save()
             self.save_thumbnail()
@@ -64,7 +65,7 @@ class Media(db.Model, CRUD, Storage):
 
     def delete_media(self):
         Storage.__init__(self, public=True)
-        removed = super().delete_file(self.storage_name)
+        removed = super().delete_file(self.storage_name, self.directory)
         if removed:
             self.delete_thumbnail()
             self.delete()
@@ -73,10 +74,10 @@ class Media(db.Model, CRUD, Storage):
 
     def get_url(self):
         host_url = self.user.site.host_url
-        return f"{host_url}file/{self.storage_name}"
+        return f"{host_url}file/{self.user_id}/{self.storage_name}"
 
     def get_media(self):
-        bytes = super().get_file(self.storage_name)
+        bytes = super().get_file(self.storage_name, self.directory)
         return bytes, self.file_name
 
     def save_thumbnail(self):
@@ -92,18 +93,18 @@ class Media(db.Model, CRUD, Storage):
             image.thumbnail((50,50))
             image.save(tmp_thumbnail_path)
             storage = Storage(public=True)
-            storage.save_file(tmp_thumbnail_path, storage_name, sub_dir="")
+            storage.save_file(tmp_thumbnail_path, storage_name, self.directory)
         except Exception as error:
             logging.warning(f"Could not create thumbnail: {error}")
 
     def delete_thumbnail(self):
         storage_name = f"tn-{self.storage_name}"
-        return super().delete_file(storage_name)
+        return super().delete_file(storage_name, self.directory)
 
     def get_thumbnail_url(self):
         host_url = self.user.site.host_url
         storage_name = f"tn-{self.storage_name}"
-        return f"{host_url}file/{storage_name}"
+        return f"{host_url}file/{self.user_id}/{storage_name}"
 
     def get_values(self):
         return {

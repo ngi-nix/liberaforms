@@ -36,7 +36,7 @@ class Storage:
             os.remove(tmp_file_path)
             return False
 
-    def save_file(self, file, storage_name, sub_dir=""):
+    def save_file(self, file, storage_name, sub_dir):
         tmp_dir = current_app.config['TMP_DIR']
         tmp_file_path = f"{tmp_dir}/{storage_name}"
         if not os.path.exists(tmp_file_path):
@@ -73,7 +73,7 @@ class Storage:
                 logging.error(f"Upload failed. Did not save file: {file_path}")
                 return False
 
-    def get_file(self, storage_name, sub_dir=""):
+    def get_file(self, storage_name, sub_dir):
         if self.local_filesystem:
             local_storage_dir = self.storage_directory_path(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)
@@ -95,7 +95,7 @@ class Storage:
                 logging.error(f"Failed to retreive remote object: {file_path}")
                 return False
 
-    def delete_file(self, storage_name, sub_dir=""):
+    def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:
             local_storage_dir = self.storage_directory_path(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)
