@@ -108,6 +108,35 @@
                 </td>
             </tr>
         </table>
+{% if config['ENABLE_UPLOADS'] %}
+        <div class="title_2 delimited">
+            {%trans%}My media{%endtrans%}
+        </div>
+        <table class="table table-sm sparse-table">
+            <tr>
+                <td>
+                  {%trans%}Manage the files you have uploaded{%endtrans%}
+                </td>
+                <td class="text-right">
+                  <a href="/media"
+                     class="btn btn-xs btn-primary">
+                     {%trans%}Edit{%endtrans%}
+                  </a>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td>
+                    {%trans%}Consentment texts{%endtrans%}
+                </td>
+                <td class="text-right">
+                  <a href="/user/{{g.current_user.username}}/consent"
+                     class="btn btn-xs btn-primary">
+                     {%trans%}Edit{%endtrans%}
+                  </a>
+                </td>
+            </tr>
+        </table>
+{% endif %}
 
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">

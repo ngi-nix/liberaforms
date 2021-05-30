@@ -8,9 +8,12 @@
 
     <div class="col-md-5">
       <div class="title_1 delimited">
-        {%trans%}File extensions{%endtrans%}
+        {%trans%}Form attachments{%endtrans%}
       </div>
-
+      <div class="title_text_subtext">
+      {%trans%}These file types can be uploaded with the forms{%endtrans%}
+      </div>
+      
       <form method="POST">
         {{ wtform.csrf_token }}
         {{ wtform.extensions.label }} <span class='required'>●</span><br />

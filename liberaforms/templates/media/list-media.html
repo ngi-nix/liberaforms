@@ -11,26 +11,86 @@
 <div class="container">
 <div class="row">
   <div class="col-md-3"></div>
-  <div class="col-md-5">
+  <div class="col-md-6">
 
     <div class="title_1 delimited">
       {%trans%}My media{%endtrans%}
+      <div style="float:right">
+          <button class="btn btn-primary btn-sm"
+                  onclick="js:show_form()">
+              {%trans%}Upload a file{%endtrans%}
+              <i class="fa fa-upload" aria-hidden="true"></i>
+          </button>
+      </div>
     </div>
+    <div class="title_text_subtext">
+      {%trans%}These files can be included in your forms.{%endtrans%}
+      <br />
+      {%trans%}Please help save disk space on the server by deleting unused files.{%endtrans%}
+    </div>
+    <form id="upload_form"
+          style="display:none"
+          enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="image_alt_text">
+          {{trans}}Alternative text{{endtrans}}
+        </label>
+        <small id="imageAltTextHelp"
+               class="form-text text-muted">
+          {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
+        </small>
+        <input type="text"
+              class="form-control"
+              id="image_alt_text"
+              aria-describedby="imageAltTextHelp"
+              placeholder="{{trans}}A photo of a horse galloping on the beach{{endtrans}}" />
+      </div>
 
-    <table class="table table-sm">
+      <div class="form-group">
+        <label for="new_image_file">
+          {{trans}}Select an image{{endtrans}}
+        </label>
+        <input type="file"
+               class="form-control-file"
+               id="new_image_file"
+               required>
+        <span id="new_image_file_error"
+              class="help-block"
+              style="color:#B94A48; display:none">
+          {{trans}}The file is not an image.{{endtrans}}
+        </span>
+      </div>
+      <div class="form-actions"
+           style="margin-bottom:2em;">
+        <input class="btn-success btn"
+               type="submit"
+               value="{%trans%}Upload{%endtrans%}"
+        />
+        <button class="btn btn-primary"
+                onclick="js:hide_form(); return false;">
+            {%trans%}Cancel{%endtrans%}
+        </button>
+      </div>
+      <hr />
+    </form>
+    <table id="media_list"
+           class="table table-sm sparse-table">
       <tbody>
         {% for image in media %}
-        <tr>
+        <tr id="media_{{image.id}}">
           <td>
             <img src="{{ image.get_thumbnail_url() }}" />
           </td>
           <td>
-            {{ image.file_name }}
+            <a href="{{ image.get_url()}}">{{ image.file_name }}</a>
           </td>
           <td>
+            {{ image.created.strftime('%Y-%m-%d') }}
+          </td>
+          <td class="text-right">
             <input class="btn btn-xs btn-danger"
                    type="button" value="{%trans%}Remove{%endtrans%}"
-                   onClick="js:removeEditor('{{image.id}}');"
+                   onClick="js:removeMedia('{{image.id}}');"
             />
           </td>
         </tr>
@@ -41,10 +101,79 @@
 </div>
 </div>
 
-
 <script>
-var csrftoken = "{{ csrf_token() }}";
-
+jQuery(function($) {
+  $("#upload_form").submit(function( event ) {
+  //$('#imageModalSaveButton').click(function() {
+    event.preventDefault();
+    var formFields = document.getElementById('upload_form').elements;
+    if (formFields['new_image_file'].files.length > 0) {
+      var file = formFields['new_image_file'].files[0];
+      if (!file.type.match('image.*')) {
+        $('#new_image_file_error').show()
+        return;
+      } else {
+        $('#new_image_file_error').hide()
+      }
+      var form_data = new FormData();
+      form_data.append('file', file);
+      form_data.append('alt_text', $('#image_alt_text').val());
+      $.ajax({
+          url : "/media/save",
+          type: "POST",
+          //enctype: 'multipart/form-data',
+          data : form_data,
+          //dataType: "json",
+          processData: false,
+          contentType: false,
+          beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+          },
+          success: function(data, textStatus, jqXHR)
+          {
+            var new_row = $('<tr id="media_'+data.id+'">');
+            html = '<img src="'+data.thumbnail_url+'" />';
+            $('<td>').html(html).appendTo(new_row);
+            html = '<a href="'+data.image_url+'">'+data.file_name+'</a>';
+            $('<td>').html(html).appendTo(new_row);
+            $('<td>').html(data.created).appendTo(new_row);
+            html = '<input class="btn btn-xs btn-danger" type="button" ';
+            html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';
+            html = html + 'onClick="js:removeMedia('+data.id+');" />';
+            $('<td class="text-right">').html(html).appendTo(new_row);
+            new_row.prependTo("#media_list");
+            hide_form();
+          }
+      });
+    }
+  });
+});
+function show_form() {
+  $('#upload_form').show();
+}
+function hide_form() {
+  $('#upload_form').hide();
+}
+function removeMedia(media_id){
+    $.ajax({
+        url : "/media/delete/"+media_id,
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data == media_id) {
+                $('#media_'+media_id).hide();
+            }
+        }
+    });
+}
 </script>
 
 {% endblock %}

@@ -63,7 +63,13 @@ class Media(db.Model, CRUD, Storage):
         return saved
 
     def delete_media(self):
-        return super().delete_file(self.storage_name)
+        Storage.__init__(self, public=True)
+        removed = super().delete_file(self.storage_name)
+        if removed:
+            self.delete_thumbnail()
+            self.delete()
+            return True
+        return False
 
     def get_url(self):
         host_url = self.user.site.host_url
@@ -89,6 +95,10 @@ class Media(db.Model, CRUD, Storage):
             storage.save_file(tmp_thumbnail_path, storage_name, sub_dir="")
         except Exception as error:
             logging.warning(f"Could not create thumbnail: {error}")
+
+    def delete_thumbnail(self):
+        storage_name = f"tn-{self.storage_name}"
+        return super().delete_file(storage_name)
 
     def get_thumbnail_url(self):
         host_url = self.user.site.host_url

@@ -31,20 +31,17 @@ class Config(object):
         "login",
         "logout",
         "static",
-        "admin",
-        "admins",
-        "user",
-        "users",
+        "admin", "admins",
+        "user", "users",
         "profile",
         "root",
-        "form",
-        "forms",
-        "site",
-        "sites",
+        "form", "forms",
+        "site", "sites",
         "update",
         "embed",
         "api",
-        "file"
+        "file", "files",
+        "media"
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
