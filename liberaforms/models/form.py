@@ -130,7 +130,9 @@ class Form(db.Model, CRUD):
     def create_field_index(structure):
         index=[]
         # Add these RESERVED fields to the index.
+        # Column title on table, to sort whether the form entries are marked or not
         index.append({'label': _("Marked"), 'name': 'marked'})
+        # Used for sort items by creation order, almost always as column title
         index.append({'label': _("Created"), 'name': 'created'})
         for element in structure:
             if 'name' in element:
@@ -176,6 +178,7 @@ class Form(db.Model, CRUD):
             result.append(item)
         if self.data_consent["enabled"]:
             # append dynamic DPL field
+            # Acronym for 'Data Privacy Law'
             result.append({"name": "DPL", "label": _("DPL")})
         return result
 
@@ -349,6 +352,7 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def defaultAfterSubmitText():
+        # Thanks text displayed when completing form as user
         text=_("Thank you!!")
         return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
@@ -726,7 +730,10 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def default_introduction_text():
+        # Example title in template for new form
         title=_("Form title")
+        # Example subtitle in template for new form
         context=_("Context")
-        content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
+        # Example content in template for new form. '\n' is used for linebreak.
+        content=_(" * Describe your form.\n * Add relevant content, links, images, etc.")
         return "## {}\n\n### {}\n\n{}".format(title, context, content)
