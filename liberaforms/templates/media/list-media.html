@@ -6,6 +6,9 @@
   .table > tbody > tr > td {
        vertical-align: middle;
   }
+  tr > td:last-of-type {
+    text-align: right;
+  }
 </style>
 
 <div class="container">
@@ -31,6 +34,9 @@
     <form id="upload_form"
           style="display:none"
           enctype="multipart/form-data">
+      <div class="title_2 delimited">
+        {%trans%}Upload a file{%endtrans%}
+      </div>
       <div class="form-group">
         <label for="image_alt_text">
           {{trans}}Alternative text{{endtrans}}
@@ -76,7 +82,7 @@
     <table id="media_list"
            class="table table-sm sparse-table">
       <tbody>
-        {% for image in media %}
+        {% for image in g.current_user.media %}
         <tr id="media_{{image.id}}">
           <td>
             <img src="{{ image.get_thumbnail_url() }}" />
@@ -87,7 +93,7 @@
           <td>
             {{ image.created.strftime('%Y-%m-%d') }}
           </td>
-          <td class="text-right">
+          <td>
             <input class="btn btn-xs btn-danger"
                    type="button" value="{%trans%}Remove{%endtrans%}"
                    onClick="js:removeMedia('{{image.id}}');"
@@ -104,50 +110,50 @@
 <script>
 jQuery(function($) {
   $("#upload_form").submit(function( event ) {
-  //$('#imageModalSaveButton').click(function() {
     event.preventDefault();
     var formFields = document.getElementById('upload_form').elements;
-    if (formFields['new_image_file'].files.length > 0) {
-      var file = formFields['new_image_file'].files[0];
-      if (!file.type.match('image.*')) {
-        $('#new_image_file_error').show()
-        return;
-      } else {
-        $('#new_image_file_error').hide()
-      }
-      var form_data = new FormData();
-      form_data.append('file', file);
-      form_data.append('alt_text', $('#image_alt_text').val());
-      $.ajax({
-          url : "/media/save",
-          type: "POST",
-          //enctype: 'multipart/form-data',
-          data : form_data,
-          //dataType: "json",
-          processData: false,
-          contentType: false,
-          beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-          },
-          success: function(data, textStatus, jqXHR)
-          {
-            var new_row = $('<tr id="media_'+data.id+'">');
-            html = '<img src="'+data.thumbnail_url+'" />';
-            $('<td>').html(html).appendTo(new_row);
-            html = '<a href="'+data.image_url+'">'+data.file_name+'</a>';
-            $('<td>').html(html).appendTo(new_row);
-            $('<td>').html(data.created).appendTo(new_row);
-            html = '<input class="btn btn-xs btn-danger" type="button" ';
-            html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';
-            html = html + 'onClick="js:removeMedia('+data.id+');" />';
-            $('<td class="text-right">').html(html).appendTo(new_row);
-            new_row.prependTo("#media_list");
-            hide_form();
-          }
-      });
+    if (formFields['new_image_file'].files.length == 0) {
+      return;
     }
+    var file = formFields['new_image_file'].files[0];
+    if (!file.type.match('image.*')) {
+      $('#new_image_file_error').show()
+      return;
+    } else {
+      $('#new_image_file_error').hide()
+    }
+    var form_data = new FormData();
+    form_data.append('file', file);
+    form_data.append('alt_text', $('#image_alt_text').val());
+    $.ajax({
+        url : "/media/save",
+        type: "POST",
+        //enctype: 'multipart/form-data',
+        data : form_data,
+        //dataType: "json",
+        processData: false,
+        contentType: false,
+        beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken)
+          }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+          var new_row = $('<tr id="media_'+data.id+'">');
+          html = '<img src="'+data.thumbnail_url+'" />';
+          $('<td>').html(html).appendTo(new_row);
+          html = '<a href="'+data.image_url+'">'+data.file_name+'</a>';
+          $('<td>').html(html).appendTo(new_row);
+          $('<td>').html(data.created).appendTo(new_row);
+          html = '<input class="btn btn-xs btn-danger" type="button" ';
+          html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';
+          html = html + 'onClick="js:removeMedia('+data.id+');" />';
+          $('<td>').html(html).appendTo(new_row);
+          new_row.prependTo("#media_list");
+          hide_form();
+        }
+    });
   });
 });
 function show_form() {

@@ -264,16 +264,11 @@ jQuery(function($) {
       pos = introduction_mde.codemirror.getCursor();
       introduction_mde.codemirror.replaceRange(image, pos);
     }
-    //document.getElementById('insert_image_form').addEventListener('submit', function(evt){
-    //$("#insert_image_form").submit(function(event) {
-    //  alert(1)
-    //$("#imageModalSaveButton").click(function (event) {
-    $('#imageModalSaveButton').click(function() {
+    $('#insert_image_form').submit(function(event) {
       event.preventDefault();
       {% if config['ENABLE_UPLOADS'] == True %}
       var formFields = document.getElementById('insert_image_form').elements;
       console.log(formFields['new_image_file'].files.length)
-      //var file = $('#new_image_file').file;
       if (formFields['new_image_file'].files.length > 0) {
         var file = formFields['new_image_file'].files[0];
         if (!file.type.match('image.*')) {

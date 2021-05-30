@@ -35,21 +35,14 @@ def save_media():
                              file,
                              request.form['alt_text'])
     if saved:
-        return JsonResponse(json.dumps({
-                                "id": media.id,
-                                "created": media.created.strftime('%Y-%m-%d'),
-                                "file_name": media.file_name,
-                                "image_url": media.get_url(),
-                                "thumbnail_url": media.get_thumbnail_url(),
-                                "alt_text": media.alt_text,
-                            }))
+        return JsonResponse(json.dumps(media.get_values()))
     return JsonResponse(json.dumps(False))
 
-@media_bp.route('/media', methods=['GET'])
+@media_bp.route('/media/<string:username>', methods=['GET'])
 @enabled_user_required
-def list_media():
-    media = Media.find_all(user_id=g.current_user.id)
-    return render_template('list-media.html', media=media)
+def list_media(username):
+    #media = Media.find_all(user_id=g.current_user.id)
+    return render_template('list-media.html')
 
 @media_bp.route('/media/delete/<int:media_id>', methods=['POST'])
 @enabled_user_required
@@ -59,4 +52,12 @@ def remove_media(media_id):
         removed = media.delete_media()
         if removed:
             return JsonResponse(json.dumps(media.id))
+    return JsonResponse(json.dumps(False))
+
+@media_bp.route('/media/get-values/<int:media_id>', methods=['GET'])
+@enabled_user_required
+def get_values(media_id):
+    media = Media.find(id=media_id, user_id=g.current_user.id)
+    if media:
+        return JsonResponse(json.dumps(media.get_values()))
     return JsonResponse(json.dumps(False))

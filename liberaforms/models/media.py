@@ -105,6 +105,16 @@ class Media(db.Model, CRUD, Storage):
         storage_name = f"tn-{self.storage_name}"
         return f"{host_url}file/{storage_name}"
 
+    def get_values(self):
+        return {
+                    "id": self.id,
+                    "created": self.created.strftime('%Y-%m-%d'),
+                    "file_name": self.file_name,
+                    "image_url": self.get_url(),
+                    "thumbnail_url": self.get_thumbnail_url(),
+                    "alt_text": self.alt_text,
+                }
+
 
 #@event.listens_for(AnswerAttachment, "after_delete")
 #def delete_answer_attachment(mapper, connection, target):

@@ -35,6 +35,7 @@ class User(db.Model, CRUD):
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
+    media = db.relationship("Media", viewonly=True)
 
     def __init__(self, **kwargs):
         self.created = datetime.datetime.now().isoformat()

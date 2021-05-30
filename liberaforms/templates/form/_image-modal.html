@@ -1,6 +1,7 @@
 <!-- Modal -->
 <style>
   .form-text { margin-top:0; }
+  .mediaThumbnail { cursor: pointer; }
 </style>
 
 <div class="modal fade"
@@ -46,7 +47,7 @@
             </label>
             <small id="imageAltTextHelp"
                    class="form-text text-muted">
-              {{trans}}An image available on the Internet.{{endtrans}}
+              {{trans}}Use an image already available on the Internet.{{endtrans}}
             </small>
             <input type="url"
                   class="form-control"
@@ -54,33 +55,49 @@
                   placeholder="https://" />
           </div>
           {% if config['ENABLE_UPLOADS'] == True %}
-          <div class="form-group">
-            <label for="new_image_file">
-              {{trans}}Or upload an image{{endtrans}}
-            </label>
-            <input type="file"
-                   class="form-control-file"
-                   id="new_image_file">
-            <span id="new_image_file_error"
-                  class="help-block"
-                  style="color:#B94A48; display:none">
-              {{trans}}The file is not an image.{{endtrans}}
-            </span>
-          </div>
+            <div class="form-group">
+              <label for="new_image_file">
+                {{trans}}Or upload a new image{{endtrans}}
+              </label>
+              <input type="file"
+                     class="form-control-file"
+                     id="new_image_file">
+              <span id="new_image_file_error"
+                    class="help-block"
+                    style="color:#B94A48; display:none">
+                {{trans}}The file is not an image.{{endtrans}}
+              </span>
+            </div>
+            <div >
+              <button id="imageModalSaveButton"
+                      type="submit"
+                      class="btn btn-success">
+                  {{trans}}Insert{{endtrans}}
+              </button>
+              <button type="button"
+                      class="btn btn-primary"
+                      data-dismiss="modal">
+                  {{trans}}Cancel{{endtrans}}
+              </button>
+            </div>
+            {% if g.current_user.media %}
+            <div style="margin-top:2em;">
+              <label>
+              {{trans}}Optionally, reuse one of your previous images{{endtrans}}
+              </label>
+
+              <div id="media_list">
+                {% for image in g.current_user.media %}
+                  <img src="{{image.get_thumbnail_url()}}"
+                       class="mediaThumbnail"
+                       media_id="{{image.id}}" />
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
           {% endif %}
         </form>
-      </div>
-      <div class="modal-footer">
-        <button id="imageModalSaveButton"
-                type="submit"
-                class="btn btn-success">
-            {{trans}}Insert{{endtrans}}
-        </button>
-        <button type="button"
-                class="btn btn-primary"
-                data-dismiss="modal">
-            {{trans}}Cancel{{endtrans}}
-        </button>
       </div>
     </div>
   </div>
@@ -90,6 +107,29 @@
 jQuery(function($) {
   $("#insert_image_form").on('change', '#new_image_file', function(){
     $('#new_image_file_error').hide()
+  });
+  $(".mediaThumbnail").on("click", function() {
+    media_id = $(this).attr("media_id")
+    alert(media_id)
+    var self = this;
+    $.ajax({
+        url : "/media/get-values/"+media_id,
+        type: "GET",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data !== false) {
+              $('#image_alt_text').val(data.alt_text);
+              $('#image_url').val(data.image_url);
+              $('#insert_image_form').submit()
+            }
+        }
+    });
   });
 });
 </script>
