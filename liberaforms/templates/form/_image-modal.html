@@ -30,10 +30,10 @@
             <label for="image_alt_text">
               {{trans}}Alternative text{{endtrans}}
             </label>
-            <small id="imageAltTextHelp"
-                   class="form-text text-muted">
+            <br />
+            <span class="hint">
               {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
-            </small>
+            </span>
             <input type="text"
                   class="form-control"
                   id="image_alt_text"
@@ -45,10 +45,10 @@
             <label for="image_url">
               {{trans}}Image URL{{endtrans}}
             </label>
-            <small id="imageAltTextHelp"
-                   class="form-text text-muted">
+            <br />
+            <span class="hint">
               {{trans}}Use an image already available on the Internet.{{endtrans}}
-            </small>
+            </span>
             <input type="url"
                   class="form-control"
                   id="image_url"
@@ -85,7 +85,6 @@
               <label>
               {{trans}}Optionally, reuse one of your previous images{{endtrans}}
               </label>
-
               <div id="media_list">
                 {% for image in g.current_user.media %}
                   <img src="{{image.get_thumbnail_url()}}"
@@ -95,7 +94,6 @@
               </div>
             </div>
             {% endif %}
-
           {% endif %}
         </form>
       </div>
@@ -109,9 +107,7 @@ jQuery(function($) {
     $('#new_image_file_error').hide()
   });
   $(".mediaThumbnail").on("click", function() {
-    media_id = $(this).attr("media_id")
-    alert(media_id)
-    var self = this;
+    var media_id = $(this).attr("media_id")
     $.ajax({
         url : "/media/get-values/"+media_id,
         type: "GET",
@@ -126,6 +122,7 @@ jQuery(function($) {
             if (data !== false) {
               $('#image_alt_text').val(data.alt_text);
               $('#image_url').val(data.image_url);
+              $('#new_image_file').val('');
               $('#insert_image_form').submit()
             }
         }

@@ -260,7 +260,7 @@ jQuery(function($) {
       }
       var image_alt_text = $('#image_alt_text').val();
       $('#image_alt_text').val('');
-      var image = '!['+image_alt_text+']('+image_url+')';
+      var image = '\n\r!['+image_alt_text+']('+image_url+')\n\r';
       pos = introduction_mde.codemirror.getCursor();
       introduction_mde.codemirror.replaceRange(image, pos);
     }
