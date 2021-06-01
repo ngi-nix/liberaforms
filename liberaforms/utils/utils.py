@@ -75,3 +75,16 @@ def gen_random_string():
 
 def str2bool(v):
   return v.lower() in ("true", "1", "yes")
+
+def human_readable_bytes(bytes):
+    """ 1 KibiByte == 1024 Bytes
+        1 Mebibyte == 1024*1024 Bytes
+        1 GibiByte == 1024*1024*1024 Bytes
+    """
+    if bytes == 0:
+        return "0 KB"
+    if bytes < 1024*1024:
+        return f"{round(bytes/(1024), 2)} KB"
+    if bytes < 1024*1024*1024:
+        return f"{round(bytes/(1024*1024), 2)} MB"
+    return f"{round(bytes/(1024*1024*1024), 2)} GB"

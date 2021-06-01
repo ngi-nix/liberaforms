@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1b33e1be047a
+Revision ID: 5a8b768c5e14
 Revises: a6b48ae7220a
-Create Date: 2021-05-29 12:32:42.724503
+Create Date: 2021-06-01 13:09:40.680315
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1b33e1be047a'
+revision = '5a8b768c5e14'
 down_revision = 'a6b48ae7220a'
 branch_labels = None
 depends_on = None
@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('alt_text', sa.String(), nullable=True),
     sa.Column('file_name', sa.String(), nullable=False),
+    sa.Column('file_size', sa.String(), nullable=False),
     sa.Column('storage_name', sa.String(), nullable=False),
     sa.Column('local_filesystem', sa.Boolean(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),

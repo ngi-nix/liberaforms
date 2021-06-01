@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+{% set uploaded_media = g.current_user.media %}
+{% set total_uploaded_media  = uploaded_media|length %}
 
 <style>
   .table > tbody > tr > td {
@@ -19,7 +21,11 @@
     <div class="title_1 delimited">
       {%trans%}My media{%endtrans%}
       <div style="float:right">
-          <button class="btn btn-primary btn-sm"
+          <button id="show_upload_form_button"
+                  class="btn btn-primary btn-sm"
+                  {% if total_uploaded_media == 0 %}
+                  style="display:none"
+                  {% endif %}
                   onclick="js:show_form()">
               {%trans%}Upload a file{%endtrans%}
               <i class="fa fa-upload" aria-hidden="true"></i>
@@ -29,10 +35,13 @@
     <div class="title_text_subtext">
       {%trans%}These files can be included in your forms.{%endtrans%}
       <br />
-      {%trans%}Please help save disk space on the server by deleting unused files.{%endtrans%}
+      {%trans%}You can help save disk space on the server by deleting unused files.{%endtrans%}
     </div>
+
     <form id="upload_form"
+          {% if total_uploaded_media != 0 %}
           style="display:none"
+          {% endif %}
           enctype="multipart/form-data">
       <div class="title_2 delimited">
         {%trans%}Upload a file{%endtrans%}
@@ -41,29 +50,35 @@
         <label for="image_alt_text">
           {{trans}}Alternative text{{endtrans}}
         </label>
+        <span class="required-dot">●</span>
         <br />
         <span class="hint">
           {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
         </span>
         <input type="text"
-              class="form-control"
-              id="image_alt_text"
-              aria-describedby="imageAltTextHelp"
-              placeholder="{{trans}}A photo of a horse galloping on the beach{{endtrans}}" />
+               class="form-control"
+               id="image_alt_text"
+               aria-describedby="imageAltTextHelp"
+               placeholder="{{trans}}A photo of a horse galloping on the beach{{endtrans}}" />
+          <span id="alt_text_error"
+                class="help-block"
+                style="color:#B94A48; display:none">
+            {{trans}}A short description is required.{{endtrans}}
+          </span>
       </div>
 
       <div class="form-group">
         <label for="new_image_file">
           {{trans}}Select an image{{endtrans}}
         </label>
+        <span class="required-dot">●</span>
         <input type="file"
                class="form-control-file"
-               id="new_image_file"
-               required>
+               id="new_image_file" />
         <span id="new_image_file_error"
               class="help-block"
               style="color:#B94A48; display:none">
-          {{trans}}The file is not an image.{{endtrans}}
+          {{trans}}Please select an image file.{{endtrans}}
         </span>
       </div>
       <div class="form-actions"
@@ -72,26 +87,25 @@
                type="submit"
                value="{%trans%}Upload{%endtrans%}"
         />
-        <button class="btn btn-primary"
-                onclick="js:hide_form(); return false;">
-            {%trans%}Cancel{%endtrans%}
-        </button>
       </div>
       <hr />
     </form>
     <table id="media_list"
            class="table table-sm sparse-table">
       <tbody>
-        {% for image in g.current_user.media %}
+        {% for image in uploaded_media %}
         <tr id="media_{{image.id}}">
           <td>
             <img src="{{ image.get_thumbnail_url() }}" />
           </td>
           <td>
-            <a href="{{ image.get_url()}}">{{ image.file_name }}</a>
+            {{ image.created.strftime('%Y-%m-%d') }}
           </td>
           <td>
-            {{ image.created.strftime('%Y-%m-%d') }}
+            {{ image.file_size }}
+          </td>
+          <td>
+            <a href="{{ image.get_url()}}">{{ image.file_name }}</a>
           </td>
           <td>
             <input class="btn btn-xs btn-danger"
@@ -111,8 +125,21 @@
 jQuery(function($) {
   $("#upload_form").submit(function( event ) {
     event.preventDefault();
+    var input_errors = false;
     var formFields = document.getElementById('upload_form').elements;
     if (formFields['new_image_file'].files.length == 0) {
+      $('#new_image_file_error').show()
+      input_errors = true;
+    } else {
+      $('#new_image_file_error').hide()
+    }
+    if ($('#image_alt_text').val() === "") {
+      $('#alt_text_error').show()
+      input_errors = true;
+    } else {
+      $('#alt_text_error').hide()
+    }
+    if (input_errors) {
       return;
     }
     var file = formFields['new_image_file'].files[0];
@@ -143,14 +170,16 @@ jQuery(function($) {
           var new_row = $('<tr id="media_'+data.id+'">');
           html = '<img src="'+data.thumbnail_url+'" />';
           $('<td>').html(html).appendTo(new_row);
+          $('<td>').html(data.created).appendTo(new_row);
+          $('<td>').html(data.file_size).appendTo(new_row);
           html = '<a href="'+data.image_url+'">'+data.file_name+'</a>';
           $('<td>').html(html).appendTo(new_row);
-          $('<td>').html(data.created).appendTo(new_row);
           html = '<input class="btn btn-xs btn-danger" type="button" ';
           html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';
           html = html + 'onClick="js:removeMedia('+data.id+');" />';
           $('<td>').html(html).appendTo(new_row);
           new_row.prependTo("#media_list");
+          $('#show_upload_form_button').show();
           hide_form();
         }
     });
@@ -160,6 +189,10 @@ function show_form() {
   $('#upload_form').show();
 }
 function hide_form() {
+  $('#image_alt_text').val('');
+  $('#alt_text_error').hide();
+  $('#new_image_file').val('');
+  $('#new_image_file_error').hide();
   $('#upload_form').hide();
 }
 function removeMedia(media_id){

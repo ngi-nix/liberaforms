@@ -28,6 +28,7 @@ class Media(db.Model, CRUD, Storage):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     alt_text = db.Column(db.String, nullable=True)
     file_name = db.Column(db.String, nullable=False)
+    file_size = db.Column(db.String, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
     local_filesystem = db.Column(db.Boolean, default=True) #Remote storage = False
     user = db.relationship("User", viewonly=True)
@@ -59,6 +60,7 @@ class Media(db.Model, CRUD, Storage):
         self.storage_name = f"{utils.gen_random_string()}{extension}"
         saved = super().save_file(file, self.storage_name, self.directory)
         if saved:
+
             self.save()
             self.save_thumbnail()
         return saved
@@ -74,7 +76,7 @@ class Media(db.Model, CRUD, Storage):
 
     def get_url(self):
         host_url = self.user.site.host_url
-        return f"{host_url}file/{self.user_id}/{self.storage_name}"
+        return f"{host_url}file/{self.directory}/{self.storage_name}"
 
     def get_media(self):
         bytes = super().get_file(self.storage_name, self.directory)
@@ -104,13 +106,14 @@ class Media(db.Model, CRUD, Storage):
     def get_thumbnail_url(self):
         host_url = self.user.site.host_url
         storage_name = f"tn-{self.storage_name}"
-        return f"{host_url}file/{self.user_id}/{storage_name}"
+        return f"{host_url}file/{self.directory}/{storage_name}"
 
     def get_values(self):
         return {
                     "id": self.id,
                     "created": self.created.strftime('%Y-%m-%d'),
                     "file_name": self.file_name,
+                    "file_size": self.file_size,
                     "image_url": self.get_url(),
                     "thumbnail_url": self.get_thumbnail_url(),
                     "alt_text": self.alt_text,

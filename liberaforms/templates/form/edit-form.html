@@ -254,12 +254,12 @@ jQuery(function($) {
     function insertImage() {
       $('#insert_image_modal').modal('hide');
       var image_url = $('#image_url').val();
-      $('#image_url').val('');
+      //$('#image_url').val('');
       if (image_url === '') {
         image_url = 'https://'
       }
       var image_alt_text = $('#image_alt_text').val();
-      $('#image_alt_text').val('');
+      //$('#image_alt_text').val('');
       var image = '\n\r!['+image_alt_text+']('+image_url+')\n\r';
       pos = introduction_mde.codemirror.getCursor();
       introduction_mde.codemirror.replaceRange(image, pos);

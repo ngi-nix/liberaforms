@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os, datetime
 from dateutil.relativedelta import relativedelta
+import pathlib
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.ext.mutable import MutableDict
@@ -154,6 +155,15 @@ class User(db.Model, CRUD):
         if not current_app.config['ENABLE_UPLOADS']:
             return False
         return self.uploads_enabled
+
+    def get_media_directory_size(self, for_humans=False):
+        dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
+        if not os.path.isdir(dir):
+            bytes = 0
+        else:
+            dir = pathlib.Path(dir)
+            bytes = sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+        return bytes if not for_humans else utils.human_readable_bytes(bytes)
 
     def toggle_uploads_enabled(self):
         self.uploads_enabled = False if self.uploads_enabled else True

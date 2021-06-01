@@ -9,6 +9,7 @@ import os, logging, shutil
 from io import BytesIO
 from flask import current_app
 from liberaforms.utils.storage.remote import RemoteStorage
+from liberaforms.utils import utils
 
 
 class Storage:
@@ -45,6 +46,8 @@ class Storage:
             except Exception as error:
                 logging.error(f"Cannot save to tmp_file. : {error}")
                 return False
+        file_size = os.path.getsize(tmp_file_path)
+        self.file_size = utils.human_readable_bytes(file_size)
         if current_app.config['ENABLE_REMOTE_STORAGE']:
             try:
                 saved = RemoteStorage().add_object(tmp_file_path,
