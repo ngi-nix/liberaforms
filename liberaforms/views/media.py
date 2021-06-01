@@ -38,7 +38,7 @@ def save_media():
         return JsonResponse(json.dumps(media.get_values()))
     return JsonResponse(json.dumps(False))
 
-@media_bp.route('/media/<string:username>', methods=['GET'])
+@media_bp.route('/user/<string:username>/media', methods=['GET'])
 @enabled_user_required
 def list_media(username):
     #media = Media.find_all(user_id=g.current_user.id)
