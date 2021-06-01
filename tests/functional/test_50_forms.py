@@ -152,7 +152,7 @@ class TestSlugAvailability():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        print(html)
+        #print(html)
         assert '<!-- edit_form_page -->' in html
         #assert '<form action="/forms/save" method="post">' in html
         response = client.post(

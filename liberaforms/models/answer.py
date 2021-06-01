@@ -59,7 +59,7 @@ class Answer(db.Model, CRUD):
 
 
 class AnswerAttachment(db.Model, CRUD, Storage):
-    __tablename__ = "answer_attachments"
+    __tablename__ = "attachments"
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.DateTime, nullable=False)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id',

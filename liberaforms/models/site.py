@@ -40,7 +40,7 @@ class Site(db.Model, CRUD):
     consentTexts = db.Column(ARRAY(JSONB), nullable=False)
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
-    newuser_uploadsdefault = db.Column(db.Boolean, nullable=False, default=False)
+    newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
     allowed_mimetypes = db.Column(JSONB, nullable=False)
     blurb = db.Column(JSONB, nullable=False)
 
@@ -238,9 +238,9 @@ class Site(db.Model, CRUD):
         return self.invitationOnly
 
     def toggle_newuser_uploads_default(self):
-        self.newuser_uploadsdefault = False if self.newuser_uploadsdefault else True
+        self.newuser_enableuploads = False if self.newuser_enableuploads else True
         self.save()
-        return self.newuser_uploadsdefault
+        return self.newuser_enableuploads
 
     def toggle_scheme(self):
         self.scheme = 'https' if self.scheme=='http' else 'http'

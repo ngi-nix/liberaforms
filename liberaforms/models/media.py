@@ -10,8 +10,6 @@ import pathlib
 from PIL import Image
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.attributes import flag_modified
-#from sqlalchemy import event
-from werkzeug.datastructures import FileStorage
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
@@ -25,7 +23,9 @@ class Media(db.Model, CRUD, Storage):
     __tablename__ = "media"
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id',
+                                                  ondelete="CASCADE"),
+                                                  nullable=False)
     alt_text = db.Column(db.String, nullable=True)
     file_name = db.Column(db.String, nullable=False)
     file_size = db.Column(db.String, nullable=False)
@@ -120,6 +120,6 @@ class Media(db.Model, CRUD, Storage):
                 }
 
 
-#@event.listens_for(AnswerAttachment, "after_delete")
-#def delete_answer_attachment(mapper, connection, target):
-#    deleted = target.delete_attachment()
+#@event.listens_for(Media, "after_delete")
+#def delete_user_media(mapper, connection, target):
+#    deleted = target.delete_media()

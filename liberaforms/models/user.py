@@ -15,6 +15,7 @@ from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
+from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
 from liberaforms.utils import utils
@@ -36,7 +37,10 @@ class User(db.Model, CRUD):
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
-    media = db.relationship("Media", viewonly=True)
+    #media = db.relationship("Media", viewonly=True)
+    media = db.relationship("Media",
+                            lazy='dynamic',
+                            cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
         self.created = datetime.datetime.now().isoformat()
@@ -120,12 +124,21 @@ class User(db.Model, CRUD):
         return validators.verify_password(password, self.password_hash)
 
     def delete_user(self):
-        # Before delete, remove this user from other form.editors{}
+        # remove this user from other form.editors{}
         forms = Form.find_all(editor_id=self.id)
         for form in forms:
-            del form.editors[str(self.id)]
-            form.save()
-        self.delete()   # cascade delete user.authored_forms
+            if form.author_id != self.id:
+                del form.editors[str(self.id)]
+                form.save()
+        # delete uploaded media files
+        media_dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
+        shutil.rmtree(media_dir, ignore_errors=True)
+        if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
+            prefix = "media/{}".format(self.id)
+            RemoteStorage().remove_directory(prefix)
+        # cascade delete user.authored_forms
+        # cascade delete user.media
+        self.delete()
 
     def set_token(self, **kwargs):
         self.token=utils.create_token(User, **kwargs)

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% set uploaded_media = g.current_user.media %}
-{% set total_uploaded_media  = uploaded_media|length %}
+<!-- list_media_page -->
+
+{% set total_uploaded_media  = g.current_user.media.count() %}
 
 <style>
   .table > tbody > tr > td {
@@ -94,7 +95,7 @@
     <table id="media_list"
            class="table table-sm sparse-table">
       <tbody>
-        {% for image in uploaded_media %}
+        {% for image in g.current_user.media %}
         <tr id="media_{{image.id}}">
           <td>
             <img src="{{ image.get_thumbnail_url() }}" />

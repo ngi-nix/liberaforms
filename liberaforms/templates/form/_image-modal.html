@@ -80,7 +80,7 @@
                   {{trans}}Cancel{{endtrans}}
               </button>
             </div>
-            {% if g.current_user.media %}
+            {% if g.current_user.media.count() %}
             <div style="margin-top:2em;">
               <label>
               {{trans}}Optionally, reuse one of your previous images{{endtrans}}
