@@ -8,29 +8,18 @@ This file is part of LiberaForms.
 import os
 import pytest
 import json
-from flask import current_app
+from flask import g, current_app
 from liberaforms.models.form import Form
 from liberaforms.utils import validators
+from .utils import login
 
 class TestForm():
-    def test_login(self, client, users):
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
-
-    def test_create_preview_save_form_1(self, client, forms):
+    def test_create_preview_save_form_1(self, client, users, forms):
         """ Creates a form with valid data.
             Tests Preview page and saves form
             Tests for a new FormLog
         """
+        login(client, users['editor'])
         response = client.get(
                         "/forms/new",
                         follow_redirects=True,

@@ -23,9 +23,9 @@ ENABLE_REMOTE_STORAGE=False
 LOG_TYPE=stream
 LOG_DIR=./logs
 
-TEST_USERNAME=test_user
-TEST_USER_PASSWORD=""
-TEST_USER_EMAIL= # YOUR_EMAIL_ADDRESS
+USER1_USERNAME=test_user
+USER1_PASSWORD=""
+USER1_EMAIL= # YOUR_EMAIL_ADDRESS
 
 # Valid SMTP configuration. Tests will send emails with this config.
 TEST_SMTP_HOST=

@@ -10,8 +10,9 @@ import pytest
 import werkzeug
 from io import BytesIO
 import mimetypes
+from flask import g
 from liberaforms.models.media import Media
-#from liberaforms.utils import validators
+from .utils import login, logout
 
 
 class TestUserMedia():
@@ -19,7 +20,7 @@ class TestUserMedia():
         """ Tests list media page
             Tests permission
         """
-        url = f"/user/{users['test_user'].username}/media"
+        url = f"/user/{users['editor']['username']}/media"
         response = anon_client.get(
                         url,
                         follow_redirects=True,
@@ -27,6 +28,7 @@ class TestUserMedia():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        login(client, users['editor'])
         response = client.get(
                         url,
                         follow_redirects=True,
@@ -57,7 +59,8 @@ class TestUserMedia():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        initial_media_count = users['test_user'].media.count()
+        login(client, users['editor'])
+        initial_media_count = g.current_user.media.count()
         response = client.post(
                         url,
                         data = {
@@ -68,18 +71,6 @@ class TestUserMedia():
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert users['test_user'].media.count() == initial_media_count + 1
-        #assert Media.find_all(user_id=users['test_user'].id).count() == initial_media_count + 1
+        assert g.current_user.media.count() == initial_media_count + 1
+        #assert Media.find_all(user_id=g.current_user.id).count() == initial_media_count + 1
         assert response.json['file_name'] == valid_media_name
-
-
-class TestUserLogout():
-    def test_logout(self, client):
-        response = client.post(
-                        "/user/logout",
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<!-- site_index_page -->' in html
-        assert '<a class="nav-link" href="/user/login">' in html

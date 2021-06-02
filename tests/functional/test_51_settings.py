@@ -8,27 +8,16 @@ This file is part of LiberaForms.
 import os
 import pytest
 import json
-from flask import current_app
+from flask import g, current_app
 from liberaforms.models.form import Form
 from liberaforms.utils import validators
+from .utils import login
 
 class TestFormSettings():
-    def test_login(self, client, users):
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
-
-    def test_toggle_public(self, client, forms):
+    def test_toggle_public(self, client, users, forms):
         """ Tests Form.enabled bool and tests for a new FormLog
         """
+        login(client, users['editor'])
         initial_enabled = forms['test_form'].enabled
         initial_log_count = forms['test_form'].log.count()
         response = client.post(
@@ -157,10 +146,10 @@ class TestFormSettings():
         assert forms['test_form'].introductionText['markdown'] in html
         assert '<input  id="slug" value=""' in html
 
-    def test_toggle_new_answer_notification(self, client, users, forms):
+    def test_toggle_new_answer_notification(self, client, forms):
         form_id=forms['test_form'].id
         initial_preference = forms['test_form'] \
-                             .editors[str(users['test_user'].id)] \
+                             .editors[str(g.current_user.id)] \
                              ['notification']['newAnswer']
         response = client.post(
                         f"/form/toggle-notification/{form_id}",
@@ -170,7 +159,7 @@ class TestFormSettings():
         assert response.is_json == True
         assert initial_preference != response.json['notification']
         saved_preference = forms['test_form'] \
-                           .editors[str(users['test_user'].id)] \
+                           .editors[str(g.current_user.id)] \
                            ['notification']['newAnswer']
         assert saved_preference != initial_preference
         assert type(saved_preference) == type(bool())

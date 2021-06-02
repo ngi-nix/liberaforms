@@ -7,9 +7,13 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+from flask import g
+from liberaforms.models.user import User
+from .utils import login
 
 class TestSharedForm():
-    def test_access_shared_forms(self, client, anon_client, forms):
+    def test_access_shared_forms(self, client, anon_client, users, forms):
+        login(client, users['editor'])
         form_id=forms['test_form'].id
         url = f"/forms/share/{form_id}"
         response = anon_client.get(
@@ -45,8 +49,9 @@ class TestSharedForm():
         html = response.data.decode()
         assert f'"/forms/add-editor/{form_id}" method="POST"' in html
         assert forms['test_form'].log.count() == initial_log_count
-        # use the test admin user as a new editor
-        existent_user_email = users['admin'].email
+        # make the dummy_1 user a new editor
+        dummy_1 = User.find(username=users['dummy_1']['username'])
+        existent_user_email = dummy_1.email
         response = client.post(
                         f"/forms/add-editor/{form_id}",
                         data = {
@@ -60,7 +65,7 @@ class TestSharedForm():
         assert existent_user_email in html
         assert forms['test_form'].log.count() == initial_log_count + 1
 
-    def test_add_shared_notification(self, anon_client, client, users, forms):
+    def test_add_shared_notification(self, client, forms):
         form_id=forms['test_form'].id
         url = f"/forms/add-shared-notification/{form_id}"
         invalid_email = "invalid@domain"

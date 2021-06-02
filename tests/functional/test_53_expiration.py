@@ -7,22 +7,12 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+from flask import g
+from .utils import login
 
 class TestFormExpiration():
-    def test_login(self, client, users):
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
-
     def test_toggle_expiration_notification(self, client, users, forms):
+        login(client, users['editor'])
         form_id=forms['test_form'].id
         response = client.get(
                         f"/forms/expiration/{form_id}",
@@ -32,7 +22,7 @@ class TestFormExpiration():
         html = response.data.decode()
         assert "<!-- form_expiration_page -->" in html
         initial_preference = forms['test_form'] \
-                             .editors[str(users['test_user'].id)] \
+                             .editors[str(g.current_user.id)] \
                              ['notification']['expiredForm']
         response = client.post(
                         f"/form/toggle-expiration-notification/{form_id}",
@@ -42,7 +32,7 @@ class TestFormExpiration():
         assert response.is_json == True
         assert response.json['notification'] != initial_preference
         assert initial_preference != forms['test_form'] \
-                                    .editors[str(users['test_user'].id)] \
+                                    .editors[str(g.current_user.id)] \
                                     ['notification']['expiredForm']
 
     def test_set_expiration_date(self, client, anon_client, forms):

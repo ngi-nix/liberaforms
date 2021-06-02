@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+from .utils import login
 
 class TestPublicForm():
     def test_display_form(self, anon_client, forms):
@@ -133,13 +134,7 @@ class TestPublicForm():
         assert "<!-- form_has_expired_page -->" in html
         assert forms['test_form'].expired_text_html in html
         # Remove the max number_field expiry condition for the next test
-        client.post(
-            "/user/login",
-            data = {
-                "username": users['test_user'].username,
-                "password": os.environ['TEST_USER_PASSWORD'],
-            },
-        )
+        login(client, users['editor'])
         form_id = forms['test_form'].id
         number_field_id = "number-1620224716308"
         response = client.post(

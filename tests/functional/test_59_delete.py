@@ -10,23 +10,12 @@ import pytest
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
 from liberaforms.models.log import FormLog
+from .utils import login
 
 class TestDeleteForm():
-    def test_login(self, client, users):
+    def test_delete_form(self, client, users, forms):
         #pytest.exit("stopped before deleting forms")
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
-
-    def test_delete_form(self, client, forms):
+        login(client, users['editor'])
         form_id = forms['test_form'].id
         initial_answers_count = forms['test_form'].answers.count()
         response = client.get(

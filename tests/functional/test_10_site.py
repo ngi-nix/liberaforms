@@ -9,9 +9,12 @@ import os
 import pytest
 import werkzeug
 from io import BytesIO
+from .utils import login, logout
+
 
 class TestSiteConfig():
-    def test_change_sitename(cls, site, admin_client, anon_client):
+    def test_change_sitename(cls, site, users, admin_client, anon_client):
+        login(admin_client, users['admin'])
         url = "/site/change-sitename"
         response = anon_client.get(
                         url,
@@ -226,7 +229,7 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
-    def test_toggle_newuser_uploadsdefault(self, site, admin_client, anon_client):
+    def test_toggle_newuser_enableuploads(self, site, admin_client, anon_client):
         """ Tests permissions
             Tests toggle
         """
@@ -238,15 +241,15 @@ class TestSiteConfig():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        initial_newuser_uploadsdefault = site.newuser_uploadsdefault
+        initial_newuser_enableuploads = site.newuser_enableuploads
         response = admin_client.post(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert response.json == {"uploads": site.newuser_uploadsdefault}
-        assert initial_newuser_uploadsdefault != site.newuser_uploadsdefault
+        assert response.json == {"uploads": site.newuser_enableuploads}
+        assert initial_newuser_enableuploads != site.newuser_enableuploads
 
     def test_edit_public_link_creation(self, site, admin_client, anon_client):
         """ Tests valid and invalid ports
