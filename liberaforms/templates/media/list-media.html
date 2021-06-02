@@ -98,7 +98,9 @@
         {% for image in g.current_user.media %}
         <tr id="media_{{image.id}}">
           <td>
-            <img src="{{ image.get_thumbnail_url() }}" />
+            <img src="{{ image.get_thumbnail_url() }}"
+                 alt="{{image.alt_text}}"
+                 title="{{image.alt_text}}" />
           </td>
           <td>
             {{ image.created.strftime('%Y-%m-%d') }}

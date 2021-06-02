@@ -89,6 +89,8 @@
                 {% for image in g.current_user.media %}
                   <img src="{{image.get_thumbnail_url()}}"
                        class="mediaThumbnail"
+                       alt="{{image.alt_text}}"
+                       title="{{image.alt_text}}"
                        media_id="{{image.id}}" />
                 {% endfor %}
               </div>

@@ -8,14 +8,16 @@ This file is part of LiberaForms.
 import os
 import pytest
 import json
-from flask import g, current_app
-from liberaforms.models.form import Form
+from flask import g
 from liberaforms.utils import validators
 from .utils import login
 
 class TestFormSettings():
+    """ Test the settings an editor can make on a form
+    """
     def test_toggle_public(self, client, users, forms):
-        """ Tests Form.enabled bool and tests for a new FormLog
+        """ Tests Form.enabled bool
+            Tests for a new FormLog entry
         """
         login(client, users['editor'])
         initial_enabled = forms['test_form'].enabled

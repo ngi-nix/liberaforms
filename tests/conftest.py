@@ -25,6 +25,12 @@ Returns app
 @pytest.fixture(scope='session')
 def app():
     flask_app = create_app()
+    # change the uploads dir to tests/uploads/
+    tests_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    uploads_dir = os.path.abspath(os.path.join(tests_dir, 'uploads'))
+    flask_app.config['MEDIA_DIR'] = os.path.join(uploads_dir, 'media')
+    flask_app.config['BRAND_DIR'] = os.path.join(uploads_dir, 'media/brand')
+    flask_app.config['ATTACHMENT_DIR'] = os.path.join(uploads_dir, 'attachments')
     yield flask_app
 
 """
@@ -88,6 +94,6 @@ def users():
         "dummy_1": {
             "username": "dave",
             "email": "dave@example.com",
-            "password": "a password"
+            "password": "another valid password"
         }
     }
