@@ -54,13 +54,13 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin/users">
-                # Used as website menu title, only for admin, linking to page about instance users
+                {# Used as website menu title, only for admin, linking to page about instance users #}
                 {%trans%}Users{%endtrans%}
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/admin">
-                # Used as website menu title, only for admin, linking to page about instance configuration
+                {# Used as website menu title, only for admin, linking to page about instance configuration #}
                 {%trans%}Config{%endtrans%}
               </a>
             </li>
@@ -79,20 +79,20 @@
         {% if g.current_user.enabled %}
           <li class="nav-item">
               <a class="nav-link" href="/forms">
-                # Used as website menu title, linking to page about user's forms
+                {# Used as website menu title, linking to page about user's forms #}
                 {%trans%}My forms{%endtrans%}
               </a>
           </li>
         {% endif %}
         <li class="nav-item">
           <a class="nav-link" href="/user/{{ g.current_user.username }}">
-            # Used as website menu title, linking to page about user's settings
+            {# Used as website menu title, linking to page about user's settings #}
             {%trans%}Profile{%endtrans%}
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/user/logout">
-            # Used as website menu title, to log out
+            {# Used as website menu title, to log out #}
             {%trans%}Logout{%endtrans%}
             <i class="fa fa-sign-out" aria-hidden="true"></i>
           </a>
@@ -108,14 +108,14 @@
         {% if not g.site.invitationOnly %}
           <li class="nav-item">
             <a class="nav-link" href="/user/new">
-              # Used as website menu title before logging in, when open registration is enabled, linking to page to create new user
+              {# Used as website menu title before logging in, when open registration is enabled, linking to page to create new user #}
               {%trans%}Create an account{%endtrans%}
             </a>
           </li>
         {% endif %}
         <li class="nav-item" style="margin-right: 1em">
           <a class="nav-link" href="/user/login">
-              # Used as website menu title before logging in, linking to page to log in
+              {# Used as website menu title before logging in, linking to page to log in #}
             {%trans%}Login{%endtrans%}
           </a>
         </li>
