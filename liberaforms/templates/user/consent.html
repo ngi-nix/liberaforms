@@ -21,7 +21,7 @@
             {% if consent.name=="DPL" %}
             {%trans%}Data protection{%endtrans%}
             {% else %}
-            {{ gettext(consent.name) }}
+            {{ _(consent.name) }}
             {% endif %}
             <div style="float:right">
 

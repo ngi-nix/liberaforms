@@ -339,7 +339,7 @@ def add_editor(id):
             flash(_("Can't find a user with that email"), 'warning')
             return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
         if str(newEditor.id) in queriedForm.editors:
-            flash(gettext("%s is already an editor" % newEditor.email), 'warning')
+            flash(_("%s is already an editor" % newEditor.email), 'warning')
             return redirect(make_url_for('form_bp.share_form', id=queriedForm.id))
 
         if queriedForm.add_editor(newEditor):

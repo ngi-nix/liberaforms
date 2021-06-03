@@ -29,7 +29,7 @@
             {% elif consent.id == site.DPL_consent_id %}
             {%trans%}Data protection{%endtrans%}
             {% else %}
-            {{ gettext(consent.name) }}
+            {{ _(consent.name) }}
             {% endif %}
             <div style="float:right">
             <input id="{{consent.id}}-edit-button" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
