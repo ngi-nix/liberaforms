@@ -8,18 +8,18 @@
   <div class="col-md-6">
 
     <div class="title_1 delimited">
-      {# Main title displayed on instance configuration page (/admin) #}
+      {# i18n: Main title displayed on instance configuration page (/admin) #}
       {%trans%}Instance configuration{%endtrans%}
     </div>
 
     <div id="site_settings" class="title_2">
-      {# Subtitle displayed on instance configuration page (/admin) #}
+      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
       {%trans%}Site settings{%endtrans%}
     </div>
 
     <table class="table table-sm">
       <tr>
-        {# Name for the website/instance #}
+        {# i18n: Name for the website/instance #}
         <td>{%trans%}Site name{%endtrans%}</td>
         <td>
         {{ site.siteName }}
@@ -28,13 +28,13 @@
           <a class="btn-primary btn btn-xs"
              role="button"
              href="/site/change-sitename">
-             {# Button to change some option #}
+             {# i18n: Button to change some option #}
               {%trans%}Change{%endtrans%}
           </a>
         </td>
       </tr>
       <tr>
-        {# Whether to enable open registration, or remain invitation only #}
+        {# i18n: Whether to enable open registration, or remain invitation only #}
         <td>{%trans%}Invitation only{%endtrans%}</td>
         <td></td>
         <td class="text-right">
@@ -55,9 +55,9 @@
         </td>
       </tr>
       <tr>
-        {# Noun, meaning agreement with terms/conditions of use #}
+        {# i18n: Noun, meaning agreement with terms/conditions of use #}
         <td>{%trans%}Consent{%endtrans%}</td>
-        {# 'etc' here stands for "and so on" at the end of a list #}
+        {# i18n: 'etc' here stands for "and so on" at the end of a list #}
         <td>
           {%trans%}Terms and conditions{%endtrans%},
           {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
@@ -66,13 +66,13 @@
           <a class="btn btn-primary btn-xs"
              role="button"
              href="/site/consent-texts">
-            {# Button to edit some option #}
+            {# i18n: Button to edit some option #}
             {%trans%}Edit{%endtrans%}
           </a>
         </td>
       </tr>
       <tr>
-        {# Icon for the website #}
+        {# i18n: Icon for the website #}
         <td>
           {%trans%}Icon{%endtrans%}
         </td>
@@ -87,7 +87,7 @@
         </td>
       </tr>
       <tr>
-        {# Color for topbar menu on website #}
+        {# i18n: Color for topbar menu on website #}
         <td>{%trans%}Menu color{%endtrans%}</td>
         <td>{{g.site.menuColor}}</td>
         <td class="text-right">
@@ -98,7 +98,7 @@
         </td>
       </tr>
       <tr>
-        {# Settings about email server used by website to send email messages #}
+        {# i18n: Settings about email server used by website to send email messages #}
         <td>{%trans%}Email server{%endtrans%}</td>
         <td>{{g.site.smtpConfig["host"]}}</td>
         <td class="text-right">
@@ -127,7 +127,7 @@
     </div>
     <table class="table table-sm">
       <tr>
-        {# Default language for instance, setting on Instance configuration #}
+        {# i18n: Default language for instance, setting on Instance configuration #}
         <td>{%trans%}Default language{%endtrans%}</td>
         <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
         <td class="text-right">
