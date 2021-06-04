@@ -10,7 +10,7 @@ import shutil
 import unicodecsv as csv
 
 from flask import current_app, g
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
@@ -130,12 +130,12 @@ class Form(db.Model, CRUD):
     def create_field_index(structure):
         index=[]
         # Add these RESERVED fields to the index.
-        index.append({'label': gettext("Marked"), 'name': 'marked'})
-        index.append({'label': gettext("Created"), 'name': 'created'})
+        index.append({'label': _("Marked"), 'name': 'marked'})
+        index.append({'label': _("Created"), 'name': 'created'})
         for element in structure:
             if 'name' in element:
                 if 'label' not in element:
-                    element['label']=gettext("Label")
+                    element['label']=_("Label")
                 index.append({'name': element['name'], 'label': element['label']})
         return index
 
@@ -176,7 +176,7 @@ class Form(db.Model, CRUD):
             result.append(item)
         if self.data_consent["enabled"]:
             # append dynamic DPL field
-            result.append({"name": "DPL", "label": gettext("DPL")})
+            result.append({"name": "DPL", "label": _("DPL")})
         return result
 
     def has_removed_fields(self):
@@ -321,7 +321,7 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def default_expired_text():
-        text=gettext("Sorry, this form has expired.")
+        text=_("Sorry, this form has expired.")
         return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
@@ -349,7 +349,7 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def defaultAfterSubmitText():
-        text=gettext("Thank you!!")
+        text=_("Thank you!!")
         return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
@@ -726,7 +726,7 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def default_introduction_text():
-        title=gettext("Form title")
-        context=gettext("Context")
+        title=_("Form title")
+        context=_("Context")
         content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
         return "## {}\n\n### {}\n\n{}".format(title, context, content)

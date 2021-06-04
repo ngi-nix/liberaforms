@@ -9,7 +9,7 @@ import os, json
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import session, flash
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
@@ -31,7 +31,7 @@ site_bp = Blueprint('site_bp', __name__,
 def save_blurb():
     if 'editor' in request.form:
         g.site.save_blurb(request.form['editor'])
-        flash(gettext("Text saved OK"), 'success')
+        flash(_("Text saved OK"), 'success')
     return redirect(make_url_for('main_bp.index'))
 
 
@@ -43,15 +43,15 @@ def recover_password(token=None):
     if token:
         user = User.find(token=token)
         if not user:
-            flash(gettext("Couldn't find that token"), 'warning')
+            flash(_("Couldn't find that token"), 'warning')
             return redirect(make_url_for('main_bp.index'))
         if validators.has_token_expired(user.token):
-            flash(gettext("Your petition has expired"), 'warning')
+            flash(_("Your petition has expired"), 'warning')
             user.delete_token()
             return redirect(make_url_for('main_bp.index'))
         if user.blocked:
             user.delete_token()
-            flash(gettext("Your account has been blocked"), 'warning')
+            flash(_("Your account has been blocked"), 'warning')
             return redirect(make_url_for('main_bp.index'))
         user.delete_token()
         user.validatedEmail=True
@@ -76,7 +76,7 @@ def recover_password(token=None):
                 invite.save()
                 return redirect(make_url_for('user_bp.new_user',
                                              token=invite.token['token']))
-        flash(gettext("We may have sent you an email"), 'info')
+        flash(_("We may have sent you an email"), 'info')
         return redirect(make_url_for('main_bp.index'))
     return render_template('recover-password.html', wtform=wtform)
 
@@ -98,7 +98,7 @@ def save_consent(id):
         if consent:
             return JsonResponse(json.dumps(consent))
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % (
-                                                gettext("An error occured")),
+                                                _("An error occured")),
                                     "label":""}))
 
 
@@ -127,7 +127,7 @@ def change_siteName():
     if request.method == 'POST' and 'sitename' in request.form:
         g.site.siteName=request.form['sitename']
         g.site.save()
-        flash(gettext("Site name changed OK"), 'success')
+        flash(_("Site name changed OK"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('change-sitename.html', site=g.site)
 
@@ -140,7 +140,7 @@ def change_default_language():
             and request.form['language'] in current_app.config['LANGUAGES']:
             g.site.defaultLanguage=request.form['language']
             g.site.save()
-            flash(gettext("Language updated OK"), 'success')
+            flash(_("Language updated OK"), 'success')
             return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('common/change-language.html',
                             current_language=g.site.defaultLanguage,
@@ -151,15 +151,15 @@ def change_default_language():
 def change_icon():
     if request.method == 'POST':
         if not request.files['file']:
-            flash(gettext("Required file is missing"), 'warning')
+            flash(_("Required file is missing"), 'warning')
             return render_template('change-icon.html')
         file=request.files['file']
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
             file.save(os.path.join(current_app.config['BRAND_DIR'], 'favicon.png'))
         else:
-            flash(gettext("Bad file name. PNG only"), 'warning')
+            flash(_("Bad file name. PNG only"), 'warning')
             return render_template('change-icon.html')
-        flash(gettext("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+        flash(_("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('change-icon.html')
 
@@ -168,7 +168,7 @@ def change_icon():
 @admin_required
 def reset_site_favicon():
     if g.site.delete_favicon():
-        flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
+        flash(_("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('admin_bp.site_admin'))
 
 
@@ -199,7 +199,7 @@ def smtp_config():
         config['password'] = wtf_smtp.password.data
         config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
         g.site.save_smtp_config(**config)
-        flash(gettext("Confguration saved OK"), 'success')
+        flash(_("Confguration saved OK"), 'success')
     wtf_email=wtf.GetEmail()
     return render_template('smtp-config.html',
                             wtf_smtp=wtf_smtp,
@@ -213,7 +213,7 @@ def test_smtp():
     if wtform.validate_on_submit():
         status = Dispatcher().send_test_email(wtform.email.data)
         if status['email_sent'] == True:
-            flash(gettext("SMTP config works!"), 'success')
+            flash(_("SMTP config works!"), 'success')
         else:
             flash(status['msg'], 'warning')
     else:
@@ -236,7 +236,7 @@ def menu_color():
     if wtform.validate_on_submit():
         g.site.menuColor=wtform.hex_color.data
         g.site.save()
-        flash(gettext("Color changed OK"), 'success')
+        flash(_("Color changed OK"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('menu-color.html', wtform=wtform)
 

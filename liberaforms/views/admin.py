@@ -9,7 +9,7 @@ import os, json
 from flask import g, request, render_template, redirect
 from flask import session, flash, Blueprint
 from flask import send_file, after_this_request
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
@@ -48,7 +48,7 @@ def list_users():
 def inspect_user(id):
     user=User.find(id=id)
     if not user:
-        flash(gettext("User not found"), 'warning')
+        flash(_("User not found"), 'warning')
         return redirect(make_url_for('admin_bp.list_users'))
     return render_template('inspect-user.html', user=user)
 
@@ -94,23 +94,23 @@ def toggle_uploads_enabled(id):
 def delete_user(id):
     user=User.find(id=id)
     if not user:
-        flash(gettext("User not found"), 'warning')
+        flash(_("User not found"), 'warning')
         return redirect(make_url_for('admin_bp.list_users'))
 
     if request.method == 'POST' and 'username' in request.form:
         if user.is_root_user():
-            flash(gettext("Cannot delete root user"), 'warning')
+            flash(_("Cannot delete root user"), 'warning')
             return redirect(make_url_for('admin_bp.inspect_user', id=user.id))
         if user.id == g.current_user.id:
-            flash(gettext("Cannot delete yourself"), 'warning')
+            flash(_("Cannot delete yourself"), 'warning')
             return redirect(make_url_for('admin_bp.inspect_user',
                                          username=user.username))
         if user.username == request.form['username']:
             user.delete_user()
-            flash(gettext("Deleted user '%s'" % (user.username)), 'success')
+            flash(_("Deleted user '%s'" % (user.username)), 'success')
             return redirect(make_url_for('admin_bp.list_users'))
         else:
-            flash(gettext("Username does not match"), 'warning')
+            flash(_("Username does not match"), 'warning')
     return render_template('delete-user.html', user=user)
 
 
@@ -138,7 +138,7 @@ def list_forms():
 def toggle_form_public_admin_prefs(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     queriedForm.toggle_admin_form_public()
     return redirect(make_url_for('form_bp.inspect_form', id=id))
@@ -149,13 +149,13 @@ def toggle_form_public_admin_prefs(id):
 def change_author(id):
     queriedForm = Form.find(id=id)
     if not queriedForm:
-        flash(gettext("Can't find that form"), 'warning')
+        flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
     if request.method == 'POST':
         author = queriedForm.author
         if not ('old_author_username' in request.form and \
                 request.form['old_author_username']==author.username):
-            flash(gettext("Current author incorrect"), 'warning')
+            flash(_("Current author incorrect"), 'warning')
             return render_template('change-author.html', form=queriedForm)
         if 'new_author_username' in request.form:
             new_author=User.find(username=request.form['new_author_username'])
@@ -163,19 +163,19 @@ def change_author(id):
                 if new_author.enabled:
                     old_author=author
                     if queriedForm.change_author(new_author):
-                        log_text = gettext("Changed author from %s to %s" % (
+                        log_text = _("Changed author from %s to %s" % (
                                                         old_author.username,
                                                         new_author.username))
                         queriedForm.add_log(log_text)
-                        flash(gettext("Changed author OK"), 'success')
+                        flash(_("Changed author OK"), 'success')
                         return redirect(make_url_for('form_bp.inspect_form',
                                                      id=queriedForm.id))
                 else:
-                    flash(gettext("Cannot use %s. The user is not enabled" % (
+                    flash(_("Cannot use %s. The user is not enabled" % (
                                     request.form['new_author_username']),
                          ), 'warning')
             else:
-                flash(gettext("Can't find username %s" % (
+                flash(_("Can't find username %s" % (
                                 request.form['new_author_username'])
                      ), 'warning')
     return render_template('change-author.html', form=queriedForm)
@@ -204,7 +204,7 @@ def new_invite():
         new_invite.save()
         status = Dispatcher().send_invitation(new_invite)
         if status['email_sent'] == True:
-            flash_text = gettext("We've sent an invitation to %s" % new_invite.email)
+            flash_text = _("We've sent an invitation to %s" % new_invite.email)
             flash(flash_text, 'success')
         else:
             flash(status['msg'], 'warning')
@@ -222,9 +222,9 @@ def delete_invite(id):
     if invite:
         invite.delete()
         # TRANSLATION: Invitation to dave@example.com deleted OK
-        flash(gettext("Invitation to %s deleted OK" % invite.email), 'success')
+        flash(_("Invitation to %s deleted OK" % invite.email), 'success')
     else:
-        flash(gettext("Opps! We can't find that invitation"), 'error')
+        flash(_("Opps! We can't find that invitation"), 'error')
     return redirect(make_url_for('admin_bp.list_invites'))
 
 
