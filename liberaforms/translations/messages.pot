@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-04 20:20+0200\n"
+"POT-Creation-Date: 2021-06-04 20:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgid "Marked"
 msgstr ""
 
 #. i18n: Used for sort items by creation order, almost always as column title
-#: models/form.py:136 models/site.py:292 templates/admin/admin-panel.html:173
+#: models/form.py:136 models/site.py:292 templates/admin/admin-panel.html:185
 #: templates/admin/inspect-user.html:30 templates/admin/inspect-user.html:128
 #: templates/admin/list-forms.html:26 templates/admin/list-invites.html:24
 #: templates/admin/list-users.html:40 templates/form/inspect-form.html:348
@@ -37,7 +37,7 @@ msgid "Label"
 msgstr ""
 
 #. i18n: Acronym for 'Data Privacy Law'
-#: models/form.py:182 templates/admin/admin-panel.html:63
+#: models/form.py:182 templates/admin/admin-panel.html:75
 #: templates/form/inspect-form.html:259 utils/consent_texts.py:126
 msgid "DPL"
 msgstr ""
@@ -114,8 +114,8 @@ msgid "Admin"
 msgstr ""
 
 #. i18n: Boolean option: True or False
-#: models/site.py:310 models/site.py:311 templates/admin/admin-panel.html:46
-#: templates/admin/admin-panel.html:151 templates/admin/inspect-user.html:44
+#: models/site.py:310 models/site.py:311 templates/admin/admin-panel.html:58
+#: templates/admin/admin-panel.html:163 templates/admin/inspect-user.html:44
 #: templates/admin/inspect-user.html:60 templates/admin/inspect-user.html:82
 #: templates/admin/inspect-user.html:98 templates/admin/inspect-user.html:142
 #: templates/answers/chart-answers.html:49
@@ -130,8 +130,8 @@ msgstr ""
 msgid "True"
 msgstr ""
 
-#: models/site.py:310 models/site.py:311 templates/admin/admin-panel.html:52
-#: templates/admin/admin-panel.html:157 templates/admin/inspect-user.html:46
+#: models/site.py:310 models/site.py:311 templates/admin/admin-panel.html:64
+#: templates/admin/admin-panel.html:169 templates/admin/inspect-user.html:46
 #: templates/admin/inspect-user.html:67 templates/admin/inspect-user.html:89
 #: templates/admin/inspect-user.html:99 templates/admin/inspect-user.html:144
 #: templates/answers/chart-answers.html:50
@@ -201,77 +201,83 @@ msgid "Site name"
 msgstr ""
 
 #. Button to change some option
-#: templates/admin/admin-panel.html:32 templates/admin/admin-panel.html:85
-#: templates/admin/admin-panel.html:96 templates/admin/admin-panel.html:137
-#: templates/site/edit-site.html:53 templates/user/user-settings.html:41
-#: templates/user/user-settings.html:59 templates/user/user-settings.html:70
+#: templates/admin/admin-panel.html:32 templates/admin/admin-panel.html:44
+#: templates/admin/admin-panel.html:97 templates/admin/admin-panel.html:108
+#: templates/admin/admin-panel.html:149 templates/site/edit-site.html:53
+#: templates/user/user-settings.html:41 templates/user/user-settings.html:59
+#: templates/user/user-settings.html:70
 msgid "Change"
 msgstr ""
 
-#. Whether to enable open registration, or remain invitation only
+#. Option in admin settings about changing instance welcoming text
 #: templates/admin/admin-panel.html:38
+msgid "Front page text"
+msgstr ""
+
+#. Whether to enable open registration, or remain invitation only
+#: templates/admin/admin-panel.html:50
 msgid "Invitation only"
 msgstr ""
 
 #. Noun, meaning agreement with terms/conditions of use
-#: templates/admin/admin-panel.html:59
+#: templates/admin/admin-panel.html:71
 msgid "Consent"
 msgstr ""
 
 #. 'etc' here stands for "and so on" at the end of a list
-#: templates/admin/admin-panel.html:62 templates/site/consent.html:28
+#: templates/admin/admin-panel.html:74 templates/site/consent.html:28
 #: templates/user/new-user.html:51
 msgid "Terms and conditions"
 msgstr ""
 
-#: templates/admin/admin-panel.html:63
+#: templates/admin/admin-panel.html:75
 msgid "etc"
 msgstr ""
 
 #. Button to edit some option
-#: templates/admin/admin-panel.html:70 templates/admin/admin-panel.html:117
+#: templates/admin/admin-panel.html:82 templates/admin/admin-panel.html:129
 #: templates/site/consent.html:35 templates/user/consent.html:33
 #: templates/user/user-settings.html:106
 msgid "Edit"
 msgstr ""
 
 #. Icon for the website
-#: templates/admin/admin-panel.html:77
+#: templates/admin/admin-panel.html:89
 msgid "Icon"
 msgstr ""
 
 #. Color for topbar menu on website
-#: templates/admin/admin-panel.html:91 templates/site/menu-color.html:9
+#: templates/admin/admin-panel.html:103 templates/site/menu-color.html:9
 msgid "Menu color"
 msgstr ""
 
 #. Settings about email server used by website to send email messages
-#: templates/admin/admin-panel.html:102 utils/wtf.py:101
+#: templates/admin/admin-panel.html:114 utils/wtf.py:101
 msgid "Email server"
 msgstr ""
 
-#: templates/admin/admin-panel.html:106
+#: templates/admin/admin-panel.html:118
 msgid "Configure"
 msgstr ""
 
-#: templates/admin/admin-panel.html:113
+#: templates/admin/admin-panel.html:125
 msgid "Public links"
 msgstr ""
 
-#: templates/admin/admin-panel.html:126 templates/user/new-user.html:12
+#: templates/admin/admin-panel.html:138 templates/user/new-user.html:12
 msgid "New user"
 msgstr ""
 
 #. Default language for instance, setting on Instance configuration
-#: templates/admin/admin-panel.html:131
+#: templates/admin/admin-panel.html:143
 msgid "Default language"
 msgstr ""
 
-#: templates/admin/admin-panel.html:143
+#: templates/admin/admin-panel.html:155
 msgid "Enable form attachments"
 msgstr ""
 
-#: templates/admin/admin-panel.html:167
+#: templates/admin/admin-panel.html:179
 msgid "Installation"
 msgstr ""
 
