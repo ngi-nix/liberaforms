@@ -144,7 +144,7 @@ class FileExtensions(FlaskForm):
 
 class UploadMedia(FlaskForm):
     alt_text = StringField(_("Descriptive text"), validators=[DataRequired()])
-    media_file = FileField(_("Select a file"))
+    media_file = FileField(_("Select a file")) # not required at form/_image-modal
     def validate_media_file(form, field):
         if not field.data:
             raise ValidationError("A file was not uploaded")

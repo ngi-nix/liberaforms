@@ -57,15 +57,16 @@
           </div>
           {% if config['ENABLE_UPLOADS'] == True %}
             <div class="form-group">
-                {% set max_kb = (config['MAX_MEDIA_SIZE']) %}
                 <label for="media_file">
                   {{trans}}Or upload a new image{{endtrans}}
                 </label>
                 {{ upload_media_form.media_file(
-                                class_="form-control",
-                                data_parsley_max_file_size=max_kb,
-                                data_parsley_filemimetypes="image/png, image/jpeg",
-                                data_parsley_required="false")
+                            class_="form-control",
+                            style="height: auto",
+                            multiple="false",
+                            data_parsley_max_file_size=config['MAX_MEDIA_SIZE'],
+                            data_parsley_filemimetypes="image/png, image/jpeg",
+                          )
                 }}
             </div>
           {% endif %}
@@ -126,9 +127,6 @@ jQuery(function($) {
               $('#image_url').val(data.image_url);
               $('#media_file').val('');
               $(document).trigger("insert_image");
-              //$('#insert_image_form').submit();
-              //insertImage();
-              //document.forms["insert_image_form"].parsley().submit();
             }
         }
     });
@@ -143,7 +141,6 @@ jQuery(function($) {
     {% if not config['ENABLE_UPLOADS'] == True %}
       $(document).trigger("insert_image");
     {% else %}
-      alert(3)
       var formFields = document.getElementById('insert_image_form').elements;
       var file = formFields['media_file'].files[0];
       if (file === undefined) {

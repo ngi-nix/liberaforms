@@ -487,7 +487,7 @@ def duplicate_form(id):
     session['form_id']=None
     session['duplication_in_progress'] = True
     flash(gettext("You can edit the duplicate now"), 'info')
-    return render_template('edit-form.html', host_url=g.site.host_url)
+    return redirect(make_url_for('form_bp.edit_form'))
 
 
 @form_bp.route('/forms/log/list/<int:id>', methods=['GET'])

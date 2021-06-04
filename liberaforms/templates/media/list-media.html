@@ -56,7 +56,8 @@
         {%trans%}Upload a file{%endtrans%}
       </div>
       <div class="form-group">
-          {{ wtform.alt_text.label }} <span class='required-dot'>●</span><br />
+          {{ wtform.alt_text.label }}
+          <span class='required-dot'>●</span><br />
           <span class="hint">
             {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
           </span>
@@ -70,9 +71,13 @@
       </div>
       <div class="form-group">
           {% set max_kb = (config['MAX_MEDIA_SIZE']) %}
-          {{ wtform.media_file.label }} <span class='required-dot'>●</span><br />
+          {{ wtform.media_file.label }}
+          <span class='required-dot'>●</span><br />
           {{ wtform.media_file(class_="form-control",
-                               data_parsley_max_file_size=max_kb
+                               style="height: auto",
+                               multiple="false",
+                               data_parsley_max_file_size=max_kb,
+                               required=True
             )
           }}
           {% for error in wtform.media_file.errors %}
@@ -156,7 +161,7 @@ $(function () {
             $('<td>').html(html).appendTo(new_row);
             $('<td>').html(data.created).appendTo(new_row);
             $('<td>').html(data.file_size).appendTo(new_row);
-            html = '<a href="'+data.image_url+' alt="'+data.alt_text+'">'+data.file_name+'</a>';
+            html = '<a href="'+data.image_url+'" alt="'+data.alt_text+'">'+data.file_name+'</a>';
             $('<td>').html(html).appendTo(new_row);
             html = '<input class="btn btn-xs btn-danger" type="button" ';
             html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';

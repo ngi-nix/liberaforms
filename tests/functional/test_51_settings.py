@@ -146,7 +146,7 @@ class TestFormSettings():
         html = response.data.decode()
         assert '<div class="info flash_message">' in html
         assert forms['test_form'].introductionText['markdown'] in html
-        assert '<input  id="slug" value=""' in html
+        assert '<input id="slug" value=""' in html
 
     def test_toggle_new_answer_notification(self, client, forms):
         form_id=forms['test_form'].id

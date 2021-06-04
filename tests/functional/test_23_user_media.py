@@ -11,6 +11,7 @@ import werkzeug
 from io import BytesIO
 import mimetypes
 from flask import g, current_app
+from liberaforms.models.user import User
 from liberaforms.models.media import Media
 from .utils import login, logout
 
@@ -47,11 +48,6 @@ class TestUserMedia():
         with open(valid_media_path, 'rb') as f:
             stream = BytesIO(f.read())
         mimetype = mimetypes.guess_type(valid_media_path)
-        file = werkzeug.datastructures.FileStorage(
-            stream=stream,
-            filename=valid_media_name,
-            content_type=mimetype,
-        )
         response = anon_client.post(
                         url,
                         follow_redirects=True,
@@ -60,20 +56,24 @@ class TestUserMedia():
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
         login(client, users['editor'])
+        file = werkzeug.datastructures.FileStorage(
+            stream=stream,
+            filename=valid_media_name,
+            content_type=mimetype,
+        )
         initial_media_count = g.current_user.media.count()
         response = client.post(
                         url,
                         data = {
-                            'file': file,
+                            'media_file': file,
                             'alt_text': "valid alternative text",
                         },
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert g.current_user.media.count() == initial_media_count + 1
-        #assert Media.find_all(user_id=g.current_user.id).count() == initial_media_count + 1
         assert response.json['file_name'] == valid_media_name
+        assert g.current_user.media.count() == initial_media_count + 1
         media = Media.find(id=1)
         media_path = os.path.join(current_app.config['MEDIA_DIR'], str(g.current_user.id))
         file_path = os.path.join(media_path, media.storage_name)
@@ -106,8 +106,9 @@ class TestUserMedia():
         assert response.is_json == True
         assert g.current_user.media.count() == initial_media_count
 
-    def test_delete_media(self, client, anon_client):
-        media = Media.find(id=1)
+    def test_delete_media(self, client, anon_client, users):
+        user = User.find(username=users['editor']['username'])
+        media = Media.find(user_id=user.id)
         url = media.get_url()
         print(url)
         response = anon_client.get(
