@@ -132,8 +132,8 @@ class TestUserPreferences():
         pass
 
     def test_toggle_new_answer_default_notification(self, users, client, anon_client):
-        print(g.current_user.username)
-        print(g.current_user.preferences["newAnswerNotification"])
+        #print(g.current_user.username)
+        #print(g.current_user.preferences["newAnswerNotification"])
         """ Tests permission
             # Tests POST only
             Tests toggle bool

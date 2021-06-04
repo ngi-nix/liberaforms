@@ -21,6 +21,11 @@ def forms():
         'test_form_2': None,
     }
 
+@pytest.fixture(scope='module')
+def client(app):
+    with app.test_client() as client:
+        yield client
+
 @pytest.fixture(scope="module")
 def invite():
     return {

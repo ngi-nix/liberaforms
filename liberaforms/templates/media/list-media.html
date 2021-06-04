@@ -70,15 +70,15 @@
           {% endfor %}
       </div>
       <div class="form-group">
-          {% set max_kb = (config['MAX_MEDIA_SIZE']) %}
           {{ wtform.media_file.label }}
           <span class='required-dot'>●</span><br />
           {{ wtform.media_file(class_="form-control",
-                               style="height: auto",
-                               multiple="false",
-                               data_parsley_max_file_size=max_kb,
-                               required=True
-            )
+                          style="height: auto",
+                          multiple="false",
+                          data_parsley_max_file_size=config['MAX_MEDIA_SIZE'],
+                          data_parsley_filemimetypes="image/png, image/jpeg",
+                          required=True
+                      )
           }}
           {% for error in wtform.media_file.errors %}
               <span class="formError">{{ error }}</span><br />
@@ -187,6 +187,24 @@ $(function () {
       en: 'This file should not be larger than {{max_media_size_for_humans}}',
       ca: 'El fitxer no ha de ser més gran que {{max_media_size_for_humans}}',
       fr: 'Ce fichier est plus grand que {{max_media_size_for_humans}}'
+    }
+  })
+  .addValidator('filemimetypes', {
+    validateString: function(_value, requirement, parsleyInstance) {
+      console.log(requirement)
+      if (!window.FormData) {
+        return true;
+      }
+      var file = parsleyInstance.$element[0].files;
+      if (file.length == 0) {
+        return true;
+      }
+      var allowedMimeTypes = requirement.replace(/\s/g, "").split(',');
+      return allowedMimeTypes.indexOf(file[0].type) !== -1;
+    },
+    requirementType: 'string',
+    messages: {
+      en: 'File mime type not allowed',
     }
   });
 });

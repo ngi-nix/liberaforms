@@ -13,6 +13,7 @@ import mimetypes
 from flask import g, current_app
 from liberaforms.models.user import User
 from liberaforms.models.media import Media
+from liberaforms.commands.user import create as create_user
 from .utils import login, logout
 
 
@@ -21,6 +22,7 @@ class TestUserMedia():
         """ Tests list media page
             Tests permission
         """
+        login(client, users['editor'])
         url = f"/user/{users['editor']['username']}/media"
         response = anon_client.get(
                         url,
@@ -106,12 +108,52 @@ class TestUserMedia():
         assert response.is_json == True
         assert g.current_user.media.count() == initial_media_count
 
-    def test_delete_media(self, client, anon_client, users):
+    def test_view_media(self, client, anon_client, users):
         user = User.find(username=users['editor']['username'])
-        media = Media.find(user_id=user.id)
+        media = Media.find_all(user_id=user.id).first()
         url = media.get_url()
-        print(url)
         response = anon_client.get(
                         url
                     )
         print(response)
+
+    def test_delete_media(self, app, client, anon_client, users):
+        """ Tests delete media
+            Tests Permissions
+        """
+        user = User.find(username=users['editor']['username'])
+        media = Media.find_all(user_id=user.id).first()
+        url = f"media/delete/{media.id}"
+        response = anon_client.post(
+                        url,
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<!-- site_index_page -->' in html
+        runner = app.test_cli_runner()
+        with app.app_context():
+            result = runner.invoke(create_user, [users['dummy_1']['username'],
+                                                 users['dummy_1']['email'],
+                                                 users['dummy_1']['password']
+                                                 ])
+        logout(client)
+        response = login(client, users['dummy_1'])
+        assert g.current_user.username == users['dummy_1']['username']
+        dummy_1 = User.find(username=users['dummy_1']['username'])
+        response = client.post(
+                        url,
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json == False
+        assert '<!-- site_index_page -->' in html
+        dummy_1.delete()
+        login(client, users['editor'])
+        response = client.post(
+                        url,
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
