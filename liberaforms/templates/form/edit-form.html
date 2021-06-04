@@ -9,125 +9,128 @@
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
 {% if config['ENABLE_UPLOADS'] == True %}
-{% include '_image-modal.html' %}
+  <script src="/static/parsley/parsley.min.js"></script>
+  <script src="/static/parsley/i18n/{{ g.current_user.language }}.js"></script>
+  <link rel="stylesheet" type="text/css" href="/static/css/parsley.css">
+  {% include '_image-modal.html' %}
 {% endif %}
 
 <div class="container">
-
-<div class="row">
+  <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-9">
-        <div class="title_1 delimited">
-        {% if session['form_id'] %}
-            <a class="btn btn-primary btn-sm"
-               role="button"
-               href="/forms/view/{{session['form_id']}}">
-                {%trans%}Return to form{%endtrans%}
-            </a>
-            {{ session['slug'] }}
-        {% else %}
-            {%trans%}Build your form here{%endtrans%}
-        {% endif %}
-        </div>
+      <div class="title_1 delimited">
+      {% if session['form_id'] %}
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/forms/view/{{session['form_id']}}">
+             {%trans%}Return to form{%endtrans%}
+          </a>
+          {{ session['slug'] }}
+      {% else %}
+          {%trans%}Build your form here{%endtrans%}
+      {% endif %}
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="row">
+  <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-7">
-        <div class="title_2">
-            1. {%trans%}Introduction text{%endtrans%}
-        </div>
+      <div class="title_2">
+        1. {%trans%}Introduction text{%endtrans%}
+      </div>
 
-        {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
-        <a href="https://www.markdownguide.org/basic-syntax"
-           target="_blank">
-           {%trans%}Learn more{%endtrans%}
-        </a>
-        <textarea id="introduction-editor">{{ session['introductionTextMD'] }}</textarea>
+      {%trans%}This is a markdown editor, an easy way to write HTML.{%endtrans%}
+      <a href="https://www.markdownguide.org/basic-syntax"
+         target="_blank">
+         {%trans%}Learn more{%endtrans%}
+      </a>
+      <textarea id="introduction-editor">{{ session['introductionTextMD'] }}</textarea>
     </div>
-</div>
+  </div>
 
-<div class="row">
+  <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-9">
-        <div class="title_2 delimited">
-            2. {%trans%}The form{%endtrans%}
-        </div>
-        <div id="fb-editor"></div>
-        <p>&nbsp;</p>
+      <div class="title_2 delimited">
+        2. {%trans%}The form{%endtrans%}
+      </div>
+      <div id="fb-editor"></div>
+      <p>&nbsp;</p>
     </div>
-</div>
+  </div>
 
-<div class="row">
+  <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-7">
-        <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
-            <input type="hidden"
-                   name="csrf_token"
-                   value="{{ csrf_token() }}" />
-            <input type="hidden"
-                   id="structure"
-                   name="structure" />
-            <input id="introduction-text"
-                   type="hidden"
-                   name="introductionTextMD" />
+      <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}" />
+        <input type="hidden"
+               id="structure"
+               name="structure" />
+        <input id="introduction-text"
+               type="hidden"
+               name="introductionTextMD" />
 
         {% if not session['form_id'] %}
-            <div class="title_2 delimited">
-                3. {%trans%}Your form will have this address{%endtrans%}
-            </div>
+        <div class="title_2 delimited">
+            3. {%trans%}Your form will have this address{%endtrans%}
+        </div>
 
-            <div class="input-group mb-3 input-group"
-                 style="margin-bottom: 0 !important;">
-              <div class="input-group-prepend">
-                <span class="input-group-text"
-                      id="hostname-addon">
-                  {{host_url}}
-                </span>
-              </div>
-              <input  id="slug" value="{{ session['slug'] }}"
-                      type="text"
-                      class="form-control"
-                      name="slug"
-                      aria-label="Slug"
-                      aria-describedby="hostname-addon"
-                      {% if session['form_id'] %}disabled{% else %}required{% endif %}
-              />
-            </div>
-            <div id="slug_not_available"
-                 class="formError"
-                 style="display:none">
-              {%trans%}This URL is not available. Try another!{%endtrans%}
-            </div>
+        <div class="input-group mb-3 input-group"
+             style="margin-bottom: 0 !important;">
+          <div class="input-group-prepend">
+            <span class="input-group-text"
+                  id="hostname-addon">
+              {{host_url}}
+            </span>
+          </div>
+          <input id="slug" value="{{ session['slug'] }}"
+                 type="text"
+                 class="form-control"
+                 name="slug"
+                 aria-label="Slug"
+                 aria-describedby="hostname-addon"
+                 {% if session['form_id'] %}disabled{% else %}required{% endif %}
+          />
+        </div>
+        <div id="slug_not_available"
+             class="formError"
+             style="display:none">
+          {%trans%}This URL is not available. Try another!{%endtrans%}
+        </div>
         {% endif %}
 
-            <div class="form-actions">
-            <input id="preview_form"
-                   class="btn-success btn"
-                   type="submit"
-                   value="{%trans%}Preview{%endtrans%}" />
-            {% if session['form_id'] %}
-                <button id="save_form"
-                        class="btn btn-success">
-                    {%trans%}Save{%endtrans%}
-                </button>
-                <a class="btn btn-primary"
-                   role="button"
-                   href="/forms/view/{{session['form_id']}}">
-                  {%trans%}Cancel{%endtrans%}
-                </a>
-            {% else %}
-                <a class="btn btn-primary"
-                   role="button"
-                   href="/forms">
-                   {%trans%}Cancel{%endtrans%}
-                </a>
-            {% endif %}
-            </div>
-        </form>
+        <div class="form-actions">
+          <input id="preview_form"
+                 class="btn-success btn"
+                 type="submit"
+                 value="{%trans%}Preview{%endtrans%}"
+          />
+        {% if session['form_id'] %}
+          <button id="save_form"
+                  class="btn btn-success">
+              {%trans%}Save{%endtrans%}
+          </button>
+          <a class="btn btn-primary"
+             role="button"
+             href="/forms/view/{{session['form_id']}}">
+            {%trans%}Cancel{%endtrans%}
+          </a>
+        {% else %}
+          <a class="btn btn-primary"
+             role="button"
+             href="/forms">
+             {%trans%}Cancel{%endtrans%}
+          </a>
+        {% endif %}
+        </div>
+      </form>
     </div>
-</div>
+  </div>
 </div>
 
 <script>
@@ -146,9 +149,7 @@ jQuery(function($) {
   		{
   			name: "custom",
   			action: function customImage(editor){
-          $('#image_url').val('');
-          $('#image_alt_text').val('');
-          $('#new_image_file').val('');
+          $('#insert_image_form')[0].reset();
   				$('#insert_image_modal').modal('show');
   			},
   			className: "fa fa-picture-o",
@@ -250,61 +251,17 @@ jQuery(function($) {
         $('#structure').val(formBuilder.actions.getData('json', true));
         $("#introduction-text").val(introduction_mde.value());
     }
-    function insertImage() {
+    $(document).on("insert_image", function(event) {
       $('#insert_image_modal').modal('hide');
       var image_url = $('#image_url').val();
-      //$('#image_url').val('');
       if (image_url === '') {
         image_url = 'https://'
       }
-      var image_alt_text = $('#image_alt_text').val();
-      //$('#image_alt_text').val('');
-      var image = '\n\r!['+image_alt_text+']('+image_url+')\n\r';
+      var alt_text = $('#alt_text').val();
+      var image = '\n\n!['+alt_text+']('+image_url+')\n\n';
       pos = introduction_mde.codemirror.getCursor();
       introduction_mde.codemirror.replaceRange(image, pos);
-    }
-    $('#insert_image_form').submit(function(event) {
-      event.preventDefault();
-      {% if config['ENABLE_UPLOADS'] == True %}
-      var formFields = document.getElementById('insert_image_form').elements;
-      console.log(formFields['new_image_file'].files.length)
-      if (formFields['new_image_file'].files.length > 0) {
-        var file = formFields['new_image_file'].files[0];
-        if (!file.type.match('image.*')) {
-          $('#new_image_file_error').show()
-          return;
-        } else {
-          $('#new_image_file_error').hide()
-        }
-        var form_data = new FormData();
-        form_data.append('file', file);
-        form_data.append('alt_text', $('#image_alt_text').val());
-        console.log(form_data)
-        $.ajax({
-            url : "/media/save",
-            type: "POST",
-            //enctype: 'multipart/form-data',
-            data : form_data,
-            //dataType: "json",
-            processData: false,
-            contentType: false,
-            beforeSend: function(xhr, settings) {
-              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                  xhr.setRequestHeader("X-CSRFToken", csrftoken)
-              }
-            },
-            success: function(data, textStatus, jqXHR)
-            {
-              $('#image_url').val(data.image_url);
-              insertImage();
-            }
-        });
-      } else {
-        insertImage();
-      }
-      {% else %}
-      insertImage();
-      {% endif %}
+      return false;
     });
 });
 function sleep(ms) {

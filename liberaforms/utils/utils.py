@@ -47,6 +47,14 @@ def JsonResponse(json_response="1", status_code=200):
         {'Content-Type':'application/json; charset=utf-8'}
     )
 
+def return_error_as_json(status_code, sub_code, message, action):
+    response = jsonify({
+        'status': status_code,
+        'sub_code': sub_code,
+        'message': message,
+        'action': action
+    })
+    return JsonResponse(response, status_code)
 
 """ ######## Session ######## """
 def logout_user():

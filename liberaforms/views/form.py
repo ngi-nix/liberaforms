@@ -24,7 +24,8 @@ from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 from liberaforms.utils.email.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
+from liberaforms.utils.utils import (make_url_for, JsonResponse,
+                                     logout_user, human_readable_bytes)
 import liberaforms.utils.wtf as wtf
 
 #from pprint import pprint
@@ -96,9 +97,12 @@ def edit_form(form_id=None):
     if queriedForm:
         optionsWithData = queriedForm.get_multichoice_options_with_saved_data()
     disabled_fields = current_app.config['FORMBUILDER_DISABLED_FIELDS']
+    max_media_size=human_readable_bytes(current_app.config['MAX_MEDIA_SIZE'])
     return render_template('edit-form.html',
                             host_url=g.site.host_url,
-                            multichoiceOptionsWithSavedData=optionsWithData)
+                            multichoiceOptionsWithSavedData=optionsWithData,
+                            upload_media_form=wtf.UploadMedia(),
+                            max_media_size_for_humans=max_media_size,)
 
 
 @form_bp.route('/forms/check-slug-availability', methods=['POST'])

@@ -8,7 +8,8 @@ This file is part of LiberaForms.
 import os, re
 import mimetypes
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField, IntegerField, SelectField, PasswordField, BooleanField, RadioField
+from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
+                     PasswordField, BooleanField, RadioField, FileField)
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask import current_app, g
 from flask_babel import lazy_gettext as _
@@ -16,6 +17,7 @@ from flask_babel import lazy_gettext as _
 from liberaforms.models.user import User
 from liberaforms.utils.sanitizers import sanitize_username
 from liberaforms.utils import validators
+from liberaforms.utils import utils
 
 
 class NewUser(FlaskForm):
@@ -138,4 +140,23 @@ class FileExtensions(FlaskForm):
             if not ext:
                 continue
             if not f".{ext}" in mimetypes.types_map:
-                raise ValidationError(_(f"Unknown file extension: %s" % ext))
+                raise ValidationError(_("Unknown file extension: %s" % ext))
+
+class UploadMedia(FlaskForm):
+    alt_text = StringField(_("Descriptive text"), validators=[DataRequired()])
+    media_file = FileField(_("Select a file"))
+    def validate_media_file(form, field):
+        if not field.data:
+            raise ValidationError("A file was not uploaded")
+        if not "image/" in field.data.content_type:
+            raise ValidationError("Not a vaild image file")
+        field.data.seek(0, os.SEEK_END)
+        file_size = field.data.tell()
+        field.data.seek(0, 0)
+        max_size = current_app.config['MAX_MEDIA_SIZE']
+        if file_size > max_size:
+            err_msg = "File too big. Maximum size is %s" % max_size
+            raise ValidationError(err_msg)
+    def validate_alt_text(form, field):
+        if not field.data.strip():
+            raise ValidationError("A descriptive text is required")

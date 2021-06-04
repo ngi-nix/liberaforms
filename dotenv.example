@@ -23,9 +23,10 @@ SESSION_TYPE = "filesystem"
 
 # See docs/upload.md
 ENABLE_UPLOADS = False
-MAX_FILE_UPLOAD_SIZE=50 # Kb
+# 1024 * 500 = 512000 = 512 KB
+MAX_MEDIA_SIZE=512000
+MAX_FILE_UPLOAD_SIZE=512000
 ENABLE_REMOTE_STORAGE=False
-
 
 # Logging [watched|stream]
 LOG_TYPE=watched

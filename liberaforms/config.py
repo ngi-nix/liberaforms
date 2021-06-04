@@ -80,7 +80,8 @@ class Config(object):
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
-    MAX_FILE_UPLOAD_SIZE = os.environ['MAX_FILE_UPLOAD_SIZE']
+    MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
+    MAX_FILE_UPLOAD_SIZE = int(os.environ['MAX_FILE_UPLOAD_SIZE'])
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
 

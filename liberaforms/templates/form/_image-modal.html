@@ -25,20 +25,21 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="insert_image_form" enctype="multipart/form-data">
+        <form id="insert_image_form"
+              enctype="multipart/form-data"
+              data-parsley-validate>
+
           <div class="form-group">
-            <label for="image_alt_text">
-              {{trans}}Alternative text{{endtrans}}
-            </label>
+            {{ upload_media_form.alt_text.label }}
+            <span class='required-dot'>●</span>
             <br />
             <span class="hint">
               {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
             </span>
-            <input type="text"
-                  class="form-control"
-                  id="image_alt_text"
-                  aria-describedby="imageAltTextHelp"
-                  placeholder="{{trans}}A photo of a horse galloping on the beach{{endtrans}}" />
+            {{ upload_media_form.alt_text(
+                    class_="form-control",
+                    placeholder=_('A photo of a horse galloping on the beach.'))
+            }}
           </div>
 
           <div class="form-group">
@@ -56,19 +57,19 @@
           </div>
           {% if config['ENABLE_UPLOADS'] == True %}
             <div class="form-group">
-              <label for="new_image_file">
-                {{trans}}Or upload a new image{{endtrans}}
-              </label>
-              <input type="file"
-                     class="form-control-file"
-                     id="new_image_file">
-              <span id="new_image_file_error"
-                    class="help-block"
-                    style="color:#B94A48; display:none">
-                {{trans}}The file is not an image.{{endtrans}}
-              </span>
+                {% set max_kb = (config['MAX_MEDIA_SIZE']) %}
+                <label for="media_file">
+                  {{trans}}Or upload a new image{{endtrans}}
+                </label>
+                {{ upload_media_form.media_file(
+                                class_="form-control",
+                                data_parsley_max_file_size=max_kb,
+                                data_parsley_filemimetypes="image/png, image/jpeg",
+                                data_parsley_required="false")
+                }}
             </div>
-            <div >
+          {% endif %}
+            <div>
               <button id="imageModalSaveButton"
                       type="submit"
                       class="btn btn-success">
@@ -80,7 +81,7 @@
                   {{trans}}Cancel{{endtrans}}
               </button>
             </div>
-            {% if g.current_user.media.count() %}
+          {% if g.current_user.media.count() %}
             <div style="margin-top:2em;">
               <label>
               {{trans}}Optionally, reuse one of your previous images{{endtrans}}
@@ -95,7 +96,6 @@
                 {% endfor %}
               </div>
             </div>
-            {% endif %}
           {% endif %}
         </form>
       </div>
@@ -122,13 +122,93 @@ jQuery(function($) {
         success: function(data, textStatus, jqXHR)
         {
             if (data !== false) {
-              $('#image_alt_text').val(data.alt_text);
+              $('#alt_text').val(data.alt_text);
               $('#image_url').val(data.image_url);
-              $('#new_image_file').val('');
-              $('#insert_image_form').submit()
+              $('#media_file').val('');
+              $(document).trigger("insert_image");
+              //$('#insert_image_form').submit();
+              //insertImage();
+              //document.forms["insert_image_form"].parsley().submit();
             }
         }
     });
+  });
+  $('#insert_image_form').parsley().on('field:validated', function() {
+    var ok = $('.parsley-error').length === 0;
+    $('.bs-callout-info').toggleClass('hidden', !ok);
+    $('.bs-callout-warning').toggleClass('hidden', ok);
+  })
+  .on('form:submit', function() {
+    event.preventDefault();
+    {% if not config['ENABLE_UPLOADS'] == True %}
+      $(document).trigger("insert_image");
+    {% else %}
+      alert(3)
+      var formFields = document.getElementById('insert_image_form').elements;
+      var file = formFields['media_file'].files[0];
+      if (file === undefined) {
+        $(document).trigger("insert_image");
+      } else {
+        var form_data = new FormData();
+        form_data.append('media_file', file);
+        form_data.append('alt_text', $('#alt_text').val());
+        $.ajax({
+            url : "/media/save",
+            type: "POST",
+            data : form_data,
+            processData: false,
+            contentType: false,
+            beforeSend: function(xhr, settings) {
+              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                  xhr.setRequestHeader("X-CSRFToken", csrftoken)
+              }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+              if (data.errors === undefined) {
+                console.log(data)
+                $('#image_url').val(data.image_url);
+                $('#alt_text').val(data.alt_text)
+                $(document).trigger("insert_image");
+              }
+            }
+        });
+      }
+    {% endif %}
+  });
+  window.Parsley
+  .addValidator('maxFileSize', {
+    validateString: function(_value, maxSize, parsleyInstance) {
+      if (!window.FormData) {
+        return true;
+      }
+      var files = parsleyInstance.$element[0].files;
+      return files.length != 1  || files[0].size <= maxSize;
+   },
+    requirementType: 'integer',
+    messages: {
+      en: 'This file should not be larger than {{max_media_size_for_humans}}',
+      ca: 'El fitxer no ha de ser més gran que {{max_media_size_for_humans}}',
+      fr: 'Ce fichier est plus grand que {{max_media_size_for_humans}}'
+    }
+  })
+  .addValidator('filemimetypes', {
+    validateString: function(_value, requirement, parsleyInstance) {
+      console.log(requirement)
+      if (!window.FormData) {
+        return true;
+      }
+      var file = parsleyInstance.$element[0].files;
+      if (file.length == 0) {
+        return true;
+      }
+      var allowedMimeTypes = requirement.replace(/\s/g, "").split(',');
+      return allowedMimeTypes.indexOf(file[0].type) !== -1;
+    },
+    requirementType: 'string',
+    messages: {
+      en: 'File mime type not allowed',
+    }
   });
 });
 </script>
