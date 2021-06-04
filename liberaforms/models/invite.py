@@ -59,5 +59,5 @@ class Invite(db.Model, CRUD):
 
     @staticmethod
     def default_message():
-        # Template message for email invitation. '\n' is used for linebreak.
+        # i18n: Template message for email invitation. '\n' is used for linebreak.
         return _("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")

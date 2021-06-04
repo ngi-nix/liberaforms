@@ -290,13 +290,13 @@ class Site(db.Model, CRUD):
         fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
         fieldheaders={  "username": _("Username"),
                         "created": _("Created"),
-                        # Used as column title
+                        # i18n: Used as column title
                         "enabled": _("Enabled"),
-                        # Email direction, used as column title
+                        # i18n: Email direction, used as column title
                         "email": _("Email"),
-                        # Used as column title
+                        # i18n: Used as column title
                         "forms": _("Forms"),
-                        # Whether user is admin, used as column title
+                        # i18n: Whether user is admin, used as column title
                         "admin": _("Admin")
                         }
         csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
@@ -306,7 +306,7 @@ class Site(db.Model, CRUD):
                                     extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in self.get_users():
-                # Boolean option: True or False
+                # i18n: Boolean option: True or False
                 is_enabled = _("True") if user.enabled else _("False")
                 is_admin = _("True") if user.is_admin() else _("False")
                 row = { "username": user.username,

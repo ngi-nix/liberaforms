@@ -175,7 +175,7 @@ def save_form(id=None):
             flash(_("Slug is not unique. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['slug'] in current_app.config['RESERVED_SLUGS']:
-            # TRANSLATION: Slug is reserved. <a_word>
+            # i18n: Slug is reserved. <a_word>
             flash(_("Slug is reserved. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
@@ -465,7 +465,7 @@ def set_expiry_total_answers(id):
         return JsonResponse(json.dumps({'expired': False, 'total_answers':0}))
     total_answers = request.form['total_answers']
     total_answers = queriedForm.save_expiry_total_answers(total_answers)
-    # TRANSLATION: Expire when total answers set to: 3
+    # i18n: Expire when total answers set to: 3
     queriedForm.add_log(_("Expire when total answers set to: %s" % total_answers))
     return JsonResponse(json.dumps({'expired': queriedForm.expired,
                                     'total_answers': total_answers}))

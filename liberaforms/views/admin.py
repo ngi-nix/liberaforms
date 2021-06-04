@@ -221,7 +221,7 @@ def delete_invite(id):
     invite=Invite.find(id=id)
     if invite:
         invite.delete()
-        # TRANSLATION: Invitation to dave@example.com deleted OK
+        # i18n: Invitation to dave@example.com deleted OK
         flash(_("Invitation to %s deleted OK" % invite.email), 'success')
     else:
         flash(_("Opps! We can't find that invitation"), 'error')
