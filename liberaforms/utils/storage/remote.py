@@ -62,11 +62,19 @@ class RemoteStorage():
         self.region = 'eu-central-1'
         self.bucket_name = Site.find().hostname
 
-    def add_object(self, file_path, directory, storage_name):
+    def ensure_bucket_exists(self):
         try:
             client = get_minio_client()
             if not client.bucket_exists(self.bucket_name):
                 client.make_bucket(self.bucket_name)
+            return client.bucket_exists(self.bucket_name)
+        except S3Error as error:
+            logging.error(error)
+            return False
+
+    def add_object(self, file_path, directory, storage_name):
+        try:
+            client = get_minio_client()
             result =client.fput_object(
                             bucket_name=self.bucket_name,
                             object_name=f"{directory}/{storage_name}",
