@@ -99,13 +99,7 @@ class Config(object):
         BRAND_DIR = fqdn_brand_dir
         ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
 
-    if os.environ['ENABLE_REMOTE_STORAGE'] == 'True':
-        ENABLE_REMOTE_STORAGE = True
-        MINIO_HOST = os.environ['MINIO_HOST']
-        MINIO_ACCESS_KEY = os.environ['MINIO_ACCESS_KEY']
-        MINIO_SECRET_KEY = os.environ['MINIO_SECRET_KEY']
-    else:
-        ENABLE_REMOTE_STORAGE = False
+    ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
 
     @staticmethod
     def init_app(app):
