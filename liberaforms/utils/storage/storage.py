@@ -58,6 +58,7 @@ class Storage:
                     os.remove(tmp_file_path)
                     return True
             except Exception as error:
+                os.remove(tmp_file_path)
                 logging.error(error)
                 logging.warning(f"Failed to save remote object. Saving to local filesystem.")
                 saved = self.save_to_disk(tmp_file_path, sub_dir, storage_name)
@@ -75,6 +76,7 @@ class Storage:
                 file_path = f"{sub_dir}/{storage_name}"
                 logging.error(f"Upload failed. Did not save file: {file_path}")
                 return False
+        return False
 
     def get_file(self, storage_name, sub_dir):
         if self.local_filesystem:
@@ -110,10 +112,13 @@ class Storage:
             return False
         else:
             try:
+                # RemoteStorage.delete run in a thread so return value is not valid.
                 removed = RemoteStorage().delete_file(sub_dir, storage_name)
-                if not removed:
-                    logging.error(f"Failed to remove remote object: {file_path}")
-                return removed
+                #if not removed:
+                #    file_path = f"{sub_dir}/{storage_name}"
+                #    logging.error(f"Failed to remove remote object: {file_path}")
+                #return removed
+                return
             except Exception as error:
                 logging.error(error)
                 return False

@@ -60,7 +60,6 @@ class Media(db.Model, CRUD, Storage):
         self.storage_name = f"{utils.gen_random_string()}{extension}"
         saved = super().save_file(file, self.storage_name, self.directory)
         if saved:
-
             self.save()
             self.save_thumbnail()
         return saved
@@ -68,11 +67,14 @@ class Media(db.Model, CRUD, Storage):
     def delete_media(self):
         Storage.__init__(self, public=True)
         removed = super().delete_file(self.storage_name, self.directory)
-        if removed:
-            self.delete_thumbnail()
-            self.delete()
-            return True
-        return False
+        self.delete_thumbnail()
+        self.delete()
+        """ Remote delete runs in a thread. Can we get the return value?
+            We return True even though we don't if the media was successfully deleted.
+            Errors are logged.
+            If the media file was not deleted, it is now dangling.
+        """
+        return True
 
     def get_url(self):
         host_url = self.user.site.host_url

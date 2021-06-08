@@ -65,6 +65,8 @@ class RemoteStorage():
     def add_object(self, file_path, directory, storage_name):
         try:
             client = get_minio_client()
+            if not client.bucket_exists(self.bucket_name):
+                client.make_bucket(self.bucket_name)
             result =client.fput_object(
                             bucket_name=self.bucket_name,
                             object_name=f"{directory}/{storage_name}",

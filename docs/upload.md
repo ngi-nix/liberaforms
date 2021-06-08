@@ -27,7 +27,7 @@ The minio package is not included in `./requirements.txt`, so install it now
 pip install minio
 ```
 
-Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and, optionally, `:PORT` is the port.
+Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and optionally, `:PORT` is the port.
 
 ```
 MINIO_HOST = FQDN[:PORT]
@@ -41,3 +41,7 @@ If remote storage is configured and LiberaForms is unable to use the server (tem
 
 * uploaded files are saved locally on the server at `./uploads`
 * the problem is logged
+
+# Nginx config
+
+https://serverfault.com/questions/987061/nginx-proxying-s3-public-bucket-hosted-by-minio-service

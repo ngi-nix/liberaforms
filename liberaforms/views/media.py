@@ -34,7 +34,6 @@ def save_media():
         errors = wtform.errors
         return JsonResponse(json.dumps({"errors": errors}))
     media = Media()
-    print(request.form)
     saved = media.save_media(g.current_user,
                              request.files['media_file'],
                              request.form['alt_text'])
