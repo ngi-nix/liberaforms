@@ -295,28 +295,10 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   vertical-align: middle;
   margin-bottom: 4px;
 }
-/* ##### Conditions ####### */
-#conditions_display a[role=button] {
-  display:none;
-}
-.conditioner_icon, .conditioned_icon {
-  padding-left: 0.3rem;
-  cursor: pointer;
-  color: gray;
-}
-#liberaform .fa-lightbulb-o {
-  font-size: 1.6rem;
-}
-.activeConditionerIcon, .activeConditionedIcon {
-  color: green;
-}
-#conditions_display a {
-  margin-left: 0.3em;
-}
-.activeConditionGroup {
-  background-color: #C3FDB8;
-}
 
+input[type="file"] {
+  height: auto;
+}
 /* ######### Consent texts ######### */
 div.required {
     /* font-size: 1.05em; */

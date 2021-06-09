@@ -182,6 +182,15 @@ jQuery(function($) {
         showActionButtons: false,
         disableFields: disabledFields,
         disabledAttrs: disabledAttrs,
+        typeUserEvents: {
+          file: {
+            onadd: function (fld) {
+              // hide unwanted fields
+              $('.placeholder-wrap', fld).hide();
+              $('.subtype-wrap', fld).hide();
+            }
+          }
+        },
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
             locale: "{{ config['LANGUAGES'][g.current_user.language][1] }}",

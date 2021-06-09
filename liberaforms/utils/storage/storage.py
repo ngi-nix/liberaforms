@@ -87,7 +87,7 @@ class Storage:
                     return BytesIO(file.read())
             except:
                 logging.error(f"Failed to retreive file from local filesystem: {file_path}")
-            return False
+            return None
         else:
             try:
                 tmp_file_path = RemoteStorage().get_object(sub_dir, storage_name)
@@ -98,7 +98,7 @@ class Storage:
             except:
                 file_path = f"{sub_dir}/{storage_name}"
                 logging.error(f"Failed to retreive remote object: {file_path}")
-                return False
+            return None
 
     def get_media_url(self, host_url, directory, storage_name):
         if self.local_filesystem:

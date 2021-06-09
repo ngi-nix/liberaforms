@@ -632,8 +632,10 @@ def view_form(slug):
 
         if request.files:
             for file_field_name in request.files.keys():
+                print("file_field_name: ", file_field_name)
                 if not queriedForm.has_field(file_field_name):
                     continue
+                print("request.files_1")
                 file = request.files[file_field_name]
                 # TODO: check size and mimetype
                 if file.filename:

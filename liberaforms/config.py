@@ -55,8 +55,8 @@ class Config(object):
         "sendConfirmation"
     ]
     RESERVED_USERNAMES = ["system", "admin", "root"]
-    FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access"]
     FORMBUILDER_DISABLED_FIELDS = ["autocomplete", "hidden", "button"]
+    FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access", "multiple"]
     FORMBUILDER_CONTROL_ORDER = ["header", "paragraph"]
     BABEL_TRANSLATION_DIRECTORIES = "translations;form_templates/translations"
     # http://www.lingoes.net/en/translator/langcode.htm

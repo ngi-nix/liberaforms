@@ -16,7 +16,7 @@
   display:none;
 }
 
-#fb-editor input[type="file"] {
+#fb-editor input[type="file"], .rendered-form input[type="file"] {
   height: auto;
 }
 

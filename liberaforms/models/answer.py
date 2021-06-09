@@ -91,8 +91,10 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     @property
     def directory(self):
         return str(self.form_id)
+        #return f"attachments/{self.form_id}"
 
     def save_attachment(self, file):
+        print("save attachment")
         self.file_name = file.filename
         self.storage_name = f"{utils.gen_random_string()}.{str(self.answer_id)}"
         saved = super().save_file(file, self.storage_name, self.directory)
@@ -110,6 +112,9 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     def get_attachment(self):
         bytes = super().get_file(self.storage_name, self.directory)
         return bytes, self.file_name
+
+    def does_attachment_exist(self):
+        return True if super().get_file(self.storage_name, self.directory) else False
 
 
 @event.listens_for(AnswerAttachment, "after_delete")
