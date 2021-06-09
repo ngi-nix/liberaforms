@@ -7,7 +7,7 @@ When set to `True` users can
 * upload images to include in the form's 'Introduction text'. Images are saved as `./uploads/media/<random_string>.<extension>`
 
 
-## MAX_FILE_UPLOAD_SIZE
+## MAX_ATTACHMENT_SIZE
 
 The maximum size in Kbytes of the uploaded files
 

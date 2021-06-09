@@ -122,7 +122,7 @@ jQuery(function($) {
                 postFormRender();
                 $('input[type=file]').each(function() {
                   $(this).attr('data-parsley-max-file-size',
-                               {{ config['MAX_FILE_UPLOAD_SIZE']/1024 }}
+                               {{ config['MAX_ATTACHMENT_SIZE']/1024 }}
                   );
                   $(this).attr('data-parsley-filemimetypes',
                               "{{ ', '.join(g.site.get_mimetypes()) }}"
