@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, json
+import os, json, logging
 from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, send_from_directory, after_this_request
@@ -149,7 +149,7 @@ def delete_answers(id):
     return render_template('delete-answers.html', form=queriedForm)
 
 
-@answers_bp.route('/attachment/<int:form_id>/<string:key>', methods=['GET'])
+@answers_bp.route('/form/<int:form_id>/attachment/<string:key>', methods=['GET'])
 @enabled_user_required
 @sanitized_key_required
 def download_attachment(form_id, key):
@@ -160,9 +160,13 @@ def download_attachment(form_id, key):
     if not attachment:
         return render_template('page-not-found.html'), 400
     (bytes, file_name) = attachment.get_attachment()
-    return send_file(bytes,
-                     attachment_filename=file_name,
-                     as_attachment=True)
+    try:
+        return send_file(bytes,
+                         attachment_filename=file_name,
+                         as_attachment=True)
+    except:
+        logging.error("Missing attachment")
+        return render_template('page-not-found.html'), 404
 
 @answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])
 @sanitized_slug_required

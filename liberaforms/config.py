@@ -14,8 +14,7 @@ def get_SQLALCHEMY_DATABASE_URI():
     host = os.environ['DB_HOST']
     dbase = os.environ['DB_NAME']
     port = os.environ.get('DB_PORT', 5432)
-    uri = f'postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbase}'
-    return uri
+    return f'postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbase}'
 
 
 class Config(object):
@@ -28,20 +27,16 @@ class Config(object):
     # User sessions last 8h (refreshed on every request)
     PERMANENT_SESSION_LIFETIME = 28800
     RESERVED_SLUGS = [
-        "login",
-        "logout",
         "static",
-        "admin", "admins",
-        "user", "users",
-        "profile",
-        "root",
+        "login", "logout",
+        "admin", "admins", "root",
+        "profile", "user", "users",
         "form", "forms",
         "site", "sites",
         "update",
         "embed",
         "api",
-        "file", "files",
-        "media"
+        "media", "m", "file", "files", "f",
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
@@ -80,26 +75,27 @@ class Config(object):
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
+    ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
     MAX_ATTACHMENT_SIZE = int(os.environ['MAX_ATTACHMENT_SIZE'])
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
 
     root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
-    uploads_dir = os.path.abspath(os.path.join(root_dir, 'uploads'))
-    MEDIA_DIR = os.path.join(uploads_dir, 'media')
+    UPLOADS_DIR = os.path.abspath(os.path.join(root_dir, 'uploads'))
+    ATTACHMENT_DIR = 'attachments'
+    MEDIA_DIR = 'media'
     BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
-    ATTACHMENT_DIR = os.path.join(uploads_dir, 'attachments')
     if 'FQDN' in os.environ:
         # LiberaForms cluster project requires a unique directory
-        MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
-        fqdn_brand_dir = os.path.join(MEDIA_DIR, "brand")
-        if not os.path.isdir(fqdn_brand_dir):
-            shutil.copytree(BRAND_DIR, fqdn_brand_dir)
-        BRAND_DIR = fqdn_brand_dir
         ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
-
-    ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
+        MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
+        inital_brand_dir = BRAND_DIR
+        BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
+        if not os.path.isdir(os.path.join(UPLOADS_DIR, BRAND_DIR)):
+            shutil.copytree(os.path.join(UPLOADS_DIR, inital_brand_dir),
+                            os.path.join(UPLOADS_DIR, BRAND_DIR)
+                            )
 
     @staticmethod
     def init_app(app):

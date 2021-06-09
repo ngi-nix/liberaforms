@@ -67,17 +67,19 @@ class RemoteStorage():
             client = get_minio_client()
             if not client.bucket_exists(self.bucket_name):
                 client.make_bucket(self.bucket_name)
+                # TODO add default folders with permissions
+
             return client.bucket_exists(self.bucket_name)
         except S3Error as error:
             logging.error(error)
             return False
 
-    def add_object(self, file_path, directory, storage_name):
+    def add_object(self, file_path, prefix, storage_name):
         try:
             client = get_minio_client()
             result =client.fput_object(
                             bucket_name=self.bucket_name,
-                            object_name=f"{directory}/{storage_name}",
+                            object_name=f"{prefix}/{storage_name}",
                             file_path=file_path
             )
             return True
@@ -85,14 +87,14 @@ class RemoteStorage():
             logging.error(error)
             return False
 
-    def get_object(self, directory, storage_name):
+    def get_object(self, prefix, storage_name):
         try:
             tmp_dir = current_app.config['TMP_DIR']
             file_path = f"{tmp_dir}/{storage_name}"
             client = get_minio_client()
             client.fget_object(
                             bucket_name=self.bucket_name,
-                            object_name=f"{directory}/{storage_name}",
+                            object_name=f"{prefix}/{storage_name}",
                             file_path=file_path
             )
             return file_path
@@ -100,23 +102,23 @@ class RemoteStorage():
             logging.error(error)
             return False
 
-    def remove_object(self, app, directory, storage_name):
+    def remove_object(self, app, prefix, storage_name):
         with app.app_context():
             try:
                 client = get_minio_client()
                 client.remove_object(
                                 bucket_name=self.bucket_name,
-                                object_name=f"{directory}/{storage_name}",
+                                object_name=f"{prefix}/{storage_name}",
                             )
                 return True
             except S3Error as error:
                 logging.error(error)
                 return False
 
-    def delete_file(self, directory, storage_name):
+    def delete_file(self, prefix, storage_name):
         thr = Thread(
                 target=self.remove_object,
-                args=[current_app._get_current_object(), directory, storage_name]
+                args=[current_app._get_current_object(), prefix, storage_name]
         )
         thr.start()
 

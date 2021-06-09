@@ -155,7 +155,7 @@ def change_icon():
             return render_template('change-icon.html')
         file=request.files['file']
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
-            file.save(os.path.join(current_app.config['BRAND_DIR'], 'favicon.png'))
+            g.site.change_favicon(file)
         else:
             flash(gettext("Bad file name. PNG only"), 'warning')
             return render_template('change-icon.html')
@@ -167,7 +167,7 @@ def change_icon():
 @site_bp.route('/site/reset-favicon', methods=['GET'])
 @admin_required
 def reset_site_favicon():
-    if g.site.delete_favicon():
+    if g.site.reset_favicon():
         flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('admin_bp.site_admin'))
 

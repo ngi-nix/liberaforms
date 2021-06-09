@@ -17,14 +17,27 @@ class Storage:
     def __init__(self, public=False):
         self.public = public
 
-    def storage_directory_path(self, sub_dir):
+    def local_storage_directory(self, sub_dir):
+        return os.path.join(current_app.config['UPLOADS_DIR'], sub_dir)
+        """
         if self.public:
             return os.path.join(current_app.config['MEDIA_DIR'], sub_dir)
         else:
             return os.path.join(current_app.config['ATTACHMENT_DIR'], sub_dir)
+        """
+
+    def remote_storage_prefix(self, sub_dir):
+        if 'FQDN' in os.environ:
+            """ Part of this path is set in config.py to be used with
+                local filesystem storage. We remove it because the
+                buckets already have unique names.
+            """
+            return sub_dir.replace(f"/hosts/{os.environ['FQDN']}", "")
+        return sub_dir
+
 
     def save_to_disk(self, tmp_file_path, sub_dir, storage_name):
-        local_storage_dir = self.storage_directory_path(sub_dir)
+        local_storage_dir = self.local_storage_directory(sub_dir)
         try:
             if not os.path.exists(local_storage_dir):
                 os.makedirs(local_storage_dir)
@@ -32,7 +45,6 @@ class Storage:
             shutil.move(tmp_file_path, dest_file_path)
             return True
         except Exception as error:
-            #logging.error(f"Failed to save file to local filesystem: {file_path}")
             logging.error(f"Failed to save file to local filesystem: {error}: {file_path}")
             os.remove(tmp_file_path)
             return False
@@ -50,9 +62,10 @@ class Storage:
         self.file_size = utils.human_readable_bytes(file_size)
         if current_app.config['ENABLE_REMOTE_STORAGE']:
             try:
-                saved = RemoteStorage().add_object(tmp_file_path,
-                                                   sub_dir,
-                                                   storage_name)
+                saved = RemoteStorage().add_object(
+                                            tmp_file_path,
+                                            self.remote_storage_prefix(sub_dir),
+                                            storage_name)
                 if saved == True:
                     self.local_filesystem = False
                     os.remove(tmp_file_path)
@@ -80,7 +93,7 @@ class Storage:
 
     def get_file(self, storage_name, sub_dir):
         if self.local_filesystem:
-            local_storage_dir = self.storage_directory_path(sub_dir)
+            local_storage_dir = self.local_storage_directory(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)
             try:
                 with open(file_path, 'rb') as file:
@@ -90,7 +103,9 @@ class Storage:
             return None
         else:
             try:
-                tmp_file_path = RemoteStorage().get_object(sub_dir, storage_name)
+                tmp_file_path = RemoteStorage().get_object(
+                                        self.remote_storage_prefix(sub_dir),
+                                        storage_name)
                 with open(tmp_file_path, 'rb') as file:
                     bytes = BytesIO(file.read())
                 os.remove(tmp_file_path)
@@ -102,14 +117,14 @@ class Storage:
 
     def get_media_url(self, host_url, directory, storage_name):
         if self.local_filesystem:
-            return f"{host_url}file/{directory}/{storage_name}"
+            return f"{host_url}f/{directory}/{storage_name}"
         else:
             # 'm' for Minio
-            return f"{host_url}file/m/{directory}/{storage_name}"
+            return f"{host_url}m/{directory}/{storage_name}"
 
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:
-            local_storage_dir = self.storage_directory_path(sub_dir)
+            local_storage_dir = self.local_storage_directory(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)
             try:
                 os.remove(file_path)
@@ -120,7 +135,9 @@ class Storage:
         else:
             try:
                 # RemoteStorage.delete run in a thread so return value is not valid.
-                removed = RemoteStorage().delete_file(sub_dir, storage_name)
+                removed = RemoteStorage().delete_file(
+                                            self.remote_storage_prefix(sub_dir),
+                                            storage_name)
                 #if not removed:
                 #    file_path = f"{sub_dir}/{storage_name}"
                 #    logging.error(f"Failed to remove remote object: {file_path}")

@@ -9,6 +9,7 @@ import os, logging, datetime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import event
+from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
 from liberaforms.utils.database import CRUD
@@ -90,11 +91,9 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     @property
     def directory(self):
-        return str(self.form_id)
-        #return f"attachments/{self.form_id}"
+        return f"{current_app.config['ATTACHMENT_DIR']}/{self.form_id}"
 
     def save_attachment(self, file):
-        print("save attachment")
         self.file_name = file.filename
         self.storage_name = f"{utils.gen_random_string()}.{str(self.answer_id)}"
         saved = super().save_file(file, self.storage_name, self.directory)
@@ -107,7 +106,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     def get_url(self):
         host_url = self.form.site.host_url
-        return f"{host_url}attachment/{self.form_id}/{self.storage_name}"
+        return f"{host_url}form/{self.form_id}/attachment/{self.storage_name}"
 
     def get_attachment(self):
         bytes = super().get_file(self.storage_name, self.directory)

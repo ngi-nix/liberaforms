@@ -112,9 +112,18 @@ class Site(db.Model, CRUD):
                 mimetypes.append(mimetype)
         return mimetypes
 
-    def delete_favicon(self):
-        favicon_path = f"{current_app.config['BRAND_DIR']}/favicon.png"
-        default_favicon = f"{current_app.config['BRAND_DIR']}/favicon-default.png"
+    def change_favicon(self, file):
+        file.save(os.path.join(current_app.config['UPLOADS_DIR'],
+                               current_app.config['BRAND_DIR'],
+                               'favicon.png'))
+
+    def reset_favicon(self):
+        favicon_path = os.path.join(current_app.config['UPLOADS_DIR'],
+                                    current_app.config['BRAND_DIR'],
+                                    'favicon.png')
+        default_favicon = os.path.join(current_app.config['UPLOADS_DIR'],
+                                       current_app.config['BRAND_DIR'],
+                                       'favicon-default.png')
         shutil.copyfile(default_favicon, favicon_path)
         return True
 

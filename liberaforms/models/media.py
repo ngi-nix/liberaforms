@@ -50,7 +50,7 @@ class Media(db.Model, CRUD, Storage):
 
     @property
     def directory(self):
-        return str(self.user_id)
+        return f"{current_app.config['MEDIA_DIR']}/{self.user_id}"
 
     def save_media(self, user, file, alt_text):
         self.user_id = user.id
@@ -84,7 +84,6 @@ class Media(db.Model, CRUD, Storage):
         host_url = self.user.site.host_url
         storage_name = f"tn-{self.storage_name}"
         return super().get_media_url(host_url, self.directory, storage_name)
-        #return f"{host_url}file/{self.directory}/{storage_name}"
 
     def get_media(self):
         bytes = super().get_file(self.storage_name, self.directory)

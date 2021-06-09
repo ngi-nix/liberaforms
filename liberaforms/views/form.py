@@ -632,10 +632,8 @@ def view_form(slug):
 
         if request.files:
             for file_field_name in request.files.keys():
-                print("file_field_name: ", file_field_name)
                 if not queriedForm.has_field(file_field_name):
                     continue
-                print("request.files_1")
                 file = request.files[file_field_name]
                 # TODO: check size and mimetype
                 if file.filename:
@@ -646,7 +644,8 @@ def view_form(slug):
                             url = attachment.get_url()
                             link = f'<a href="{url}">{file.filename}</a>'
                             answer.update_field(file_field_name, link)
-                    except:
+                    except Exception as error:
+                        logging.error(error)
                         err = "Failed to save attachment: form:{}, answer:{}" \
                               .format(queriedForm.slug, answer.id)
                         logging.error(err)
