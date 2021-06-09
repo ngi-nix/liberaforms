@@ -688,6 +688,9 @@ def view_form(slug):
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)
-    return render_template('view-form.html', form=queriedForm,
-                                             navbar=False,
-                                             no_bot=True)
+    max_attach_size=human_readable_bytes(current_app.config['MAX_FILE_UPLOAD_SIZE'])
+    return render_template('view-form.html',
+                            form=queriedForm,
+                            max_attachment_size_for_humans=max_attach_size,
+                            navbar=False,
+                            no_bot=True)

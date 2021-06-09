@@ -87,16 +87,15 @@
 
       <div class="form-actions"
            style="margin-bottom:2em;">
-        <button class="btn-success btn"
+        <button class="btn
+                       btn-success"
                type="submit"
         >
-        {%trans%}Upload{%endtrans%}
-        {% if config['ENABLE_REMOTE_STORAGE'] %}
-        <i id="upload_spinner"
-           style="display:none; font-size: 1rem"
-           class="fa fa-circle-o-notch fa-spin fa-3x fa-fw">
-        </i>
-        {% endif %}
+          {%trans%}Upload{%endtrans%}
+          <i id="upload_spinner"
+             style="display:none"
+             class="fa fa-circle-o-notch fa-spin">
+          </i>
         </button>
       </div>
     </form>
@@ -149,7 +148,7 @@ $(function () {
     form_data.append('media_file', file);
     form_data.append('alt_text', $('#alt_text').val());
 
-    //$("#upload_spinner").show();
+    $("#upload_spinner").show();
     $.ajax({
         url : "/media/save",
         type: "POST",
@@ -177,7 +176,7 @@ $(function () {
             $('<td>').html(html).appendTo(new_row);
             new_row.prependTo("#media_list");
             $('#show_upload_form_button').show();
-            //$("#upload_spinner").hide();
+            $("#upload_spinner").hide();
             $('#upload_form').hide();
           }else{
             alert("Error message: media_upload-1")

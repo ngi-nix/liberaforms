@@ -94,7 +94,7 @@ hr { margin-top: 5px }
   border-radius: .2rem;
 }
 .btn > i {
-  padding-left: 5px;
+  margin-left: 5px;
 }
 .author-badge {
   font-size:0.95em;

@@ -75,6 +75,10 @@
                       type="submit"
                       class="btn btn-success">
                   {{trans}}Insert{{endtrans}}
+                  <i id="upload_spinner"
+                     style="display:none"
+                     class="fa fa-circle-o-notch fa-spin">
+                  </i>
               </button>
               <button type="button"
                       class="btn btn-primary"
@@ -146,6 +150,7 @@ jQuery(function($) {
       if (file === undefined) {
         $(document).trigger("insert_image");
       } else {
+        $("#upload_spinner").show();
         var form_data = new FormData();
         form_data.append('media_file', file);
         form_data.append('alt_text', $('#alt_text').val());
@@ -166,6 +171,7 @@ jQuery(function($) {
                 console.log(data)
                 $('#image_url').val(data.image_url);
                 $('#alt_text').val(data.alt_text)
+                $("#upload_spinner").hide();
                 $(document).trigger("insert_image");
               }
             }

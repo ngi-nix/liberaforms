@@ -92,7 +92,8 @@ def human_readable_bytes(bytes):
     if bytes == 0:
         return "0 KB"
     if bytes < 1024*1024:
-        return f"{int(round(bytes/(1024), 2))} KB"
+        return f"{float(round(bytes/(1024), 2))} KB"
     if bytes < 1024*1024*1024:
-        return f"{int(round(bytes/(1024*1024), 2))} MB"
-    return f"{int(round(bytes/(1024*1024*1024), 2))} GB"
+        print("MiB: ", bytes/(1024*1024))
+        return f"{float(round(bytes/(1024*1024), 2))} MB"
+    return f"{float(round(bytes/(1024*1024*1024), 2))} GB"

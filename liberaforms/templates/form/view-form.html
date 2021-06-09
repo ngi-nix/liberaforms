@@ -82,12 +82,16 @@
           </div>
         </div>
         {% endif %}
-        <input class="btn
+        <button class="btn
                       btn-lg
                       btn-success"
-               type="submit"
-               value="{%trans%}Send{%endtrans%}"
-        >
+                type="submit">
+          {%trans%}Send{%endtrans%}
+          <i id="upload_spinner"
+             style="display:none"
+             class="fa fa-circle-o-notch fa-spin">
+          </i>
+        </button>
       </form>
     </div>
   </div>
@@ -143,7 +147,7 @@ $(function () {
     $('.bs-callout-warning').toggleClass('hidden', ok);
   })
   .on('form:submit', function() {
-    //return; // Don't submit form for this demo
+    $("#upload_spinner").show().delay(5000).hide();
   });
   {% if can_attach_files %}
   window.Parsley
@@ -158,9 +162,9 @@ $(function () {
     },
     requirementType: 'integer',
     messages: {
-      en: 'This file should not be larger than %s Kb',
-      ca: 'El fitxer no ha de ser més gran que %s Kb',
-      fr: 'Ce fichier est plus grand que %s Kb.'
+      en: 'This file should not be larger than {{max_attachment_size_for_humans}}',
+      ca: 'El fitxer no ha de ser més gran que {{max_attachment_size_for_humans}}',
+      fr: 'Ce fichier est plus grand que {{max_attachment_size_for_humans}}'
     }
   })
   .addValidator('filemimetypes', {

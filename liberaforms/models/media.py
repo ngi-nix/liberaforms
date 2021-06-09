@@ -92,8 +92,7 @@ class Media(db.Model, CRUD, Storage):
 
     def does_media_exits(self, thumbnail=False):
         name = self.storage_name if thumbnail==False else f"tn-{self.storage_name}"
-        bytes = super().get_file(name, self.directory)
-        return True if bytes else False
+        return True if super().get_file(name, self.directory) else False
 
     def save_thumbnail(self):
         try:
