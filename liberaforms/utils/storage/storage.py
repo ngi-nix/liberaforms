@@ -100,6 +100,13 @@ class Storage:
                 logging.error(f"Failed to retreive remote object: {file_path}")
                 return False
 
+    def get_media_url(self, host_url, directory, storage_name):
+        if self.local_filesystem:
+            return f"{host_url}file/{directory}/{storage_name}"
+        else:
+            # 'm' for Minio
+            return f"{host_url}file/m/{directory}/{storage_name}"
+
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:
             local_storage_dir = self.storage_directory_path(sub_dir)

@@ -78,11 +78,22 @@ class Media(db.Model, CRUD, Storage):
 
     def get_url(self):
         host_url = self.user.site.host_url
-        return f"{host_url}file/{self.directory}/{self.storage_name}"
+        return super().get_media_url(host_url, self.directory, self.storage_name)
+
+    def get_thumbnail_url(self):
+        host_url = self.user.site.host_url
+        storage_name = f"tn-{self.storage_name}"
+        return super().get_media_url(host_url, self.directory, storage_name)
+        #return f"{host_url}file/{self.directory}/{storage_name}"
 
     def get_media(self):
         bytes = super().get_file(self.storage_name, self.directory)
         return bytes, self.file_name
+
+    def does_media_exits(self, thumbnail=False):
+        name = self.storage_name if thumbnail==False else f"tn-{self.storage_name}"
+        bytes = super().get_file(name, self.directory)
+        return True if bytes else False
 
     def save_thumbnail(self):
         try:
@@ -104,11 +115,6 @@ class Media(db.Model, CRUD, Storage):
     def delete_thumbnail(self):
         storage_name = f"tn-{self.storage_name}"
         return super().delete_file(storage_name, self.directory)
-
-    def get_thumbnail_url(self):
-        host_url = self.user.site.host_url
-        storage_name = f"tn-{self.storage_name}"
-        return f"{host_url}file/{self.directory}/{storage_name}"
 
     def get_values(self):
         return {

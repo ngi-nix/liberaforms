@@ -18,6 +18,13 @@ from .utils import login, logout
 
 
 class TestUserMedia():
+
+    @pytest.mark.skipif(os.environ['ENABLE_REMOTE_STORAGE'] != 'True',
+                        reason="ENABLE_REMOTE_STORAGE!=True in test.ini")
+    def test_ensure_bucket(self):
+        from liberaforms.utils.storage.remote import RemoteStorage
+        assert RemoteStorage().ensure_bucket_exists() == True
+
     def test_media_page(self, users, client, anon_client):
         """ Tests list media page
             Tests permission
@@ -80,8 +87,10 @@ class TestUserMedia():
         media_path = os.path.join(current_app.config['MEDIA_DIR'], str(g.current_user.id))
         file_path = os.path.join(media_path, media.storage_name)
         thumbnail_path = os.path.join(media_path, f"tn-{media.storage_name}")
-        assert os.path.isfile(file_path) == True
-        assert os.path.isfile(thumbnail_path) == True
+        assert media.does_media_exits() == True
+        assert media.does_media_exits(thumbnail=True) == True
+        #assert os.path.isfile(file_path) == True
+        #assert os.path.isfile(thumbnail_path) == True
 
     def test_invaild_media_upload(self, client):
         url = "/media/save"
