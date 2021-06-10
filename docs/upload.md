@@ -30,7 +30,7 @@ pip install minio
 Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and optionally, `:PORT` is the port.
 
 ```
-MINIO_HOST = FQDN[:PORT]
+MINIO_HOST = https://FQDN[:PORT]
 MINIO_ACCESS_KEY=
 MINIO_SECRET_KEY=
 ```

@@ -5,8 +5,9 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import sys, os, logging, json
+import sys, os, logging
 import urllib3
+from urllib.parse import urlparse
 from threading import Thread
 from flask import current_app
 from minio import Minio
@@ -20,8 +21,9 @@ from liberaforms.utils import utils
 
 def get_minio_client():
     try:
+        parsed_url = urlparse(os.environ['MINIO_HOST'])
         return Minio(
-                os.environ['MINIO_HOST'],
+                parsed_url.netloc,
                 access_key=os.environ['MINIO_ACCESS_KEY'],
                 secret_key=os.environ['MINIO_SECRET_KEY'],
                 #region=self.region,

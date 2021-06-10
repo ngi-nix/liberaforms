@@ -22,7 +22,6 @@ class Storage:
 
     @staticmethod
     def get_remote_storage_path(sub_dir):
-        print("sub_dir: ", sub_dir)
         if 'FQDN' in os.environ:
             """ Part of this path is set in config.py to be used with
                 local filesystem storage. We remove 'hosts/FQDN' because the
@@ -130,7 +129,7 @@ class Storage:
             bucket_name = f"{directory_parts[0]}.media"
             prefix = directory_parts[1]
             remote_media_path = f"{bucket_name}/{prefix}/{storage_name}"
-            return f"http://{os.environ['MINIO_HOST']}/{remote_media_path}"
+            return f"{os.environ['MINIO_HOST']}/{remote_media_path}"
 
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:

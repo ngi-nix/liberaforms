@@ -73,7 +73,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     form = db.relationship("Form", viewonly=True)
 
     def __init__(self, answer):
-        Storage.__init__(self, public=False)
+        Storage.__init__(self)
         self.created = datetime.datetime.now().isoformat()
         self.answer_id = answer.id
         self.form_id = answer.form.id
