@@ -16,9 +16,9 @@ migrate = Migrate(app, db)
 if app.config['ENABLE_REMOTE_STORAGE']:
     from liberaforms.utils.storage.remote import RemoteStorage
     with app.app_context():
-        logging.debug("Checking for remote bucket")
-        if not RemoteStorage().ensure_bucket_exists():
-            logging.error("Bucket does not exist")
+        logging.debug("Checking for remote buckets")
+        if not RemoteStorage().ensure_buckets_exist():
+            logging.error("Buckets are not configured correctly !!")
 
 
 

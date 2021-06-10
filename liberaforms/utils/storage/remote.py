@@ -5,13 +5,14 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import sys, os, logging
+import sys, os, logging, json
 import urllib3
 from threading import Thread
 from flask import current_app
 from minio import Minio
 from minio.deleteobjects import DeleteObject
 from minio.error import S3Error
+from jinja2 import Environment, FileSystemLoader
 from liberaforms.utils import utils
 
 #https://docs.min.io/docs/python-client-api-reference.html
@@ -52,6 +53,13 @@ def get_minio_client():
         logging.error(error)
     return None
 
+def generate_bucket_policy(template, bucket_name):
+    template_dir = os.path.join(current_app.root_path, 'utils/storage/policies')
+    j2_env = Environment(loader = FileSystemLoader(template_dir))
+    j2_template = j2_env.get_template(template)
+    return j2_template.render(bucket_name=bucket_name)
+
+
 class RemoteStorage():
     client = None
     bucket_name = None
@@ -60,40 +68,63 @@ class RemoteStorage():
     def __init__(self):
         from liberaforms.models.site import Site
         self.region = 'eu-central-1'
-        self.bucket_name = Site.find().hostname
+        hostname = Site.find().hostname
+        self.attachment_bucket_name = f"{hostname}.attachments"
+        self.media_bucket_name = f"{hostname}.media"
 
-    def ensure_bucket_exists(self):
+    def ensure_buckets_exist(self):
         try:
             client = get_minio_client()
-            if not client.bucket_exists(self.bucket_name):
-                client.make_bucket(self.bucket_name)
-                # TODO add default folders with permissions
-
-            return client.bucket_exists(self.bucket_name)
+            bucket_names = [bucket.name for bucket in client.list_buckets()]
+            if not self.attachment_bucket_name in bucket_names:
+                client.make_bucket(self.attachment_bucket_name)
+            if not self.media_bucket_name in bucket_names:
+                client.make_bucket(self.media_bucket_name)
+                # set anonymous download permission on bucket
+                policy = generate_bucket_policy('read_only.j2',
+                                                self.media_bucket_name)
+                client.set_bucket_policy(self.media_bucket_name, policy)
+            bucket_names = [bucket.name for bucket in client.list_buckets()]
+            if  self.attachment_bucket_name in bucket_names and \
+                self.media_bucket_name in bucket_names:
+                return True
+            return False
         except S3Error as error:
             logging.error(error)
             return False
 
-    def add_object(self, file_path, prefix, storage_name):
+    def get_bucket_and_prefix(self, object_path):
+        if object_path.startswith('attachments'):
+            return  self.attachment_bucket_name, \
+                    object_path.lstrip('attachments')
+        if object_path.startswith('media'):
+            return  self.media_bucket_name, \
+                    object_path.lstrip('media')
+        logging.error("Could not resolve bucket_name")
+        return None, None
+
+    def add_object(self, filesystem_path, object_path, storage_name):
         try:
             client = get_minio_client()
+            (bucket_name, prefix) = self.get_bucket_and_prefix(object_path)
             result =client.fput_object(
-                            bucket_name=self.bucket_name,
+                            bucket_name=bucket_name,
                             object_name=f"{prefix}/{storage_name}",
-                            file_path=file_path
+                            file_path=filesystem_path
             )
             return True
         except S3Error as error:
             logging.error(error)
             return False
 
-    def get_object(self, prefix, storage_name):
+    def get_object(self, object_path, storage_name):
         try:
             tmp_dir = current_app.config['TMP_DIR']
             file_path = f"{tmp_dir}/{storage_name}"
             client = get_minio_client()
+            (bucket_name, prefix) = self.get_bucket_and_prefix(object_path)
             client.fget_object(
-                            bucket_name=self.bucket_name,
+                            bucket_name=bucket_name,
                             object_name=f"{prefix}/{storage_name}",
                             file_path=file_path
             )
@@ -102,12 +133,13 @@ class RemoteStorage():
             logging.error(error)
             return False
 
-    def remove_object(self, app, prefix, storage_name):
+    def remove_object(self, app, object_path, storage_name):
         with app.app_context():
             try:
                 client = get_minio_client()
+                (bucket_name, prefix) = self.get_bucket_and_prefix(object_path)
                 client.remove_object(
-                                bucket_name=self.bucket_name,
+                                bucket_name=bucket_name,
                                 object_name=f"{prefix}/{storage_name}",
                             )
                 return True
@@ -115,34 +147,35 @@ class RemoteStorage():
                 logging.error(error)
                 return False
 
-    def delete_file(self, prefix, storage_name):
+    def delete_file(self, object_path, storage_name):
         thr = Thread(
                 target=self.remove_object,
-                args=[current_app._get_current_object(), prefix, storage_name]
+                args=[current_app._get_current_object(), object_path, storage_name]
         )
         thr.start()
 
-    def delete_objects(self, app, prefix):
+    def delete_objects(self, app, object_path):
         with app.app_context():
             client = get_minio_client()
+            (bucket_name, prefix) = self.get_bucket_and_prefix(object_path)
             delete_object_list = map(
                 lambda x: DeleteObject(x.object_name),
                 client.list_objects(
-                            bucket_name=self.bucket_name,
+                            bucket_name=bucket_name,
                             prefix=prefix,
                             recursive=True
                         )
             )
             errors = client.remove_objects(
-                            bucket_name=self.bucket_name,
+                            bucket_name=bucket_name,
                             delete_object_list=delete_object_list,
                         )
             for error in errors:
                 logging.error(error)
 
-    def remove_directory(self, prefix):
+    def remove_directory(self, object_path):
         thr = Thread(
                 target=self.delete_objects,
-                args=[current_app._get_current_object(), prefix]
+                args=[current_app._get_current_object(), object_path]
         )
         thr.start()

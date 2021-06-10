@@ -36,7 +36,7 @@ class Config(object):
         "update",
         "embed",
         "api",
-        "media", "m", "file", "files", "f",
+        "media", "file",
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [

@@ -165,7 +165,7 @@ def download_attachment(form_id, key):
                          attachment_filename=file_name,
                          as_attachment=True)
     except:
-        logging.error("Missing attachment")
+        logging.error(f"Missing attachment. Answer id: {attachment.answer_id}")
         return render_template('page-not-found.html'), 404
 
 @answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])

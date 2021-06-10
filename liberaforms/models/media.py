@@ -9,7 +9,6 @@ import os, logging, datetime
 import pathlib
 from PIL import Image
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm.attributes import flag_modified
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
@@ -34,7 +33,7 @@ class Media(db.Model, CRUD, Storage):
     user = db.relationship("User", viewonly=True)
 
     def __init__(self):
-        Storage.__init__(self, public=True)
+        Storage.__init__(self)
         self.created = datetime.datetime.now().isoformat()
 
     def __str__(self):
@@ -65,7 +64,7 @@ class Media(db.Model, CRUD, Storage):
         return saved
 
     def delete_media(self):
-        Storage.__init__(self, public=True)
+        Storage.__init__(self)
         removed = super().delete_file(self.storage_name, self.directory)
         self.delete_thumbnail()
         self.delete()
@@ -105,7 +104,7 @@ class Media(db.Model, CRUD, Storage):
             image = Image.open(tmp_thumbnail_path)
             image.thumbnail((50,50))
             image.save(tmp_thumbnail_path)
-            storage = Storage(public=True)
+            storage = Storage()
             storage.save_file(tmp_thumbnail_path, storage_name, self.directory)
         except Exception as error:
             logging.warning(f"Could not create thumbnail: {error}")

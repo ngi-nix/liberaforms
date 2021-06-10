@@ -23,7 +23,7 @@ class TestUserMedia():
                         reason="ENABLE_REMOTE_STORAGE!=True in test.ini")
     def test_ensure_bucket(self):
         from liberaforms.utils.storage.remote import RemoteStorage
-        assert RemoteStorage().ensure_bucket_exists() == True
+        assert RemoteStorage().ensure_buckets_exist() == True
 
     def test_media_page(self, users, client, anon_client):
         """ Tests list media page
@@ -89,8 +89,6 @@ class TestUserMedia():
         thumbnail_path = os.path.join(media_path, f"tn-{media.storage_name}")
         assert media.does_media_exits() == True
         assert media.does_media_exits(thumbnail=True) == True
-        #assert os.path.isfile(file_path) == True
-        #assert os.path.isfile(thumbnail_path) == True
 
     def test_invaild_media_upload(self, client):
         url = "/media/save"
