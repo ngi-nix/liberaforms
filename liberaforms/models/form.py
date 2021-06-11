@@ -728,5 +728,5 @@ class Form(db.Model, CRUD):
     def default_introduction_text():
         title=_("Form title")
         context=_("Context")
-        content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
+        content=_(" * Describe your form.\n * Add relevant content, links, images, etc.")
         return "## {}\n\n### {}\n\n{}".format(title, context, content)
