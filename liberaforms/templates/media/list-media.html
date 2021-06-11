@@ -117,7 +117,10 @@
             {{ image.file_size }}
           </td>
           <td>
-            <a href="{{ image.get_url()}}">{{ image.file_name }}</a>
+            <a href="{{ image.get_url()}}"
+               alt="{{ image.alt_text}}">
+              {{ image.file_name }}
+            </a>
           </td>
           <td>
             <input class="btn btn-xs btn-danger"

@@ -21,7 +21,7 @@ from liberaforms.utils import utils
 
 def get_minio_client():
     try:
-        parsed_url = urlparse(os.environ['MINIO_HOST'])
+        parsed_url = urlparse(os.environ['MINIO_URL'])
         return Minio(
                 parsed_url.netloc,
                 access_key=os.environ['MINIO_ACCESS_KEY'],

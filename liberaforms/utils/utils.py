@@ -90,10 +90,11 @@ def human_readable_bytes(bytes):
         1 GibiByte == 1024*1024*1024 Bytes
     """
     if bytes == 0:
-        return "0 KB"
+        return "0 bytes"
+    if bytes < 1024:
+         return f"{bytes} bytes"
     if bytes < 1024*1024:
         return f"{float(round(bytes/(1024), 2))} KB"
     if bytes < 1024*1024*1024:
-        print("MiB: ", bytes/(1024*1024))
         return f"{float(round(bytes/(1024*1024), 2))} MB"
     return f"{float(round(bytes/(1024*1024*1024), 2))} GB"

@@ -24,15 +24,42 @@ Minio server software is free software. You will need an account on a server to 
 The minio package is not included in `./requirements.txt`, so install it now
 
 ```
-pip install minio
+pip install "minio>=7.0.3,==7.*"
 ```
 
 Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and optionally, `:PORT` is the port.
 
 ```
-MINIO_HOST = https://FQDN[:PORT]
+MINIO_URL = https://FQDN[:PORT]
 MINIO_ACCESS_KEY=
 MINIO_SECRET_KEY=
+```
+
+### Encryption
+
+LiberaForms encrypts attachments before uploading them to the remote Minio server.
+
+```
+pip install "cryptography>=3.4.7,==3.*"
+```
+
+#### Create the keys
+
+```
+flask cryptokey create
+
+olYyUwGTCxnx1BPn9AMsm8GoH9oc9AkH_HoMEW--g9Q=
+
+```
+
+Very Important! Save this key somewhere safe, and don't lose it.
+
+Copy the generated key and save it in a file with a name you will recognize. Something like `my.domain.com.key`.
+
+Now add the key you have generated to your `.env` file
+
+```
+CRYPTO_KEY=olYyUwGT--this-is-my-key--oH9oc9AkH_HoMEW--g9Q=
 ```
 
 ### Remote storage failure

@@ -9,6 +9,7 @@ import os, logging, shutil
 from io import BytesIO
 from flask import current_app
 from liberaforms.utils.storage.remote import RemoteStorage
+from liberaforms.utils.storage.crypto import encrypt_file, decrypt_file_content
 from liberaforms.utils import utils
 
 
@@ -45,12 +46,10 @@ class Storage:
 
     @staticmethod
     def delete_from_disk(file_path):
-        try:
+        if os.path.exists(file_path):
             os.remove(file_path)
-            return True
-        except Exception as error:
-            logging.error(f"Failed to delete file: {file_path}")
-            return False
+        else:
+            logging.error(f"Failed to delete file. Does not exist: {file_path}")
 
     def save_file(self, file, storage_name, sub_dir):
         tmp_dir = current_app.config['TMP_DIR']
@@ -63,6 +62,15 @@ class Storage:
                 return False
         file_size = os.path.getsize(tmp_file_path)
         self.file_size = utils.human_readable_bytes(file_size)
+        if sub_dir.startswith('attachment'):
+            """ attachments get encrypted """
+            enc_file_path = encrypt_file(tmp_file_path)
+            if enc_file_path:
+                self.encrypted=True
+                self.delete_from_disk(tmp_file_path)
+                tmp_file_path = enc_file_path
+            else:
+                logging.info(f"Failed to encrypt attachment: {sub_dir}")
         if current_app.config['ENABLE_REMOTE_STORAGE']:
             try:
                 saved = RemoteStorage().add_object(
@@ -95,15 +103,16 @@ class Storage:
         return False
 
     def get_file(self, storage_name, sub_dir):
+        file_content = None
         if self.local_filesystem:
             local_storage_dir = self.get_local_storage_directory(sub_dir)
             file_path = os.path.join(local_storage_dir, storage_name)
             try:
                 with open(file_path, 'rb') as file:
-                    return BytesIO(file.read())
+                    file_content = file.read()
             except:
                 logging.error(f"Failed to retrieve file from local filesystem: {file_path}")
-            return None
+                return None
         else:
             try:
                 tmp_file_path = RemoteStorage().get_object(
@@ -112,24 +121,20 @@ class Storage:
                 if not tmp_file_path:
                     return None
                 with open(tmp_file_path, 'rb') as file:
-                    bytes = BytesIO(file.read())
+                    file_content = file.read()
                 self.delete_from_disk(tmp_file_path)
-                return bytes
             except:
                 file_path = f"{sub_dir}/{storage_name}"
                 logging.error(f"Failed to retrieve remote object: {file_path}")
+                return None
+        if not file_content:
             return None
-
-    def get_media_url(self, host_url, directory, storage_name):
-        if self.local_filesystem:
-            return f"{host_url}file/{directory}/{storage_name}"
+        if sub_dir.startswith('attachment'):
+            """ attachments get decrypted """
+            decrypted_file_content = decrypt_file_content(file_content)
+            return BytesIO(decrypted_file_content)
         else:
-            """ creates a URL to the media on the minio server """
-            directory_parts = directory.split('/')[2:]
-            bucket_name = f"{directory_parts[0]}.media"
-            prefix = directory_parts[1]
-            remote_media_path = f"{bucket_name}/{prefix}/{storage_name}"
-            return f"{os.environ['MINIO_HOST']}/{remote_media_path}"
+            return BytesIO(file_content)
 
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:

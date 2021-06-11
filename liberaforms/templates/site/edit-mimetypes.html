@@ -13,7 +13,7 @@
       <div class="title_text_subtext">
       {%trans%}These file types can be uploaded with the forms{%endtrans%}
       </div>
-      
+
       <form method="POST">
         {{ wtform.csrf_token }}
         {{ wtform.extensions.label }} <span class='required'>●</span><br />
@@ -26,7 +26,7 @@
         <div class="form-actions">
           <input class="btn-success btn"
                  type="submit"
-                 value="{%trans%}Submit{%endtrans%}">
+                 value="{%trans%}Save{%endtrans%}">
           <a class="btn
                     btn-primary"
              role="button"

@@ -75,14 +75,21 @@ class Media(db.Model, CRUD, Storage):
         """
         return True
 
+    def _get_media_url(self, storage_name):
+        if self.local_filesystem:
+            host_url = self.user.site.host_url
+            return f"{host_url}file/{self.directory}/{storage_name}"
+        else:
+            """ creates a URL for the media file on the minio server """
+            bucket_name = f"{self.user.site.hostname}.media"
+            media_path = f"{bucket_name}/{self.user_id}/{storage_name}"
+            return f"{os.environ['MINIO_URL']}/{media_path}"
+
     def get_url(self):
-        host_url = self.user.site.host_url
-        return super().get_media_url(host_url, self.directory, self.storage_name)
+        return self._get_media_url(self.storage_name)
 
     def get_thumbnail_url(self):
-        host_url = self.user.site.host_url
-        storage_name = f"tn-{self.storage_name}"
-        return super().get_media_url(host_url, self.directory, storage_name)
+        return self._get_media_url(f"tn-{self.storage_name}")
 
     def get_media(self):
         bytes = super().get_file(self.storage_name, self.directory)
