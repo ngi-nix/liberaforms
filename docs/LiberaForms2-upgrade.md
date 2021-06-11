@@ -1,7 +1,19 @@
 # LiberaForms2 upgrade
 
-Use this documentation to upgrade from LiberaForms1 to LiberaForms2
+> Use this documentation to upgrade from LiberaForms1 to LiberaForms2
 
+## Migrate the database
+
+Follow the instructions at https://gitlab.com/liberaforms/mongo2postgres
+
+## Download LiberaForms2
+
+After migrating the database ...
+```
+git clone ..
+```
+
+## Configuration
 
 ```
 mv config.cfg .env
@@ -10,14 +22,28 @@ mv config.cfg .env
 Edit `.env` and add these lines
 
 ```
+# See docs/upload.md
+ENABLE_UPLOADS = False
+# 1024 * 500 = 512000 = 500 KiB
+MAX_MEDIA_SIZE=512000
+# 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
+MAX_ATTACHMENT_SIZE=1572864
+ENABLE_REMOTE_STORAGE=False
+
+# Logging [watched|stream]
+LOG_TYPE=watched
+LOG_DIR=./logs
+
 FLASK_ENV=production
 FLASK_CONFIG=production
 ```
+See a complete example at `./dotenv.example`
+
 
 ## Nginx
 
-Nginx is much faster serving static files than flask.
-We have added two new locations to take load off the LiberaForms app.
+Nginx is much faster serving static files than Flask.
+We have added new locations to take load off the LiberaForms app.
 
 ```
 location /static/ {
@@ -26,6 +52,11 @@ location /static/ {
 location /favicon.png {
     alias  /path/to/liberaforms/instancesfiles/brand/favicon.png;
 }
-
+location /brand/emailheader.png {
+    alias  /path/to/liberaforms/uploads/media/emailheader.png;
+}
+location /file/media/ {
+    alias /path/to/liberaforms/uploads/media/;
+}
 ```
-See `docs/nginx.example` for an example configuration.
+See `docs/nginx.example` for a complete example configuration.

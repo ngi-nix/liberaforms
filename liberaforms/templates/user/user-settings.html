@@ -86,12 +86,24 @@
                     <div id="toggle_new_answer_notification"
                          class="btn-group btn-toggle">
                     <button id="new_answer_notification_true"
-                            class="btn btn-xs btn-default {% if user.new_answer_notification_default %}btn-success{% endif %}">
-                            {%trans%}True{%endtrans%}
+                            class="btn
+                                   btn-xs
+                                   btn-default
+                                   {% if user.new_answer_notification_default %}
+                                   btn-success
+                                   {% endif %}
+                            ">
+                        {%trans%}True{%endtrans%}
                     </button>
                     <button id="new_answer_notification_false"
-                            class="btn btn-xs btn-default {% if not user.new_answer_notification_default %}btn-primary{% endif %}">
-                            {%trans%}False{%endtrans%}
+                            class="btn
+                                   btn-xs
+                                   btn-default
+                                   {% if not user.new_answer_notification_default %}
+                                   btn-primary
+                                   {% endif %}
+                            ">
+                        {%trans%}False{%endtrans%}
                     </button>
                     </div>
                 </td>
@@ -108,6 +120,35 @@
                 </td>
             </tr>
         </table>
+{% if config['ENABLE_UPLOADS'] %}
+        <div class="title_2 delimited">
+            {%trans%}My media{%endtrans%}
+        </div>
+        <table class="table table-sm sparse-table">
+            <tr>
+                <td>
+                  {%trans%}Add and delete uploaded files{%endtrans%}
+                </td>
+                <td class="text-right">
+                  <a href="/user/{{g.current_user.username}}/media"
+                     class="btn btn-xs btn-primary">
+                     {%trans%}Edit{%endtrans%}
+                  </a>
+                </td>
+            </tr>
+            <tr style="display:none">
+                <td>
+                    {%trans%}Consentment texts{%endtrans%}
+                </td>
+                <td class="text-right">
+                  <a href="/user/{{g.current_user.username}}/consent"
+                     class="btn btn-xs btn-primary">
+                     {%trans%}Edit{%endtrans%}
+                  </a>
+                </td>
+            </tr>
+        </table>
+{% endif %}
 
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">
@@ -118,9 +159,28 @@
             <tr>
                 <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
                 <td class="text-right">
-                    <div id="toggle_notify_newuser" class="btn-group btn-toggle">
-                    <button id="notify_newuser_true" class="btn btn-xs btn-default {% if user.admin['notifyNewUser'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newuser_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewUser'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                    <div id="toggle_notify_newuser"
+                         class="btn-group btn-toggle">
+                    <button id="notify_newuser_true"
+                            class="btn
+                                   btn-xs
+                                   btn-default
+                                   {% if user.admin['notifyNewUser'] %}
+                                   btn-success
+                                   {% endif %}
+                                   ">
+                        {%trans%}True{%endtrans%}
+                    </button>
+                    <button id="notify_newuser_false"
+                            class="btn
+                                   btn-xs
+                                   btn-default
+                                   {% if not user.admin['notifyNewUser'] %}
+                                   btn-primary
+                                   {% endif %}
+                                   ">
+                        {%trans%}False{%endtrans%}
+                    </button>
                     </div>
                </td>
             </tr>
@@ -128,8 +188,26 @@
                 <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
                 <td class="text-right">
                     <div id="toggle_notify_newform" class="btn-group btn-toggle">
-                    <button id="notify_newform_true" class="btn btn-xs btn-default {% if user.admin['notifyNewForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="notify_newform_false" class="btn btn-xs btn-default {% if not user.admin['notifyNewForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                      <button id="notify_newform_true"
+                              class="btn
+                                     btn-xs
+                                     btn-default
+                                     {% if user.admin['notifyNewForm'] %}
+                                     btn-success
+                                     {% endif %}
+                              ">
+                          {%trans%}True{%endtrans%}
+                      </button>
+                      <button id="notify_newform_false"
+                              class="btn
+                                     btn-xs
+                                     btn-default
+                                     {% if not user.admin['notifyNewForm'] %}
+                                     btn-primary
+                                     {% endif %}
+                              ">
+                          {%trans%}False{%endtrans%}
+                      </button>
                     </div>
                </td>
             </tr>

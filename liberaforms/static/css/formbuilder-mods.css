@@ -16,6 +16,10 @@
   display:none;
 }
 
+#fb-editor input[type="file"], .rendered-form input[type="file"] {
+  height: auto;
+}
+
 /* vertical form rhythm */
 .form-group {
   padding-bottom: 1.3em;

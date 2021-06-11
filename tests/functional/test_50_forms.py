@@ -8,29 +8,18 @@ This file is part of LiberaForms.
 import os
 import pytest
 import json
-from flask import current_app
+from flask import g, current_app
 from liberaforms.models.form import Form
 from liberaforms.utils import validators
+from .utils import login
 
 class TestForm():
-    def test_login(self, client, users):
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
-
-    def test_create_preview_save_form(self, client, forms):
+    def test_create_preview_save_form_1(self, client, users, forms):
         """ Creates a form with valid data.
             Tests Preview page and saves form
             Tests for a new FormLog
         """
+        login(client, users['editor'])
         response = client.get(
                         "/forms/new",
                         follow_redirects=True,
@@ -41,7 +30,7 @@ class TestForm():
         slug = "a-valid-slug"
         with open("./assets/valid_form_structure.json", 'r') as structure:
             valid_structure = structure.read()
-        print(valid_structure)
+        #print(valid_structure)
         response = client.post(
                         "/forms/edit",
                         data = {
@@ -69,155 +58,47 @@ class TestForm():
         assert forms['test_form'].enabled == False
         assert forms['test_form'].sharedAnswers['enabled'] == False
         assert validators.is_valid_UUID(forms['test_form'].sharedAnswers['key']) == True
+        assert forms['test_form'].shared_notifications == []
 
-    def test_toggle_public(self, client, forms):
-        """ Tests Form.enabled bool and tests for a new FormLog
+    def test_create_preview_save_form_2(self, client, forms):
+        """ Creates a form with valid data.
+            Tests Preview page and saves form
+            Tests for a new FormLog
         """
-        initial_enabled = forms['test_form'].enabled
-        initial_log_count = forms['test_form'].log.count()
-        response = client.post(
-                        f"/form/toggle-enabled/{forms['test_form'].id}",
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert forms['test_form'].enabled != initial_enabled
-        assert response.json['enabled'] == forms['test_form'].enabled
-        assert forms['test_form'].log.count() == initial_log_count + 1
-
-    def test_save_expired_text(self, client, forms):
-        form_id=forms['test_form'].id
-        initial_log_count = forms['test_form'].log.count()
-        response = client.post(
-                        f"/forms/save-expired-text/{form_id}",
-                        data = {
-                            "markdown": "# Hello",
-                        },
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert response.json['html'] == "<h1>Hello</h1>"
-        assert forms['test_form'].expired_text_html == response.json['html']
-        assert forms['test_form'].log.count() != initial_log_count
-
-    def test_save_after_submit_text(self, client, forms):
-        form_id=forms['test_form'].id
-        initial_log_count = forms['test_form'].log.count()
-        response = client.post(
-                        f"/forms/save-after-submit-text/{form_id}",
-                        data = {
-                            "markdown": "# Hello",
-                        },
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert response.json['html'] == "<h1>Hello</h1>"
-        assert forms['test_form'].after_submit_text_html == response.json['html']
-        assert forms['test_form'].log.count() != initial_log_count
-
-    def test_toggle_GDPR_consent(self, client, forms):
-        form_id=forms['test_form'].id
-        initial_GDPR_state = forms['test_form'].data_consent['enabled']
-        initial_log_count = forms['test_form'].log.count()
-        response = client.post(
-                        f"/form/toggle-data-consent/{form_id}",
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert forms['test_form'].data_consent['enabled'] == response.json['enabled']
-        assert forms['test_form'].data_consent['enabled'] != initial_GDPR_state
-        assert type(forms['test_form'].data_consent['enabled']) == type(bool())
-        assert forms['test_form'].log.count() != initial_log_count
-
-    def test_recover_GDPR_default_text(self, client, forms):
-        form_id=forms['test_form'].id
-        text_id=forms['test_form'].data_consent['id']
-        initial_log_count = forms['test_form'].log.count()
+        slug = "another-valid-slug"
         response = client.get(
-                        f"/forms/default-consent/{form_id}/{text_id}",
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert "<h6>" in response.json['html']
-
-    def test_save_GDPR_text(self, client, forms):
-        form_id=forms['test_form'].id
-        text_id=forms['test_form'].data_consent['id']
-        initial_log_count = forms['test_form'].log.count()
-        response = client.post(
-                        f"/forms/save-consent/{form_id}/{text_id}",
-                        data = {
-                            "markdown": "# Hello!",
-                            "label": "",
-                            "required": True
-                        },
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert response.json['html'] == "<h1>Hello!</h1>"
-        assert forms['test_form'].data_consent['html'] == response.json['html']
-        assert forms['test_form'].log.count() != initial_log_count
-        # Test empty markdown input
-        initial_log_count = forms['test_form'].log.count()
-        response = client.post(
-                        f"/forms/save-consent/{form_id}/{text_id}",
-                        data = {
-                            "markdown": "",
-                            "label": "",
-                            "required": True
-                        },
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        assert response.is_json == True
-        assert "<h6>" in response.json['html']
-        assert forms['test_form'].data_consent['html'] == ""
-        assert forms['test_form'].log.count() != initial_log_count
-
-    def test_view_log(self, client, forms):
-        form_id=forms['test_form'].id
-        response = client.get(
-                        f"/forms/log/list/{form_id}",
+                        "/forms/new",
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert "<!-- log_list_page -->" in html
-
-    def test_duplicate_form(self, client, forms):
-        form_id=forms['test_form'].id
-        response = client.get(
-                        f"/forms/duplicate/{form_id}",
+        assert '<form id="result" method="POST" action="/forms/edit" >' in html
+        with open("./assets/form_structure_with_upload.json", 'r') as structure:
+            valid_structure = structure.read()
+        response = client.post(
+                        "/forms/edit",
+                        data = {
+                            "structure": valid_structure,
+                            "introductionTextMD": "hello",
+                            "slug": slug,
+                        },
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div class="info flash_message">' in html
-        assert forms['test_form'].introductionText['markdown'] in html
-        assert '<input  id="slug" value=""' in html
-
-    def test_toggle_new_answer_notification(self, client, users, forms):
-        form_id=forms['test_form'].id
-        initial_preference = forms['test_form'] \
-                             .editors[str(users['test_user'].id)] \
-                             ['notification']['newAnswer']
+        assert '<form action="/forms/save" method="post">' in html
         response = client.post(
-                        f"/form/toggle-notification/{form_id}",
-                        follow_redirects=False,
+                        "/forms/save",
+                        follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert response.is_json == True
-        assert initial_preference != response.json['notification']
-        saved_preference = forms['test_form'] \
-                           .editors[str(users['test_user'].id)] \
-                           ['notification']['newAnswer']
-        assert saved_preference != initial_preference
-        assert type(saved_preference) == type(bool())
+        forms['test_form_2'] = Form.find(slug=slug)
+        assert forms['test_form_2'] != None
+        html = response.data.decode()
+        assert '<!-- inspect_form_page -->' in html
+        assert forms['test_form_2'].log.count() == 1
+
+
 
 
 class TestSlugAvailability():
@@ -245,7 +126,7 @@ class TestSlugAvailability():
         assert response.is_json == True
         assert response.json['available'] == False
 
-    def test_save_form_with_reserved_slug(self, client):
+    def test_preview_save_form_with_reserved_slug(self, client):
         reserved_slug = current_app.config['RESERVED_SLUGS'][0]
         with open("./assets/valid_form_structure.json", 'r') as structure:
             valid_structure = structure.read()
@@ -260,9 +141,16 @@ class TestSlugAvailability():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<form action="/forms/save" method="post">' in html
+        #print(html)
+        assert '<!-- edit_form_page -->' in html
+        #assert '<form action="/forms/save" method="post">' in html
         response = client.post(
                         "/forms/save",
+                        data = {
+                            "structure": valid_structure,
+                            "introductionTextMD": "hello",
+                            "slug": reserved_slug,
+                        },
                         follow_redirects=True,
                     )
         assert response.status_code == 200
@@ -270,7 +158,7 @@ class TestSlugAvailability():
         assert '<div class="error flash_message">' in html
         assert '<!-- edit_form_page -->' in html
 
-    def test_save_form_with_unavailable_slug(self, client, forms):
+    def test_preview_save_form_with_unavailable_slug(self, client, forms):
         unavailable_slug = forms['test_form'].slug
         with open("./assets/valid_form_structure.json", 'r') as structure:
             valid_structure = structure.read()
@@ -285,22 +173,18 @@ class TestSlugAvailability():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<form action="/forms/save" method="post">' in html
+        #assert '<form action="/forms/save" method="post">' in html
+        assert '<!-- edit_form_page -->' in html
         response = client.post(
                         "/forms/save",
+                        data = {
+                            "structure": valid_structure,
+                            "introductionTextMD": "hello",
+                            "slug": unavailable_slug,
+                        },
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div class="error flash_message">' in html
+        #assert '<div class="error flash_message">' in html
         assert '<!-- edit_form_page -->' in html
-
-    def test_embed_form_html_code(self, client, anon_client, forms):
-        form_id = forms['test_form'].id
-        response = client.get(
-                        f"/forms/view/{form_id}",
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert forms['test_form'].embed_url in html

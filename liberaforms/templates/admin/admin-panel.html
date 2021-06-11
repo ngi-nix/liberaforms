@@ -120,6 +120,21 @@
                   onClick="location.href='/site/email/config'" />
         </td>
       </tr>
+      {% if config['ENABLE_UPLOADS'] %}
+      <tr>
+        <td>
+          {%trans%}Form attachments{%endtrans%}
+        </td>
+        <td>
+          {{ ', '.join(g.site.allowed_mimetypes.keys()) }}
+        </td>
+        <td class="text-right">
+          <input  class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Edit{%endtrans%}"
+                  onClick="location.href='/site/edit-mimetypes'">
+        </td>
+      </tr>
+      {% endif %}
       {% if g.current_user.is_root_user() %}
       <tr>
         <td colspan="2">
@@ -159,15 +174,13 @@
           <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
           <button id="uploads_enabled_true"
                   class="btn btn-xs btn-default
-                        {% if site.newUserUploadsDefault %}btn-success{% endif %}
-                  ">
-                  {%trans%}True{%endtrans%}
+                        {% if site.newuser_enableuploads %}btn-success{% endif %}">
+              {%trans%}True{%endtrans%}
           </button>
           <button id="uploads_enabled_false"
                   class="btn btn-xs btn-default
-                        {% if not site.newUserUploadsDefault %}btn-primary{% endif %}
-                  ">
-                  {%trans%}False{%endtrans%}
+                        {% if not site.newuser_enableuploads %}btn-primary{% endif %}">
+              {%trans%}False{%endtrans%}
           </button>
           </div>
         </td>

@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, json
+import os, json, logging
 from flask import g, request, render_template, redirect
 from flask import session, flash
 from flask import Blueprint, send_file, send_from_directory, after_this_request
@@ -149,20 +149,24 @@ def delete_answers(id):
     return render_template('delete-answers.html', form=queriedForm)
 
 
-@answers_bp.route('/file/<int:form_id>/<string:key>', methods=['GET'])
+@answers_bp.route('/form/<int:form_id>/attachment/<string:key>', methods=['GET'])
 @enabled_user_required
 @sanitized_key_required
-def download_file(form_id, key):
+def download_attachment(form_id, key):
     queriedForm = Form.find(id=form_id, editor_id=str(g.current_user.id))
     if not (queriedForm):
         return render_template('page-not-found.html'), 400
-    file = AnswerAttachment.find(form_id=form_id, storage_name=key)
-    if not file:
+    attachment = AnswerAttachment.find(form_id=form_id, storage_name=key)
+    if not attachment:
         return render_template('page-not-found.html'), 400
-    return send_from_directory( file.get_directory(),
-                                file.storage_name,
-                                attachment_filename=file.file_name,
-                                as_attachment=True)
+    (bytes, file_name) = attachment.get_attachment()
+    try:
+        return send_file(bytes,
+                         attachment_filename=file_name,
+                         as_attachment=True)
+    except:
+        logging.error(f"Missing attachment. Answer id: {attachment.answer_id}")
+        return render_template('page-not-found.html'), 404
 
 @answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])
 @sanitized_slug_required

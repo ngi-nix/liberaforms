@@ -13,6 +13,7 @@ from flask_babel import gettext as _
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
@@ -39,7 +40,8 @@ class Site(db.Model, CRUD):
     consentTexts = db.Column(ARRAY(JSONB), nullable=False)
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
-    newUserUploadsDefault = db.Column(db.Boolean, default=False)
+    newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
+    allowed_mimetypes = db.Column(JSONB, nullable=False)
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
@@ -58,13 +60,19 @@ class Site(db.Model, CRUD):
                                             name="DPL")
                             ]
         self.newUserConsentment = []
-        self.smtpConfig = { "host": f"smtp.{hostname}",
-                            "port": 25,
-                            "encryption": "",
-                            "user": "",
-                            "password": "",
-                            "noreplyAddress": f"no-reply@{hostname}"
-                          }
+        self.allowed_mimetypes = {
+                "pdf": "application/pdf",
+                "png": "image/png",
+                "odt": "application/vnd.oasis.opendocument.text"
+        }
+        self.smtpConfig = {
+                "host": f"smtp.{hostname}",
+                "port": 25,
+                "encryption": "",
+                "user": "",
+                "password": "",
+                "noreplyAddress": f"no-reply@{hostname}"
+        }
         blurb = os.path.join(current_app.root_path, 'templates/default_index.md')
         with open(blurb, 'r') as default_blurb:
             default_MD = default_blurb.read()
@@ -97,9 +105,25 @@ class Site(db.Model, CRUD):
             url = f"{url}:{self.port}"
         return url+'/'
 
-    def delete_favicon(self):
-        favicon_path = f"{current_app.config['BRAND_DIR']}/favicon.png"
-        default_favicon = f"{current_app.config['BRAND_DIR']}/favicon-default.png"
+    def get_mimetypes(self):
+        mimetypes = []
+        for mimetype in self.allowed_mimetypes.values():
+            if not mimetype in mimetypes:
+                mimetypes.append(mimetype)
+        return mimetypes
+
+    def change_favicon(self, file):
+        file.save(os.path.join(current_app.config['UPLOADS_DIR'],
+                               current_app.config['BRAND_DIR'],
+                               'favicon.png'))
+
+    def reset_favicon(self):
+        favicon_path = os.path.join(current_app.config['UPLOADS_DIR'],
+                                    current_app.config['BRAND_DIR'],
+                                    'favicon.png')
+        default_favicon = os.path.join(current_app.config['UPLOADS_DIR'],
+                                       current_app.config['BRAND_DIR'],
+                                       'favicon-default.png')
         shutil.copyfile(default_favicon, favicon_path)
         return True
 
@@ -223,9 +247,9 @@ class Site(db.Model, CRUD):
         return self.invitationOnly
 
     def toggle_newuser_uploads_default(self):
-        self.newUserUploadsDefault = False if self.newUserUploadsDefault else True
+        self.newuser_enableuploads = False if self.newuser_enableuploads else True
         self.save()
-        return self.newUserUploadsDefault
+        return self.newuser_enableuploads
 
     def toggle_scheme(self):
         self.scheme = 'https' if self.scheme=='http' else 'http'

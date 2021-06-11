@@ -47,6 +47,14 @@ def JsonResponse(json_response="1", status_code=200):
         {'Content-Type':'application/json; charset=utf-8'}
     )
 
+def return_error_as_json(status_code, sub_code, message, action):
+    response = jsonify({
+        'status': status_code,
+        'sub_code': sub_code,
+        'message': message,
+        'action': action
+    })
+    return JsonResponse(response, status_code)
 
 """ ######## Session ######## """
 def logout_user():
@@ -75,3 +83,18 @@ def gen_random_string():
 
 def str2bool(v):
   return v.lower() in ("true", "1", "yes")
+
+def human_readable_bytes(bytes):
+    """ 1 KibiByte == 1024 Bytes
+        1 Mebibyte == 1024*1024 Bytes
+        1 GibiByte == 1024*1024*1024 Bytes
+    """
+    if bytes == 0:
+        return "0 bytes"
+    if bytes < 1024:
+         return f"{bytes} bytes"
+    if bytes < 1024*1024:
+        return f"{float(round(bytes/(1024), 2))} KB"
+    if bytes < 1024*1024*1024:
+        return f"{float(round(bytes/(1024*1024), 2))} MB"
+    return f"{float(round(bytes/(1024*1024*1024), 2))} GB"

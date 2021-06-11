@@ -26,12 +26,12 @@ def test_user():
     """ The default test user as defined in ./tests/test.ini
     """
     user = User(
-        username = os.environ['TEST_USERNAME'],
-        email = os.environ['TEST_USER_EMAIL'],
-        password = os.environ['TEST_USER_PASSWORD'],
+        username = os.environ['USER1_USERNAME'],
+        email = os.environ['USER1_EMAIL'],
+        password = os.environ['USER1_PASSWORD'],
         preferences = User.default_user_preferences(),
         admin = User.default_admin_settings(),
         validatedEmail = True,
-        uploadsEnabled = False
+        uploads_enabled = os.environ['ENABLE_UPLOADS']
     )
     return user

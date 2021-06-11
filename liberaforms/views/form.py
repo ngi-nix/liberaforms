@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os, json, datetime
+import logging
 from threading import Thread
 from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
@@ -16,16 +17,18 @@ from liberaforms import csrf
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
 from liberaforms.models.answer import Answer, AnswerAttachment
+from liberaforms.models.media import Media
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 from liberaforms.utils.email.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
+from liberaforms.utils.utils import (make_url_for, JsonResponse,
+                                     logout_user, human_readable_bytes)
 import liberaforms.utils.wtf as wtf
 
-from pprint import pprint as pp
+#from pprint import pprint
 
 form_bp = Blueprint('form_bp', __name__,
                     template_folder='../templates/form')
@@ -53,16 +56,16 @@ def new_form(templateID=None):
 
 
 @form_bp.route('/forms/edit', methods=['GET', 'POST'])
-@form_bp.route('/forms/edit/<int:id>', methods=['GET', 'POST'])
+@form_bp.route('/forms/edit/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required
-def edit_form(id=None):
+def edit_form(form_id=None):
     queriedForm=None
-    if id:
-        if session['form_id'] != str(id):
+    if form_id:
+        if session['form_id'] != str(form_id):
             flash_text = _("Something went wrong. id does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
-        queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+        queriedForm = Form.find(id=form_id, editor_id=g.current_user.id)
         if not queriedForm:
             flash(_("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
@@ -71,9 +74,16 @@ def edit_form(id=None):
             session['slug'] = queriedForm.slug
         elif 'slug' in request.form:
             session['slug'] = sanitizers.sanitize_slug(request.form['slug'])
+            if not form_helper.is_slug_available(session['slug']):
+                flash(_("Something went wrong. Slug not unique!"), 'error')
+                return redirect(make_url_for('form_bp.edit_form'))
         if not session['slug']:
             flash(_("Something went wrong. No slug!"), 'error')
             return redirect(make_url_for('form_bp.my_forms'))
+
+        #if form_id and not form_helper.is_slug_available(session['slug']):
+        #    flash(gettext("Something went wrong. slug is not unique."), 'error')
+        #    return redirect(make_url_for('form_bp.edit_form'))
         structure = form_helper.repair_form_structure(
                                         json.loads(request.form['structure'])
                                 )
@@ -87,9 +97,12 @@ def edit_form(id=None):
     if queriedForm:
         optionsWithData = queriedForm.get_multichoice_options_with_saved_data()
     disabled_fields = current_app.config['FORMBUILDER_DISABLED_FIELDS']
+    max_media_size=human_readable_bytes(current_app.config['MAX_MEDIA_SIZE'])
     return render_template('edit-form.html',
                             host_url=g.site.host_url,
-                            multichoiceOptionsWithSavedData=optionsWithData)
+                            multichoiceOptionsWithSavedData=optionsWithData,
+                            upload_media_form=wtf.UploadMedia(),
+                            max_media_size_for_humans=max_media_size,)
 
 
 @form_bp.route('/forms/check-slug-availability', methods=['POST'])
@@ -101,12 +114,8 @@ def is_slug_available():
         return JsonResponse(json.dumps({'slug':"", 'available':False}))
     available = True
     slug=sanitizers.sanitize_slug(slug)
-    if not slug:
-        available = False
-    elif Form.find(slug=slug):
-        available = False
-    elif slug in current_app.config['RESERVED_SLUGS']:
-        available = False
+    if not (slug and form_helper.is_slug_available(slug)):
+        return JsonResponse(json.dumps({'slug':slug, 'available': False}))
     # we return a sanitized slug as a suggestion for the user.
     return JsonResponse(json.dumps({'slug':slug, 'available':available}))
 
@@ -129,7 +138,7 @@ def conditions_form(id):
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    #pp(queriedForm.structure)
+    #pprint(queriedForm.structure)
     return render_template('conditions.html', form=queriedForm)
 
 
@@ -171,12 +180,9 @@ def save_form(id=None):
         if not session['slug']:
             flash(_("Slug is missing."), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
-        if Form.find(slug=session['slug']):
-            flash(_("Slug is not unique. %s" % (session['slug'])), 'error')
-            return redirect(make_url_for('form_bp.edit_form'))
-        if session['slug'] in current_app.config['RESERVED_SLUGS']:
-            # i18n: Slug is reserved. <a_word>
-            flash(_("Slug is reserved. %s" % (session['slug'])), 'error')
+        if not form_helper.is_slug_available(session['slug']):
+            # TRANSLATION: Slug is not available. <a_word>
+            flash(_("Slug is not available. %s" % (session['slug'])), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         if session['duplication_in_progress']:
             # this new form is a duplicate
@@ -187,7 +193,7 @@ def save_form(id=None):
             consentTexts=[Form.new_data_consent()]
             afterSubmitText={'html':"", 'markdown':""}
             expiredText={'html':"", 'markdown':""}
-        #pp(formStructure)
+        #pprint(formStructure)
         new_form_data={
                         "slug": session['slug'],
                         "structure": formStructure,
@@ -309,6 +315,7 @@ def inspect_form(id):
         flash(_("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     # prepare the session for possible form edit
+    #pprint(queriedForm.structure)
     form_helper.populate_session_with_form(queriedForm)
     return render_template('inspect-form.html', form=queriedForm)
 
@@ -371,10 +378,8 @@ def add_shared_notification(id):
     if request.method == 'POST':
         if wtform.validate():
             email = wtform.email.data
-            if not queriedForm.sharedNotifications:
-                queriedForm.sharedNotifications = []
-            if not wtform.email.data in queriedForm.sharedNotifications:
-                queriedForm.sharedNotifications.append(email)
+            if not wtform.email.data in queriedForm.shared_notifications:
+                queriedForm.shared_notifications.append(email)
                 log_msg = _("Added shared notification: %s" % email)
                 queriedForm.add_log(log_msg)
                 queriedForm.save()
@@ -392,8 +397,8 @@ def remove_shared_notification(id):
     email = request.form.get('email')
     if not validators.is_valid_email(email):
         return JsonResponse(json.dumps(False))
-    if email in queriedForm.sharedNotifications:
-        queriedForm.sharedNotifications.remove(email)
+    if email in queriedForm.shared_notifications:
+        queriedForm.shared_notifications.remove(email)
         queriedForm.add_log(_("Removed shared notification: %s" % email))
         queriedForm.save()
         return JsonResponse(json.dumps(True))
@@ -483,7 +488,7 @@ def duplicate_form(id):
     session['form_id']=None
     session['duplication_in_progress'] = True
     flash(_("You can edit the duplicate now"), 'info')
-    return render_template('edit-form.html', host_url=g.site.host_url)
+    return redirect(make_url_for('form_bp.edit_form'))
 
 
 @form_bp.route('/forms/log/list/<int:id>', methods=['GET'])
@@ -613,7 +618,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        answer = {'marked': False}
+        answer_data = {'marked': False}
         for key in formData:
             if key=='csrf_token':
                 continue
@@ -622,25 +627,48 @@ def view_form(slug):
                 value=', '.join(value) # convert list of values to a string
                 key=key.rstrip('[]') # remove tailing '[]' from the name attrib (appended by formbuilder)
             value=sanitizers.remove_first_and_last_newlines(value.strip())
-            answer[key]=value
-        new_answer = Answer(queriedForm.id, queriedForm.author_id, answer)
-        new_answer.save()
+            answer_data[key]=value
+        answer = Answer(queriedForm.id, queriedForm.author_id, answer_data)
+        answer.save()
 
         if request.files:
             for file_field_name in request.files.keys():
                 if not queriedForm.has_field(file_field_name):
                     continue
                 file = request.files[file_field_name]
+                # TODO: check size and mimetype
                 if file.filename:
-                    upload = AnswerAttachment(new_answer, file)
-                    upload.save()
-                    link = f'<a href="{upload.get_url()}">{file.filename}</a>'
-                    new_answer.update_field(file_field_name, link)
+                    attachment = AnswerAttachment(answer)
+                    try:
+                        saved = attachment.save_attachment(file)
+                        if saved:
+                            url = attachment.get_url()
+                            link = f'<a href="{url}">{file.filename}</a>'
+                            answer.update_field(file_field_name, link)
+                    except Exception as error:
+                        logging.error(error)
+                        err = "Failed to save attachment: form:{}, answer:{}" \
+                              .format(queriedForm.slug, answer.id)
+                        logging.error(err)
+
+        if not queriedForm.expired and queriedForm.has_expired():
+            queriedForm.expired=True
+            queriedForm.save()
+            emails=[]
+            for editor_id, preferences in queriedForm.editors.items():
+                if preferences["notification"]["expiredForm"]:
+                    user=User.find(id=editor_id)
+                    if user and user.enabled:
+                        emails.append(user.email)
+            emails = list(set(emails + queriedForm.shared_notifications))
+            if emails:
+                Dispatcher().send_expired_form_notification(emails, queriedForm)
+
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
-            confirmationEmail=queriedForm.get_confirmation_email_address(answer)
-            if confirmationEmail and validators.is_valid_email(confirmationEmail):
-                Dispatcher().send_answer_confirmation(confirmationEmail, queriedForm)
+            email=queriedForm.get_confirmation_email_address(answer)
+            if email and validators.is_valid_email(email):
+                Dispatcher().send_answer_confirmation(email, queriedForm)
 
         emails=[]
         for editor_id, preferences in queriedForm.editors.items():
@@ -648,30 +676,23 @@ def view_form(slug):
                 user=User.find(id=editor_id)
                 if user and user.enabled:
                     emails.append(user.email)
-        emails = list(set(emails + queriedForm.sharedNotifications))
+        emails = list(set(emails + queriedForm.shared_notifications))
         if emails:
             data=[]
             for field in queriedForm.get_field_index_for_data_display():
-                if field['name'] in answer:
+                if field['name'] in answer.data:
                     if field['name']=="marked":
                         continue
-                    data.append( (field['label'], answer[field['name']]) )
+                    data.append( (field['label'], answer.data[field['name']]) )
             Dispatcher().send_new_answer_notification(  emails,
                                                         data,
                                                         queriedForm.slug)
-        if not queriedForm.expired and queriedForm.has_expired():
-            queriedForm.expired=True
-            emails=[]
-            for editor_id, preferences in queriedForm.editors.items():
-                if preferences["notification"]["expiredForm"]:
-                    user=User.find(id=editor_id)
-                    if user and user.enabled:
-                        emails.append(user.email)
-            emails = list(set(emails + queriedForm.sharedNotifications))
-            if emails:
-                Dispatcher().send_expired_form_notification(emails, queriedForm)
-        queriedForm.save()
-        return render_template('thankyou.html', form=queriedForm, navbar=False)
-    return render_template('view-form.html', form=queriedForm,
-                                             navbar=False,
-                                             no_bot=True)
+        return render_template('thankyou.html',
+                                form=queriedForm,
+                                navbar=False)
+    max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
+    return render_template('view-form.html',
+                            form=queriedForm,
+                            max_attachment_size_for_humans=max_attach_size,
+                            navbar=False,
+                            no_bot=True)

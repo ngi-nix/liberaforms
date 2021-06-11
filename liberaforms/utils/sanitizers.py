@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 def sanitize_string(string):
     string = unidecode(string)
     string = string.replace(" ", "")
-    return re.sub('[^A-Za-z0-9\-]', '', string)
+    return re.sub('[^A-Za-z0-9\-\.]', '', string)
 
 def sanitize_slug(slug):
     slug = slug.lower()

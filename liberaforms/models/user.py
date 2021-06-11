@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os, datetime
 from dateutil.relativedelta import relativedelta
+import pathlib
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.ext.mutable import MutableDict
@@ -14,6 +15,7 @@ from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
+from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
 from liberaforms.utils import utils
@@ -31,10 +33,14 @@ class User(db.Model, CRUD):
     blocked = db.Column(db.Boolean, default=False)
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean, default=False)
-    uploadsEnabled = db.Column(db.Boolean, default=False)
+    uploads_enabled = db.Column(db.Boolean, default=False, nullable=False)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
+    #media = db.relationship("Media", viewonly=True)
+    media = db.relationship("Media",
+                            lazy='dynamic',
+                            cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
         self.created = datetime.datetime.now().isoformat()
@@ -45,7 +51,7 @@ class User(db.Model, CRUD):
         self.blocked = False
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
-        self.uploadsEnabled = kwargs["uploadsEnabled"]
+        self.uploads_enabled = kwargs["uploads_enabled"]
         self.token = {}
         self.consentTexts = []
 
@@ -118,12 +124,21 @@ class User(db.Model, CRUD):
         return validators.verify_password(password, self.password_hash)
 
     def delete_user(self):
-        # Before delete, remove this user from other form.editors{}
+        # remove this user from other form.editors{}
         forms = Form.find_all(editor_id=self.id)
         for form in forms:
-            del form.editors[str(self.id)]
-            form.save()
-        self.delete()   # cascade delete user.authored_forms
+            if form.author_id != self.id:
+                del form.editors[str(self.id)]
+                form.save()
+        # delete uploaded media files
+        media_dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
+        shutil.rmtree(media_dir, ignore_errors=True)
+        if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
+            prefix = "media/{}".format(self.id)
+            RemoteStorage().remove_directory(prefix)
+        # cascade delete user.authored_forms
+        # cascade delete user.media
+        self.delete()
 
     def set_token(self, **kwargs):
         self.token=utils.create_token(User, **kwargs)
@@ -149,15 +164,24 @@ class User(db.Model, CRUD):
         self.save()
         return self.preferences["newAnswerNotification"]
 
-    def uploads_enabled(self):
+    def get_uploads_enabled(self):
         if not current_app.config['ENABLE_UPLOADS']:
             return False
-        return self.uploadsEnabled
+        return self.uploads_enabled
+
+    def get_media_directory_size(self, for_humans=False):
+        dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
+        if not os.path.isdir(dir):
+            bytes = 0
+        else:
+            dir = pathlib.Path(dir)
+            bytes = sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+        return bytes if not for_humans else utils.human_readable_bytes(bytes)
 
     def toggle_uploads_enabled(self):
-        self.uploadsEnabled = False if self.uploadsEnabled else True
+        self.uploads_enabled = False if self.uploads_enabled else True
         self.save()
-        return self.uploadsEnabled
+        return self.uploads_enabled
 
     def toggle_admin(self):
         if self.is_root_user():

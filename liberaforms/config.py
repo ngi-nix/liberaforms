@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, shutil
+import os, shutil, ast
 import logging
 
 def get_SQLALCHEMY_DATABASE_URI():
@@ -14,8 +14,7 @@ def get_SQLALCHEMY_DATABASE_URI():
     host = os.environ['DB_HOST']
     dbase = os.environ['DB_NAME']
     port = os.environ.get('DB_PORT', 5432)
-    uri = f'postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbase}'
-    return uri
+    return f'postgresql+psycopg2://{user}:{pswd}@{host}:{port}/{dbase}'
 
 
 class Config(object):
@@ -28,23 +27,16 @@ class Config(object):
     # User sessions last 8h (refreshed on every request)
     PERMANENT_SESSION_LIFETIME = 28800
     RESERVED_SLUGS = [
-        "login",
-        "logout",
         "static",
-        "admin",
-        "admins",
-        "user",
-        "users",
-        "profile",
-        "root",
-        "form",
-        "forms",
-        "site",
-        "sites",
+        "login", "logout",
+        "admin", "admins", "root",
+        "profile", "user", "users",
+        "form", "forms",
+        "site", "sites",
         "update",
         "embed",
         "api",
-        "file"
+        "media", "file",
     ]
     # DPL = Data Protection Law
     RESERVED_FORM_ELEMENT_NAMES = [
@@ -58,8 +50,8 @@ class Config(object):
         "sendConfirmation"
     ]
     RESERVED_USERNAMES = ["system", "admin", "root"]
-    FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access"]
     FORMBUILDER_DISABLED_FIELDS = ["autocomplete", "hidden", "button"]
+    FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access", "multiple"]
     FORMBUILDER_CONTROL_ORDER = ["header", "paragraph"]
     BABEL_TRANSLATION_DIRECTORIES = "translations;form_templates/translations"
     # http://www.lingoes.net/en/translator/langcode.htm
@@ -69,37 +61,41 @@ class Config(object):
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
     }
+    #ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
+    TMP_DIR = os.environ['TMP_DIR']
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SESSION_TYPE = os.environ['SESSION_TYPE']
+    TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
     if SESSION_TYPE == "memcached":
         import pylibmc as memcache
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
+    ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
+    MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
+    MAX_ATTACHMENT_SIZE = int(os.environ['MAX_ATTACHMENT_SIZE'])
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
-    TOKEN_EXPIRATION = os.environ['TOKEN_EXPIRATION']
 
-    base_dir = os.path.dirname(os.path.abspath(__file__))
-    instancefiles = 'instancefiles'
-    BRAND_DIR = os.path.join(base_dir, instancefiles, 'brand')
-    UPLOAD_DIR = os.path.join(base_dir, instancefiles, 'uploads')
+    root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
+    UPLOADS_DIR = os.path.abspath(os.path.join(root_dir, 'uploads'))
+    ATTACHMENT_DIR = 'attachments'
+    MEDIA_DIR = 'media'
+    BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
     if 'FQDN' in os.environ:
-        # LiberaForms' cluster project requires a unique directory
-        brand_dir = os.path.join(   base_dir,
-                                    instancefiles,
-                                    "hosts",
-                                    os.environ['FQDN'],
-                                    "brand")
-        if not os.path.isdir(brand_dir):
-            #os.mkdir(host_brand_dir)
-            shutil.copytree(BRAND_DIR, brand_dir)
-        BRAND_DIR = brand_dir
-
+        # LiberaForms cluster project requires a unique directory
+        ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
+        MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
+        inital_brand_dir = BRAND_DIR
+        BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
+        if not os.path.isdir(os.path.join(UPLOADS_DIR, BRAND_DIR)):
+            shutil.copytree(os.path.join(UPLOADS_DIR, inital_brand_dir),
+                            os.path.join(UPLOADS_DIR, BRAND_DIR)
+                            )
 
     @staticmethod
     def init_app(app):

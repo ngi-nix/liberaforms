@@ -1,0 +1,41 @@
+[
+   {
+     "type": "text",
+     "required": false,
+     "label": "Name",
+     "className": "form-control",
+     "name": "text-1620232883208",
+     "subtype": "text"
+   },
+   {
+     "type": "date",
+     "required": false,
+     "label": "Date",
+     "className": "form-control",
+     "name": "date-1620224710459"
+   },
+   {
+     "type": "number",
+     "required": false,
+     "label": "Number",
+     "className": "form-control",
+     "name": "number-1620224716308"
+   },
+   {
+     "type": "text",
+     "subtype": "email",
+     "required": false,
+     "label": "Email",
+     "className": "form-control",
+     "name": "text-1620232903350"
+   },
+   {
+     "className": "form-control",
+     "label": "upload a file",
+     "multiple": false,
+     "name": "file-1622045746136",
+     "required": true,
+     "subtype": "file",
+     "type": "file"
+   }
+ ]

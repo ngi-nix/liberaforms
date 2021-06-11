@@ -41,13 +41,14 @@ def create_app():
     from liberaforms.commands import register_commands
     register_commands(app)
     register_blueprints(app)
+    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
     @app.after_request
     def after_request(response):
         """ Logging after every request. """
         logger = logging.getLogger("app.access")
         logger.info(
-            "[%s] %s %s %s %s %s %s %s",
+            "[%s] %s %s %s %s %s %s",
             datetime.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
             request.method,
             request.path,
@@ -55,11 +56,10 @@ def create_app():
             response.status,
             response.content_length,
             request.referrer,
-            request.user_agent,
+            #request.user_agent,
         )
         return response
 
-    app.jinja_env.add_extension('jinja2.ext.loopcontrols')
     return app
 
 
@@ -67,6 +67,7 @@ def register_blueprints(app):
     from liberaforms.views.errors import errors_bp
     from liberaforms.views.main import main_bp
     from liberaforms.views.user import user_bp
+    from liberaforms.views.media import media_bp
     from liberaforms.views.form import form_bp
     from liberaforms.views.site import site_bp
     from liberaforms.views.admin import admin_bp
@@ -75,6 +76,7 @@ def register_blueprints(app):
     app.register_blueprint(errors_bp)
     app.register_blueprint(main_bp)
     app.register_blueprint(user_bp)
+    app.register_blueprint(media_bp)
     app.register_blueprint(form_bp)
     app.register_blueprint(site_bp)
     app.register_blueprint(admin_bp)

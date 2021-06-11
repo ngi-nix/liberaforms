@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os
+import ast
 
 os.environ['FLASK_CONFIG'] = 'testing'
 os.environ['DB_USER'] = os.environ['TEST_DB_USER']
@@ -24,6 +25,12 @@ Returns app
 @pytest.fixture(scope='session')
 def app():
     flask_app = create_app()
+    # change the uploads dir to tests/uploads/
+    tests_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+    uploads_dir = os.path.abspath(os.path.join(tests_dir, 'uploads'))
+    flask_app.config['MEDIA_DIR'] = os.path.join(uploads_dir, 'media')
+    flask_app.config['BRAND_DIR'] = os.path.join(uploads_dir, 'media/brand')
+    flask_app.config['ATTACHMENT_DIR'] = os.path.join(uploads_dir, 'attachments')
     yield flask_app
 
 """
@@ -54,24 +61,34 @@ def session(db):
     yield session
 
 @pytest.fixture(scope='session')
-def client(app):
-    with app.test_client() as client:
-        yield client
-
-@pytest.fixture(scope='session')
 def admin_client(app):
     with app.test_client() as client:
         yield client
 
-@pytest.fixture(scope='class')
+@pytest.fixture(scope='session')
 def anon_client(app):
     with app.test_client() as client:
         yield client
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='class')
 def users():
+    root_user_email = ast.literal_eval(os.environ['ROOT_USERS'])[0]
+    root_user_username = root_user_email.split('@')[0]
     return {
-        "test_user": None,
-        "admin": None,
-        "admin_password": "this is a valid password"
+        #"user": None,
+        "editor": {
+            "username": os.environ['USER1_USERNAME'],
+            "email": os.environ['USER1_EMAIL'],
+            "password": os.environ['USER1_PASSWORD']
+        },
+        "admin": {
+            "username": root_user_username,
+            "email": root_user_email,
+            "password": "this is a valid password"
+        },
+        "dummy_1": {
+            "username": "dave",
+            "email": "dave@example.com",
+            "password": "another valid password"
+        }
     }

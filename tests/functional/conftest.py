@@ -18,7 +18,13 @@ def site(db):
 def forms():
     return {
         'test_form': None,
+        'test_form_2': None,
     }
+
+@pytest.fixture(scope='module')
+def client(app):
+    with app.test_client() as client:
+        yield client
 
 @pytest.fixture(scope="module")
 def invite():

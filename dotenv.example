@@ -21,13 +21,17 @@ SESSION_TYPE = "filesystem"
 #MEMCACHED_HOST=
 #SESSION_KEY_PREFIX=
 
-# See docs/Uploads.md
-ENABLE_UPLOADS = False
+# See docs/upload.md
+ENABLE_UPLOADS = True
+# 1024 * 500 = 512000 = 500 KiB
+MAX_MEDIA_SIZE=512000
+# 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
+MAX_ATTACHMENT_SIZE=1572864
+ENABLE_REMOTE_STORAGE=False
 
 # Logging [watched|stream]
 LOG_TYPE=watched
 LOG_DIR=./logs
-
 
 # FLASK_ENV
 # this sets the Flask running mode

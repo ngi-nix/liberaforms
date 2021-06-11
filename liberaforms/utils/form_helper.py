@@ -6,9 +6,10 @@ This file is part of LiberaForms.
 """
 
 import json
-from flask import session
+from flask import session, current_app
 from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
+from liberaforms.models.form import Form
 
 
 def clear_session_form_data():
@@ -21,7 +22,7 @@ def clear_session_form_data():
     session['consentTexts'] = []
     session['afterSubmitText']= {}
     session['expiredText'] = {}
-    
+
 def populate_session_with_form(form):
     clear_session_form_data()
     session['slug'] = form.slug
@@ -66,3 +67,10 @@ def repair_form_structure(structure):
                     input_type["value"] = sanitizers.sanitize_string(input_type["value"])
                     input_type["value"] = sanitizers.remove_newlines(input_type["value"])
     return structure
+
+def is_slug_available(slug):
+    if Form.find(slug=slug):
+        return False
+    if slug in current_app.config['RESERVED_SLUGS']:
+        return False
+    return True

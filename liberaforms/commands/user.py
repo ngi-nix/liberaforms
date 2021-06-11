@@ -8,7 +8,7 @@ This file is part of LiberaForms.
 import click
 from flask.cli import AppGroup
 from flask.cli import with_appcontext
-from liberaforms import db
+from liberaforms.models.site import Site
 from liberaforms.models.user import User
 from liberaforms.utils import validators
 
@@ -22,29 +22,30 @@ user_cli = AppGroup('user')
 @with_appcontext
 def create(username, email, password, is_admin):
     if not validators.is_valid_email(email):
-        print("Not a valid email")
-        return
+        click.echo("Not a valid email")
+        return False
     if User.find(username=username):
-        print("User already exists")
-        return
+        click.echo("User already exists")
+        return False
     if User.find(email=email):
-        print("User with email already exists")
-        return
+        click.echo("User with email already exists")
+        return False
     adminSettings = User.default_admin_settings()
     adminSettings["isAdmin"] = is_admin
     user = User(username = username,
                 email = email,
-                password_hash = validators.hash_password(password),
+                password = password,
                 preferences = User.default_user_preferences(),
                 admin = adminSettings,
                 validatedEmail = True,
+                uploads_enabled = Site.find().newuser_enableuploads,
                 )
-    db.session.add(user)
-    db.session.commit()
+    user.save()
     if is_admin:
-        print('Admin created: ', user.id)
+        print(f'Admin created: {user.id}')
     else:
-        print('User created: ', user.id)
+        print(f'User created: {user.id}')
+    return True
 
 @user_cli.command()
 @click.argument("username")

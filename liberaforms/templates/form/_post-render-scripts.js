@@ -51,6 +51,12 @@ function watchEmail(){
         }
     });
 }
+// TODO: this code might be better?
+/*
+is_valid = field.checkVadility()
+*/
+//var re = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+//var is_email=re.test(input.val());
 function isEmailValid(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }

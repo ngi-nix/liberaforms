@@ -13,7 +13,6 @@ from flask import session, flash
 from flask_babel import gettext as _
 from flask_babel import refresh as babel_refresh
 
-#from liberaforms import app
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
@@ -73,7 +72,7 @@ def new_user(token=None):
             preferences = User.default_user_preferences(g.site),
             admin = adminSettings,
             validatedEmail = validatedEmail,
-            uploadsEnabled = g.site.newUserUploadsDefault,
+            uploads_enabled = g.site.newuser_enableuploads,
         )
         try:
             new_user.save()

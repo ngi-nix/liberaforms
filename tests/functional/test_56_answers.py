@@ -7,23 +7,12 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+from .utils import login
 
 
 class TestAnswers():
-    def test_login(self, client, users):
-        response = client.post(
-                        "/user/login",
-                        data = {
-                            "username": users['test_user'].username,
-                            "password": os.environ['TEST_USER_PASSWORD'],
-                        },
-                        follow_redirects=True,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<a class="nav-link" href="/user/logout">' in html
-
-    def test_show_answers_table(self, client, forms):
+    def test_show_answers_table(self, client, users, forms):
+        login(client, users['editor'])
         response = client.get(
                         f"/forms/answers/{forms['test_form'].id}",
                         follow_redirects=False,

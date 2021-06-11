@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os, json
+import mimetypes
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import session, flash
@@ -20,7 +21,7 @@ from liberaforms.utils.utils import make_url_for, JsonResponse
 from liberaforms.utils.email.dispatcher import Dispatcher
 import liberaforms.utils.wtf as wtf
 
-#from pprint import pprint as pp
+from pprint import pprint
 
 site_bp = Blueprint('site_bp', __name__,
                     template_folder='../templates/site')
@@ -102,7 +103,6 @@ def save_consent(id):
                                     "label":""}))
 
 
-
 @site_bp.route('/site/update-enabled-new-user-consentment-texts/<string:id>', methods=['POST'])
 @admin_required
 def updateEnabledNewUserConsentmentTexts(id):
@@ -155,7 +155,7 @@ def change_icon():
             return render_template('change-icon.html')
         file=request.files['file']
         if len(file.filename) > 4 and file.filename[-4:] == ".png":
-            file.save(os.path.join(current_app.config['BRAND_DIR'], 'favicon.png'))
+            g.site.change_favicon(file)
         else:
             flash(_("Bad file name. PNG only"), 'warning')
             return render_template('change-icon.html')
@@ -167,9 +167,33 @@ def change_icon():
 @site_bp.route('/site/reset-favicon', methods=['GET'])
 @admin_required
 def reset_site_favicon():
-    if g.site.delete_favicon():
+    if g.site.reset_favicon():
         flash(_("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('admin_bp.site_admin'))
+
+
+@site_bp.route('/site/edit-mimetypes', methods=['GET', 'POST'])
+@admin_required
+def edit_mimetypes():
+    wtform=wtf.FileExtensions()
+    if wtform.validate_on_submit():
+        mimetypes.init()
+        extensions = wtform.extensions.data.splitlines()
+        mime_types = {}
+        for extension in extensions:
+            if not extension:
+                continue
+            type = mimetypes.types_map[f".{extension}"]
+            for guessed_extensions in mimetypes.guess_all_extensions(type):
+                mime_types[guessed_extensions[1:]] = type
+        g.site.allowed_mimetypes = mime_types
+        g.site.save()
+        g.site.get_mimetypes()
+        flash(gettext("Enabled file extensions updated OK"), 'success')
+        return redirect(make_url_for('admin_bp.site_admin'))
+    if request.method == 'GET':
+        wtform.extensions.data = '\n'.join(g.site.allowed_mimetypes.keys())
+    return render_template('edit-mimetypes.html', wtform=wtform)
 
 
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])

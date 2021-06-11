@@ -29,8 +29,8 @@ pip install -r ./requirements.txt
 #### Filesystem
 Create this directory. session data will be saved there.
 ```
-mkdir ./liberaforms/flask_session
-chown www-data ./liberaforms/flask_session
+# mkdir ./liberaforms/flask_session
+# chown www-data ./liberaforms/flask_session
 ```
 
 #### Memory
@@ -53,10 +53,12 @@ openssl rand -base64 32
 
 ### File permissions
 
+The `instancefiles` directory contains uploaded files like the `logo.png` and
+attachments uploaded with the forms.
 
-Admins can upload a logo. You need to give the system user who runs LiberaForms write permission
+You need to give the system user who runs LiberaForms write permissions.
 ```
-chown -R www-data ./liberaforms/liberaforms/static/images
+chown -R www-data ./instancefiles
 ```
 
 ## Database
