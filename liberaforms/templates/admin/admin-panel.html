@@ -8,15 +8,18 @@
   <div class="col-md-6">
 
     <div class="title_1 delimited">
-      {%trans%}Administrator{%endtrans%}
+      {# i18n: Main title displayed on instance configuration page (/admin) #}
+      {%trans%}Instance configuration{%endtrans%}
     </div>
 
     <div id="site_settings" class="title_2">
+      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
       {%trans%}Site settings{%endtrans%}
     </div>
 
     <table class="table table-sm">
       <tr>
+        {# i18n: Name for the website/instance #}
         <td>{%trans%}Site name{%endtrans%}</td>
         <td>
         {{ site.siteName }}
@@ -25,11 +28,26 @@
           <a class="btn-primary btn btn-xs"
              role="button"
              href="/site/change-sitename">
+             {# i18n: Button to change some option #}
               {%trans%}Change{%endtrans%}
           </a>
         </td>
       </tr>
       <tr>
+        <td colspan="2">
+          {# i18n: Option in admin settings about changing instance welcoming text #}
+          {%trans%}Front page text{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn-primary btn btn-xs"
+             role="button"
+             href="/?edit=true">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Whether to enable open registration, or remain invitation only #}
         <td>{%trans%}Invitation only{%endtrans%}</td>
         <td></td>
         <td class="text-right">
@@ -50,7 +68,9 @@
         </td>
       </tr>
       <tr>
+        {# i18n: Noun, meaning agreement with terms/conditions of use #}
         <td>{%trans%}Consent{%endtrans%}</td>
+        {# i18n: 'etc' here stands for "and so on" at the end of a list #}
         <td>
           {%trans%}Terms and conditions{%endtrans%},
           {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
@@ -59,11 +79,13 @@
           <a class="btn btn-primary btn-xs"
              role="button"
              href="/site/consent-texts">
+            {# i18n: Button to edit some option #}
             {%trans%}Edit{%endtrans%}
           </a>
         </td>
       </tr>
       <tr>
+        {# i18n: Icon for the website #}
         <td>
           {%trans%}Icon{%endtrans%}
         </td>
@@ -78,6 +100,7 @@
         </td>
       </tr>
       <tr>
+        {# i18n: Color for topbar menu on website #}
         <td>{%trans%}Menu color{%endtrans%}</td>
         <td>{{g.site.menuColor}}</td>
         <td class="text-right">
@@ -88,6 +111,7 @@
         </td>
       </tr>
       <tr>
+        {# i18n: Settings about email server used by website to send email messages #}
         <td>{%trans%}Email server{%endtrans%}</td>
         <td>{{g.site.smtpConfig["host"]}}</td>
         <td class="text-right">
@@ -131,6 +155,7 @@
     </div>
     <table class="table table-sm">
       <tr>
+        {# i18n: Default language for instance, setting on Instance configuration #}
         <td>{%trans%}Default language{%endtrans%}</td>
         <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
         <td class="text-right">

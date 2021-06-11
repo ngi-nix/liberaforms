@@ -10,7 +10,7 @@ import shutil
 import unicodecsv as csv
 
 from flask import current_app, g
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
@@ -132,12 +132,14 @@ class Form(db.Model, CRUD):
     def create_field_index(structure):
         index=[]
         # Add these RESERVED fields to the index.
-        index.append({'label': gettext("Marked"), 'name': 'marked'})
-        index.append({'label': gettext("Created"), 'name': 'created'})
+        # i18n: Column title on table, to sort whether the form entries are marked or not
+        index.append({'label': _("Marked"), 'name': 'marked'})
+        # i18n: Used for sort items by creation order, almost always as column title
+        index.append({'label': _("Created"), 'name': 'created'})
         for element in structure:
             if 'name' in element:
                 if 'label' not in element:
-                    element['label']=gettext("Label")
+                    element['label']=_("Label")
                 index.append({'name': element['name'], 'label': element['label']})
         return index
 
@@ -178,7 +180,8 @@ class Form(db.Model, CRUD):
             result.append(item)
         if self.data_consent["enabled"]:
             # append dynamic DPL field
-            result.append({"name": "DPL", "label": gettext("DPL")})
+            # i18n: Acronym for 'Data Privacy Law'
+            result.append({"name": "DPL", "label": _("DPL")})
         return result
 
     def has_removed_fields(self):
@@ -323,7 +326,7 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def default_expired_text():
-        text=gettext("Sorry, this form has expired.")
+        text=_("Sorry, this form has expired.")
         return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
@@ -351,7 +354,8 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def defaultAfterSubmitText():
-        text=gettext("Thank you!!")
+        # i18n: Thanks text displayed when completing form as user
+        text=_("Thank you!!")
         return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
@@ -732,7 +736,10 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def default_introduction_text():
-        title=gettext("Form title")
-        context=gettext("Context")
-        content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
+        # i18n: Example title in template for new form
+        title=_("Form title")
+        # i18n: Example subtitle in template for new form
+        context=_("Context")
+        # i18n: Example content in template for new form. '\n' is used for linebreak.
+        content=_(" * Describe your form.\n * Add relevant content, links, images, etc.")
         return "## {}\n\n### {}\n\n{}".format(title, context, content)

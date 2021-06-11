@@ -10,7 +10,7 @@ from threading import Thread
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import session, flash
-from flask_babel import gettext
+from flask_babel import gettext as _
 from flask_babel import refresh as babel_refresh
 
 from liberaforms.models.site import Site
@@ -41,10 +41,10 @@ def new_user(token=None):
     if token:
         invite=Invite.find(token=token)
         if not invite:
-            flash(gettext("Invitation not found"), 'warning')
+            flash(_("Invitation not found"), 'warning')
             return redirect(make_url_for('main_bp.index'))
         if validators.has_token_expired(invite.token):
-            flash(gettext("This invitation has expired"), 'warning')
+            flash(_("This invitation has expired"), 'warning')
             invite.delete()
             return redirect(make_url_for('main_bp.index'))
 
@@ -77,7 +77,7 @@ def new_user(token=None):
         try:
             new_user.save()
         except:
-            flash(gettext("Opps! An error ocurred when creating the user"), 'error')
+            flash(_("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
         if invite:
             invite.delete()
@@ -85,7 +85,7 @@ def new_user(token=None):
         session["user_id"]=str(new_user.id)
         g.current_user = new_user
         babel_refresh()
-        flash(gettext("Welcome!"), 'success')
+        flash(_("Welcome!"), 'success')
         if validatedEmail == True:
             return redirect(make_url_for('form_bp.my_forms'))
         else:
@@ -123,7 +123,7 @@ def send_email_validation():
     status = Dispatcher().send_email_address_confirmation(g.current_user,
                                                           g.current_user.email)
     if status['email_sent'] == True:
-        flash(gettext("We've sent an email to %s") % g.current_user.email, 'info')
+        flash(_("We've sent an email to %s") % g.current_user.email, 'info')
     else:
         flash(status['msg'], 'warning')
         logging.warning(status['msg'])
@@ -142,7 +142,7 @@ def change_language():
             g.current_user.preferences["language"]=request.form['language']
             g.current_user.save()
             babel_refresh()
-            flash(gettext("Language updated OK"), 'success')
+            flash(_("Language updated OK"), 'success')
             return redirect(make_url_for('user_bp.user_settings',
                                          username=g.current_user.username))
     return render_template('common/change-language.html',
@@ -158,7 +158,7 @@ def change_email():
         status = Dispatcher().send_email_address_confirmation(g.current_user,
                                                               wtform.email.data)
         if status['email_sent'] == True:
-            flash(gettext("We've sent an email to %s") % wtform.email.data, 'info')
+            flash(_("We've sent an email to %s") % wtform.email.data, 'info')
         else:
             # TODO: Tell the user that the email has not been sent
             pass
@@ -174,7 +174,7 @@ def reset_password():
     if wtform.validate_on_submit():
         g.current_user.password_hash=validators.hash_password(wtform.password.data)
         g.current_user.save()
-        flash(gettext("Password changed OK"), 'success')
+        flash(_("Password changed OK"), 'success')
         return redirect(make_url_for('user_bp.user_settings',
                                      username=g.current_user.username))
     return render_template('reset-password.html', wtform=wtform)
@@ -188,7 +188,7 @@ def delete_account(user_id):
         return redirect(make_url_for('user_bp.user_settings',
                                      username=g.current_user.username))
     if g.current_user.is_admin() and g.site.get_admins().count() == 1:
-        flash(gettext("Cannot delete. You are the only Admin on this site"),
+        flash(_("Cannot delete. You are the only Admin on this site"),
              'warning')
         return redirect(make_url_for(   'user_bp.user_settings',
                                         username=g.current_user.username))
@@ -196,7 +196,7 @@ def delete_account(user_id):
     if wtform.validate_on_submit():
         g.current_user.delete_user()
         logout_user()
-        flash(gettext("Thank you for using LiberaForms"), 'success')
+        flash(_("Thank you for using LiberaForms"), 'success')
         return redirect(make_url_for('main_bp.index'))
     return render_template( 'delete-account.html',
                             wtform=wtform,
@@ -221,10 +221,10 @@ A user has already recieved an email including this link.
 def validate_email(token):
     user = User.find(token=token)
     if not user:
-        flash(gettext("We couldn't find that petition"), 'warning')
+        flash(_("We couldn't find that petition"), 'warning')
         return redirect(make_url_for('main_bp.index'))
     if validators.has_token_expired(user.token):
-        flash(gettext("Your petition has expired"), 'warning')
+        flash(_("Your petition has expired"), 'warning')
         user.delete_token()
         return redirect(make_url_for('main_bp.index'))
     # On a Change email request, the new email address is saved in the token.
@@ -236,7 +236,7 @@ def validate_email(token):
     user.save()
     #login the user
     session['user_id']=str(user.id)
-    flash(gettext("Your email address is valid"), 'success')
+    flash(_("Your email address is valid"), 'success')
     return redirect(make_url_for('user_bp.user_settings',
                                  username=user.username))
 
@@ -269,7 +269,7 @@ def login():
             else:
                 return redirect(make_url_for('form_bp.my_forms'))
         else:
-            flash(gettext("Bad credentials"), 'warning')
+            flash(_("Bad credentials"), 'warning')
     return render_template('login.html', wtform=wtform)
 
 

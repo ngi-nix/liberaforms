@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-    
+
         <div class="title_1 delimited">
             {%trans%}Default consent text{%endtrans%}
         </div>
@@ -21,7 +21,7 @@
             {% if consent.name=="DPL" %}
             {%trans%}Data protection{%endtrans%}
             {% else %}
-            {{ gettext(consent.name) }}
+            {%trans consent_name=consent.name%}{{consent_name}}{%endtrans%}
             {% endif %}
             <div style="float:right">
 
@@ -61,7 +61,7 @@
                 <input id="{{consent.id}}-cancel-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
                 </div>
                 <textarea id="{{consent.id}}-mde">{{ consent.markdown }}</textarea>
-                
+
                 <div id="{{consent.id}}-consent-editor" class="form-row">
                     <div class="form-group col">
                     <input id="{{consent.id}}-label-input" class="form-control form-control-sm" type="text" placeholder="{%trans%}I agree{%endtrans%}" value="{{consent.label}}">
@@ -90,7 +90,7 @@ var csrftoken = "{{ csrf_token() }}";
 
 {% for consent in site.consentTexts %}
 $(document).ready(function() {
-    var MDE_{{consent.id}} = new SimpleMDE({ 
+    var MDE_{{consent.id}} = new SimpleMDE({
                                 autosave: {enabled: false},
                                 autofocus: true,
                                 spellChecker: false,
@@ -134,7 +134,7 @@ $(document).ready(function() {
                 if (required) {
                     $("#{{consent.id}}-label").append('<span class="required-dot">●</span>')
                     $("#{{consent.id}}-label").addClass("required")
-                    
+
                 }else{
                     $("#{{consent.id}}-label").find('span[class=required]').remove()
                     $("#{{consent.id}}-label").removeClass("required")
@@ -184,5 +184,5 @@ function fadeOutHighlight(element){
     element.animate({ backgroundColor: "white" }, 2000)
 }
 </script>
-  
+
 {% endblock %}

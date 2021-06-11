@@ -9,7 +9,7 @@ import os, datetime, markdown, shutil
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
 from flask import current_app
-from flask_babel import gettext
+from flask_babel import gettext as _
 
 from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
@@ -312,12 +312,16 @@ class Site(db.Model, CRUD):
 
     def write_users_csv(self):
         fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
-        fieldheaders={  "username": gettext("Username"),
-                        "created": gettext("Created"),
-                        "enabled": gettext("Enabled"),
-                        "email": gettext("Email"),
-                        "forms": gettext("Forms"),
-                        "admin": gettext("Admin")
+        fieldheaders={  "username": _("Username"),
+                        "created": _("Created"),
+                        # i18n: Used as column title
+                        "enabled": _("Enabled"),
+                        # i18n: Email direction, used as column title
+                        "email": _("Email"),
+                        # i18n: Used as column title
+                        "forms": _("Forms"),
+                        # i18n: Whether user is admin, used as column title
+                        "admin": _("Admin")
                         }
         csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
         with open(csv_name, mode='wb') as csv_file:
@@ -326,8 +330,9 @@ class Site(db.Model, CRUD):
                                     extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in self.get_users():
-                is_enabled = gettext("True") if user.enabled else gettext("False")
-                is_admin = gettext("True") if user.is_admin() else gettext("False")
+                # i18n: Boolean option: True or False
+                is_enabled = _("True") if user.enabled else _("False")
+                is_admin = _("True") if user.is_admin() else _("False")
                 row = { "username": user.username,
                         "created": user.created.strftime("%Y-%m-%d"),
                         "enabled": is_enabled,

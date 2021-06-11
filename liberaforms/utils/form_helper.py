@@ -7,7 +7,7 @@ This file is part of LiberaForms.
 
 import json
 from flask import session, current_app
-from flask_babel import gettext
+from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
 from liberaforms.models.form import Form
 
@@ -50,7 +50,7 @@ def repair_form_structure(structure):
                 element['label'] = sanitizers.strip_html_tags(element['label']).strip()
                 element['label'] = sanitizers.remove_newlines(element['label'])
             if not 'label' in element or element['label']=="":
-                element['label']=gettext("Label")
+                element['label']=_("Label")                
             # formBuilder does not save select dropdown correctly
             if element["type"] == "select" and "multiple" in element:
                 if element["multiple"] == False:

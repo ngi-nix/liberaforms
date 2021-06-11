@@ -23,7 +23,7 @@ function setLimits(){
             if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
                     if ({{available}} > 0){
                         var hint=$("<div class='hint'></div>")
-                        hint.text("{{ gettext('Note: Maximum is now %(max)s', max=available) }}");
+                        hint.text("{%trans max=available%}Note: Maximum is now {{max}}s{%endtrans%}");
                         hint.insertBefore("#{{field}}");
                         $("#{{field}}").prop("max", {{available}});
                     }
