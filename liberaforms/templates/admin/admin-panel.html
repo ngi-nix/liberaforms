@@ -126,7 +126,7 @@
           {%trans%}Form attachments{%endtrans%}
         </td>
         <td>
-          {{ ', '.join(g.site.allowed_mimetypes.keys()) }}
+          {{ ', '.join(g.site.mimetypes.extensions) }}
         </td>
         <td class="text-right">
           <input  class="btn-primary btn btn-xs"

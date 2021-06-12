@@ -178,21 +178,21 @@ def edit_mimetypes():
     wtform=wtf.FileExtensions()
     if wtform.validate_on_submit():
         mimetypes.init()
+        updated_mimetypes = {"extensions":[], "mimetypes": []}
         extensions = wtform.extensions.data.splitlines()
-        mime_types = {}
         for extension in extensions:
             if not extension:
                 continue
             type = mimetypes.types_map[f".{extension}"]
-            for guessed_extensions in mimetypes.guess_all_extensions(type):
-                mime_types[guessed_extensions[1:]] = type
-        g.site.allowed_mimetypes = mime_types
+            if not extension in updated_mimetypes["extensions"]:
+                updated_mimetypes["extensions"].append(extension)
+                updated_mimetypes["mimetypes"].append(type)
+        g.site.mimetypes = updated_mimetypes
         g.site.save()
-        g.site.get_mimetypes()
-        flash(gettext("Enabled file extensions updated OK"), 'success')
+        flash(_("Enabled file extensions updated OK"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
     if request.method == 'GET':
-        wtform.extensions.data = '\n'.join(g.site.allowed_mimetypes.keys())
+        wtform.extensions.data = '\n'.join(g.site.mimetypes['extensions'])
     return render_template('edit-mimetypes.html', wtform=wtform)
 
 
