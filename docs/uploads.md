@@ -35,15 +35,23 @@ MINIO_ACCESS_KEY=
 MINIO_SECRET_KEY=
 ```
 
+Now you can create the remote buckets. LiberaForms uses two buckets:
+
+* `my.domain.com.media`: Media files go here. Anonymous Internet users can download these files.
+* `my.domain.com.attachments`: Documents attached to forms are stored here.
+
+#### Create remote buckets
+
+```
+flask storage create --remote-buckets
+```
+
+
 ### Encryption
 
-LiberaForms encrypts attachments before uploading them to the remote Minio server.
+LiberaForms encrypts form attachments when they are submitted.
 
-```
-pip install "cryptography>=3.4.7,==3.*"
-```
-
-#### Create the keys
+#### Create the key
 
 ```
 flask cryptokey create
@@ -68,7 +76,3 @@ If remote storage is configured and LiberaForms is unable to use the server (tem
 
 * uploaded files are saved locally on the server at `./uploads`
 * the problem is logged
-
-# Nginx config
-
-https://serverfault.com/questions/987061/nginx-proxying-s3-public-bucket-hosted-by-minio-service
