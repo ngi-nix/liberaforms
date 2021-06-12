@@ -189,7 +189,17 @@ jQuery(function($) {
               $('.placeholder-wrap', fld).hide();
               $('.subtype-wrap', fld).hide();
             }
-          }
+          },
+          select: {
+            onadd: function (fld) {
+              $('.placeholder-wrap', fld).hide();
+            }
+          },
+          date: {
+            onadd: function (fld) {
+              $('.placeholder-wrap', fld).hide();
+            }
+          },
         },
         controlOrder: {{ config['FORMBUILDER_CONTROL_ORDER'] | tojson }},
         i18n: {
