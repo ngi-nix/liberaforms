@@ -125,7 +125,7 @@ jQuery(function($) {
                                {{ config['MAX_ATTACHMENT_SIZE']/1024 }}
                   );
                   $(this).attr('data-parsley-filemimetypes',
-                              "{{ ', '.join(g.site.get_mimetypes()) }}"
+                              "{{ ', '.join(g.site.mimetypes['mimetypes']) }}"
                   );
                 });
                 $('#form').parsley();
@@ -139,6 +139,9 @@ jQuery(function($) {
 {% with form=form %}
 {% include '_post-render-scripts.js' %}
 {% endwith %}
+
+
+var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
 
 $(function () {
   $('#form').parsley().on('field:validated', function() {
@@ -182,7 +185,10 @@ $(function () {
     },
     requirementType: 'string',
     messages: {
-      en: 'File mime type not allowed',
+      en: 'Valid file types: '+allowed_extensions,
+      es: 'Valid file types: '+allowed_extensions,
+      eu: 'Valid file types: '+allowed_extensions,
+      ca: 'Valid file types: '+allowed_extensions,
 
     }
   });

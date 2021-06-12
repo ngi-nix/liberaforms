@@ -41,7 +41,7 @@ class Site(db.Model, CRUD):
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
     newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
-    allowed_mimetypes = db.Column(JSONB, nullable=False)
+    mimetypes = db.Column(JSONB, nullable=False)
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
@@ -60,10 +60,11 @@ class Site(db.Model, CRUD):
                                             name="DPL")
                             ]
         self.newUserConsentment = []
-        self.allowed_mimetypes = {
-                "pdf": "application/pdf",
-                "png": "image/png",
-                "odt": "application/vnd.oasis.opendocument.text"
+        self.mimetypes = {
+                "extensions": ["pdf", "png", "odt"],
+                "mimetypes": ["application/pdf",
+                              "image/png",
+                              "application/vnd.oasis.opendocument.text"]
         }
         self.smtpConfig = {
                 "host": f"smtp.{hostname}",
@@ -104,13 +105,6 @@ class Site(db.Model, CRUD):
         if self.port:
             url = f"{url}:{self.port}"
         return url+'/'
-
-    def get_mimetypes(self):
-        mimetypes = []
-        for mimetype in self.allowed_mimetypes.values():
-            if not mimetype in mimetypes:
-                mimetypes.append(mimetype)
-        return mimetypes
 
     def change_favicon(self, file):
         file.save(os.path.join(current_app.config['UPLOADS_DIR'],
