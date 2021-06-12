@@ -165,21 +165,21 @@ class TestSiteConfig():
                     follow_redirects=False,
                 )
         html = response.data.decode()
-        assert '<form method="POST" enctype=multipart/form-data >' in html
-        favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
+        assert '<!-- change_icon_page -->' in html
+        favicon_path = f"{app.config['BRAND_DIR']}/favicon.ico"
         initial_favicon_stats = os.stat(favicon_path)
         invalid_favicon = "favicon_invalid.jpeg"
         with open(f'./assets/{invalid_favicon}', 'rb') as f:
             stream = BytesIO(f.read())
-        file = werkzeug.datastructures.FileStorage(
+        invalid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
             filename=invalid_favicon,
-            content_type="image/png",
+            content_type="plain/txt",
         )
         response = admin_client.post(
                     url,
                     data = {
-                        'file': file,
+                        'file': invalid_file,
                     },
                     follow_redirects=True,
                     content_type='multipart/form-data',
@@ -187,11 +187,11 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert initial_favicon_stats.st_size == os.stat(favicon_path).st_size
         html = response.data.decode()
-        assert '<form method="POST" enctype=multipart/form-data >' in html
-        valid_favicon = "favicon_valid.png"
+        assert '<!-- change_icon_page -->' in html
+        valid_favicon = "favicon_valid.jpeg"
         with open(f'./assets/{valid_favicon}', 'rb') as f:
             stream = BytesIO(f.read())
-        file = werkzeug.datastructures.FileStorage(
+        valid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
             filename=valid_favicon,
             content_type="image/png",
@@ -199,7 +199,7 @@ class TestSiteConfig():
         response = admin_client.post(
                     url,
                     data = {
-                        'file': file,
+                        'file': valid_file,
                     },
                     follow_redirects=True,
                     content_type='multipart/form-data',
@@ -207,7 +207,7 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
         html = response.data.decode()
-        assert '<div id="site_settings"' in html
+        assert '<!-- admin-panel_page -->' in html
 
     def test_restore_default_favicon(self, app, admin_client, anon_client):
         url = "/site/reset-favicon"
@@ -218,7 +218,7 @@ class TestSiteConfig():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        favicon_path = f"{app.config['BRAND_DIR']}/favicon.png"
+        favicon_path = f"{app.config['BRAND_DIR']}/favicon.ico"
         initial_favicon_stats = os.stat(favicon_path)
         response = admin_client.get(
                         url,

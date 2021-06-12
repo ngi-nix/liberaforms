@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- admin-panel_page -->
 
 <div class="container">
 <div class="row">
@@ -47,6 +48,40 @@
         </td>
       </tr>
       <tr>
+        {# i18n: Icon for the website #}
+        <td>
+          {%trans%}Icon and Favicon{%endtrans%}
+        </td>
+        <td>
+          <img src="/favicon.ico" width=24 height=24 />
+        </td>
+        <td class="text-right">
+          <input class="btn-primary btn btn-xs"
+                 type="button"
+                 value="{%trans%}Change{%endtrans%}"
+                 onClick="location.href='/site/change-icon'">
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Color for topbar menu on website #}
+        <td>{%trans%}Menu color{%endtrans%}</td>
+        <td>{{g.site.menuColor}}</td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button" href="/site/change-menu-color">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p>&nbsp;</p>
+    <div id="site_settings" class="title_2">
+      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+      {%trans%}Site settings{%endtrans%}
+    </div>
+    <table class="table table-sm">
+      <tr>
         {# i18n: Whether to enable open registration, or remain invitation only #}
         <td>{%trans%}Invitation only{%endtrans%}</td>
         <td></td>
@@ -84,42 +119,6 @@
           </a>
         </td>
       </tr>
-      <tr>
-        {# i18n: Icon for the website #}
-        <td>
-          {%trans%}Icon{%endtrans%}
-        </td>
-        <td>
-          <img src="/favicon.png" width=18 height=18 />
-        </td>
-        <td class="text-right">
-          <input class="btn-primary btn btn-xs"
-                 type="button"
-                 value="{%trans%}Change{%endtrans%}"
-                 onClick="location.href='/site/change-icon'">
-        </td>
-      </tr>
-      <tr>
-        {# i18n: Color for topbar menu on website #}
-        <td>{%trans%}Menu color{%endtrans%}</td>
-        <td>{{g.site.menuColor}}</td>
-        <td class="text-right">
-          <a class="btn btn-primary btn-xs"
-             role="button" href="/site/change-menu-color">
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      <tr>
-        {# i18n: Settings about email server used by website to send email messages #}
-        <td>{%trans%}Email server{%endtrans%}</td>
-        <td>{{g.site.smtpConfig["host"]}}</td>
-        <td class="text-right">
-          <input class="btn-primary btn btn-xs"
-                  type="button" value="{%trans%}Configure{%endtrans%}"
-                  onClick="location.href='/site/email/config'" />
-        </td>
-      </tr>
       {% if config['ENABLE_UPLOADS'] %}
       <tr>
         <td>
@@ -147,6 +146,16 @@
         </td>
       </tr>
       {% endif %}
+      <tr>
+        {# i18n: Settings about email server used by website to send email messages #}
+        <td>{%trans%}Email server{%endtrans%}</td>
+        <td>{{g.site.smtpConfig["host"]}}</td>
+        <td class="text-right">
+          <input class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Configure{%endtrans%}"
+                  onClick="location.href='/site/email/config'" />
+        </td>
+      </tr>
     </table>
 
     <p>&nbsp;</p>

@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 import os, datetime, markdown, shutil
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
+from PIL import Image
 from flask import current_app
 from flask_babel import gettext as _
 
@@ -107,17 +108,24 @@ class Site(db.Model, CRUD):
         return url+'/'
 
     def change_favicon(self, file):
-        file.save(os.path.join(current_app.config['UPLOADS_DIR'],
-                               current_app.config['BRAND_DIR'],
-                               'favicon.png'))
+        """ Convert file to .ico and make the it square """
+        img = Image.open(file)
+        x, y = img.size
+        size = max(32, x, y)
+        #icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
+        new_favicon = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+        new_favicon.paste(img, (int((size - x) / 2), int((size - y) / 2)))
+        new_favicon.save(os.path.join(current_app.config['UPLOADS_DIR'],
+                                      current_app.config['BRAND_DIR'],
+                                      'favicon.ico'))
 
     def reset_favicon(self):
         favicon_path = os.path.join(current_app.config['UPLOADS_DIR'],
                                     current_app.config['BRAND_DIR'],
-                                    'favicon.png')
+                                    'favicon.ico')
         default_favicon = os.path.join(current_app.config['UPLOADS_DIR'],
                                        current_app.config['BRAND_DIR'],
-                                       'favicon-default.png')
+                                       'favicon-default.ico')
         shutil.copyfile(default_favicon, favicon_path)
         return True
 

@@ -24,8 +24,8 @@ server {
         location /static/ {
             alias  /path/to/liberaforms/liberaforms/static;
         }
-        location /favicon.png {
-            alias  /path/to/liberaforms/uploads/media/brand/favicon.png;
+        location /favicon.ico {
+            alias /path/to/liberaforms/uploads/media/brand/favicon.ico;
         }
         location /brand/emailheader.png {
             alias  /path/to/liberaforms/uploads/media/emailheader.png;

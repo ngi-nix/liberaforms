@@ -154,13 +154,16 @@ def change_icon():
             flash(_("Required file is missing"), 'warning')
             return render_template('change-icon.html')
         file=request.files['file']
-        if len(file.filename) > 4 and file.filename[-4:] == ".png":
-            g.site.change_favicon(file)
+        if "image/" in file.content_type:
+            try:
+                g.site.change_favicon(file)
+                flash(_("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+                return redirect(make_url_for('admin_bp.site_admin'))
+            except Exception as error:
+                logging.error(error)
         else:
-            flash(_("Bad file name. PNG only"), 'warning')
+            flash(_("An image file is required"), 'warning')
             return render_template('change-icon.html')
-        flash(_("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
-        return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('change-icon.html')
 
 

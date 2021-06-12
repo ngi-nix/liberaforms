@@ -49,8 +49,8 @@ We have added new locations to take load off the LiberaForms app.
 location /static/ {
     alias  /path/to/liberaforms/static;
 }
-location /favicon.png {
-    alias  /path/to/liberaforms/instancesfiles/brand/favicon.png;
+location /favicon.ico {
+    alias /path/to/liberaforms/uploads/media/brand/favicon.ico;
 }
 location /brand/emailheader.png {
     alias  /path/to/liberaforms/uploads/media/emailheader.png;
@@ -60,3 +60,8 @@ location /file/media/ {
 }
 ```
 See `docs/nginx.example` for a complete example configuration.
+
+
+## Site icon
+
+The favicon file type has been changed to `ico`. You need to upload your site icon (`png` or `jpg`) again. It will be converted to `ico` for you.

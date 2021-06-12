@@ -8,7 +8,7 @@
   {% if 'site' in g and g.site %}
   <title>{{ g.site.siteName }}</title>
   {% endif %}
-  <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>
@@ -29,7 +29,7 @@
   <div class="container">
 
     {% if 'site' in g and g.site %}
-    <a class="navbar-brand" href="/"><img src="/favicon.png" /></a>
+    <a class="navbar-brand" href="/"><img src="/favicon.ico" /></a>
     {% endif %}
 
     <button class="navbar-toggler"
