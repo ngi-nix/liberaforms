@@ -80,7 +80,7 @@ class RemoteStorage():
             bucket_names = [bucket.name for bucket in client.list_buckets()]
             if  self.attachment_bucket_name in bucket_names and \
                 self.media_bucket_name in bucket_names:
-                return True, f"Buckets already exist"
+                return True, "Buckets ok. Both buckets already exist"
             if not self.attachment_bucket_name in bucket_names:
                 client.make_bucket(self.attachment_bucket_name)
             if not self.media_bucket_name in bucket_names:
@@ -92,7 +92,7 @@ class RemoteStorage():
             bucket_names = [bucket.name for bucket in client.list_buckets()]
             if  self.attachment_bucket_name in bucket_names and \
                 self.media_bucket_name in bucket_names:
-                return True, "Buckets created"
+                return True, "Buckets ok. Created two buckets"
             return False, "Could not create buckets"
         except S3Error as error:
             logging.error(error)

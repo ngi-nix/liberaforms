@@ -56,7 +56,7 @@ LiberaForms encrypts form attachments when they are submitted.
 ```
 flask cryptokey create
 
-olYyUwGTCxnx1BPn9AMsm8GoH9oc9AkH_HoMEW--g9Q=
+olYyUwGT--example-key--oH9oc9AkH_HoMEW--g9Q=
 
 ```
 
@@ -67,7 +67,7 @@ Copy the generated key and save it in a file with a name you will recognize. Som
 Now add the key you have generated to your `.env` file
 
 ```
-CRYPTO_KEY=olYyUwGT--this-is-my-key--oH9oc9AkH_HoMEW--g9Q=
+olYyUwGT--example-key--oH9oc9AkH_HoMEW--g9Q=
 ```
 
 ### Remote storage failure

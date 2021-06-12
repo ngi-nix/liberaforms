@@ -19,12 +19,6 @@ from .utils import login, logout
 
 class TestUserMedia():
 
-    @pytest.mark.skipif(os.environ['ENABLE_REMOTE_STORAGE'] != 'True',
-                        reason="ENABLE_REMOTE_STORAGE!=True in test.ini")
-    def test_ensure_bucket(self):
-        from liberaforms.utils.storage.remote import RemoteStorage
-        assert RemoteStorage().ensure_buckets_exist() == True
-
     def test_media_page(self, users, client, anon_client):
         """ Tests list media page
             Tests permission
