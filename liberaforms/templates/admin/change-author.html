@@ -9,14 +9,17 @@
     <div class="col-md-5">
 
         <div class="returnToForm">
+            {# i18n: Button for going back to form #}
             <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
             {{ form.slug }}
         </div>
+        {# i18n: Changing author of the form #}
         <div class="title_1">{%trans%}Change author{%endtrans%}</div>
 
         <table class="table table-sm">
         {% if g.is_root_user_enabled %}
             <tr>
+               {# i18n: Table row showing form site, instance #}
                <td>{%trans%}Form site{%endtrans%}</td>
                <td>{{ form.hostname }}</td>
             </tr>
@@ -33,8 +36,10 @@
 
         <form action="/admin/forms/change-author/{{form.id}}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+            {# i18n: Username of current author of form #}
             <input name="old_author_username" class="form-control" type="text" placeholder="{%trans%}Current author's username{%endtrans%}" required />
             <br />
+            {# i18n: Username of new author for form #}
             <input name="new_author_username" class="form-control" type="text" placeholder="{%trans%}New author's username{%endtrans%}" required />
 
             <div class="form-actions">
@@ -45,6 +50,7 @@
     {% set editors=form.get_editors() %}
     {% if editors|length > 1 %}
         <p>&nbsp;</p>
+        {# i18n: Users who can edit a specific form, but is not the original author #}
         <div class="title_2">{%trans%}Editors{%endtrans%}</div>
 
         <table class="table table-sm">
@@ -54,6 +60,7 @@
                 <td>{{ editor.email }}</td>
                 <td class="text-right">
                 {% if form.is_author(editor) %}
+                {# i18n: Author of the form #}
                     {%trans%}Author{%endtrans%}
                 {% else %}
                     {%trans%}Editor{%endtrans%}

@@ -105,10 +105,11 @@
       <tr>
         {# i18n: Noun, meaning agreement with terms/conditions of use #}
         <td>{%trans%}Consent{%endtrans%}</td>
-        {# i18n: 'etc' here stands for "and so on" at the end of a list #}
         <td>
           {%trans%}Terms and conditions{%endtrans%},
-          {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
+          {%trans%}DPL{%endtrans%},
+          {# i18n: 'etc' here stands for "and so on" at the end of a list #}
+          {%trans%}etc{%endtrans%}
         </td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
@@ -122,6 +123,7 @@
       {% if config['ENABLE_UPLOADS'] %}
       <tr>
         <td>
+          {# i18n: Whether to enable users attaching documents on forms #}
           {%trans%}Form attachments{%endtrans%}
         </td>
         <td>
@@ -151,6 +153,7 @@
         <td>{%trans%}Email server{%endtrans%}</td>
         <td>{{g.site.smtpConfig["host"]}}</td>
         <td class="text-right">
+          {# i18n: Button to configure some option #}
           <input class="btn-primary btn btn-xs"
                   type="button" value="{%trans%}Configure{%endtrans%}"
                   onClick="location.href='/site/email/config'" />
@@ -160,6 +163,7 @@
 
     <p>&nbsp;</p>
     <div id="site_settings" class="title_2">
+      {# i18n: Title in Admin panel refering to configurations concerning new users #}
       {%trans%}New user{%endtrans%}
     </div>
     <table class="table table-sm">
@@ -177,6 +181,7 @@
       </tr>
       {% if config['ENABLE_UPLOADS'] %}
       <tr>
+        {# i18n: Whether to enable new users attaching documents into forms #}
         <td>{%trans%}Enable form attachments{%endtrans%}</td>
         <td></td>
         <td class="text-right">
@@ -199,6 +204,7 @@
 
     <p>&nbsp;</p>
     <div class="title_2">
+      {# i18n: Title in Admin panel displaying versions of the software used #}
       {%trans%}Versions{%endtrans%}
     </div>
 
