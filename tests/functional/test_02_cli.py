@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 import os
 import pytest
 import werkzeug
+from liberaforms.models.site import Site
 from liberaforms.commands.cryptokey import create as create_cryptokey
 from liberaforms.commands.storage import create as create_storage
 
@@ -28,7 +29,8 @@ class TestCommandLine():
         """ Tests remote minio bucket creation
             Creates the buckets. Buckets are used by other tests
         """
+        assert Site.query.first() != None
         runner = app.test_cli_runner()
         with app.app_context():
             result = runner.invoke(create_storage, ['--remote-buckets'])
-        assert 'Buckets ok.' in result.output
+        assert 'for:' in result.output

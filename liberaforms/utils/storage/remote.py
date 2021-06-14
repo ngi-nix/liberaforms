@@ -63,24 +63,41 @@ def generate_bucket_policy(template, bucket_name):
 
 
 class RemoteStorage():
-    client = None
-    bucket_name = None
-    region = None
+    hostname = None
+    attachment_bucket_name = None
+    media_bucket_name = None
 
     def __init__(self):
         from liberaforms.models.site import Site
-        self.region = 'eu-central-1'
-        hostname = Site.find().hostname
-        self.attachment_bucket_name = f"{hostname}.attachments"
-        self.media_bucket_name = f"{hostname}.media"
+        site = Site.query.first()
+        if site:
+            self.hostname = site.hostname
+            self.attachment_bucket_name = f"{self.hostname}.attachments"
+            self.media_bucket_name = f"{self.hostname}.media"
+        else:
+            logging.error("Cannot initiate RemoteStorage. Site does not exist")
+
+    def do_buckets_exist(self, client=None):
+        if not self.hostname:
+            return []
+        if not client:
+            client = get_minio_client()
+        bucket_names = [bucket.name for bucket in client.list_buckets()]
+        exists = []
+        if self.attachment_bucket_name in bucket_names:
+            exists.append(self.attachment_bucket_name)
+        if self.media_bucket_name in bucket_names:
+            exists.append(self.media_bucket_name)
+        return exists
 
     def create_buckets(self):
+        if not self.hostname:
+            return False, "Site does not exist. Browse to your domain first"
         try:
             client = get_minio_client()
-            bucket_names = [bucket.name for bucket in client.list_buckets()]
-            if  self.attachment_bucket_name in bucket_names and \
-                self.media_bucket_name in bucket_names:
-                return True, "Buckets ok. Both buckets already exist"
+            bucket_names = self.do_buckets_exist(client)
+            if len(bucket_names) == 2:
+                return True, f"Both buckets already exist for: {self.hostname}"
             if not self.attachment_bucket_name in bucket_names:
                 client.make_bucket(self.attachment_bucket_name)
             if not self.media_bucket_name in bucket_names:
@@ -89,10 +106,8 @@ class RemoteStorage():
                 policy = generate_bucket_policy('read_only.j2',
                                                 self.media_bucket_name)
                 client.set_bucket_policy(self.media_bucket_name, policy)
-            bucket_names = [bucket.name for bucket in client.list_buckets()]
-            if  self.attachment_bucket_name in bucket_names and \
-                self.media_bucket_name in bucket_names:
-                return True, "Buckets ok. Created two buckets"
+            if self.do_buckets_exist(client):
+                return True, f"Both buckets ready for: {self.hostname}"
             return False, "Could not create buckets"
         except S3Error as error:
             logging.error(error)
