@@ -131,9 +131,9 @@ We use `pybabel` python module to manage this
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#compile)
 
 ### Extracting
-> Updates .pot file from code
+> Updates .pot file from code, extracting comments starting with 'i18n:'
 
-`pybabel extract -F babel/messages.cfg -o translations/messages.pot ./`  
+`pybabel extract -F babel/messages.cfg -o translations/messages.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, AGPLv3 or later'`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#extract)
 
 ### Creating
