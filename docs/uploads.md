@@ -15,7 +15,15 @@ Extra Admin settings are enabled:
 
 ## Storage
 
-Uploaded files are saved in the `./uploads` directory. You should include this directory in your backups!
+Uploaded files are saved in the `./uploads` directory.
+
+Run this command to ensure the sub directories are created
+
+```
+flask storage create
+```
+
+You should include the `./uploads` directory in your backups!
 
 ### MAX_MEDIA_SIZE
 

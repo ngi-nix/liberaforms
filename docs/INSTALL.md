@@ -51,16 +51,6 @@ You can create a SECRET_KEY like this
 openssl rand -base64 32
 ```
 
-### File permissions
-
-The `instancefiles` directory contains uploaded files like the `logo.png` and
-attachments uploaded with the forms.
-
-You need to give the system user who runs LiberaForms write permissions.
-```
-chown -R www-data ./instancefiles
-```
-
 ## Database
 
 Install PostgreSQL
