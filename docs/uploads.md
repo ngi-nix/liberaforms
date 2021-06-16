@@ -23,6 +23,8 @@ Run this command to ensure the sub directories are created
 flask storage create
 ```
 
+Remember to `chown -R <user>` on the `upload` directory so that it can be written to.
+
 You should include the `./uploads` directory in your backups!
 
 ### MAX_MEDIA_SIZE

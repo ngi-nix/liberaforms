@@ -101,7 +101,10 @@ class AnswerAttachment(db.Model, CRUD, Storage):
         saved = super().save_file(file, self.storage_name, self.directory)
         if saved:
             self.save()
-        return saved
+            return True
+        else:
+            logging.error(f"Did not save attachment. Answer id: {self.answer_id}")
+            return False
 
     def delete_attachment(self):
         return super().delete_file(self.storage_name, self.directory)

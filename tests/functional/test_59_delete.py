@@ -14,7 +14,6 @@ from .utils import login
 
 class TestDeleteForm():
     def test_delete_form(self, client, users, forms):
-        return
         #pytest.exit("stopped before deleting forms")
         login(client, users['editor'])
         form_id = forms['test_form'].id

@@ -89,8 +89,29 @@ class TestAnswerAttachment():
         assert attachment != None
         assert attachment.does_attachment_exist() == True
         assert attachment.file_name == valid_attachment_name
-        assert attachment.answer_id == vars(answer)['id']
 
+    def test_delete_answer_with_attachment(self, client, forms):
+        initial_log_count = forms['test_form_2'].log.count()
+        initial_answers_count = forms['test_form_2'].answers.count()
+        answer = forms['test_form_2'].answers[-1]
+        attachment = AnswerAttachment.find(form_id=forms['test_form_2'].id,
+                                           answer_id=vars(answer)['id'])
+        response = client.post(
+                        f"/forms/delete-answer/{forms['test_form_2'].id}",
+                        json = {
+                            "id": vars(answer)['id']
+                        },
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        assert response.json['deleted'] == True
+        assert forms['test_form_2'].answers.count() == initial_answers_count - 1
+        assert forms['test_form_2'].log.count() == initial_log_count + 1
+        assert attachment.does_attachment_exist() == False
+
+
+    @pytest.mark.skip(reason="Unsure")
     def test_submit_invalid_attachment(self, anon_client, forms):
         forms['test_form_2'].enabled = True
         forms['test_form_2'].save()
@@ -118,6 +139,7 @@ class TestAnswerAttachment():
         html = response.data.decode()
         assert "<!-- thank_you_page -->" in html
         answer = forms['test_form_2'].answers[-1]
+        assert vars(answer)['data']['text-1620232883208'] == name
         attachment = AnswerAttachment.find(form_id=forms['test_form_2'].id,
                                            answer_id=vars(answer)['id'])
         assert attachment == None

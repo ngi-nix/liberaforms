@@ -122,7 +122,7 @@ def change_answer(id):
     return JsonResponse(json.dumps({'saved': True}))
 
 
-@answers_bp.route('/forms/delete-answers/<int:id>', methods=['GET', 'POST'])
+@answers_bp.route('/forms/delete-all-answers/<int:id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_answers(id):
     queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
@@ -134,9 +134,9 @@ def delete_answers(id):
             totalAnswers = int(request.form['totalAnswers'])
         except:
             flash(_("We expected a number"), 'warning')
-            return render_template('delete-answers.html', form=queriedForm)
+            return render_template('delete-all-answers.html', form=queriedForm)
         if queriedForm.get_total_answers() == totalAnswers:
-            queriedForm.delete_answers()
+            queriedForm.delete_all_answers()
             queriedForm.add_log(_("Deleted all answers"))
             if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
@@ -146,7 +146,7 @@ def delete_answers(id):
                                          id=queriedForm.id))
         else:
             flash(_("Number of answers does not match"), 'warning')
-    return render_template('delete-answers.html', form=queriedForm)
+    return render_template('delete-all-answers.html', form=queriedForm)
 
 
 @answers_bp.route('/form/<int:form_id>/attachment/<string:key>', methods=['GET'])
