@@ -118,7 +118,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
         return bytes, self.file_name
 
     def does_attachment_exist(self):
-        return True if super().get_file(self.storage_name, self.directory) else False
+        return True if super().does_file_exist(self.directory, self.storage_name) else False
 
 
 @event.listens_for(AnswerAttachment, "after_delete")

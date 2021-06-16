@@ -174,6 +174,11 @@ class RemoteStorage():
             logging.error(error)
             return False
 
+    def list_directory(self, object_path):
+        client = get_minio_client()
+        (bucket_name, prefix) = self.get_bucket_name_and_prefix(object_path)
+        return client.list_objects(bucket_name, prefix=prefix, recursive=True)
+
     def delete_file(self, object_path, storage_name):
         return self.remove_object(object_path, storage_name)
 

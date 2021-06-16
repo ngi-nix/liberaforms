@@ -65,15 +65,12 @@ class Media(db.Model, CRUD, Storage):
 
     def delete_media(self):
         Storage.__init__(self)
-        removed = super().delete_file(self.storage_name, self.directory)
-        self.delete_thumbnail()
+        removed_media = super().delete_file(self.storage_name, self.directory)
+        removed_thumbnail = self.delete_thumbnail()
         self.delete()
-        """ Remote delete runs in a thread. Can we get the return value?
-            We return True even though we don't if the media was successfully deleted.
-            Errors are logged.
-            If the media file was not deleted, it is now dangling.
-        """
-        return True
+        if removed_media and removed_thumbnail:
+            return True
+        return False
 
     def _get_media_url(self, storage_name):
         if self.local_filesystem:
@@ -97,7 +94,7 @@ class Media(db.Model, CRUD, Storage):
 
     def does_media_exits(self, thumbnail=False):
         name = self.storage_name if thumbnail==False else f"tn-{self.storage_name}"
-        return True if super().get_file(name, self.directory) else False
+        return True if super().does_file_exist(self.directory, name) else False
 
     def save_thumbnail(self):
         try:

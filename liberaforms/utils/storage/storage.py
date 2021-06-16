@@ -134,6 +134,19 @@ class Storage:
         else:
             return BytesIO(file_content)
 
+    def does_file_exist(self, sub_dir, storage_name):
+        if self.local_filesystem:
+            local_storage_dir = self.get_local_storage_directory(sub_dir)
+            file_path = os.path.join(local_storage_dir, storage_name)
+            return os.path.exists(file_path)
+        else:
+            remote_dir = self.get_remote_storage_path(sub_dir)
+            directory_content = RemoteStorage().list_directory(remote_dir)
+            for object in directory_content:
+                if storage_name in object.object_name:
+                    return True
+            return False
+
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:
             local_storage_dir = self.get_local_storage_directory(sub_dir)
