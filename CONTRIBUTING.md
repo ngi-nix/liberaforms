@@ -131,9 +131,9 @@ We use `pybabel` python module to manage this
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#compile)
 
 ### Extracting
-> Updates .pot file from code
+> Updates .pot file from code, extracting comments starting with 'i18n:' and adding relevant metadata
 
-`pybabel extract -F babel/messages.cfg -o translations/messages.pot ./`  
+`pybabel extract -F babel/messages.cfg -o translations/messages.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='info@liberaforms.org'`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#extract)
 
 ### Creating
@@ -146,5 +146,6 @@ _You must specify the target language adding its [ISO-639-1](https://en.wikipedi
 ### Updating
 > Updates .po files according to .pot.  
 _You must specify the target language adding its [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code at the end of command_
-> 
-`pybabel update -i ./translations/messages.pot -d ./translations -l es`[Read more](http://babel.pocoo.org/en/latest/cmdline.html#update)
+
+`pybabel update -i ./translations/messages.pot -d ./translations -l es`  
+[Read more](http://babel.pocoo.org/en/latest/cmdline.html#update)
