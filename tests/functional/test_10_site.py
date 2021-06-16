@@ -166,7 +166,9 @@ class TestSiteConfig():
                 )
         html = response.data.decode()
         assert '<!-- change_icon_page -->' in html
-        favicon_path = f"{app.config['BRAND_DIR']}/favicon.ico"
+        favicon_path = os.path.join(app.config['UPLOADS_DIR'],
+                                    app.config['BRAND_DIR'],
+                                    'favicon.ico')
         initial_favicon_stats = os.stat(favicon_path)
         invalid_favicon = "favicon_invalid.jpeg"
         with open(f'./assets/{invalid_favicon}', 'rb') as f:
@@ -218,7 +220,9 @@ class TestSiteConfig():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        favicon_path = f"{app.config['BRAND_DIR']}/favicon.ico"
+        favicon_path = os.path.join(app.config['UPLOADS_DIR'],
+                                    app.config['BRAND_DIR'],
+                                    'favicon.ico')
         initial_favicon_stats = os.stat(favicon_path)
         response = admin_client.get(
                         url,

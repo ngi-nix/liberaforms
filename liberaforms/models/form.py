@@ -473,20 +473,22 @@ class Form(db.Model, CRUD):
                         break
         return field_positions
 
-    def get_attachment_dir(self):
-        return os.path.join(current_app.config['ATTACHMENT_DIR'], str(self.id))
+    def delete(self):
+        self.delete_all_answers()
+        super().delete()
 
-    def delete_answers(self):
+    def delete_all_answers(self):
         self.answers.delete()
+        attachment_dir = os.path.join(current_app.config['ATTACHMENT_DIR'],
+                                      str(self.id))
         attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
-                                      self.get_attachment_dir())
+                                      attachment_dir)
         if os.path.exists(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
-        elif not current_app.config['ENABLE_REMOTE_STORAGE']:
-            logging.warning(f"Attachment dir not found: {attachment_dir}")
+        else:
+            logging.warning(f"Local attachment dir not found: {attachment_dir}")
         if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
-            prefix = self.get_attachment_dir()
-            RemoteStorage().remove_directory(prefix)
+            RemoteStorage().remove_directory(f"attachments/{self.id}")
 
     def is_author(self, user):
         return True if self.author_id == user.id else False

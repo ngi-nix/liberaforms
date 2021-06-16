@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os
 import pytest
+from liberaforms.models.form import Form
 from .utils import login
 
 
@@ -67,10 +68,6 @@ class TestAnswers():
         assert forms['test_form'].answers.count() == initial_answers_count - 1
         assert forms['test_form'].log.count() == initial_log_count + 1
 
-    @pytest.mark.skip(reason="No way of currently testing this")
-    def test_undelete_answer(self, client, forms):
-        pass
-
     def test_toggle_marked_answer(self, client, forms):
         answer = forms['test_form'].answers[-1]
         initial_marked = vars(answer)['marked']
@@ -94,14 +91,14 @@ class TestAnswers():
         initial_answers_count = forms['test_form'].answers.count()
         initial_log_count = forms['test_form'].log.count()
         response = client.get(
-                        f"/forms/delete-answers/{forms['test_form'].id}",
+                        f"/forms/delete-all-answers/{forms['test_form'].id}",
                         follow_redirects=False,
                     )
         assert response.status_code == 200
         html = response.data.decode()
         assert f'<div class="title_3">{initial_answers_count}</div>' in html
         response = client.post(
-                        f"/forms/delete-answers/{forms['test_form'].id}",
+                        f"/forms/delete-all-answers/{forms['test_form'].id}",
                         data = {
                             "totalAnswers": initial_answers_count,
                         },
