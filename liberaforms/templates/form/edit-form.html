@@ -64,7 +64,11 @@
   <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-7">
-      <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
+      {% set action = "" %}
+      {% if session['form_id'] %}
+        {% set action = "/" + session['form_id']|string %}
+      {% endif %}
+      <form id="result" method="POST" action="/forms/edit{{action}}" >
         <input type="hidden"
                name="csrf_token"
                value="{{ csrf_token() }}" />
@@ -293,14 +297,19 @@ function render_fbEditor(fbEditor, options) {
     {% for value in multichoiceOptionsWithSavedData[field] %}
     field = $('input[name="{{field}}-option"][class="option-value"][value="{{value}}"]')
     field.prop("disabled", true)
-    field.prop("title", "{%trans%}Cannot modify because a response with this value exists in the database{%endtrans%}")
+    field.prop("title", "{%trans%}Cannot modify because an answer with this value exists in the database{%endtrans%}")
     {% endfor %}
   {% endfor %}
+  var field_list = $("ul.ui-sortable")
+  field_list.find("[data-type=header]").css("background-color", "#E6E6E6")
+  field_list.find("[data-type=paragraph]").css("background-color", "#E6E6E6")
   });
   return builder
 }
 
+
 // enable the user to uncheck radio buttons
+/*
 $("#fb-editor").on("click", "input[type=radio]", function (event) {
     if ($(this).closest(".formbuilder-radio") !== undefined) {
         var check = $(this).attr('checked')
@@ -311,6 +320,10 @@ $("#fb-editor").on("click", "input[type=radio]", function (event) {
         }
     }
 });
+*/
+
+
+
 </script>
 
 {% endblock %}
