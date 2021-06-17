@@ -27,6 +27,7 @@ body {
 .nav-link:hover {
   opacity: 1;
 }
+
 #main-content {
   margin-top: 1.5em;
 }
@@ -221,7 +222,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     font-size: 1rem;
 }
 
-/* ######### Entries table ######### */
+/* ######### Answers table ######### */
 
 .delete-row-icon {
     font-size: 1.15em !important;
@@ -282,6 +283,9 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   margin-top: 1em;
 }
 
+.liberaform .marked-up li {
+  margin-left: -1.2em;
+}
 
 /* ###### Theming ###### */
 .menu-color-options span {

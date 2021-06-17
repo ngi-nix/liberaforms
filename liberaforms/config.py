@@ -52,7 +52,9 @@ class Config(object):
     RESERVED_USERNAMES = ["system", "admin", "root"]
     FORMBUILDER_DISABLED_FIELDS = ["autocomplete", "hidden", "button"]
     FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access", "multiple"]
-    FORMBUILDER_CONTROL_ORDER = ["header", "paragraph"]
+    FORMBUILDER_CONTROL_ORDER = ["text", "textarea", "select", "radio-group",
+                                 "checkbox-group", "date", "number", "file",
+                                 "header", "paragraph"]
     BABEL_TRANSLATION_DIRECTORIES = "translations;form_templates/translations"
     # http://www.lingoes.net/en/translator/langcode.htm
     LANGUAGES = {
