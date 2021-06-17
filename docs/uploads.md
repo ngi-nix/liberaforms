@@ -2,19 +2,67 @@
 
 ## ENABLE_UPLOADS
 
-When set to `True` users can
-* include a file attachment field in their forms. Attachments are saved as `./uploads/attachments/<form_id>/<random_string>.<answer_id>`
-* upload images to include in the form's 'Introduction text'. Images are saved as `./uploads/media/<random_string>.<extension>`
+When set to `True`, two types of file uploads are enabled.
+
+* Media: Images can be uploaded by users and included in their forms' markdown Introduction text.
+* Attachments: A new `file field` is available in the form editor. Files (attachments) can be uploaded by anonymous users with each form.
+
+Extra Admin settings are enabled:
+
+* Mimetypes. Define permited Attachment file types. (PDF, PNG, ODT by default)
+* Enable `file field` on a per user basis.
+* Enable `file field` by default.
+
+## Storage
+
+Uploaded files are saved in the `./uploads` directory.
+
+Run this command to ensure the sub directories are created
+
+```
+flask storage create
+```
+
+Remember to `chown -R <user>` on the `upload` directory so that it can be written to.
+
+You should include the `./uploads` directory in your backups!
+
+### MAX_MEDIA_SIZE
 
 
-## MAX_ATTACHMENT_SIZE
+### MAX_ATTACHMENT_SIZE
 
 The maximum size in Kbytes of the uploaded files
 
+
+## Encryption
+
+LiberaForms encrypts form attachments when they are submitted.
+
+### Create the key
+
+```
+flask cryptokey create
+
+olYyUwGT--example-key--c9AkH_HoMEWg9Q=
+
+```
+
+Very Important! Save this key somewhere safe and don't lose it.
+
+Copy the generated key and save it in a file with a name you will recognize. Something like `my.domain.com.key`.
+
+Now add the key you have generated to your `.env` file
+
+```
+CRYPTO_KEY=olYyUwGT--example-key--c9AkH_HoMEWg9Q=
+```
+
+
 ## ENABLE_REMOTE_STORAGE
 
-`False`: uploaded files are saved on your server's filesystem in the
-directory `./uploads`
+`False`: uploaded files are saved on your server's filesystem under the
+directory `./uploads`.
 
 `True`: files are saved on an Object Storage Server. LiberaForms uses the Minio client library which uses the S3 protocol.
 Minio server software is free software. You will need an account on a server to use this option.
@@ -35,40 +83,20 @@ MINIO_ACCESS_KEY=
 MINIO_SECRET_KEY=
 ```
 
-### Encryption
+Now you can create the remote buckets. LiberaForms uses two buckets:
 
-LiberaForms encrypts attachments before uploading them to the remote Minio server.
+* `my.domain.com.media`: Media files go here. Anonymous Internet users can download these files.
+* `my.domain.com.attachments`: Documents attached to forms are stored here.
 
-```
-pip install "cryptography>=3.4.7,==3.*"
-```
-
-#### Create the keys
+#### Create remote buckets
 
 ```
-flask cryptokey create
-
-olYyUwGTCxnx1BPn9AMsm8GoH9oc9AkH_HoMEW--g9Q=
-
-```
-
-Very Important! Save this key somewhere safe, and don't lose it.
-
-Copy the generated key and save it in a file with a name you will recognize. Something like `my.domain.com.key`.
-
-Now add the key you have generated to your `.env` file
-
-```
-CRYPTO_KEY=olYyUwGT--this-is-my-key--oH9oc9AkH_HoMEW--g9Q=
+flask storage create --remote-buckets
 ```
 
 ### Remote storage failure
 
-If remote storage is configured and LiberaForms is unable to use the server (temporarily unavailable, network issues, etc), then:
+If remote storage is enabled and LiberaForms is unable to use the server (temporarily unavailable, network issues, etc), then:
 
 * uploaded files are saved locally on the server at `./uploads`
 * the problem is logged
-
-# Nginx config
-
-https://serverfault.com/questions/987061/nginx-proxying-s3-public-bucket-hosted-by-minio-service

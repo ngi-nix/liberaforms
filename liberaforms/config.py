@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, shutil, ast
+import os, ast
 import logging
 
 def get_SQLALCHEMY_DATABASE_URI():
@@ -90,12 +90,7 @@ class Config(object):
         # LiberaForms cluster project requires a unique directory
         ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
         MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
-        inital_brand_dir = BRAND_DIR
         BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
-        if not os.path.isdir(os.path.join(UPLOADS_DIR, BRAND_DIR)):
-            shutil.copytree(os.path.join(UPLOADS_DIR, inital_brand_dir),
-                            os.path.join(UPLOADS_DIR, BRAND_DIR)
-                            )
 
     @staticmethod
     def init_app(app):

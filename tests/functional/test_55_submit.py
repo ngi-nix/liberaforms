@@ -16,7 +16,7 @@ class TestPublicForm():
         forms['test_form'].enabled = False
         forms['test_form'].save()
         form_url = forms['test_form'].url
-        print(form_url)
+        #print(form_url)
         # test disabled form
         response = anon_client.get(
                         form_url,

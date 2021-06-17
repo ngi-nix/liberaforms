@@ -27,10 +27,7 @@ def app():
     flask_app = create_app()
     # change the uploads dir to tests/uploads/
     tests_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    uploads_dir = os.path.abspath(os.path.join(tests_dir, 'uploads'))
-    flask_app.config['MEDIA_DIR'] = os.path.join(uploads_dir, 'media')
-    flask_app.config['BRAND_DIR'] = os.path.join(uploads_dir, 'media/brand')
-    flask_app.config['ATTACHMENT_DIR'] = os.path.join(uploads_dir, 'attachments')
+    flask_app.config['UPLOADS_DIR'] = os.path.abspath(os.path.join(tests_dir, 'uploads'))
     yield flask_app
 
 """

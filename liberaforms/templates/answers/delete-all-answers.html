@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- delete_all_answers -->
+
+{% set total_answers = form.get_total_answers() %}
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+
+    <div class="col-md-5">
+
+      <div class="title_1 delimited">
+        {%trans%}Delete answers{%endtrans%}
+      </div>
+      <div class="title_2">
+        {%trans%}Form{%endtrans%}: {{ form.slug }}
+      </div>
+
+      {%trans%}You are going to delete{%endtrans%}
+      {{total_answers}} {%trans%}answers{%endtrans%}.
+      <p></p>
+
+      {%trans%}Write the total number of answers below{%endtrans%}.
+      <p></p>
+
+      <div class="title_3">{{total_answers}}</div>
+
+      <form method="POST">
+          <input type="hidden"
+                 name="csrf_token"
+                 value="{{ csrf_token() }}" />
+          <input type="text"
+                 name="totalAnswers"
+                 class="form-control"
+                 required >
+          <br />
+          <p></p>
+          <input class="btn-danger btn"
+                 type="submit"
+                 value="{%trans%}Delete answers{%endtrans%}">
+          <input class="btn-primary btn"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}"
+                 onClick="location.href='/forms/answers/{{form.id}}'">
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

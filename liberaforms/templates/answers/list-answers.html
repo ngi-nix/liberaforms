@@ -21,48 +21,70 @@
 {% endif %}
 
 <div class="container">
-<div class="row" style="font-size:1.5em">
+<div class="row"
+     style="font-size:1.5em">
     <div class="col">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Form details{%endtrans%}</a>
-    {{ form.slug }}
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/view/{{form.id}}">
+         {%trans%}Form details{%endtrans%}
+      </a>
+      {{ form.slug }}
     </div>
 
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/answers/stats/{{form.id}}">
-        {%trans%}Graphs{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
+    <a class="btn btn-primary btn-sm"
+       role="button"
+       href="/forms/answers/stats/{{form.id}}">
+       {%trans%}Graphs{%endtrans%}
+      <i class="fa fa-bar-chart" aria-hidden="true"></i>
     </a>
     {% if with_deleted_columns %}
-        <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}?with_deleted_columns=true">
-            {%trans%}Download CSV{%endtrans%}
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/csv/{{form.id}}?with_deleted_columns=true">
+           {%trans%}Download CSV{%endtrans%}
         </a>
     {% else %}
-        <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/csv/{{form.id}}">
             {%trans%}Download CSV{%endtrans%}
         </a>
     {% endif %}
 
     {% if answers|length %}
         {% if edit_mode %}
-            <a class="btn btn-success btn-sm" role="button" href="/forms/answers/{{form.id}}">
+            <a class="btn btn-success btn-sm"
+               role="button"
+               href="/forms/answers/{{form.id}}">
                 {%trans%}Disable edition{%endtrans%}
             </a>
         {% else %}
-            <a class="btn btn-primary btn-sm" role="button" href="?edit_mode=true">
+            <a class="btn btn-primary btn-sm"
+               role="button"
+               href="?edit_mode=true">
                 {%trans%}Enable edition{%endtrans%}
             </a>
         {% endif %}
         {% if form.has_removed_fields() %}
             {% if with_deleted_columns %}
-                <a class="btn btn-success btn-sm" role="button" href="/forms/answers/{{form.id}}">
+                <a class="btn btn-success btn-sm"
+                   role="button"
+                   href="/forms/answers/{{form.id}}">
                     {%trans%}Hide deleted columns{%endtrans%}
                 </a>
             {% else %}
-                <a class="btn btn-primary btn-sm" role="button" href="?with_deleted_columns=true">
+                <a class="btn btn-primary btn-sm"
+                   role="button"
+                   href="?with_deleted_columns=true">
                     {%trans%}Show deleted columns{%endtrans%}
                 </a>
             {% endif %}
         {% endif %}
-        <a class="btn btn-warning btn-sm" role="button" href="/forms/delete-answers/{{form.id}}">
+        <a class="btn btn-warning btn-sm"
+           role="button"
+           href="/forms/delete-all-answers/{{form.id}}">
             {%trans%}Delete all{%endtrans%}
         </a>
     {%endif%}
