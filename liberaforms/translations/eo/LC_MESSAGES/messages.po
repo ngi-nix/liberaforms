@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-06-17 11:47+0200\n"
+"POT-Creation-Date: 2021-06-17 12:19+0200\n"
 "PO-Revision-Date: 2021-06-17 12:03+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: eo\n"
@@ -399,8 +399,8 @@ msgstr ""
 #: templates/answers/list-answers.html:297
 #: templates/answers/list-answers.html:343
 #: templates/common/change-language.html:42
-#: templates/common/change-language.html:44 templates/form/edit-form.html:121
-#: templates/form/edit-form.html:127 templates/form/expiration.html:147
+#: templates/common/change-language.html:44 templates/form/edit-form.html:125
+#: templates/form/edit-form.html:131 templates/form/expiration.html:147
 #: templates/form/inspect-form.html:301 templates/form/inspect-form.html:385
 #: templates/form/inspect-form.html:420 templates/form/preview-form.html:35
 #: templates/form/preview-form.html:38 templates/main/index.html:31
@@ -592,7 +592,7 @@ msgid "Delete answer"
 msgstr ""
 
 #: templates/answers/list-answers.html:296
-#: templates/common/change-language.html:40 templates/form/edit-form.html:116
+#: templates/common/change-language.html:40 templates/form/edit-form.html:120
 #: templates/form/expiration.html:146 templates/form/inspect-form.html:297
 #: templates/form/inspect-form.html:381 templates/form/inspect-form.html:416
 #: templates/form/preview-form.html:32 templates/main/index.html:27
@@ -642,25 +642,25 @@ msgstr ""
 msgid "The form"
 msgstr ""
 
-#: templates/form/edit-form.html:80
+#: templates/form/edit-form.html:84
 msgid "Your form will have this address"
 msgstr ""
 
-#: templates/form/edit-form.html:103
+#: templates/form/edit-form.html:107
 msgid "This URL is not available. Try another!"
 msgstr ""
 
-#: templates/form/edit-form.html:111 templates/form/edit-form.html:260
+#: templates/form/edit-form.html:115 templates/form/edit-form.html:280
 #: templates/form/preview-form.html:14
 msgid "Preview"
 msgstr ""
 
-#: templates/form/edit-form.html:245
+#: templates/form/edit-form.html:265
 msgid "OK, use this URL"
 msgstr ""
 
-#: templates/form/edit-form.html:296
-msgid "Cannot modify because a response with this value exists in the database"
+#: templates/form/edit-form.html:316
+msgid "Cannot modify because an answer with this value exists in the database"
 msgstr ""
 
 #: templates/form/expiration.html:26
@@ -1810,4 +1810,7 @@ msgstr ""
 #: views/user.py:272
 msgid "Bad credentials"
 msgstr ""
+
+#~ msgid "Cannot modify because a response with this value exists in the database"
+#~ msgstr ""
 
