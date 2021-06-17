@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2021-06-17 12:19+0200\n"
+=======
+"POT-Creation-Date: 2020-11-02 20:52+0100\n"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 "PO-Revision-Date: 2021-04-18 13:34+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
@@ -16,7 +20,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+<<<<<<< HEAD
 "Generated-By: Babel 2.9.1\n"
+=======
+"Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 2.4.1\n"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
 #. not
@@ -86,6 +95,7 @@ msgstr ""
 "\n"
 "Saludos."
 
+<<<<<<< HEAD
 #: models/site.py:317 templates/admin/inspect-user.html:20
 #: templates/admin/list-users.html:40 templates/site/list-admins.html:25
 #: utils/wtf.py:24 utils/wtf.py:61
@@ -106,6 +116,11 @@ msgstr "Hablitado"
 #: templates/site/list-admins.html:28 utils/wtf.py:25
 msgid "Email"
 msgstr "Correo-e"
+=======
+#: templates/base.html:43 templates/site/admin-panel.html:138
+msgid "Toggle root mode"
+msgstr "Commutar modo root"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #. i18n: Used as column title
 #: models/site.py:324 templates/admin/delete-user.html:22
@@ -969,6 +984,7 @@ msgstr "Vaya! 404"
 msgid "Opps! 500 server error"
 msgstr "Vaya! Error de servidor 500"
 
+<<<<<<< HEAD
 #: templates/media/list-media.html:27 templates/user/user-settings.html:125
 msgid "My media"
 msgstr ""
@@ -977,6 +993,55 @@ msgstr ""
 #, fuzzy
 msgid "Upload a file"
 msgstr "Subir imagen"
+=======
+#: templates/site/admin-panel.html:11
+msgid "Administrator"
+msgstr "Administrador"
+
+#: templates/site/admin-panel.html:16
+msgid "Invitations"
+msgstr "Invitaciones"
+
+#: templates/site/admin-panel.html:20
+msgid "Invite a new user"
+msgstr "Invitar a un usuario nuevo"
+
+#: templates/site/admin-panel.html:53
+msgid "Invitation message"
+msgstr "Mensaje de la invitación"
+
+#: templates/site/admin-panel.html:63
+msgid "Site settings"
+msgstr "Preferencias del sitio web"
+
+#: templates/site/admin-panel.html:68
+msgid "Site name"
+msgstr "Nombre de sitio web"
+
+#: templates/site/admin-panel.html:73 templates/site/admin-panel.html:80
+#: templates/site/admin-panel.html:109 templates/site/admin-panel.html:116
+#: templates/site/edit-site.html:59 templates/user/user-settings.html:34
+#: templates/user/user-settings.html:48 templates/user/user-settings.html:56
+msgid "Change"
+msgstr "Cambiar"
+
+#: templates/site/admin-panel.html:77
+msgid "Default language"
+msgstr "Idioma por omisión"
+
+#: templates/site/admin-panel.html:84 templates/site/edit-site.html:30
+msgid "Invitation only"
+msgstr "Solo invitaciones"
+
+#: templates/site/admin-panel.html:94
+msgid "Consent"
+msgstr "Texto de consentimiento por omisión"
+
+#: templates/site/admin-panel.html:96 templates/site/consent.html:28
+#: templates/user/new-user.html:50
+msgid "Terms and conditions"
+msgstr "Términos y Condiciones"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #: templates/media/list-media.html:41
 msgid "These files can be included in your forms."
@@ -1268,10 +1333,89 @@ msgstr "Notifíqueme cuando se registre un usuario nuevo"
 msgid "Notify me when new form has been created"
 msgstr "Notifíqueme cuando se cree un nuevo formulario"
 
+<<<<<<< HEAD
 #: templates/user/user-settings.html:219
 #, fuzzy
 msgid "Delete my account"
 msgstr "Crear una cuenta"
+=======
+#: utils/consent_texts.py:125
+msgid "Please accept our terms and conditions."
+msgstr "Por favor, acepta nuestros términos y condiciones."
+
+#: utils/consent_texts.py:137
+msgid "We take your data protection seriously. Please contact us for any inquiries."
+msgstr "Tomamos en serio la protección de tus datos. Por favor, contáctanos para cualquier consulta."
+
+#: utils/email.py:87
+msgid "Congratulations!"
+msgstr "¡Felicidades!"
+
+#: utils/email.py:88
+msgid "SMTP test"
+msgstr "Prueba el SMTP"
+
+#: utils/email.py:98
+#, python-format
+msgid "Invitation to %s"
+msgstr "Invitación a %s"
+
+#: utils/email.py:119
+#, python-format
+msgid "New user '%s' created at %s"
+msgstr "Nuevo usuario '%s' creado en %s"
+
+#: utils/email.py:120
+msgid "LiberaForms. New user notification"
+msgstr "LiberaForms. Notificación de nuevo usuario"
+
+#: utils/email.py:130
+msgid "Please use this link to recover your password"
+msgstr "Usa este enlace para recuperar tu contraseña"
+
+#: utils/email.py:132
+msgid "LiberaForms. Recover password"
+msgstr "LiberaForms. Recupera tu contraseña"
+
+#: utils/email.py:140
+#, python-format
+msgid "Hello %s\n"
+"\n"
+"Please confirm your email\n"
+"\n"
+"%s"
+msgstr "Hola %s\n"
+"\n"
+"Por favor, confirma tu dirección de correo\n"
+"\n"
+"%s"
+
+#: utils/email.py:142
+msgid "LiberaForms. Confirm email"
+msgstr "LiberaForms. Confirma tu correo-e"
+
+#: utils/email.py:164
+#, python-format
+msgid "New form '%s' created at %s"
+msgstr "Nuevo formulario '%s' creado en %s"
+
+#: utils/email.py:165
+msgid "LiberaForms. New form notification"
+msgstr "LiberaForms. Notificación de nuevo formulario"
+
+#: utils/email.py:174
+#, python-format
+msgid "New form entry in %s at %s\n"
+msgstr "Nueva respuesta para %s en %s\n"
+
+#: utils/email.py:178
+msgid "LiberaForms. New form entry"
+msgstr "LiberaForms. Nueva respuesta"
+
+#: utils/email.py:190
+msgid "Confirmation message"
+msgstr "Mensaje de confirmación"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #: utils/consent_texts.py:115
 msgid "Please accept our terms and conditions."

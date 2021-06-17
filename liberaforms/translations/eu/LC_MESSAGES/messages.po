@@ -7,16 +7,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2021-06-17 12:19+0200\n"
 "PO-Revision-Date: 2021-04-18 13:38+0200\n"
+=======
+"POT-Creation-Date: 2020-11-02 20:52+0100\n"
+"PO-Revision-Date: 2021-04-22 11:11+0200\n"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
-"Language: eu\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+<<<<<<< HEAD
 "Generated-By: Babel 2.9.1\n"
+=======
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 2.4.1\n"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
 #. not
@@ -45,12 +55,12 @@ msgstr "DPBLO"
 
 #: models/form.py:329
 msgid "Sorry, this form has expired."
-msgstr "Sentitzen dugu, formulario hau iraungi egin da."
+msgstr "Sentitzen dugu, galdetegi hau iraungi egin da."
 
 #. i18n: Thanks text displayed when completing form as user
 #: models/form.py:358
 msgid "Thank you!!"
-msgstr "Eskerrik asko!"
+msgstr "Esker aunitz!"
 
 #. i18n: Example title in template for new form
 #: models/form.py:742
@@ -171,8 +181,16 @@ msgstr "Configurazioa"
 msgid "My forms"
 msgstr "Nire galdetegiak"
 
+<<<<<<< HEAD
 #. Used as website menu title, linking to page about user's settings
 #: templates/base.html:90
+=======
+#: templates/base.html:74
+msgid "Config"
+msgstr "Konfigurazioa"
+
+#: templates/base.html:82
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 msgid "Profile"
 msgstr "Profila"
 
@@ -441,10 +459,19 @@ msgstr "Ostalari-izena"
 msgid "Language"
 msgstr "Hizkuntza"
 
+<<<<<<< HEAD
 #. Whether the email of user was validated
 #: templates/admin/inspect-user.html:45
+=======
+#: templates/admin/inspect-user.html:47 templates/admin/list-users.html:31
+#: templates/site/admin-panel.html:29 utils/wtf.py:36
+msgid "Email"
+msgstr "Eposta"
+
+#: templates/admin/inspect-user.html:51
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 msgid "Validated email"
-msgstr "Balioztatutako e-posta"
+msgstr "Balioztatutako eposta"
 
 #. Whether user is able to upload attached documents to form
 #: templates/admin/inspect-user.html:56
@@ -676,9 +703,14 @@ msgstr "Aurreikusi"
 msgid "OK, use this URL"
 msgstr "Ados, erabili URL hau"
 
+<<<<<<< HEAD
 #: templates/form/edit-form.html:316
 #, fuzzy
 msgid "Cannot modify because an answer with this value exists in the database"
+=======
+#: templates/form/edit-form.html:193
+msgid "Cannot modify because a response with this value exists in the database"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 msgstr "Ezin da aldatu jada badagoela balio hau duen erantzun bat datu-basean"
 
 #: templates/form/expiration.html:26
@@ -885,7 +917,7 @@ msgstr "Nahitaezko eremuak"
 
 #: templates/form/inspect-form.html:538 templates/form/view-form.html:58
 msgid "Send me confirmation by mail"
-msgstr "Bidali berrespena e-postaz"
+msgstr "Bidali berrespena epostaz"
 
 #: templates/form/inspect-form.html:562 templates/form/preview-form.html:25
 #: templates/form/view-form.html:89 templates/site/smtp-config.html:61
@@ -922,7 +954,8 @@ msgstr "Editatu berriro"
 
 #: templates/form/share-form.html:31
 msgid "Users listed here have the <b>same permissions</b> as you"
-msgstr "Hemen zerrendatutako erabiltzaileek zure <b>baimen berberak</b> dituzte"
+msgstr ""
+"Hemen zerrendatutako erabiltzaileek zure <b>baimen berberak</b> dituzte"
 
 #: templates/form/share-form.html:47 templates/form/share-form.html:94
 #: templates/media/list-media.html:127 templates/media/list-media.html:177
@@ -978,10 +1011,16 @@ msgstr "Hara! 500 zerbitzari-errorea"
 msgid "My media"
 msgstr ""
 
+<<<<<<< HEAD
 #: templates/media/list-media.html:35 templates/media/list-media.html:56
 #, fuzzy
 msgid "Upload a file"
 msgstr "Igo irudia"
+=======
+#: templates/site/admin-panel.html:120 utils/wtf.py:104
+msgid "Email server"
+msgstr "Eposta zerbitzaria"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #: templates/media/list-media.html:41
 msgid "These files can be included in your forms."
@@ -1110,14 +1149,36 @@ msgstr "Egitasmoa"
 msgid "Go back"
 msgstr "Itzuli"
 
+<<<<<<< HEAD
 #: templates/site/list-admins.html:12
 #, fuzzy
 msgid "Admins"
 msgstr "Administratzailea"
+=======
+#: templates/site/new-invite.html:11
+msgid "Send a new user invitation"
+msgstr "Gonbidatu erabiltzaile berria"
+
+#: templates/site/new-invite.html:25
+msgid "The link to the invitation will be appended to this message"
+msgstr "Gonbidapenerako esteka mezu honi gehituko zaio"
+
+#: templates/site/new-invite.html:35
+msgid "Root user options"
+msgstr "Root erabiltzailearen aukerak"
+
+#: templates/site/new-invite.html:37
+msgid "Invite to one of these sites"
+msgstr "Gonbidatu webgune hauetako batera"
+
+#: templates/site/new-invite.html:60
+msgid "Send email"
+msgstr "Bidali eposta"
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 
 #: templates/site/smtp-config.html:9
 msgid "Email server configuration"
-msgstr "E-posta zerbitzariaren konfigurazioa"
+msgstr "Eposta zerbitzariaren konfigurazioa"
 
 #: templates/site/smtp-config.html:54
 msgid "Test configuration"
@@ -1147,7 +1208,7 @@ msgstr "Guztizko erabiltzaileak"
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr "Aldatu e-posta helbidea"
+msgstr "Aldatu eposta helbidea"
 
 #: templates/user/consent.html:14
 msgid "Default consent text"
@@ -1156,8 +1217,7 @@ msgstr "Baimentze-testu lehenetsia"
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
 msgstr ""
-"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien "
-"galdetegietan"
+"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien galdetegietan"
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:49
 #, fuzzy
@@ -1204,7 +1264,7 @@ msgstr "Beste adibide bat: Nirekin bizi den zakurrak arkakusoak ditu"
 
 #: templates/user/new-user.html:106
 msgid "We sent you an email!"
-msgstr "E-posta mezu bat bidali dizugu!"
+msgstr "Eposta mezu bat bidali dizugu!"
 
 #: templates/user/recover-password.html:11
 msgid "Recover password"
@@ -1237,11 +1297,11 @@ msgstr "Zure eposta helbidea ez da egiaztatu"
 
 #: templates/user/user-settings.html:24
 msgid "Validate my email"
-msgstr "Egiaztatu nire e-posta helbidea"
+msgstr "Egiaztatu nire eposta helbidea"
 
 #: templates/user/user-settings.html:33 utils/wtf.py:84
 msgid "Email address"
-msgstr "E-posta helbidea"
+msgstr "Eposta helbidea"
 
 #: templates/user/user-settings.html:46 utils/wtf.py:26 utils/wtf.py:62
 #: utils/wtf.py:95 utils/wtf.py:112
@@ -1288,13 +1348,96 @@ msgstr "Onartu gure erabilera-baldintzak."
 
 #: utils/consent_texts.py:127
 msgid ""
-"We take your data protection seriously. Please contact us for any "
-"inquiries."
+"We take your data protection seriously. Please contact us for any inquiries."
 msgstr ""
 "Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
 "harremanetan edozein kontsultatarako."
 
+<<<<<<< HEAD
 #: utils/wraps.py:103
+=======
+#: utils/email.py:87
+msgid "Congratulations!"
+msgstr "Zorionak!"
+
+#: utils/email.py:88
+msgid "SMTP test"
+msgstr "SMTP testa"
+
+#: utils/email.py:98
+#, python-format
+msgid "Invitation to %s"
+msgstr "%s(e)rako gonbidapena"
+
+#: utils/email.py:119
+#, python-format
+msgid "New user '%s' created at %s"
+msgstr "'%s' erabiltzaile berria sortu da, %s zerbitzarian"
+
+#: utils/email.py:120
+msgid "LiberaForms. New user notification"
+msgstr "LiberaForms. Erabiltzaile berriaren jakinarazpena"
+
+#: utils/email.py:130
+msgid "Please use this link to recover your password"
+msgstr "Erabili esteka hau zure pasahitza berreskuratzeko"
+
+#: utils/email.py:132
+msgid "LiberaForms. Recover password"
+msgstr "LiberaForms. Berreskuratu pasahitza"
+
+#: utils/email.py:140
+#, python-format
+msgid ""
+"Hello %s\n"
+"\n"
+"Please confirm your email\n"
+"\n"
+"%s"
+msgstr ""
+"Kaixo %s\n"
+"\n"
+"Egiaztatu zure eposta helbidea\n"
+"\n"
+"%s"
+
+#: utils/email.py:142
+msgid "LiberaForms. Confirm email"
+msgstr "LiberaForms. Egiaztatu eposta"
+
+#: utils/email.py:164
+#, python-format
+msgid "New form '%s' created at %s"
+msgstr "'%s' galdetegia sortu da, %s zerbitzarian"
+
+#: utils/email.py:165
+msgid "LiberaForms. New form notification"
+msgstr "LiberaForms. Galdetegi berriaren jakinarazpena"
+
+#: utils/email.py:174
+#, python-format
+msgid "New form entry in %s at %s\n"
+msgstr "Erantzun berria %s galdetegian, %s zerbitzarian\n"
+
+#: utils/email.py:178
+msgid "LiberaForms. New form entry"
+msgstr "LiberaForms. Galdetegiko erantzun berria"
+
+#: utils/email.py:190
+msgid "Confirmation message"
+msgstr "Egiaztapen mezua"
+
+#: utils/email.py:197
+#, python-format
+msgid "The form '%s' has expired at %s"
+msgstr "'%s' galdetegia iraungitu da, %s zerbitzarian"
+
+#: utils/email.py:198
+msgid "LiberaForms. A form has expired"
+msgstr "LiberaForms. Galdetegi bat iraungitu zaizu"
+
+#: utils/wraps.py:108
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
 msgid "That's a nasty key!"
 msgstr "Hori da gako desatsegina!"
 
@@ -1316,7 +1459,7 @@ msgstr "Erabili beste erabiltzaile-izen bat"
 
 #: utils/wtf.py:43 utils/wtf.py:92 utils/wtf.py:125
 msgid "Please use a different email address"
-msgstr "Erabili beste e-posta helbide bat"
+msgstr "Erabili beste eposta helbide bat"
 
 #: utils/wtf.py:47 utils/wtf.py:100
 msgid "Your password is weak"
@@ -1351,7 +1494,7 @@ msgstr "Pasahitza ahaztu duzu?"
 
 #: utils/wtf.py:88
 msgid "New email address"
-msgstr "E-posta helbide berria"
+msgstr "Eposta helbide berria"
 
 #: utils/wtf.py:105
 msgid "Port"
@@ -1367,7 +1510,7 @@ msgstr "Bidaltzailearen helbidea"
 
 #: utils/wtf.py:119
 msgid "New user's email"
-msgstr "Erabiltzaile berriaren e-posta"
+msgstr "Erabiltzaile berriaren eposta"
 
 #: utils/wtf.py:120
 msgid "Include message"
@@ -1676,7 +1819,7 @@ msgstr "Baimena behar da galdetegia ikusteko"
 
 #: views/form.py:346
 msgid "Can't find a user with that email"
-msgstr "Ez da aurkitu e-posta helbide hori duen erabiltzailerik"
+msgstr "Ez da aurkitu eposta helbide hori duen erabiltzailerik"
 
 #: views/form.py:349
 #, python-format
@@ -1762,7 +1905,7 @@ msgstr "Datuak babesteko baimena zehaztuta: %s"
 #: views/form.py:569
 #, python-format
 msgid "Send Confirmation set to: %s"
-msgstr "Bidali berrespena e-postaz zehaztuta: %s"
+msgstr "Bidali berrespena epostaz zehaztuta: %s"
 
 #: views/form.py:606
 msgid "That form has expired"
@@ -1873,7 +2016,7 @@ msgstr "Ezin izan dugu eskaera aurkitu"
 
 #: views/user.py:239
 msgid "Your email address is valid"
-msgstr "Zure e-posta helbidea baliozkoa da"
+msgstr "Zure eposta helbidea baliozkoa da"
 
 #: views/user.py:272
 msgid "Bad credentials"
@@ -1900,10 +2043,10 @@ msgstr "Kredentzial okerrak"
 #~ msgid "User's forms"
 #~ msgstr "Erabiltzailearen galdetegiak"
 
-#~ msgid "Cannot modify because an entry with this value exists in the database"
+#~ msgid ""
+#~ "Cannot modify because an entry with this value exists in the database"
 #~ msgstr ""
-#~ "Ezin da aldatu, jada badagoelako balio"
-#~ " hau duen erantzun bat datu-basean"
+#~ "Ezin da aldatu, jada badagoelako balio hau duen erantzun bat datu-basean"
 
 #~ msgid "Conditionals"
 #~ msgstr "Baldintzak"
@@ -1928,6 +2071,7 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "root mode"
 #~ msgstr "root modua"
+<<<<<<< HEAD
 
 #~ msgid "Toggle root mode"
 #~ msgstr "Gaitu/Desgaitu root modua"
@@ -2020,3 +2164,5 @@ msgstr "Kredentzial okerrak"
 #~ msgid "Root enabled"
 #~ msgstr "Root gaituta"
 
+=======
+>>>>>>> 948011a9bb8058a08f8fe9a761172400d098308e
