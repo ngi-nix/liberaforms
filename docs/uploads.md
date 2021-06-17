@@ -69,7 +69,6 @@ Minio server software is free software. You will need an account on a server to 
 
 ### Configure remote storage
 
-```
 
 Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and optionally, `:PORT` is the port.
 

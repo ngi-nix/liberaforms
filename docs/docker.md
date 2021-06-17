@@ -1,6 +1,4 @@
-# Docker
-
-If you only want to run one LiberaForms server with Docker, this documentation is for you!
+# Single LiberaForms container installation
 
 If you want to run multiple LiberaForms servers, please see the LiberaForms cluster project.
 
@@ -69,6 +67,51 @@ If you need to delete the database
 ```
 flask database drop --docker-container liberaforms-db
 ```
+
+## Storage
+
+See `./uploads.md` for some background.
+
+To create storage for a container first you need a volume
+
+Create a directory, for example
+
+```
+mkdir /opt/liberaforms_uploads
+```
+Make sure the write permission is set
+
+Edit your `docker-compose.yml` and add the volume to the LiberaForms container config.
+```
+volumes:
+  - /opt/liberaforms_uploads:/app/uploads
+```
+
+Instantiate the containers and create the required directory structure
+
+```
+flask storage create --docker-container liberaforms-app
+```
+
+Remember to modify your `nginx` configuration to fit.
+
+### Remote storage
+
+The volume created in the previous step is neccesary. It is used if the Minio server becomes unavailable.
+
+Then add these lines to your `docker-compose.yml`
+
+```
+MINIO_URL: ${MINIO_URL}
+MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+```
+And create the Minio buckets
+
+```
+flask storage create --docker-container liberaforms-app --remote-buckets
+```
+
 
 ## backups
 
