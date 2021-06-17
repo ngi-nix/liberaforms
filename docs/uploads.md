@@ -69,10 +69,6 @@ Minio server software is free software. You will need an account on a server to 
 
 ### Configure remote storage
 
-The minio package is not included in `./requirements.txt`, so install it now
-
-```
-pip install "minio>=7.0.3,==7.*"
 ```
 
 Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and optionally, `:PORT` is the port.

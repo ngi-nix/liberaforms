@@ -26,7 +26,6 @@ It will not setup a webserver, you will have to do that.
 ### Edit `.env`
 
 The Postgres container requires two extra environment variables.
-Also, the name of the container will be set to `DB_HOST`
 
 ```
 POSTGRES_ROOT_USER=
@@ -34,6 +33,8 @@ POSTGRES_ROOT_PASSWORD=
 
 DB_HOST=liberaforms-db
 ```
+
+Note that the name of the postgresql container will be set to `DB_HOST`
 
 ### Instantiate the containers
 
