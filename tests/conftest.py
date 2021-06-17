@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, shutil
 import ast
 
 os.environ['FLASK_CONFIG'] = 'testing'
@@ -25,9 +25,6 @@ Returns app
 @pytest.fixture(scope='session')
 def app():
     flask_app = create_app()
-    # change the uploads dir to tests/uploads/
-    tests_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
-    flask_app.config['UPLOADS_DIR'] = os.path.abspath(os.path.join(tests_dir, 'uploads'))
     yield flask_app
 
 """

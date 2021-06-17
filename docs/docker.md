@@ -87,12 +87,6 @@ volumes:
   - /opt/liberaforms_uploads:/app/uploads
 ```
 
-Instantiate the containers and create the required directory structure
-
-```
-flask storage create --docker-container liberaforms-app
-```
-
 Remember to modify your `nginx` configuration to fit.
 
 ### Remote storage

@@ -43,6 +43,9 @@ def create_app():
     register_blueprints(app)
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
+    from liberaforms.utils.setup import ensure_uploads_dir_tree
+    ensure_uploads_dir_tree(app)
+
     @app.after_request
     def after_request(response):
         """ Logging after every request. """

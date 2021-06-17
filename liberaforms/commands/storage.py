@@ -31,25 +31,12 @@ def run_subprocess(cmdline):
 @click.option('--docker-container', 'container_name',
               help="LiberaForms container name")
 def create(remote, container_name):
+    if not remote:
+        return
     if container_name:
-        remote_option = "--remote-buckets" if remote else ""
-        flask_cmd = f"docker exec {container_name} flask storage create {remote_option}".split()
+        flask_cmd = f"docker exec {container_name} flask storage create --remote-buckets".split()
         click.echo(" ".join(flask_cmd))
         run_subprocess(flask_cmd)
     else:
-        if 'FQDN' in os.environ:
-            brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
-                                     current_app.config['BRAND_DIR'])
-            if not os.path.isdir(brand_dir):
-                shutil.copytree(os.path.join(current_app.config['UPLOADS_DIR'],
-                                            'media',
-                                            'brand'),
-                                brand_dir)
-        attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
-                                      current_app.config['ATTACHMENT_DIR'])
-        if not os.path.isdir(attachment_dir):
-            os.makedirs(attachment_dir)
-        click.echo("Local directories in place")
-        if remote:
-            (created, msg) = RemoteStorage().create_buckets()
-            click.echo(msg)
+        (created, msg) = RemoteStorage().create_buckets()
+        click.echo(msg)

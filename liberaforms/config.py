@@ -83,8 +83,8 @@ class Config(object):
     LOG_TYPE = os.environ['LOG_TYPE']
     LOG_DIR = os.environ['LOG_DIR']
 
-    root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
-    UPLOADS_DIR = os.path.abspath(os.path.join(root_dir, 'uploads'))
+    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))
+    UPLOADS_DIR = os.path.join(ROOT_DIR, 'uploads')
     ATTACHMENT_DIR = 'attachments'
     MEDIA_DIR = 'media'
     BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
@@ -118,7 +118,7 @@ class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
     LOG_LEVEL = logging.DEBUG
-
+    UPLOADS_DIR = os.path.join(Config.ROOT_DIR, 'tests', 'uploads')
 
 config = {
     'development': DevelopmentConfig,
