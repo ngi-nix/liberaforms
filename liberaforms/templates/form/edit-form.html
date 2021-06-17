@@ -21,14 +21,14 @@
     <div class="col-md-9">
       <div class="title_1 delimited">
       {% if session['form_id'] %}
-          <a class="btn btn-primary btn-sm"
-             role="button"
-             href="/forms/view/{{session['form_id']}}">
-             {%trans%}Return to form{%endtrans%}
-          </a>
-          {{ session['slug'] }}
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/view/{{session['form_id']}}">
+           {%trans%}Return to form{%endtrans%}
+        </a>
+        {{ session['slug'] }}
       {% else %}
-          {%trans%}Build your form here{%endtrans%}
+        {%trans%}Build your form here{%endtrans%}
       {% endif %}
       </div>
     </div>
@@ -199,9 +199,25 @@ jQuery(function($) {
               $('.placeholder-wrap', fld).hide();
             }
           },
+          radio: {
+            onadd: function (fld) {
+              $('.placeholder-wrap', fld).hide();
+            }
+          },
           date: {
             onadd: function (fld) {
               $('.placeholder-wrap', fld).hide();
+              $('.value-wrap', fld).hide();
+            }
+          },
+          number: {
+            onadd: function (fld) {
+              $('.placeholder-wrap', fld).hide();
+            }
+          },
+          paragraph: {
+            onadd: function (fld) {
+              $('.subtype-wrap', fld).hide();
             }
           },
         },
@@ -300,9 +316,6 @@ function render_fbEditor(fbEditor, options) {
     field.prop("title", "{%trans%}Cannot modify because an answer with this value exists in the database{%endtrans%}")
     {% endfor %}
   {% endfor %}
-  var field_list = $("ul.ui-sortable")
-  field_list.find("[data-type=header]").css("background-color", "#E6E6E6")
-  field_list.find("[data-type=paragraph]").css("background-color", "#E6E6E6")
   });
   return builder
 }
