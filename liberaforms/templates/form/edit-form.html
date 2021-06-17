@@ -21,14 +21,14 @@
     <div class="col-md-9">
       <div class="title_1 delimited">
       {% if session['form_id'] %}
-          <a class="btn btn-primary btn-sm"
-             role="button"
-             href="/forms/view/{{session['form_id']}}">
-             {%trans%}Return to form{%endtrans%}
-          </a>
-          {{ session['slug'] }}
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/view/{{session['form_id']}}">
+           {%trans%}Return to form{%endtrans%}
+        </a>
+        {{ session['slug'] }}
       {% else %}
-          {%trans%}Build your form here{%endtrans%}
+        {%trans%}Build your form here{%endtrans%}
       {% endif %}
       </div>
     </div>
@@ -64,7 +64,11 @@
   <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-7">
-      <form id="result" method="POST" action="/forms/edit{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" >
+      {% set action = "" %}
+      {% if session['form_id'] %}
+        {% set action = "/" + session['form_id']|string %}
+      {% endif %}
+      <form id="result" method="POST" action="/forms/edit{{action}}" >
         <input type="hidden"
                name="csrf_token"
                value="{{ csrf_token() }}" />
@@ -195,9 +199,25 @@ jQuery(function($) {
               $('.placeholder-wrap', fld).hide();
             }
           },
+          radio: {
+            onadd: function (fld) {
+              $('.placeholder-wrap', fld).hide();
+            }
+          },
           date: {
             onadd: function (fld) {
               $('.placeholder-wrap', fld).hide();
+              $('.value-wrap', fld).hide();
+            }
+          },
+          number: {
+            onadd: function (fld) {
+              $('.placeholder-wrap', fld).hide();
+            }
+          },
+          paragraph: {
+            onadd: function (fld) {
+              $('.subtype-wrap', fld).hide();
             }
           },
         },
@@ -293,14 +313,16 @@ function render_fbEditor(fbEditor, options) {
     {% for value in multichoiceOptionsWithSavedData[field] %}
     field = $('input[name="{{field}}-option"][class="option-value"][value="{{value}}"]')
     field.prop("disabled", true)
-    field.prop("title", "{%trans%}Cannot modify because a response with this value exists in the database{%endtrans%}")
+    field.prop("title", "{%trans%}Cannot modify because an answer with this value exists in the database{%endtrans%}")
     {% endfor %}
   {% endfor %}
   });
   return builder
 }
 
+
 // enable the user to uncheck radio buttons
+/*
 $("#fb-editor").on("click", "input[type=radio]", function (event) {
     if ($(this).closest(".formbuilder-radio") !== undefined) {
         var check = $(this).attr('checked')
@@ -311,6 +333,10 @@ $("#fb-editor").on("click", "input[type=radio]", function (event) {
         }
     }
 });
+*/
+
+
+
 </script>
 
 {% endblock %}
