@@ -322,7 +322,7 @@ class Site(db.Model, CRUD):
                         "email": _("Email"),
                         # i18n: Used as column title
                         "forms": _("Forms"),
-                        # i18n: Whether user is admin, used as column title
+                        # i18n: Whether user is admin
                         "admin": _("Admin")
                         }
         csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")

@@ -1,5 +1,5 @@
 # Translations template for PROJECT.
-# Copyright (C) 2021 LiberaForms, AGPLv3 or later
+# Copyright (C) 2021 LiberaForms, CC-BY-SA
 # This file is distributed under the same license as the PROJECT project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-06-14 17:10+0200\n"
+"Report-Msgid-Bugs-To: info@liberaforms.org\n"
+"POT-Creation-Date: 2021-06-17 11:47+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,9 +25,9 @@ msgstr ""
 
 #. i18n: Used for sort items by creation order, almost always as column title
 #: models/form.py:138 models/site.py:318 templates/admin/admin-panel.html:214
-#: templates/admin/inspect-user.html:30 templates/admin/inspect-user.html:147
-#: templates/admin/list-forms.html:26 templates/admin/list-invites.html:24
-#: templates/admin/list-users.html:40 templates/form/inspect-form.html:348
+#: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:152
+#: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
+#: templates/admin/list-users.html:41 templates/form/inspect-form.html:348
 #: templates/form/my-forms.html:37 templates/site/list-admins.html:26
 msgid "Created"
 msgstr ""
@@ -52,17 +52,17 @@ msgid "Thank you!!"
 msgstr ""
 
 #. i18n: Example title in template for new form
-#: models/form.py:740
+#: models/form.py:742
 msgid "Form title"
 msgstr ""
 
 #. i18n: Example subtitle in template for new form
-#: models/form.py:742
+#: models/form.py:744
 msgid "Context"
 msgstr ""
 
 #. i18n: Example content in template for new form. '\n' is used for linebreak.
-#: models/form.py:744
+#: models/form.py:746
 msgid ""
 " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
@@ -79,13 +79,13 @@ msgid ""
 msgstr ""
 
 #: models/site.py:317 templates/admin/inspect-user.html:20
-#: templates/admin/list-users.html:39 templates/site/list-admins.html:25
+#: templates/admin/list-users.html:40 templates/site/list-admins.html:25
 #: utils/wtf.py:24 utils/wtf.py:61
 msgid "Username"
 msgstr ""
 
 #. i18n: Used as column title
-#: models/site.py:320 templates/admin/list-users.html:44
+#: models/site.py:320 templates/admin/list-users.html:45
 #: templates/form/inspect-form.html:243 templates/form/inspect-form.html:266
 #: templates/form/share-form.html:134 templates/site/list-admins.html:27
 #: templates/user/consent.html:29
@@ -93,34 +93,34 @@ msgid "Enabled"
 msgstr ""
 
 #. i18n: Email address, used as column title
-#: models/site.py:322 templates/admin/inspect-user.html:38
-#: templates/admin/list-invites.html:25 templates/admin/list-users.html:45
+#: models/site.py:322 templates/admin/inspect-user.html:40
+#: templates/admin/list-invites.html:27 templates/admin/list-users.html:46
 #: templates/site/list-admins.html:28 utils/wtf.py:25
 msgid "Email"
 msgstr ""
 
 #. i18n: Used as column title
-#: models/site.py:324 templates/admin/delete-user.html:21
-#: templates/admin/inspect-user.html:140 templates/admin/inspect-user.html:278
-#: templates/admin/list-users.html:46 templates/base.html:52
+#: models/site.py:324 templates/admin/delete-user.html:22
+#: templates/admin/inspect-user.html:145 templates/admin/inspect-user.html:284
+#: templates/admin/list-users.html:47 templates/base.html:52
 #: templates/site/list-admins.html:29
 msgid "Forms"
 msgstr ""
 
-#. i18n: Whether user is admin, used as column title
-#: models/site.py:326 templates/admin/list-invites.html:29
-#: templates/admin/list-users.html:47
+#. i18n: Whether user is admin
+#: models/site.py:326 templates/admin/inspect-user.html:78
+#: templates/admin/list-invites.html:31 templates/admin/list-users.html:48
 msgid "Admin"
 msgstr ""
 
 #. i18n: Boolean option: True or False
 #: models/site.py:336 models/site.py:337 templates/admin/admin-panel.html:94
-#: templates/admin/admin-panel.html:192 templates/admin/inspect-user.html:44
-#: templates/admin/inspect-user.html:60 templates/admin/inspect-user.html:81
-#: templates/admin/inspect-user.html:102 templates/admin/inspect-user.html:161
+#: templates/admin/admin-panel.html:192 templates/admin/inspect-user.html:47
+#: templates/admin/inspect-user.html:64 templates/admin/inspect-user.html:85
+#: templates/admin/inspect-user.html:107 templates/admin/inspect-user.html:167
 #: templates/answers/chart-answers.html:49
-#: templates/answers/list-answers.html:85
-#: templates/answers/list-answers.html:148 templates/form/expiration.html:23
+#: templates/answers/list-answers.html:107
+#: templates/answers/list-answers.html:170 templates/form/expiration.html:23
 #: templates/form/inspect-form.html:96 templates/form/inspect-form.html:106
 #: templates/form/inspect-form.html:140 templates/form/inspect-form.html:170
 #: templates/form/inspect-form.html:199 templates/form/inspect-form.html:214
@@ -131,12 +131,12 @@ msgid "True"
 msgstr ""
 
 #: models/site.py:336 models/site.py:337 templates/admin/admin-panel.html:100
-#: templates/admin/admin-panel.html:197 templates/admin/inspect-user.html:46
-#: templates/admin/inspect-user.html:67 templates/admin/inspect-user.html:87
-#: templates/admin/inspect-user.html:109 templates/admin/inspect-user.html:163
+#: templates/admin/admin-panel.html:197 templates/admin/inspect-user.html:49
+#: templates/admin/inspect-user.html:71 templates/admin/inspect-user.html:91
+#: templates/admin/inspect-user.html:114 templates/admin/inspect-user.html:169
 #: templates/answers/chart-answers.html:50
-#: templates/answers/list-answers.html:93
-#: templates/answers/list-answers.html:150 templates/form/expiration.html:24
+#: templates/answers/list-answers.html:115
+#: templates/answers/list-answers.html:172 templates/form/expiration.html:24
 #: templates/form/inspect-form.html:101 templates/form/inspect-form.html:108
 #: templates/form/inspect-form.html:133 templates/form/inspect-form.html:142
 #: templates/form/inspect-form.html:172 templates/form/inspect-form.html:201
@@ -318,7 +318,7 @@ msgid "You are going to change the author of this form."
 msgstr ""
 
 #: templates/admin/change-author.html:34
-#: templates/answers/list-answers.html:319
+#: templates/answers/list-answers.html:341
 msgid "Are you sure?"
 msgstr ""
 
@@ -333,26 +333,27 @@ msgid "New author's username"
 msgstr ""
 
 #. Users who can edit a specific form, but is not the original author
-#: templates/admin/change-author.html:54 templates/admin/delete-user.html:26
-#: templates/admin/inspect-user.html:149 templates/form/inspect-form.html:148
+#: templates/admin/change-author.html:54 templates/admin/delete-user.html:28
+#: templates/admin/inspect-user.html:154 templates/form/inspect-form.html:148
 #: templates/form/share-form.html:28
 msgid "Editors"
 msgstr ""
 
 #. Author of the form
-#: templates/admin/change-author.html:64 templates/admin/inspect-user.html:148
-#: templates/admin/list-forms.html:27 templates/form/inspect-form.html:332
+#: templates/admin/change-author.html:64 templates/admin/inspect-user.html:153
+#: templates/admin/list-forms.html:28 templates/form/inspect-form.html:332
 #: templates/form/share-form.html:43
 msgid "Author"
 msgstr ""
 
-#: templates/admin/change-author.html:66
+#. Editor of the form
+#: templates/admin/change-author.html:67
 msgid "Editor"
 msgstr ""
 
 #. Title and button to delete user
-#: templates/admin/delete-user.html:12 templates/admin/delete-user.html:54
-#: templates/admin/inspect-user.html:126
+#: templates/admin/delete-user.html:12 templates/admin/delete-user.html:57
+#: templates/admin/inspect-user.html:131
 msgid "Delete user"
 msgstr ""
 
@@ -360,36 +361,42 @@ msgstr ""
 msgid "You are going to delete a user"
 msgstr ""
 
-#: templates/admin/delete-user.html:16
+#. consecution of the sentence "You are going to delete a user", if that user
+#. has any form
+#: templates/admin/delete-user.html:17
 msgid "and their forms"
 msgstr ""
 
-#: templates/admin/delete-user.html:25 templates/admin/inspect-user.html:146
-#: templates/admin/list-forms.html:25 templates/form/inspect-form.html:49
+#. Table column title, indicating name of a user or a form
+#: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:151
+#: templates/admin/list-forms.html:26 templates/form/inspect-form.html:49
 #: templates/form/my-forms.html:34
 msgid "Name"
 msgstr ""
 
-#: templates/admin/delete-user.html:27 templates/admin/inspect-user.html:151
-#: templates/admin/inspect-user.html:270 templates/admin/list-forms.html:30
+#. Table column title, indicating answers recived for a form
+#: templates/admin/delete-user.html:30 templates/admin/inspect-user.html:157
+#: templates/admin/inspect-user.html:276 templates/admin/list-forms.html:32
 #: templates/answers/chart-answers.html:87 templates/form/my-forms.html:35
 #: templates/site/stats.html:44 templates/site/stats.html:120
 #: templates/user/statistics.html:31
 msgid "Answers"
 msgstr ""
 
-#: templates/admin/delete-user.html:40
+#: templates/admin/delete-user.html:43
 msgid "Write the name of the user below"
 msgstr ""
 
-#: templates/admin/delete-user.html:52
+#: templates/admin/delete-user.html:55
 msgid "Delete user and forms"
 msgstr ""
 
-#: templates/admin/delete-user.html:56 templates/admin/new-invite.html:50
-#: templates/admin/new-invite.html:56 templates/answers/delete-answers.html:29
-#: templates/answers/list-answers.html:275
-#: templates/answers/list-answers.html:321
+#. Button to cancel operation
+#: templates/admin/delete-user.html:59 templates/admin/new-invite.html:53
+#: templates/admin/new-invite.html:59
+#: templates/answers/delete-all-answers.html:45
+#: templates/answers/list-answers.html:297
+#: templates/answers/list-answers.html:343
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:121
 #: templates/form/edit-form.html:127 templates/form/expiration.html:147
@@ -409,91 +416,101 @@ msgstr ""
 msgid "User details"
 msgstr ""
 
-#: templates/admin/inspect-user.html:25 templates/admin/list-forms.html:32
-#: templates/admin/list-users.html:42 templates/form/inspect-form.html:353
+#. Hostname of user, admin or form. The hostname is same as instance URL, for
+#. example "erabili.liberaforms.org"
+#: templates/admin/inspect-user.html:26 templates/admin/list-forms.html:34
+#: templates/admin/list-users.html:43 templates/form/inspect-form.html:353
 #: templates/site/list-admins.html:24
 msgid "Hostname"
 msgstr ""
 
-#: templates/admin/inspect-user.html:34
+#. Language selected by user
+#: templates/admin/inspect-user.html:36
 msgid "Language"
 msgstr ""
 
-#: templates/admin/inspect-user.html:42
+#. Whether the email of user was validated
+#: templates/admin/inspect-user.html:45
 msgid "Validated email"
 msgstr ""
 
-#: templates/admin/inspect-user.html:52
+#. Whether user is able to upload attached documents to form
+#: templates/admin/inspect-user.html:56
 msgid "Attachments enabled"
 msgstr ""
 
-#: templates/admin/inspect-user.html:74
-msgid "Is Admin"
-msgstr ""
-
-#: templates/admin/inspect-user.html:93
+#. Whether user is blocked by admin
+#: templates/admin/inspect-user.html:98
 msgid "Blocked by admin"
 msgstr ""
 
-#: templates/admin/inspect-user.html:120
+#: templates/admin/inspect-user.html:125
 msgid "Delete user and authored forms"
 msgstr ""
 
-#: templates/admin/inspect-user.html:135 templates/admin/list-forms.html:17
+#: templates/admin/inspect-user.html:140 templates/admin/list-forms.html:18
 #: templates/admin/list-users.html:15 templates/form/my-forms.html:22
 msgid "Statistics"
 msgstr ""
 
-#: templates/admin/inspect-user.html:150 templates/admin/list-forms.html:28
+#. Whether for is public
+#: templates/admin/inspect-user.html:156 templates/admin/list-forms.html:29
 #: templates/form/inspect-form.html:89 templates/form/my-forms.html:38
 msgid "Public"
 msgstr ""
 
-#: templates/admin/list-forms.html:14
+#. Title on /admin/forms page
+#: templates/admin/list-forms.html:15
 msgid "All forms"
 msgstr ""
 
-#: templates/admin/list-forms.html:29 templates/form/inspect-form.html:53
+#. Shows when was the last answer received on form
+#: templates/admin/list-forms.html:31 templates/form/inspect-form.html:53
 #: templates/form/my-forms.html:36
 msgid "Last answer"
 msgstr ""
 
-#: templates/admin/list-invites.html:13 templates/admin/list-invites.html:67
+#. Title on /admin/invites page
+#: templates/admin/list-invites.html:14 templates/admin/list-invites.html:69
 #: templates/admin/list-users.html:25
 msgid "Invitations"
 msgstr ""
 
-#: templates/admin/list-invites.html:17 templates/admin/list-users.html:20
+#. Button to invite new user
+#: templates/admin/list-invites.html:19 templates/admin/list-users.html:20
 msgid "Invite a new user"
 msgstr ""
 
-#: templates/admin/list-invites.html:52 templates/answers/list-answers.html:320
+#: templates/admin/list-invites.html:54 templates/answers/list-answers.html:342
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
 #: templates/user/user-settings.html:225
 msgid "Delete"
 msgstr ""
 
-#: templates/admin/list-invites.html:59
+#: templates/admin/list-invites.html:61
 msgid "Invitation message"
 msgstr ""
 
-#: templates/admin/list-users.html:30 templates/answers/chart-answers.html:24
+#. Button to download answers received on form in CSV document format
+#: templates/admin/list-users.html:31 templates/answers/chart-answers.html:24
 #: templates/answers/chart-answers.html:37
-#: templates/answers/list-answers.html:36
-#: templates/answers/list-answers.html:40
+#: templates/answers/list-answers.html:46
+#: templates/answers/list-answers.html:52
 #: templates/answers/view-results.html:25 templates/site/list-admins.html:15
 msgid "Download CSV"
 msgstr ""
 
-#: templates/admin/new-invite.html:12
+#. Title on /admin/invites/new page
+#: templates/admin/new-invite.html:13
 msgid "Send a new user invitation"
 msgstr ""
 
-#: templates/admin/new-invite.html:27
+#: templates/admin/new-invite.html:28
 msgid "The link to the invitation will be appended to this message"
 msgstr ""
 
-#: templates/admin/new-invite.html:45
+#. Button to send new user invitation message via email
+#: templates/admin/new-invite.html:47
 msgid "Send email"
 msgstr ""
 
@@ -503,12 +520,12 @@ msgid "View answers"
 msgstr ""
 
 #: templates/answers/chart-answers.html:29
-#: templates/answers/list-answers.html:26
+#: templates/answers/list-answers.html:30
 msgid "Form details"
 msgstr ""
 
 #: templates/answers/chart-answers.html:52
-#: templates/answers/list-answers.html:96
+#: templates/answers/list-answers.html:118
 msgid "Notify me on each new answer"
 msgstr ""
 
@@ -516,64 +533,64 @@ msgstr ""
 msgid "Multiple choice"
 msgstr ""
 
-#: templates/answers/delete-answers.html:12
-#: templates/answers/delete-answers.html:28
+#: templates/answers/delete-all-answers.html:15
+#: templates/answers/delete-all-answers.html:42
 msgid "Delete answers"
 msgstr ""
 
-#: templates/answers/delete-answers.html:13
+#: templates/answers/delete-all-answers.html:18
 #: templates/form/inspect-form.html:502 views/form.py:159
 msgid "Form"
 msgstr ""
 
-#: templates/answers/delete-answers.html:15
+#: templates/answers/delete-all-answers.html:21
 msgid "You are going to delete"
 msgstr ""
 
-#: templates/answers/delete-answers.html:16 templates/form/delete-form.html:27
-#: templates/site/delete-site.html:22
+#: templates/answers/delete-all-answers.html:22
+#: templates/form/delete-form.html:27 templates/site/delete-site.html:22
 msgid "answers"
 msgstr ""
 
-#: templates/answers/delete-answers.html:19
+#: templates/answers/delete-all-answers.html:25
 msgid "Write the total number of answers below"
 msgstr ""
 
-#: templates/answers/list-answers.html:32
+#: templates/answers/list-answers.html:39
 #: templates/answers/view-results.html:22 templates/form/inspect-form.html:36
 msgid "Graphs"
 msgstr ""
 
-#: templates/answers/list-answers.html:47
+#: templates/answers/list-answers.html:61
 msgid "Disable edition"
 msgstr ""
 
-#: templates/answers/list-answers.html:51
+#: templates/answers/list-answers.html:67
 msgid "Enable edition"
 msgstr ""
 
-#: templates/answers/list-answers.html:57
+#: templates/answers/list-answers.html:75
 msgid "Hide deleted columns"
 msgstr ""
 
-#: templates/answers/list-answers.html:61
+#: templates/answers/list-answers.html:81
 msgid "Show deleted columns"
 msgstr ""
 
-#: templates/answers/list-answers.html:66
+#: templates/answers/list-answers.html:88
 msgid "Delete all"
 msgstr ""
 
-#: templates/answers/list-answers.html:142
-#: templates/answers/list-answers.html:144
+#: templates/answers/list-answers.html:164
+#: templates/answers/list-answers.html:166
 msgid "Mark"
 msgstr ""
 
-#: templates/answers/list-answers.html:230
+#: templates/answers/list-answers.html:252
 msgid "Delete answer"
 msgstr ""
 
-#: templates/answers/list-answers.html:274
+#: templates/answers/list-answers.html:296
 #: templates/common/change-language.html:40 templates/form/edit-form.html:116
 #: templates/form/expiration.html:146 templates/form/inspect-form.html:297
 #: templates/form/inspect-form.html:381 templates/form/inspect-form.html:416

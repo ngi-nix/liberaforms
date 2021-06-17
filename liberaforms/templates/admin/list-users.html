@@ -26,6 +26,7 @@
                     <span class="badge badge-light">{{ total_invites }}</span>
                 </a>
             {% endif %}
+            {# i18n: Button to download answers received on form in CSV document format #}
             <a class="btn btn-primary btn-sm" role="button" href="/admin/users/csv">
                 {%trans%}Download CSV{%endtrans%}
                 <i class="fa fa-download" aria-hidden="true"></i>
@@ -79,5 +80,5 @@ $(document).ready(function() {
     });
 } );
 </script>
-  
+
 {% endblock %}
