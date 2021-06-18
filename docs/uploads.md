@@ -13,26 +13,22 @@ Extra Admin settings are enabled:
 * Enable `file field` on a per user basis.
 * Enable `file field` by default.
 
-## Storage
+## Uploads
 
 Uploaded files are saved in the `./uploads` directory.
 
-Run this command to ensure the sub directories are created
+Remember to `chown -R <user>` the directory so that it can be written to.
 
-```
-flask storage create
-```
-
-Remember to `chown -R <user>` on the `upload` directory so that it can be written to.
-
-You should include the `./uploads` directory in your backups!
+> You should include the `./uploads` directory in your backups!
 
 ### MAX_MEDIA_SIZE
+
+The maximum size in bytes of the files that can be uploaded by form editors.
 
 
 ### MAX_ATTACHMENT_SIZE
 
-The maximum size in Kbytes of the uploaded files
+The maximum size in bytes of the files that can be attached to forms.
 
 
 ## Encryption
@@ -48,7 +44,7 @@ olYyUwGT--example-key--c9AkH_HoMEWg9Q=
 
 ```
 
-Very Important! Save this key somewhere safe and don't lose it.
+> Important! Save this key somewhere safe and don't lose it.
 
 Copy the generated key and save it in a file with a name you will recognize. Something like `my.domain.com.key`.
 
@@ -69,11 +65,6 @@ Minio server software is free software. You will need an account on a server to 
 
 ### Configure remote storage
 
-The minio package is not included in `./requirements.txt`, so install it now
-
-```
-pip install "minio>=7.0.3,==7.*"
-```
 
 Add these lines to your `.env` file where `FQDN` is the host name of the minio sever and optionally, `:PORT` is the port.
 
@@ -96,7 +87,7 @@ flask storage create --remote-buckets
 
 ### Remote storage failure
 
-If remote storage is enabled and LiberaForms is unable to use the server (temporarily unavailable, network issues, etc), then:
+If remote storage is enabled but becomes temporarily unavailable (network issues, maintainence downtime, etc), LiberaForms will:
 
-* uploaded files are saved locally on the server at `./uploads`
-* the problem is logged
+* save the attachments locally on the server in `./uploads/attachments`
+* log the problem

@@ -34,10 +34,20 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DB_NAME: ${DB_NAME}
       ROOT_USERS: ${ROOT_USERS}
+      TMP_DIR: ${TMP_DIR}
       DEFAULT_LANGUAGE: ${DEFAULT_LANGUAGE}
       SECRET_KEY: ${SECRET_KEY}
       SESSION_TYPE: ${SESSION_TYPE}
       TOKEN_EXPIRATION: ${TOKEN_EXPIRATION}
+      LOG_TYPE: ${LOG_TYPE}
+      LOG_DIR: ${LOG_DIR}
+      ENABLE_UPLOADS: ${ENABLE_UPLOADS}
+      ENABLE_REMOTE_STORAGE: ${ENABLE_REMOTE_STORAGE}
+      MAX_MEDIA_SIZE: ${MAX_MEDIA_SIZE}
+      MAX_ATTACHMENT_SIZE: ${MAX_ATTACHMENT_SIZE}
+      #CRYPTO_KEY: ${CRYPTO_KEY}  # enable when ENABLE_UPLOADS = True
+    volumes:
+      - /opt/liberaforms_uploads:/app/uploads
     networks:
       - db_net
     ## For development
@@ -45,7 +55,7 @@ services:
     #  - ./:/app
     #command: flask run --host 0.0.0.0
     ## For production
-    command: gunicorn --bind 0.0.0.0:5000 --workers 3 wsgi:app
+    command: gunicorn --worker-tmp-dir /dev/shm --bind 0.0.0.0:5000 --workers 3 wsgi:app
 
 
 volumes:

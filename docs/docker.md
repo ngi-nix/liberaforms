@@ -1,6 +1,4 @@
-# Docker
-
-If you only want to run one LiberaForms server with Docker, this documentation is for you!
+# Single LiberaForms container installation
 
 If you want to run multiple LiberaForms servers, please see the LiberaForms cluster project.
 
@@ -26,7 +24,6 @@ It will not setup a webserver, you will have to do that.
 ### Edit `.env`
 
 The Postgres container requires two extra environment variables.
-Also, the name of the container will be set to `DB_HOST`
 
 ```
 POSTGRES_ROOT_USER=
@@ -34,6 +31,8 @@ POSTGRES_ROOT_PASSWORD=
 
 DB_HOST=liberaforms-db
 ```
+
+Note that the name of the postgresql container will be set to `DB_HOST`
 
 ### Instantiate the containers
 
@@ -69,8 +68,50 @@ If you need to delete the database
 flask database drop --docker-container liberaforms-db
 ```
 
-## backups
+## Storage
 
+See `./uploads.md` for some background.
+
+To create storage for a container first you need a volume
+
+Create a directory, for example
+
+```
+mkdir /opt/liberaforms_uploads
+```
+Make sure the write permission is set
+
+Edit your `docker-compose.yml` and add the volume to the LiberaForms container config.
+```
+volumes:
+  - /opt/liberaforms_uploads:/app/uploads
+```
+
+Remember to modify your `nginx` configuration to fit.
+
+### Remote storage
+
+The volume created in the previous step is neccesary. It is used if the Minio server becomes unavailable.
+
+Now add these lines to your `docker-compose.yml`
+
+```
+MINIO_URL: ${MINIO_URL}
+MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+```
+And create the Minio buckets
+
+```
+flask storage create --remote-buckets --docker-container liberaforms-app
+```
+
+
+## Backups
+
+### Database
 ```
 docker exec <container> /usr/local/bin/pg_dump -U <db_user> <db_name> > backup.sql
 ```
+
+### Uploads

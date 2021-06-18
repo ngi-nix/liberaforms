@@ -127,12 +127,22 @@ class Storage:
                 return None
         if not file_content:
             return None
-        if sub_dir.startswith('attachment'):
-            """ attachments get decrypted """
-            decrypted_file_content = decrypt_file_content(file_content)
-            return BytesIO(decrypted_file_content)
+        if self.encrypted:
+            file_content = decrypt_file_content(file_content)
+        return BytesIO(file_content)
+
+    def does_file_exist(self, sub_dir, storage_name):
+        if self.local_filesystem:
+            local_storage_dir = self.get_local_storage_directory(sub_dir)
+            file_path = os.path.join(local_storage_dir, storage_name)
+            return os.path.exists(file_path)
         else:
-            return BytesIO(file_content)
+            remote_dir = self.get_remote_storage_path(sub_dir)
+            directory_content = RemoteStorage().list_directory(remote_dir)
+            for object in directory_content:
+                if storage_name in object.object_name:
+                    return True
+            return False
 
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:

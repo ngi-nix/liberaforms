@@ -10,10 +10,10 @@ import pytest
 import werkzeug
 from io import BytesIO
 import mimetypes
-from .utils import login
+from flask import current_app
 from liberaforms.models.form import Form
 from liberaforms.models.answer import AnswerAttachment
-
+from .utils import login
 
 class TestAnswerAttachment():
 
@@ -23,7 +23,7 @@ class TestAnswerAttachment():
             Tests for a new FormLog
         """
         login(client, users['editor'])
-        slug = "another-valid-slug"
+        slug = "form-with-file-field"
         response = client.get(
                         "/forms/new",
                         follow_redirects=True,
@@ -66,7 +66,7 @@ class TestAnswerAttachment():
         mimetype = mimetypes.guess_type(valid_attachment_path)
         with open(valid_attachment_path, 'rb') as f:
             stream = BytesIO(f.read())
-        file = werkzeug.datastructures.FileStorage(
+        valid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
             filename=valid_attachment_name,
             content_type=mimetype,
@@ -75,7 +75,7 @@ class TestAnswerAttachment():
                         form_url,
                         data = {
                             "text-1620232883208": name,
-                            "file-1622045746136": file,
+                            "file-1622045746136": valid_file,
                         },
                         follow_redirects=True,
                     )
@@ -110,6 +110,55 @@ class TestAnswerAttachment():
         assert forms['test_form_2'].log.count() == initial_log_count + 1
         assert attachment.does_attachment_exist() == False
 
+    def test_delete_all_answers(self, anon_client, client, forms):
+        form_url = forms['test_form_2'].url
+        name = "Julia"
+        valid_attachment_name = "valid_attachment.pdf"
+        valid_attachment_path = f"./assets/{valid_attachment_name}"
+        mimetype = mimetypes.guess_type(valid_attachment_path)
+        with open(valid_attachment_path, 'rb') as f:
+            stream = BytesIO(f.read())
+        valid_file = werkzeug.datastructures.FileStorage(
+            stream=stream,
+            filename=valid_attachment_name,
+            content_type=mimetype,
+        )
+        response = anon_client.post(
+                        form_url,
+                        data = {
+                            "text-1620232883208": name,
+                            "file-1622045746136": valid_file,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert "<!-- thank_you_page -->" in html
+        initial_answers_count = forms['test_form_2'].answers.count()
+        initial_log_count = forms['test_form_2'].log.count()
+        response = client.get(
+                        f"/forms/delete-all-answers/{forms['test_form_2'].id}",
+                        follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert f'<div class="title_3">{initial_answers_count}</div>' in html
+        response = client.post(
+                        f"/forms/delete-all-answers/{forms['test_form_2'].id}",
+                        data = {
+                            "totalAnswers": initial_answers_count,
+                        },
+                        follow_redirects=True,
+                    )
+        assert response.status_code == 200
+        html = response.data.decode()
+        assert '<div class="success flash_message">' in html
+        assert '<!-- list_answers_page -->' in html
+        assert forms['test_form_2'].answers.count() == 0
+        assert forms['test_form_2'].log.count() == initial_log_count + 1
+        assert os.path.isdir(os.path.join(current_app.config['UPLOADS_DIR'],
+                                          current_app.config['ATTACHMENT_DIR'],
+                                          str(forms['test_form_2'].id))) == False
 
     @pytest.mark.skip(reason="Unsure")
     def test_submit_invalid_attachment(self, anon_client, forms):

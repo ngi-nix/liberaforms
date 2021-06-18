@@ -2,5 +2,6 @@
 gunicorn.py
 /flask_session
 /docs
-/docker
+/test
+/uploads/*
 **/__pycache__

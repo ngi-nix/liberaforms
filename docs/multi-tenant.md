@@ -25,7 +25,7 @@ FQDN=my.tenant.com
 ## Port
 
 
-# Uploads
+# Uploads directory
 
 Run this command to create the required directory tree.
 
