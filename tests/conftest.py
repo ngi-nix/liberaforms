@@ -5,8 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, shutil
-import ast
+import os, ast
 
 os.environ['FLASK_CONFIG'] = 'testing'
 os.environ['DB_USER'] = os.environ['TEST_DB_USER']

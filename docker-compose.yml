@@ -45,7 +45,9 @@ services:
       ENABLE_REMOTE_STORAGE: ${ENABLE_REMOTE_STORAGE}
       MAX_MEDIA_SIZE: ${MAX_MEDIA_SIZE}
       MAX_ATTACHMENT_SIZE: ${MAX_ATTACHMENT_SIZE}
-
+      #CRYPTO_KEY: ${CRYPTO_KEY}  # enable when ENABLE_UPLOADS = True
+    volumes:
+      - /opt/liberaforms_uploads:/app/uploads
     networks:
       - db_net
     ## For development

@@ -93,7 +93,7 @@ Remember to modify your `nginx` configuration to fit.
 
 The volume created in the previous step is neccesary. It is used if the Minio server becomes unavailable.
 
-Then add these lines to your `docker-compose.yml`
+Now add these lines to your `docker-compose.yml`
 
 ```
 MINIO_URL: ${MINIO_URL}
@@ -103,12 +103,15 @@ MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
 And create the Minio buckets
 
 ```
-flask storage create --docker-container liberaforms-app --remote-buckets
+flask storage create --remote-buckets --docker-container liberaforms-app
 ```
 
 
-## backups
+## Backups
 
+### Database
 ```
 docker exec <container> /usr/local/bin/pg_dump -U <db_user> <db_name> > backup.sql
 ```
+
+### Uploads

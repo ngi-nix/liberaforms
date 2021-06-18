@@ -127,12 +127,9 @@ class Storage:
                 return None
         if not file_content:
             return None
-        if sub_dir.startswith('attachment'):
-            """ attachments get decrypted """
-            decrypted_file_content = decrypt_file_content(file_content)
-            return BytesIO(decrypted_file_content)
-        else:
-            return BytesIO(file_content)
+        if self.encrypted:
+            file_content = decrypt_file_content(file_content)
+        return BytesIO(file_content)
 
     def does_file_exist(self, sub_dir, storage_name):
         if self.local_filesystem:
