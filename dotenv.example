@@ -29,8 +29,7 @@ MAX_MEDIA_SIZE=512000
 MAX_ATTACHMENT_SIZE=1572864
 ENABLE_REMOTE_STORAGE=False
 
-# Logging [watched|stream]
-LOG_TYPE=watched
+# Directory where logs will be saved
 LOG_DIR=./logs
 
 # FLASK_ENV

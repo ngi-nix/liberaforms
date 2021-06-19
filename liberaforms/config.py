@@ -65,6 +65,7 @@ class Config(object):
     }
     #ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     TMP_DIR = os.environ['TMP_DIR']
+    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
@@ -75,21 +76,23 @@ class Config(object):
         import pylibmc as memcache
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
-        SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
+        if 'SESSION_KEY_PREFIX' in os.environ:
+            SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX']
+        else:
+            SESSION_KEY_PREFIX = "LF:"
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
     MAX_ATTACHMENT_SIZE = int(os.environ['MAX_ATTACHMENT_SIZE'])
-    LOG_TYPE = os.environ['LOG_TYPE']
+    LOG_TYPE = os.environ['LOG_TYPE'] if 'LOG_TYPE' in os.environ else 'watched'
     LOG_DIR = os.environ['LOG_DIR']
-
-    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../'))
     UPLOADS_DIR = os.path.join(ROOT_DIR, 'uploads')
     ATTACHMENT_DIR = 'attachments'
     MEDIA_DIR = 'media'
     BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
     if 'FQDN' in os.environ:
         # LiberaForms cluster project requires a unique directory
+        LOG_DIR = os.path.join(LOG_DIR, "hosts", os.environ['FQDN'])
         ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
         MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
         BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
@@ -101,24 +104,27 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    LOG_LEVEL = logging.WARNING
+    LOG_LEVEL = logging.INFO
 
 
 class StagingConfig(Config):
     DEVELOPMENT = True
-    LOG_LEVEL = logging.WARNING
+    LOG_LEVEL = logging.INFO
 
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     LOG_LEVEL = logging.DEBUG
+    LOG_TYPE = 'stream'
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
     LOG_LEVEL = logging.DEBUG
+    LOG_TYPE = 'stream'
     UPLOADS_DIR = os.path.join(Config.ROOT_DIR, 'tests', 'uploads')
+
 
 config = {
     'development': DevelopmentConfig,

@@ -8,6 +8,12 @@ This file is part of LiberaForms.
 
 import os, logging, shutil
 
+
+def ensure_log_dir(app):
+    if not os.path.isdir(app.config['LOG_DIR']):
+        os.makedirs(app.config['LOG_DIR'])
+    logging.debug(f"Log dir in place at: {app.config['LOG_DIR']}")
+
 def ensure_uploads_dir_tree(app):
 
     uploads_dir = app.config['UPLOADS_DIR']

@@ -32,6 +32,10 @@ def create_app():
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    from liberaforms.utils import setup
+    setup.ensure_log_dir(app)
+    setup.ensure_uploads_dir_tree(app)
+
     logs.init_app(app)
     db.init_app(app)
     babel.init_app(app)
@@ -42,9 +46,6 @@ def create_app():
     register_commands(app)
     register_blueprints(app)
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
-
-    from liberaforms.utils.setup import ensure_uploads_dir_tree
-    ensure_uploads_dir_tree(app)
 
     @app.after_request
     def after_request(response):

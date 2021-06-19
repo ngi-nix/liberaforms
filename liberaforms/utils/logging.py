@@ -7,12 +7,16 @@ This file is part of LiberaForms.
 # https://medium.com/tenable-techblog/the-boring-stuff-flask-logging-21c3a5dd0392
 # https://github.com/tenable/flask-logging-demo/tree/master/app_factory_pattern
 
+# FATAL <- ERROR <- WARN <- INFO <- DEBUG <- TRACE
+
+#from flask.logging import default_handler
 from logging.config import dictConfig
 
 
 class LogSetup(object):
     def __init__(self, app=None, **kwargs):
         if app is not None:
+            #app.logger.removeHandler(default_handler)
             self.init_app(app, **kwargs)
 
     def init_app(self, app):
