@@ -39,15 +39,15 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       SESSION_TYPE: ${SESSION_TYPE}
       TOKEN_EXPIRATION: ${TOKEN_EXPIRATION}
-      LOG_TYPE: ${LOG_TYPE}
       LOG_DIR: ${LOG_DIR}
       ENABLE_UPLOADS: ${ENABLE_UPLOADS}
       ENABLE_REMOTE_STORAGE: ${ENABLE_REMOTE_STORAGE}
       MAX_MEDIA_SIZE: ${MAX_MEDIA_SIZE}
       MAX_ATTACHMENT_SIZE: ${MAX_ATTACHMENT_SIZE}
-      #CRYPTO_KEY: ${CRYPTO_KEY}  # enable when ENABLE_UPLOADS = True
+      CRYPTO_KEY: ${CRYPTO_KEY}
     volumes:
       - /opt/liberaforms_uploads:/app/uploads
+      - /opt/liberaforms_logs:/app/logs
     networks:
       - db_net
     ## For development

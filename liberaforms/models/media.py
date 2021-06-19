@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging, datetime
+import os, datetime
 import pathlib
 from PIL import Image
 from sqlalchemy.dialects.postgresql import JSONB
@@ -111,7 +111,7 @@ class Media(db.Model, CRUD, Storage):
             storage = Storage()
             storage.save_file(tmp_thumbnail_path, storage_name, self.directory)
         except Exception as error:
-            logging.warning(f"Could not create thumbnail: {error}")
+            current_app.logger.warning(f"Could not create thumbnail: {error}")
 
     def delete_thumbnail(self):
         storage_name = f"tn-{self.storage_name}"

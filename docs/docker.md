@@ -34,7 +34,13 @@ DB_HOST=liberaforms-db
 
 Note that the name of the postgresql container will be set to `DB_HOST`
 
-### Instantiate the containers
+### docker-compose
+
+Create `docker-compose.yml` and edit as needed
+
+```
+cp docker-compose.yml.example docker-compose.yml
+```
 
 ```
 docker-compose up -d

@@ -9,7 +9,6 @@ ENV VIRTUAL_ENV=/opt/venv
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$PATH:$VIRTUAL_ENV/bin"
 
-
 RUN apt-get install libmemcached-dev -y
 
 RUN mkdir /app

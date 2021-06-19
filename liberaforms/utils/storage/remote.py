@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import sys, os, logging
+import sys, os
 import urllib3
 from urllib.parse import urlparse
 from threading import Thread
@@ -40,19 +40,19 @@ def get_minio_client():
                 )
         )
     except S3Error as error:
-        logging.error(error)
+        current_app.logger.error(error)
     except HTTPError:
-        logging.error(error)
+        current_app.logger.error(error)
     except urllib3.exceptions.ConnectTimeoutError as error:
-        logging.error(error)
+        current_app.logger.error(error)
     except urllib3.exceptions.MaxRetryError as error:
-        logging.error(error)
+        current_app.logger.error(error)
     except urllib3.exceptions.NewConnectionError as error:
-        logging.error(error)
+        current_app.logger.error(error)
     except urllib3.exceptions.ProtocolError as error:
-        logging.error(error)
+        current_app.logger.error(error)
     except Exception as error:
-        logging.error(error)
+        current_app.logger.error(error)
     return None
 
 def generate_bucket_policy(template, bucket_name):
@@ -75,7 +75,7 @@ class RemoteStorage():
             self.attachment_bucket_name = f"{self.hostname}.attachments"
             self.media_bucket_name = f"{self.hostname}.media"
         else:
-            logging.error("Cannot initiate RemoteStorage. Site does not exist")
+            current_app.logger.error("Cannot initiate RemoteStorage. Site does not exist")
 
     def get_bucket_name_and_prefix(self, object_path):
         if object_path.startswith('attachments'):
@@ -84,7 +84,7 @@ class RemoteStorage():
         if object_path.startswith('media'):
             return  self.media_bucket_name, \
                     object_path.lstrip('media')
-        logging.error("Could not resolve bucket_name")
+        current_app.logger.error("Could not resolve bucket_name")
         return None, None
 
     def get_existing_bucket_names(self, client=None):
@@ -128,7 +128,7 @@ class RemoteStorage():
                 return True, f"Both buckets ready for: {self.hostname}"
             return False, "Could not create buckets."
         except S3Error as error:
-            logging.error(error)
+            current_app.logger.error(error)
             return False, str(error)
 
     def add_object(self, filesystem_path, object_path, storage_name):
@@ -142,7 +142,7 @@ class RemoteStorage():
             )
             return True
         except S3Error as error:
-            logging.error(error)
+            current_app.logger.error(error)
             return False
 
     def get_object(self, object_path, storage_name):
@@ -158,7 +158,7 @@ class RemoteStorage():
             )
             return file_path
         except S3Error as error:
-            logging.error(error)
+            current_app.logger.error(error)
             return False
 
     def remove_object(self, object_path, storage_name):
@@ -171,7 +171,7 @@ class RemoteStorage():
                         )
             return True
         except S3Error as error:
-            logging.error(error)
+            current_app.logger.error(error)
             return False
 
     def list_directory(self, object_path):
@@ -198,7 +198,7 @@ class RemoteStorage():
                         delete_object_list=delete_object_list,
                     )
         for error in errors:
-            logging.error(error)
+            current_app.logger.error(error)
 
     def remove_directory(self, object_path):
         return self.delete_objects( object_path)

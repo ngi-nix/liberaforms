@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os
-import json, logging
+import json
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import flash

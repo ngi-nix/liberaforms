@@ -32,6 +32,9 @@ def create_app():
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
+    #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
+    #print("LOG TYPE: ", app.config['LOG_TYPE'])
+
     from liberaforms.utils import setup
     setup.ensure_log_dir(app)
     setup.ensure_uploads_dir_tree(app)
@@ -46,6 +49,12 @@ def create_app():
     register_commands(app)
     register_blueprints(app)
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+
+    app.logger.debug("My Debug")
+    app.logger.info("My Info")
+    app.logger.warning("My Warning")
+    app.logger.warning("WARNING: app.config['TOKEN_EXPIRATION']: %s", app.config['TOKEN_EXPIRATION'])
+    app.logger.error("ERROR: app.config['TOKEN_EXPIRATION']: %s", app.config['TOKEN_EXPIRATION'])
 
     @app.after_request
     def after_request(response):

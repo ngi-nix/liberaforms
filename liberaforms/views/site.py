@@ -160,7 +160,7 @@ def change_icon():
                 flash(_("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
                 return redirect(make_url_for('admin_bp.site_admin'))
             except Exception as error:
-                logging.error(error)
+                current_app.logger.error(error)
         else:
             flash(_("An image file is required"), 'warning')
             return render_template('change-icon.html')

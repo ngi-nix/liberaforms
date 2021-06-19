@@ -24,6 +24,7 @@ class Config(object):
     # WTF_CSRF_TIME_LIMIT. Time to fill out a form.
     # Must be less than PERMANENT_SESSION_LIFETIME
     WTF_CSRF_TIME_LIMIT = 21600
+    #WTF_CSRF_TIME_LIMIT = 1
     # User sessions last 8h (refreshed on every request)
     PERMANENT_SESSION_LIFETIME = 28800
     RESERVED_SLUGS = [
@@ -76,16 +77,15 @@ class Config(object):
         import pylibmc as memcache
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
-        if 'SESSION_KEY_PREFIX' in os.environ:
-            SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX']
-        else:
-            SESSION_KEY_PREFIX = "LF:"
+    if 'SESSION_KEY_PREFIX' in os.environ:
+        SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX']
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
     MAX_ATTACHMENT_SIZE = int(os.environ['MAX_ATTACHMENT_SIZE'])
     LOG_TYPE = os.environ['LOG_TYPE'] if 'LOG_TYPE' in os.environ else 'watched'
-    LOG_DIR = os.environ['LOG_DIR']
+    #LOG_DIR = os.environ['LOG_DIR']
+    LOG_DIR = os.path.abspath(os.path.join(ROOT_DIR, os.environ['LOG_DIR']))
     UPLOADS_DIR = os.path.join(ROOT_DIR, 'uploads')
     ATTACHMENT_DIR = 'attachments'
     MEDIA_DIR = 'media'
@@ -96,6 +96,7 @@ class Config(object):
         ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
         MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
         BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
+        SESSION_KEY_PREFIX = os.environ['FQDN']
 
     @staticmethod
     def init_app(app):
@@ -109,7 +110,7 @@ class ProductionConfig(Config):
 
 class StagingConfig(Config):
     DEVELOPMENT = True
-    LOG_LEVEL = logging.INFO
+    LOG_LEVEL = logging.WARNING
 
 
 class DevelopmentConfig(Config):
@@ -121,7 +122,7 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
-    LOG_LEVEL = logging.DEBUG
+    LOG_LEVEL = logging.INFO
     LOG_TYPE = 'stream'
     UPLOADS_DIR = os.path.join(Config.ROOT_DIR, 'tests', 'uploads')
 

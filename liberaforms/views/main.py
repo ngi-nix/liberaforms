@@ -15,8 +15,6 @@ from liberaforms.models.site import Site
 from liberaforms.models.user import User
 from liberaforms.utils.utils import logout_user
 
-#import logging
-#logger = logging.getLogger("app.access")
 
 main_bp = Blueprint('main_bp',
                     __name__,

@@ -6,13 +6,13 @@ This file is part of LiberaForms.
 """
 
 
-import os, logging, shutil
+import os, shutil
 
 
 def ensure_log_dir(app):
     if not os.path.isdir(app.config['LOG_DIR']):
         os.makedirs(app.config['LOG_DIR'])
-    logging.debug(f"Log dir in place at: {app.config['LOG_DIR']}")
+    app.logger.info(f"Log dir in place at: {app.config['LOG_DIR']}")
 
 def ensure_uploads_dir_tree(app):
 
@@ -25,4 +25,4 @@ def ensure_uploads_dir_tree(app):
                         os.path.join(uploads_dir, app.config['BRAND_DIR']))
     if not os.path.isdir(attachment_dir):
         os.makedirs(attachment_dir)
-    logging.debug("Uploads dir tree in place")
+    app.logger.info("Uploads dir tree in place")

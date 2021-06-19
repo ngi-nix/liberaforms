@@ -4,10 +4,11 @@ This file is part of LiberaForms.
 # SPDX-FileCopyrightText: 2021 LiberaForms.org
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
+# https://docs.python.org/3/howto/logging.html
 # https://medium.com/tenable-techblog/the-boring-stuff-flask-logging-21c3a5dd0392
 # https://github.com/tenable/flask-logging-demo/tree/master/app_factory_pattern
 
-# FATAL <- ERROR <- WARN <- INFO <- DEBUG <- TRACE
+# CRITICAL:50 <- ERROR:40 <- WARNING:30 <- INFO:20 <- DEBUG:10
 
 #from flask.logging import default_handler
 from logging.config import dictConfig
@@ -57,6 +58,7 @@ class LogSetup(object):
                     "handlers": ["access_logs"],
                     "propagate": False,
                 },
+                "gunicorn": {"level": logging_level, "handlers": ["default"]},
                 "root": {"level": logging_level, "handlers": ["default"]},
             }
         }

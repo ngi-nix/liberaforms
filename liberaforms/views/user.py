@@ -126,7 +126,7 @@ def send_email_validation():
         flash(_("We've sent an email to %s") % g.current_user.email, 'info')
     else:
         flash(status['msg'], 'warning')
-        logging.warning(status['msg'])
+        current_app.logger.warning(status['msg'])
     return redirect(make_url_for('user_bp.user_settings',
                                  username=g.current_user.username))
 

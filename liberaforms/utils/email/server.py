@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging, traceback
+import os, traceback
 import smtplib, ssl
 from email.utils import formatdate, make_msgid
 
@@ -33,7 +33,7 @@ class EmailServer():
                                                     timeout=self.timeout)
                 self.connection.login(self.username, self.password)
             except Exception as error:
-                logging.warning(traceback.format_exc())
+                current_app.logger.warning(traceback.format_exc())
                 self.connection = None
                 return error
         elif self.use_tls:
@@ -47,7 +47,7 @@ class EmailServer():
                 self.connection.ehlo()
                 self.connection.login(self.username, self.password)
             except Exception as error:
-                logging.warning(traceback.format_exc())
+                current_app.logger.warning(traceback.format_exc())
                 self.connection = None
                 return error
         else:
@@ -58,7 +58,7 @@ class EmailServer():
                 if self.username and self.password:
                     self.connection.login(self.username, self.password)
             except Exception as error:
-                logging.warning(traceback.format_exc())
+                current_app.logger.warning(traceback.format_exc())
                 self.connection = None
                 return error
 
@@ -75,7 +75,7 @@ class EmailServer():
                 # by the connection.
                 self.connection.close()
             except smtplib.SMTPException as e:
-                logging.warning(traceback.format_exc())
+                current_app.logger.warning(traceback.format_exc())
         finally:
             self.connection = None
 
@@ -102,7 +102,7 @@ class EmailServer():
                     "email_sent": True
                 }
             except Exception as error:
-                logging.warning(traceback.format_exc())
+                current_app.logger.warning(traceback.format_exc())
                 return {
                     "email_sent": False,
                     "msg": str(error)
