@@ -15,21 +15,19 @@ import os
 from logging.config import dictConfig
 
 if not "LOG_TYPE" in os.environ:
-    if  os.environ["FLASK_CONFIG"] == "development" or \
-        os.environ["FLASK_ENV"] == "development":
+    if os.environ["FLASK_CONFIG"] == "development":
         os.environ["LOG_TYPE"] = "stream"
         os.environ["LOG_LEVEL"] = "DEBUG"
     else:
         os.environ["LOG_TYPE"] = "watched"
 if not "LOG_LEVEL" in os.environ:
     os.environ["LOG_LEVEL"] = "INFO"
-log_type = os.environ["LOG_TYPE"]
-logging_level = os.environ["LOG_LEVEL"]
-
 if not "LOG_DIR" in os.environ:
     os.environ["LOG_DIR"] = "logs"
 if "FQDN" in os.environ:
     os.environ["LOG_DIR"] = os.path.join(os.environ["LOG_DIR"], "hosts", os.environ["FQDN"])
+log_type = os.environ["LOG_TYPE"]
+logging_level = os.environ["LOG_LEVEL"]
 log_directory = os.environ["LOG_DIR"]
 if not os.path.isdir(log_directory):
     os.makedirs(log_directory)
