@@ -8,14 +8,7 @@ This file is part of LiberaForms.
 
 import os, shutil
 
-
-def ensure_log_dir(app):
-    if not os.path.isdir(app.config['LOG_DIR']):
-        os.makedirs(app.config['LOG_DIR'])
-    app.logger.info(f"Log dir in place at: {app.config['LOG_DIR']}")
-
 def ensure_uploads_dir_tree(app):
-
     uploads_dir = app.config['UPLOADS_DIR']
     media_dir = os.path.join(uploads_dir, app.config['MEDIA_DIR'])
     attachment_dir = os.path.join(uploads_dir, app.config['ATTACHMENT_DIR'])

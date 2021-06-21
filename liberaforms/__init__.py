@@ -15,18 +15,19 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
-from liberaforms.config import config
-from liberaforms.utils.logging import LogSetup
+from liberaforms.utils import setup
+from liberaforms.config.config import config
 
 db = SQLAlchemy()
 babel = Babel()
 session = Session()
 csrf = CSRFProtect()
-logs = LogSetup()
 
 #sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
 def create_app():
+    from liberaforms.config.logging import dictConfig
+
     app = Flask(__name__.split(".")[0])
     config_name = os.getenv('FLASK_CONFIG') or 'default'
     app.config.from_object(config[config_name])
@@ -35,26 +36,20 @@ def create_app():
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
 
-    from liberaforms.utils import setup
-    setup.ensure_log_dir(app)
-    setup.ensure_uploads_dir_tree(app)
-
-    logs.init_app(app)
     db.init_app(app)
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
+    setup.ensure_uploads_dir_tree(app)
 
     from liberaforms.commands import register_commands
     register_commands(app)
     register_blueprints(app)
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
 
-    app.logger.debug("My Debug")
-    app.logger.info("My Info")
-    app.logger.warning("My Warning")
-    app.logger.warning("WARNING: app.config['TOKEN_EXPIRATION']: %s", app.config['TOKEN_EXPIRATION'])
-    app.logger.error("ERROR: app.config['TOKEN_EXPIRATION']: %s", app.config['TOKEN_EXPIRATION'])
+    app.logger.info("Created app")
+    app.logger.debug("LOG LEVEL: %s", os.environ['LOG_LEVEL'])
+    app.logger.debug("LOG TYPE: %s", os.environ['LOG_TYPE'])
 
     @app.after_request
     def after_request(response):
