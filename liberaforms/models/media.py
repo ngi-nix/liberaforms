@@ -35,6 +35,7 @@ class Media(db.Model, CRUD, Storage):
     def __init__(self):
         Storage.__init__(self)
         self.created = datetime.datetime.now().isoformat()
+        self.encrypted = False
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -72,6 +73,10 @@ class Media(db.Model, CRUD, Storage):
             return True
         return False
 
+    def delete_thumbnail(self):
+        storage_name = f"tn-{self.storage_name}"
+        return super().delete_file(storage_name, self.directory)
+
     def _get_media_url(self, storage_name):
         if self.local_filesystem:
             host_url = self.user.site.host_url
@@ -97,25 +102,20 @@ class Media(db.Model, CRUD, Storage):
         return True if super().does_file_exist(self.directory, name) else False
 
     def save_thumbnail(self):
-        try:
-            storage_name = f"tn-{self.storage_name}"
-            tmp_thumbnail_path = os.path.join(current_app.config['TMP_DIR'],
-                                              storage_name)
-            (stream, file_name) = self.get_media()
-            with open(tmp_thumbnail_path, "wb") as outfile:
-                #Copy the BytesIO stream to the output file
-                outfile.write(stream.getbuffer())
-            image = Image.open(tmp_thumbnail_path)
-            image.thumbnail((50,50))
-            image.save(tmp_thumbnail_path)
-            storage = Storage()
-            storage.save_file(tmp_thumbnail_path, storage_name, self.directory)
-        except Exception as error:
-            current_app.logger.warning(f"Could not create thumbnail: {error}")
-
-    def delete_thumbnail(self):
         storage_name = f"tn-{self.storage_name}"
-        return super().delete_file(storage_name, self.directory)
+        tmp_thumbnail_path = os.path.join(current_app.config['TMP_DIR'],
+                                          storage_name)
+        (stream, file_name) = self.get_media()
+        with open(tmp_thumbnail_path, "wb") as outfile:
+            #Copy the BytesIO stream to the output file
+            outfile.write(stream.getbuffer())
+        image = Image.open(tmp_thumbnail_path)
+        image.thumbnail((50,50))
+        image.save(tmp_thumbnail_path)
+        storage = Storage()
+        storage.save_file(tmp_thumbnail_path, storage_name, self.directory)
+        #except Exception as error:
+        #    current_app.logger.warning(f"Could not create thumbnail: {error}")
 
     def get_values(self):
         return {

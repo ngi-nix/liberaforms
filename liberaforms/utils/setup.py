@@ -18,4 +18,4 @@ def ensure_uploads_dir_tree(app):
                         os.path.join(uploads_dir, app.config['BRAND_DIR']))
     if not os.path.isdir(attachment_dir):
         os.makedirs(attachment_dir)
-    app.logger.info("Uploads dir tree in place")
+    #app.logger.info("Uploads dir tree in place")

@@ -48,8 +48,10 @@ class Storage:
     def delete_from_disk(file_path):
         if os.path.exists(file_path):
             os.remove(file_path)
+            return True
         else:
             current_app.logger.error(f"Failed to delete file. Does not exist: {file_path}")
+            return False
 
     def save_file(self, file, storage_name, sub_dir):
         tmp_dir = current_app.config['TMP_DIR']
