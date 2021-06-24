@@ -36,6 +36,8 @@ def before_request():
             return
         if g.current_user.is_admin():
             g.is_admin=True
+    with open('VERSION.txt') as f:
+        g.app_version = f.readline().strip()
 
 
 @main_bp.route('/', methods=['GET'])
