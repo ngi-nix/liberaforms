@@ -45,7 +45,7 @@ Fixes #21
 
 Merge requests must be tagged
 
-After commiting your changes, tag the commit. Change the message when relevant.
+After commiting your changes, create a tag. Change the message when relevant.
 ```
 git tag -a v$(cat VERSION.txt) -m "Bumped version $(cat VERSION.txt)"
 git push origin v$(cat VERSION.txt)

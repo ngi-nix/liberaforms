@@ -43,7 +43,7 @@ cp docker-compose.yml.example docker-compose.yml
 ```
 
 ```
-VERSION_TAG=$(cat VERSION.txt) docker-compose up -d
+VERSION=$(cat VERSION.txt) docker-compose up -d
 ```
 
 ## Create the database
