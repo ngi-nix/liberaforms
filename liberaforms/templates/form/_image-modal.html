@@ -55,7 +55,7 @@
                   id="image_url"
                   placeholder="https://" />
           </div>
-          {% if config['ENABLE_UPLOADS'] == True %}
+          {% if g.current_user.get_uploads_enabled() %}
             <div class="form-group">
                 <label for="media_file">
                   {{trans}}Or upload a new image{{endtrans}}
