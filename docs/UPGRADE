@@ -1,5 +1,9 @@
 # Upgrading LiberaForms
 
+Fisrt backup:
+* your database
+* make a copy of `./uploads`
+
 ### Stop LiberaForms
 ```
 supervisorctl stop LiberaForms
@@ -24,4 +28,17 @@ flask db upgrade
 ### Start LiberaForms
 ```
 supervisorctl start LiberaForms
+```
+
+# Run a specific version of LiberaForms
+
+If you have problems with the latest version of LiberaForms, you can use an earlier version
+
+List the available versions
+```
+git tag -l
+```
+
+```
+git checkout v2.x.x
 ```

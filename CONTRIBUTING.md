@@ -1,20 +1,17 @@
 # Git
 ## Issues
-### When you create a new issue:
+
+If you want to work on something create an issue
+
 * Use a descriptive Title
 * Add contextual information in the description
 * Do not assign it to another person
+* Assign it to yourself
+* Add the label 'Doing' to the issue
+* Create a new branch
+* When you have finished, tag it with version and merge it into `develop` branch
 
-### If you want to work on something new:
-* First create and issue
-
-### When you start working on an issue:
-1. Assign it to yourself
-2. Add the tag 'Doing'
-3. Create a new branch
-4. When you have finished, merge it into `develop` branch
-    
-## Branch workflow
+## Branches
 `feat/<name>` _feat: (new feature/objective)_  
 `fix/<name>` _fix: (a fix)_  
 ⇣⇣⇣  
@@ -25,7 +22,7 @@
 `WIP`  
 ⇣⇣⇣  
 ⇣⇣⇣ **Protected**. We merge WIP into main_  
-`main` 
+`main`
 
 ## Commit messages
 
@@ -44,6 +41,22 @@ https://en.wikipedia.org/wiki/Port_(computer_networking)
 Fixes #21
 ```
 
+## Tagging
+
+Merge requests must be tagged
+
+After commiting your changes, create a tag. Change the message when relevant.
+```
+git tag -a v$(cat VERSION.txt) -m "Bumped version $(cat VERSION.txt)"
+git push origin v$(cat VERSION.txt)
+```
+
+You can list the tags
+
+```
+git tag -l --sort=-version:refname "v*"
+```
+
 
 # Translating
 ## Weblate
@@ -59,11 +72,11 @@ Fixes #21
 >   + Binary files generated from each .PO, computer-readable.
 >   
 > **JS** and **LANG** format translation files are also used. _These are translations coming from [FormBuilder](https://github.com/kevinchappell/formBuilder)_
-> 
+>
 > **Current directories with translation files:**  
 > + Gettext
 >   + ~/liberaforms/translations
->   + ~/liberaforms/form_templates/translations 
+>   + ~/liberaforms/form_templates/translations
 > + JS
 >   + ~/liberaforms/static/dataTables-languages  
 > + LANG

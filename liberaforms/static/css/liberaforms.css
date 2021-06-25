@@ -33,6 +33,7 @@ body {
 }
 
 #footer {
+  color: #999;
   text-align:right;
   position: absolute;
   bottom: 0;

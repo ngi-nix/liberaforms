@@ -13,7 +13,7 @@ git clone https://gitlab.com/liberaforms/liberaforms.git
 
 First create a docker image.
 ```
-docker build -t liberaforms:latest .
+docker build -t liberaforms:$(cat VERSION.txt) .
 ```
 
 ## Compose
@@ -43,7 +43,7 @@ cp docker-compose.yml.example docker-compose.yml
 ```
 
 ```
-docker-compose up -d
+VERSION=$(cat VERSION.txt) docker-compose up -d
 ```
 
 ## Create the database
