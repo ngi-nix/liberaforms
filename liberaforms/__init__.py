@@ -54,8 +54,11 @@ def create_app():
 
     @app.before_request
     def before_request():
-        from liberaforms.utils.utils import populate_flask_g
-        populate_flask_g()
+        if request.path[0:7] == '/static':
+            app.logger.warning('Serving a static file. Check Nginx config.')
+        else:
+            from liberaforms.utils.utils import populate_flask_g
+            populate_flask_g()
 
     @app.after_request
     def after_request(response):
