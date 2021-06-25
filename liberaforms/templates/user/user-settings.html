@@ -120,7 +120,7 @@
                 </td>
             </tr>
         </table>
-{% if config['ENABLE_UPLOADS'] %}
+{% if g.current_user.get_uploads_enabled() %}
         <div class="title_2 delimited">
             {%trans%}My media{%endtrans%}
         </div>

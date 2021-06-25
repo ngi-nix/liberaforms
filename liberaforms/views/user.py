@@ -102,8 +102,10 @@ def new_user(token=None):
 @login_required
 def user_settings(username):
     if username != g.current_user.username:
-        return redirect(make_url_for('user_bp.user_settings',
-                                     username=g.current_user.username))
+        return redirect(make_url_for(
+                                'user_bp.user_settings',
+                                 username=g.current_user.username)
+                        )
     return render_template('user-settings.html', user=g.current_user)
 
 
