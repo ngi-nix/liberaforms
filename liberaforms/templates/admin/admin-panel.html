@@ -199,7 +199,7 @@
 
     <p>&nbsp;</p>
     <div class="title_2">
-      {%trans%}Versions{%endtrans%}
+      {%trans%}Installation{%endtrans%}
     </div>
 
     <table class="table table-sm">
@@ -210,12 +210,8 @@
     </tr>
     {% endif %}
     <tr>
-      <td>LiberaForms version</td>
-      <td>{{config['APP_VERSION']}}</td>
-    </tr>
-    <tr>
-      <td>Database schema version</td>
-      <td>1234</td>
+      <td>{%trans%}Version{%endtrans%}</td>
+      <td>{{g.app_version}}</td>
     </tr>
     </table>
 
