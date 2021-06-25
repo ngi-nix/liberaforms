@@ -80,7 +80,7 @@ class Media(db.Model, CRUD, Storage):
     def _get_media_url(self, storage_name):
         if self.local_filesystem:
             host_url = self.user.site.host_url
-            return f"{host_url}file/{self.directory}/{storage_name}"
+            return f"{host_url}file/media/{self.user_id}/{storage_name}"
         else:
             """ creates a URL for the media file on the minio server """
             bucket_name = f"{self.user.site.hostname}.media"
