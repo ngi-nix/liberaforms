@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os, traceback
 import smtplib, ssl
+from flask import current_app
 from email.utils import formatdate, make_msgid
 
 
