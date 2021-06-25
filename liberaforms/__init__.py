@@ -51,6 +51,12 @@ def create_app():
     app.logger.debug("LOG LEVEL: %s", os.environ['LOG_LEVEL'])
     app.logger.debug("LOG TYPE: %s", os.environ['LOG_TYPE'])
 
+
+    @app.before_request
+    def before_request():
+        from liberaforms.utils.utils import populate_flask_g
+        populate_flask_g()
+
     @app.after_request
     def after_request(response):
         """ Logging after every request. """
