@@ -13,7 +13,7 @@ git clone https://gitlab.com/liberaforms/liberaforms.git
 
 First create a docker image.
 ```
-docker build -t liberaforms:$(cat VERSION.txt) .
+docker build -t liberaforms-app:$(cat VERSION.txt) .
 ```
 
 ## Compose

@@ -20,7 +20,7 @@ services:
       - db_net
 
   liberaforms:
-    image: liberaforms:${VERSION}
+    image: liberaforms-app:${VERSION}
     container_name: liberaforms-app
     depends_on:
       - db
