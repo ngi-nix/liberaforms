@@ -1,6 +1,6 @@
 # Upgrading LiberaForms
 
-Fisrt backup:
+First backup:
 * your database
 * make a copy of `./uploads`
 
