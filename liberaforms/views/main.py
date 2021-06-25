@@ -13,7 +13,7 @@ from flask_wtf.csrf import CSRFError
 
 from liberaforms.models.site import Site
 from liberaforms.models.user import User
-from liberaforms.utils.utils import logout_user
+from liberaforms.utils import utils
 
 
 main_bp = Blueprint('main_bp',
@@ -32,12 +32,11 @@ def before_request():
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"])
         if not g.current_user:
-            logout_user()
+            utils.logout_user()
             return
         if g.current_user.is_admin():
             g.is_admin=True
-    with open('VERSION.txt') as f:
-        g.app_version = f.readline().strip()
+        g.app_version = utils.get_app_version()
 
 
 @main_bp.route('/', methods=['GET'])

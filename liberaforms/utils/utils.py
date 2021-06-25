@@ -37,6 +37,14 @@ def get_locale():
                                         current_app.config['LANGUAGES'].keys()
                                         )
 
+def get_app_version():
+    try:
+        with open('VERSION.txt') as f:
+            app_version = f.readline().strip()
+            return app_version if app_version else ""
+    except Exception as error:
+        current_app.logger.error(error)
+
 """
 Used to respond to Ajax requests
 """
