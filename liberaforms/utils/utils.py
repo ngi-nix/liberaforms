@@ -41,9 +41,6 @@ def populate_flask_g():
     g.current_user=None
     g.is_admin=False
     g.embedded=False
-    if request.path[0:7] == '/static':
-        current_app.logger.warning('Serving a static file. Check nginx config.')
-        return
     from urllib.parse import urlparse
     from liberaforms.models.site import Site
     from liberaforms.models.user import User
