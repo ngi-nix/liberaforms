@@ -5,8 +5,9 @@
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-        
-        <div class="title_1 delimited">{%trans%}Menu color{%endtrans%}</div>
+
+        <div class="title_1 delimited">{%trans%}Primary colour{%endtrans%}</div>
+
         <div class="menu-color-options">
             <span style="background-color:#b71c1c">L</span>
             <span style="background-color:#c62828">i</span>
@@ -39,7 +40,7 @@
             <span style="background-color:#455a64">L</span>
             <span style="background-color:#546e7a">i</span>
         </div>
-        
+
         <div class="menu-color-options">
             <span style="background-color:#1b5e20">b</span>
             <span style="background-color:#2e7d32">e</span>
@@ -50,9 +51,9 @@
             <span style="background-color:#00796b">r</span>
             <span style="background-color:#00897b">m</span>
         </div>
-        
+
         <p>&nbsp;</p>
-        
+
         <form method="POST">
             {{ wtform.csrf_token }}
             <p>
@@ -96,5 +97,5 @@ $.cssHooks.backgroundColor = {
     }
 }
 </script>
-  
+
 {% endblock %}

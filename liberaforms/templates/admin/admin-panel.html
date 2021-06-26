@@ -63,12 +63,24 @@
         </td>
       </tr>
       <tr>
-        {# i18n: Color for topbar menu on website #}
-        <td>{%trans%}Menu color{%endtrans%}</td>
-        <td>{{g.site.menuColor}}</td>
+        {# i18n: Website's primary colour #}
+        <td>{%trans%}Primary colour{%endtrans%}</td>
+        <td>{{g.site.primary_color}}</td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
-             role="button" href="/site/change-menu-color">
+             role="button" href="/site/primary-colour">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Define the 'look' of emails #}
+        <td colspan="2">
+          {%trans%}Email branding{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button" href="/site/email-branding">
               {%trans%}Change{%endtrans%}
           </a>
         </td>
