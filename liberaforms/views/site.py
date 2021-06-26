@@ -284,17 +284,7 @@ def email_branding():
         g.site.save()
     if request.method == 'GET' and g.site.email_footer:
         wtform.footer_text.data=g.site.get_email_footer()
-    email_html = HTML_email('with_button.j2',
-                            header_image_url=g.site.get_email_header_url(),
-                            primary_color=g.site.primary_color,
-                            footer=g.site.get_email_footer(),
-                            body="Lorem ipsum dolor sit amet, consectetur \
-                                  adipisci elit, sed eiusmod tempor \
-                                  incidunt ut labore et dolore magna aliqua.",
-                            button_text=_("A button"))
-    return render_template('email-branding.html',
-                            email_html=email_html,
-                            wtform=wtform)
+    return render_template('email-branding.html', wtform=wtform)
 
 
 @site_bp.route('/site/reset-email-header', methods=['GET'])
@@ -304,6 +294,19 @@ def reset_email_header():
         flash(_("Reset image OK"), 'success')
     return redirect(make_url_for('site_bp.email_branding'))
 
+@site_bp.route('/site/example-email-preview', methods=['GET'])
+@admin_required
+def email_preview():
+    from liberaforms.utils.email.dispatcher import HTML_email
+    email_html = HTML_email('with_button.j2',
+                            header_image_url=g.site.get_email_header_url(),
+                            primary_color=g.site.primary_color,
+                            footer=g.site.get_email_footer(),
+                            body="Lorem ipsum dolor sit amet, consectetur \
+                                  adipisci elit, sed eiusmod tempor \
+                                  incidunt ut labore et dolore magna aliqua.",
+                            button_text=_("A button"))
+    return email_html
 
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required

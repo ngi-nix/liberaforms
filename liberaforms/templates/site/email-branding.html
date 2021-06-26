@@ -13,6 +13,8 @@
     box-shadow: 4px 3px 8px 1px #969696;
   	-webkit-box-shadow: 4px 3px 8px 1px #969696;
     margin-top:1em;
+    width: 100%;
+    border: 0;
 }
 </style>
 
@@ -28,9 +30,7 @@
         </p>
 
         <div class="title_2">{%trans%}Example email{%endtrans%}</div>
-        <div id="email_preview">
-          {{ email_html|safe }}
-        </div>
+        <iframe id="email_preview" src="/site/example-email-preview"></iframe>
 
         <p>&nbsp</p>
 
@@ -91,6 +91,15 @@
 </div>
 
 <script>
+var frame = document.getElementById("email_preview");
+frame.onload = function()
+{
+  frame.style.height =
+  frame.contentWindow.document.body.scrollHeight + 'px';
+  frame.style.width  =
+  frame.contentWindow.document.body.scrollWidth+'px';
+}
+
 $(function () {
   $('#upload_form').parsley().on('field:validated', function() {
     var ok = $('.parsley-error').length === 0;
