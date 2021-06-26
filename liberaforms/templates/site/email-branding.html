@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- email_branding_page -->
+
+<script src="/static/parsley/parsley.min.js"></script>
+<script src="/static/parsley/i18n/{{ g.current_user.language }}.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/parsley.css" />
+
+<style>
+#email_preview{
+  	background: #ccc;
+    box-shadow: 4px 3px 8px 1px #969696;
+  	-webkit-box-shadow: 4px 3px 8px 1px #969696;
+    margin-top:1em;
+    width: 100%;
+    border: 0;
+}
+</style>
+
+<div class="container">
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
+
+        <div class="title_1 delimited">{%trans%}Email branding{%endtrans%}</div>
+
+        <p style="font-size: 1.2em">
+          {%trans%}LiberaForms will occasionally send emails.{%endtrans%}
+        </p>
+
+        <div class="title_2">{%trans%}Example email{%endtrans%}</div>
+        <iframe id="email_preview" src="/site/example-email-preview"></iframe>
+
+        <p>&nbsp</p>
+
+        <div class="title_1 delimited">{%trans%}Personalize{%endtrans%}</div>
+
+        <form id="upload_form" method="POST" enctype=multipart/form-data >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+            <div class="form-group">
+                {{ wtform.header_image.label }}
+                <br />
+                <span class="hint">
+                  {%trans%}Keep the kilobytes to a minimum.{%endtrans%}
+                </span>
+                <br />
+                {{ wtform.header_image(class_="form-control",
+                                style="height: auto",
+                                multiple="false",
+                                data_parsley_filemimetypes="image/png, image/jpeg"
+                            )
+                }}
+                {% for error in wtform.header_image.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                {{ wtform.footer_text.label }}
+                {{ wtform.footer_text(
+                                class_="form-control",
+                                placeholder=_("Ethical form software"))
+                }}
+                {% for error in wtform.footer_text.errors %}
+                    <span class="formError">{{ error }}</span><br />
+                {% endfor %}
+            </div>
+
+            <div class="form-actions">
+              <input class="btn btn-success"
+                     type="submit"
+                     value="{%trans%}Submit{%endtrans%}"
+              />
+              <a class="btn btn-primary"
+                 role="button"
+                 href="/site/reset-email-header">
+                 {%trans%}Use default image{%endtrans%}
+              </a>
+              <a class="btn btn-primary"
+                 role="button"
+                 href="/admin">
+                 {%trans%}Cancel{%endtrans%}
+              </a>
+            </div>
+        </form>
+
+    </div>
+</div>
+</div>
+
+<script>
+var frame = document.getElementById("email_preview");
+frame.onload = function()
+{
+  frame.style.height =
+  frame.contentWindow.document.body.scrollHeight + 'px';
+  frame.style.width  =
+  frame.contentWindow.document.body.scrollWidth+'px';
+}
+
+$(function () {
+  $('#upload_form').parsley().on('field:validated', function() {
+    var ok = $('.parsley-error').length === 0;
+    $('.bs-callout-info').toggleClass('hidden', !ok);
+    $('.bs-callout-warning').toggleClass('hidden', ok);
+  })
+});
+window.Parsley.addValidator('filemimetypes', {
+  validateString: function(_value, requirement, parsleyInstance) {
+    console.log(requirement)
+    if (!window.FormData) {
+      return true;
+    }
+    var file = parsleyInstance.$element[0].files;
+    if (file.length == 0) {
+      return true;
+    }
+    var allowedMimeTypes = requirement.replace(/\s/g, "").split(',');
+    return allowedMimeTypes.indexOf(file[0].type) !== -1;
+  },
+  requirementType: 'string',
+  messages: {
+    en: 'Please use a PNG or JPG file',
+    es: 'Please use a PNG or JPG file',
+    eu: 'Please use a PNG or JPG file',
+    ca: 'Please use a PNG or JPG file',
+  }
+});
+</script>
+
+{% endblock %}
