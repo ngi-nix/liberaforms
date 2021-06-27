@@ -31,6 +31,20 @@ def HTML_email(template_file, **kwargs):
     result = mjml_to_html(mjml_template)
     return result.html
 
+def branding_body_preview():
+    body="Lorem ipsum dolor sit amet, consectetur \
+          adipisci elit, sed eiusmod tempor \
+          incidunt ut labore et dolore magna aliqua."
+    link=g.site.host_url
+    html_body = HTML_email('with_button.j2',
+                            header_image_url=g.site.get_email_header_url(),
+                            primary_color=g.site.primary_color,
+                            footer=g.site.get_email_footer(),
+                            body=body,
+                            link=link,
+                            button_text=_("A button"))
+    return {'html': html_body, 'text': f"{body}\n\n{link}"}
+
 class Dispatcher(EmailServer):
     def __init__(self):
         self.site = Site.find()
@@ -178,7 +192,14 @@ class Dispatcher(EmailServer):
             )
             thr.start()
 
-
+    def send_branding_preview(self, email):
+        body = branding_body_preview()
+        message = self.create_multipart_message(body['text'], body['html'])
+        header = Header(_("LiberaForms. Email brand preview"))
+        message['Subject'] = header.encode()
+        message['To'] = email
+        status = self.send_mail(message)
+        return status
 
     """
     def send_password_success(recipient_email):
