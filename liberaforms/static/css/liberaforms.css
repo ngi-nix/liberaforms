@@ -217,6 +217,15 @@ input[type="date"], input[type="number"], input[type="time"] {
 }
 
 
+#html_email_preview {
+  background: #ccc;
+  box-shadow: 4px 3px 8px 1px #969696;
+  -webkit-box-shadow: 4px 3px 8px 1px #969696;
+  margin-top:1em;
+  width: 100%;
+  border: 0;
+}
+
 /* ######### WTForms ######### */
 .formError {
     color: #d9534f;

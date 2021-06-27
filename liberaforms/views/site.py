@@ -278,9 +278,8 @@ def email_branding():
         if request.files['header_image']:
             g.site.change_email_header(request.files['header_image'])
         footer_text = wtform.footer_text.data
-        print("wtform.footer_text.data: ",wtform.footer_text.data)
         g.site.email_footer = footer_text if footer_text else None
-        flash(_("Updated email branding OK. Refresh with  &lt;F5&gt;"), 'success')
+        flash(_("Updated OK. Refresh with &lt;F5&gt;"), 'success')
         g.site.save()
     if request.method == 'GET' and g.site.email_footer:
         wtform.footer_text.data=g.site.get_email_footer()
@@ -291,22 +290,32 @@ def email_branding():
 @admin_required
 def reset_email_header():
     if g.site.reset_email_header():
-        flash(_("Reset image OK"), 'success')
+        flash(_("Reset image OK. Refresh with &lt;F5&gt;"), 'success')
     return redirect(make_url_for('site_bp.email_branding'))
+
 
 @site_bp.route('/site/example-email-preview', methods=['GET'])
 @admin_required
 def email_preview():
-    from liberaforms.utils.email.dispatcher import HTML_email
-    email_html = HTML_email('with_button.j2',
-                            header_image_url=g.site.get_email_header_url(),
-                            primary_color=g.site.primary_color,
-                            footer=g.site.get_email_footer(),
-                            body="Lorem ipsum dolor sit amet, consectetur \
-                                  adipisci elit, sed eiusmod tempor \
-                                  incidunt ut labore et dolore magna aliqua.",
-                            button_text=_("A button"))
-    return email_html
+    from liberaforms.utils.email import dispatcher
+    return dispatcher.branding_body_preview()['html']
+
+
+@site_bp.route('/site/send-email-preview', methods=['POST'])
+@admin_required
+def send_branding_preview():
+    if 'email' in request.form:
+        email = request.form['email']
+        if validators.is_valid_email(email):
+            status = Dispatcher().send_branding_preview(email)
+            if status['email_sent'] == True:
+                flash(_("Sent email OK"), 'success')
+            else:
+                flash(status['msg'], 'warning')
+            return redirect(make_url_for('site_bp.email_branding'))
+    flash(_("Email address is not valid"), 'warning')
+    return redirect(make_url_for('site_bp.email_branding'))
+
 
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required

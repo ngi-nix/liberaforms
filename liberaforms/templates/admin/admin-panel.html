@@ -215,16 +215,14 @@
     </div>
 
     <table class="table table-sm">
-    {% if g.current_user.is_root_user() %}
-    <tr>
-      <td>{%trans%}Created{%endtrans%}</td>
-      <td>{{site.created}}</td>
-    </tr>
-    {% endif %}
-    <tr>
-      <td>{%trans%}Version{%endtrans%}</td>
-      <td>{{g.app_version}}</td>
-    </tr>
+      <tr>
+        <td>{%trans%}Created{%endtrans%}</td>
+        <td>{{site.created}}</td>
+      </tr>
+      <tr>
+        <td>{%trans%}Version{%endtrans%}</td>
+        <td>{{g.app_version}}</td>
+      </tr>
     </table>
 
   </div>
