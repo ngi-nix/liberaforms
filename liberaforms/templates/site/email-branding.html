@@ -117,7 +117,9 @@
     frame.contentWindow.document.body.scrollWidth+'px';
   }
 
+
   $(function () {
+    $('#html_email_preview').attr('src', $('html_email_preview').attr('src'));
     $('#brand_form').parsley().on('field:validated', function() {
       var ok = $('.parsley-error').length === 0;
       $('.bs-callout-info').toggleClass('hidden', !ok);
