@@ -281,6 +281,7 @@ def email_branding():
         g.site.email_footer = footer_text if footer_text else None
         flash(_("Updated OK. Refresh with &lt;F5&gt;"), 'success')
         g.site.save()
+        return redirect(make_url_for('site_bp.email_branding'))
     if request.method == 'GET' and g.site.email_footer:
         wtform.footer_text.data=g.site.get_email_footer()
     return render_template('email-branding.html', wtform=wtform)
