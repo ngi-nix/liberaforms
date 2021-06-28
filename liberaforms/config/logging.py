@@ -29,8 +29,7 @@ if "FQDN" in os.environ:
 log_type = os.environ["LOG_TYPE"]
 logging_level = os.environ["LOG_LEVEL"]
 log_directory = os.environ["LOG_DIR"]
-if not os.path.isdir(log_directory):
-    os.makedirs(log_directory)
+os.makedirs(log_directory, exist_ok=True)
 
 if log_type != "stream":
     app_log_file_name = "app.log"
