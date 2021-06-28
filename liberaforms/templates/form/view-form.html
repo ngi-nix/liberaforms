@@ -16,86 +16,86 @@
 {% set can_attach_files = form.has_file_field() %}
 
 <div class="container">
-<div class="row">
-  <div class="col-md-3"></div>
-  <div class="col-md-6">
-    <div id="liberaform"
-         class="liberaform"
-         style="display:none">
-      <div class="formIntroduction marked-up" >
-        {{ form.introductionText['html'] | safe }}
-      </div>
-
-      <div id='required_message' class='required' style="display:none">
-        ● {%trans%}Required fields{%endtrans%}
-      </div>
-
-      {% if can_attach_files %}
-      <form id="form" method="POST" enctype="multipart/form-data">
-      {% else %}
-      <form id="form" method="POST">
-      {% endif %}
-        {% if not g.embedded %}
-        <input type="hidden"
-               name="csrf_token"
-               value="{{ csrf_token() }}" />
-        {% endif %}
-        <div id="fb-render">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <div id="liberaform"
+           class="liberaform"
+           style="display:none">
+        <div class="formIntroduction marked-up" >
+          {{ form.introductionText['html'] | safe }}
         </div>
-        {% if form.might_send_confirmation_email() %}
-        <div class="form-group
-                    form-check">
-          <input id="confirmation_checkbox"
-                 class="form-check-input send-confirmation"
-                 type="checkbox"
-                 name="send-confirmation"
-                 value="ok"
-                 disabled
-          />
-          <label for="confirmation_checkbox"
-                 class="form-check-label
-                        send-confirmation">
-            {%trans%}Send me confirmation by mail{%endtrans%}
-            <span id='confirmation_email'></span>
-          </label>
+
+        <div id='required_message' class='required' style="display:none">
+          ● {%trans%}Required fields{%endtrans%}
         </div>
+
+        {% if can_attach_files %}
+        <form id="form" method="POST" enctype="multipart/form-data">
+        {% else %}
+        <form id="form" method="POST">
         {% endif %}
-        {% if dataConsent['enabled'] %}
-        <div class="consentText
-                    form-group">
-          <div id="dataConsentText" >
-            {{ dataConsent['html'] | safe }}
+          {% if not g.embedded %}
+          <input type="hidden"
+                 name="csrf_token"
+                 value="{{ csrf_token() }}" />
+          {% endif %}
+          <div id="fb-render">
           </div>
-          <div class="form-check">
-            <input id="I_agree"
+          {% if form.might_send_confirmation_email() %}
+          <div class="form-group
+                      form-check">
+            <input id="confirmation_checkbox"
+                   class="form-check-input send-confirmation"
                    type="checkbox"
-                   class="form-check-input consent"
-                   name="DPL"
+                   name="send-confirmation"
                    value="ok"
-                   required />
-            <label for="I_agree"
+                   disabled
+            />
+            <label for="confirmation_checkbox"
                    class="form-check-label
-                          consent required">
-            {{ dataConsent['label'] }}
-            <span class="required-dot">●</span>
+                          send-confirmation">
+              {%trans%}Send me confirmation by mail{%endtrans%}
+              <span id='confirmation_email'></span>
             </label>
           </div>
-        </div>
-        {% endif %}
-        <button class="btn
-                      btn-lg
-                      btn-success"
-                type="submit">
-          {%trans%}Send{%endtrans%}
-          <i id="upload_spinner"
-             style="display:none"
-             class="fa fa-circle-o-notch fa-spin">
-          </i>
-        </button>
-      </form>
+          {% endif %}
+          {% if dataConsent['enabled'] %}
+          <div class="consentText
+                      form-group">
+            <div id="dataConsentText" >
+              {{ dataConsent['html'] | safe }}
+            </div>
+            <div class="form-check">
+              <input id="I_agree"
+                     type="checkbox"
+                     class="form-check-input consent"
+                     name="DPL"
+                     value="ok"
+                     required />
+              <label for="I_agree"
+                     class="form-check-label
+                            consent required">
+              {{ dataConsent['label'] }}
+              <span class="required-dot">●</span>
+              </label>
+            </div>
+          </div>
+          {% endif %}
+          <button class="btn
+                        btn-lg
+                        btn-success"
+                  type="submit">
+            {%trans%}Send{%endtrans%}
+            <i id="upload_spinner"
+               style="display:none"
+               class="fa fa-circle-o-notch fa-spin">
+            </i>
+          </button>
+        </form>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <script>
@@ -128,7 +128,6 @@ jQuery(function($) {
                               "{{ ', '.join(g.site.mimetypes['mimetypes']) }}"
                   );
                 });
-                $('#form').parsley();
                 $('#liberaform').show();
                 return;
             }
@@ -144,7 +143,18 @@ jQuery(function($) {
 var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
 
 $(function () {
-  $('#form').parsley().on('field:validated', function() {
+  var parsley_options = {
+    // append the error message to the input group
+    errorsContainer: function (field) {
+        var input = field.element;
+        var type = $(input).prop('type');
+        var form_group = $(input).closest(".form-group");
+        if (form_group.length != 0 && (type == "radio" || type == "checkbox")) {
+          return $(input).closest(".form-group")
+        }
+      }
+  }
+  $('#form').parsley(parsley_options).on('field:validated', function() {
     var ok = $('.parsley-error').length === 0;
     $('.bs-callout-info').toggleClass('hidden', !ok);
     $('.bs-callout-warning').toggleClass('hidden', ok);
@@ -166,7 +176,8 @@ $(function () {
     requirementType: 'integer',
     messages: {
       en: 'This file should not be larger than {{max_attachment_size_for_humans}}',
-      ca: 'El fitxer no ha de ser més gran que {{max_attachment_size_for_humans}}',
+      es: 'El fichero no debe ser mas grande de {{max_attachment_size_for_humans}}',
+      ca: 'El fitxer no ha de ser més gran de {{max_attachment_size_for_humans}}',
       fr: 'Ce fichier est plus grand que {{max_attachment_size_for_humans}}'
     }
   })
@@ -186,10 +197,9 @@ $(function () {
     requirementType: 'string',
     messages: {
       en: 'Valid file types: '+allowed_extensions,
-      es: 'Valid file types: '+allowed_extensions,
+      es: 'Tipos de fichero válidos: '+allowed_extensions,
       eu: 'Valid file types: '+allowed_extensions,
       ca: 'Valid file types: '+allowed_extensions,
-
     }
   });
   {% endif %}
