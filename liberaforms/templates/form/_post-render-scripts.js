@@ -1,6 +1,7 @@
 function postFormRender(){
-    if ($('#liberaform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
-        $("#required_message").show()
+    if ($('#liberaform').find("span.formbuilder-required").length ||
+        $('#liberaform').find("input[name=DPL]").filter(":visible").length ) {
+      $("#required_message").show()
     }
     $("#liberaform").find(":checkbox").css("box-shadow", "none")
     $(".marked-up").find("a").prop("target", "_blank")
