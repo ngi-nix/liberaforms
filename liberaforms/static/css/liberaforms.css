@@ -319,7 +319,7 @@ div.required {
     color: #c10000;
     padding: 0 0 1em 0;
 }
-div.consentText {
+div.consentText > #dataConsentText {
   font-size: 0.85rem;
   color: #666;
 }

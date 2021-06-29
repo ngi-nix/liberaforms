@@ -148,7 +148,7 @@ $(function () {
         var type = $(input).prop('type');
         var form_group = $(input).closest(".form-group");
         if (form_group.length != 0 && (type == "radio" || type == "checkbox")) {
-          return $(input).closest(".form-group")
+          return form_group;
         }
       }
   }
