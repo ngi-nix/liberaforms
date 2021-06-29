@@ -289,7 +289,7 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   display: none;
 }
 
-.liberaform input[type=submit] {
+.liberaform button[type=submit] {
   margin-top: 1em;
 }
 
@@ -325,16 +325,23 @@ div.consentText {
 }
 label.consent {
   font-size: 1rem;
-  margin-left: 0.5em;
+  color: #333333 !important;
   cursor: pointer;
+  margin-left: 6px;
+  display: block;
+}
+input.consent {
+  margin-top: .4rem;
+}
+div.confirmation-group {
+  margin-bottom: 2em;
 }
 label.send-confirmation {
-  font-size: 1.2rem;
-  margin-left: 0.5em;
+  font-size: 1em;
+  margin-left: 6px;
+  display: block;
+  margin-top: -1px;
   cursor: pointer;
-}
-label.consent {
-  color: #333;
 }
 label.required {
   margin-top: -0.1em;

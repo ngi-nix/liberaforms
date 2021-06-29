@@ -43,8 +43,7 @@
           <div id="fb-render">
           </div>
           {% if form.might_send_confirmation_email() %}
-          <div class="form-group
-                      form-check">
+          <div class="form-group form-check confirmation-group">
             <input id="confirmation_checkbox"
                    class="form-check-input send-confirmation"
                    type="checkbox"
@@ -74,10 +73,9 @@
                      value="ok"
                      required />
               <label for="I_agree"
-                     class="form-check-label
-                            consent required">
-              {{ dataConsent['label'] }}
-              <span class="required-dot">●</span>
+                     class="form-check-label consent required">
+                {{ dataConsent['label'] }}
+                <span class="required-dot">●</span>
               </label>
             </div>
           </div>
@@ -119,7 +117,6 @@ jQuery(function($) {
         },
         notify: {
             success: function(message) {
-                postFormRender();
                 $('input[type=file]').each(function() {
                   $(this).attr('data-parsley-max-file-size',
                                {{ config['MAX_ATTACHMENT_SIZE']/1024 }}
@@ -129,6 +126,7 @@ jQuery(function($) {
                   );
                 });
                 $('#liberaform').show();
+                postFormRender();
                 return;
             }
         }
