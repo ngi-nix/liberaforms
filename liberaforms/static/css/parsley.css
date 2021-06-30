@@ -18,7 +18,7 @@ textarea.parsley-error {
 
 .parsley-errors-list {
   margin: 2px 0 3px;
-  padding: 4px 0 0 0;
+  padding: 0;
   list-style-type: none;
   font-size: 0.9em;
   line-height: 1.1em;

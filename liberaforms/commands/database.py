@@ -77,9 +77,6 @@ def update(container_name=None):
         flask_cmd = f"docker exec {container_name} flask db".split()
     else:
         flask_cmd = "flask db".split()
-    cmdline = flask_cmd + ['migrate']
-    click.echo(" ".join(cmdline))
-    run_subprocess(cmdline)
     cmdline = flask_cmd + ['upgrade']
     click.echo(" ".join(cmdline))
     run_subprocess(cmdline)

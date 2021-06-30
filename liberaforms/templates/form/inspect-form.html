@@ -524,7 +524,7 @@
             <div id="fb-render"></div>
             {% if form.has_email_field() %}
             <div id="sendConfirmation"
-                 class="form-group form-check"
+                 class="form-group form-check confirmation-group"
                  {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
               <input id="confirmation_checkbox"
                      class="form-check-input send-confirmation"
@@ -547,6 +547,7 @@
               <div class="form-check">
                 <input id="dummy-consent-checkbox"
                        type="checkbox"
+                       name="DPL"
                        class="form-check-input consent"
                        required />
                 <label id="DPL-label"
@@ -557,10 +558,12 @@
                 </label>
               </div>
             </div>
-            <input class="btn btn-lg btn-success"
+            <button class="btn btn-lg btn-success"
                    type="submit"
-                   value="{%trans%}Send{%endtrans%}"
-                   disabled />
+                   value=""
+                   disabled >
+                {%trans%}Send{%endtrans%}
+            </button>
         </div>
     </div>
 </div>
