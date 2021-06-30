@@ -9,13 +9,13 @@
   <div class="col-md-6">
 
     <div class="title_1 delimited">
-      {# i18n: Main title displayed on instance configuration page (/admin) #}
-      {%trans%}Instance configuration{%endtrans%}
+      {# i18n: Main title displayed on site configuration page (/admin) #}
+      {%trans%}Site configuration{%endtrans%}
     </div>
 
     <div id="site_settings" class="title_2">
       {# i18n: Subtitle displayed on instance configuration page (/admin) #}
-      {%trans%}Site settings{%endtrans%}
+      {%trans%}Site styling{%endtrans%}
     </div>
 
     <table class="table table-sm">
@@ -76,7 +76,7 @@
       <tr>
         {# i18n: Define the 'look' of emails #}
         <td colspan="2">
-          {%trans%}Email branding{%endtrans%}
+          {%trans%}Email styling{%endtrans%}
         </td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
@@ -117,10 +117,11 @@
       <tr>
         {# i18n: Noun, meaning agreement with terms/conditions of use #}
         <td>{%trans%}Consent{%endtrans%}</td>
-        {# i18n: 'etc' here stands for "and so on" at the end of a list #}
         <td>
           {%trans%}Terms and conditions{%endtrans%},
-          {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
+          {%trans%}DPL{%endtrans%},
+          {# i18n: 'etc' here stands for "and so on" at the end of a list #}
+          {%trans%}etc{%endtrans%}
         </td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
@@ -134,7 +135,8 @@
       {% if config['ENABLE_UPLOADS'] %}
       <tr>
         <td>
-          {%trans%}Form attachments{%endtrans%}
+          {# i18n: Which type of attachments are allowed #}
+          {%trans%}Attachment types{%endtrans%}
         </td>
         <td>
           {{ ', '.join(g.site.mimetypes.extensions) }}
@@ -163,6 +165,7 @@
         <td>{%trans%}Email server{%endtrans%}</td>
         <td>{{g.site.smtpConfig["host"]}}</td>
         <td class="text-right">
+          {# i18n: Button to configure some option #}
           <input class="btn-primary btn btn-xs"
                   type="button" value="{%trans%}Configure{%endtrans%}"
                   onClick="location.href='/site/email/config'" />
@@ -172,6 +175,7 @@
 
     <p>&nbsp;</p>
     <div id="site_settings" class="title_2">
+      {# i18n: Title in Admin panel refering to configurations concerning new users #}
       {%trans%}New user{%endtrans%}
     </div>
     <table class="table table-sm">
@@ -189,6 +193,7 @@
       </tr>
       {% if config['ENABLE_UPLOADS'] %}
       <tr>
+        {# i18n: Whether to enable new users attaching documents into forms #}
         <td>{%trans%}Enable form attachments{%endtrans%}</td>
         <td></td>
         <td class="text-right">
@@ -211,6 +216,7 @@
 
     <p>&nbsp;</p>
     <div class="title_2">
+      {# i18n: Title in Admin panel displaying info about installation #}
       {%trans%}Installation{%endtrans%}
     </div>
 

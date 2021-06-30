@@ -8,10 +8,12 @@
     <div class="col-md-3"></div>
 
     <div class="col-md-5">
+        {# i18n: Title and button to delete user #}
         <div class="title_1 delimited">{%trans%}Delete user{%endtrans%}</div>
         <p>
         {%trans%}You are going to delete a user{%endtrans%}
         {% if form_count %}
+        {# i18n: consecution of the sentence "You are going to delete a user", if that user has any form #}
             {%trans%}and their forms{%endtrans%}
         {% endif %}
         </p>
@@ -21,8 +23,10 @@
             <table class="table table-striped table-sm">
                 <thead>
                     <tr>
+                        {# i18n: Table column title, indicating name of a user or a form #}
                         <th>{%trans%}Name{%endtrans%}</th>
                         <th>{%trans%}Editors{%endtrans%}</th>
+                        {# i18n: Table column title, indicating answers recived for a form #}
                         <th>{%trans%}Answers{%endtrans%}</th>
                     </tr>
                 </thead>

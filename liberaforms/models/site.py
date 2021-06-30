@@ -342,11 +342,11 @@ class Site(db.Model, CRUD):
                         "created": _("Created"),
                         # i18n: Used as column title
                         "enabled": _("Enabled"),
-                        # i18n: Email direction, used as column title
+                        # i18n: Email address, used as column title
                         "email": _("Email"),
                         # i18n: Used as column title
                         "forms": _("Forms"),
-                        # i18n: Whether user is admin, used as column title
+                        # i18n: Whether user is admin
                         "admin": _("Admin")
                         }
         csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
