@@ -16,6 +16,7 @@ from flask_babel import lazy_gettext as _
 
 from liberaforms.models.user import User
 from liberaforms.utils.sanitizers import sanitize_username
+from liberaforms.utils.utils import human_readable_bytes
 from liberaforms.utils import validators
 from liberaforms.utils import utils
 
@@ -125,7 +126,7 @@ class NewInvite(FlaskForm):
             raise ValidationError(_("Please use a different email address"))
 
 
-class ChangeMenuColor(FlaskForm):
+class ChangePrimaryColor(FlaskForm):
     hex_color = StringField(_("HTML color code"), validators=[DataRequired()])
     def validate_hex_color(self, hex_color):
         if not validators.is_hex_color(hex_color.data):
@@ -155,8 +156,25 @@ class UploadMedia(FlaskForm):
         field.data.seek(0, 0)
         max_size = current_app.config['MAX_MEDIA_SIZE']
         if file_size > max_size:
+            max_size = human_readable_bytes(max_size)
             err_msg = "File too big. Maximum size is %s" % max_size
             raise ValidationError(err_msg)
     def validate_alt_text(form, field):
         if not field.data.strip():
             raise ValidationError("A descriptive text is required")
+
+class EmailBranding(FlaskForm):
+    footer_text = StringField(_("Footer text"))
+    header_image = FileField(_("Header image"))
+    def validate_header_image(form, field):
+        if field.data:
+            if not "image/" in field.data.content_type:
+                raise ValidationError("Not a vaild image file")
+            field.data.seek(0, os.SEEK_END)
+            file_size = field.data.tell()
+            field.data.seek(0, 0)
+            max_size = 102400 # 100 Kb
+            if file_size > max_size:
+                max_size = human_readable_bytes(max_size)
+                err_msg = "File too big. Maximum size is %s" % max_size
+                raise ValidationError(err_msg)

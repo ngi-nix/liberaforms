@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging, datetime, re
+import os, datetime, re
 import shutil
 import unicodecsv as csv
 
@@ -483,10 +483,10 @@ class Form(db.Model, CRUD):
                                       str(self.id))
         attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
                                       attachment_dir)
-        if os.path.exists(attachment_dir):
+        if os.path.isdir(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
         else:
-            logging.warning(f"Local attachment dir not found: {attachment_dir}")
+            current_app.logger.debug(f"Local attachment dir not found: {attachment_dir}")
         if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
             RemoteStorage().remove_directory(f"attachments/{self.id}")
 

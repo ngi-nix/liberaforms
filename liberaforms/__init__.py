@@ -15,33 +15,50 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
-from liberaforms.config import config
-from liberaforms.utils.logging import LogSetup
+from liberaforms.utils import setup
+from liberaforms.config.config import config
 
 db = SQLAlchemy()
 babel = Babel()
 session = Session()
 csrf = CSRFProtect()
-logs = LogSetup()
 
 #sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
 def create_app():
+    from liberaforms.config.logging import dictConfig
+
     app = Flask(__name__.split(".")[0])
     config_name = os.getenv('FLASK_CONFIG') or 'default'
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
-    logs.init_app(app)
+    #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
+    #print("LOG TYPE: ", app.config['LOG_TYPE'])
+
     db.init_app(app)
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
+    setup.ensure_uploads_dir_tree(app)
 
     from liberaforms.commands import register_commands
     register_commands(app)
     register_blueprints(app)
     app.jinja_env.add_extension('jinja2.ext.loopcontrols')
+
+    app.logger.info("Created app")
+    app.logger.debug("LOG LEVEL: %s", os.environ['LOG_LEVEL'])
+    app.logger.debug("LOG TYPE: %s", os.environ['LOG_TYPE'])
+
+
+    from liberaforms.utils.utils import populate_flask_g
+    @app.before_request
+    def before_request():
+        if request.path[0:8] == '/static/':
+            app.logger.warning('Serving a static file. Check Nginx config.')
+        else:
+            populate_flask_g()
 
     @app.after_request
     def after_request(response):

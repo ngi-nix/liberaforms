@@ -70,6 +70,8 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * invite new user. functional[✔]
     * delete invite. functional[✔]
     * with admin permission. functional[✔]
+  * upload media
+  * delete media
 
 ## Forms
   * create a form. functional[✔]
@@ -92,16 +94,21 @@ You can skip sending mails by setting `SKIP_EMAILS` to `True` in `test.ini`
   * test embedded form. functional[✔]
   * change author. functional[✔]
   * delete form and answers. functional[✔]
+    * with attachments (local and remote). functional[✔]
 
 ## Answers
   * make an answer. functional[✔]
   * delete an answer. functional[✔]
-  * undo delete
+  * delete an answer. functional[✔]
+    * with attachment (local and remote). functional[✔]
   * edit a answer
   * delete all answers. functional[✔]
+  * delete all answers (local and remote attachments included). functional[✔]
+    * local and remote attachments included. functional[✔]
   * export CSV. functional[✔]
   * export CSV with deleted columns
   * test shared answers links. functional[✔]
+
 
 # Backups
 Drop database and restore copy

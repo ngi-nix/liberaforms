@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os
-import json, logging
+import json
 from flask import g, request, render_template, redirect
 from flask import Blueprint, current_app
 from flask import flash
@@ -44,6 +44,16 @@ def save_media():
 @media_bp.route('/user/<string:username>/media', methods=['GET'])
 @enabled_user_required
 def list_media(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for(
+                                'media_bp.list_media',
+                                 username=g.current_user.username)
+                        )
+    if not g.current_user.get_uploads_enabled():
+        return redirect(make_url_for(
+                                'user_bp.user_settings',
+                                 username=g.current_user.username)
+                        )
     max_media_size=human_readable_bytes(current_app.config['MAX_MEDIA_SIZE'])
     return render_template('list-media.html',
                             max_media_size_for_humans=max_media_size,

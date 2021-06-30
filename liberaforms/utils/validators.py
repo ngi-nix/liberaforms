@@ -5,11 +5,12 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging
+import os
 import re, datetime, time, uuid
 from email_validator import validate_email, EmailNotValidError
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
+from flask import current_app
 
 
 def is_valid_email(email):
@@ -17,7 +18,7 @@ def is_valid_email(email):
         validate_email(email)
         return True
     except EmailNotValidError as e:
-        logging.warning(e)
+        current_app.logger.warning(e)
         return False
 
 

@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging, shutil
+import os, shutil
 from io import BytesIO
 from flask import current_app
 from liberaforms.utils.storage.remote import RemoteStorage
@@ -40,7 +40,7 @@ class Storage:
             shutil.move(tmp_file_path, dest_file_path)
             return True
         except Exception as error:
-            logging.error(f"Failed to save file to local filesystem: {error}")
+            current_app.logger.error(f"Failed to save file to local filesystem: {error}")
             self.delete_from_disk(tmp_file_path)
             return False
 
@@ -48,8 +48,10 @@ class Storage:
     def delete_from_disk(file_path):
         if os.path.exists(file_path):
             os.remove(file_path)
+            return True
         else:
-            logging.error(f"Failed to delete file. Does not exist: {file_path}")
+            current_app.logger.error(f"Failed to delete file. Does not exist: {file_path}")
+            return False
 
     def save_file(self, file, storage_name, sub_dir):
         tmp_dir = current_app.config['TMP_DIR']
@@ -58,7 +60,7 @@ class Storage:
             try:
                 file.save(tmp_file_path)
             except Exception as error:
-                logging.error(f"Cannot save to tmp_file. : {error}")
+                current_app.logger.error(f"Cannot save to tmp_file. : {error}")
                 return False
         file_size = os.path.getsize(tmp_file_path)
         self.file_size = utils.human_readable_bytes(file_size)
@@ -70,7 +72,7 @@ class Storage:
                 self.delete_from_disk(tmp_file_path)
                 tmp_file_path = enc_file_path
             else:
-                logging.info(f"Failed to encrypt attachment: {sub_dir}")
+                current_app.logger.info(f"Failed to encrypt attachment: {sub_dir}")
         if current_app.config['ENABLE_REMOTE_STORAGE']:
             saved = RemoteStorage().add_object(
                                     tmp_file_path,
@@ -82,13 +84,13 @@ class Storage:
                 self.delete_from_disk(tmp_file_path)
                 return True
             else:
-                logging.error(f"Failed to save remote object. Saving to local filesystem.")
+                current_app.logger.warning(f"Failed to save remote object. Saving to local filesystem.")
                 saved = self.save_to_disk(tmp_file_path, sub_dir, storage_name)
                 if saved == True:
                     return True
                 else:
                     file_path = f"{sub_dir}/{storage_name}"
-                    logging.error(f"Did not save file: {file_path}")
+                    current_app.logger.error(f"Did not save file: {file_path}")
                     return False
         else:
             saved = self.save_to_disk(tmp_file_path, sub_dir, storage_name)
@@ -96,7 +98,7 @@ class Storage:
                 return True
             else:
                 file_path = f"{sub_dir}/{storage_name}"
-                logging.error(f"Upload failed. Did not save file: {file_path}")
+                current_app.logger.error(f"Upload failed. Did not save file: {file_path}")
                 return False
         return False
 
@@ -109,7 +111,7 @@ class Storage:
                 with open(file_path, 'rb') as file:
                     file_content = file.read()
             except:
-                logging.error(f"Failed to retrieve file from local filesystem: {file_path}")
+                current_app.logger.error(f"Failed to retrieve file from local filesystem: {file_path}")
                 return None
         else:
             try:
@@ -123,16 +125,26 @@ class Storage:
                 self.delete_from_disk(tmp_file_path)
             except:
                 file_path = f"{sub_dir}/{storage_name}"
-                logging.error(f"Failed to retrieve remote object: {file_path}")
+                current_app.logger.error(f"Failed to retrieve remote object: {file_path}")
                 return None
         if not file_content:
             return None
-        if sub_dir.startswith('attachment'):
-            """ attachments get decrypted """
-            decrypted_file_content = decrypt_file_content(file_content)
-            return BytesIO(decrypted_file_content)
+        if self.encrypted:
+            file_content = decrypt_file_content(file_content)
+        return BytesIO(file_content)
+
+    def does_file_exist(self, sub_dir, storage_name):
+        if self.local_filesystem:
+            local_storage_dir = self.get_local_storage_directory(sub_dir)
+            file_path = os.path.join(local_storage_dir, storage_name)
+            return os.path.exists(file_path)
         else:
-            return BytesIO(file_content)
+            remote_dir = self.get_remote_storage_path(sub_dir)
+            directory_content = RemoteStorage().list_directory(remote_dir)
+            for object in directory_content:
+                if storage_name in object.object_name:
+                    return True
+            return False
 
     def delete_file(self, storage_name, sub_dir):
         if self.local_filesystem:
@@ -146,8 +158,8 @@ class Storage:
                                             storage_name)
                 if not removed:
                     file_path = f"{sub_dir}/{storage_name}"
-                    logging.error(f"Failed to remove remote object: {file_path}")
+                    current_app.logger.error(f"Failed to remove remote object: {file_path}")
                 return removed
             except Exception as error:
-                logging.error(error)
+                current_app.logger.error(error)
                 return False

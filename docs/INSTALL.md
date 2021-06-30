@@ -110,11 +110,19 @@ ctrl-c
 
 Gunicorn serves LiberaForms.
 
-This command will suggest a configuration file path and it's content. It will also output a command to test the configuration.
+This command will suggest a configuration file path and it's content.
+
 ```
 flask config hint gunicorn
 ```
-Copy the content. Create the `gunicorn.py` file and paste.
+
+Copy the content. Create the file `./gunicorn.py` and paste.
+
+You can test gunicorn like this
+
+```
+gunicorn -c gunicorn.py wsgi:app
+```
 
 ## Install Supervisor
 

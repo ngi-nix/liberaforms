@@ -1,18 +1,22 @@
-FROM python:3.8-alpine
+FROM python:3.8-buster
 
 #ENV PYTHONUNBUFFERED 1
 #ENV PYTHONDONTWRITEBYTECODE 1
+
+RUN apt-get update
+
+ENV VIRTUAL_ENV=/opt/venv
+RUN python3 -m venv $VIRTUAL_ENV
+ENV PATH="$PATH:$VIRTUAL_ENV/bin"
+
+RUN apt-get install libmemcached-dev -y
 
 RUN mkdir /app
 WORKDIR /app
 ADD ./requirements.txt requirements.txt
 
-RUN \
- apk add --no-cache postgresql-libs libmemcached && \
- apk add --no-cache --virtual .build-deps g++ musl-dev postgresql-dev libmemcached-dev zlib-dev && \
- python3 -m pip install -r requirements.txt --no-cache-dir && \
- python3 -m pip install pylibmc --no-cache-dir && \
- apk --purge del .build-deps
+RUN pip install -r requirements.txt --no-cache-dir
+RUN pip install pylibmc --no-cache-dir
 
 COPY . /app
 EXPOSE 5000

@@ -6,7 +6,6 @@ This file is part of LiberaForms.
 """
 
 import os, json, datetime
-import logging
 from threading import Thread
 from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
@@ -646,10 +645,10 @@ def view_form(slug):
                             link = f'<a href="{url}">{file.filename}</a>'
                             answer.update_field(file_field_name, link)
                     except Exception as error:
-                        logging.error(error)
+                        current_app.logger.error(error)
                         err = "Failed to save attachment: form:{}, answer:{}" \
                               .format(queriedForm.slug, answer.id)
-                        logging.error(err)
+                        current_app.logger.error(err)
 
         if not queriedForm.expired and queriedForm.has_expired():
             queriedForm.expired=True

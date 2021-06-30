@@ -5,9 +5,9 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, json, logging
+import os, json
 from flask import g, request, render_template, redirect
-from flask import session, flash
+from flask import current_app, session, flash
 from flask import Blueprint, send_file, send_from_directory, after_this_request
 from flask_babel import gettext as _
 
@@ -165,7 +165,7 @@ def download_attachment(form_id, key):
                          attachment_filename=file_name,
                          as_attachment=True)
     except:
-        logging.error(f"Missing attachment. Answer id: {attachment.answer_id}")
+        current_app.logger.warning(f"Missing attachment. Answer id: {attachment.answer_id}")
         return render_template('page-not-found.html'), 404
 
 @answers_bp.route('/<string:slug>/results/<string:key>', methods=['GET'])

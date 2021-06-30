@@ -63,12 +63,24 @@
         </td>
       </tr>
       <tr>
-        {# i18n: Color for topbar menu on website #}
-        <td>{%trans%}Menu color{%endtrans%}</td>
-        <td>{{g.site.menuColor}}</td>
+        {# i18n: Website's primary colour #}
+        <td>{%trans%}Primary colour{%endtrans%}</td>
+        <td>{{g.site.primary_color}}</td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
-             role="button" href="/site/change-menu-color">
+             role="button" href="/site/primary-colour">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Define the 'look' of emails #}
+        <td colspan="2">
+          {%trans%}Email branding{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button" href="/site/email-branding">
               {%trans%}Change{%endtrans%}
           </a>
         </td>
@@ -204,25 +216,19 @@
 
     <p>&nbsp;</p>
     <div class="title_2">
-      {# i18n: Title in Admin panel displaying versions of the software used #}
-      {%trans%}Versions{%endtrans%}
+      {# i18n: Title in Admin panel displaying info about installation #}
+      {%trans%}Installation{%endtrans%}
     </div>
 
     <table class="table table-sm">
-    {% if g.current_user.is_root_user() %}
-    <tr>
-      <td>{%trans%}Created{%endtrans%}</td>
-      <td>{{site.created}}</td>
-    </tr>
-    {% endif %}
-    <tr>
-      <td>LiberaForms version</td>
-      <td>{{config['APP_VERSION']}}</td>
-    </tr>
-    <tr>
-      <td>Database schema version</td>
-      <td>1234</td>
-    </tr>
+      <tr>
+        <td>{%trans%}Created{%endtrans%}</td>
+        <td>{{site.created}}</td>
+      </tr>
+      <tr>
+        <td>{%trans%}Version{%endtrans%}</td>
+        <td>{{g.app_version}}</td>
+      </tr>
     </table>
 
   </div>

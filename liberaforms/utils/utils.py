@@ -37,6 +37,31 @@ def get_locale():
                                         current_app.config['LANGUAGES'].keys()
                                         )
 
+def populate_flask_g():
+    g.current_user=None
+    g.is_admin=False
+    g.embedded=False
+    from urllib.parse import urlparse
+    from liberaforms.models.site import Site
+    from liberaforms.models.user import User
+    g.site=Site.find(urlparse(request.host_url))
+    if 'user_id' in session and session["user_id"] != None:
+        g.current_user=User.find(id=session["user_id"])
+        if not g.current_user:
+            logout_user()
+            return
+        if g.current_user.is_admin():
+            g.is_admin=True
+        g.app_version = get_app_version()
+
+def get_app_version():
+    try:
+        with open('VERSION.txt') as f:
+            app_version = f.readline().strip()
+            return app_version if app_version else ""
+    except Exception as error:
+        current_app.logger.error(error)
+
 """
 Used to respond to Ajax requests
 """
@@ -55,6 +80,7 @@ def return_error_as_json(status_code, sub_code, message, action):
         'action': action
     })
     return JsonResponse(response, status_code)
+
 
 """ ######## Session ######## """
 def logout_user():
