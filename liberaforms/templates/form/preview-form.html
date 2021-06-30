@@ -48,6 +48,7 @@
 </div>
 
 <script>
+var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
 jQuery(function($) {
     var fbRender = document.getElementById('fb-render');
     var formData = {{ session['formStructure'] | tojson }};

@@ -84,10 +84,10 @@ hr { margin-top: 5px }
   margin-top:2.15em;
 }
 .hint {
-  font-size: 1em;
+  font-size: 1rem;
   font-style: italic;
   color: grey;
-  margin-top: -0.8em;
+  /*margin-top: -0.8em;*/
 }
 .btn-xs {
   padding: .45rem .45rem;
@@ -341,7 +341,6 @@ label.send-confirmation {
   margin-left: 6px;
   display: block;
   margin-top: -1px;
-  cursor: pointer;
 }
 label.required {
   margin-top: -0.1em;
