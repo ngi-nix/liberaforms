@@ -25,7 +25,7 @@
 
 {% if ('current_user' in g and g.current_user) or (navbar != False) %}
 <nav class="navbar navbar-expand-lg navbar-dark navbar-full"
-     style="background-color:{{g.site.menuColor}}">
+     style="background-color:{{g.site.primary_color}}">
   <div class="container">
 
     {% if 'site' in g and g.site %}
@@ -144,7 +144,9 @@
 
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
-  AGPLv3 <a href="https://liberaforms.org">LiberaForms</a>
+  <a href="https://liberaforms.org">LiberaForms</a>
+  {{ g.app_version }}
+  AGPLv3
 </div>
 
 

@@ -1,47 +1,44 @@
 # Upgrading LiberaForms
 
-There are two ways to upgrade LiberaForms. Script assisted, and Manual.
+First backup:
+* your database
+* make a copy of `./uploads`
 
-## Script assisted upgrade
-
-upgrade.py will first make a rollback copy of your LiberaForms installation, then pull the new code and upgrade.
-
+### Stop LiberaForms
 ```
-cd LiberaForms
-source venv/bin/activate
-python upgrade.py
+supervisorctl stop LiberaForms
 ```
-
-### Restart LiberaForms
-```
-supervisorctl restart LiberaForms
-```
-
-## Manual upgrade
 
 ### Pull the new code
 ```
 cd LiberaForms
 git pull origin main
 source venv/bin/activate
-pip install --upgrade setuptools
+#pip install --upgrade setuptools
 pip install -r ./requirements.txt
 ```
 
 ### Upgrade database schema
-First, **backup your database**. Then run the mirgate_db.py script.
+
 ```
 source venv/bin/activate
-python migrate_db.py
+flask db upgrade
 ```
 
-### Restart LiberaForms
+### Start LiberaForms
 ```
-supervisorctl restart LiberaForms
+supervisorctl start LiberaForms
 ```
 
-### Permissions
-Make sure the user who runs LiberaForms has write permission
+# Run a specific version of LiberaForms
+
+If you have problems with the latest version of LiberaForms, you can use an earlier version
+
+List the available versions
 ```
-chown -R www-data ./liberaforms/static/images
+git tag -l
+```
+
+```
+git checkout v2.x.x
 ```

@@ -15,13 +15,13 @@
         {% if g.current_user.validatedEmail != True %}
         <div class="row">
             <div class="col title_2">
-                {%trans%}Your email has not been validated{%endtrans%}
+                {%trans%}Please validated your email to continue{%endtrans%}
             </div>
             <div class="col-auto">
                 <a  class="btn btn-sm btn-success"
                     role="button"
                     href="/user/send-email-validation">
-                    {%trans%}Validate my email{%endtrans%}
+                    {%trans%}Validate{%endtrans%}
                 </a>
             </div>
         </div>
@@ -74,6 +74,7 @@
             <tr>
             </tr>
         </table>
+{% if g.current_user.enabled %}
         <div class="title_2 delimited">
             {%trans%}By default{%endtrans%}
         </div>
@@ -120,7 +121,7 @@
                 </td>
             </tr>
         </table>
-{% if config['ENABLE_UPLOADS'] %}
+  {% if g.current_user.get_uploads_enabled() %}
         <div class="title_2 delimited">
             {%trans%}My media{%endtrans%}
         </div>
@@ -148,7 +149,7 @@
                 </td>
             </tr>
         </table>
-{% endif %}
+  {% endif %}
 
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">
@@ -212,8 +213,9 @@
                </td>
             </tr>
         </table>
-{% endif %}
+  {% endif %}
         <hr />
+{% endif %}
         <div class="row" style="margin-top: 2em">
             <div class="col title_2">
                 {%trans%}Delete my account{%endtrans%}

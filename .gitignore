@@ -1,5 +1,6 @@
 venv
 .env
+docker-compose.yml
 gunicorn.py
 notes.txt
 flask_session

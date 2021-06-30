@@ -13,6 +13,18 @@ from .utils import login, logout
 
 
 class TestSiteConfig():
+    def test_uploads_tree(self, app):
+        assert os.path.isdir(os.path.join(app.config['UPLOADS_DIR'],
+                                          app.config['MEDIA_DIR'])) == True
+        assert os.path.isdir(os.path.join(app.config['UPLOADS_DIR'],
+                                          app.config['BRAND_DIR'])) == True
+        assert os.path.isdir(os.path.join(app.config['UPLOADS_DIR'],
+                                          app.config['ATTACHMENT_DIR'])) == True
+        if 'FQDN' in os.environ:
+            assert os.environ['FQDN'] in app.config['MEDIA_DIR']
+            assert os.environ['FQDN'] in app.config['BRAND_DIR']
+            assert os.environ['FQDN'] in app.config['ATTACHMENT_DIR']
+
     def test_change_sitename(cls, site, users, admin_client, anon_client):
         login(admin_client, users['admin'])
         url = "/site/change-sitename"

@@ -6,7 +6,6 @@ This file is part of LiberaForms.
 """
 
 import os, ast
-import logging
 
 def get_SQLALCHEMY_DATABASE_URI():
     user = os.environ['DB_USER']
@@ -24,6 +23,7 @@ class Config(object):
     # WTF_CSRF_TIME_LIMIT. Time to fill out a form.
     # Must be less than PERMANENT_SESSION_LIFETIME
     WTF_CSRF_TIME_LIMIT = 21600
+    #WTF_CSRF_TIME_LIMIT = 1
     # User sessions last 8h (refreshed on every request)
     PERMANENT_SESSION_LIFETIME = 28800
     RESERVED_SLUGS = [
@@ -65,6 +65,7 @@ class Config(object):
     }
     #ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     TMP_DIR = os.environ['TMP_DIR']
+    ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
     SECRET_KEY = os.environ['SECRET_KEY']
     SQLALCHEMY_DATABASE_URI = get_SQLALCHEMY_DATABASE_URI()
@@ -75,16 +76,13 @@ class Config(object):
         import pylibmc as memcache
         server = os.environ['MEMCACHED_HOST']
         SESSION_MEMCACHED = memcache.Client([server])
-        SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX'] or "LF:"
+    if 'SESSION_KEY_PREFIX' in os.environ:
+        SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX']
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
     MAX_ATTACHMENT_SIZE = int(os.environ['MAX_ATTACHMENT_SIZE'])
-    LOG_TYPE = os.environ['LOG_TYPE']
-    LOG_DIR = os.environ['LOG_DIR']
-
-    root_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../')
-    UPLOADS_DIR = os.path.abspath(os.path.join(root_dir, 'uploads'))
+    UPLOADS_DIR = os.path.join(ROOT_DIR, 'uploads')
     ATTACHMENT_DIR = 'attachments'
     MEDIA_DIR = 'media'
     BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
@@ -93,6 +91,7 @@ class Config(object):
         ATTACHMENT_DIR = os.path.join(ATTACHMENT_DIR, "hosts", os.environ['FQDN'])
         MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
         BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
+        SESSION_KEY_PREFIX = os.environ['FQDN']
 
     @staticmethod
     def init_app(app):
@@ -101,23 +100,20 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
-    LOG_LEVEL = logging.WARNING
 
 
 class StagingConfig(Config):
     DEVELOPMENT = True
-    LOG_LEVEL = logging.WARNING
 
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
-    LOG_LEVEL = logging.DEBUG
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
-    LOG_LEVEL = logging.DEBUG
+    UPLOADS_DIR = os.path.join(Config.ROOT_DIR, 'tests', 'uploads')
 
 
 config = {

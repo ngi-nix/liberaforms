@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging, datetime
+import os, datetime
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import event
@@ -103,7 +103,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
             self.save()
             return True
         else:
-            logging.error(f"Did not save attachment. Answer id: {self.answer_id}")
+            current_app.logger.error(f"Did not save attachment. Answer id: {self.answer_id}")
             return False
 
     def delete_attachment(self):
@@ -118,7 +118,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
         return bytes, self.file_name
 
     def does_attachment_exist(self):
-        return True if super().get_file(self.storage_name, self.directory) else False
+        return True if super().does_file_exist(self.directory, self.storage_name) else False
 
 
 @event.listens_for(AnswerAttachment, "after_delete")

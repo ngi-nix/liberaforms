@@ -34,7 +34,7 @@ def hint(configuration):
                 })
         click.echo(f"Suggested config for {gunicorn_py}\n")
         click.echo(f"{config}{os.linesep}")
-        click.echo(f"Test with: gunicorn -c {gunicorn_py} 'wsgi:create_app()'")
+        click.echo(f"Test with: gunicorn -c {gunicorn_py} wsgi:app")
 
     if configuration == "supervisor":
         template = j2_env.get_template('supervisor.j2')

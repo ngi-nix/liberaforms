@@ -4,7 +4,7 @@
 
 ## Migrate the database
 
-Follow the instructions at https://gitlab.com/liberaforms/mongo2postgres
+First, follow and complete the instructions at https://gitlab.com/liberaforms/mongo2postgres
 
 ## Download LiberaForms2
 

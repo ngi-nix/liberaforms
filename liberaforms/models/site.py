@@ -36,13 +36,14 @@ class Site(db.Model, CRUD):
     scheme = db.Column(db.String, nullable=False, default="http")
     siteName = db.Column(db.String, nullable=False)
     defaultLanguage = db.Column(db.String, nullable=False)
-    menuColor = db.Column(db.String, nullable=False)
+    primary_color = db.Column(db.String, nullable=False)
     invitationOnly = db.Column(db.Boolean, default=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=False)
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
     newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
     mimetypes = db.Column(JSONB, nullable=False)
+    email_footer = db.Column(db.String, nullable=True)
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
@@ -52,7 +53,7 @@ class Site(db.Model, CRUD):
         self.scheme = scheme
         self.siteName = "LiberaForms!"
         self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
-        self.menuColor = "#b71c1c"
+        self.primary_color = "#b71c1c"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
                                             name="terms"),
@@ -107,6 +108,23 @@ class Site(db.Model, CRUD):
             url = f"{url}:{self.port}"
         return url+'/'
 
+    def change_email_header(self, file):
+        """ Convert file to .png """
+        new_header = Image.open(file)
+        new_header.save(os.path.join(current_app.config['UPLOADS_DIR'],
+                                     current_app.config['BRAND_DIR'],
+                                     'emailheader.png'))
+
+    def reset_email_header(self):
+        email_header_path = os.path.join(current_app.config['UPLOADS_DIR'],
+                                         current_app.config['BRAND_DIR'],
+                                         'emailheader.png')
+        default_email_header = os.path.join(current_app.config['UPLOADS_DIR'],
+                                            current_app.config['BRAND_DIR'],
+                                            'emailheader-default.png')
+        shutil.copyfile(default_email_header, email_header_path)
+        return True
+
     def change_favicon(self, file):
         """ Convert file to .ico and make the it square """
         img = Image.open(file)
@@ -128,6 +146,12 @@ class Site(db.Model, CRUD):
                                        'favicon-default.ico')
         shutil.copyfile(default_favicon, favicon_path)
         return True
+
+    def get_email_footer(self):
+        return self.email_footer if self.email_footer else _("Ethical form software")
+
+    def get_email_header_url(self):
+        return f"{self.host_url}brand/emailheader.png"
 
     def save_blurb(self, MDtext):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),

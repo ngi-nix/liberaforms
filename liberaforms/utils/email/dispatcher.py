@@ -21,25 +21,41 @@ from liberaforms.models.user import User
 from liberaforms.utils.email.server import EmailServer
 
 
+
+def HTML_email(template_file, **kwargs):
+    template_dir = os.path.join(current_app.root_path, 'utils/email/templates')
+    j2_env = Environment(loader = FileSystemLoader(template_dir))
+    j2_template = j2_env.get_template(template_file)
+    kwargs['body'] = kwargs['body'].replace('\n', '<br />')
+    mjml_template = j2_template.render(kwargs)
+    result = mjml_to_html(mjml_template)
+    return result.html
+
+def branding_body_preview():
+    body="Lorem ipsum dolor sit amet, consectetur \
+          adipisci elit, sed eiusmod tempor \
+          incidunt ut labore et dolore magna aliqua."
+    link=g.site.host_url
+    html_body = HTML_email('with_button.j2',
+                            header_image_url=g.site.get_email_header_url(),
+                            primary_color=g.site.primary_color,
+                            footer=g.site.get_email_footer(),
+                            body=body,
+                            link=link,
+                            button_text=_("A button"))
+    return {'html': html_body, 'text': f"{body}\n\n{link}"}
+
 class Dispatcher(EmailServer):
     def __init__(self):
         self.site = Site.find()
         EmailServer.__init__(self, self.site)
 
-    def email_header_image_url(self):
-        return f"{self.site.host_url}/brand/emailheader.png"
-
     def create_HTML_body(self, template_file, **kwargs):
-        template_dir = os.path.join(current_app.root_path, 'utils/email/templates')
-        j2_env = Environment(loader = FileSystemLoader(template_dir))
-        j2_template = j2_env.get_template(template_file)
-        kwargs['header_image_url'] = self.email_header_image_url()
-        kwargs['body'] = kwargs['body'].replace('\n', '<br />')
+        kwargs['header_image_url'] = self.site.get_email_header_url()
+        kwargs['primary_color'] = self.site.primary_color
         if not 'footer' in kwargs:
-            kwargs['footer'] = _("Ethical form software.")
-        mjml_template = j2_template.render(kwargs)
-        result = mjml_to_html(mjml_template)
-        return result.html
+            kwargs['footer'] = self.site.get_email_footer()
+        return HTML_email(template_file, **kwargs)
 
     def create_multipart_message(self, text_body, html_body):
         text_part = MIMEText(text_body, _subtype='plain', _charset='UTF-8')
@@ -176,7 +192,14 @@ class Dispatcher(EmailServer):
             )
             thr.start()
 
-
+    def send_branding_preview(self, email):
+        body = branding_body_preview()
+        message = self.create_multipart_message(body['text'], body['html'])
+        header = Header(_("LiberaForms. Email brand preview"))
+        message['Subject'] = header.encode()
+        message['To'] = email
+        status = self.send_mail(message)
+        return status
 
     """
     def send_password_success(recipient_email):

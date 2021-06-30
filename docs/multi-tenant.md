@@ -25,7 +25,7 @@ FQDN=my.tenant.com
 ## Port
 
 
-# Uploads
+# Uploads directory
 
 Run this command to create the required directory tree.
 
@@ -39,13 +39,13 @@ You should include the `./uploads` directory in your backups!
 
 Nginx serves media files.
 
+Modify these locations
+
 ```
-# Remove this location
-location /file/media/ {
-    alias /path/to/liberaforms/uploads/media/;
+location /favicon.ico {
+    alias /path/to/liberaforms/uploads/media/hosts/<FQDN>/brand/favicon.ico;
 }
 
-# Add this location
 location /file/media/ {
     alias /path/to/liberaforms/uploads/media/hosts/<FQDN>/;
 }
