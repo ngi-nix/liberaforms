@@ -124,11 +124,14 @@ def is_slug_available():
 def preview_form():
     if not ('slug' in session and 'formStructure' in session):
         return redirect(make_url_for('form_bp.my_forms'))
+    max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template( 'preview-form.html',
                             slug=session['slug'],
                             introductionText=sanitizers.markdown2HTML(
-                                                session['introductionTextMD'])
-                                            )
+                                                session['introductionTextMD']
+                            ),
+                            max_attachment_size_for_humans=max_attach_size,
+                        )
 
 @form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
 @enabled_user_required
@@ -316,7 +319,10 @@ def inspect_form(id):
     # prepare the session for possible form edit
     #pprint(queriedForm.structure)
     form_helper.populate_session_with_form(queriedForm)
-    return render_template('inspect-form.html', form=queriedForm)
+    max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
+    return render_template('inspect-form.html',
+                            form=queriedForm,
+                            max_attachment_size_for_humans=max_attach_size)
 
 
 @form_bp.route('/forms/share/<int:id>', methods=['GET'])

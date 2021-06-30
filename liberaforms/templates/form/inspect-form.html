@@ -572,6 +572,7 @@
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
+var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
 jQuery(function($) {
     var fbRender = document.getElementById('fb-render');
     var formData = {{ form.structure | tojson }};
