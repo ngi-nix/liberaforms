@@ -9,13 +9,13 @@
   <div class="col-md-6">
 
     <div class="title_1 delimited">
-      {# i18n: Main title displayed on instance configuration page (/admin) #}
-      {%trans%}Instance configuration{%endtrans%}
+      {# i18n: Main title displayed on site configuration page (/admin) #}
+      {%trans%}Site configuration{%endtrans%}
     </div>
 
     <div id="site_settings" class="title_2">
       {# i18n: Subtitle displayed on instance configuration page (/admin) #}
-      {%trans%}Site settings{%endtrans%}
+      {%trans%}Site styling{%endtrans%}
     </div>
 
     <table class="table table-sm">
@@ -76,7 +76,7 @@
       <tr>
         {# i18n: Define the 'look' of emails #}
         <td colspan="2">
-          {%trans%}Email branding{%endtrans%}
+          {%trans%}Email styling{%endtrans%}
         </td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
@@ -135,8 +135,8 @@
       {% if config['ENABLE_UPLOADS'] %}
       <tr>
         <td>
-          {# i18n: Whether to enable users attaching documents on forms #}
-          {%trans%}Form attachments{%endtrans%}
+          {# i18n: Which type of attachments are allowed #}
+          {%trans%}Attachment types{%endtrans%}
         </td>
         <td>
           {{ ', '.join(g.site.mimetypes.extensions) }}
