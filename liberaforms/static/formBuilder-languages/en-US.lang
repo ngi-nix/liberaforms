@@ -1,7 +1,7 @@
 NATIVE_NAME = English (US)
 ENGLISH_NAME = English
 
-addOption = Add Option +
+addOption = Add option
 allFieldsRemoved = All fields were removed.
 allowMultipleFiles = Allow users to upload multiple files
 autocomplete = Autocomplete
