@@ -137,9 +137,7 @@ input[type="date"], input[type="number"], input[type="time"] {
   white-space: nowrap;
 }
 */
-.td-controls td:first-child {
-    text-align: center;
-}
+
 .cell-editor  {
   white-space:nowrap;
 }
