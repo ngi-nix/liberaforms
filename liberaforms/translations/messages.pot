@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-06-30 09:27+0200\n"
+"POT-Creation-Date: 2021-06-30 10:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -169,7 +169,7 @@ msgstr ""
 
 #. Used as website menu title, linking to page about user's settings
 #: templates/base.html:90
-msgid "Profile"
+msgid "Settings"
 msgstr ""
 
 #. Used as website menu title, to log out
@@ -419,8 +419,8 @@ msgstr ""
 #: templates/common/change-language.html:44 templates/form/edit-form.html:125
 #: templates/form/edit-form.html:131 templates/form/expiration.html:147
 #: templates/form/inspect-form.html:301 templates/form/inspect-form.html:385
-#: templates/form/inspect-form.html:420 templates/form/preview-form.html:35
-#: templates/form/preview-form.html:38 templates/main/index.html:31
+#: templates/form/inspect-form.html:420 templates/form/preview-form.html:40
+#: templates/form/preview-form.html:43 templates/main/index.html:31
 #: templates/site/change-icon.html:44 templates/site/change-sitename.html:23
 #: templates/site/consent.html:76 templates/site/delete-site.html:37
 #: templates/site/edit-mimetypes.html:34 templates/site/email-branding.html:102
@@ -613,7 +613,7 @@ msgstr ""
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
 #: templates/form/expiration.html:146 templates/form/inspect-form.html:297
 #: templates/form/inspect-form.html:381 templates/form/inspect-form.html:416
-#: templates/form/preview-form.html:32 templates/main/index.html:27
+#: templates/form/preview-form.html:37 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
 #: templates/site/set-primary-color.html:67 templates/user/change-email.html:23
 #: templates/user/consent.html:60
@@ -818,8 +818,8 @@ msgstr ""
 msgid "Use the template"
 msgstr ""
 
-#: templates/form/inspect-form.html:314 templates/form/inspect-form.html:736
-#: templates/form/inspect-form.html:775 templates/site/consent.html:64
+#: templates/form/inspect-form.html:314 templates/form/inspect-form.html:739
+#: templates/form/inspect-form.html:778 templates/site/consent.html:64
 #: templates/site/consent.html:83 templates/user/consent.html:48
 #: templates/user/consent.html:67 templates/user/new-user.html:66
 #: utils/consent_texts.py:61
@@ -879,12 +879,12 @@ msgstr ""
 msgid "Required fields"
 msgstr ""
 
-#: templates/form/inspect-form.html:538 templates/form/view-form.html:58
+#: templates/form/inspect-form.html:538 templates/form/view-form.html:57
 msgid "Send me confirmation by mail"
 msgstr ""
 
-#: templates/form/inspect-form.html:562 templates/form/preview-form.html:25
-#: templates/form/view-form.html:89 templates/site/smtp-config.html:84
+#: templates/form/inspect-form.html:565 templates/form/preview-form.html:29
+#: templates/form/view-form.html:87 templates/site/smtp-config.html:84
 msgid "Send"
 msgstr ""
 
@@ -912,7 +912,7 @@ msgstr ""
 msgid "Shared"
 msgstr ""
 
-#: templates/form/preview-form.html:34 templates/form/preview-form.html:37
+#: templates/form/preview-form.html:39 templates/form/preview-form.html:42
 msgid "Edit again"
 msgstr ""
 
