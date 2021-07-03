@@ -16,6 +16,7 @@ function HScrollVisible () {
 
 $(document).ready(function() {
   var switched = false;
+  set_card_titles();
 
   $(".show-card").on("click", function (){
     if ($(this).hasClass('fa-chevron-circle-down')){
@@ -33,6 +34,17 @@ $(document).ready(function() {
     }
   });
   //console.log(HScrollVisible())
+
+  function set_card_titles() {
+    $("table.lb-data-table").each(function(i, table) {
+      $(table).find('tr').each(function(i, tr) {
+        console.log(tr)
+        var card_title = $(tr).find('td:eq(1)').html();
+        console.log("card_title: "+card_title)
+        $(tr).find('.row-controls').append('<span>'+card_title+'</span>')
+      });
+    });
+  }
 
   function update_grid_tables () {
     if ($(window).width() <= 768) {

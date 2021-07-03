@@ -173,19 +173,19 @@
                 <i class="fa fa-thumb-tack" aria-hidden="true"></i>
               </button>
             {% endif %}
-            <span>fsdsfdfdsfds fffffffff d</span>
             </td>
           {% elif field['name'].startswith('file-') %}
-            <td class="dontEdit" title="{{ answer[field['name']] }}">
+            <td class="dontEdit" data-label="{{ field['label'] }}">
               {{ answer[field['name']]|safe }}
             </td>
           {% else %}
-            <td title="{{ answer[field['name']] }}">
+            <td data-label="{{ field['label'] }}">
                 {{ answer[field['name']] }}
             </td>
           {% endif %}
         {% endfor %}
-        <td title="{{ ns_fields.created }}">
+        <td data-label="{%trans%}Created{%endtrans%}"
+            title="ns_fields.created">
           {% set date = ns_fields.created.split(' ')[0] %}
           {% set time = ns_fields.created.split(' ')[1] %}
           {{ date }} <span class='card-show'>{{ time }}</span>

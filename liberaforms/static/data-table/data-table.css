@@ -76,11 +76,6 @@ table.lb-data-table td span.card-show {
   display: none;
 }
 
-/* Mobile */
-/* @media only screen and (max-width: 767px) { */
-
-	/*table.lb-data-table { margin-bottom: 0; }*/
-
 .pinned-table {
 	position: absolute;
 	left: 0;
@@ -167,10 +162,6 @@ i.delete-row {
   table.lb-data-table tr > td,
   table.lb-data-table tr > td:last-child
 	{
-    /*
-    display: block;
-		text-align: left;
-    */
     padding: 9px 0px;
 		height: auto;
 		max-width: 100%;
@@ -201,33 +192,19 @@ i.delete-row {
     width: 100%;
     /*text-align: left;*/
     padding: 0.75em 0;
+    /*
     white-space: nowrap;
-
   	overflow: hidden;
   	text-overflow: clip;
-
+    */
   }
 
-  table.lb-data-table td {
-    /*border-left: 0;*/
-    /*border-top: 1px solid #ddd;*/
-    /*display: block;*/
-    /*text-align: right;*/
-  }
-
-  /*
-  table.lb-data-table td:before {
+  table.lb-data-table tbody td:before {
     content: attr(data-label);
-    float: left;
     font-weight: bold;
+    display: block;
   }
-  */
 
-  /*
-  table.lb-data-table td:last-child {
-    border-bottom: 0;
-  }
-  */
   table.lb-data-table i.show-card,
   table.lb-data-table i.delete-row
   {
