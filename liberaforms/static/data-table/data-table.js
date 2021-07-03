@@ -21,13 +21,12 @@ $(document).ready(function() {
   $(".show-card").on("click", function (){
     if ($(this).hasClass('fa-chevron-circle-down')){
       var tr = $(this).closest('tr')
-      $(tr).find('td').css('display', 'block')
-      $(tr).css('margin-bottom', '2em')
+      $(tr).find('td').css('display', 'inline-block')
       $(this).removeClass('fa-chevron-circle-down')
              .addClass('fa-chevron-circle-up')
     } else {
       var tr = $(this).closest('tr')
-      $(tr).find('td').not(':first').css('display', '')
+      $(tr).find('td').css('display', '')
       $(tr).css('margin-bottom', '')
       $(this).removeClass('fa-chevron-circle-up')
              .addClass('fa-chevron-circle-down')
@@ -38,10 +37,11 @@ $(document).ready(function() {
   function set_card_titles() {
     $("table.lb-data-table").each(function(i, table) {
       $(table).find('tr').each(function(i, tr) {
-        console.log(tr)
         var card_title = $(tr).find('td:eq(1)').html();
-        console.log("card_title: "+card_title)
-        $(tr).find('.row-controls').append('<span>'+card_title+'</span>')
+        var span = $(tr).find('.row-controls').find('span')
+        if (span.length == 0) {
+          $(tr).find('.row-controls').append('<span>'+card_title+'</span>')
+        }
       });
     });
   }

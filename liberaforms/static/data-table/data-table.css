@@ -159,8 +159,8 @@ i.delete-row {
     /*display: block;*/
 
   }
-  table.lb-data-table tr > td,
-  table.lb-data-table tr > td:last-child
+  table.lb-data-table tr > td:nth-child(n+2)
+  /*table.lb-data-table tr > td:last-child*/
 	{
     padding: 9px 0px;
 		height: auto;
@@ -170,8 +170,10 @@ i.delete-row {
 		overflow: auto;
 		text-overflow: clip;
     border-left: 0;
-    border-top: 1px solid #ddd;
 	}
+  table.lb-data-table tr > td:nth-child(n+3) {
+    border-top: 1px solid #ddd;
+  }
   table.lb-data-table td span.card-show {
     display: inline;
   }
@@ -190,15 +192,19 @@ i.delete-row {
   table.lb-data-table td.row-controls
   {
     width: 100%;
-    /*text-align: left;*/
+    height: auto;
     padding: 0.75em 0;
-    /*
+
+
+
+  }
+  table.lb-data-table td.row-controls span
+  {
+    display: inline-block;
     white-space: nowrap;
   	overflow: hidden;
-  	text-overflow: clip;
-    */
+  	text-overflow: ellipsis;
   }
-
   table.lb-data-table tbody td:before {
     content: attr(data-label);
     font-weight: bold;
