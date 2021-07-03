@@ -35,7 +35,7 @@ $(document).ready(function() {
   //console.log(HScrollVisible())
 
   function update_grid_tables () {
-    if ($(window).width() <= 600) {
+    if ($(window).width() <= 768) {
       if (switched) {
         unsplit_all_grid_tables();
       }
@@ -73,7 +73,7 @@ $(document).ready(function() {
   }
 
   function cards_to_grid() {
-    if ($(window).width() >= 600 && $(".pinned-table").length == 0) {
+    if ($(window).width() >= 768 && $(".pinned-table").length == 0) {
       console.log('card to grid')
       $("table.lb-data-table").each(function(i, element) {
         $(element).find('tr').each(function (i, tr) {
@@ -124,8 +124,15 @@ $(document).ready(function() {
     original.unwrap('.scrollable');
   }
 
-  $(window).on("redraw",function(){switched=false; update_grid_tables();}); // An event to listen for
-  $(window).on("resize", function(){ cards_to_grid(); update_grid_tables();});
+  $(window).on("redraw",function(){
+          switched=false;
+          cards_to_grid();
+          update_grid_tables();
+  });
+  $(window).on("resize", function(){
+          cards_to_grid();
+          update_grid_tables();
+  });
 
 });
 

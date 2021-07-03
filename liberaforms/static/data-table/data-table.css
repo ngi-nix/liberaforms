@@ -138,7 +138,7 @@ i.delete-row {
   cursor: pointer;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 768px) {
   table.pinned-table {
 		visibility: hidden;
 	}
