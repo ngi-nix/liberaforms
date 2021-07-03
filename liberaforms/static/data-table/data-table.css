@@ -1,4 +1,3 @@
-/* Table pinning idea seen at http://foundation.zurb.com */
 
 table.lb-data-table {
   width: 100%;
@@ -9,7 +8,8 @@ table.lb-data-table {
 table.lb-data-table tr,
 table.pinned-table tr
 {
-  border-top: 1px solid #ccc;
+  display: table-row;
+  border-top: 1px solid #ddd;
 }
 
 table.lb-data-table th,
@@ -22,6 +22,7 @@ table.lb-data-table tr > td,
 table.pinned-table th,
 table.pinned-table tr > td
 {
+  display: block-inline;
 	padding: 0 9px;
 	text-align: left;
 	height: 3em;
@@ -51,30 +52,29 @@ table.lb-data-table tbody tr:hover {
   background-color: rgba(0,0,0,.05);
 }
 
-table.lb-data-table td.row-controls {
-  width: 10px;
-}
-table.lb-data-table tbody td:first-child,
-table.pinned-table tbody td:first-child
+table.lb-data-table td.row-controls,
+table.pinned-table td.row-controls
 {
-    text-align: left;
-    padding: 0 0.2rem 0 0.2rem;
+  display: table-cell;
+  width: 10px;
+  text-align: left;
+  padding: 0 0.2rem 0 0.2rem;
+}
+
+table.lb-data-table td.row-controls span,
+table.pinned-table td.row-controls span {
+  display: none;
 }
 
 table.lb-data-table thead th:last-child,
 table.lb-data-table tr > td:last-child
 {
-  /*text-align: right;*/
   width: 10px;
   white-space: nowrap;
 }
-/*
-table.lb-data-table tr > td:not:first-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-
+table.lb-data-table td span.card-show {
+  display: none;
 }
-*/
 
 /* Mobile */
 /* @media only screen and (max-width: 767px) { */
@@ -104,7 +104,7 @@ div.responsive-table {
 	position: relative;
 	margin-bottom: 20px;
 	overflow: hidden;
-	border-right: 1px solid #ccc;
+	/*border-right: 1px solid #ccc;*/
 }
 div.responsive-table div.scrollable {
 	margin-left: 220px;
@@ -126,4 +126,131 @@ table.lb-data-table td.row-controls,
 table.pinned-table td.row-controls
 {
 	width: 10px;
+}
+
+table.lb-data-table .show-card,
+table.pinned-table .show-card
+{
+  display: none;
+}
+i.delete-row {
+  color: #d9534f;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 600px) {
+  table.pinned-table {
+		visibility: hidden;
+	}
+  table.lb-data-table  {
+    border: 0;
+    width: 100%;
+  }
+  table.lb-data-table tbody tr:hover {
+    background-color: initial;
+  }
+  table.lb-data-table thead {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  table.lb-data-table tr {
+    /*border-top: 1px solid #ddd;*/
+    /*display: block;*/
+
+  }
+  table.lb-data-table tr > td,
+  table.lb-data-table tr > td:last-child
+	{
+    /*
+    display: block;
+		text-align: left;
+    */
+    padding: 9px 0px;
+		height: auto;
+		max-width: 100%;
+		width: 100%;
+		white-space: normal;
+		overflow: auto;
+		text-overflow: clip;
+    border-left: 0;
+    border-top: 1px solid #ddd;
+	}
+  table.lb-data-table td span.card-show {
+    display: inline;
+  }
+
+  table.lb-data-table th:nth-child(n+2),
+  table.lb-data-table td:nth-child(n+2)
+  {
+    border-left: 0;
+  }
+
+  table.lb-data-table tr > td:not(.row-controls)
+  {
+    display: none;
+  }
+
+  table.lb-data-table td.row-controls
+  {
+    width: 100%;
+    /*text-align: left;*/
+    padding: 0.75em 0;
+    white-space: nowrap;
+
+  	overflow: hidden;
+  	text-overflow: clip;
+
+  }
+
+  table.lb-data-table td {
+    /*border-left: 0;*/
+    /*border-top: 1px solid #ddd;*/
+    /*display: block;*/
+    /*text-align: right;*/
+  }
+
+  /*
+  table.lb-data-table td:before {
+    content: attr(data-label);
+    float: left;
+    font-weight: bold;
+  }
+  */
+
+  /*
+  table.lb-data-table td:last-child {
+    border-bottom: 0;
+  }
+  */
+  table.lb-data-table i.show-card,
+  table.lb-data-table i.delete-row
+  {
+    font-size: 1.5em;
+    vertical-align: middle;
+    display: inline;
+  }
+  table.lb-data-table i.show-card
+  {
+    color: #337ab7;
+    cursor: pointer;
+    margin-right: 0.25em;
+  }
+  table.lb-data-table i.delete-row {
+    vertical-align: middle;
+    margin: 0 0.4em 0 0em;
+  }
+  table.lb-data-table td.row-controls span {
+    display: inline;
+    margin-left: 0.3em;
+    /*
+    overflow: hidden;
+    text-overflow: ellipsis;
+    */
+  }
 }

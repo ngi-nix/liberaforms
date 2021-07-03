@@ -232,6 +232,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 
 /* ######### Answers table ######### */
 
+/*
 .delete-row-icon {
     font-size: 1.15em !important;
     color: grey;
@@ -241,6 +242,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     color: #d9534f;
     cursor: pointer;
 }
+*/
 .undo-delete-row {
     font-weight: bold !important;
     color: #5cb85c;
