@@ -1,55 +1,34 @@
+/*
+This file is part of LiberaForms.
+
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
+# SPDX-License-Identifier: AGPL-3.0-or-later
+*/
+
 /* Table pinning idea seen at http://foundation.zurb.com */
 /* Table card idea seen at https://www.exeideas.com/2020/10/simple-responsive-html-table.html */
 
-function HScrollVisible () {
-  var table_width = 0;
-  $("table.lb-data-table").each(function(i, table) {
-    if ($(table).width() > table_width) {
-      table_width = $(table).width();
-    }
-  });
-  if (table_width > $(window).width()) {
-    return table_width;
-  }
-  return false;
-}
-
-$(document).ready(function() {
+function dataTable(options) {
+  var table_id = options.table_id
+  var csrftoken = options.csrftoken
+  var endpoint = options.endpoint
   var switched = false;
-  set_card_titles();
 
-  $(".show-card").on("click", function (){
-    if ($(this).hasClass('fa-chevron-circle-down')){
-      var tr = $(this).closest('tr')
-      $(tr).find('td').css('display', 'inline-block')
-      $(this).removeClass('fa-chevron-circle-down')
-             .addClass('fa-chevron-circle-up')
-    } else {
-      var tr = $(this).closest('tr')
-      $(tr).find('td').css('display', '')
-      $(tr).css('margin-bottom', '')
-      $(this).removeClass('fa-chevron-circle-up')
-             .addClass('fa-chevron-circle-down')
-    }
-  });
-  //console.log(HScrollVisible())
+  var table = $("#" + table_id)
+  table.addClass("lb-data-table")
+  /* ~~~~~~ add 'load more items' button ~~~~~~~ */
+  var btn = $("<button class='btn btn-primary retrieve_items_button'>")
+  btn.html("Load more")
+  btn.insertAfter(table);
 
-  function set_card_titles() {
-    $("table.lb-data-table").each(function(i, table) {
-      $(table).find('tr').each(function(i, tr) {
-        var card_title = $(tr).find('td:eq(1)').html();
-        var span = $(tr).find('.row-controls').find('span')
-        if (span.length == 0) {
-          $(tr).find('.row-controls').append('<span>'+card_title+'</span>')
-        }
-      });
-    });
-  }
+  retrieve_items(); // make ajax request and populate table with result
 
-  function update_grid_tables () {
+
+  /* ~~~~~~~~~~ responsive table ~~~~~~~~~~ */
+  function update_grid_table () {
     if ($(window).width() <= 768) {
       if (switched) {
-        unsplit_all_grid_tables();
+        unsplit_grid_table();
       }
       $("table.lb-data-table").each(function(i, element) {
         $(element).css('opacity', 1);
@@ -57,36 +36,17 @@ $(document).ready(function() {
       return
     }
     if (!switched && HScrollVisible()) {
-      split_all_grid_tables();
+      split_grid_table();
     }
     else if (switched && HScrollVisible() == false) {
-      unsplit_all_grid_tables();
+      unsplit_grid_table();
     }
     $("table.lb-data-table").each(function(i, element) {
       $(element).css('opacity', 1);
     });
   }
-
-  update_grid_tables();
-  function split_all_grid_tables() {
-    switched = true;
-    $("table.lb-data-table").each(function(i, element) {
-      split_grid_table($(element));
-      console.log("splitting")
-    });
-    return true;
-  }
-
-  function unsplit_all_grid_tables() {
-    switched = false;
-    $("table.lb-data-table").each(function(i, element) {
-      usplit_grid_table($(element));
-    });
-  }
-
   function cards_to_grid() {
     if ($(window).width() >= 768 && $(".pinned-table").length == 0) {
-      console.log('card to grid')
       $("table.lb-data-table").each(function(i, element) {
         $(element).find('tr').each(function (i, tr) {
           $(tr).find('td').css('display', '')
@@ -98,14 +58,13 @@ $(document).ready(function() {
       });
     }
   }
-
-  function split_grid_table(original)
+  function split_grid_table()
   {
-    console.log('split_grid_table')
+    switched = true;
+    var original = table
     if (original.parent(".responsive-table").length == 0) {
-  	   original.wrap("<div class='responsive-table' />");
+  	  original.wrap("<div class='responsive-table' />");
     }
-
   	var copy = original.clone();
   	copy.removeClass("lb-data-table");
 
@@ -118,32 +77,47 @@ $(document).ready(function() {
     $(pinned_table).append($('<thead />').append(newRow));
     $(pinned_table).append(tbody);
     copy.find("tbody").find("tr").each(function(index) {
-        var newRow = $("<tr></tr>");
-        $(this).find("td:first-child").clone().appendTo(newRow);
-        $(this).find("td:nth-child(2)").clone().appendTo(newRow);
-        $(tbody).append(newRow);
+      var newRow = $("<tr></tr>");
+      $(this).find("td:first-child").clone().appendTo(newRow);
+      $(this).find("td:nth-child(2)").clone().appendTo(newRow);
+      $(tbody).append(newRow);
     });
     //console.log(pinned_table)
     original.addClass('hidden-for-pin');
   	original.closest(".responsive-table").append(pinned_table);
   	original.wrap("<div class='scrollable' />");
   }
-
-  function usplit_grid_table(original) {
-    //console.log("unsplit table")
+  function unsplit_grid_table() {
+    switched = false;
+    var original = table
     original.removeClass('hidden-for-pin');
     original.closest(".responsive-table").find(".pinned-table").remove();
     original.unwrap('.scrollable');
   }
 
+  /* ~~~~~~~~~~ events ~~~~~~~~~~ */
   $(window).on("redraw",function(){
-          switched=false;
-          cards_to_grid();
-          update_grid_tables();
+    switched=false;
+    cards_to_grid();
+    update_grid_table();
   });
   $(window).on("resize", function(){
-          cards_to_grid();
-          update_grid_tables();
+    cards_to_grid();
+    update_grid_table();
+  });
+  $(document).on("click", ".toggle-card", function (){
+    if ($(this).hasClass('fa-chevron-circle-down')){
+      var tr = $(this).closest('tr')
+      $(tr).find('td').css('display', 'inline-block')
+      $(this).removeClass('fa-chevron-circle-down')
+             .addClass('fa-chevron-circle-up')
+    } else {
+      var tr = $(this).closest('tr')
+      $(tr).find('td').css('display', '')
+      $(tr).css('margin-bottom', '')
+      $(this).removeClass('fa-chevron-circle-up')
+             .addClass('fa-chevron-circle-down')
+    }
   });
   /*
   $('.lb-data-table').on('mousedown', function(e) {
@@ -159,8 +133,179 @@ $(document).ready(function() {
     $('.lb-data-table').off('mousemove');
   });
   */
-});
+
+  /* ~~~~~~~~~~ table construction ~~~~~~~~~~ */
+  function set_card_titles() {
+    table.find('tr').each(function(i, tr) {
+      var card_title = $(tr).find('td:eq(1)').html();
+      var span = $(tr).find('td.row-controls').find('span.card-title')
+      if (span.length == 0) {
+        var card_title = $('<span class="card-title">'+card_title+'</span>')
+        $(tr).find('.row-controls').append(card_title)
+      }
+    });
+  }
+  function insert_thead(fields) {
+    var row = $('<tr>')
+    for (let key in fields) {
+      if (fields[key].name == "created") {
+        var created_label = fields[key].label
+        continue;
+      }
+      row.append('<th title="'+fields[key].label+'">'+fields[key].label+'</th>')
+    }
+    row.append('<th>'+created_label+'</th>')
+    table.prepend($('<thead>').append(row))
+  }
+  function insert_items(data) {
+    var tbody = table.find('tbody')
+    if (tbody.length == 0) {
+      tbody = $('<tbody>')
+      table.append(tbody)
+    }
+    var fields = data.meta.field_index
+    var items = data.items
+    for (let item_key in items) {
+      var item = items[item_key]
+      var tr = $('<tr _id="'+item.id+'">')
+      for (let field_key in fields) {
+        var field = fields[field_key]
+        if (field.name == "created") {
+          var created_value = item.created
+          var created_label = field.label
+          continue;
+        }
+        if (field.name == "marked") {
+          var td = $('<td class="row-controls">')
+          var i = $('<i class="toggle-card fa fa-chevron-circle-down action" aria-label="Show fields">')
+          td.append(i)
+          var btn = $('<button class="btn btn-xs mark_answer">')
+          btn.html('Mark <i class="fa fa-thumb-tack" aria-hidden="true"></i>')
+          if ( item[field.name] == true ) {
+            btn.addClass('btn-success')
+          }
+          td.append(btn)
+        }
+        else if (field.name.startsWith('file-')) {
+          var td = $('<td class="dontEdit" data-label="'+field.label+'" aria-hidden="true">')
+          td.html(item.data[field.name])
+        }
+        else {
+          var td = $('<td data-label="'+field.label+'" aria-hidden="true">')
+          td.html(sanitizeHTML(item.data[field.name]))
+        }
+        tr.append(td)
+      }
+      var td = $('<td data-label="'+created_label+'" aria-hidden="true">')
+      var date_parts = created_value.split("T")
+      var date = date_parts[0];
+      var time = date_parts[1].split(".")[0]
+      td.prop('title', date+' '+time)
+      td.html(date + ' <span class="card-show">'+time+'</span>')
+      tr.append(td)
+      tbody.append(tr)
+    }
+    set_card_titles();
+    update_grid_table();
+  }
+
+  /* ~~~~~~~~~~ ajax ~~~~~~~~~~ */
+  function retrieve_items() {
+    $.ajax({
+      url : endpoint,
+      type: "GET",
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken)
+        }
+      },
+      success: function(data, textStatus, jqXHR)
+      {
+        if (table.find('thead').length == 0 ) {
+          insert_thead(data.meta.field_index)
+        }
+        insert_items(data);
+      }
+    });
+  }
+}
+
+/* ~~~~~~~~~~ helper functions ~~~~~~~~~~ */
+var HScrollVisible = function () {
+  var table_width = 0;
+  $("table.lb-data-table").each(function(i, table) {
+    if ($(table).width() > table_width) {
+      table_width = $(table).width();
+    }
+  });
+  if (table_width > $(window).width()) {
+    return table_width;
+  }
+  return false;
+}
+var sanitizeHTML = function (str) {
+   var temp = document.createElement('div');
+   temp.textContent = str; return temp.innerHTML;
+};
+
+
 
 $(document).ready(function() {
 
 });
+
+/*
+<tbody>
+  {% for answer in answers %}
+  <tr _id="{{ answer['id'] }}">
+    {% set ns_fields = namespace(created=false) %}
+    {% for field in fieldIndex %}
+      {% if field['name'] == "created" %}
+          {% set ns_fields.created = answer[field['name']] %}
+          {% continue %}
+      {% endif %}
+      {% if field['name'] == "marked" %}
+        <td class="row-controls">
+          <i class="show-with-card fa fa-chevron-circle-down action"
+             aria-label="{%trans%}Show fields{%endtrans%}">
+          </i>
+          {% if edit_mode %}
+          <i class="fa fa-trash action delete-row"
+             aria-label="{%trans%}Hide fields{%endtrans%}">
+          </i>
+          {% endif %}
+          {% if answer[field['name']] == True %}
+            <button class="btn btn-success btn-xs mark_answer">
+              {%trans%}Mark{%endtrans%}
+              <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+            </button>
+          {% else %}
+            <button class="btn btn-light btn-xs mark_answer">
+              {%trans%}Mark{%endtrans%}
+              <i class="fa fa-thumb-tack" aria-hidden="true"></i>
+            </button>
+          {% endif %}
+        </td>
+      {% elif field['name'].startswith('file-') %}
+        <td class="dontEdit"
+            data-label="{{ field['label'] }}"
+            aria-hidden="true">
+          {{ answer[field['name']]|safe }}
+        </td>
+      {% else %}
+        <td data-label="{{ field['label'] }}"
+            aria-hidden="true">
+          {{ answer[field['name']] }}
+        </td>
+      {% endif %}
+    {% endfor %}
+    <td data-label="{%trans%}Created{%endtrans%}"
+        title="{{ns_fields.created}}">
+      {% set date = ns_fields.created.split(' ')[0] %}
+      {% set time = ns_fields.created.split(' ')[1] %}
+      {{ date }} <span class='card-show'>{{ time }}</span>
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+*/

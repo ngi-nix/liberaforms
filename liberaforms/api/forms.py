@@ -33,5 +33,8 @@ def form_answers(form_id):
         return jsonify("Denied"), 401
     return jsonify(
         items=AnswerSchema(many=True).dump(queriedForm.answers),
-        meta={'count': queriedForm.answers.count()}
+        meta = {
+            'count': queriedForm.answers.count(),
+            'field_index': queriedForm.fieldIndex,
+        }
     )

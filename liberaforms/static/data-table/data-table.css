@@ -52,6 +52,13 @@ table.lb-data-table tbody tr:hover {
   background-color: rgba(0,0,0,.05);
 }
 
+table.lb-data-table thead th:last-child,
+table.lb-data-table tr > td:last-child
+{
+  width: 10px;
+  white-space: nowrap;
+}
+
 table.lb-data-table td.row-controls,
 table.pinned-table td.row-controls
 {
@@ -60,19 +67,14 @@ table.pinned-table td.row-controls
   text-align: left;
   padding: 0 0.2rem 0 0.2rem;
 }
-
-table.lb-data-table td.row-controls span,
-table.pinned-table td.row-controls span {
+table.lb-data-table td.row-controls i.toggle-card,
+table.pinned-table td.row-controls i.toggle-card
+{
   display: none;
 }
-
-table.lb-data-table thead th:last-child,
-table.lb-data-table tr > td:last-child
+table.lb-data-table td.row-controls span.card-title,
+table.pinned-table td.row-controls span.card-title
 {
-  width: 10px;
-  white-space: nowrap;
-}
-table.lb-data-table td span.card-show {
   display: none;
 }
 
@@ -123,12 +125,6 @@ table.pinned-table td.row-controls
 	width: 10px;
 }
 
-table.lb-data-table .show-card,
-table.pinned-table .show-card
-{
-  display: none;
-}
-
 
 /*
 table.lb-data-table td.row-controls i,
@@ -146,7 +142,7 @@ table.pinned-table i.action
   vertical-align: middle;
   display: inline;
 }
-table.pinned-table i.show-card {
+table.pinned-table i.toggle-card {
   display: none;
 }
 i.delete-row {
@@ -201,10 +197,6 @@ i.delete-row {
   table.lb-data-table tr > td:nth-child(n+3) {
     border-top: 1px solid #ddd;
   }
-  table.lb-data-table td span.card-show {
-    display: inline;
-  }
-
   table.lb-data-table tr > td:not(.row-controls)
   {
     display: none;
@@ -216,7 +208,7 @@ i.delete-row {
     height: auto;
     padding: 0.75em 0;
   }
-  table.lb-data-table td.row-controls span
+  table.lb-data-table td.row-controls span.card-title
   {
     display: inline;
     white-space: nowrap;
@@ -234,8 +226,9 @@ i.delete-row {
     font-size: 1.5em;
   }
 
-  table.lb-data-table i.show-card
+  table.lb-data-table td.row-controls i.toggle-card
   {
+    display: inline;
     color: #337ab7;
     cursor: pointer;
     margin-right: 0.25em;
@@ -245,4 +238,8 @@ i.delete-row {
     margin: 0 0.4em 0 0em;
   }
 
+}
+
+.retrieve_items_button {
+  display: none;
 }
