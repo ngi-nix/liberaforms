@@ -145,7 +145,20 @@ $(document).ready(function() {
           cards_to_grid();
           update_grid_tables();
   });
-
+  /*
+  $('.lb-data-table').on('mousedown', function(e) {
+    console.log("mouse down")
+    $('.lb-data-table').on('mousemove', function(evt) {
+      console.log("mouse move")
+      $('html,body').stop(false, true).animate({
+          scrollLeft: evt.pageX - evt.clientX
+      });
+    });
+  });
+  $('.lb-data-table').on('mouseup', function() {
+    $('.lb-data-table').off('mousemove');
+  });
+  */
 });
 
 $(document).ready(function() {

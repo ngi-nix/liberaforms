@@ -103,16 +103,16 @@ div.responsive-table {
 }
 div.responsive-table div.scrollable {
 	margin-left: 220px;
+  /*cursor: ew-resize;*/
 }
 div.responsive-table div.scrollable {
 	overflow: scroll;
 	overflow-y: hidden;
 }
 
-.responsive-table table.lb-data-table.hidden-for-pin th:first-child,
-.responsive-table table.lb-data-table.hidden-for-pin th:nth-child(2),
-.responsive-table table.lb-data-table.hidden-for-pin td:first-child,
-.responsive-table table.lb-data-table.hidden-for-pin td:nth-child(2)
+.responsive-table table.lb-data-table.hidden-for-pin th:nth-child(-n+2),
+.responsive-table table.lb-data-table.hidden-for-pin td:nth-child(-n+2)
+/* hide first two */
 {
 	display: none;
 }
@@ -128,9 +128,29 @@ table.pinned-table .show-card
 {
   display: none;
 }
+
+
+/*
+table.lb-data-table td.row-controls i,
+table.pinned-table td.row-controls i {
+  font-size: 1.1em;
+  vertical-align: middle;
+  cursor: pointer;
+}
+*/
+
+table.lb-data-table i.action,
+table.pinned-table i.action
+{
+  font-size: 1.1em;
+  vertical-align: middle;
+  display: inline;
+}
+table.pinned-table i.show-card {
+  display: none;
+}
 i.delete-row {
   color: #d9534f;
-  cursor: pointer;
 }
 
 @media screen and (max-width: 768px) {
@@ -171,17 +191,18 @@ i.delete-row {
 		text-overflow: clip;
     border-left: 0;
 	}
+  table.lb-data-table tr > td:nth-child(2) {
+    margin-top: -0.5em;
+  }
+  table.lb-data-table th:nth-child(n+2)
+  {
+    border-left: 0;
+  }
   table.lb-data-table tr > td:nth-child(n+3) {
     border-top: 1px solid #ddd;
   }
   table.lb-data-table td span.card-show {
     display: inline;
-  }
-
-  table.lb-data-table th:nth-child(n+2),
-  table.lb-data-table td:nth-child(n+2)
-  {
-    border-left: 0;
   }
 
   table.lb-data-table tr > td:not(.row-controls)
@@ -194,16 +215,14 @@ i.delete-row {
     width: 100%;
     height: auto;
     padding: 0.75em 0;
-
-
-
   }
   table.lb-data-table td.row-controls span
   {
-    display: inline-block;
+    display: inline;
     white-space: nowrap;
   	overflow: hidden;
   	text-overflow: ellipsis;
+    margin-left: 0.3em;
   }
   table.lb-data-table tbody td:before {
     content: attr(data-label);
@@ -211,13 +230,10 @@ i.delete-row {
     display: block;
   }
 
-  table.lb-data-table i.show-card,
-  table.lb-data-table i.delete-row
-  {
+  table.lb-data-table td.row-controls i.action {
     font-size: 1.5em;
-    vertical-align: middle;
-    display: inline;
   }
+
   table.lb-data-table i.show-card
   {
     color: #337ab7;
@@ -228,12 +244,5 @@ i.delete-row {
     vertical-align: middle;
     margin: 0 0.4em 0 0em;
   }
-  table.lb-data-table td.row-controls span {
-    display: inline;
-    margin-left: 0.3em;
-    /*
-    overflow: hidden;
-    text-overflow: ellipsis;
-    */
-  }
+
 }
