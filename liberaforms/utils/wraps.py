@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 from functools import wraps
-from flask import current_app, request, g
+from flask import current_app, request, g, jsonify
 from flask import redirect, url_for, render_template, flash
 from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
@@ -20,6 +20,18 @@ def login_required(f):
             return f(*args, **kwargs)
         else:
             return redirect(url_for('main_bp.index'))
+    return wrap
+
+def enabled_user_required_json(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user and g.current_user.enabled:
+            return f(*args, **kwargs)
+        elif g.current_user:
+            current_app.logger.info(f'Disabled user denied: {request.path}')
+        else:
+            current_app.logger.info(f'Anon user denied: {request.path}')
+        return jsonify("Denied"), 401
     return wrap
 
 def enabled_user_required(f):
