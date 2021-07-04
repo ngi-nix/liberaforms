@@ -12,6 +12,7 @@ function dataTable(options) {
   var table_id = options.table_id
   var csrftoken = options.csrftoken
   var endpoint = options.endpoint
+  var edit_mode = options.edit_mode
   var switched = false;
 
   var table = $("#" + table_id)
@@ -177,8 +178,14 @@ function dataTable(options) {
         }
         if (field.name == "marked") {
           var td = $('<td class="row-controls">')
-          var i = $('<i class="toggle-card fa fa-chevron-circle-down action" aria-label="Show fields">')
+          var i = $('<i class="toggle-card action fa fa-chevron-circle-down" \
+                        aria-label="Show fields">')
           td.append(i)
+          if (edit_mode) {
+            var i = $('<i class="fa fa-trash action delete-row" \
+                          aria-label="{%trans%}Hide fields{%endtrans%}">')
+            td.append(i)
+          }
           var btn = $('<button class="btn btn-xs mark_answer">')
           btn.html('Mark <i class="fa fa-thumb-tack" aria-hidden="true"></i>')
           if ( item[field.name] == true ) {
@@ -251,65 +258,3 @@ var sanitizeHTML = function (str) {
    var temp = document.createElement('div');
    temp.textContent = str; return temp.innerHTML;
 };
-
-
-
-$(document).ready(function() {
-
-});
-
-/*
-<tbody>
-  {% for answer in answers %}
-  <tr _id="{{ answer['id'] }}">
-    {% set ns_fields = namespace(created=false) %}
-    {% for field in fieldIndex %}
-      {% if field['name'] == "created" %}
-          {% set ns_fields.created = answer[field['name']] %}
-          {% continue %}
-      {% endif %}
-      {% if field['name'] == "marked" %}
-        <td class="row-controls">
-          <i class="show-with-card fa fa-chevron-circle-down action"
-             aria-label="{%trans%}Show fields{%endtrans%}">
-          </i>
-          {% if edit_mode %}
-          <i class="fa fa-trash action delete-row"
-             aria-label="{%trans%}Hide fields{%endtrans%}">
-          </i>
-          {% endif %}
-          {% if answer[field['name']] == True %}
-            <button class="btn btn-success btn-xs mark_answer">
-              {%trans%}Mark{%endtrans%}
-              <i class="fa fa-thumb-tack" aria-hidden="true"></i>
-            </button>
-          {% else %}
-            <button class="btn btn-light btn-xs mark_answer">
-              {%trans%}Mark{%endtrans%}
-              <i class="fa fa-thumb-tack" aria-hidden="true"></i>
-            </button>
-          {% endif %}
-        </td>
-      {% elif field['name'].startswith('file-') %}
-        <td class="dontEdit"
-            data-label="{{ field['label'] }}"
-            aria-hidden="true">
-          {{ answer[field['name']]|safe }}
-        </td>
-      {% else %}
-        <td data-label="{{ field['label'] }}"
-            aria-hidden="true">
-          {{ answer[field['name']] }}
-        </td>
-      {% endif %}
-    {% endfor %}
-    <td data-label="{%trans%}Created{%endtrans%}"
-        title="{{ns_fields.created}}">
-      {% set date = ns_fields.created.split(' ')[0] %}
-      {% set time = ns_fields.created.split(' ')[1] %}
-      {{ date }} <span class='card-show'>{{ time }}</span>
-    </td>
-  </tr>
-  {% endfor %}
-</tbody>
-*/

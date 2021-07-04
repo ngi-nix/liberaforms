@@ -138,6 +138,7 @@
                 "table_id": "answers_table",
                 "csrftoken": "{{ csrf_token() }}",
                 "endpoint": "/api/form/{{form.id}}/answers",
+                "edit_mode": {{ edit_mode|tojson }}
             };
     var table = new dataTable(options);
   });
