@@ -142,11 +142,18 @@ table.pinned-table i.action
   vertical-align: middle;
   display: inline;
 }
+/*
 table.pinned-table i.toggle-card {
   display: none;
 }
+*/
 i.delete-row {
   color: #d9534f;
+}
+
+.answer-time
+{
+  display: none;
 }
 
 @media screen and (max-width: 768px) {
@@ -237,7 +244,9 @@ i.delete-row {
     vertical-align: middle;
     margin: 0 0.4em 0 0em;
   }
-
+  .answer-time {
+    display: inline;
+  }
 }
 
 .retrieve_items_button {

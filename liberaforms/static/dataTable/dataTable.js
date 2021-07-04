@@ -197,11 +197,15 @@ function dataTable(options) {
         tr.append(td)
       }
       var td = $('<td data-label="'+created_label+'" aria-hidden="true">')
-      var date_parts = created_value.split("T")
-      var date = date_parts[0];
-      var time = date_parts[1].split(".")[0]
-      td.prop('title', date+' '+time)
-      td.html(date + ' <span class="card-show">'+time+'</span>')
+      if (created_value.includes("T")) {
+        var date_parts = created_value.split("T")
+        var date = date_parts[0];
+        var time = date_parts[1].split(".")[0]
+        td.prop('title', date+' '+time)
+        td.html(date + ' <span class="answer-time">'+time+'</span>')
+      } else {
+        td.html(created_value)
+      }
       tr.append(td)
       tbody.append(tr)
     }

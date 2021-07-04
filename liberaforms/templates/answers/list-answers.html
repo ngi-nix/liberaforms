@@ -11,8 +11,8 @@
 <!-- <script src="/static/dataTables/plugins/sum().js"></script> -->
 {% endif %}
 
-<script src="/static/data-table/data-table.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/data-table/data-table.css">
+<script src="/static/dataTable/dataTable.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTable/dataTable.css">
 
 
 {% if edit_mode %}
@@ -45,13 +45,13 @@
         <a class="btn btn-primary btn-sm"
            role="button"
            href="/forms/csv/{{form.id}}?with_deleted_columns=true">
-           {%trans%}Download CSV{%endtrans%}
+          {%trans%}Download CSV{%endtrans%}
         </a>
     {% else %}
         <a class="btn btn-primary btn-sm"
            role="button"
            href="/forms/csv/{{form.id}}">
-            {%trans%}Download CSV{%endtrans%}
+          {%trans%}Download CSV{%endtrans%}
         </a>
     {% endif %}
 
@@ -60,13 +60,13 @@
             <a class="btn btn-success btn-sm"
                role="button"
                href="/forms/answers/{{form.id}}">
-                {%trans%}Disable edition{%endtrans%}
+              {%trans%}Disable edition{%endtrans%}
             </a>
         {% else %}
             <a class="btn btn-primary btn-sm"
                role="button"
                href="?edit_mode=true">
-                {%trans%}Enable edition{%endtrans%}
+              {%trans%}Enable edition{%endtrans%}
             </a>
         {% endif %}
         {% if form.has_removed_fields() %}
@@ -74,13 +74,13 @@
                 <a class="btn btn-success btn-sm"
                    role="button"
                    href="/forms/answers/{{form.id}}">
-                    {%trans%}Hide deleted columns{%endtrans%}
+                  {%trans%}Hide deleted columns{%endtrans%}
                 </a>
             {% else %}
                 <a class="btn btn-primary btn-sm"
                    role="button"
                    href="?with_deleted_columns=true">
-                    {%trans%}Show deleted columns{%endtrans%}
+                  {%trans%}Show deleted columns{%endtrans%}
                 </a>
             {% endif %}
         {% endif %}
@@ -88,7 +88,7 @@
         <a class="btn btn-warning btn-sm"
            role="button"
            href="/forms/delete-all-answers/{{form.id}}">
-            {%trans%}Delete all{%endtrans%}
+          {%trans%}Delete all{%endtrans%}
         </a>
         {% endif %}
     {%endif%}
