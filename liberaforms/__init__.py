@@ -12,6 +12,7 @@ from datetime import datetime
 from flask import Flask, request
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
@@ -19,6 +20,7 @@ from liberaforms.utils import setup
 from liberaforms.config.config import config
 
 db = SQLAlchemy()
+ma = Marshmallow()
 babel = Babel()
 session = Session()
 csrf = CSRFProtect()
@@ -37,6 +39,7 @@ def create_app():
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
 
     db.init_app(app)
+    ma.init_app(app)
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
@@ -89,6 +92,7 @@ def register_blueprints(app):
     from liberaforms.views.site import site_bp
     from liberaforms.views.admin import admin_bp
     from liberaforms.views.answers import answers_bp
+    from liberaforms.api.forms import form_api_bp
 
     app.register_blueprint(errors_bp)
     app.register_blueprint(main_bp)
@@ -98,4 +102,5 @@ def register_blueprints(app):
     app.register_blueprint(site_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(answers_bp)
+    app.register_blueprint(form_api_bp)
     return None
