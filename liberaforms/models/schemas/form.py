@@ -13,5 +13,6 @@ class FormSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Form
 
-    id = ma.auto_field()
+    id = ma.Int(dump_only=True)
     created = ma.auto_field()
+    slug = ma.auto_field()

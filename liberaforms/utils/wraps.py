@@ -22,7 +22,7 @@ def login_required(f):
             return redirect(url_for('main_bp.index'))
     return wrap
 
-def enabled_user_required_json(f):
+def enabled_user_required__json(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if g.current_user and g.current_user.enabled:

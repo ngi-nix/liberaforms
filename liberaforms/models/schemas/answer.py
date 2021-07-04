@@ -14,11 +14,13 @@ class AnswerSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Answer
 
-    id = ma.auto_field()
-    created = ma.auto_field()
-    form_id = ma.auto_field()
-    author_id = ma.auto_field()
-    marked = ma.auto_field()
+    id = ma.Int(dump_only=True)
+    created = ma.auto_field(dump_only=True)
+    marked = ma.Bool()
     data = ma.auto_field()
     form = ma.auto_field()
+    """
+    form_id = ma.auto_field()
+    author_id = ma.auto_field()
     attachments = ma.auto_field()
+    """
