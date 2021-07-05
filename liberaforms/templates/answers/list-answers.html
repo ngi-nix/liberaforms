@@ -11,10 +11,8 @@
 <!-- <script src="/static/dataTables/plugins/sum().js"></script> -->
 {% endif %}
 
-{% if edit_mode %}
 <script src="/static/jConfirm/jConfirm.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/jConfirm/jConfirm.min.css">
-{% endif %}
 
 <script src="/static/dataTable/dataTable.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTable/dataTable.css">
@@ -52,7 +50,6 @@
           {%trans%}Download CSV{%endtrans%}
         </a>
       {% endif %}
-
       {% if answers|length %}
         {% if edit_mode %}
           <a class="btn btn-success btn-sm"
@@ -96,34 +93,13 @@
     <div class="col-md-12">
       <hr />
 
-      {% if form.editors[g.current_user.id|string] is defined %}
-      <div id="toggle_notification"
-           class="btn-group btn-toggle">
-        <button id="notification_true"
-                class="btn btn-sm btn-default
-                {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
-                  btn-success
-                {% endif %}
-        ">
-          {%trans%}True{%endtrans%}
-        </button>
-        <button id="notification_false"
-                class="btn btn-sm btn-default
-                {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
-                  btn-primary
-                {% endif %}
-        ">
-          {%trans%}False{%endtrans%}
-        </button>
-      </div>
-      {%trans%}Notify me on each new answer{%endtrans%}
-      {% endif %}
-
       <p>&nbsp;</p>
-
-      <table id="answers_table"></table>
-
     </div>
+
+    <div class="col-md-12">
+      <table id="answers_table"></table>
+    </div>
+
   </div>
 </div>
 
@@ -258,30 +234,6 @@ $('#answersTable tbody').on('click', '.saveCellEdition', function () {
 });
 
 {% endif %}
-
-document.getElementById('toggle_notification').addEventListener('click', function(evt){
-    $.ajax({
-        url : "/form/toggle-notification/{{ form.id }}",
-        type: "POST",
-        dataType: "json",
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.notification == true) {
-                $('#notification_true').addClass('btn-success');
-                $('#notification_false').removeClass('btn-primary');
-            }
-            else if (data.notification == false) {
-                $('#notification_true').removeClass('btn-success');
-                $('#notification_false').addClass('btn-primary');
-            }
-        }
-    });
-});
 */
 </script>
 {% endif %}

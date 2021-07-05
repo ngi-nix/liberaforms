@@ -28,6 +28,9 @@ function dataTable(options) {
   /* ~~~~~~~~~~ setup layout ~~~~~~~~~~ */
   //
 
+  /* ~~~~~~ add table tools ~~~~~~~ */
+  var search_col = $('<div class="col-md-6">')
+  search_col.insertBefore(table.closest('div'))
   /* ~~~~~~ add search input ~~~~~~~ */
   var search = $('<div class="input-group mb-3">')
   var input = $('<input type="text" class="form-control" \
@@ -46,7 +49,8 @@ function dataTable(options) {
   group2.append(button1)
   group2.append(button2)
   search.append(group2)
-  search.insertBefore(table)
+  search_col.append(search)
+
 
   /* ~~~~~~ add 'load more items' button ~~~~~~~ */
   var btn = $("<button class='btn btn-primary retrieve_items_button' \
@@ -260,10 +264,14 @@ function dataTable(options) {
                         aria-label="Show fields">')
           td.append(i)
           if (edit_mode) {
-            var i = $('<i class="fa fa-trash action delete-row" \
+            var i = $('<i class="fa fa-trash action delete-row edition-components" \
                           aria-label="Delete answer">')
-            td.append(i.jConfirm())
+          } else {
+            var i = $('<i class="fa fa-trash action delete-row edition-components" \
+                          aria-label="Delete answer" \
+                          style="display: none">')
           }
+          td.append(i.jConfirm())
           var btn = $('<button class="btn btn-xs mark_answer">')
           btn.html('Mark <i class="fa fa-thumb-tack" \
                             aria-hidden="true"></i>')
@@ -433,7 +441,7 @@ var sanitizeHTML = function (str) {
    var temp = document.createElement('div');
    temp.textContent = str; return temp.innerHTML;
 };
-// makes 'contains' case insentive
+// makes jQuery's 'contains' case insentive
 jQuery.expr[':'].contains = function(a, i, m) {
   return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
 };
