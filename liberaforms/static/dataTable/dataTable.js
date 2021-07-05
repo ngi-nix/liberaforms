@@ -18,9 +18,16 @@ function dataTable(options) {
   var switched = false;
   var paginate_page = 1;
   var retrieved_items = 0;
+  var total_items = 0;
 
   var table = $("#" + table_id)
   table.addClass("lb-data-table")
+  retrieve_items(); // make ajax request and populate table with result
+
+  //
+  /* ~~~~~~~~~~ setup layout ~~~~~~~~~~ */
+  //
+
   /* ~~~~~~ add search input ~~~~~~~ */
   var search = $('<div class="input-group mb-3">')
   var input = $('<input type="text" class="form-control" \
@@ -34,12 +41,13 @@ function dataTable(options) {
                           type="button" \
                           table="'+table_id+'">')
   button1.html('Clear')
-  button2.html('Search')
+  button2.html('Search').append('<i class="fa fa-search" aria-hidden="true">')
   search.append(input)
   group2.append(button1)
   group2.append(button2)
   search.append(group2)
   search.insertBefore(table)
+
   /* ~~~~~~ add 'load more items' button ~~~~~~~ */
   var btn = $("<button class='btn btn-primary retrieve_items_button' \
                        table="+table_id+">")
@@ -55,11 +63,75 @@ function dataTable(options) {
     $.jConfirm.defaults.size = 'small';
   }
 
-  retrieve_items(); // make ajax request and populate table with result
+  //
+  /* ~~~~~~~~~~ events ~~~~~~~~~~ */
+  //
+
+  $(window).on("redraw",function(){
+    switched=false;
+    cards_to_grid();
+    redraw_grid_table();
+  });
+  $(window).on("resize", function(){
+    cards_to_grid();
+    redraw_grid_table();
+  });
+  $(document).on("click", ".toggle-card", function(){
+    if ($(this).hasClass('fa-chevron-circle-down')){
+      var tr = $(this).closest('tr')
+      $(tr).find('td').css('display', 'inline-block')
+      $(this).removeClass('fa-chevron-circle-down')
+             .addClass('fa-chevron-circle-up')
+    } else {
+      var tr = $(this).closest('tr')
+      $(tr).find('td').css('display', '')
+      $(tr).css('margin-bottom', '')
+      $(this).removeClass('fa-chevron-circle-up')
+             .addClass('fa-chevron-circle-down')
+    }
+  });
+  $(document).on("click", ".mark_answer", function(){
+    answer_id = $(this).closest('tr').attr('_id')
+    mark_answer(answer_id)
+  });
+  $(document).on("confirm", ".delete-row", function(){
+    answer_id = $(this).closest('tr').attr('_id')
+    delete_answer(answer_id)
+  });
+  $(document).on("click", '.retrieve_items_button[table='+table_id+']', function(){
+    retrieve_items()
+  });
+  $(document).on("click", '.clear_search[table='+table_id+']', function(){
+    $(this).closest('.input-group').find('input').val('')
+    clear_search();
+  });
+  $(document).on("click", '.search_items[table='+table_id+']', function(){
+    if (retrieved_items < total_items) {
+      retrieve_items(all_items=true)
+    }
+    var text = $(this).closest('.input-group').find('input').val()
+    search_text(text);
+  });
+  /*
+  $('.lb-data-table').on('mousedown', function(e) {
+    console.log("mouse down")
+    $('.lb-data-table').on('mousemove', function(evt) {
+      console.log("mouse move")
+      $('html,body').stop(false, true).animate({
+          scrollLeft: evt.pageX - evt.clientX
+      });
+    });
+  });
+  $('.lb-data-table').on('mouseup', function() {
+    $('.lb-data-table').off('mousemove');
+  });
+  */
+
 
   //
   /* ~~~~~~~~~~ responsive table ~~~~~~~~~~ */
   //
+
   function redraw_grid_table () {
     //console.log("redwaw grid table")
     if ($(window).width() <= 768) {
@@ -113,84 +185,9 @@ function dataTable(options) {
   }
 
   //
-  /* ~~~~~~~~~~ events ~~~~~~~~~~ */
-  //
-  $(window).on("redraw",function(){
-    switched=false;
-    cards_to_grid();
-    redraw_grid_table();
-  });
-  $(window).on("resize", function(){
-    cards_to_grid();
-    redraw_grid_table();
-  });
-  $(document).on("click", ".toggle-card", function(){
-    if ($(this).hasClass('fa-chevron-circle-down')){
-      var tr = $(this).closest('tr')
-      $(tr).find('td').css('display', 'inline-block')
-      $(this).removeClass('fa-chevron-circle-down')
-             .addClass('fa-chevron-circle-up')
-    } else {
-      var tr = $(this).closest('tr')
-      $(tr).find('td').css('display', '')
-      $(tr).css('margin-bottom', '')
-      $(this).removeClass('fa-chevron-circle-up')
-             .addClass('fa-chevron-circle-down')
-    }
-  });
-  $(document).on("click", ".mark_answer", function(){
-    answer_id = $(this).closest('tr').attr('_id')
-    mark_answer(answer_id)
-  });
-  $(document).on("confirm", ".delete-row", function(){
-    answer_id = $(this).closest('tr').attr('_id')
-    delete_answer(answer_id)
-  });
-  $(document).on("click", '.retrieve_items_button[table='+table_id+']', function(){
-    retrieve_items()
-  });
-  $(document).on("click", '.clear_search[table='+table_id+']', function(){
-    $(this).closest('.input-group').find('input').val('')
-    table.find('tbody').find('tr').removeClass('not_found_by_search')
-    table.closest('.responsive-table').find('.pinned-table')
-                                      .find('tr')
-                                      .removeClass('not_found_by_search')
-  });
-  $(document).on("click", '.search_items[table='+table_id+']', function(){
-    var text = $(this).closest('.input-group').find('input').val()
-    if (text ==="") {
-      $(table).find('tbody').find('tr').removeClass('not_found_by_search')
-    } else {
-      $(table).find('tbody').find('tr').each(function(i, tr) {
-        var _id = $(tr).attr('_id')
-        console.log(_id)
-        if ($(tr).is(':contains("'+text+'")')) {
-          $(document).find('tr[_id='+_id+']').removeClass('not_found_by_search')
-        } else {
-          $(document).find('tr[_id='+_id+']').addClass('not_found_by_search')
-        }
-      });
-    }
-
-  });
-  /*
-  $('.lb-data-table').on('mousedown', function(e) {
-    console.log("mouse down")
-    $('.lb-data-table').on('mousemove', function(evt) {
-      console.log("mouse move")
-      $('html,body').stop(false, true).animate({
-          scrollLeft: evt.pageX - evt.clientX
-      });
-    });
-  });
-  $('.lb-data-table').on('mouseup', function() {
-    $('.lb-data-table').off('mousemove');
-  });
-  */
-
-  //
   /* ~~~~~~~~~~ table construction ~~~~~~~~~~ */
   //
+
   function create_pinned_table(){
     //console.log("create pinned table")
     var original = table;
@@ -315,9 +312,15 @@ function dataTable(options) {
   //
   /* ~~~~~~~~~~ ajax ~~~~~~~~~~ */
   //
-  function retrieve_items() {
+
+  async function retrieve_items(all_items=false) {
+    if (all_items) {
+      var url = items_endpoint
+    } else {
+      var url = items_endpoint+"?page="+paginate_page
+    }
     $.ajax({
-      url : items_endpoint+"?page="+paginate_page,
+      url : url,
       type: "GET",
       beforeSend: function(xhr, settings) {
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
@@ -332,7 +335,8 @@ function dataTable(options) {
         insert_items(data);
         paginate_page = paginate_page +1;
         retrieved_items = retrieved_items + data.items.length;
-        if (retrieved_items < data.meta.total) {
+        total_items = data.meta.total
+        if (retrieved_items < total_items) {
           $('.retrieve_items_button[table='+table_id+']').show()
         } else {
           $('.retrieve_items_button[table='+table_id+']').hide()
@@ -382,11 +386,37 @@ function dataTable(options) {
       }
     });
   }
+
+  //
+  /* ~~~~~~~~~~ search functions ~~~~~~~~~~ */
+  //
+
+  function search_text(text) {
+    if (text ==="") {
+      $(table).find('tbody').find('tr').removeClass('not_found_by_search')
+    } else {
+      $(table).find('tbody').find('tr').each(function(i, tr) {
+        var _id = $(tr).attr('_id')
+        if ($(tr).is(':contains("'+text+'")')) {
+          $(document).find('tr[_id='+_id+']').removeClass('not_found_by_search')
+        } else {
+          $(document).find('tr[_id='+_id+']').addClass('not_found_by_search')
+        }
+      });
+    }
+  }
+  function clear_search() {
+    table.find('tbody').find('tr').removeClass('not_found_by_search')
+    table.closest('.responsive-table').find('.pinned-table')
+                                      .find('tr')
+                                      .removeClass('not_found_by_search')
+  }
 }
 
 //
 /* ~~~~~~~~~~ helper functions ~~~~~~~~~~ */
 //
+
 var HScrollVisible = function () {
   var table_width = 0;
   $("table.lb-data-table").each(function(i, table) {
@@ -407,7 +437,3 @@ var sanitizeHTML = function (str) {
 jQuery.expr[':'].contains = function(a, i, m) {
   return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
 };
-
-/*
-
-*/

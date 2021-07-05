@@ -33,10 +33,10 @@ def form_answers(form_id):
     if not form:
         return jsonify("Denied"), 401
     page = request.args.get('page', type=int)
-    if not page:
-        current_app.logger.debug(f"No page")
-        return jsonify("No pagination"), 406
-    answers = form.answers.paginate(page, 10, False).items
+    if page:
+        answers = form.answers.paginate(page, 10, False).items
+    else:
+        answers = form.answers
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'total': form.answers.count(),
