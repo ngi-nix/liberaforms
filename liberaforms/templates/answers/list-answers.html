@@ -20,12 +20,8 @@
 <link rel="stylesheet" type="text/css" href="/static/dataTable/dataTable.css">
 
 
-
-
-
-
 <div class="container">
-<div class="row"
+  <div class="row"
      style="font-size:1.5em">
     <div class="col">
       <a class="btn btn-primary btn-sm"
@@ -37,71 +33,70 @@
     </div>
 
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm"
-       role="button"
-       href="/forms/answers/stats/{{form.id}}">
-       {%trans%}Graphs{%endtrans%}
-      <i class="fa fa-bar-chart" aria-hidden="true"></i>
-    </a>
-    {% if with_deleted_columns %}
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/answers/stats/{{form.id}}">
+         {%trans%}Graphs{%endtrans%}
+        <i class="fa fa-bar-chart" aria-hidden="true"></i>
+      </a>
+      {% if with_deleted_columns %}
         <a class="btn btn-primary btn-sm"
            role="button"
            href="/forms/csv/{{form.id}}?with_deleted_columns=true">
           {%trans%}Download CSV{%endtrans%}
         </a>
-    {% else %}
+      {% else %}
         <a class="btn btn-primary btn-sm"
            role="button"
            href="/forms/csv/{{form.id}}">
           {%trans%}Download CSV{%endtrans%}
         </a>
-    {% endif %}
+      {% endif %}
 
-    {% if answers|length %}
+      {% if answers|length %}
         {% if edit_mode %}
+          <a class="btn btn-success btn-sm"
+             role="button"
+             href="/forms/answers/{{form.id}}">
+            {%trans%}Disable edition{%endtrans%}
+          </a>
+        {% else %}
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="?edit_mode=true">
+            {%trans%}Enable edition{%endtrans%}
+          </a>
+        {% endif %}
+        {% if form.has_removed_fields() %}
+          {% if with_deleted_columns %}
             <a class="btn btn-success btn-sm"
                role="button"
                href="/forms/answers/{{form.id}}">
-              {%trans%}Disable edition{%endtrans%}
+              {%trans%}Hide deleted columns{%endtrans%}
             </a>
-        {% else %}
+          {% else %}
             <a class="btn btn-primary btn-sm"
                role="button"
-               href="?edit_mode=true">
-              {%trans%}Enable edition{%endtrans%}
+               href="?with_deleted_columns=true">
+              {%trans%}Show deleted columns{%endtrans%}
             </a>
-        {% endif %}
-        {% if form.has_removed_fields() %}
-            {% if with_deleted_columns %}
-                <a class="btn btn-success btn-sm"
-                   role="button"
-                   href="/forms/answers/{{form.id}}">
-                  {%trans%}Hide deleted columns{%endtrans%}
-                </a>
-            {% else %}
-                <a class="btn btn-primary btn-sm"
-                   role="button"
-                   href="?with_deleted_columns=true">
-                  {%trans%}Show deleted columns{%endtrans%}
-                </a>
-            {% endif %}
+          {% endif %}
         {% endif %}
         {% if edit_mode %}
-        <a class="btn btn-warning btn-sm"
-           role="button"
-           href="/forms/delete-all-answers/{{form.id}}">
-          {%trans%}Delete all{%endtrans%}
-        </a>
+          <a class="btn btn-warning btn-sm"
+             role="button"
+             href="/forms/delete-all-answers/{{form.id}}">
+            {%trans%}Delete all{%endtrans%}
+          </a>
         {% endif %}
-    {%endif%}
+      {%endif%}
     </div>
-</div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <hr />
 
-<div class="row">
-  <div class="col-md-12">
-    <hr />
-
-    {% if form.editors[g.current_user.id|string] is defined %}
+      {% if form.editors[g.current_user.id|string] is defined %}
       <div id="toggle_notification"
            class="btn-group btn-toggle">
         <button id="notification_true"
@@ -122,14 +117,14 @@
         </button>
       </div>
       {%trans%}Notify me on each new answer{%endtrans%}
-    {% endif %}
+      {% endif %}
 
-    <p>&nbsp;</p>
+      <p>&nbsp;</p>
 
-    <table id="answers_table"></table>
+      <table id="answers_table"></table>
 
+    </div>
   </div>
-</div>
 </div>
 
 {% if form.editors[g.current_user.id|string] is defined %}

@@ -253,3 +253,6 @@ i.delete-row {
 .retrieve_items_button {
   display: none;
 }
+.not_found_by_search {
+  display: none !important;
+}

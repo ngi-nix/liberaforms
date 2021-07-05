@@ -21,6 +21,25 @@ function dataTable(options) {
 
   var table = $("#" + table_id)
   table.addClass("lb-data-table")
+  /* ~~~~~~ add search input ~~~~~~~ */
+  var search = $('<div class="input-group mb-3">')
+  var input = $('<input type="text" class="form-control" \
+                        aria-label="Search" \
+                        aria-describedby="basic-addon2">')
+  var group2 = $('<div class="input-group-append">')
+  var button1 = $('<button class="btn clear_search" \
+                          type="button" \
+                          table="'+table_id+'">')
+  var button2 = $('<button class="btn btn-primary search_items" \
+                          type="button" \
+                          table="'+table_id+'">')
+  button1.html('Clear')
+  button2.html('Search')
+  search.append(input)
+  group2.append(button1)
+  group2.append(button2)
+  search.append(group2)
+  search.insertBefore(table)
   /* ~~~~~~ add 'load more items' button ~~~~~~~ */
   var btn = $("<button class='btn btn-primary retrieve_items_button' \
                        table="+table_id+">")
@@ -56,9 +75,7 @@ function dataTable(options) {
     else if (switched && HScrollVisible() == false) {
       unsplit_grid_table();
     }
-    $("table.lb-data-table").each(function(i, element) {
-      $(element).css('opacity', 1);
-    });
+    table.css('opacity', 1);
   }
   function cards_to_grid() {
     if ($(window).width() >= 768 && $(".pinned-table").length == 0) {
@@ -131,6 +148,30 @@ function dataTable(options) {
   });
   $(document).on("click", '.retrieve_items_button[table='+table_id+']', function(){
     retrieve_items()
+  });
+  $(document).on("click", '.clear_search[table='+table_id+']', function(){
+    $(this).closest('.input-group').find('input').val('')
+    table.find('tbody').find('tr').removeClass('not_found_by_search')
+    table.closest('.responsive-table').find('.pinned-table')
+                                      .find('tr')
+                                      .removeClass('not_found_by_search')
+  });
+  $(document).on("click", '.search_items[table='+table_id+']', function(){
+    var text = $(this).closest('.input-group').find('input').val()
+    if (text ==="") {
+      $(table).find('tbody').find('tr').removeClass('not_found_by_search')
+    } else {
+      $(table).find('tbody').find('tr').each(function(i, tr) {
+        var _id = $(tr).attr('_id')
+        console.log(_id)
+        if ($(tr).is(':contains("'+text+'")')) {
+          $(document).find('tr[_id='+_id+']').removeClass('not_found_by_search')
+        } else {
+          $(document).find('tr[_id='+_id+']').addClass('not_found_by_search')
+        }
+      });
+    }
+
   });
   /*
   $('.lb-data-table').on('mousedown', function(e) {
@@ -362,7 +403,10 @@ var sanitizeHTML = function (str) {
    var temp = document.createElement('div');
    temp.textContent = str; return temp.innerHTML;
 };
-
+// makes 'contains' case insentive
+jQuery.expr[':'].contains = function(a, i, m) {
+  return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+};
 
 /*
 
