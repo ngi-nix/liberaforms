@@ -79,24 +79,6 @@ def delete_answer(id):
     return JsonResponse(json.dumps({'deleted': True}))
 
 
-@answers_bp.route('/forms/toggle-marked-answer/<int:id>', methods=['POST'])
-@enabled_user_required
-def toggle_marked_answer(id):
-    queriedForm=Form.find(id=id, editor_id=str(g.current_user.id))
-    if not (queriedForm and 'id' in request.json):
-        return JsonResponse(json.dumps({'marked': False}))
-    try:
-        answer_id = int(request.json['id'])
-        answer = Answer.find(id=answer_id, form_id=queriedForm.id)
-    except:
-        answer = None
-    if not answer:
-        return JsonResponse(json.dumps({'marked': False}))
-    answer.marked = False if answer.marked == True else True
-    answer.save()
-    return JsonResponse(json.dumps({'marked': answer.marked}))
-
-
 @answers_bp.route('/forms/change-answer-field-value/<int:id>', methods=['POST'])
 @enabled_user_required
 def change_answer(id):

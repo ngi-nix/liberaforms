@@ -141,17 +141,12 @@ table.pinned-table i.action
   font-size: 1.1em;
   vertical-align: middle;
   display: inline;
+  cursor: pointer;
 }
-/*
-table.pinned-table i.toggle-card {
-  display: none;
-}
-*/
 i.delete-row {
   color: #d9534f;
   margin-right: 0.4em;
 }
-
 .answer-time
 {
   display: none;

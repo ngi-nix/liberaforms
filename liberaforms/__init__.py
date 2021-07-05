@@ -92,7 +92,8 @@ def register_blueprints(app):
     from liberaforms.views.site import site_bp
     from liberaforms.views.admin import admin_bp
     from liberaforms.views.answers import answers_bp
-    from liberaforms.api.forms import form_api_bp
+    from liberaforms.api.form import form_api_bp
+    from liberaforms.api.answer import answer_api_bp
 
     app.register_blueprint(errors_bp)
     app.register_blueprint(main_bp)
@@ -103,4 +104,5 @@ def register_blueprints(app):
     app.register_blueprint(admin_bp)
     app.register_blueprint(answers_bp)
     app.register_blueprint(form_api_bp)
+    app.register_blueprint(answer_api_bp)
     return None

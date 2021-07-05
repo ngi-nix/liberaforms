@@ -11,7 +11,8 @@ This file is part of LiberaForms.
 function dataTable(options) {
   var table_id = options.table_id
   var csrftoken = options.csrftoken
-  var endpoint = options.endpoint
+  var items_endpoint = options.items_endpoint
+  var item_endpoint = options.item_endpoint
   var edit_mode = options.edit_mode
   var switched = false;
 
@@ -77,8 +78,9 @@ function dataTable(options) {
     $(thead_row).find("th:nth-child(2)").clone().appendTo(newRow);
     $(pinned_table).append($('<thead />').append(newRow));
     $(pinned_table).append(tbody);
-    copy.find("tbody").find("tr").each(function(index) {
+    copy.find("tbody").find("tr").each(function(index, tr) {
       var newRow = $("<tr></tr>");
+      newRow.attr('_id', $(tr).attr('_id'))
       $(this).find("td:first-child").clone().appendTo(newRow);
       $(this).find("td:nth-child(2)").clone().appendTo(newRow);
       $(tbody).append(newRow);
@@ -119,6 +121,10 @@ function dataTable(options) {
       $(this).removeClass('fa-chevron-circle-up')
              .addClass('fa-chevron-circle-down')
     }
+  });
+  $(document).on("click", ".mark_answer", function (){
+    answer_id = $(this).closest('tr').attr('_id')
+    mark_answer(answer_id, this)
   });
   /*
   $('.lb-data-table').on('mousedown', function(e) {
@@ -223,7 +229,7 @@ function dataTable(options) {
   /* ~~~~~~~~~~ ajax ~~~~~~~~~~ */
   function retrieve_items() {
     $.ajax({
-      url : endpoint,
+      url : items_endpoint,
       type: "GET",
       beforeSend: function(xhr, settings) {
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
@@ -238,6 +244,27 @@ function dataTable(options) {
         insert_items(data);
       }
     });
+  }
+  function mark_answer(answer_id, button) {
+    $.ajax({
+      url : item_endpoint+'/'+answer_id+'/mark',
+      type: "POST",
+      beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken)
+          }
+      },
+      success: function(data, textStatus, jqXHR)
+      {
+          if (data.marked == true) {
+              $(button).removeClass("btn-basic")
+              $(button).addClass("btn-success")
+          }else{
+              $(button).addClass("btn-basic")
+              $(button).removeClass("btn-success")
+          }
+      }
+  });
   }
 }
 
