@@ -245,6 +245,11 @@ i.delete-row {
   }
 }
 
+.deletion-in-progress {
+    background-color: #FAAFBE;
+    text-decoration: line-through;
+    cursor: auto;
+}
 .retrieve_items_button {
   display: none;
 }

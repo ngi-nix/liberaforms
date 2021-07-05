@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 from flask import Blueprint, jsonify
+from flask_babel import gettext as _
 from liberaforms.models.form import Form
 from liberaforms.models.schemas.form import FormSchema
 from liberaforms.models.schemas.answer import AnswerSchema
@@ -18,7 +19,7 @@ form_api_bp = Blueprint('form_api_bp', __name__)
 @form_api_bp.route('/api/forms', methods=['GET'])
 @enabled_user_required__json
 def all_forms():
-    forms = Form.find_all(author_id=g.current_user.id)
+    forms = Form.find_all(editor_id=g.current_user.id)
     return jsonify(
         items=FormSchema(many=True).dump(forms),
         meta={'count': forms.count()}

@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 /* Table pinning idea seen at http://foundation.zurb.com */
 /* Table card idea seen at https://www.exeideas.com/2020/10/simple-responsive-html-table.html */
 
+
 function dataTable(options) {
   var table_id = options.table_id
   var csrftoken = options.csrftoken
@@ -22,6 +23,15 @@ function dataTable(options) {
   var btn = $("<button class='btn btn-primary retrieve_items_button'>")
   btn.html("Load more")
   btn.insertAfter(table);
+
+  if (edit_mode) {
+    $.jConfirm.defaults.question = 'Are you sure?';
+    $.jConfirm.defaults.confirm_text = 'Delete';
+    $.jConfirm.defaults.deny_text = 'Cancel';
+    $.jConfirm.defaults.theme = 'bootstrap-4-white';
+    $.jConfirm.defaults.position = 'right';
+    $.jConfirm.defaults.size = 'small';
+  }
 
   retrieve_items(); // make ajax request and populate table with result
 
@@ -81,7 +91,11 @@ function dataTable(options) {
     copy.find("tbody").find("tr").each(function(index, tr) {
       var newRow = $("<tr></tr>");
       newRow.attr('_id', $(tr).attr('_id'))
-      $(this).find("td:first-child").clone().appendTo(newRow);
+      first_td = $(this).find("td:first-child").clone()
+      if (first_td.find('i.delete-row').length != 0) {
+        first_td.find('i.delete-row').jConfirm()
+      }
+      first_td.appendTo(newRow);
       $(this).find("td:nth-child(2)").clone().appendTo(newRow);
       $(tbody).append(newRow);
     });
@@ -108,7 +122,7 @@ function dataTable(options) {
     cards_to_grid();
     update_grid_table();
   });
-  $(document).on("click", ".toggle-card", function (){
+  $(document).on("click", ".toggle-card", function(){
     if ($(this).hasClass('fa-chevron-circle-down')){
       var tr = $(this).closest('tr')
       $(tr).find('td').css('display', 'inline-block')
@@ -122,9 +136,13 @@ function dataTable(options) {
              .addClass('fa-chevron-circle-down')
     }
   });
-  $(document).on("click", ".mark_answer", function (){
+  $(document).on("click", ".mark_answer", function(){
     answer_id = $(this).closest('tr').attr('_id')
-    mark_answer(answer_id, this)
+    mark_answer(answer_id)
+  });
+  $(document).on("confirm", ".delete-row", function(){
+    answer_id = $(this).closest('tr').attr('_id')
+    delete_answer(answer_id)
   });
   /*
   $('.lb-data-table').on('mousedown', function(e) {
@@ -189,18 +207,20 @@ function dataTable(options) {
           td.append(i)
           if (edit_mode) {
             var i = $('<i class="fa fa-trash action delete-row" \
-                          aria-label="{%trans%}Hide fields{%endtrans%}">')
-            td.append(i)
+                          aria-label="Delete answer">')
+            td.append(i.jConfirm())
           }
           var btn = $('<button class="btn btn-xs mark_answer">')
-          btn.html('Mark <i class="fa fa-thumb-tack" aria-hidden="true"></i>')
+          btn.html('Mark <i class="fa fa-thumb-tack" \
+                            aria-hidden="true"></i>')
           if ( item[field.name] == true ) {
             btn.addClass('btn-success')
           }
           td.append(btn)
         }
         else if (field.name.startsWith('file-')) {
-          var td = $('<td class="dontEdit" data-label="'+field.label+'" aria-hidden="true">')
+          var td = $('<td class="dontEdit" data-label="'+field.label+'" \
+                          aria-hidden="true">')
           td.html(item.data[field.name])
         }
         else {
@@ -245,26 +265,47 @@ function dataTable(options) {
       }
     });
   }
-  function mark_answer(answer_id, button) {
+  function mark_answer(answer_id) {
     $.ajax({
       url : item_endpoint+'/'+answer_id+'/mark',
       type: "POST",
       beforeSend: function(xhr, settings) {
-          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken)
-          }
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken)
+        }
       },
       success: function(data, textStatus, jqXHR)
       {
-          if (data.marked == true) {
-              $(button).removeClass("btn-basic")
-              $(button).addClass("btn-success")
-          }else{
-              $(button).addClass("btn-basic")
-              $(button).removeClass("btn-success")
-          }
+        buttons = $(document).find('tr[_id='+answer_id+']')
+                             .find('button.mark_answer')
+        if (data.marked == true) {
+          $(buttons).removeClass("btn-basic").addClass("btn-success")
+        }else{
+          $(buttons).removeClass("btn-success").addClass("btn-basic")
+        }
       }
-  });
+    });
+  }
+  function delete_answer(answer_id) {
+    var rows = $(document).find('tr[_id='+answer_id+']')
+    rows.addClass('deletion-in-progress')
+    $.ajax({
+      url : item_endpoint+'/'+answer_id+'/delete',
+      type: "DELETE",
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken)
+        }
+      },
+      success: function(data, textStatus, jqXHR)
+      {
+        if (data.deleted == true) {
+          rows.remove()
+        }else{
+          rows.removedClass('deletion-in-progress')
+        }
+      }
+    });
   }
 }
 
@@ -285,3 +326,8 @@ var sanitizeHTML = function (str) {
    var temp = document.createElement('div');
    temp.textContent = str; return temp.innerHTML;
 };
+
+
+/*
+
+*/

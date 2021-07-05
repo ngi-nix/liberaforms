@@ -248,11 +248,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     color: #5cb85c;
     cursor: pointer;
 }
-.deleted-row {
-    background-color: #FAAFBE;
-    text-decoration: line-through;
-    cursor: auto;
-}
+
 .answerCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
     background-color: #ffffcc;
     cursor: pointer;

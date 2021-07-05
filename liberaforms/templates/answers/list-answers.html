@@ -11,14 +11,16 @@
 <!-- <script src="/static/dataTables/plugins/sum().js"></script> -->
 {% endif %}
 
-<script src="/static/dataTable/dataTable.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTable/dataTable.css">
-
-
 {% if edit_mode %}
 <script src="/static/jConfirm/jConfirm.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/jConfirm/jConfirm.min.css">
 {% endif %}
+
+<script src="/static/dataTable/dataTable.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTable/dataTable.css">
+
+
+
 
 
 
@@ -210,38 +212,6 @@ $(document).ready(function() {
     $('.delete-row-icon').attr('title', "{%trans%}Delete answer{%endtrans%}");
 });
 
-{% if not edit_mode %}
-// toggle marked field
-$('#answersTable tbody').on('click', '.mark_answer', function () {
-    var $row = $(this).parents('tr');
-    var button=$(this)
-    $.ajax({
-        url : "/forms/toggle-marked-answer/{{ form.id }}",
-        type: "POST",
-        dataType: "json",
-        contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify({"id": getAnswerID($row)} ),
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.marked == true) {
-                button.removeClass("btn-basic")
-                button.addClass("btn-success")
-                button.prev('span').html(1)
-            }else{
-                button.addClass("btn-basic")
-                button.removeClass("btn-success")
-                button.prev('span').html(0)
-            }
-        }
-    });
-});
-{% endif %}
-
 {% if edit_mode %}
 // Edit cell
 $('#answersTable tbody')
@@ -291,46 +261,7 @@ $('#answersTable tbody').on('click', '.saveCellEdition', function () {
         }
     });
 });
-$(function(){
-  $('.delete-row-icon').jConfirm({
-    position: 'right',
-    size: 'small',
-    theme: 'bootstrap-4-white',
-    question: "{%trans%}Are you sure?{%endtrans%}",
-    confirm_text: '{%trans%}Delete{%endtrans%}',
-    deny_text: "{%trans%}Cancel{%endtrans%}",
-  }).on('confirm', function(e){
 
-    var $row=$(this).parents('tr');
-    if ($row.find(".cellEditionMode").length == 1){
-        return
-    }
-    $row.children(':not(:first-child)').addClass('deleted-row');
-    $.ajax({
-        url : "/forms/delete-answer/{{ form.id }}",
-        type: "POST",
-        dataType: "json",
-        contentType: 'application/json;charset=UTF-8',
-        data: JSON.stringify({"id": getAnswerID($row)}),
-        beforeSend: function(xhr, settings) {
-            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken)
-            }
-        },
-        success: function(data, textStatus, jqXHR)
-        {
-            if (data.deleted == true) {
-                $row.remove();
-            } else {
-              $row.children(':not(:first-child)').removeClass('deleted-row');
-            }
-        }
-    });
-  });
-});
-//$('#answersTable tbody').on('click', '.delete-row-icon', function () {
-
-//});
 {% endif %}
 
 document.getElementById('toggle_notification').addEventListener('click', function(evt){
