@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
 from liberaforms.models.schemas.form import FormSchema
@@ -23,18 +23,23 @@ def all_forms():
     return jsonify(
         items=FormSchema(many=True).dump(forms),
         meta={'count': forms.count()}
-    )
+    ), 200
 
 
 @form_api_bp.route('/api/form/<int:form_id>/answers', methods=['GET'])
 @enabled_user_required__json
 def form_answers(form_id):
-    queriedForm = Form.find(id=form_id, editor_id=g.current_user.id)
-    if not queriedForm:
+    form = Form.find(id=form_id, editor_id=g.current_user.id)
+    if not form:
         return jsonify("Denied"), 401
+    page = request.args.get('page', type=int)
+    if not page:
+        current_app.logger.debug(f"No page")
+        return jsonify("No pagination"), 406
+    answers = form.answers.paginate(page, 10, False).items
     return jsonify(
-        items=AnswerSchema(many=True).dump(queriedForm.answers),
-        meta={'count': queriedForm.answers.count(),
-              'field_index': queriedForm.fieldIndex,
+        items=AnswerSchema(many=True).dump(answers),
+        meta={'total': form.answers.count(),
+              'field_index': form.fieldIndex,
         }
-    )
+    ), 200

@@ -16,11 +16,14 @@ function dataTable(options) {
   var item_endpoint = options.item_endpoint
   var edit_mode = options.edit_mode
   var switched = false;
+  var paginate_page = 1;
+  var retrieved_items = 0;
 
   var table = $("#" + table_id)
   table.addClass("lb-data-table")
   /* ~~~~~~ add 'load more items' button ~~~~~~~ */
-  var btn = $("<button class='btn btn-primary retrieve_items_button'>")
+  var btn = $("<button class='btn btn-primary retrieve_items_button' \
+                       table="+table_id+">")
   btn.html("Load more")
   btn.insertAfter(table);
 
@@ -35,16 +38,16 @@ function dataTable(options) {
 
   retrieve_items(); // make ajax request and populate table with result
 
-
+  //
   /* ~~~~~~~~~~ responsive table ~~~~~~~~~~ */
-  function update_grid_table () {
+  //
+  function redraw_grid_table () {
+    //console.log("redwaw grid table")
     if ($(window).width() <= 768) {
       if (switched) {
         unsplit_grid_table();
       }
-      $("table.lb-data-table").each(function(i, element) {
-        $(element).css('opacity', 1);
-      });
+      table.css('opacity', 1);
       return
     }
     if (!switched && HScrollVisible()) {
@@ -72,33 +75,13 @@ function dataTable(options) {
   }
   function split_grid_table()
   {
+    //console.log("split grid table")
     switched = true;
     var original = table
     if (original.parent(".responsive-table").length == 0) {
   	  original.wrap("<div class='responsive-table' />");
     }
-  	var copy = original.clone();
-  	copy.removeClass("lb-data-table");
-
-    var pinned_table = $("<table class='pinned-table' />")
-    var thead_row = copy.find("thead").find("tr");
-    var tbody = $('<tbody />');
-    var newRow = $("<tr></tr>");
-    $(thead_row).find("th:first-child").clone().appendTo(newRow);
-    $(thead_row).find("th:nth-child(2)").clone().appendTo(newRow);
-    $(pinned_table).append($('<thead />').append(newRow));
-    $(pinned_table).append(tbody);
-    copy.find("tbody").find("tr").each(function(index, tr) {
-      var newRow = $("<tr></tr>");
-      newRow.attr('_id', $(tr).attr('_id'))
-      first_td = $(this).find("td:first-child").clone()
-      if (first_td.find('i.delete-row').length != 0) {
-        first_td.find('i.delete-row').jConfirm()
-      }
-      first_td.appendTo(newRow);
-      $(this).find("td:nth-child(2)").clone().appendTo(newRow);
-      $(tbody).append(newRow);
-    });
+    var pinned_table = create_pinned_table();
     //console.log(pinned_table)
     original.addClass('hidden-for-pin');
   	original.closest(".responsive-table").append(pinned_table);
@@ -112,15 +95,17 @@ function dataTable(options) {
     original.unwrap('.scrollable');
   }
 
+  //
   /* ~~~~~~~~~~ events ~~~~~~~~~~ */
+  //
   $(window).on("redraw",function(){
     switched=false;
     cards_to_grid();
-    update_grid_table();
+    redraw_grid_table();
   });
   $(window).on("resize", function(){
     cards_to_grid();
-    update_grid_table();
+    redraw_grid_table();
   });
   $(document).on("click", ".toggle-card", function(){
     if ($(this).hasClass('fa-chevron-circle-down')){
@@ -144,6 +129,9 @@ function dataTable(options) {
     answer_id = $(this).closest('tr').attr('_id')
     delete_answer(answer_id)
   });
+  $(document).on("click", '.retrieve_items_button[table='+table_id+']', function(){
+    retrieve_items()
+  });
   /*
   $('.lb-data-table').on('mousedown', function(e) {
     console.log("mouse down")
@@ -159,7 +147,35 @@ function dataTable(options) {
   });
   */
 
+  //
   /* ~~~~~~~~~~ table construction ~~~~~~~~~~ */
+  //
+  function create_pinned_table(){
+    //console.log("create pinned table")
+    var original = table;
+    var copy = original.clone();
+  	copy.removeClass("lb-data-table");
+    var pinned_table = $("<table class='pinned-table' />")
+    var thead_row = copy.find("thead").find("tr");
+    var tbody = $('<tbody />');
+    var newRow = $("<tr></tr>");
+    $(thead_row).find("th:first-child").clone().appendTo(newRow);
+    $(thead_row).find("th:nth-child(2)").clone().appendTo(newRow);
+    $(pinned_table).append($('<thead />').append(newRow));
+    $(pinned_table).append(tbody);
+    copy.find("tbody").find("tr").each(function(index, tr) {
+      var newRow = $("<tr></tr>");
+      newRow.attr('_id', $(tr).attr('_id'))
+      first_td = $(this).find("td:first-child").clone()
+      if (first_td.find('i.delete-row').length != 0) {
+        first_td.find('i.delete-row').jConfirm()
+      }
+      first_td.appendTo(newRow);
+      $(this).find("td:nth-child(2)").clone().appendTo(newRow);
+      $(tbody).append(newRow);
+    });
+    return pinned_table;
+  }
   function set_card_titles() {
     table.find('tr').each(function(i, tr) {
       var card_title = $(tr).find('td:eq(1)').html();
@@ -226,6 +242,9 @@ function dataTable(options) {
         else {
           var td = $('<td data-label="'+field.label+'" aria-hidden="true">')
           td.html(sanitizeHTML(item.data[field.name]))
+          if (edit_mode) {
+            td.attr('type', field.name)
+          }
         }
         tr.append(td)
       }
@@ -243,13 +262,21 @@ function dataTable(options) {
       tbody.append(tr)
     }
     set_card_titles();
-    update_grid_table();
+
+    if (table.closest('.responsive-table').find("table.pinned-table").length !=0) {
+      //console.log("replace pinned table")
+      table.closest('.responsive-table').find("table.pinned-table")
+           .replaceWith(create_pinned_table());
+    }
+    redraw_grid_table();
   }
 
+  //
   /* ~~~~~~~~~~ ajax ~~~~~~~~~~ */
+  //
   function retrieve_items() {
     $.ajax({
-      url : items_endpoint,
+      url : items_endpoint+"?page="+paginate_page,
       type: "GET",
       beforeSend: function(xhr, settings) {
         if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
@@ -262,6 +289,13 @@ function dataTable(options) {
           insert_thead(data.meta.field_index)
         }
         insert_items(data);
+        paginate_page = paginate_page +1;
+        retrieved_items = retrieved_items + data.items.length;
+        if (retrieved_items < data.meta.total) {
+          $('.retrieve_items_button[table='+table_id+']').show()
+        } else {
+          $('.retrieve_items_button[table='+table_id+']').hide()
+        }
       }
     });
   }
@@ -309,7 +343,9 @@ function dataTable(options) {
   }
 }
 
+//
 /* ~~~~~~~~~~ helper functions ~~~~~~~~~~ */
+//
 var HScrollVisible = function () {
   var table_width = 0;
   $("table.lb-data-table").each(function(i, table) {
