@@ -112,7 +112,8 @@
                 "csrftoken": "{{ csrf_token() }}",
                 "items_endpoint": "/api/form/{{form.id}}/answers",
                 "item_endpoint": "/api/answer",
-                "edit_mode": {{ edit_mode|tojson }}
+                "paginate_items": false,
+                "is_editable": true,
             };
     var table = new dataTable(options);
   });

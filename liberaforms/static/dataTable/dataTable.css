@@ -8,7 +8,7 @@ table.lb-data-table {
 table.lb-data-table tr,
 table.pinned-table tr
 {
-  display: table-row;
+  /*display: table-row;*/
   border-top: 1px solid #ddd;
 }
 
@@ -22,7 +22,7 @@ table.lb-data-table tr > td,
 table.pinned-table th,
 table.pinned-table tr > td
 {
-  display: block-inline;
+  /*display: block-inline;*/
 	padding: 0 9px;
 	text-align: left;
 	height: 3em;
@@ -48,10 +48,13 @@ table.lb-data-table td, table.lb-data-table th {
   height: 2.5em;
 }
 */
-table.lb-data-table tbody tr:hover {
+/*
+table.lb-data-table tbody tr:hover,
+table.pinned-table tbody tr:hover
+{
   background-color: rgba(0,0,0,.05);
 }
-
+*/
 table.lb-data-table thead th:last-child,
 table.lb-data-table tr > td:last-child
 {
@@ -103,17 +106,17 @@ div.responsive-table {
 	overflow: hidden;
 	/*border-right: 1px solid #ccc;*/
 }
-div.responsive-table div.scrollable {
+div.responsive-table div.scrollable-wrap {
 	margin-left: 220px;
   /*cursor: ew-resize;*/
 }
-div.responsive-table div.scrollable {
+div.responsive-table div.scrollable-wrap {
 	overflow: scroll;
 	overflow-y: hidden;
 }
 
-.responsive-table table.lb-data-table.hidden-for-pin th:nth-child(-n+2),
-.responsive-table table.lb-data-table.hidden-for-pin td:nth-child(-n+2)
+.responsive-table table.lb-data-table.hidden-cols-for-pinned-table th:nth-child(-n+2),
+.responsive-table table.lb-data-table.hidden-cols-for-pinned-table td:nth-child(-n+2)
 /* hide first two */
 {
 	display: none;
@@ -160,9 +163,11 @@ i.delete-row {
     border: 0;
     width: 100%;
   }
+  /*
   table.lb-data-table tbody tr:hover {
     background-color: initial;
   }
+  */
   table.lb-data-table thead {
     border: 0;
     clip: rect(0 0 0 0);
@@ -253,6 +258,10 @@ i.delete-row {
 .retrieve_items_button {
   display: none;
 }
-.not_found_by_search {
+
+tr.not_found_by_search {
+  display: none !important;
+}
+.edition-components {
   display: none !important;
 }

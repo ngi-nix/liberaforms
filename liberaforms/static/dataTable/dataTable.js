@@ -14,34 +14,55 @@ function dataTable(options) {
   var csrftoken = options.csrftoken
   var items_endpoint = options.items_endpoint
   var item_endpoint = options.item_endpoint
-  var edit_mode = options.edit_mode
-  var switched = false;
+  var paginate_items = options.paginate_items
+  if (paginate_items === undefined) {paginate_items=true};
+  var is_editable = options.is_editable;
+  if (is_editable === undefined) {paginate_items=true};
+  var edit_mode = false;
+  var is_base_table_split = false;
   var paginate_page = 1;
   var retrieved_items = 0;
-  var total_items = 0;
-
-  var table = $("#" + table_id)
-  table.addClass("lb-data-table")
-  retrieve_items(); // make ajax request and populate table with result
+  var total_items_on_server = 0;
+  var all_items_retrieved = false;
+  //var table = $("#" + table_id)
+  //var base_table = table;
+  var base_table = $("#" + table_id)
+  base_table.attr('table_group', table_id)
+  base_table.addClass("lb-data-table")
+  retrieve_items(); // make ajax request and populate base_table with result
 
   //
   /* ~~~~~~~~~~ setup layout ~~~~~~~~~~ */
   //
 
   /* ~~~~~~ add table tools ~~~~~~~ */
-  var search_col = $('<div class="col-md-6">')
-  search_col.insertBefore(table.closest('div'))
+  var button_col = $('<div class="col-md-8">')
+  var search_col = $('<div class="col-md-4">')
+  button_col.insertBefore(base_table.closest('div'))
+  search_col.insertBefore(base_table.closest('div'))
+  /* ~~~~~~ add buttons input ~~~~~~~ */
+  if (is_editable) {
+    var button = $('<button class="btn btn-primary enable_edition" \
+                            type="button" \
+                            aria-label="enable edition" \
+                            table="'+table_id+'">')
+    button.html('Enable edition')
+    button_col.append(button)
+  }
   /* ~~~~~~ add search input ~~~~~~~ */
   var search = $('<div class="input-group mb-3">')
-  var input = $('<input type="text" class="form-control" \
-                        aria-label="Search" \
-                        aria-describedby="basic-addon2">')
+  var input = $('<input type="text" class="form-control search_input" \
+                        aria-label="search text" \
+                        aria-describedby="basic-addon2" \
+                        table="'+table_id+'">')
   var group2 = $('<div class="input-group-append">')
   var button1 = $('<button class="btn clear_search" \
                           type="button" \
+                          aria-label="clear search text" \
                           table="'+table_id+'">')
   var button2 = $('<button class="btn btn-primary search_items" \
                           type="button" \
+                          aria-label="submit search" \
                           table="'+table_id+'">')
   button1.html('Clear')
   button2.html('Search').append('<i class="fa fa-search" aria-hidden="true">')
@@ -56,23 +77,22 @@ function dataTable(options) {
   var btn = $("<button class='btn btn-primary retrieve_items_button' \
                        table="+table_id+">")
   btn.html("Load more")
-  btn.insertAfter(table);
+  btn.insertAfter(base_table);
 
-  if (edit_mode) {
-    $.jConfirm.defaults.question = 'Are you sure?';
-    $.jConfirm.defaults.confirm_text = 'Delete';
-    $.jConfirm.defaults.deny_text = 'Cancel';
-    $.jConfirm.defaults.theme = 'bootstrap-4-white';
-    $.jConfirm.defaults.position = 'right';
-    $.jConfirm.defaults.size = 'small';
-  }
+  $.jConfirm.defaults.question = 'Are you sure?';
+  $.jConfirm.defaults.confirm_text = 'Delete';
+  $.jConfirm.defaults.deny_text = 'Cancel';
+  $.jConfirm.defaults.theme = 'bootstrap-4-white';
+  $.jConfirm.defaults.position = 'right';
+  $.jConfirm.defaults.size = 'small';
+
 
   //
   /* ~~~~~~~~~~ events ~~~~~~~~~~ */
   //
 
   $(window).on("redraw",function(){
-    switched=false;
+    is_base_table_split=false;
     cards_to_grid();
     redraw_grid_table();
   });
@@ -109,12 +129,25 @@ function dataTable(options) {
     $(this).closest('.input-group').find('input').val('')
     clear_search();
   });
+  $(document).on("keypress", '.search_input[table='+table_id+']', function(e){
+    if (e.which == 13) { search_text($(this).val()); }
+  });
   $(document).on("click", '.search_items[table='+table_id+']', function(){
-    if (retrieved_items < total_items) {
-      retrieve_items(all_items=true)
-    }
     var text = $(this).closest('.input-group').find('input').val()
     search_text(text);
+  });
+  $(document).on("click", '.enable_edition[table='+table_id+']', function(){
+    if (edit_mode == false) {
+      edit_mode = true;
+      $(this).addClass('btn-success').removeClass('btn-primary')
+      $(this).html("Disable edition")
+      table.find('tr').find('.edition-components').show();
+    } else {
+      edit_mode = false;
+      $(this).addClass('btn-primary').removeClass('btn-success')
+      $(this).html("Enable edition")
+      base_table.find('tr').find('.edition-components').hide();
+    }
   });
   /*
   $('.lb-data-table').on('mousedown', function(e) {
@@ -139,23 +172,23 @@ function dataTable(options) {
   function redraw_grid_table () {
     //console.log("redwaw grid table")
     if ($(window).width() <= 768) {
-      if (switched) {
+      if (is_base_table_split) {
         unsplit_grid_table();
       }
-      table.css('opacity', 1);
+      base_table.css('opacity', 1);
       return
     }
-    if (!switched && HScrollVisible()) {
+    if (!is_base_table_split && HScrollVisible()) {
       split_grid_table();
     }
-    else if (switched && HScrollVisible() == false) {
+    else if (is_base_table_split && HScrollVisible() == false) {
       unsplit_grid_table();
     }
-    table.css('opacity', 1);
+    base_table.css('opacity', 1);
   }
   function cards_to_grid() {
     if ($(window).width() >= 768 && $(".pinned-table").length == 0) {
-      $("table.lb-data-table").each(function(i, element) {
+      base_table.each(function(i, element) {
         $(element).find('tr').each(function (i, tr) {
           $(tr).find('td').css('display', '')
           $(tr).css('margin-bottom', '')
@@ -169,23 +202,21 @@ function dataTable(options) {
   function split_grid_table()
   {
     //console.log("split grid table")
-    switched = true;
-    var original = table
-    if (original.parent(".responsive-table").length == 0) {
-  	  original.wrap("<div class='responsive-table' />");
+    if (base_table.parent(".responsive-table").length == 0) {
+  	  base_table.wrap("<div class='responsive-table' />");
     }
     var pinned_table = create_pinned_table();
     //console.log(pinned_table)
-    original.addClass('hidden-for-pin');
-  	original.closest(".responsive-table").append(pinned_table);
-  	original.wrap("<div class='scrollable' />");
+    base_table.addClass('hidden-cols-for-pinned-table');
+  	base_table.closest(".responsive-table").append(pinned_table);
+  	base_table.wrap("<div class='scrollable-wrap' />");
+    is_base_table_split = true;
   }
   function unsplit_grid_table() {
-    switched = false;
-    var original = table
-    original.removeClass('hidden-for-pin');
-    original.closest(".responsive-table").find(".pinned-table").remove();
-    original.unwrap('.scrollable');
+    base_table.removeClass('hidden-cols-for-pinned-table');
+    base_table.closest(".responsive-table").find(".pinned-table").remove();
+    base_table.unwrap('.scrollable-wrap');
+    is_base_table_split = false;
   }
 
   //
@@ -194,10 +225,10 @@ function dataTable(options) {
 
   function create_pinned_table(){
     //console.log("create pinned table")
-    var original = table;
-    var copy = original.clone();
+    var copy = base_table.clone();
   	copy.removeClass("lb-data-table");
-    var pinned_table = $("<table class='pinned-table' />")
+    var pinned_table = $("<table class='pinned-table' \
+                                 table_group="+table_id+"' />")
     var thead_row = copy.find("thead").find("tr");
     var tbody = $('<tbody />');
     var newRow = $("<tr></tr>");
@@ -206,9 +237,10 @@ function dataTable(options) {
     $(pinned_table).append($('<thead />').append(newRow));
     $(pinned_table).append(tbody);
     copy.find("tbody").find("tr").each(function(index, tr) {
-      var newRow = $("<tr></tr>");
+      var newRow = $("<tr>");
       newRow.attr('_id', $(tr).attr('_id'))
-      first_td = $(this).find("td:first-child").clone()
+      newRow.prop("classList", $(tr).prop("classList"))
+      first_td = $(this).find("td:first-child").clone(true)
       if (first_td.find('i.delete-row').length != 0) {
         first_td.find('i.delete-row').jConfirm()
       }
@@ -219,7 +251,7 @@ function dataTable(options) {
     return pinned_table;
   }
   function set_card_titles() {
-    table.find('tr').each(function(i, tr) {
+    base_table.find('tr').each(function(i, tr) {
       var card_title = $(tr).find('td:eq(1)').html();
       var span = $(tr).find('td.row-controls').find('span.card-title')
       if (span.length == 0) {
@@ -238,13 +270,13 @@ function dataTable(options) {
       row.append('<th title="'+fields[key].label+'">'+fields[key].label+'</th>')
     }
     row.append('<th>'+created_label+'</th>')
-    table.prepend($('<thead>').append(row))
+    base_table.prepend($('<thead>').append(row))
   }
-  function insert_items(data) {
-    var tbody = table.find('tbody')
+  function insert_rows(data) {
+    var tbody = base_table.find('tbody')
     if (tbody.length == 0) {
       tbody = $('<tbody>')
-      table.append(tbody)
+      base_table.append(tbody)
     }
     var fields = data.meta.field_index
     var items = data.items
@@ -263,16 +295,13 @@ function dataTable(options) {
           var i = $('<i class="toggle-card action fa fa-chevron-circle-down" \
                         aria-label="Show fields">')
           td.append(i)
-          if (edit_mode) {
+          if (is_editable) {
             var i = $('<i class="fa fa-trash action delete-row edition-components" \
                           aria-label="Delete answer">')
-          } else {
-            var i = $('<i class="fa fa-trash action delete-row edition-components" \
-                          aria-label="Delete answer" \
-                          style="display: none">')
+            td.append(i.jConfirm())
           }
-          td.append(i.jConfirm())
-          var btn = $('<button class="btn btn-xs mark_answer">')
+          var btn = $('<button class="btn btn-xs mark_answer" \
+                               aria-label="mark answer">')
           btn.html('Mark <i class="fa fa-thumb-tack" \
                             aria-hidden="true"></i>')
           if ( item[field.name] == true ) {
@@ -281,7 +310,7 @@ function dataTable(options) {
           td.append(btn)
         }
         else if (field.name.startsWith('file-')) {
-          var td = $('<td class="dontEdit" data-label="'+field.label+'" \
+          var td = $('<td class="dontEdit" data-label="file '+field.label+'" \
                           aria-hidden="true">')
           td.html(item.data[field.name])
         }
@@ -309,10 +338,12 @@ function dataTable(options) {
     }
     set_card_titles();
 
-    if (table.closest('.responsive-table').find("table.pinned-table").length !=0) {
+    if (base_table.closest('.responsive-table')
+                  .find("table.pinned-table").length !=0) {
       //console.log("replace pinned table")
-      table.closest('.responsive-table').find("table.pinned-table")
-           .replaceWith(create_pinned_table());
+      base_table.closest('.responsive-table')
+                .find("table.pinned-table")
+                .replaceWith(create_pinned_table());
     }
     redraw_grid_table();
   }
@@ -321,11 +352,11 @@ function dataTable(options) {
   /* ~~~~~~~~~~ ajax ~~~~~~~~~~ */
   //
 
-  async function retrieve_items(all_items=false) {
-    if (all_items) {
-      var url = items_endpoint
-    } else {
+  async function retrieve_items() {
+    if (paginate_items) {
       var url = items_endpoint+"?page="+paginate_page
+    } else {
+      var url = items_endpoint
     }
     $.ajax({
       url : url,
@@ -337,16 +368,17 @@ function dataTable(options) {
       },
       success: function(data, textStatus, jqXHR)
       {
-        if (table.find('thead').length == 0 ) {
+        if (base_table.find('thead').length == 0 ) {
           insert_thead(data.meta.field_index)
         }
-        insert_items(data);
+        insert_rows(data);
         paginate_page = paginate_page +1;
         retrieved_items = retrieved_items + data.items.length;
-        total_items = data.meta.total
-        if (retrieved_items < total_items) {
+        total_items_on_server = data.meta.total
+        if (retrieved_items < total_items_on_server) {
           $('.retrieve_items_button[table='+table_id+']').show()
         } else {
+          all_items_retrieved = true;
           $('.retrieve_items_button[table='+table_id+']').hide()
         }
       }
@@ -400,24 +432,30 @@ function dataTable(options) {
   //
 
   function search_text(text) {
-    if (text ==="") {
-      $(table).find('tbody').find('tr').removeClass('not_found_by_search')
+    if (text === "") {
+      clear_search(); return;
+    }
+    if (all_items_retrieved) {
+      search_locally(text)
     } else {
-      $(table).find('tbody').find('tr').each(function(i, tr) {
-        var _id = $(tr).attr('_id')
-        if ($(tr).is(':contains("'+text+'")')) {
-          $(document).find('tr[_id='+_id+']').removeClass('not_found_by_search')
-        } else {
-          $(document).find('tr[_id='+_id+']').addClass('not_found_by_search')
-        }
-      });
+      search_remotely(text)
     }
   }
+  function search_locally(text) {
+    $(base_table).find('tbody').find('tr').each(function(i, tr) {
+      var _id = $(tr).attr('_id')
+      if ($(tr).is(':contains("'+text+'")')) {
+        console.log('found '+text+' '+_id )
+        $('tr[_id='+_id+']').removeClass('not_found_by_search')
+      } else {
+        console.log('not found '+text+' '+_id )
+        $('tr[_id='+_id+']').addClass('not_found_by_search')
+      }
+    });
+  }
   function clear_search() {
-    table.find('tbody').find('tr').removeClass('not_found_by_search')
-    table.closest('.responsive-table').find('.pinned-table')
-                                      .find('tr')
-                                      .removeClass('not_found_by_search')
+    $('table[table_group='+table_id+']').find('tr.not_found_by_search')
+                                        .removeClass('not_found_by_search')
   }
 }
 
@@ -441,7 +479,7 @@ var sanitizeHTML = function (str) {
    var temp = document.createElement('div');
    temp.textContent = str; return temp.innerHTML;
 };
-// makes jQuery's 'contains' case insentive
+// makes jQuery's 'contains' case insensitive
 jQuery.expr[':'].contains = function(a, i, m) {
   return jQuery(a).text().toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
 };
