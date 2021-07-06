@@ -141,12 +141,12 @@ function dataTable(options) {
       edit_mode = true;
       $(this).addClass('btn-success').removeClass('btn-primary')
       $(this).html("Disable edition")
-      table.find('tr').find('.edition-components').show();
+      $('table[table_group='+table_id+']').find('i.edition-components').show()
     } else {
       edit_mode = false;
       $(this).addClass('btn-primary').removeClass('btn-success')
       $(this).html("Enable edition")
-      base_table.find('tr').find('.edition-components').hide();
+      $('table[table_group='+table_id+']').find('i.edition-components').hide()
     }
   });
   /*
@@ -228,7 +228,7 @@ function dataTable(options) {
     var copy = base_table.clone();
   	copy.removeClass("lb-data-table");
     var pinned_table = $("<table class='pinned-table' \
-                                 table_group="+table_id+"' />")
+                                 table_group='"+table_id+"' />")
     var thead_row = copy.find("thead").find("tr");
     var tbody = $('<tbody />');
     var newRow = $("<tr></tr>");
@@ -240,7 +240,7 @@ function dataTable(options) {
       var newRow = $("<tr>");
       newRow.attr('_id', $(tr).attr('_id'))
       newRow.prop("classList", $(tr).prop("classList"))
-      first_td = $(this).find("td:first-child").clone(true)
+      first_td = $(this).find("td:first-child").clone()
       if (first_td.find('i.delete-row').length != 0) {
         first_td.find('i.delete-row').jConfirm()
       }

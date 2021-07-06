@@ -65,7 +65,7 @@ table.lb-data-table tr > td:last-child
 table.lb-data-table td.row-controls,
 table.pinned-table td.row-controls
 {
-  display: table-cell;
+  /*display: table-cell;*/
   width: 10px;
   text-align: left;
   padding: 0 0.2rem 0 0.2rem;
@@ -143,7 +143,7 @@ table.pinned-table i.action
 {
   font-size: 1.1em;
   vertical-align: middle;
-  display: inline;
+  /*display: inline;*/
   cursor: pointer;
 }
 i.delete-row {
@@ -260,8 +260,8 @@ i.delete-row {
 }
 
 tr.not_found_by_search {
-  display: none !important;
+  display: none;
 }
 .edition-components {
-  display: none !important;
+  display: none;
 }
