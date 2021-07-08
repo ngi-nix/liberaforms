@@ -13,5 +13,11 @@ class FormSchema(ma.SQLAlchemySchema):
     class Meta:
         model = Form
 
+    id = ma.auto_field()
     created = ma.auto_field()
+    slug = ma.auto_field()
     structure = ma.auto_field()
+    introduction_md = ma.Method('get_introduction_md')
+
+    def get_introduction_md(self, obj):
+        return obj.introductionText['markdown']
