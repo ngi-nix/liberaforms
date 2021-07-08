@@ -52,7 +52,6 @@ def populate_flask_g():
             return
         if g.current_user.is_admin():
             g.is_admin=True
-        g.app_version = get_app_version()
 
 def get_app_version():
     try:
