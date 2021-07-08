@@ -7,44 +7,84 @@
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
 <div class="container">
-<div class="row">
+  <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-        <div class="title_1 delimited">
-            {%trans%}Preview{%endtrans%}: {{ slug }}
-        </div>
+      <div class="title_1 delimited">
+        {% if is_template %}
+          {%trans%}Template{%endtrans%}: {{ slug }}
+        {% else %}
+          {%trans%}Preview{%endtrans%}: {{ slug }}
+        {% endif %}
+      </div>
 
-        <div id="liberaform" class="liberaform">
-            <div class="formIntroduction marked-up">
-            {{ introductionText | safe }}
-            </div>
-            <div id='required_message' class='required' style="display:none">● {%trans%}Required fields{%endtrans%}</div>
-            <div id="fb-render"></div>
-
-            <div class="form-actions">
-              <button class="btn btn-lg btn-success"
-                     type="submit"
-                     value=""
-                     disabled >
-                  {%trans%}Send{%endtrans%}
-              </button>
-            </div>
-            <p>&nbsp;</p>
+      <div id="liberaform" class="liberaform">
+        <div class="formIntroduction marked-up">
+        {{ introductionText | safe }}
         </div>
-            <hr />
-            <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <input class="btn-success btn" type="submit" value="{%trans%}Save{%endtrans%}">
-                {% if session['form_id'] %}
-                    <a class="btn-primary btn" role="button" href="/forms/edit/{{session['form_id']}}">{%trans%}Edit again{%endtrans%}</a>
-                    <a class="btn-primary btn" role="button" href="/forms/view/{{session['form_id']}}">{%trans%}Cancel{%endtrans%}</a>
-                {% else %}
-                    <a class="btn-primary btn" role="button" href="/forms/edit">{%trans%}Edit again{%endtrans%}</a>
-                    <a class="btn-primary btn" role="button" href="/forms">{%trans%}Cancel{%endtrans%}</a>
-                {% endif %}
-            </form>
+        <div id='required_message' class='required' style="display:none">
+          ● {%trans%}Required fields{%endtrans%}
+        </div>
+        <div id="fb-render"></div>
+
+        <div class="form-actions">
+          <button class="btn btn-lg btn-success"
+                  type="submit"
+                  value=""
+                  disabled >
+              {%trans%}Send{%endtrans%}
+          </button>
+        </div>
+        <p>&nbsp;</p>
+      </div>
+      <hr />
+      {% if is_template %}
+      <a class="btn btn-success"
+         role="button"
+         href="/forms/template/{{ template.id }}/create-form">
+        {%trans%}Create a form with this template{%endtrans%}
+      </a>
+      <a class="btn btn-primary"
+         role="button"
+         href="/forms/templates">
+        {%trans%}Go back{%endtrans%}
+      </a>
+      {% else %}
+      <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}"
+            method="post">
+        <input type="hidden"
+               name="csrf_token"
+               value="{{ csrf_token() }}" />
+        <input class="btn-success btn"
+               type="submit"
+               value="{%trans%}Save{%endtrans%}">
+        {% if session['form_id'] %}
+          <a class="btn-primary btn"
+             role="button"
+             href="/forms/edit/{{session['form_id']}}">
+            {%trans%}Edit again{%endtrans%}
+          </a>
+          <a class="btn-primary btn"
+             role="button"
+             href="/forms/view/{{session['form_id']}}">
+            {%trans%}Cancel{%endtrans%}
+          </a>
+        {% else %}
+          <a class="btn-primary btn"
+             role="button"
+             href="/forms/edit">
+            {%trans%}Edit again{%endtrans%}
+          </a>
+          <a class="btn-primary btn"
+             role="button"
+             href="/forms">
+            {%trans%}Cancel{%endtrans%}
+          </a>
+        {% endif %}
+      </form>
+      {% endif %}
     </div>
-</div>
+  </div>
 </div>
 
 <script>
