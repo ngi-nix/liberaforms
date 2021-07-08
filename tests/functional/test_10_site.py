@@ -116,11 +116,11 @@ class TestSiteConfig():
     def test_set_consent_texts(cls, admin_client):
         pass
 
-    def test_change_menucolor(cls, site, admin_client, anon_client):
+    def test_change_primary_color(cls, site, admin_client, anon_client):
         """ Tests valid and invalid html hex color
             Tests admin permission
         """
-        url = "/site/change-menu-color"
+        url = "/site/primary-colour"
         response = anon_client.get(
                         url,
                         follow_redirects=True,
@@ -134,7 +134,7 @@ class TestSiteConfig():
                     )
         html = response.data.decode()
         assert '<div class="menu-color-options">' in html
-        initial_color = site.menuColor
+        initial_color = site.primary_color
         bad_color = "green"
         response = admin_client.post(
                         url,
@@ -144,7 +144,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.menuColor == initial_color
+        assert site.primary_color == initial_color
         html = response.data.decode()
         assert '<div class="menu-color-options">' in html
         valid_color = "#cccccc"
@@ -156,7 +156,7 @@ class TestSiteConfig():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert site.menuColor != initial_color
+        assert site.primary_color != initial_color
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
