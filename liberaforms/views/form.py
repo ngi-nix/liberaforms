@@ -734,6 +734,5 @@ def create_form_from_template(template_id):
         return redirect(make_url_for('form_bp.list_templates'))
     session['introductionTextMD']=template['introduction_md']
     session['formStructure'] = template['structure']
-    session['duplication_in_progress'] = True
-    flash(_("Copied template OK"), 'success')
+    flash(_("Copied template OK. You can edit your new form"), 'success')
     return redirect(make_url_for('form_bp.edit_form'))
