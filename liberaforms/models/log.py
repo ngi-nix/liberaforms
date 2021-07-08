@@ -14,7 +14,10 @@ class FormLog(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+    #form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey('forms.id',
+                                                    ondelete="CASCADE"),
+                                                    nullable=True)
     message = db.Column(db.String, nullable=False)
     user = db.relationship("User", viewonly=True)
     form = db.relationship("Form", viewonly=True)

@@ -50,8 +50,7 @@
         {%trans%}Go back{%endtrans%}
       </a>
       {% else %}
-      <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}"
-            method="post">
+      <form action="/forms/save{% if session['form_id'] %}/{{ session['form_id'] }}{% endif %}" method="post">
         <input type="hidden"
                name="csrf_token"
                value="{{ csrf_token() }}" />
