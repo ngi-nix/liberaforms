@@ -15,11 +15,23 @@
         {%trans%}My forms{%endtrans%}
     </div>
     <div class="col-auto">
-    <a class="btn btn-sm btn-success" role="button" href="/forms/new">
-        {%trans%}New form{%endtrans%} <i class="fa fa-star" aria-hidden="true"></i>
+    <a class="btn btn-sm btn-success"
+       role="button"
+       href="/forms/new">
+      {%trans%}New form{%endtrans%}
+      <i class="fa fa-star" aria-hidden="true"></i>
     </a>
-    <a class="btn btn-sm btn-primary" role="button" href="/user/{{g.current_user.username}}/statistics">
-        {%trans%}Statistics{%endtrans%} <i class="fa fa-bar-chart" aria-hidden="true"></i>
+    <a class="btn btn-sm btn-success"
+       role="button"
+       href="/forms/templates">
+      {%trans%}Templates{%endtrans%}
+      <i class="fa fa-file-text" aria-hidden="true"></i>
+    </a>
+    <a class="btn btn-sm btn-primary"
+       role="button"
+       href="/user/{{g.current_user.username}}/statistics">
+      {%trans%}Statistics{%endtrans%}
+      <i class="fa fa-bar-chart" aria-hidden="true"></i>
     </a>
     </div>
 </div>
@@ -28,7 +40,9 @@
 <div class="col-md-12">
 <hr />
 
-<table id="my_forms" style="display:none" class="table table-sm table-striped nowrap">
+<table id="my_forms"
+       style="display:none"
+       class="table table-sm table-striped nowrap">
     <thead>
     <tr>
         <th data-priority="1">{%trans%}Name{%endtrans%}</th>

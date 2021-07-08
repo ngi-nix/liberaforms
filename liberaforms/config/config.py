@@ -32,6 +32,7 @@ class Config(object):
         "admin", "admins", "root",
         "profile", "user", "users",
         "form", "forms",
+        "template", "templates",
         "site", "sites",
         "update",
         "embed",

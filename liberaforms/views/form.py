@@ -17,6 +17,7 @@ from liberaforms.models.form import Form
 from liberaforms.models.user import User
 from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.models.media import Media
+from liberaforms.form_templates import form_templates
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
@@ -701,3 +702,38 @@ def view_form(slug):
                             max_attachment_size_for_humans=max_attach_size,
                             navbar=False,
                             no_bot=True)
+
+
+@form_bp.route('/forms/templates', methods=['GET'])
+@enabled_user_required
+def list_templates():
+    return render_template('list-templates.html',
+                            templates = form_templates.templates)
+
+@form_bp.route('/forms/template/<int:template_id>', methods=['GET'])
+@enabled_user_required
+def view_template(template_id):
+    form_helper.clear_session_form_data()
+    template = next((sub for sub in form_templates.templates if sub['id'] == template_id), None)
+    if not template:
+        return redirect(make_url_for('form_bp.list_templates'))
+    introduction_text = sanitizers.markdown2HTML(str(template['introduction_md']))
+    session['formStructure'] = template['structure']
+    return render_template('preview-form.html',
+                            is_template=True,
+                            slug=template['name'],
+                            introductionText=introduction_text,
+                            template = template)
+
+@form_bp.route('/forms/template/<int:template_id>/create-form', methods=['GET'])
+@enabled_user_required
+def create_form_from_template(template_id):
+    form_helper.clear_session_form_data()
+    template = next((sub for sub in form_templates.templates if sub['id'] == template_id), None)
+    if not template:
+        return redirect(make_url_for('form_bp.list_templates'))
+    session['introductionTextMD']=template['introduction_md']
+    session['formStructure'] = template['structure']
+    session['duplication_in_progress'] = True
+    flash(_("Copied template OK"), 'success')
+    return redirect(make_url_for('form_bp.edit_form'))
