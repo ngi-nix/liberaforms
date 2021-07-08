@@ -32,6 +32,7 @@ admin_bp = Blueprint('admin_bp', __name__,
 def site_admin():
     return render_template('admin-panel.html',
                             user=g.current_user,
+                            app_version=utils.get_app_version(),
                             site=g.site)
 
 """ User management """
