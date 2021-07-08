@@ -1,150 +1,244 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- admin-panel_page -->
 
 <div class="container">
 <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-6">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
 
-        <div class="title_1 delimited">
-          {%trans%}Administrator{%endtrans%}
-        </div>
-
-        <div id="site_settings" class="title_2">
-          {%trans%}Site settings{%endtrans%}
-        </div>
-
-        <table class="table table-sm">
-          <tr>
-            <td>{%trans%}Site name{%endtrans%}</td>
-            <td>
-            {{ site.siteName }}
-            </td>
-            <td class="text-right">
-              <a class="btn-primary btn btn-xs"
-                 role="button"
-                 href="/site/change-sitename">
-                  {%trans%}Change{%endtrans%}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Default language{%endtrans%}</td>
-            <td>{{config['LANGUAGES'][g.site.defaultLanguage][0]}}</td>
-            <td class="text-right">
-              <a class="btn btn-primary btn-xs"
-                 role="button"
-                 href="/site/change-default-language">
-                  {%trans%}Change{%endtrans%}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Invitation only{%endtrans%}</td>
-            <td></td>
-            <td class="text-right">
-                <div id="toggle_invitation_only" class="btn-group btn-toggle">
-                <button id="invitation_only_true"
-                        class="btn btn-xs btn-default {% if site.invitationOnly %}btn-success{% endif %}">
-                        {%trans%}True{%endtrans%}
-                </button>
-                <button id="invitation_only_false"
-                        class="btn btn-xs btn-default {% if not site.invitationOnly %}btn-primary{% endif %}">
-                        {%trans%}False{%endtrans%}
-                </button>
-                </div>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Consent{%endtrans%}</td>
-            <td>
-              {%trans%}Terms and conditions{%endtrans%},
-              {%trans%}DPL{%endtrans%}, {%trans%}etc{%endtrans%}
-            </td>
-            <td class="text-right">
-              <a class="btn btn-primary btn-xs"
-                 role="button"
-                 href="/site/consent-texts">
-                  {%trans%}Edit{%endtrans%}
-                </a>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              {%trans%}Favicon{%endtrans%}
-            </td>
-            <td>
-              <img src="{{g.site.favicon_url()}}" width=18 height=18 />
-            </td>
-            <td class="text-right">
-              <input class="btn-primary btn btn-xs"
-                     type="button"
-                     value="{%trans%}Change{%endtrans%}"
-                     onClick="location.href='/site/change-favicon'">
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Menu color{%endtrans%}</td>
-            <td>{{g.site.menuColor}}</td>
-            <td class="text-right">
-              <a class="btn btn-primary btn-xs"
-                 role="button" href="/site/change-menu-color">
-                  {%trans%}Change{%endtrans%}
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>{%trans%}Email server{%endtrans%}</td>
-            <td>{{g.site.smtpConfig["host"]}}</td>
-            <td class="text-right">
-              <input class="btn-primary btn btn-xs"
-                      type="button" value="{%trans%}Configure{%endtrans%}"
-                      onClick="location.href='/site/email/config'" />
-            </td>
-          </tr>
-          {% if g.current_user.is_root_user() %}
-          <tr>
-            <td colspan="2">
-              {%trans%}Public links{%endtrans%}
-            </td>
-            <td class="text-right">
-              <input  class="btn-primary btn btn-xs"
-                      type="button" value="{%trans%}Edit{%endtrans%}"
-                      onClick="location.href='/site/edit'">
-            </td>
-          </tr>
-          {% endif %}
-        </table>
-
-        <p>&nbsp;</p>
-        <div class="title_2">
-          {%trans%}Installation{%endtrans%}
-        </div>
-
-        <table class="table table-sm">
-        {% if g.current_user.is_root_user() %}
-        <tr>
-          <td>{%trans%}Created{%endtrans%}</td>
-          <td>{{site.created}}</td>
-        </tr>
-        {% endif %}
-        <tr>
-          <td>LiberaForms version</td>
-          <td>{{config['APP_VERSION']}}</td>
-        </tr>
-        <tr>
-          <td>Database schema version</td>
-          <td>1234</td>
-        </tr>
-        </table>
+    <div class="title_1 delimited">
+      {# i18n: Main title displayed on site configuration page (/admin) #}
+      {%trans%}Site configuration{%endtrans%}
     </div>
+
+    <div id="site_settings" class="title_2">
+      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+      {%trans%}Site styling{%endtrans%}
+    </div>
+
+    <table class="table table-sm">
+      <tr>
+        {# i18n: Name for the website/instance #}
+        <td>{%trans%}Site name{%endtrans%}</td>
+        <td>
+        {{ site.siteName }}
+        </td>
+        <td class="text-right">
+          <a class="btn-primary btn btn-xs"
+             role="button"
+             href="/site/change-sitename">
+             {# i18n: Button to change some option #}
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          {# i18n: Option in admin settings about changing instance welcoming text #}
+          {%trans%}Front page text{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn-primary btn btn-xs"
+             role="button"
+             href="/?edit=true">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Icon for the website #}
+        <td>
+          {%trans%}Icon and Favicon{%endtrans%}
+        </td>
+        <td>
+          <img src="/favicon.ico" width=24 height=24 />
+        </td>
+        <td class="text-right">
+          <input class="btn-primary btn btn-xs"
+                 type="button"
+                 value="{%trans%}Change{%endtrans%}"
+                 onClick="location.href='/site/change-icon'">
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Website's primary colour #}
+        <td>{%trans%}Primary colour{%endtrans%}</td>
+        <td>{{g.site.primary_color}}</td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button" href="/site/primary-colour">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Define the 'look' of emails #}
+        <td colspan="2">
+          {%trans%}Email styling{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button" href="/site/email-branding">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <p>&nbsp;</p>
+    <div id="site_settings" class="title_2">
+      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+      {%trans%}Site settings{%endtrans%}
+    </div>
+    <table class="table table-sm">
+      <tr>
+        {# i18n: Whether to enable open registration, or remain invitation only #}
+        <td>{%trans%}Invitation only{%endtrans%}</td>
+        <td></td>
+        <td class="text-right">
+          <div id="toggle_invitation_only" class="btn-group btn-toggle">
+          <button id="invitation_only_true"
+                  class="btn btn-xs btn-default
+                        {% if site.invitationOnly %}btn-success{% endif %}
+                  ">
+                  {%trans%}True{%endtrans%}
+          </button>
+          <button id="invitation_only_false"
+                  class="btn btn-xs btn-default
+                        {% if not site.invitationOnly %}btn-primary{% endif %}
+                  ">
+                  {%trans%}False{%endtrans%}
+          </button>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Noun, meaning agreement with terms/conditions of use #}
+        <td>{%trans%}Consent{%endtrans%}</td>
+        <td>
+          {%trans%}Terms and conditions{%endtrans%},
+          {%trans%}DPL{%endtrans%},
+          {# i18n: 'etc' here stands for "and so on" at the end of a list #}
+          {%trans%}etc{%endtrans%}
+        </td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button"
+             href="/site/consent-texts">
+            {# i18n: Button to edit some option #}
+            {%trans%}Edit{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      {% if config['ENABLE_UPLOADS'] %}
+      <tr>
+        <td>
+          {# i18n: Which type of attachments are allowed #}
+          {%trans%}Attachment types{%endtrans%}
+        </td>
+        <td>
+          {{ ', '.join(g.site.mimetypes.extensions) }}
+        </td>
+        <td class="text-right">
+          <input  class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Edit{%endtrans%}"
+                  onClick="location.href='/site/edit-mimetypes'">
+        </td>
+      </tr>
+      {% endif %}
+      {% if g.current_user.is_root_user() %}
+      <tr>
+        <td colspan="2">
+          {%trans%}Public links{%endtrans%}
+        </td>
+        <td class="text-right">
+          <input  class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Edit{%endtrans%}"
+                  onClick="location.href='/site/edit'">
+        </td>
+      </tr>
+      {% endif %}
+      <tr>
+        {# i18n: Settings about email server used by website to send email messages #}
+        <td>{%trans%}Email server{%endtrans%}</td>
+        <td>{{g.site.smtpConfig["host"]}}</td>
+        <td class="text-right">
+          {# i18n: Button to configure some option #}
+          <input class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Configure{%endtrans%}"
+                  onClick="location.href='/site/email/config'" />
+        </td>
+      </tr>
+    </table>
+
+    <p>&nbsp;</p>
+    <div id="site_settings" class="title_2">
+      {# i18n: Title in Admin panel refering to configurations concerning new users #}
+      {%trans%}New user{%endtrans%}
+    </div>
+    <table class="table table-sm">
+      <tr>
+        {# i18n: Default language for instance, setting on Instance configuration #}
+        <td>{%trans%}Default language{%endtrans%}</td>
+        <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
+        <td class="text-right">
+          <a class="btn btn-primary btn-xs"
+             role="button"
+             href="/site/change-default-language">
+              {%trans%}Change{%endtrans%}
+          </a>
+        </td>
+      </tr>
+      {% if config['ENABLE_UPLOADS'] %}
+      <tr>
+        {# i18n: Whether to enable new users attaching documents into forms #}
+        <td>{%trans%}Enable form attachments{%endtrans%}</td>
+        <td></td>
+        <td class="text-right">
+          <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
+          <button id="uploads_enabled_true"
+                  class="btn btn-xs btn-default
+                        {% if site.newuser_enableuploads %}btn-success{% endif %}">
+              {%trans%}True{%endtrans%}
+          </button>
+          <button id="uploads_enabled_false"
+                  class="btn btn-xs btn-default
+                        {% if not site.newuser_enableuploads %}btn-primary{% endif %}">
+              {%trans%}False{%endtrans%}
+          </button>
+          </div>
+        </td>
+      </tr>
+      {% endif %}
+    </table>
+
+    <p>&nbsp;</p>
+    <div class="title_2">
+      {# i18n: Title in Admin panel displaying info about installation #}
+      {%trans%}Installation{%endtrans%}
+    </div>
+
+    <table class="table table-sm">
+      <tr>
+        <td>{%trans%}Created{%endtrans%}</td>
+        <td>{{site.created}}</td>
+      </tr>
+      <tr>
+        <td>{%trans%}Version{%endtrans%}</td>
+        <td>{{app_version}}</td>
+      </tr>
+    </table>
+
+  </div>
 </div>
 </div>
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
-document.getElementById('toggle_invitation_only').addEventListener('click', function(evt){
+document.getElementById('toggle_invitation_only')
+        .addEventListener('click', function(evt){
     $.ajax({
         url : "/site/toggle-invitation-only",
         type: "POST",
@@ -167,13 +261,32 @@ document.getElementById('toggle_invitation_only').addEventListener('click', func
         }
     });
 });
-$(document).on('click', '#invites_table td:first-child', function(){
-    if($(this).parent().next('tr').is(":visible")){
-        $(this).parent().next('tr').hide()
-    }else{
-        $(this).parent().next('tr').show() // token message
-    }
+{% if config['ENABLE_UPLOADS'] %}
+document.getElementById('toggle_uploads_enabled')
+        .addEventListener('click', function(evt){
+    $.ajax({
+        url : "/site/toggle-newuser-uploads-default",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.uploads == true) {
+                $('#uploads_enabled_true').addClass('btn-success');
+                $('#uploads_enabled_false').removeClass('btn-primary');
+            }
+            else if (data.uploads == false) {
+                $('#uploads_enabled_true').removeClass('btn-success');
+                $('#uploads_enabled_false').addClass('btn-primary');
+            }
+        }
+    });
 });
+{% endif %}
 </script>
 
 {% endblock %}

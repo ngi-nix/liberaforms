@@ -2,11 +2,14 @@
 {% block content %}
 
 
+<!-- new_invite_page -->
+
 <div class="container">
 <div class="row">
   <div class="col-md-3"></div>
   <div class="col-md-5">
     <div class="title_1 delimited">
+      {# i18n: Title on /admin/invites/new page #}
       {%trans%}Send a new user invitation{%endtrans%}
     </div>
     <form method="POST">
@@ -38,6 +41,7 @@
       </div>
       </p>
       <div class="form-actions">
+        {# i18n: Button to send new user invitation message via email #}
         <input class="btn-success btn"
                type="submit"
                value="{%trans%}Send email{%endtrans%}">
@@ -45,6 +49,7 @@
           <a class="btn btn-primary"
              role="button"
              href="/admin/users">
+             {# i18n: Button to cancel operation #}
               {%trans%}Cancel{%endtrans%}
           </a>
         {% else %}

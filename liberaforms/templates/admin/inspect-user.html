@@ -22,24 +22,17 @@
             </tr>
             {% if g.is_root_user_enabled %}
                 <tr>
+                   {# i18n: Hostname of user, admin or form. The hostname is same as instance URL, for example "erabili.liberaforms.org" #}
                    <td>{%trans%}Hostname{%endtrans%}</td>
                    <td>{{ user.hostname }}</td>
                 </tr>
             {% endif %}
             <tr>
-               <td>{%trans%}Is Admin{%endtrans%}</td>
-               <td>
-                   <div id="toggle_admin" class="btn-group btn-toggle">
-                    <button id="admin_true" class="btn btn-xs btn-default {% if user.is_admin() %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="admin_false" class="btn btn-xs btn-default {% if not user.is_admin() %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-                   </div>
-                </td>
-            </tr>
-            <tr>
                <td>{%trans%}Created{%endtrans%}</td>
                <td>{{ user.created }}</td>
             </tr>
             <tr>
+              {# i18n: Language selected by user #}
                <td>{%trans%}Language{%endtrans%}</td>
                <td>{{ config['LANGUAGES'][user.language][0] }}</td>
             </tr>
@@ -48,6 +41,7 @@
                <td>{{ user.email }}</td>
             </tr>
             <tr>
+              {# i18n: Whether the email of user was validated #}
                <td>{%trans%}Validated email{%endtrans%}</td>
                <td> {% if user.validatedEmail %}
                     <span>{%trans%}True{%endtrans%}</span>
@@ -56,21 +50,86 @@
                     {% endif %}
                 </td>
             </tr>
+            {% if config['ENABLE_UPLOADS'] %}
             <tr>
+              {# i18n: Whether user is able to upload attached documents to form #}
+              <td>{%trans%}Attachments enabled{%endtrans%}</td>
+              <td>
+                <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
+                  <button id="uploads_enabled_true"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if user.get_uploads_enabled() %}btn-success{% endif %}
+                  ">
+                      {%trans%}True{%endtrans%}
+                  </button>
+                  <button id="uploads_enabled_false"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if not user.get_uploads_enabled() %}btn-primary{% endif %}
+                  ">
+                    {%trans%}False{%endtrans%}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            {% endif %}
+            <tr>
+              <td>{%trans%}Admin{%endtrans%}</td>
+              <td>
+                <div id="toggle_admin" class="btn-group btn-toggle">
+                  <button id="admin_true"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if user.is_admin() %}btn-success{% endif %}">
+                      {%trans%}True{%endtrans%}
+                  </button>
+                  <button id="admin_false"
+                          class="btn btn-xs
+                                 btn-default
+                                 {% if not user.is_admin() %}btn-primary{% endif %}">
+                    {%trans%}False{%endtrans%}
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              {# i18n: Whether user is blocked by admin #}
                <td>{%trans%}Blocked by admin{%endtrans%}</td>
                <td>
-                   <div id="toggle_blocked" class="btn-group btn-toggle">
-                    <button id="blocked_true" class="btn btn-xs btn-default {% if user.blocked %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                    <button id="blocked_false" class="btn btn-xs btn-default {% if not user.blocked %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
+                   <div id="toggle_blocked"
+                        class="btn-group btn-toggle">
+                      <button id="blocked_true"
+                              class="btn
+                                     btn-xs
+                                     btn-default
+                                     {% if user.blocked %}btn-success{% endif %}">
+                            {%trans%}True{%endtrans%}
+                      </button>
+                      <button id="blocked_false"
+                              class="btn
+                                     btn-xs
+                                     btn-default
+                                     {% if not user.blocked %}btn-primary{% endif %}">
+                            {%trans%}False{%endtrans%}
+                      </button>
                    </div>
                 </td>
             </tr>
         </table>
         {% if not user.id == g.current_user.id %}
             {% if forms.count() %}
-            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user and authored forms{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
+            <input class="btn-warning
+                          btn btn-sm"
+                   type="button"
+                   value="{%trans%}Delete user and authored forms{%endtrans%}"
+                   onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% else %}
-            <input class="btn-warning btn btn-sm" type="button" value="{%trans%}Delete user{%endtrans%}" onClick="location.href='/admin/users/delete/{{user.id}}'">
+            <input class="btn-warning
+                          btn btn-sm"
+                   type="button"
+                   value="{%trans%}Delete user{%endtrans%}"
+                   onClick="location.href='/admin/users/delete/{{user.id}}'">
             {% endif %}
         {% endif %}
 
@@ -93,8 +152,9 @@
                 <th>{%trans%}Created{%endtrans%}</th>
                 <th>{%trans%}Author{%endtrans%}</th>
                 <th>{%trans%}Editors{%endtrans%}</th>
+                {# i18n: Whether for is public #}
                 <th>{%trans%}Public{%endtrans%}</th>
-                <th>{%trans%}Entries{%endtrans%}</th>
+                <th>{%trans%}Answers{%endtrans%}</th>
             </tr>
         </thead>
 
@@ -111,7 +171,7 @@
             </td>
            <td>{{form.editors|length}}</td>
            <td>{{form.is_public()}}</td>
-           <td>{{form.get_entries().count()}}</td>
+           <td>{{form.get_answers().count()}}</td>
         </tr>
         {% endfor %}
     </table>
@@ -157,6 +217,31 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
         }
     });
 });
+{% if config['ENABLE_UPLOADS'] %}
+document.getElementById('toggle_uploads_enabled').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/admin/users/toggle-uploads-enabled/{{ user.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.uploads_enabled == true) {
+                $('#uploads_enabled_true').addClass('btn-success');
+                $('#uploads_enabled_false').removeClass('btn-primary');
+            }
+            else if (data.uploads_enabled == false) {
+                $('#uploads_enabled_true').removeClass('btn-success');
+                $('#uploads_enabled_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+{% endif %}
 document.getElementById('toggle_admin').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/users/toggle-admin/{{ user.id }}",
@@ -188,8 +273,8 @@ var time_chart = new Chart(ctx, {
         beginAtZero: true,
         datasets: [
             {
-                label: ["{{ _('Entries')}}"],
-                data: {{ stats['entries']|tojson }},
+                label: ["{{ _('Answers')}}"],
+                data: {{ stats['answers']|tojson }},
                 fill: true,
                 borderWidth: 0,
                 backgroundColor: "rgba(182, 0, 181, 0.7)",

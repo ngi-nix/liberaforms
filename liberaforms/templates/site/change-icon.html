@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- change_icon_page -->
+
+<script src="/static/parsley/parsley.min.js"></script>
+<script src="/static/parsley/i18n/{{ g.current_user.language }}.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/parsley.css">
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-5">
+
+      <div class="title_1 delimited">
+          {%trans%}Change site icon{%endtrans%}
+      </div>
+      <div class="title_2">{%trans%}Upload an image{%endtrans%}</div>
+
+      <form id="upload_form" method="POST" enctype=multipart/form-data >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+          <span class="hint">{%trans%}A small square image.{%endtrans%}</span>
+          <div class="form-group">
+            <input type=file
+                   name=file
+                   class="form-control"
+                   data-parsley-filemimetypes="image/png, image/jpeg"
+                   required=True />
+          </div>
+
+          <div class="form-actions">
+            <input class="btn-success btn"
+                          type="submit"
+                          value="{%trans%}Upload{%endtrans%}" />
+            <a class="btn btn-primary"
+               role="button"
+               href="/site/reset-favicon">
+               {%trans%}Use default{%endtrans%}
+             </a>
+            <a class="btn btn-primary"
+               role="button"
+               href="/admin">
+               {%trans%}Cancel{%endtrans%}
+             </a>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+$(function () {
+  $('#upload_form').parsley().on('field:validated', function() {
+    var ok = $('.parsley-error').length === 0;
+    $('.bs-callout-info').toggleClass('hidden', !ok);
+    $('.bs-callout-warning').toggleClass('hidden', ok);
+  })
+});
+window.Parsley.addValidator('filemimetypes', {
+  validateString: function(_value, requirement, parsleyInstance) {
+    console.log(requirement)
+    if (!window.FormData) {
+      return true;
+    }
+    var file = parsleyInstance.$element[0].files;
+    if (file.length == 0) {
+      return true;
+    }
+    var allowedMimeTypes = requirement.replace(/\s/g, "").split(',');
+    return allowedMimeTypes.indexOf(file[0].type) !== -1;
+  },
+  requirementType: 'string',
+  messages: {
+    en: 'Please use a PNG or JPG file',
+    es: 'Please use a PNG or JPG file',
+    eu: 'Please use a PNG or JPG file',
+    ca: 'Please use a PNG or JPG file',
+  }
+});
+</script>
+
+{% endblock %}

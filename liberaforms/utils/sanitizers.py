@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 def sanitize_string(string):
     string = unidecode(string)
     string = string.replace(" ", "")
-    return re.sub('[^A-Za-z0-9\-]', '', string)
+    return re.sub('[^A-Za-z0-9\-\.]', '', string)
 
 def sanitize_slug(slug):
     slug = slug.lower()
@@ -23,13 +23,13 @@ def sanitize_username(username):
     return sanitize_string(username)
 
 def escape_markdown(MDtext):
-    #removed html tags
+    #removes html tags
     TAG_RE = re.compile(r'<[^>]+>')
     return TAG_RE.sub('', MDtext)
 
 def markdown2HTML(MDtext):
     MDtext=escape_markdown(MDtext)
-    return markdown.markdown(MDtext, extensions=['nl2br'])
+    return markdown.markdown(MDtext, extensions=['markdown.extensions.nl2br'])
 
 def strip_html_tags(text):
     # removes tags and tag content

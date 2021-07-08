@@ -14,7 +14,10 @@ class FormLog(db.Model, CRUD):
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+    #form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey('forms.id',
+                                                    ondelete="CASCADE"),
+                                                    nullable=True)
     message = db.Column(db.String, nullable=False)
     user = db.relationship("User", viewonly=True)
     form = db.relationship("Form", viewonly=True)
@@ -24,3 +27,11 @@ class FormLog(db.Model, CRUD):
         self.user_id = kwargs['user_id']
         self.form_id = kwargs['form_id']
         self.message = kwargs['message']
+
+    @classmethod
+    def find(cls, **kwargs):
+        return cls.find_all(**kwargs).first()
+
+    @classmethod
+    def find_all(cls, **kwargs):
+        return cls.query.filter_by(**kwargs)

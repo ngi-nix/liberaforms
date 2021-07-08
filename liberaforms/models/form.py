@@ -5,19 +5,21 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, copy
+import os, datetime, re
+import shutil
 import unicodecsv as csv
 
-from flask import g
-from flask_babel import gettext
+from flask import current_app, g
+from flask_babel import gettext as _
 
-from liberaforms import app, db
+from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms.models.log import FormLog
-from liberaforms.models.answer import Answer
+from liberaforms.models.answer import Answer, AnswerAttachment
+from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
@@ -32,6 +34,7 @@ fieldIndex: List of dictionaries. Each dict contains one formbuider field info.
 """
 class Form(db.Model, CRUD):
     __tablename__ = "forms"
+    _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
     created = db.Column(db.Date, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
@@ -43,7 +46,8 @@ class Form(db.Model, CRUD):
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
-    sharedEntries = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
+    sharedAnswers = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
+    shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     introductionText = db.Column(JSONB, nullable=False)
@@ -51,24 +55,26 @@ class Form(db.Model, CRUD):
     expiredText = db.Column(JSONB, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
-    answers = db.relationship("Answer", cascade = "all, delete, delete-orphan")
-    log = db.relationship("FormLog", cascade = "all, delete, delete-orphan")
-    _site=None
+    answers = db.relationship("Answer", lazy='dynamic',
+                                        cascade="all, delete, delete-orphan")
+    log = db.relationship("FormLog", lazy='dynamic',
+                                     cascade="all, delete, delete-orphan")
 
     def __init__(self, author, **kwargs):
         self.created = datetime.datetime.now().isoformat()
         self.author_id = author.id
         self.editors = {self.author_id: self.new_editor_preferences(author)}
-        self.expiryConditions = {"totalEntries": 0,
+        self.expiryConditions = {"totalAnswers": 0,
                                  "expireDate": False,
                                  "fields": {}}
         self.slug = kwargs["slug"]
         self.structure = kwargs["structure"]
         self.fieldIndex = kwargs["fieldIndex"]
-        self.sharedEntries = {  "enabled": False,
+        self.sharedAnswers = {  "enabled": False,
                                 "key": utils.gen_random_string(),
                                 "password": False,
                                 "expireDate": False}
+        self.shared_notifications = []
         self.introductionText = kwargs["introductionText"]
         self.consentTexts = kwargs["consentTexts"]
         self.afterSubmitText = kwargs["afterSubmitText"]
@@ -98,7 +104,7 @@ class Form(db.Model, CRUD):
             filters.append(cls.editors.has_key(str(kwargs['editor_id'])))
             kwargs.pop('editor_id')
         if 'key' in kwargs:
-            filters.append(cls.sharedEntries.contains({'key': kwargs['key']}))
+            filters.append(cls.sharedAnswers.contains({'key': kwargs['key']}))
             kwargs.pop('key')
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
@@ -126,17 +132,19 @@ class Form(db.Model, CRUD):
     def create_field_index(structure):
         index=[]
         # Add these RESERVED fields to the index.
-        index.append({'label': gettext("Marked"), 'name': 'marked'})
-        index.append({'label': gettext("Created"), 'name': 'created'})
+        # i18n: Column title on table, to sort whether the form entries are marked or not
+        index.append({'label': _("Marked"), 'name': 'marked'})
+        # i18n: Used for sort items by creation order, almost always as column title
+        index.append({'label': _("Created"), 'name': 'created'})
         for element in structure:
             if 'name' in element:
                 if 'label' not in element:
-                    element['label']=gettext("Label")
+                    element['label']=_("Label")
                 index.append({'name': element['name'], 'label': element['label']})
         return index
 
     def update_field_index(self, newIndex):
-        if self.get_total_entries() == 0:
+        if self.get_total_answers() == 0:
             self.fieldIndex = newIndex
         else:
             deletedFieldsWithData=[]
@@ -155,7 +163,7 @@ class Form(db.Model, CRUD):
                     if can_delete:
                         # A pseudo delete.
                         # We drop the field (it's reference) from the index
-                        # (the empty field remains as is in each entry in the db)
+                        # (the empty field remains as is in each answer in the db)
                         pass
                     else:
                         # We don't delete this field from the index because it contains data
@@ -172,7 +180,8 @@ class Form(db.Model, CRUD):
             result.append(item)
         if self.data_consent["enabled"]:
             # append dynamic DPL field
-            result.append({"name": "DPL", "label": gettext("DPL")})
+            # i18n: Acronym for 'Data Privacy Law'
+            result.append({"name": "DPL", "label": _("DPL")})
         return result
 
     def has_removed_fields(self):
@@ -196,41 +205,54 @@ class Form(db.Model, CRUD):
     def has_email_field(self):
         return Form.structure_has_email_field(self.structure)
 
+    def has_field(self, field_name):
+        for field in self.structure:
+            if "name" in field and field["name"] == field_name:
+                return True
+        return False
+
+    def has_file_field(self):
+        for field in self.structure:
+            if "type" in field and field["type"] == "file":
+                return True
+        return False
+
     def might_send_confirmation_email(self):
         if self.sendConfirmation and self.has_email_field():
             return True
         else:
             return False
 
-    def get_confirmation_email_address(self, entry):
+    def get_confirmation_email_address(self, answer):
         for element in self.structure:
             if Form.is_email_field(element):
-                if element["name"] in entry and entry[element["name"]]:
-                    return entry[element["name"]].strip()
+                if element["name"] in answer and answer[element["name"]]:
+                    return answer[element["name"]].strip()
         return False
 
-    def get_entries(self, oldest_first=False, **kwargs):
+    def get_answers(self, oldest_first=False, **kwargs):
         kwargs['oldest_first'] = oldest_first
         kwargs['form_id'] = self.id
         return Answer.find_all(**kwargs)
 
-    def get_entries_for_display(self, oldest_first=False):
-        entries = self.get_entries(oldest_first=oldest_first)
+    def get_answers_for_display(self, oldest_first=False):
+        answers = self.get_answers(oldest_first=oldest_first)
         result = []
-        for entry in entries:
-            result.append({ 'id': entry.id,
-                            'created': entry.created.strftime("%Y-%m-%d %H:%M:%S"),
-                            'marked': entry.marked,
-                            **entry.data})
+        for answer in answers:
+            result.append({ 'id': answer.id,
+                            'created': answer.created.strftime("%Y-%m-%d %H:%M:%S"),
+                            'marked': answer.marked,
+                            **answer.data})
         return result
 
-    def get_total_entries(self):
-        return Answer.find_all(form_id=self.id).count()
+    def get_total_answers(self):
+        return self.answers.count()
+        #return Answer.find_all(form_id=self.id).count()
 
-    def get_last_entry_date(self):
-        last_entry = Answer.find(form_id=self.id)
-        if last_entry:
-            return last_entry.created.strftime('%Y-%m-%d %H:%M:%S')
+    def get_last_answer_date(self):
+        last_answer = Answer.find(form_id=self.id)
+        if last_answer:
+            return last_answer.created.strftime('%Y-%m-%d %H:%M:%S')
         return ""
 
     def is_enabled(self):
@@ -240,9 +262,9 @@ class Form(db.Model, CRUD):
 
     @classmethod
     def new_editor_preferences(cls, editor):
-        return {'notification': {   'newEntry': editor.preferences[
-                                                    "newEntryNotification"
-                                                ],
+        return {'notification': {   'newAnswer': editor.preferences[
+                                                "newAnswerNotification"
+                                                 ],
                                     'expiredForm': True }}
 
     def add_editor(self, editor):
@@ -267,11 +289,11 @@ class Form(db.Model, CRUD):
 
     @property
     def url(self):
-        return "%s%s" % (self.site.host_url, self.slug)
+        return f"{self.site.host_url}{self.slug}"
 
     @property
     def embed_url(self):
-        return "%sembed/%s" % (self.site.host_url, self.slug)
+        return f"{self.site.host_url}embed/{self.slug}"
 
     @property
     def data_consent(self):
@@ -304,8 +326,8 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def default_expired_text():
-        text=gettext("Sorry, this form has expired.")
-        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+        text=_("Sorry, this form has expired.")
+        return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
     def expired_text_html(self):
@@ -332,8 +354,9 @@ class Form(db.Model, CRUD):
 
     @staticmethod
     def defaultAfterSubmitText():
-        text=gettext("Thank you!!")
-        return {"markdown": "## %s" % text, "html": "<h2>%s</h2>" % text}
+        # i18n: Thanks text displayed when completing form as user
+        text=_("Thank you!!")
+        return {"markdown": f"## {text}", "html": f"<h2>{text}</h2>"}
 
     @property
     def after_submit_text_html(self):
@@ -391,11 +414,17 @@ class Form(db.Model, CRUD):
         flag_modified(self, "expiryConditions")
         self.save()
 
-    def save_expiry_total_entries(self, total_entries):
-        self.expiryConditions['totalEntries']=total_entries
+    def save_expiry_total_answers(self, total_answers):
+        try:
+            total_answers = int(total_answers)
+        except:
+            total_answers = 0
+        total_answers = 0 if total_answers < 0 else total_answers
+        self.expiryConditions['totalAnswers']=total_answers
         self.expired = self.has_expired()
         flag_modified(self, "expiryConditions")
         self.save()
+        return self.expiryConditions['totalAnswers']
 
     def save_expiry_field_condition(self, field_name, condition):
         available_fields=self.get_available_number_type_fields()
@@ -413,12 +442,14 @@ class Form(db.Model, CRUD):
             try:
                 condition_dict = {"type": field_type, "condition": int(condition)}
                 self.expiryConditions['fields'][field_name] = condition_dict
-                self.expired=self.has_expired()
-                flag_modified(self, "expiryConditions")
-                self.save()
-                return condition
             except:
-                return False
+                condition = False
+                if field_name in self.expiryConditions['fields']:
+                    del self.expiryConditions['fields'][field_name]
+            self.expired=self.has_expired()
+            flag_modified(self, "expiryConditions")
+            self.save()
+            return condition
         return False
 
     def update_expiryConditions(self):
@@ -442,9 +473,22 @@ class Form(db.Model, CRUD):
                         break
         return field_positions
 
-    def delete_entries(self):
-        Answer.query.filter_by(form_id=self.id).delete()
-        db.session.commit()
+    def delete(self):
+        self.delete_all_answers()
+        super().delete()
+
+    def delete_all_answers(self):
+        self.answers.delete()
+        attachment_dir = os.path.join(current_app.config['ATTACHMENT_DIR'],
+                                      str(self.id))
+        attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                      attachment_dir)
+        if os.path.isdir(attachment_dir):
+            shutil.rmtree(attachment_dir, ignore_errors=True)
+        else:
+            current_app.logger.debug(f"Local attachment dir not found: {attachment_dir}")
+        if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
+            RemoteStorage().remove_directory(f"attachments/{self.id}")
 
     def is_author(self, user):
         return True if self.author_id == user.id else False
@@ -465,7 +509,7 @@ class Form(db.Model, CRUD):
         return editors
 
     def can_expire(self):
-        if self.expiryConditions["totalEntries"]:
+        if self.expiryConditions["totalAnswers"]:
             return True
         if self.expiryConditions["expireDate"]:
             return True
@@ -476,8 +520,8 @@ class Form(db.Model, CRUD):
     def has_expired(self):
         if not self.can_expire():
             return False
-        if self.expiryConditions["totalEntries"] and \
-            self.get_entries().count() >= self.expiryConditions["totalEntries"]:
+        if self.expiryConditions["totalAnswers"] and \
+            self.answers.count() >= self.expiryConditions["totalAnswers"]:
             return True
         if self.expiryConditions["expireDate"] and not \
             validators.is_future_date(self.expiryConditions["expireDate"]):
@@ -491,9 +535,9 @@ class Form(db.Model, CRUD):
 
     def tally_number_field(self, fieldName):
         total=0
-        for entry in self.get_entries():
+        for answer in self.get_answers():
             try:
-                total = total + int(entry.data[fieldName])
+                total = total + int(answer.data[fieldName])
             except:
                 continue
         return total
@@ -505,17 +549,17 @@ class Form(db.Model, CRUD):
             return True
 
     def is_shared(self):
-        if self.are_entries_shared():
+        if self.are_answers_shared():
             return True
         if len(self.editors) > 1:
             return True
         return False
 
-    def are_entries_shared(self):
-        return self.sharedEntries['enabled']
+    def are_answers_shared(self):
+        return self.sharedAnswers['enabled']
 
-    def get_shared_entries_url(self, part="results"):
-        return f"{self.url}/{part}/{self.sharedEntries['key']}"
+    def get_shared_answers_url(self, part="results"):
+        return f"{self.url}/{part}/{self.sharedAnswers['key']}"
 
     """
     Used when editing a form.
@@ -550,25 +594,25 @@ class Form(db.Model, CRUD):
                     return result
         return result
 
-    def get_entries_for_json(self):
+    def get_answers_for_json(self):
         result=[]
-        entries = self.get_entries_for_display(oldest_first=True)
-        for saved_entry in entries:
-            entry={}
+        answers = self.get_answers_for_display(oldest_first=True)
+        for saved_answer in answers:
+            answer={}
             for field in self.get_field_index_for_data_display():
-                #value=saved_entry[field['name']] if field['name'] in saved_entry else ""
-                if field['name'] in saved_entry:
-                    value = saved_entry[field['name']]
+                #value=saved_answer[field['name']] if field['name'] in saved_answer else ""
+                if field['name'] in saved_answer:
+                    value = saved_answer[field['name']]
                 else:
                     value = ""
-                entry[field['label']]=value
-            result.append(entry)
+                answer[field['label']]=value
+            result.append(answer)
         return result
 
     def get_chart_data(self):
         chartable_time_fields=[]
-        total={'entries':0}
-        time_data={'entries':[]}
+        total={'answers':0}
+        time_data={'answers':[]}
         for field in self.get_available_number_type_fields():
             label=self.get_field_label(field)
             total[label]=0
@@ -585,25 +629,25 @@ class Form(db.Model, CRUD):
             for value in field['values']:
                 field_for_chart['axis_1'].append(value['label'])
                 field_for_chart['axis_2'].append(0) #start counting at zero
-        for entry in self.get_entries_for_display(oldest_first=True):
-            total['entries']+=1
-            time_data['entries'].append({   'x': entry['created'],
-                                            'y': total['entries']})
+        for answer in self.get_answers_for_display(oldest_first=True):
+            total['answers']+=1
+            time_data['answers'].append({   'x': answer['created'],
+                                            'y': total['answers']})
             for field in chartable_time_fields:
                 try:
-                    total[field['label']]+=int(entry[field['name']])
-                    time_data[field['label']].append({'x': entry['created'],
+                    total[field['label']]+=int(answer[field['name']])
+                    time_data[field['label']].append({'x': answer['created'],
                                                       'y': total[field['label']]
                                                     })
                 except:
                     continue
             for field in multichoice_fields:
-                if not (field['name'] in entry and entry[field['name']]):
+                if not (field['name'] in answer and answer[field['name']]):
                     continue
                 field_for_chart=[item for item in multi_choice_for_chart if item["name"]==field['name']][0]
-                entry_values=entry[field['name']].split(', ')
+                answer_values=answer[field['name']].split(', ')
                 for idx, field_value in enumerate(field['values']):
-                    if field_value['value'] in entry_values:
+                    if field_value['value'] in answer_values:
                         field_for_chart['axis_2'][idx]+=1
         return {'multi_choice':multi_choice_for_chart,
                 'time_chart':time_data}
@@ -622,11 +666,11 @@ class Form(db.Model, CRUD):
         self.save()
         return self.adminPreferences['public']
 
-    def toggle_shared_entries(self):
-        enabled = self.sharedEntries['enabled']
-        self.sharedEntries['enabled'] = False if enabled else True
+    def toggle_shared_answers(self):
+        enabled = self.sharedAnswers['enabled']
+        self.sharedAnswers['enabled'] = False if enabled else True
         self.save()
-        return self.sharedEntries['enabled']
+        return self.sharedAnswers['enabled']
 
     def toggle_restricted_access(self):
         self.restrictedAccess = False if self.restrictedAccess else True
@@ -636,13 +680,13 @@ class Form(db.Model, CRUD):
     def toggle_notification(self, editor_id):
         editor_id = str(editor_id)
         if editor_id in self.editors:
-            if self.editors[editor_id]['notification']['newEntry']:
-                self.editors[editor_id]['notification']['newEntry']=False
+            if self.editors[editor_id]['notification']['newAnswer']:
+                self.editors[editor_id]['notification']['newAnswer']=False
             else:
-                self.editors[editor_id]['notification']['newEntry']=True
+                self.editors[editor_id]['notification']['newAnswer']=True
             flag_modified(self, 'editors')
             self.save()
-            return self.editors[editor_id]['notification']['newEntry']
+            return self.editors[editor_id]['notification']['newAnswer']
         return False
 
     def toggle_expiration_notification(self, editor_id):
@@ -674,20 +718,30 @@ class Form(db.Model, CRUD):
         for field in self.get_field_index_for_data_display(with_deleted_columns):
             fieldnames.append(field['name'])
             fieldheaders[field['name']]=field['label']
-        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.slug}.csv")
+        csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.slug}.csv")
         with open(csv_name, mode='wb') as csv_file:
             writer = csv.DictWriter(csv_file,
                                     fieldnames=fieldnames,
                                     extrasaction='ignore')
             writer.writerow(fieldheaders)
-            entries = self.get_entries_for_display(oldest_first=True)
-            for entry in entries:
-                writer.writerow(entry)
+            answers = self.get_answers_for_display(oldest_first=True)
+            for answer in answers:
+                for field_name in answer.keys():
+                    if field_name.startswith('file-'):
+                        # extract attachment url
+                        url = re.search(r'https?:[\'"]?([^\'" >]+)',
+                                        answer[field_name])
+                        if url:
+                            answer[field_name] = url.group(0)
+                writer.writerow(answer)
         return csv_name
 
     @staticmethod
     def default_introduction_text():
-        title=gettext("Form title")
-        context=gettext("Context")
-        content=gettext(" * Describe your form.\n * Add relevant content, links, images, etc.")
+        # i18n: Example title in template for new form
+        title=_("Form title")
+        # i18n: Example subtitle in template for new form
+        context=_("Context")
+        # i18n: Example content in template for new form. '\n' is used for linebreak.
+        content=_(" * Describe your form.\n * Add relevant content, links, images, etc.")
         return "## {}\n\n### {}\n\n{}".format(title, context, content)

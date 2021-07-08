@@ -27,11 +27,13 @@ body {
 .nav-link:hover {
   opacity: 1;
 }
+
 #main-content {
   margin-top: 1.5em;
 }
 
 #footer {
+  color: #999;
   text-align:right;
   position: absolute;
   bottom: 0;
@@ -82,10 +84,10 @@ hr { margin-top: 5px }
   margin-top:2.15em;
 }
 .hint {
-  font-size: 1em;
+  font-size: 1rem;
   font-style: italic;
   color: grey;
-  margin-top: -0.8em;
+  /*margin-top: -0.8em;*/
 }
 .btn-xs {
   padding: .45rem .45rem;
@@ -94,7 +96,7 @@ hr { margin-top: 5px }
   border-radius: .2rem;
 }
 .btn > i {
-  padding-left: 5px;
+  margin-left: 5px;
 }
 .author-badge {
   font-size:0.95em;
@@ -126,11 +128,11 @@ label {
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
 }
-.entries-table {
+.answers-table {
   font-size: 14px;
 }
 /*
-.entries-table td:nth-child(-n+3), .entries-table th:nth-child(-n+3) {
+.answers-table td:nth-child(-n+3), .answers-table th:nth-child(-n+3) {
   max-width: 45px;
   white-space: nowrap;
 }
@@ -215,13 +217,22 @@ input[type="date"], input[type="number"], input[type="time"] {
 }
 
 
+#html_email_preview {
+  background: #ccc;
+  box-shadow: 4px 3px 8px 1px #969696;
+  -webkit-box-shadow: 4px 3px 8px 1px #969696;
+  margin-top:1em;
+  width: 100%;
+  border: 0;
+}
+
 /* ######### WTForms ######### */
 .formError {
     color: #d9534f;
     font-size: 1rem;
 }
 
-/* ######### Entries table ######### */
+/* ######### Answers table ######### */
 
 .delete-row-icon {
     font-size: 1.15em !important;
@@ -242,7 +253,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     text-decoration: line-through;
     cursor: auto;
 }
-.entryCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
+.answerCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
     background-color: #ffffcc;
     cursor: pointer;
 }
@@ -278,10 +289,13 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   display: none;
 }
 
-.liberaform input[type=submit] {
+.liberaform button[type=submit] {
   margin-top: 1em;
 }
 
+.liberaform .marked-up li {
+  margin-left: -1.2em;
+}
 
 /* ###### Theming ###### */
 .menu-color-options span {
@@ -290,55 +304,43 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
   height: 52px;
   cursor: pointer;
   color: white;
-  font-size: 34px; 
+  font-size: 34px;
   text-align: center;
   vertical-align: middle;
   margin-bottom: 4px;
 }
-/* ##### Conditions ####### */
-#conditions_display a[role=button] {
-  display:none;
-}
-.conditioner_icon, .conditioned_icon {
-  padding-left: 0.3rem;
-  cursor: pointer;
-  color: gray;
-}
-#liberaform .fa-lightbulb-o {
-  font-size: 1.6rem;
-}
-.activeConditionerIcon, .activeConditionedIcon {
-  color: green;
-}
-#conditions_display a {
-  margin-left: 0.3em;
-}
-.activeConditionGroup {
-  background-color: #C3FDB8;
-}
 
+input[type="file"] {
+  height: auto;
+}
 /* ######### Consent texts ######### */
 div.required {
     /* font-size: 1.05em; */
     color: #c10000;
     padding: 0 0 1em 0;
 }
-div.consentText {
+div.consentText > #dataConsentText {
   font-size: 0.85rem;
   color: #666;
 }
 label.consent {
   font-size: 1rem;
-  margin-left: 0.5em;
+  color: #333333 !important;
   cursor: pointer;
+  margin-left: 6px;
+  display: block;
+}
+input.consent {
+  margin-top: .4rem;
+}
+div.confirmation-group {
+  margin-bottom: 2em;
 }
 label.send-confirmation {
-  font-size: 1.2rem;
-  margin-left: 0.5em;
-  cursor: pointer;
-}
-label.consent {
-  color: #333;
+  font-size: 1em;
+  margin-left: 6px;
+  display: block;
+  margin-top: -1px;
 }
 label.required {
   margin-top: -0.1em;
@@ -355,4 +357,14 @@ button.newUserConsentTextToggle {
 }
 button.newUserConsentTextToggle > i {
   padding: 0;
+}
+
+/* ########## Modals ########## */
+.jc-question {
+  font-size: 1.4em !important;
+  font-weight: inherit !important;
+}
+.jc-small {
+  font-size: 11px !important;
+  padding: 0 !important;
 }

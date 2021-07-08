@@ -5,15 +5,22 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+import os
 import re, datetime, time, uuid
-from liberaforms import app
-from validate_email import validate_email
+from email_validator import validate_email, EmailNotValidError
 from passlib.hash import pbkdf2_sha256
 from password_strength import PasswordPolicy
+from flask import current_app
 
 
 def is_valid_email(email):
-    return validate_email(email)
+    try:
+        validate_email(email)
+        return True
+    except EmailNotValidError as e:
+        current_app.logger.warning(e)
+        return False
+
 
 pwd_policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
@@ -24,7 +31,11 @@ pwd_policy = PasswordPolicy.from_names(
 )
 
 def hash_password(password):
-    return pbkdf2_sha256.hash(password, rounds=200000, salt_size=16)
+    settings = {
+        'rounds': 200000,
+        'salt_size': 16,
+    }
+    return pbkdf2_sha256.using(**settings).hash(password)
 
 def verify_password(password, hash):
     return pbkdf2_sha256.verify(password, hash)
@@ -33,7 +44,7 @@ def has_token_expired(token_data):
     token_created = datetime.datetime.strptime( token_data['created'],
                                                 "%Y-%m-%d %H:%M:%S")
     token_age = datetime.datetime.now() - token_created
-    if token_age.total_seconds() <= app.config['TOKEN_EXPIRATION']:
+    if token_age.total_seconds() <= int(os.environ['TOKEN_EXPIRATION']):
         return False
     return True
 

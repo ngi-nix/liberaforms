@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- log_list_page -->
+
 <script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
 <script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
@@ -11,7 +13,9 @@
     <div class="col-md-8">
 
         <div class="returnToForm">
-            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
+            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">
+              {%trans%}Return to form{%endtrans%}
+            </a>
             {{ form.slug }}
         </div>
 
@@ -24,11 +28,11 @@
                 <th>{%trans%}Message{%endtrans%}</th>
             </tr>
         </thead>
-        {% for entry in form.log %}
+        {% for log in form.log %}
         <tr>
-            <td>{{entry.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
-            <td>{{entry.user.username}}</td>
-            <td>{{entry.message}}</td>
+            <td>{{log.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+            <td>{{log.user.username}}</td>
+            <td>{{log.message}}</td>
         </tr>
         {% endfor %}
         </table>

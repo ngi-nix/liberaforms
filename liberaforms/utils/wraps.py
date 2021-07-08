@@ -6,8 +6,9 @@ This file is part of LiberaForms.
 """
 
 from functools import wraps
-from flask import g, redirect, url_for, render_template, flash
-from liberaforms import app
+from flask import current_app, request, g
+from flask import redirect, url_for, render_template, flash
+from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
 
@@ -26,8 +27,23 @@ def enabled_user_required(f):
     def wrap(*args, **kwargs):
         if g.current_user and g.current_user.enabled:
             return f(*args, **kwargs)
+        elif g.current_user:
+            current_app.logger.info(f'Disabled user denied: {request.path}')
         else:
-            return redirect(url_for('main_bp.index'))
+            current_app.logger.info(f'Anon user denied: {request.path}')
+        return redirect(url_for('main_bp.index'))
+    return wrap
+
+def enabled_user_required__json(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user and g.current_user.enabled:
+            return f(*args, **kwargs)
+        elif g.current_user:
+            current_app.logger.info(f'Disabled user denied: {request.path}')
+        else:
+            current_app.logger.info(f'Anon user denied: {request.path}')
+        return jsonify("Denied"), 401
     return wrap
 
 def admin_required(f):
@@ -35,14 +51,17 @@ def admin_required(f):
     def wrap(*args, **kwargs):
         if g.is_admin:
             return f(*args, **kwargs)
+        elif g.current_user:
+            current_app.logger.info(f'Non admin user denied: {request.path}')
         else:
-            return redirect(url_for('main_bp.index'))
+            current_app.logger.info(f'Anon user denied: {request.path}')
+        return redirect(url_for('main_bp.index'))
     return wrap
 
 def rootuser_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
-        if g.current_user.is_root_user():
+        if g.current_user and g.current_user.is_root_user():
             return f(*args, **kwargs)
         else:
             return redirect(url_for('main_bp.index'))
@@ -63,7 +82,7 @@ def queriedForm_editor_required(f):
     def wrap(*args, **kwargs):
         queriedForm=models.Form.find(id=kwargs['id'], editor_id=str(g.current_user.id))
         if not queriedForm:
-            flash(gettext("Form is not available. 404"), 'warning')
+            flash(_("Form is not available. 404"), 'warning')
             return redirect(make_url_for('forms_bp.my_forms'))
         kwargs['queriedForm']=queriedForm
         return f(*args, **kwargs)
@@ -77,7 +96,7 @@ def sanitized_slug_required(f):
             if g.current_user:
                 flash("No slug found!", 'error')
             return render_template('page-not-found.html'), 404
-        if kwargs['slug'] in app.config['RESERVED_SLUGS']:
+        if kwargs['slug'] in current_app.config['RESERVED_SLUGS']:
             if g.current_user:
                 flash("Reserved slug!", 'warning')
             return render_template('page-not-found.html'), 404
@@ -93,7 +112,7 @@ def sanitized_key_required(f):
     def wrap(*args, **kwargs):
         if not ('key' in kwargs and kwargs['key'] == sanitizers.sanitize_string(kwargs['key'])):
             if g.current_user:
-                flash(gettext("That's a nasty key!"), 'warning')
+                flash(_("That's a nasty key!"), 'warning')
             return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)
@@ -104,7 +123,7 @@ def sanitized_token(f):
     def wrap(*args, **kwargs):
         if 'token' in kwargs and not validators.is_valid_UUID(kwargs['token']):
             if g.current_user:
-                flash(gettext("That's a nasty token!"), 'warning')
+                flash(_("That's a nasty token!"), 'warning')
             return render_template('page-not-found.html'), 404
         else:
             return f(*args, **kwargs)

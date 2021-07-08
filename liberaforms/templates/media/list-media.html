@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/parsley/parsley.min.js"></script>
+<script src="/static/parsley/i18n/{{ g.current_user.language }}.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/css/parsley.css">
+
+<!-- list_media_page -->
+
+{% set total_uploaded_media  = g.current_user.media.count() %}
+
+<style>
+  .table > tbody > tr > td {
+       vertical-align: middle;
+  }
+  tr > td:last-of-type {
+    text-align: right;
+  }
+</style>
+
+<div class="container">
+<div class="row">
+  <div class="col-md-3"></div>
+  <div class="col-md-6">
+
+    <div class="title_1 delimited">
+      {%trans%}My media{%endtrans%}
+      <div style="float:right">
+          <button id="show_upload_form_button"
+                  class="btn btn-primary btn-sm"
+                  {% if total_uploaded_media == 0 %}
+                  style="display:none"
+                  {% endif %}
+                  onclick="js:show_form()">
+              {%trans%}Upload a file{%endtrans%}
+              <i class="fa fa-upload" aria-hidden="true"></i>
+          </button>
+      </div>
+    </div>
+    <div class="title_text_subtext">
+      {%trans%}These files can be included in your forms.{%endtrans%}
+    </div>
+    <p>
+    {%trans%}You can help save disk space on the server by deleting unused files.{%endtrans%}
+    </p>
+
+    <form id="upload_form"
+          action="/media/save"
+          method ="post"
+          {% if total_uploaded_media != 0 %}
+          style="display:none"
+          {% endif %}
+          enctype="multipart/form-data">
+      {{ wtform.csrf_token }}
+      <div class="title_2 delimited">
+        {%trans%}Upload a file{%endtrans%}
+      </div>
+      <div class="form-group">
+          {{ wtform.alt_text.label }}
+          <span class='required-dot'>●</span><br />
+          <span class="hint">
+            {{trans}}Describe the image. This helps people with visual challenges.{{endtrans}}
+          </span>
+          {{ wtform.alt_text(
+                  class_="form-control",
+                  placeholder=_('A photo of a horse galloping on the beach.'))
+          }}
+          {% for error in wtform.alt_text.errors %}
+              <span class="formError">{{ error }}</span><br />
+          {% endfor %}
+      </div>
+      <div class="form-group">
+          {{ wtform.media_file.label }}
+          <span class='required-dot'>●</span><br />
+          {{ wtform.media_file(class_="form-control",
+                          style="height: auto",
+                          multiple="false",
+                          data_parsley_max_file_size=config['MAX_MEDIA_SIZE'],
+                          data_parsley_filemimetypes="image/png, image/jpeg",
+                          required=True
+                      )
+          }}
+          {% for error in wtform.media_file.errors %}
+              <span class="formError">{{ error }}</span><br />
+          {% endfor %}
+      </div>
+
+      <div class="form-actions"
+           style="margin-bottom:2em;">
+        <button class="btn
+                       btn-success"
+               type="submit"
+        >
+          {%trans%}Upload{%endtrans%}
+          <i id="upload_spinner"
+             style="display:none"
+             class="fa fa-circle-o-notch fa-spin">
+          </i>
+        </button>
+      </div>
+    </form>
+
+    <table id="media_list"
+           class="table table-sm sparse-table">
+      <tbody>
+        {% for image in g.current_user.media %}
+        <tr id="media_{{image.id}}">
+          <td>
+            <img src="{{ image.get_thumbnail_url() }}"
+                 alt="{{image.alt_text}}"
+                 title="{{image.alt_text}}" />
+          </td>
+          <td>
+            {{ image.created.strftime('%Y-%m-%d') }}
+          </td>
+          <td>
+            {{ image.file_size }}
+          </td>
+          <td>
+            <a href="{{ image.get_url()}}"
+               alt="{{ image.alt_text}}">
+              {{ image.file_name }}
+            </a>
+          </td>
+          <td>
+            <input class="btn btn-xs btn-danger"
+                   type="button" value="{%trans%}Remove{%endtrans%}"
+                   onClick="js:removeMedia('{{image.id}}');"
+            />
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<script>
+$(function () {
+  $('#upload_form').parsley().on('field:validated', function() {
+    var ok = $('.parsley-error').length === 0;
+    $('.bs-callout-info').toggleClass('hidden', !ok);
+    $('.bs-callout-warning').toggleClass('hidden', ok);
+  })
+  .on('form:submit', function() {
+    event.preventDefault();
+    var form_data = new FormData();
+    var formFields = document.getElementById('upload_form').elements;
+    var file = formFields['media_file'].files[0];
+    form_data.append('media_file', file);
+    form_data.append('alt_text', $('#alt_text').val());
+
+    $("#upload_spinner").show();
+    $.ajax({
+        url : "/media/save",
+        type: "POST",
+        data : form_data,
+        processData: false,
+        contentType: false,
+        beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken)
+          }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+          if (data !== false && data.errors === undefined) {
+            var new_row = $('<tr id="media_'+data.id+'">');
+            html = '<img src="'+data.thumbnail_url+'" />';
+            $('<td>').html(html).appendTo(new_row);
+            $('<td>').html(data.created).appendTo(new_row);
+            $('<td>').html(data.file_size).appendTo(new_row);
+            html = '<a href="'+data.image_url+'" alt="'+data.alt_text+'">'+data.file_name+'</a>';
+            $('<td>').html(html).appendTo(new_row);
+            html = '<input class="btn btn-xs btn-danger" type="button" ';
+            html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';
+            html = html + 'onClick="js:removeMedia('+data.id+');" />';
+            $('<td>').html(html).appendTo(new_row);
+            new_row.prependTo("#media_list");
+            $('#show_upload_form_button').show();
+            $("#upload_spinner").hide();
+            $('#upload_form').hide();
+          }else{
+            alert("Error message: media_upload-1")
+          }
+        }
+    });
+  });
+  window.Parsley.addValidator('maxFileSize', {
+    validateString: function(_value, maxSize, parsleyInstance) {
+      if (!window.FormData) {
+        return true;
+      }
+      var files = parsleyInstance.$element[0].files;
+      return files.length != 1  || files[0].size <= maxSize;
+   },
+    requirementType: 'integer',
+    messages: {
+      en: 'This file should not be larger than {{max_media_size_for_humans}}',
+      ca: 'El fitxer no ha de ser més gran que {{max_media_size_for_humans}}',
+      fr: 'Ce fichier est plus grand que {{max_media_size_for_humans}}'
+    }
+  })
+  .addValidator('filemimetypes', {
+    validateString: function(_value, requirement, parsleyInstance) {
+      console.log(requirement)
+      if (!window.FormData) {
+        return true;
+      }
+      var file = parsleyInstance.$element[0].files;
+      if (file.length == 0) {
+        return true;
+      }
+      var allowedMimeTypes = requirement.replace(/\s/g, "").split(',');
+      return allowedMimeTypes.indexOf(file[0].type) !== -1;
+    },
+    requirementType: 'string',
+    messages: {
+      en: 'File type not allowed',
+      es: 'File type not allowed',
+      eu: 'File type not allowed',
+      ca: 'File type not allowed',
+    }
+  });
+});
+function show_form() {
+  $('#upload_form')[0].reset()
+  $('#upload_form').show();
+}
+function removeMedia(media_id){
+    $.ajax({
+        url : "/media/delete/"+media_id,
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data == media_id) {
+                $('#media_'+media_id).hide();
+            } else {
+              alert("Error message: media_remove-1 ")
+            }
+        }
+    });
+}
+</script>
+
+{% endblock %}

@@ -1,7 +1,9 @@
 venv
-config.cfg
+.env
+docker-compose.yml
+gunicorn.py
 notes.txt
 flask_session
-*.pyc
-static/node_modules
 __pycache__
+*.backup
+.pytest_cache

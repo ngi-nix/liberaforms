@@ -3,58 +3,56 @@
 
 <div class="container">
 <div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-5">
+  <div class="col-md-3"></div>
+  <div class="col-md-5">
 
-        <div class="title_1 delimited">
-            {%trans%}Delete account{%endtrans%}: {{ user.username }}
-        </div>
-        <div class="title_3">
-        {%trans%}You will delete your account and the following data{%endtrans%}
-        </div>
-        <table class="table table-sm" style="margin-top: 1em">
-            <tr>
-                <td>{%trans%}The forms you have created{%endtrans%}</td>
-                <td>{{ user.authored_forms_total() }}</td>
-            </tr>
-            <tr>
-                <td>{%trans%}The replies to those forms{%endtrans%}</td>
-                <td>{{ user.get_entries().count() }}</td>
-            </tr>
-        </table>
-        <p>
-        {{forms_with_editors}}
-        </p>
-        <hr />
-        <form method="POST">
-        {{ wtform.csrf_token }}
-        <p>
-            {{ wtform.delete_username.label }} <span class='required-dot'>●</span><br />
-            {{ wtform.delete_username(class_="form-control") }}
-            {% for error in wtform.delete_username.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-        <p>
-            {{ wtform.delete_password.label }} <span class='required-dot'>●</span><br />
-            {{ wtform.delete_password(class_="form-control") }}
-            {% for error in wtform.delete_password.errors %}
-                <span class="formError">{{ error }}</span><br />
-            {% endfor %}
-        </p>
-        <div class="title_1">
-            {%trans%}This is irreversible!{%endtrans%}
-        </div>
-
-        <input class="btn-danger btn" type="submit" value="{%trans%}Delete account{%endtrans%}" />
-        <a class="btn btn-primary" role="button" href="/user/{{user.username}}">
-          {%trans%}Cancel{%endtrans%}
-        </a>
-        </div>
-        </form>
-
-
+    <div class="title_1 delimited">
+        {%trans%}Delete account{%endtrans%}: {{ user.username }}
     </div>
+    <div class="title_3">
+    {%trans%}You will delete your account and the following data{%endtrans%}
+    </div>
+    <table class="table table-sm" style="margin-top: 1em">
+        <tr>
+            <td>{%trans%}The forms you have created{%endtrans%}</td>
+            <td>{{ user.authored_forms_total() }}</td>
+        </tr>
+        <tr>
+            <td>{%trans%}The replies to those forms{%endtrans%}</td>
+            <td>{{ user.get_answers().count() }}</td>
+        </tr>
+    </table>
+    <p>
+    {{forms_with_editors}}
+    </p>
+    <hr />
+    <form method="POST">
+      {{ wtform.csrf_token }}
+      <p>
+          {{ wtform.delete_username.label }} <span class='required-dot'>●</span><br />
+          {{ wtform.delete_username(class_="form-control") }}
+          {% for error in wtform.delete_username.errors %}
+              <span class="formError">{{ error }}</span><br />
+          {% endfor %}
+      </p>
+      <p>
+          {{ wtform.delete_password.label }} <span class='required-dot'>●</span><br />
+          {{ wtform.delete_password(class_="form-control") }}
+          {% for error in wtform.delete_password.errors %}
+              <span class="formError">{{ error }}</span><br />
+          {% endfor %}
+      </p>
+      <div class="title_1">
+          {%trans%}This is irreversible!{%endtrans%}
+      </div>
+
+      <input class="btn-danger btn" type="submit" value="{%trans%}Delete account{%endtrans%}" />
+      <a class="btn btn-primary" role="button" href="/user/{{user.username}}">
+        {%trans%}Cancel{%endtrans%}
+      </a>
+    </form>
+
+  </div>
 </div>
 </div>
 {% endblock %}

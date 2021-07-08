@@ -1,15 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- new_user_form_page -->
 
 {% if not created %}
 <div class="container">
 <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
-    
+
     <div class="title_1 delimited">{%trans%}New user{%endtrans%}</div>
-    
+
     <form method="POST">
         {{ wtform.csrf_token }}
         <p>
@@ -51,7 +52,7 @@
             {% endif %}
             <div class="form-group {{ 'consentText' if consent.id != g.site.terms_consent_id }}">
                 <div>{{ consent['html']|safe }}</div>
-                
+
                 <div class="form-check">
                     {% set input_name = consent.name %}
                     {% if consent.id == g.site.terms_consent_id %}
@@ -82,7 +83,7 @@
         </div>
 
     {% endfor %}
-    
+
         <div class="form-actions">
         {% set disabled = "disabled" if preview_only else "" %}
         <input class="btn-success btn" type="submit" value="{%trans%}Submit{%endtrans%}" {{disabled}} />
@@ -93,7 +94,7 @@
         {% endif %}
         </div>
     </form>
-    
+
     </div>
 
 </div>

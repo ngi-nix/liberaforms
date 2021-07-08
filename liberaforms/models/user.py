@@ -5,15 +5,17 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import datetime
+import os, datetime
 from dateutil.relativedelta import relativedelta
-from liberaforms import app, db
+import pathlib
+from liberaforms import db
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.ext.mutable import MutableDict
-#from sqlalchemy.orm.attributes import flag_modified
+from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer
+from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
 from liberaforms.utils import utils
@@ -31,19 +33,25 @@ class User(db.Model, CRUD):
     blocked = db.Column(db.Boolean, default=False)
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean, default=False)
+    uploads_enabled = db.Column(db.Boolean, default=False, nullable=False)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
+    #media = db.relationship("Media", viewonly=True)
+    media = db.relationship("Media",
+                            lazy='dynamic',
+                            cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
         self.created = datetime.datetime.now().isoformat()
         self.username = kwargs["username"]
         self.email = kwargs["email"]
-        self.password_hash = kwargs["password_hash"]
+        self.password_hash = validators.hash_password(kwargs["password"])
         self.preferences = kwargs["preferences"]
         self.blocked = False
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
+        self.uploads_enabled = kwargs["uploads_enabled"]
         self.token = {}
         self.consentTexts = []
 
@@ -103,25 +111,34 @@ class User(db.Model, CRUD):
         return self.preferences["language"]
 
     @property
-    def new_entry_notification_default(self):
-        return self.preferences["newEntryNotification"]
+    def new_answer_notification_default(self):
+        return self.preferences["newAnswerNotification"]
 
     def is_admin(self):
         return True if self.admin['isAdmin']==True else False
 
     def is_root_user(self):
-        return True if self.email in app.config['ROOT_USERS'] else False
+        return True if self.email in os.environ['ROOT_USERS'] else False
 
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
 
     def delete_user(self):
-        # Before delete, remove this user from other form.editors{}
+        # remove this user from other form.editors{}
         forms = Form.find_all(editor_id=self.id)
         for form in forms:
-            del form.editors[str(self.id)]
-            form.save()
-        self.delete()   # cascade delete user.authored_forms
+            if form.author_id != self.id:
+                del form.editors[str(self.id)]
+                form.save()
+        # delete uploaded media files
+        media_dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
+        shutil.rmtree(media_dir, ignore_errors=True)
+        if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
+            prefix = "media/{}".format(self.id)
+            RemoteStorage().remove_directory(prefix)
+        # cascade delete user.authored_forms
+        # cascade delete user.media
+        self.delete()
 
     def set_token(self, **kwargs):
         self.token=utils.create_token(User, **kwargs)
@@ -139,13 +156,32 @@ class User(db.Model, CRUD):
         self.save()
         return self.blocked
 
-    def toggle_new_entry_notification_default(self):
-        if self.preferences["newEntryNotification"]==True:
-            self.preferences["newEntryNotification"]=False
+    def toggle_new_answer_notification_default(self):
+        if self.preferences["newAnswerNotification"]==True:
+            self.preferences["newAnswerNotification"]=False
         else:
-            self.preferences["newEntryNotification"]=True
+            self.preferences["newAnswerNotification"]=True
         self.save()
-        return self.preferences["newEntryNotification"]
+        return self.preferences["newAnswerNotification"]
+
+    def get_uploads_enabled(self):
+        if not current_app.config['ENABLE_UPLOADS']:
+            return False
+        return self.uploads_enabled
+
+    def get_media_directory_size(self, for_humans=False):
+        dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
+        if not os.path.isdir(dir):
+            bytes = 0
+        else:
+            dir = pathlib.Path(dir)
+            bytes = sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+        return bytes if not for_humans else utils.human_readable_bytes(bytes)
+
+    def toggle_uploads_enabled(self):
+        self.uploads_enabled = False if self.uploads_enabled else True
+        self.save()
+        return self.uploads_enabled
 
     def toggle_admin(self):
         if self.is_root_user():
@@ -153,6 +189,15 @@ class User(db.Model, CRUD):
         self.admin['isAdmin']=False if self.is_admin() else True
         self.save()
         return self.is_admin()
+
+    @staticmethod
+    def default_user_preferences(site=None):
+        if site:
+            default_language = site.defaultLanguage
+        else:
+            default_language = os.environ['DEFAULT_LANGUAGE']
+        return { "language": default_language,
+                 "newAnswerNotification": True}
 
     @staticmethod
     def default_admin_settings():
@@ -182,7 +227,7 @@ class User(db.Model, CRUD):
         self.save()
         return self.admin['notifyNewForm']
 
-    def get_entries(self, **kwargs):
+    def get_answers(self, **kwargs):
         kwargs['author_id']=str(self.id)
         return Answer.find_all(**kwargs)
 
@@ -192,8 +237,8 @@ class User(db.Model, CRUD):
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
-        result={    "labels":[], "entries":[], "forms":[],
-                    "total_entries":[], "total_forms": []}
+        result={    "labels":[], "answers":[], "forms":[],
+                    "total_answers":[], "total_forms": []}
         while 1:
             month = month +1
             if month == 13:
@@ -204,25 +249,25 @@ class User(db.Model, CRUD):
             result['labels'].append(year_month)
             if year_month == today:
                 break
-        total_entries=0
+        total_answers=0
         total_forms=0
-        entry_filter=[Answer.author_id == self.id]
+        answer_filter=[Answer.author_id == self.id]
         form_filter=[Form.author_id == self.id]
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
             start_date = datetime.datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
-            entries_filter = entry_filter + [Answer.created >= start_date]
-            entries_filter = entry_filter + [Answer.created < stop_date]
+            answers_filter = answer_filter + [Answer.created >= start_date]
+            answers_filter = answer_filter + [Answer.created < stop_date]
             forms_filter = form_filter + [Form.created >= start_date]
             forms_filter = form_filter + [Form.created < stop_date]
-            monthy_entries = Answer.query.filter(*entries_filter).count()
+            monthy_answers = Answer.query.filter(*answers_filter).count()
             monthy_forms = Form.query.filter(*forms_filter).count()
-            total_entries= total_entries + monthy_entries
+            total_answers= total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
-            result['entries'].append(monthy_entries)
+            result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)
-            result['total_entries'].append(total_entries)
+            result['total_answers'].append(total_answers)
             result['total_forms'].append(total_forms)
         return result
 

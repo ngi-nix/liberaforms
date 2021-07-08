@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import datetime
-from flask_babel import gettext
+from flask_babel import gettext as _
 from sqlalchemy.dialects.postgresql import JSONB
 from liberaforms.utils.database import CRUD
 from liberaforms import db
@@ -59,4 +59,5 @@ class Invite(db.Model, CRUD):
 
     @staticmethod
     def default_message():
-        return gettext("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")
+        # i18n: Template message for email invitation. '\n' is used for linebreak.
+        return _("Hello,\n\nYou have been invited to LiberaForms.\n\nRegards.")

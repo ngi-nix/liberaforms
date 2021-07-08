@@ -9,10 +9,10 @@ import json, string, random, datetime, uuid
 from pprint import pformat
 
 from flask import Response, redirect, request, url_for
-from flask import g, session
-from flask_babel import gettext
+from flask import current_app, g, session
+from flask_babel import gettext as _
 
-from liberaforms import app, babel
+from liberaforms import babel
 
 
 def print_obj_values(obj):
@@ -33,7 +33,33 @@ def get_locale():
     if 'current_user' in g and g.current_user:
         return g.current_user.language
     else:
-        return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
+        return request.accept_languages.best_match(
+                                        current_app.config['LANGUAGES'].keys()
+                                        )
+
+def populate_flask_g():
+    g.current_user=None
+    g.is_admin=False
+    g.embedded=False
+    from urllib.parse import urlparse
+    from liberaforms.models.site import Site
+    from liberaforms.models.user import User
+    g.site=Site.find(urlparse(request.host_url))
+    if 'user_id' in session and session["user_id"] != None:
+        g.current_user=User.find(id=session["user_id"])
+        if not g.current_user:
+            logout_user()
+            return
+        if g.current_user.is_admin():
+            g.is_admin=True
+
+def get_app_version():
+    try:
+        with open('VERSION.txt') as f:
+            app_version = f.readline().strip()
+            return app_version if app_version else ""
+    except Exception as error:
+        current_app.logger.error(error)
 
 """
 Used to respond to Ajax requests
@@ -44,6 +70,15 @@ def JsonResponse(json_response="1", status_code=200):
         status_code,
         {'Content-Type':'application/json; charset=utf-8'}
     )
+
+def return_error_as_json(status_code, sub_code, message, action):
+    response = jsonify({
+        'status': status_code,
+        'sub_code': sub_code,
+        'message': message,
+        'action': action
+    })
+    return JsonResponse(response, status_code)
 
 
 """ ######## Session ######## """
@@ -73,3 +108,18 @@ def gen_random_string():
 
 def str2bool(v):
   return v.lower() in ("true", "1", "yes")
+
+def human_readable_bytes(bytes):
+    """ 1 KibiByte == 1024 Bytes
+        1 Mebibyte == 1024*1024 Bytes
+        1 GibiByte == 1024*1024*1024 Bytes
+    """
+    if bytes == 0:
+        return "0 bytes"
+    if bytes < 1024:
+         return f"{bytes} bytes"
+    if bytes < 1024*1024:
+        return f"{float(round(bytes/(1024), 2))} KB"
+    if bytes < 1024*1024*1024:
+        return f"{float(round(bytes/(1024*1024), 2))} MB"
+    return f"{float(round(bytes/(1024*1024*1024), 2))} GB"

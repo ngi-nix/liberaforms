@@ -1,0 +1,44 @@
+SECRET_KEY = 'super secret key'
+
+ROOT_USERS = ['your_email_address@example.com']
+DEFAULT_LANGUAGE = 'en'
+TMP_DIR = '/tmp'
+
+## Database
+DB_HOST=localhost
+DB_NAME=liberaforms
+DB_USER=liberaforms
+# Use a strong password
+DB_PASSWORD=""
+
+# Maximum valid age for password resets, invitations, ..
+# 86400 seconds = 24h
+TOKEN_EXPIRATION = 604800
+
+# Session management (see docs/INSTALL)
+SESSION_TYPE = "filesystem"
+#SESSION_TYPE = "memcached"
+#MEMCACHED_HOST=
+#SESSION_KEY_PREFIX=
+
+# See docs/upload.md
+ENABLE_UPLOADS=True
+ENABLE_REMOTE_STORAGE=False
+# 1024 * 500 = 512000 = 500 KiB
+MAX_MEDIA_SIZE=512000
+# 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
+MAX_ATTACHMENT_SIZE=1572864
+CRYPTO_KEY=
+
+# Directory where logs will be saved
+LOG_DIR=logs
+
+# FLASK_ENV
+# this sets the Flask running mode
+# can be 'production' or 'development'
+FLASK_ENV=production
+
+# FLASK_CONFIG
+# this sets the config to use (see config.py)
+# can be 'production' or 'development'
+FLASK_CONFIG=production

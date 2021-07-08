@@ -16,9 +16,33 @@
   display:none;
 }
 
+#fb-editor input[type="file"], .rendered-form input[type="file"] {
+  height: auto;
+}
+
+/* hide these field attribute in the editor */
+#fb-editor .other-wrap,  #fb-editor .maxlength-wrap {
+  display: none;
+}
+
+#fb-editor .form-elements label {
+  font-weight: initial;
+  font-size: 1.1em;
+}
+
+/* highlight non input options */
+#fb-editor ul.ui-sortable [data-type=header],
+#fb-editor ul.ui-sortable [data-type=paragraph] {
+  background-color: #E6E6E6;
+}
+#fb-editor ul.ui-sortable [data-type=header]:hover,
+#fb-editor ul.ui-sortable [data-type=paragraph]:hover {
+  background-color: #f2f2f2;
+}
+
 /* vertical form rhythm */
-.form-group {
-  padding-bottom: 1.3em;
+.rendered-form .form-group {
+  margin-bottom: 2em;
 }
 
 /* remove tooltip */

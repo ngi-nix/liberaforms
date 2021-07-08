@@ -6,17 +6,14 @@ This file is part of LiberaForms.
 """
 
 from flask_babel import lazy_gettext as _
- 
 
-formTemplates = [
+templates = [
     {
-        'id': "tpl-1",
+        'id': 1,
         'name': _('One day congress'),
         'description': "Let attendees choose one of two talks running in parallel. They will also select their lunch menu.",
+        'introduction_md': _('# hello\none two three'),
         'structure': [
-            {"subtype": "h1", "label": _('One day congress'), "type": "header"},
-            {"subtype": "p", "label": "<div>12th July, all day event<br></div><div>Our meeting point.</div><div>46, Big Street.</div><div>Post code.</div>", "type": "paragraph"},
-            {"subtype": "p", "label": "<div>We are holding talks all day on the 12th. We have two conference rooms, and are running the talks in parallel.</div><div><br></div><div>&lt;b&gt;09h - 10h Room 1. Presentation.&lt;/b&gt;<br></div>", "type": "paragraph"},
             {"name": "radio-group-1563733517177",
                 "values": [
                     {"label": _("Room 1. Municipal Strategies"), "value": "strategies"},
@@ -39,12 +36,11 @@ formTemplates = [
         ]
     },
     {
-        'id': "tpl-2",
+        'id': 2,
         'name': _("Summer courses"),
         'description': _("Students can enroll in a variety of activities spread out across three days."),
+        'introduction_md': _('# hello'),
         'structure': [
-            {"label": _("Summer courses"), "subtype": "h1", "type": "header"},
-            {"label": "<div><br></div><div>Please enroll here for this year's Summer courses</div><div><br></div>", "subtype": "p", "type": "paragraph"},
             {"values":
                 [
                     {"label": "10h - 13h. Neutral networks. A practical presentation of our WIFI installation", "value": "eXO-guifi-net"},
@@ -71,12 +67,11 @@ formTemplates = [
         ]
     },
     {
-        'id': "tpl-3",
+        'id': 3,
         'name': _("Save our shelter"),
         'description': _("Petition citizen support for your local initiative."),
+        'introduction_md': _('# hello'),
         'structure': [
-            {"type": "header", "subtype": "h1", "label": _("Save our shelter")},
-            {"type": "paragraph", "subtype": "p", "label": "<div>During the civil war neighbors sought shelter from the aerial bombing. Some time ago the local Church purchased the property and have recently started demolition to build a new parking lot.</div><div><br></div><div>If you want to save our local heritage, please give your support.</div><div><br> </div>"},
             {"className": "form-control", "name": "text-1563737790717", "type": "text", "required": "true", "label": _("ID number"), "subtype": "text"},
             {"type": "text", "className": "form-control", "subtype": "email", "name": "text-1563737806028", "label": _("Email")},
             {"type": "textarea", "subtype": "textarea", "label": _("Comments"), "name": "textarea-1563737836394", "className": "form-control"}

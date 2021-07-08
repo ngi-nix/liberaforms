@@ -6,22 +6,22 @@ This file is part of LiberaForms.
 """
 
 import os, json
+import mimetypes
 from flask import g, request, render_template, redirect
+from flask import Blueprint, current_app
 from flask import session, flash
-from flask import Blueprint, send_file, after_this_request
-from flask_babel import gettext
+from flask_babel import gettext as _
 
-from liberaforms import app
 from liberaforms.models.site import Site
 from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
-from liberaforms.utils.email import EmailServer
+from liberaforms.utils.email.dispatcher import Dispatcher
 import liberaforms.utils.wtf as wtf
 
-#from pprint import pprint as pp
+from pprint import pprint
 
 site_bp = Blueprint('site_bp', __name__,
                     template_folder='../templates/site')
@@ -32,7 +32,7 @@ site_bp = Blueprint('site_bp', __name__,
 def save_blurb():
     if 'editor' in request.form:
         g.site.save_blurb(request.form['editor'])
-        flash(gettext("Text saved OK"), 'success')
+        flash(_("Text saved OK"), 'success')
     return redirect(make_url_for('main_bp.index'))
 
 
@@ -44,15 +44,15 @@ def recover_password(token=None):
     if token:
         user = User.find(token=token)
         if not user:
-            flash(gettext("Couldn't find that token"), 'warning')
+            flash(_("Couldn't find that token"), 'warning')
             return redirect(make_url_for('main_bp.index'))
         if validators.has_token_expired(user.token):
-            flash(gettext("Your petition has expired"), 'warning')
+            flash(_("Your petition has expired"), 'warning')
             user.delete_token()
             return redirect(make_url_for('main_bp.index'))
         if user.blocked:
             user.delete_token()
-            flash(gettext("Your account has been blocked"), 'warning')
+            flash(_("Your account has been blocked"), 'warning')
             return redirect(make_url_for('main_bp.index'))
         user.delete_token()
         user.validatedEmail=True
@@ -66,10 +66,10 @@ def recover_password(token=None):
         user = User.find(email=wtform.email.data, blocked=False)
         if user:
             user.set_token()
-            EmailServer().sendRecoverPassword(user)
-        if not user and wtform.email.data in app.config['ROOT_USERS']:
-            if User.query.count() == 0:
-                # auto invite first root user
+            Dispatcher().send_account_recovery(user)
+        if not user and wtform.email.data in os.environ['ROOT_USERS']:
+            if not User.find(email=wtform.email.data):
+                # auto invite root user
                 invite=Invite(  email=wtform.email.data,
                                 message="New root user",
                                 token=utils.create_token(Invite),
@@ -77,7 +77,7 @@ def recover_password(token=None):
                 invite.save()
                 return redirect(make_url_for('user_bp.new_user',
                                              token=invite.token['token']))
-        flash(gettext("We may have sent you an email"), 'info')
+        flash(_("We may have sent you an email"), 'info')
         return redirect(make_url_for('main_bp.index'))
     return render_template('recover-password.html', wtform=wtform)
 
@@ -99,9 +99,8 @@ def save_consent(id):
         if consent:
             return JsonResponse(json.dumps(consent))
     return JsonResponse(json.dumps({'html': "<h1>%s</h1>" % (
-                                                gettext("An error occured")),
+                                                _("An error occured")),
                                     "label":""}))
-
 
 
 @site_bp.route('/site/update-enabled-new-user-consentment-texts/<string:id>', methods=['POST'])
@@ -128,7 +127,7 @@ def change_siteName():
     if request.method == 'POST' and 'sitename' in request.form:
         g.site.siteName=request.form['sitename']
         g.site.save()
-        flash(gettext("Site name changed OK"), 'success')
+        flash(_("Site name changed OK"), 'success')
         return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('change-sitename.html', site=g.site)
 
@@ -138,41 +137,66 @@ def change_siteName():
 def change_default_language():
     if request.method == 'POST':
         if 'language' in request.form \
-            and request.form['language'] in app.config['LANGUAGES']:
+            and request.form['language'] in current_app.config['LANGUAGES']:
             g.site.defaultLanguage=request.form['language']
             g.site.save()
-            flash(gettext("Language updated OK"), 'success')
+            flash(_("Language updated OK"), 'success')
             return redirect(make_url_for('admin_bp.site_admin'))
     return render_template('common/change-language.html',
                             current_language=g.site.defaultLanguage,
                             go_back_to_admin_panel=True)
 
-@site_bp.route('/site/change-favicon', methods=['GET', 'POST'])
+@site_bp.route('/site/change-icon', methods=['GET', 'POST'])
 @admin_required
-def change_site_favicon():
+def change_icon():
     if request.method == 'POST':
         if not request.files['file']:
-            flash(gettext("Required file is missing"), 'warning')
-            return render_template('change-site-favicon.html')
+            flash(_("Required file is missing"), 'warning')
+            return render_template('change-icon.html')
         file=request.files['file']
-        # need to lower filename
-        if len(file.filename) > 4 and file.filename[-4:] == ".png":
-            filename="%s_favicon.png" % g.site.hostname
-            file.save(os.path.join(app.config['FAVICON_FOLDER'], filename))
+        if "image/" in file.content_type:
+            try:
+                g.site.change_favicon(file)
+                flash(_("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+                return redirect(make_url_for('admin_bp.site_admin'))
+            except Exception as error:
+                current_app.logger.error(error)
         else:
-            flash(gettext("Bad file name. PNG only"), 'warning')
-            return render_template('change-site-favicon.html')
-        flash(gettext("Favicon changed OK. Refresh with  &lt;F5&gt;"), 'success')
-        return redirect(make_url_for('admin_bp.site_admin'))
-    return render_template('change-site-favicon.html')
+            flash(_("An image file is required"), 'warning')
+            return render_template('change-icon.html')
+    return render_template('change-icon.html')
 
 
 @site_bp.route('/site/reset-favicon', methods=['GET'])
 @admin_required
 def reset_site_favicon():
-    if g.site.delete_favicon():
-        flash(gettext("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
+    if g.site.reset_favicon():
+        flash(_("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('admin_bp.site_admin'))
+
+
+@site_bp.route('/site/edit-mimetypes', methods=['GET', 'POST'])
+@admin_required
+def edit_mimetypes():
+    wtform=wtf.FileExtensions()
+    if wtform.validate_on_submit():
+        mimetypes.init()
+        updated_mimetypes = {"extensions":[], "mimetypes": []}
+        extensions = wtform.extensions.data.splitlines()
+        for extension in extensions:
+            if not extension:
+                continue
+            type = mimetypes.types_map[f".{extension}"]
+            if not extension in updated_mimetypes["extensions"]:
+                updated_mimetypes["extensions"].append(extension)
+                updated_mimetypes["mimetypes"].append(type)
+        g.site.mimetypes = updated_mimetypes
+        g.site.save()
+        flash(_("Enabled file extensions updated OK"), 'success')
+        return redirect(make_url_for('admin_bp.site_admin'))
+    if request.method == 'GET':
+        wtform.extensions.data = '\n'.join(g.site.mimetypes['extensions'])
+    return render_template('edit-mimetypes.html', wtform=wtform)
 
 
 @site_bp.route('/site/toggle-invitation-only', methods=['POST'])
@@ -180,6 +204,10 @@ def reset_site_favicon():
 def toggle_invitation_only():
     return JsonResponse(json.dumps({'invite': g.site.toggle_invitation_only()}))
 
+@site_bp.route('/site/toggle-newuser-uploads-default', methods=['POST'])
+@admin_required
+def toggle_newuser_uploads_default():
+    return JsonResponse(json.dumps({'uploads': g.site.toggle_newuser_uploads_default()}))
 
 @site_bp.route('/site/email/config', methods=['GET', 'POST'])
 @admin_required
@@ -198,7 +226,7 @@ def smtp_config():
         config['password'] = wtf_smtp.password.data
         config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
         g.site.save_smtp_config(**config)
-        flash(gettext("Confguration saved OK"), 'success')
+        flash(_("Confguration saved OK"), 'success')
     wtf_email=wtf.GetEmail()
     return render_template('smtp-config.html',
                             wtf_smtp=wtf_smtp,
@@ -209,9 +237,12 @@ def smtp_config():
 @admin_required
 def test_smtp():
     wtform=wtf.GetEmail()
-    if wtform.validate():
-        if EmailServer().sendTestEmail(wtform.email.data):
-            flash(gettext("SMTP config works!"), 'success')
+    if wtform.validate_on_submit():
+        status = Dispatcher().send_test_email(wtform.email.data)
+        if status['email_sent'] == True:
+            flash(_("SMTP config works!"), 'success')
+        else:
+            flash(status['msg'], 'warning')
     else:
         flash("Email not valid", 'warning')
     return redirect(make_url_for('site_bp.smtp_config'))
@@ -223,17 +254,69 @@ def edit_site():
     queriedSite=Site.find()
     return render_template('edit-site.html', site=queriedSite)
 
-@site_bp.route('/site/change-menu-color', methods=['GET', 'POST'])
+
+@site_bp.route('/site/primary-colour', methods=['GET', 'POST'])
 @admin_required
-def menu_color():
-    wtform=wtf.ChangeMenuColor()
+def primary_color():
+    wtform=wtf.ChangePrimaryColor()
     if request.method == 'GET':
-        wtform.hex_color.data=g.site.menuColor
-    if wtform.validate():
-        g.site.menuColor=wtform.hex_color.data
+        wtform.hex_color.data=g.site.primary_color
+    if wtform.validate_on_submit():
+        g.site.primary_color=wtform.hex_color.data
         g.site.save()
-        flash(gettext("Color changed OK"), 'success')
-    return render_template('menu-color.html', wtform=wtform)
+        flash(_("Color changed OK"), 'success')
+        return redirect(make_url_for('admin_bp.site_admin'))
+    return render_template('set-primary-color.html', wtform=wtform)
+
+
+@site_bp.route('/site/email-branding', methods=['GET', 'POST'])
+@admin_required
+def email_branding():
+    from liberaforms.utils.email.dispatcher import HTML_email
+    wtform = wtf.EmailBranding()
+    if wtform.validate_on_submit():
+        if request.files['header_image']:
+            g.site.change_email_header(request.files['header_image'])
+        footer_text = wtform.footer_text.data
+        g.site.email_footer = footer_text if footer_text else None
+        flash(_("Updated OK. Refresh with &lt;F5&gt;"), 'success')
+        g.site.save()
+        return redirect(make_url_for('site_bp.email_branding'))
+    if request.method == 'GET' and g.site.email_footer:
+        wtform.footer_text.data=g.site.get_email_footer()
+    return render_template('email-branding.html', wtform=wtform)
+
+
+@site_bp.route('/site/reset-email-header', methods=['GET'])
+@admin_required
+def reset_email_header():
+    if g.site.reset_email_header():
+        flash(_("Reset image OK. Refresh with &lt;F5&gt;"), 'success')
+    return redirect(make_url_for('site_bp.email_branding'))
+
+
+@site_bp.route('/site/example-email-preview', methods=['GET'])
+@admin_required
+def email_preview():
+    from liberaforms.utils.email import dispatcher
+    return dispatcher.branding_body_preview()['html']
+
+
+@site_bp.route('/site/send-email-preview', methods=['POST'])
+@admin_required
+def send_branding_preview():
+    if 'email' in request.form:
+        email = request.form['email']
+        if validators.is_valid_email(email):
+            status = Dispatcher().send_branding_preview(email)
+            if status['email_sent'] == True:
+                flash(_("Sent email OK"), 'success')
+            else:
+                flash(status['msg'], 'warning')
+            return redirect(make_url_for('site_bp.email_branding'))
+    flash(_("Email address is not valid"), 'warning')
+    return redirect(make_url_for('site_bp.email_branding'))
+
 
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
@@ -254,18 +337,3 @@ def change_site_port(port=None):
     g.site.port=port
     g.site.save()
     return json.dumps({'port': g.site.port})
-
-
-@site_bp.route('/site/toggle-root-mode-enabled', methods=['POST'])
-@admin_required
-def toggle_enable_root():
-    if not g.current_user.is_root_user():
-        session["root_enabled"]=False
-        return JsonResponse(json.dumps({'enabled': False}))
-    if session["root_enabled"] == True:
-        session["root_enabled"]=False
-        flash(gettext("Root mode disabled"), 'success')
-    else:
-        session["root_enabled"]=True
-        flash(gettext("Root mode enabled"), 'success')
-    return JsonResponse(json.dumps({'enabled': session["root_enabled"]}))

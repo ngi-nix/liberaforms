@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- list_templates_page -->
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+
+      <div class="title_1 delimited">
+        {%trans%}Form templates{%endtrans%}
+      </div>
+
+      <p>
+      {%trans%}We've put together some forms you can use to get started.{%endtrans%}
+      <br />
+      {%trans%}Choose the template that best suits your needs and edit it to fit.{%endtrans%}
+      </p>
+
+      {% for template in templates %}
+      <hr />
+      <h2>
+        {{ template['name'] }}
+      </h2>
+      <p>
+        {{ template['description'] }}
+        <a style="white-space: nowrap;"
+            href="/forms/template/{{ template['id'] }}">
+          {%trans%}Show more{%endtrans%}
+        </a>
+      </p>
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

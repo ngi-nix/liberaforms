@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- list_answers_page -->
+
+{% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
+{% set answers = form.get_answers_for_display() %}
+{% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
+
+<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
+<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
+{% if tallyColumns %}
+<script src="/static/dataTables/plugins/sum().js"></script>
+{% endif %}
+<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<script src="/static/dataTables/extensions/responsive/2.2.4/dataTables.responsive.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/dataTables/extensions/responsive/2.2.4/responsive.dataTables.min.css">
+{% if edit_mode %}
+<script src="/static/jConfirm/jConfirm.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/static/jConfirm/jConfirm.min.css">
+{% endif %}
+
+<div class="container">
+<div class="row"
+     style="font-size:1.5em">
+    <div class="col">
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/view/{{form.id}}">
+         {%trans%}Form details{%endtrans%}
+      </a>
+      {{ form.slug }}
+    </div>
+
+    <div class="col-auto">
+    <a class="btn btn-primary btn-sm"
+       role="button"
+       href="/forms/answers/stats/{{form.id}}">
+       {%trans%}Graphs{%endtrans%}
+      <i class="fa fa-bar-chart" aria-hidden="true"></i>
+    </a>
+    {% if with_deleted_columns %}
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/csv/{{form.id}}?with_deleted_columns=true">
+           {%trans%}Download CSV{%endtrans%}
+        </a>
+    {% else %}
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/csv/{{form.id}}">
+            {%trans%}Download CSV{%endtrans%}
+        </a>
+    {% endif %}
+
+    {% if answers|length %}
+        {% if edit_mode %}
+            <a class="btn btn-success btn-sm"
+               role="button"
+               href="/forms/answers/{{form.id}}">
+                {%trans%}Disable edition{%endtrans%}
+            </a>
+        {% else %}
+            <a class="btn btn-primary btn-sm"
+               role="button"
+               href="?edit_mode=true">
+                {%trans%}Enable edition{%endtrans%}
+            </a>
+        {% endif %}
+        {% if form.has_removed_fields() %}
+            {% if with_deleted_columns %}
+                <a class="btn btn-success btn-sm"
+                   role="button"
+                   href="/forms/answers/{{form.id}}">
+                    {%trans%}Hide deleted columns{%endtrans%}
+                </a>
+            {% else %}
+                <a class="btn btn-primary btn-sm"
+                   role="button"
+                   href="?with_deleted_columns=true">
+                    {%trans%}Show deleted columns{%endtrans%}
+                </a>
+            {% endif %}
+        {% endif %}
+        <a class="btn btn-warning btn-sm"
+           role="button"
+           href="/forms/delete-all-answers/{{form.id}}">
+            {%trans%}Delete all{%endtrans%}
+        </a>
+    {%endif%}
+    </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <hr />
+
+    {% if form.editors[g.current_user.id|string] is defined %}
+      <div id="toggle_notification"
+           class="btn-group btn-toggle">
+        <button id="notification_true"
+                class="btn btn-sm btn-default
+                {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                  btn-success
+                {% endif %}
+        ">
+          {%trans%}True{%endtrans%}
+        </button>
+        <button id="notification_false"
+                class="btn btn-sm btn-default
+                {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                  btn-primary
+                {% endif %}
+        ">
+          {%trans%}False{%endtrans%}
+        </button>
+      </div>
+      {%trans%}Notify me on each new answer{%endtrans%}
+    {% endif %}
+
+    <p>&nbsp;</p>
+
+    <table  id="answersTable" style="display:none"
+            class="table
+                   table-bordered
+                   table-striped
+                   table-sm
+                   answers-table
+                   {%if not edit_mode%}nowrap{%endif%}">
+      <thead>
+        <tr>
+          <th></th>
+          {% for field in fieldIndex %}
+            {% if field['name'] == "DPL" %}
+              <th data-priority="10001">{{ field['label'] }}</th>
+              {% continue %}
+              {% endif %}
+              {% if field['name'] == "created" %}
+              <th data-priority="10002">
+                {{ field['label'] }}
+              </th>
+              {% continue %}
+              {% endif %}
+              <th>{{ field['label'] }}</th>
+              {% endfor %}
+        </tr>
+      </thead>
+      <tbody {% if edit_mode %}class="answerCellHighlighter"{% endif %} >
+        <!-- Keep the data TD on one line! -->
+        {% for answer in answers %}
+        <tr _id="{{ answer['id'] }}" class="td-controls">
+          <td>
+            {% if edit_mode %}
+            <i class="fa fa-trash delete-row-icon enabled" aria-hidden="true"></i>
+            {% endif %}
+          </td>
+          {% for field in fieldIndex %}
+            {% if field['name'] == "id" %}
+                {% continue %}
+            {% endif %}
+            {% if field['name'] == "marked" %}
+              {% if not edit_mode %}
+                {% if answer[field['name']] == True %}
+                <td><span style="display:none">1</span><button class="btn btn-success btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
+                {% else %}
+                <td><span style="display:none">0</span><button class="btn btn-basic btn-xs mark_answer">{%trans%}Mark{%endtrans%} <i class="fa fa-thumb-tack" aria-hidden="true"></i></button></td>
+                {% endif %}
+              {% else %}
+                {% if answer[field['name']] == True %}
+                <td marked="1">{%trans%}True{%endtrans%}</td>
+                {% else %}
+                <td marked="0">{%trans%}False{%endtrans%}</td>
+                {% endif %}
+              {% endif %}
+            {% elif field['name'].startswith('file-') %}
+              <td class="dontEdit">{{ answer[field['name']]|safe }}</td>
+            {% else %}
+              <td>{{ answer[field['name']] }}</td>
+            {% endif %}
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+{% if form.editors[g.current_user.id|string] is defined %}
+<script>
+var csrftoken = "{{ csrf_token() }}";
+var fieldIndex={{fieldIndex|tojson}};
+var editMode = false;
+var tallyColumns = {{tallyColumns|tojson}};
+
+function getAnswerID($row){
+    return $row.attr('_id')
+}
+function getFieldValueInRow(fieldName, $row){
+    var arrayLength = fieldIndex.length;
+    for (var loop = 0; loop < arrayLength; loop++) {
+        if (fieldIndex[loop]["name"] == fieldName) {
+            return $row.children('td').eq(loop+1).html()
+        }
+    }
+    return null;
+}
+function getRowData($row) {
+    var rowData = new Array();
+    var arrayLength = fieldIndex.length;
+    for (var loop = 0; loop < arrayLength; loop++) {
+        if ( fieldIndex[loop]["name"] == "marked") {
+            if ($row.children('td').eq(loop+1).attr('marked') == 0) {
+                rowData.push({"name":"marked", "value":false})
+            } else {
+                rowData.push({"name":"marked", "value":true})
+            }
+            continue
+        }
+        rowData.push({"name": fieldIndex[loop]["name"], "value": $row.children('td').eq(loop+1).html()})
+    }
+    //rowData.push({"name":"id", "value":getAnswerID($row)})
+    return rowData;
+}
+$(document).ready(function() {
+    var table = $('#answersTable').DataTable({
+        {% if not edit_mode %}
+        "responsive": true,
+        //"scrollY": "50vh",
+        //"scrollCollapse": true,
+        //"scroller": true,
+        //"paging": false,
+        {% endif %}
+        "language": {
+            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
+        },
+        "initComplete": function(settings, json) {
+            tallyColumns.forEach(function(column) {
+                col=column+1
+                sum=table.column( col ).data().sum();
+                $("#answersTable th:nth-child("+ (col+1) +")").append(" <span class='col_sum'>("+sum+")</span>");
+            });
+            $(".dataTable").show();
+        },
+        "order": [[2, 'desc']],
+        "columnDefs": [
+            { "orderable": false, "targets": 0 },
+            //{ "width": "15px", "targets": 0 }
+        ],
+        "pageLength": 100
+    });
+    $('.delete-row-icon').attr('title', "{%trans%}Delete answer{%endtrans%}");
+});
+
+{% if not edit_mode %}
+// toggle marked field
+$('#answersTable tbody').on('click', '.mark_answer', function () {
+    var $row = $(this).parents('tr');
+    var button=$(this)
+    $.ajax({
+        url : "/forms/toggle-marked-answer/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify({"id": getAnswerID($row)} ),
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.marked == true) {
+                button.removeClass("btn-basic")
+                button.addClass("btn-success")
+                button.prev('span').html(1)
+            }else{
+                button.addClass("btn-basic")
+                button.removeClass("btn-success")
+                button.prev('span').html(0)
+            }
+        }
+    });
+});
+{% endif %}
+
+{% if edit_mode %}
+// Edit cell
+$('#answersTable tbody')
+        .on('click', "td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):not(.dontEdit)",
+        function () {
+    $(this).addClass('cellEditionMode');
+    var cellValue = $(this).html();
+    var $editor = $("<div class='cell-editor' initial_value=\""+ cellValue +"\"></div>");
+    $editor.append("<input type='text' value=\""+ cellValue +"\" />");
+    $editor.append('<i class="fa fa-check-circle saveCellEdition" aria-hidden="true" title="{%trans%}Save{%endtrans%}"></i>');
+    $editor.append('<i class="fa fa-minus-circle cancelCellEdition" aria-hidden="true" title="{%trans%}Cancel{%endtrans%}"></i>');
+    $(this).html($editor);
+});
+// Cancel edition
+$('#answersTable tbody').on('click', '.cancelCellEdition', function () {
+    $(this).parents("td").removeClass('cellEditionMode');
+    var initialValue = $(this).parent("div").attr("initial_value")
+    $(this).parents("td").html(initialValue);
+});
+// Save edition
+$('#answersTable tbody').on('click', '.saveCellEdition', function () {
+    var initialValue = $(this).parent("div").attr("initial_value");
+    var newValue = $(this).parent("div").find('input').val();
+    var $row = $(this).parents('tr');
+    var $cell = $(this).parents("td");
+    $cell.html(newValue);
+    $.ajax({
+        url : "/forms/change-answer-field-value/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify({'id': getAnswerID($row), 'data':getRowData($row)}),
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            $cell.removeClass('cellEditionMode');
+            if (data.saved != true) {
+                $cell.html(initialValue);
+            }else{
+                // could improve this to recalculate the given column
+                $(".col_sum").hide();
+            }
+        }
+    });
+});
+$(function(){
+  $('.delete-row-icon').jConfirm({
+    position: 'right',
+    size: 'small',
+    theme: 'bootstrap-4-white',
+    question: "{%trans%}Are you sure?{%endtrans%}",
+    confirm_text: '{%trans%}Delete{%endtrans%}',
+    deny_text: "{%trans%}Cancel{%endtrans%}",
+  }).on('confirm', function(e){
+
+    var $row=$(this).parents('tr');
+    if ($row.find(".cellEditionMode").length == 1){
+        return
+    }
+    $row.children(':not(:first-child)').addClass('deleted-row');
+    $.ajax({
+        url : "/forms/delete-answer/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8',
+        data: JSON.stringify({"id": getAnswerID($row)}),
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.deleted == true) {
+                $row.remove();
+            } else {
+              $row.children(':not(:first-child)').removeClass('deleted-row');
+            }
+        }
+    });
+  });
+});
+//$('#answersTable tbody').on('click', '.delete-row-icon', function () {
+
+//});
+{% endif %}
+
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-notification/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,48 @@
+
+
+FLASK_ENV=development
+FLASK_CONFIG=testing
+
+DEFAULT_LANGUAGE=en
+SECRET_KEY=a_secret_key
+ROOT_USERS=['dave@example.com']
+
+TEST_DB_HOST=localhost
+TEST_DB_NAME=test_db
+TEST_DB_USER=db_user
+TEST_DB_PASSWORD="db_password"
+
+TOKEN_EXPIRATION=604800
+SESSION_TYPE=filesystem
+
+# See docs/upload.md
+ENABLE_UPLOADS = True
+# 1024 * 500 = 512000 = 512 KB
+MAX_MEDIA_SIZE=512000
+MAX_ATTACHMENT_SIZE=512000
+CRYPTO_KEY=PPAhRsJeBjp9aBGx3sVOYXtv-t_bBTmCTCM3vLFMLpo=
+
+ENABLE_REMOTE_STORAGE=False
+MINIO_URL = https://FQDN[:PORT]
+MINIO_ACCESS_KEY=
+MINIO_SECRET_KEY=
+
+LOG_TYPE=stream
+LOG_DIR=./logs
+
+USER1_USERNAME=test_user
+USER1_PASSWORD=""
+USER1_EMAIL= # YOUR_EMAIL_ADDRESS
+
+# Valid SMTP configuration. Tests will send emails with this config.
+TEST_SMTP_HOST=
+TEST_SMTP_PORT=
+TEST_SMTP_ENCRYPTION= #['', 'SSL', 'STARTTLS']
+TEST_SMTP_USERNAME=
+TEST_SMTP_USER_PASSWORD=
+TEST_SMTP_NO_REPLY=noreply@example.com
+
+# Don't send emails emails during the tests
+SKIP_EMAILS=True
+
+TMP_DIR=/tmp

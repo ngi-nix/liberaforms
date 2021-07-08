@@ -5,13 +5,16 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, markdown
+import os, datetime, markdown, shutil
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
-from flask_babel import gettext
+from PIL import Image
+from flask import current_app
+from flask_babel import gettext as _
 
-from liberaforms import app, db
+from liberaforms import db
 from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
@@ -33,11 +36,14 @@ class Site(db.Model, CRUD):
     scheme = db.Column(db.String, nullable=False, default="http")
     siteName = db.Column(db.String, nullable=False)
     defaultLanguage = db.Column(db.String, nullable=False)
-    menuColor = db.Column(db.String, nullable=False)
+    primary_color = db.Column(db.String, nullable=False)
     invitationOnly = db.Column(db.Boolean, default=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=False)
     newUserConsentment = db.Column(JSONB, nullable=True)
     smtpConfig = db.Column(JSONB, nullable=False)
+    newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
+    mimetypes = db.Column(JSONB, nullable=False)
+    email_footer = db.Column(db.String, nullable=True)
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
@@ -46,8 +52,8 @@ class Site(db.Model, CRUD):
         self.port = port
         self.scheme = scheme
         self.siteName = "LiberaForms!"
-        self.defaultLanguage = app.config['DEFAULT_LANGUAGE']
-        self.menuColor = "#b71c1c"
+        self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
+        self.primary_color = "#b71c1c"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
                                             name="terms"),
@@ -56,19 +62,25 @@ class Site(db.Model, CRUD):
                                             name="DPL")
                             ]
         self.newUserConsentment = []
-        self.smtpConfig = { "host": f"smtp.{hostname}",
-                            "port": 25,
-                            "encryption": "",
-                            "user": "",
-                            "password": "",
-                            "noreplyAddress": f"no-reply@{hostname}"
-                          }
-        real_path = os.path.realpath(__file__)
-        blurb_path = f'{os.path.dirname(real_path)}/../default_blurb.md'
-        with open(blurb_path, 'r') as defaultBlurb:
-            defaultMD=defaultBlurb.read()
-        self.blurb = {  'markdown': defaultMD,
-                        'html': markdown.markdown(defaultMD)
+        self.mimetypes = {
+                "extensions": ["pdf", "png", "odt"],
+                "mimetypes": ["application/pdf",
+                              "image/png",
+                              "application/vnd.oasis.opendocument.text"]
+        }
+        self.smtpConfig = {
+                "host": f"smtp.{hostname}",
+                "port": 25,
+                "encryption": "",
+                "user": "",
+                "password": "",
+                "noreplyAddress": f"no-reply@{hostname}"
+        }
+        blurb = os.path.join(current_app.root_path, 'templates/default_index.md')
+        with open(blurb, 'r') as default_blurb:
+            default_MD = default_blurb.read()
+        self.blurb = {  'markdown': default_MD,
+                        'html': markdown.markdown(default_MD)
                      }
 
     def __str__(self):
@@ -96,19 +108,50 @@ class Site(db.Model, CRUD):
             url = f"{url}:{self.port}"
         return url+'/'
 
-    def favicon_url(self):
-        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
-        if os.path.exists(path):
-            return f"/static/images/favicon/{self.hostname}_favicon.png"
-        else:
-            return "/static/images/favicon/default-favicon.png"
+    def change_email_header(self, file):
+        """ Convert file to .png """
+        new_header = Image.open(file)
+        new_header.save(os.path.join(current_app.config['UPLOADS_DIR'],
+                                     current_app.config['BRAND_DIR'],
+                                     'emailheader.png'))
 
-    def delete_favicon(self):
-        path = f"{app.config['FAVICON_FOLDER']}{self.hostname}_favicon.png"
-        if os.path.exists(path):
-            os.remove(path)
-            return True
-        return False
+    def reset_email_header(self):
+        email_header_path = os.path.join(current_app.config['UPLOADS_DIR'],
+                                         current_app.config['BRAND_DIR'],
+                                         'emailheader.png')
+        default_email_header = os.path.join(current_app.config['UPLOADS_DIR'],
+                                            current_app.config['BRAND_DIR'],
+                                            'emailheader-default.png')
+        shutil.copyfile(default_email_header, email_header_path)
+        return True
+
+    def change_favicon(self, file):
+        """ Convert file to .ico and make the it square """
+        img = Image.open(file)
+        x, y = img.size
+        size = max(32, x, y)
+        #icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
+        new_favicon = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+        new_favicon.paste(img, (int((size - x) / 2), int((size - y) / 2)))
+        new_favicon.save(os.path.join(current_app.config['UPLOADS_DIR'],
+                                      current_app.config['BRAND_DIR'],
+                                      'favicon.ico'))
+
+    def reset_favicon(self):
+        favicon_path = os.path.join(current_app.config['UPLOADS_DIR'],
+                                    current_app.config['BRAND_DIR'],
+                                    'favicon.ico')
+        default_favicon = os.path.join(current_app.config['UPLOADS_DIR'],
+                                       current_app.config['BRAND_DIR'],
+                                       'favicon-default.ico')
+        shutil.copyfile(default_favicon, favicon_path)
+        return True
+
+    def get_email_footer(self):
+        return self.email_footer if self.email_footer else _("Ethical form software")
+
+    def get_email_header_url(self):
+        return f"{self.host_url}brand/emailheader.png"
 
     def save_blurb(self, MDtext):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
@@ -229,6 +272,11 @@ class Site(db.Model, CRUD):
         self.save()
         return self.invitationOnly
 
+    def toggle_newuser_uploads_default(self):
+        self.newuser_enableuploads = False if self.newuser_enableuploads else True
+        self.save()
+        return self.newuser_enableuploads
+
     def toggle_scheme(self):
         self.scheme = 'https' if self.scheme=='http' else 'http'
         self.save()
@@ -237,7 +285,7 @@ class Site(db.Model, CRUD):
     def get_forms(self, **kwargs):
         return Form.find_all(**kwargs)
 
-    def get_entries(self, **kwargs):
+    def get_answers(self, **kwargs):
         return Answer.find_all(**kwargs)
 
     def get_users(self, **kwargs):
@@ -249,8 +297,8 @@ class Site(db.Model, CRUD):
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
-        result={    "labels":[], "entries":[], "forms":[], 'users':[],
-                    "total_entries":[], "total_forms": [], "total_users":[]}
+        result={    "labels":[], "answers":[], "forms":[], 'users':[],
+                    "total_answers":[], "total_forms": [], "total_users":[]}
         while 1:
             month = month +1
             if month == 13:
@@ -261,7 +309,7 @@ class Site(db.Model, CRUD):
             result['labels'].append(year_month)
             if year_month == today:
                 break
-        total_entries=0
+        total_answers=0
         total_forms=0
         total_users=0
         for year_month in result['labels']:
@@ -274,38 +322,43 @@ class Site(db.Model, CRUD):
             monthy_forms = Form.query.filter(
                                     Form.created >= start_date,
                                     Form.created < stop_date).count()
-            monthy_entries = Answer.query.filter(
+            monthy_answers = Answer.query.filter(
                                     Answer.created >= start_date,
                                     Answer.created < stop_date).count()
-            total_entries = total_entries + monthy_entries
+            total_answers = total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
             total_users = total_users + monthy_users
-            result['entries'].append(monthy_entries)
+            result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)
             result['users'].append(monthy_users)
-            result['total_entries'].append(total_entries)
+            result['total_answers'].append(total_answers)
             result['total_forms'].append(total_forms)
             result['total_users'].append(total_users)
         return result
 
     def write_users_csv(self):
         fieldnames=["username", "created", "enabled", "email", "forms", "admin"]
-        fieldheaders={  "username": gettext("Username"),
-                        "created": gettext("Created"),
-                        "enabled": gettext("Enabled"),
-                        "email": gettext("Email"),
-                        "forms": gettext("Forms"),
-                        "admin": gettext("Admin")
+        fieldheaders={  "username": _("Username"),
+                        "created": _("Created"),
+                        # i18n: Used as column title
+                        "enabled": _("Enabled"),
+                        # i18n: Email address, used as column title
+                        "email": _("Email"),
+                        # i18n: Used as column title
+                        "forms": _("Forms"),
+                        # i18n: Whether user is admin
+                        "admin": _("Admin")
                         }
-        csv_name = os.path.join(app.config['TMP_DIR'], f"{self.hostname}.users.csv")
+        csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
         with open(csv_name, mode='wb') as csv_file:
             writer = csv.DictWriter(csv_file,
                                     fieldnames=fieldnames,
                                     extrasaction='ignore')
             writer.writerow(fieldheaders)
             for user in self.get_users():
-                is_enabled = gettext("True") if user.enabled else gettext("False")
-                is_admin = gettext("True") if user.is_admin() else gettext("False")
+                # i18n: Boolean option: True or False
+                is_enabled = _("True") if user.enabled else _("False")
+                is_admin = _("True") if user.is_admin() else _("False")
                 row = { "username": user.username,
                         "created": user.created.strftime("%Y-%m-%d"),
                         "enabled": is_enabled,
