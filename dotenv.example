@@ -33,6 +33,9 @@ CRYPTO_KEY=
 # Directory where logs will be saved
 LOG_DIR=logs
 
+# see assets/timezones.txt for valid options
+DEFAULT_TIMEZONE="Europe/Madrid"
+
 # FLASK_ENV
 # this sets the Flask running mode
 # can be 'production' or 'development'

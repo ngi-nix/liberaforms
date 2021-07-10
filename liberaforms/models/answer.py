@@ -5,8 +5,9 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime
-from sqlalchemy.dialects.postgresql import JSONB
+import os
+from datetime import datetime, timezone
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm.attributes import flag_modified
 from sqlalchemy import event
 from flask import current_app
@@ -20,7 +21,9 @@ from pprint import pprint as pp
 class Answer(db.Model, CRUD):
     __tablename__ = "answers"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(TIMESTAMP,
+                        default=datetime.now(timezone.utc),
+                        nullable=False)
     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     marked = db.Column(db.Boolean, default=False)
@@ -31,7 +34,6 @@ class Answer(db.Model, CRUD):
                                     cascade = "all, delete, delete-orphan")
 
     def __init__(self, form_id, author_id, data):
-        self.created = datetime.datetime.now().isoformat()
         self.form_id = form_id
         self.author_id = author_id
         self.marked = False
