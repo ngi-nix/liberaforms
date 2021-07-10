@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os, re
-import mimetypes
+import mimetypes, pytz
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
                      PasswordField, BooleanField, RadioField, FileField)
@@ -132,6 +132,11 @@ class ChangePrimaryColor(FlaskForm):
         if not validators.is_hex_color(hex_color.data):
             raise ValidationError(_("Not a valid HTML color code"))
 
+class ChangeTimeZone(FlaskForm):
+    timezone = StringField(_("Time zone"), validators=[DataRequired()])
+    def validate_timezone(self, timezone):
+        if not timezone.data in pytz.common_timezones:
+            raise ValidationError(_("Not a valid time zone"))
 
 class FileExtensions(FlaskForm):
     extensions = TextAreaField(_("Extensions"), validators=[DataRequired()])
