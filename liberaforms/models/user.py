@@ -40,10 +40,7 @@ class User(db.Model, CRUD):
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
-    timezone = db.Column(db.String,
-                        default=os.environ['DEFAULT_TIMEZONE'],
-                        nullable=False)
-    #media = db.relationship("Media", viewonly=True)
+    timezone = db.Column(db.String, nullable=True)
     media = db.relationship("Media",
                             lazy='dynamic',
                             cascade = "all, delete, delete-orphan")

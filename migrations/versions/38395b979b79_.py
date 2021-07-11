@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 181a1faf67ea
+Revision ID: 38395b979b79
 Revises:
-Create Date: 2021-07-11 10:16:45.165642
+Create Date: 2021-07-11 13:02:04.933427
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '181a1faf67ea'
+revision = '38395b979b79'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -47,11 +47,6 @@ def upgrade():
     sa.Column('blurb', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
-    #op.execute("UPDATE site SET mimetypes = '{\"pdf\":\"application/pdf\",\"png\":\"image/png\", \"odt\":\"application/vnd.oasis.opendocument.text\"}'")
-    op.execute("UPDATE site SET mimetypes = '{\"extensions\":[\"pdf\",\"png\",\"odt\"], \"mimetypes\":[\"application/pdf\",\"image/png\",\"application/vnd.oasis.opendocument.text\"]}'")
-    op.alter_column('site', 'mimetypes', nullable=False)
-
-
     op.create_index(op.f('ix_site_id'), 'site', ['id'], unique=False)
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
@@ -66,7 +61,7 @@ def upgrade():
     sa.Column('uploads_enabled', sa.Boolean(), nullable=False),
     sa.Column('token', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('consentTexts', postgresql.ARRAY(postgresql.JSONB(astext_type=sa.Text())), nullable=True),
-    sa.Column('timezone', sa.String(), nullable=False),
+    sa.Column('timezone', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('email'),
@@ -173,3 +168,6 @@ def downgrade():
     op.drop_index(op.f('ix_invites_id'), table_name='invites')
     op.drop_table('invites')
     # ### end Alembic commands ###
+
+
+#op.execute("UPDATE site SET mimetypes = '{\"extensions\":[\"pdf\",\"png\",\"odt\"], \"mimetypes\":[\"application/pdf\",\"image/png\",\"application/vnd.oasis.opendocument.text\"]}'")

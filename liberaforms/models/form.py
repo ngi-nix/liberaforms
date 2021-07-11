@@ -116,7 +116,7 @@ class Form(db.Model, CRUD):
 
     def get_created_date(self):
         return utils.utc_to_g_timezone(self.created).strftime("%Y-%m-%d")
-        
+
     def change_author(self, new_author):
         if new_author.enabled:
             if new_author.id == self.author_id:
