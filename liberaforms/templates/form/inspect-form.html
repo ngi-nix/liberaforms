@@ -346,7 +346,7 @@
             </tr>
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ form.created }}</td>
+               <td>{{ form.get_created_date() }}</td>
             </tr>
             {% if g.is_root_user_enabled %}
             <tr>

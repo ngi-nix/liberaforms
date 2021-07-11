@@ -5,7 +5,8 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, markdown, shutil
+import os, markdown, shutil
+from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
 from PIL import Image
@@ -13,7 +14,7 @@ from flask import current_app
 from flask_babel import gettext as _
 
 from liberaforms import db
-from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
@@ -30,7 +31,9 @@ from liberaforms.utils import utils
 class Site(db.Model, CRUD):
     __tablename__ = "site"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.Date, nullable=False)
+    created = db.Column(TIMESTAMP,
+                        default=datetime.now(timezone.utc),
+                        nullable=False)
     hostname = db.Column(db.String, nullable=False)
     port = db.Column(db.Integer, nullable=True)
     scheme = db.Column(db.String, nullable=False, default="http")
@@ -47,7 +50,6 @@ class Site(db.Model, CRUD):
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
-        self.created = datetime.datetime.now().isoformat()
         self.hostname = hostname
         self.port = port
         self.scheme = scheme

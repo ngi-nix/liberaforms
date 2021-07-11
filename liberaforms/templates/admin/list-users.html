@@ -51,7 +51,9 @@
     {% for user in users %}
     <tr>
         <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
-        <td>{{user.created}}</td>
+        <td>
+          {{user.get_created_date()}}
+        </td>
         {% if g.is_root_user_enabled %}
             <td>{{user.hostname}}</td>
         {% endif %}

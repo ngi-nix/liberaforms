@@ -223,7 +223,7 @@
     <table class="table table-sm">
       <tr>
         <td>{%trans%}Created{%endtrans%}</td>
-        <td>{{site.created}}</td>
+        <td>{{site.created.astimezone(g.timezone).strftime("%Y-%m-%d")}}</td>
       </tr>
       <tr>
         <td>{%trans%}Default timezone{%endtrans%}</td>

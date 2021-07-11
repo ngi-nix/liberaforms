@@ -5,10 +5,10 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime
-import pathlib
+import os, pathlib
+from datetime import datetime, timezone
 from PIL import Image
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
@@ -21,7 +21,9 @@ from pprint import pprint as pp
 class Media(db.Model, CRUD, Storage):
     __tablename__ = "media"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(TIMESTAMP,
+                        default=datetime.now(timezone.utc),
+                        nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id',
                                                   ondelete="CASCADE"),
                                                   nullable=False)
@@ -34,7 +36,6 @@ class Media(db.Model, CRUD, Storage):
 
     def __init__(self):
         Storage.__init__(self)
-        self.created = datetime.datetime.now().isoformat()
         self.encrypted = False
 
     def __str__(self):

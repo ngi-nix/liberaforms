@@ -5,15 +5,15 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, re
-import shutil
+import os, re, shutil
+from datetime import datetime, timezone
 import unicodecsv as csv
 
 from flask import current_app, g
 from flask_babel import gettext as _
 
 from liberaforms import db
-from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
@@ -36,7 +36,9 @@ class Form(db.Model, CRUD):
     __tablename__ = "forms"
     _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.Date, nullable=False)
+    created = db.Column(TIMESTAMP,
+                        default=datetime.now(timezone.utc),
+                        nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
@@ -61,7 +63,6 @@ class Form(db.Model, CRUD):
                                      cascade="all, delete, delete-orphan")
 
     def __init__(self, author, **kwargs):
-        self.created = datetime.datetime.now().isoformat()
         self.author_id = author.id
         self.editors = {self.author_id: self.new_editor_preferences(author)}
         self.expiryConditions = {"totalAnswers": 0,
@@ -113,6 +114,9 @@ class Form(db.Model, CRUD):
     def get_author(self):
         return self.author
 
+    def get_created_date(self):
+        return utils.utc_to_g_timezone(self.created).strftime("%Y-%m-%d")
+        
     def change_author(self, new_author):
         if new_author.enabled:
             if new_author.id == self.author_id:
