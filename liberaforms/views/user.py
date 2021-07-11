@@ -204,6 +204,28 @@ def change_timezone():
                             wtform=wtform)
 
 
+@user_bp.route('/user/<string:username>/fediverse', methods=['GET', 'POST'])
+@enabled_user_required
+def fediverse_config(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.fediverse_config',
+                                     username=g.current_user.username))
+    wtform=wtf.FediverseAuth()
+    response = None
+    if wtform.validate_on_submit():
+        error, resp = fediverse.configure(wtform.node_url.data)
+        if error:
+            g.current_user.fedi_auth={}
+            g.current_user.save()
+            flash(resp, 'warning')
+        else:
+            flash(_("Saved token OK"), 'success')
+            response = resp
+        print(error)
+        print(response)
+    return render_template('fediverse-config.html', wtform=wtform)
+
+
 @user_bp.route('/user/delete-account/<string:user_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_account(user_id):

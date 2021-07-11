@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- https://tools.splat.soy/pleroma-access-token/ -->
+
+<!-- fediverse_config_page -->
+
+<style>
+.message-body,
+.message-header {
+  display: none;
+}
+</style>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-5">
+
+      <div class="title_1 delimited">
+        {%trans%}Fediverse configuration{%endtrans%}
+      </div>
+
+    	<form method="post" action="#" id="sbmt">
+        <input class="input is-primary"
+               type="hidden"
+               id="client_name"
+               value="LiberaForms"
+               required />
+    		<input class="input is-primary"
+               type="hidden"
+               id="website"
+               value="{{ g.site.host_url.rstrip('/') }}" />
+    		<p>
+          <label class="label"
+                 for="pleroma_url">
+              {%trans%}Fediverse node{%endtrans%}
+              <span class='required'>●</span>
+          </label>
+    			<input type="text"
+                 class="form-control"
+                 id="pleroma_url"
+                 value=""
+                 placeholder="https://node.fediverse"
+                 required />
+    		</p>
+    		<p class="control">
+    			<label class="label">Scopes</label>
+    				<select name="scopes" id="scopes">
+    					<option>read</option>
+    					<option>write</option>
+    					<option>follow</option>
+    					<option>read write</option>
+    					<option>read follow</option>
+    					<option>write follow</option>
+    					<option>read write follow</option>
+    				</select>
+    		</p>
+
+    		<div class="form-actions">
+          <button class="btn btn-success"
+                  type="submit"
+                  id="btn"
+                  name="btn">
+              {%trans%}Generate access token{%endtrans%}
+          </button>
+          <button class="btn btn-primary"
+                  type="button"
+                  id="btn_clr"
+                  name="btn_clr">
+              {%trans%}Clear tokens{%endtrans%}
+          </button>
+          <a class="btn btn-primary"
+             role="button"
+             href="/user/{{ g.current_user.username }}">
+            {%trans%}Cancel{%endtrans%}
+          </a>
+    		</div>
+    	</form>
+
+
+    	<div id="result-container" style="display:block;">
+
+    		<div class="message-header">
+    			<p>
+            client_id &nbsp;
+            <button id="btn_client_id"
+                    type="button"
+                    class="button is-small is-inverted">
+                show
+            </button>
+          </p>
+    		</div>
+    		<div class="message-body">
+    			<p><span id="client_id" style="visibility:hidden;"></span></p>
+    		</div>
+
+    		<div class="message-header">
+    			<p>
+            client_secret &nbsp;
+            <button id="btn_client_secret"
+                    type="button"
+                    class="button is-small is-inverted">
+                show
+            </button>
+          </p>
+    		</div>
+    		<div class="message-body">
+    			<p><span id="client_secret" style="visibility:hidden;"></span></p>
+    		</div>
+    	</div>
+
+      <p>&nbsp;</p>
+      <form action="/user/{{g.current_user.username}}/fediverse" method="POST">
+        {{ wtform.csrf_token }}
+        <label class="label" >
+          {{ wtform.access_token.label }}
+          <i class="fa fa-check-circle"
+             style="color: #28a745"
+             aria-hidden="true"></i>
+        </label>
+        {{ wtform.access_token(id="access_token",
+                               class_="form-control",
+                               disabled="true") }}
+        <input value="{{g.site.host_url.rstrip('/')}}"
+              name="node_url"
+              required type="hidden" />
+        <div class="form-actions">
+          <submit class="btn btn-success">
+            {%trans%}Save{%endtrans%}
+          </submit>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  function elem(el) {
+  	return document.getElementById(el);
+  }
+
+  function makePostData(args) {
+  	var data = [];
+  	Object.keys(args).forEach(function(key) {
+  		data.push(encodeURIComponent(key) + '=' + encodeURIComponent(args[key]));
+  	});
+  	rtn = data.join('&').replace(/%20/g, '+');
+  	return rtn
+  }
+
+  function post(url, args, done) {
+  	var xhr = new XMLHttpRequest();
+  	xhr.onreadystatechange = function() {
+  		if (xhr.readyState === 4 && xhr.status === 200) {
+  			var data = xhr.response;
+  			done(data);
+  		}
+  	}
+  	xhr.open("POST", url, true);
+  	xhr.setRequestHeader("Content-Type" , "application/x-www-form-urlencoded");
+  	xhr.responseType = "json";
+  	var postData = makePostData(args);
+  	xhr.send(postData);
+  }
+
+  function getQueryVariable(variable)
+  {
+  	var query = window.location.search.substring(1);
+  	var vars = query.split("&");
+  	for (var i=0;i<vars.length;i++) {
+  		var pair = vars[i].split("=");
+  		if(pair[0] == variable){return pair[1];}
+  	}
+  	return(false);
+  }
+
+  /* main */
+  var redirect_uri = window.location.protocol+"//"+window.location.host+window.location.pathname;
+  var pleroma_url = localStorage.getItem("PLEROMA_URL");
+  var client_id = localStorage.getItem("PLEROMA_CLIENT_ID");
+  var client_secret = localStorage.getItem("PLEROMA_CLIENT_SECRET");
+
+  if (window.location.href.indexOf("?code=") !== -1 && pleroma_url != "" && client_id != "" && client_secret != "") {
+  	var code = getQueryVariable("code");
+  	var url2 = pleroma_url+"/oauth/token";
+  	elem("pleroma_url").value = pleroma_url;
+  	elem("client_id").textContent = client_id;
+  	elem("client_secret").textContent = client_secret;
+  	var args2 = {client_id: client_id,
+  		client_secret: client_secret,
+  		redirect_uri: redirect_uri,
+  		grant_type: "authorization_code",
+  		code: code};
+  		post(url2, args2, function(data) {
+  			elem('access_token').value = data.access_token;
+
+        // show results
+        var result_container = document.getElementById("result-container")
+        result_container.style.display="block"
+
+
+  		})
+  } else {
+  	localStorage.setItem("PLEROMA_URL", "");
+  	localStorage.setItem("PLEROMA_CLIENT_ID", "");
+  	localStorage.setItem("PLEROMA_CLIENT_SECRET", "");
+  }
+
+  	elem("sbmt").addEventListener("submit", function(event) {
+  		event.preventDefault();
+  		var url = elem("pleroma_url").value+"/api/v1/apps";
+  		var s = elem("scopes");
+  		var scopes = s.options[s.selectedIndex].value;
+  		var args = {client_name: elem("client_name").value,
+  		redirect_uris: redirect_uri,
+  		website: elem("website").value,
+  		scopes: scopes};
+  		post(url ,args, function(data) {
+  			localStorage.setItem("PLEROMA_URL", elem("pleroma_url").value);
+  			localStorage.setItem("PLEROMA_CLIENT_ID", data.client_id);
+  			localStorage.setItem("PLEROMA_CLIENT_SECRET", data.client_secret);
+  			var redirectLink = elem("pleroma_url").value+"/oauth/authorize?client_id="+data.client_id+"&redirect_uri="+redirect_uri+"&response_type=code&scope=" + scopes;
+  			window.location.href = redirectLink;
+  		});
+  	});
+
+  	elem("btn_clr").addEventListener("click", function(event) {
+  		elem('access_token').textContent = "";
+  		elem('client_id').textContent = "";
+  		elem('client_secret').textContent = "";
+  		localStorage.setItem("PLEROMA_URL", "");
+  		localStorage.setItem("PLEROMA_CLIENT_ID", "");
+  		localStorage.setItem("PLEROMA_CLIENT_SECRET", "");
+
+      var result_container = document.getElementById("result-container")
+      result_container.style.display="none"
+  	});
+
+  	elem("btn_client_secret").addEventListener("click", function(event) {
+  		elem("client_secret").style.visibility = "visible";
+  	});
+  	elem("btn_client_id").addEventListener("click", function(event) {
+  		elem("client_id").style.visibility = "visible";
+  	});
+
+</script>
+
+{% endblock %}
