@@ -238,11 +238,14 @@ class Form(db.Model, CRUD):
     def get_answers_for_display(self, oldest_first=False):
         answers = self.get_answers(oldest_first=oldest_first)
         result = []
+        frmt = "%Y-%m-%d %H:%M:%S"
         for answer in answers:
-            result.append({ 'id': answer.id,
-                            'created': answer.created.strftime("%Y-%m-%d %H:%M:%S"),
-                            'marked': answer.marked,
-                            **answer.data})
+            result.append({
+                        'id': answer.id,
+                        'created': utils.utc_to_g_timezone(answer.created)
+                                        .strftime(frmt),
+                        'marked': answer.marked,
+                        **answer.data})
         return result
 
     def get_total_answers(self):

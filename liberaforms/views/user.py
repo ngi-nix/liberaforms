@@ -182,6 +182,28 @@ def reset_password():
     return render_template('reset-password.html', wtform=wtform)
 
 
+@user_bp.route('/user/change-timezone', methods=['GET', 'POST'])
+@login_required
+def change_timezone():
+    wtform=wtf.ChangeTimeZone()
+    if wtform.validate_on_submit():
+        g.current_user.timezone = wtform.timezone.data
+        g.current_user.save()
+        flash(_("Time zone changed OK"), 'success')
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=g.current_user.username))
+    timezones = {}
+    tz_path = os.path.join(current_app.config['ROOT_DIR'], 'assets/timezones.txt')
+    with open(tz_path, 'r') as available_timezones:
+        lines = available_timezones.readlines()
+        for line in lines:
+            line=line.strip()
+            timezones[line] = line
+    return render_template('change-timezone.html',
+                            timezones=timezones,
+                            wtform=wtform)
+
+
 @user_bp.route('/user/delete-account/<string:user_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_account(user_id):

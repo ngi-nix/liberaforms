@@ -79,6 +79,7 @@ class Config(object):
         SESSION_MEMCACHED = memcache.Client([server])
     if 'SESSION_KEY_PREFIX' in os.environ:
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX']
+    DEFAULT_TIMEZONE = os.environ['DEFAULT_TIMEZONE']
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])

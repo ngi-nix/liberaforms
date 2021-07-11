@@ -37,6 +37,7 @@ class User(db.Model, CRUD):
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
+    timezone = db.Column(db.String, nullable=False)
     #media = db.relationship("Media", viewonly=True)
     media = db.relationship("Media",
                             lazy='dynamic',
@@ -97,6 +98,11 @@ class User(db.Model, CRUD):
         if self.blocked:
             return False
         return True
+
+    def get_timezone(self):
+        if self.timezone:
+            return self.timezone
+        return current_app.config['DEFAULT_TIMEZONE']
 
     def get_forms(self, **kwargs):
         kwargs['editor_id']=self.id

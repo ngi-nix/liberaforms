@@ -37,7 +37,7 @@ def create_app():
 
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
-
+    
     db.init_app(app)
     ma.init_app(app)
     babel.init_app(app)
