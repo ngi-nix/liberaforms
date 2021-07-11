@@ -14,16 +14,16 @@
 
         {% if g.current_user.validatedEmail != True %}
         <div class="row">
-          <div class="col title_2">
-              {%trans%}Please validated your email to continue{%endtrans%}
-          </div>
-          <div class="col-auto">
-            <a  class="btn btn-sm btn-success"
-                role="button"
-                href="/user/send-email-validation">
-                {%trans%}Validate{%endtrans%}
-            </a>
-          </div>
+            <div class="col title_2">
+                {%trans%}Please validate your email to continue{%endtrans%}
+            </div>
+            <div class="col-auto">
+                <a  class="btn btn-sm btn-success"
+                    role="button"
+                    href="/user/send-email-validation">
+                    {%trans%}Validate{%endtrans%}
+                </a>
+            </div>
         </div>
         <p>&nbsp;</p>
         {% endif %}
