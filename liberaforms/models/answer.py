@@ -64,7 +64,9 @@ class Answer(db.Model, CRUD):
 class AnswerAttachment(db.Model, CRUD, Storage):
     __tablename__ = "attachments"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(TIMESTAMP,
+                        default=datetime.now(timezone.utc),
+                        nullable=False)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id',
                                                     ondelete="CASCADE"),
                                                     nullable=True)
@@ -78,7 +80,6 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     def __init__(self, answer):
         Storage.__init__(self)
-        self.created = datetime.datetime.now().isoformat()
         self.answer_id = answer.id
         self.form_id = answer.form.id
 

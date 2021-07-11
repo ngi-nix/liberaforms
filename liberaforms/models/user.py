@@ -5,11 +5,12 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime
+import os
+from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import pathlib
 from liberaforms import db
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict
 from flask import current_app
 from liberaforms.utils.database import CRUD
@@ -25,7 +26,9 @@ from pprint import pprint
 class User(db.Model, CRUD):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.Date, nullable=False)
+    created = db.Column(TIMESTAMP,
+                        default=datetime.now(timezone.utc),
+                        nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
@@ -37,14 +40,12 @@ class User(db.Model, CRUD):
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
-    timezone = db.Column(db.String, nullable=False)
-    #media = db.relationship("Media", viewonly=True)
+    timezone = db.Column(db.String, nullable=True)
     media = db.relationship("Media",
                             lazy='dynamic',
                             cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
-        self.created = datetime.datetime.now().isoformat()
         self.username = kwargs["username"]
         self.email = kwargs["email"]
         self.password_hash = validators.hash_password(kwargs["password"])
@@ -90,6 +91,10 @@ class User(db.Model, CRUD):
         for key, value in kwargs.items():
             filters.append(getattr(cls, key) == value)
         return cls.query.filter(*filters)
+
+    def get_created_date(self):
+        return utils.utc_to_g_timezone(self.created).strftime("%Y-%m-%d")
+        #return self.created.astimezone(g.timezone).strftime("%Y-%m-%d")
 
     @property
     def enabled(self):
@@ -238,8 +243,10 @@ class User(db.Model, CRUD):
         return Answer.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
-        today = datetime.date.today().strftime("%Y-%m")
-        one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
+        #today = datetime.date.today().strftime("%Y-%m")
+        today = datetime.now(timezone.utc).strftime("%Y-%m")
+        #one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
+        one_year_ago = datetime.now(timezone.utc) - timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
@@ -261,7 +268,7 @@ class User(db.Model, CRUD):
         form_filter=[Form.author_id == self.id]
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
-            start_date = datetime.datetime.strptime(date_str, '%Y, %m')
+            start_date = datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
             answers_filter = answer_filter + [Answer.created >= start_date]
             answers_filter = answer_filter + [Answer.created < stop_date]

@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-from flask import Blueprint, request, jsonify
+from flask import current_app, Blueprint, request, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.site import Site
 from liberaforms.models.form import Form
@@ -25,6 +25,7 @@ def site_info():
     site=SiteSchema(only=['created',
                           'hostname']).dump(Site.find())
     site['version'] = utils.get_app_version()
+    site['timezone'] = current_app.config['DEFAULT_TIMEZONE']
     return jsonify(
         site=site
     ), 200

@@ -29,7 +29,9 @@
             {% endif %}
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ user.created }}</td>
+               <td>
+                 {{ user.get_created_date() }}
+               </td>
             </tr>
             <tr>
               {# i18n: Language selected by user #}
@@ -161,7 +163,7 @@
         {% for form in forms %}
         <tr>
            <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-           <td>{{form.created}}</td>
+           <td>{{form.get_created_date()}}</td>
            <td>
                 {% if form.is_author(user) %}
                     {%trans%}True{%endtrans%}

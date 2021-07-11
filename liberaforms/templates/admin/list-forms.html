@@ -39,7 +39,7 @@
         {% set author = form.get_author() %}
         <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-            <td>{{form.created}}</td>
+            <td>{{form.get_created_date()}}</td>
             <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
             <td>{{form.is_public()}}</td>
             <td>{{form.get_last_answer_date()}}</td>
