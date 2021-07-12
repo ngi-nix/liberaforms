@@ -22,7 +22,7 @@ from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import (make_url_for, JsonResponse,
                                      logout_user, human_readable_bytes)
@@ -324,6 +324,24 @@ def inspect_form(id):
     return render_template('inspect-form.html',
                             form=queriedForm,
                             max_attachment_size_for_humans=max_attach_size)
+
+
+@form_bp.route('/form/<int:id>/fediverse-publish', methods=['GET', 'POST'])
+@enabled_user_required
+def fedi_publish(id):
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+    if not queriedForm:
+        flash(_("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    if not g.current_user.fedi_auth:
+        flash(_("Fediverse connect is not configured"), 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    if request.method == 'POST':
+        Dispatcher().publish_form(queriedForm, fediverse=True)
+        flash(_(f"Published on {g.current_user.fedi_auth['node_url']}"), 'success')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+
+    return render_template('fedi-publish.html', form=queriedForm)
 
 
 @form_bp.route('/forms/share/<int:id>', methods=['GET'])

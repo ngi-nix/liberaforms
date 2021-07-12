@@ -41,7 +41,7 @@ class User(db.Model, CRUD):
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
     timezone = db.Column(db.String, nullable=True)
-    fedi_auth = db.Column(JSONB, nullable=True)
+    fedi_auth = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     media = db.relationship("Media",
                             lazy='dynamic',
                             cascade = "all, delete, delete-orphan")

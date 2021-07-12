@@ -5,13 +5,6 @@
 
 <!-- fediverse_config_page -->
 
-<style>
-.message-body,
-.message-header {
-  display: none;
-}
-</style>
-
 <div class="container">
   <div class="row">
     <div class="col-md-3"></div>
@@ -25,15 +18,13 @@
         <input class="input is-primary"
                type="hidden"
                id="client_name"
-               value="LiberaForms"
-               required />
+               value="LiberaForms" />
     		<input class="input is-primary"
                type="hidden"
                id="website"
                value="{{ g.site.host_url.rstrip('/') }}" />
     		<p>
-          <label class="label"
-                 for="pleroma_url">
+          <label class="label" for="pleroma_url">
               {%trans%}Fediverse node{%endtrans%}
               <span class='required'>●</span>
           </label>
@@ -44,20 +35,20 @@
                  placeholder="https://node.fediverse"
                  required />
     		</p>
-    		<p class="control">
-    			<label class="label">Scopes</label>
-    				<select name="scopes" id="scopes">
-    					<option>read</option>
-    					<option>write</option>
-    					<option>follow</option>
-    					<option>read write</option>
-    					<option>read follow</option>
-    					<option>write follow</option>
-    					<option>read write follow</option>
-    				</select>
+    		<p>
+    			<select name="scopes" id="scopes">
+    				<option>read</option>
+    				<option>write</option>
+    				<option>follow</option>
+    				<option>read write</option>
+    				<option>read follow</option>
+    				<option>write follow</option>
+    				<option>read write follow</option>
+    			</select>
     		</p>
 
-    		<div class="form-actions">
+    		<div id="generate_token_form"
+             class="form-actions">
           <button class="btn btn-success"
                   type="submit"
                   id="btn"
@@ -65,6 +56,7 @@
               {%trans%}Generate access token{%endtrans%}
           </button>
           <button class="btn btn-primary"
+                  style="display: none"
                   type="button"
                   id="btn_clr"
                   name="btn_clr">
@@ -73,62 +65,59 @@
           <a class="btn btn-primary"
              role="button"
              href="/user/{{ g.current_user.username }}">
-            {%trans%}Cancel{%endtrans%}
+             {%trans%}Cancel{%endtrans%}
           </a>
     		</div>
     	</form>
 
-
-    	<div id="result-container" style="display:block;">
-
-    		<div class="message-header">
-    			<p>
-            client_id &nbsp;
-            <button id="btn_client_id"
-                    type="button"
-                    class="button is-small is-inverted">
-                show
-            </button>
-          </p>
-    		</div>
-    		<div class="message-body">
-    			<p><span id="client_id" style="visibility:hidden;"></span></p>
-    		</div>
-
-    		<div class="message-header">
-    			<p>
-            client_secret &nbsp;
-            <button id="btn_client_secret"
-                    type="button"
-                    class="button is-small is-inverted">
-                show
-            </button>
-          </p>
-    		</div>
-    		<div class="message-body">
-    			<p><span id="client_secret" style="visibility:hidden;"></span></p>
-    		</div>
+    	<div id="result-container" style="display:none;">
+        client_id
+        <button id="btn_client_id"
+                type="button"
+                class="btn">
+            show
+        </button>
+    		<span id="client_id"></span>
+        client_secret
+        <button id="btn_client_secret"
+                type="button"
+                class="btn">
+            show
+        </button>
+    		<span id="client_secret"></span>
     	</div>
 
       <p>&nbsp;</p>
-      <form action="/user/{{g.current_user.username}}/fediverse" method="POST">
+      <form id="save_token_form"
+            action="/user/{{g.current_user.username}}/fediverse"
+            method="POST">
         {{ wtform.csrf_token }}
-        <label class="label" >
-          {{ wtform.access_token.label }}
-          <i class="fa fa-check-circle"
-             style="color: #28a745"
-             aria-hidden="true"></i>
-        </label>
-        {{ wtform.access_token(id="access_token",
-                               class_="form-control",
-                               disabled="true") }}
-        <input value="{{g.site.host_url.rstrip('/')}}"
-              name="node_url"
-              required type="hidden" />
+        {{ wtform.access_token.label }}
+        <i class="fa fa-check-circle"
+           style="color: #28a745"
+           aria-hidden="true">
+        </i>
+        <input class="form-control" id="token_display" disabled />
+        {% for error in wtform.access_token.errors %}
+          <span class="formError">{{ error }}</span><br />
+        {% endfor %}
+        <input id="access_token"
+               name="access_token"
+               type="hidden" />
+        <input id="node_url"
+               name="node_url"
+               type="hidden" />
         <div class="form-actions">
-          <submit class="btn btn-success">
-            {%trans%}Save{%endtrans%}
-          </submit>
+          <input type="submit"
+                 class="btn btn-success"
+                 role="button"
+                 value="{%trans%}Save{%endtrans%}"
+                 form="save_token_form" />
+          <a class="btn btn-primary"
+            role="button"
+            href="/user/{{ g.current_user.username }}">
+            {%trans%}Cancel{%endtrans%}
+          </a>
         </div>
       </form>
     </div>
@@ -195,56 +184,57 @@
   		code: code};
   		post(url2, args2, function(data) {
   			elem('access_token').value = data.access_token;
-
+  			elem('token_display').value = data.access_token;
+        elem('node_url').value = pleroma_url;
         // show results
-        var result_container = document.getElementById("result-container")
+        elem("generate_token_form").style.display="none"
+        var result_container = elem("save_token_form")
         result_container.style.display="block"
 
-
-  		})
+  		});
   } else {
   	localStorage.setItem("PLEROMA_URL", "");
   	localStorage.setItem("PLEROMA_CLIENT_ID", "");
   	localStorage.setItem("PLEROMA_CLIENT_SECRET", "");
   }
 
-  	elem("sbmt").addEventListener("submit", function(event) {
-  		event.preventDefault();
-  		var url = elem("pleroma_url").value+"/api/v1/apps";
-  		var s = elem("scopes");
-  		var scopes = s.options[s.selectedIndex].value;
-  		var args = {client_name: elem("client_name").value,
-  		redirect_uris: redirect_uri,
-  		website: elem("website").value,
-  		scopes: scopes};
-  		post(url ,args, function(data) {
-  			localStorage.setItem("PLEROMA_URL", elem("pleroma_url").value);
-  			localStorage.setItem("PLEROMA_CLIENT_ID", data.client_id);
-  			localStorage.setItem("PLEROMA_CLIENT_SECRET", data.client_secret);
-  			var redirectLink = elem("pleroma_url").value+"/oauth/authorize?client_id="+data.client_id+"&redirect_uri="+redirect_uri+"&response_type=code&scope=" + scopes;
-  			window.location.href = redirectLink;
-  		});
+  elem("sbmt").addEventListener("submit", function(event) {
+  	event.preventDefault();
+  	var url = elem("pleroma_url").value+"/api/v1/apps";
+  	var s = elem("scopes");
+  	var scopes = s.options[s.selectedIndex].value;
+  	var args = {client_name: elem("client_name").value,
+  	redirect_uris: redirect_uri,
+  	website: elem("website").value,
+  	scopes: scopes};
+  	post(url ,args, function(data) {
+  		localStorage.setItem("PLEROMA_URL", elem("pleroma_url").value);
+  		localStorage.setItem("PLEROMA_CLIENT_ID", data.client_id);
+  		localStorage.setItem("PLEROMA_CLIENT_SECRET", data.client_secret);
+  		var redirectLink = elem("pleroma_url").value+"/oauth/authorize?client_id="+data.client_id+"&redirect_uri="+redirect_uri+"&response_type=code&scope=" + scopes;
+  		window.location.href = redirectLink;
   	});
+  });
 
-  	elem("btn_clr").addEventListener("click", function(event) {
-  		elem('access_token').textContent = "";
-  		elem('client_id').textContent = "";
-  		elem('client_secret').textContent = "";
-  		localStorage.setItem("PLEROMA_URL", "");
-  		localStorage.setItem("PLEROMA_CLIENT_ID", "");
-  		localStorage.setItem("PLEROMA_CLIENT_SECRET", "");
+  elem("btn_clr").addEventListener("click", function(event) {
+  	elem('access_token').value = "";
+  	elem('client_id').textContent = "";
+  	elem('client_secret').textContent = "";
+  	localStorage.setItem("PLEROMA_URL", "");
+  	localStorage.setItem("PLEROMA_CLIENT_ID", "");
+  	localStorage.setItem("PLEROMA_CLIENT_SECRET", "");
 
-      var result_container = document.getElementById("result-container")
-      result_container.style.display="none"
-  	});
-
-  	elem("btn_client_secret").addEventListener("click", function(event) {
-  		elem("client_secret").style.visibility = "visible";
-  	});
-  	elem("btn_client_id").addEventListener("click", function(event) {
-  		elem("client_id").style.visibility = "visible";
-  	});
-
+    var result_container = elem("save_token_form")
+    result_container.style.display="none"
+  });
+  /*
+  elem("btn_client_secret").addEventListener("click", function(event) {
+  	elem("client_secret").style.visibility = "visible";
+  });
+  elem("btn_client_id").addEventListener("click", function(event) {
+  	elem("client_id").style.visibility = "visible";
+  });
+  */
 </script>
 
 {% endblock %}

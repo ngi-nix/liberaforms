@@ -19,7 +19,7 @@ from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import validators
 from liberaforms.utils import wtf
 
@@ -211,18 +211,14 @@ def fediverse_config(username):
         return redirect(make_url_for('user_bp.fediverse_config',
                                      username=g.current_user.username))
     wtform=wtf.FediverseAuth()
-    response = None
     if wtform.validate_on_submit():
-        error, resp = fediverse.configure(wtform.node_url.data)
-        if error:
-            g.current_user.fedi_auth={}
-            g.current_user.save()
-            flash(resp, 'warning')
-        else:
-            flash(_("Saved token OK"), 'success')
-            response = resp
-        print(error)
-        print(response)
+        data = {"node_url": wtform.node_url.data,
+                "access_token": wtform.access_token.data}
+        g.current_user.fedi_auth = data
+        g.current_user.save()
+        flash(_("Connected to the Fediverse"), 'success')
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=g.current_user.username))
     return render_template('fediverse-config.html', wtform=wtform)
 
 

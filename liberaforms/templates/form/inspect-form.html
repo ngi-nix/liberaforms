@@ -85,6 +85,21 @@
                    {% endif %}
                 </td>
             </tr>
+            {% if current_user_is_editor and g.current_user.fedi_auth %}
+            <tr>
+                <td>
+                  {%trans%}Fediverse{%endtrans%}
+                </td>
+                <td>
+                  <button id="fediverse-publish"
+                          class="btn btn-primary btn-xs"
+                          onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
+                          {% if not form.is_public() %}disabled{% endif %}>
+                    {%trans%}Publish{%endtrans%}
+                  </button>
+                </td>
+            </tr>
+            {% endif %}
             <tr>
                <td>{%trans%}Public{%endtrans%}</td>
                <td>
@@ -623,12 +638,14 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
                 $('#enabled_false').removeClass('btn-primary');
                 $('#formURL').hide();
                 $('#formLink').show();
+                $('#fediverse-publish').prop('disabled', false);
             }
             else if (data.enabled == false) {
                 $('#enabled_true').removeClass('btn-success');
                 $('#enabled_false').addClass('btn-primary');
                 $('#formURL').show();
                 $('#formLink').hide();
+                $('#fediverse-publish').prop('disabled', true);
             }
         }
     });
