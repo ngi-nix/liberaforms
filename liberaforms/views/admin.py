@@ -18,7 +18,7 @@ from liberaforms.models.invite import Invite
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import wtf
 
 from pprint import pprint

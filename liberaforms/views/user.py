@@ -19,7 +19,7 @@ from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import validators
 from liberaforms.utils import wtf
 
@@ -202,6 +202,24 @@ def change_timezone():
     return render_template('change-timezone.html',
                             timezones=timezones,
                             wtform=wtform)
+
+
+@user_bp.route('/user/<string:username>/fediverse', methods=['GET', 'POST'])
+@enabled_user_required
+def fediverse_config(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.fediverse_config',
+                                     username=g.current_user.username))
+    wtform=wtf.FediverseAuth()
+    if wtform.validate_on_submit():
+        data = {"node_url": wtform.node_url.data,
+                "access_token": wtform.access_token.data}
+        g.current_user.fedi_auth = data
+        g.current_user.save()
+        flash(_("Connected to the Fediverse"), 'success')
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=g.current_user.username))
+    return render_template('fediverse-config.html', wtform=wtform)
 
 
 @user_bp.route('/user/delete-account/<string:user_id>', methods=['GET', 'POST'])

@@ -134,17 +134,33 @@
         </table>
   {% if g.current_user.get_uploads_enabled() %}
         <div class="title_2 delimited">
-            {%trans%}My media{%endtrans%}
+            {%trans%}Media{%endtrans%}
         </div>
         <table class="table table-sm sparse-table">
           <tr>
-            <td>
+            <td colspan="2">
               {%trans%}Add and delete uploaded files{%endtrans%}
             </td>
             <td class="text-right">
               <a href="/user/{{g.current_user.username}}/media"
                  class="btn btn-xs btn-primary">
                  {%trans%}Edit{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {%trans%}Fediverse connect{%endtrans%}
+            </td>
+            <td>
+              {% if g.current_user.fedi_auth %}
+                {{ g.current_user.fedi_auth['node_url'] }}
+              {% endif %}
+            </td>
+            <td class="text-right">
+              <a href="/user/{{g.current_user.username}}/fediverse"
+                 class="btn btn-xs btn-primary">
+                 {%trans%}Configure{%endtrans%}
               </a>
             </td>
           </tr>

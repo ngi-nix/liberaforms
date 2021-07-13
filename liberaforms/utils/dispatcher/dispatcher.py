@@ -18,12 +18,13 @@ from email.mime.multipart import MIMEMultipart
 from mjml.mjml2html import mjml_to_html
 from liberaforms.models.site import Site
 from liberaforms.models.user import User
-from liberaforms.utils.email.server import EmailServer
+from liberaforms.utils.dispatcher.email import EmailServer
+from liberaforms.utils.dispatcher.fediverse import FediPublisher
 
 
 
 def HTML_email(template_file, **kwargs):
-    template_dir = os.path.join(current_app.root_path, 'utils/email/templates')
+    template_dir = os.path.join(current_app.root_path, 'utils/dispatcher/templates')
     j2_env = Environment(loader = FileSystemLoader(template_dir))
     j2_template = j2_env.get_template(template_file)
     kwargs['body'] = kwargs['body'].replace('\n', '<br />')
@@ -211,3 +212,7 @@ class Dispatcher(EmailServer):
         status = EmailServer().send_mail(message)
         return status
     """
+
+    def publish_form(self, text, img_src, fediverse=True):
+        published, msg = FediPublisher().publish(text, img_src)
+        return {"published": published, "msg": msg}

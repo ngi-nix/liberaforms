@@ -10,6 +10,7 @@ import mimetypes, pytz
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
                      PasswordField, BooleanField, RadioField, FileField)
+from wtforms.fields.html5 import URLField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask import current_app, g
 from flask_babel import lazy_gettext as _
@@ -94,7 +95,9 @@ class ChangeEmail(FlaskForm):
 
 class ResetPassword(FlaskForm):
     password = PasswordField(_("Password"), validators=[DataRequired()])
-    password2 = PasswordField(_("Password again"), validators=[DataRequired(), EqualTo('password')])
+    password2 = PasswordField(_("Password again"),
+                              validators=[DataRequired(),
+                              EqualTo('password')])
 
     def validate_password(self, password):
         if validators.pwd_policy.test(password.data):
@@ -183,3 +186,11 @@ class EmailBranding(FlaskForm):
                 max_size = human_readable_bytes(max_size)
                 err_msg = "File too big. Maximum size is %s" % max_size
                 raise ValidationError(err_msg)
+
+class FediverseAuth(FlaskForm):
+    node_url = StringField(_("Fediverse node"), validators=[DataRequired()])
+    access_token = StringField(validators=[DataRequired()])
+
+class FormPublish(FlaskForm):
+    image_source = StringField()
+    text = TextAreaField(validators=[DataRequired()])

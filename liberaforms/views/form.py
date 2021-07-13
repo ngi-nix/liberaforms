@@ -22,7 +22,8 @@ from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils import html_parser
+from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import (make_url_for, JsonResponse,
                                      logout_user, human_readable_bytes)
@@ -324,6 +325,38 @@ def inspect_form(id):
     return render_template('inspect-form.html',
                             form=queriedForm,
                             max_attachment_size_for_humans=max_attach_size)
+
+
+@form_bp.route('/form/<int:id>/fediverse-publish', methods=['GET', 'POST'])
+@enabled_user_required
+def fedi_publish(id):
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+    if not queriedForm:
+        flash(_("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    if not g.current_user.fedi_auth:
+        flash(_("Fediverse connect is not configured"), 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    wtform = wtf.FormPublish()
+    if wtform.validate_on_submit():
+        status = Dispatcher().publish_form(wtform.text.data,
+                                           wtform.image_source.data,
+                                           fediverse=True)
+        if status['published'] == True:
+            flash(_(f"Published at {status['msg']}"), 'success')
+        else:
+            flash(status['msg'], 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    if request.method == 'GET':
+        html = queriedForm.introductionText['html']
+        images_src = html_parser.extract_images_src(html)
+        image_src = images_src[0] if images_src else ""
+        text = html_parser.extract_text(html, with_links=True).strip('\n')
+        wtform.text.data = f"{text}\n\n{queriedForm.url}"
+        wtform.image_source.data = image_src
+    return render_template('fedi-publish.html',
+                            form=queriedForm,
+                            wtform=wtform)
 
 
 @form_bp.route('/forms/share/<int:id>', methods=['GET'])

@@ -18,7 +18,7 @@ from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher import Dispatcher
 import liberaforms.utils.wtf as wtf
 
 from pprint import pprint
@@ -272,7 +272,7 @@ def primary_color():
 @site_bp.route('/site/email-branding', methods=['GET', 'POST'])
 @admin_required
 def email_branding():
-    from liberaforms.utils.email.dispatcher import HTML_email
+    from liberaforms.utils.dispatcher.dispatcher import HTML_email
     wtform = wtf.EmailBranding()
     if wtform.validate_on_submit():
         if request.files['header_image']:
@@ -298,7 +298,7 @@ def reset_email_header():
 @site_bp.route('/site/example-email-preview', methods=['GET'])
 @admin_required
 def email_preview():
-    from liberaforms.utils.email import dispatcher
+    from liberaforms.utils.dispatcher import dispatcher
     return dispatcher.branding_body_preview()['html']
 
 
