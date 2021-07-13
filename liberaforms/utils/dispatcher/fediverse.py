@@ -10,6 +10,7 @@ import requests
 from flask import current_app, g
 
 #from pprint import pprint
+# https://stackoverflow.com/questions/22346158/python-requests-how-to-limit-received-size-transfer-rate-and-or-total-time
 
 ALLOWED_IMAGE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
@@ -20,7 +21,6 @@ def allowed_file(filename):
 
 class FediPublisher():
     def publish(self, text, image_src=None):
-        fedi_auth = g.current_user.fedi_auth
         data = {
             "status": text,
         }
@@ -30,13 +30,14 @@ class FediPublisher():
                 data['media_ids']=[media_id]
         fedi_auth = g.current_user.fedi_auth
         try:
+            endpoint = f"{fedi_auth['node_url']}/api/v1/statuses"
             resp = requests.post(
-                f"{fedi_auth['node_url']}/api/v1/statuses",
+                endpoint,
                 json=data,
                 headers={"Authorization": f"Bearer {fedi_auth['access_token']}"}
             )
             if resp.status_code != 200:
-                msg = f"Could not post status: {resp.status_code}"
+                msg = f"Could not post status: {endpoint} {resp.status_code}"
                 current_app.logger.warning(msg)
                 return False, msg
             resp = resp.json()
@@ -53,23 +54,24 @@ class FediPublisher():
             """
             resp = requests.get(img_src)
             if resp.status_code != 200:
-                msg = f"Could not get media: {resp.status_code}"
+                msg = f"Could not get media: {img_src} {resp.status_code}"
                 current_app.logger.warning(msg)
-                return False, msg
+                return None
             file_bytes=resp.content
 
             """ upload the media file to the node
             """
             fedi_auth = g.current_user.fedi_auth
+            endpoint = f"{fedi_auth['node_url']}/api/v1/media"
             resp = requests.post(
-                f"{fedi_auth['node_url']}/api/v1/media",
+                endpoint,
                 files={"file": file_bytes},
                 headers={"Authorization": f"Bearer {fedi_auth['access_token']}"}
             )
             if resp.status_code != 200:
-                msg = f"Could not post media: {resp.status_code}"
+                msg = f"Could not post media: {endpoint} {resp.status_code}"
                 current_app.logger.warning(msg)
-                return False, msg
+                return None
             response = resp.json()
             return response['id'] if 'id' in response else None
         except Exception as error:

@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os, json, datetime
 from threading import Thread
+from urllib.parse import urlparse
 from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
 from flask import session, flash, send_file, after_this_request
@@ -354,7 +355,9 @@ def fedi_publish(id):
         text = html_parser.extract_text(html, with_links=True).strip('\n')
         wtform.text.data = f"{text}\n\n{queriedForm.url}"
         wtform.image_source.data = image_src
+    node_name = urlparse(g.current_user.fedi_auth['node_url']).hostname
     return render_template('fedi-publish.html',
+                            node_name=node_name,
                             form=queriedForm,
                             wtform=wtform)
 

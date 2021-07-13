@@ -11,8 +11,11 @@
     <div class="col-md-6">
 
       <div class="title_1 delimited">
-        {%trans%}Fediverse configuration{%endtrans%}
+        {%trans%}Fediverse connect{%endtrans%}
       </div>
+      <p>
+        {%trans%}Publish your forms on the descentralized social media network{%endtrans%}
+      </p>
 
       <form id="save_token_form"
             action="/user/{{g.current_user.username}}/fediverse"
@@ -29,7 +32,7 @@
         <button class="btn btn-success btn-xs"
                 type="button"
                 id="generate_btn"
-                style="margin: 0 0 0.2em 0.2em"
+                style="margin: 0 0 0.2em 0.4em"
                 name="btn">
             {%trans%}Generate{%endtrans%}
         </button>
