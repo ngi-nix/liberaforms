@@ -219,6 +219,9 @@ def fediverse_config(username):
         flash(_("Connected to the Fediverse"), 'success')
         return redirect(make_url_for('user_bp.user_settings',
                                      username=g.current_user.username))
+    if request.method == 'GET' and g.current_user.fedi_auth:
+        wtform.node_url.data = g.current_user.fedi_auth['node_url']
+        wtform.access_token.data = g.current_user.fedi_auth['access_token']
     return render_template('fediverse-config.html', wtform=wtform)
 
 

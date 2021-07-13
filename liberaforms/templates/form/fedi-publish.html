@@ -17,8 +17,8 @@
         {{ form.slug }}
       </div>
 
-      <div class="title_1">
-        {%trans%}Publish on the Fediverse{%endtrans%}
+      <div class="title_2">
+        {%trans%}Publish on {%endtrans%} {{ node_name }}
       </div>
 
       <form method="POST">
@@ -29,11 +29,14 @@
         {% if wtform.image_source.data %}
         <img src="{{wtform.image_source.data}}" />
         {% endif %}
+        <p style="margin-top: 0.5em">
+        {{ wtform.text.label }}
+        <span class='required'>●</span>
         {{ wtform.text(class_="form-control", rows="7") }}
         {% for error in wtform.text.errors %}
             <span class="formError">{{ error }}</span><br />
         {% endfor %}
-
+        </p>
         <div class="form-actions">
           <input class="btn-success btn"
                  type="submit"
@@ -49,5 +52,12 @@
     </div>
   </div>
 </div>
+
+<script>
+  $("form").submit(function( event ) {
+    $("input[type=submit]").prop("disabled", true);
+    return;
+  });
+</script>
 
 {% endblock %}
