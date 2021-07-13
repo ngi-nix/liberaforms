@@ -132,11 +132,12 @@
             </td>
           </tr>
         </table>
-  {% if g.current_user.get_uploads_enabled() %}
+
         <div class="title_2 delimited">
             {%trans%}Media{%endtrans%}
         </div>
         <table class="table table-sm sparse-table">
+          {% if g.current_user.get_uploads_enabled() %}
           <tr>
             <td colspan="2">
               {%trans%}Add and delete uploaded files{%endtrans%}
@@ -148,6 +149,7 @@
               </a>
             </td>
           </tr>
+          {% endif %}
           <tr>
             <td>
               {%trans%}Fediverse connect{%endtrans%}
@@ -176,7 +178,6 @@
             </td>
           </tr>
         </table>
-  {% endif %}
 
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">

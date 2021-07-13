@@ -188,8 +188,12 @@ class EmailBranding(FlaskForm):
                 raise ValidationError(err_msg)
 
 class FediverseAuth(FlaskForm):
-    node_url = StringField(_("Fediverse node"), validators=[DataRequired()])
-    access_token = StringField(validators=[DataRequired()])
+    node_url = StringField(_("Fediverse node"),
+                          default="",
+                          validators=[DataRequired()])
+    access_token = StringField(_("Access token"),
+                               default="",
+                               validators=[DataRequired()])
 
 class FormPublish(FlaskForm):
     image_source = StringField()
