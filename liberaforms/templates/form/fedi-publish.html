@@ -7,8 +7,7 @@
   <div class="row">
     <div class="col-md-3"></div>
 
-    <div class="col-md-5">
-
+    <div class="col-md-5 publishingPreview">
       <div class="returnToForm">
         <a class="btn btn-primary btn-sm"
            role="button"
@@ -23,18 +22,30 @@
       </div>
 
       <form method="POST">
-        <input id="csrf_token"
-              name="csrf_token"
-              type="hidden"
-              value="{{ csrf_token() }}" />
+        {{ wtform.csrf_token }}
+        <input name="image_source"
+               type="hidden"
+               value="{{wtform.image_source.data}}" />
+        {% if wtform.image_source.data %}
+        <img src="{{wtform.image_source.data}}" />
+        {% endif %}
+        {{ wtform.text(class_="form-control", rows="7") }}
+        {% for error in wtform.text.errors %}
+            <span class="formError">{{ error }}</span><br />
+        {% endfor %}
+
         <div class="form-actions">
-          <button class="btn btn-lg btn-success"
-                  type="submit">
-              {%trans%}Publish{%endtrans%}
-          </button>
+          <input class="btn-success btn"
+                 type="submit"
+                 value="{%trans%}Publish{%endtrans%}">
+          <a class="btn
+                    btn-primary"
+             role="button"
+             href="/forms/view/{{form.id}}">
+             {%trans%}Cancel{%endtrans%}
+          </a>
         </div>
       </form>
-
     </div>
   </div>
 </div>

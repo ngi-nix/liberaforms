@@ -175,7 +175,10 @@ input[type="date"], input[type="number"], input[type="time"] {
 .formIntroduction {
     padding-bottom: 1em;
 }
-.formIntroduction img, .afterSubmitText img, .expiredText img {
+.formIntroduction img,
+.afterSubmitText img,
+.expiredText img,
+.publishingPreview img {
   width: 100%;
 }
 

@@ -213,7 +213,6 @@ class Dispatcher(EmailServer):
         return status
     """
 
-    def publish_form(self, form, fediverse=True):
-        text = "This is test 1"
-        fedi_publisher = FediPublisher().publish(text)
-        pass
+    def publish_form(self, text, img_src, fediverse=True):
+        published, msg = FediPublisher().publish(text, img_src)
+        return {"published": published, "msg": msg}

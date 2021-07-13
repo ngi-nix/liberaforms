@@ -15,38 +15,24 @@
       </div>
 
     	<form method="post" action="#" id="sbmt">
-        <input class="input is-primary"
-               type="hidden"
+        <input type="hidden"
                id="client_name"
                value="LiberaForms" />
-    		<input class="input is-primary"
-               type="hidden"
+    		<input type="hidden"
                id="website"
                value="{{ g.site.host_url.rstrip('/') }}" />
-    		<p>
-          <label class="label" for="pleroma_url">
-              {%trans%}Fediverse node{%endtrans%}
-              <span class='required'>●</span>
-          </label>
-    			<input type="text"
-                 class="form-control"
-                 id="pleroma_url"
-                 value=""
-                 placeholder="https://node.fediverse"
-                 required />
-    		</p>
-    		<p>
-    			<select name="scopes" id="scopes">
-    				<option>read</option>
-    				<option>write</option>
-    				<option>follow</option>
-    				<option>read write</option>
-    				<option>read follow</option>
-    				<option>write follow</option>
-    				<option>read write follow</option>
-    			</select>
-    		</p>
 
+        <label class="label" for="pleroma_url">
+            {%trans%}Fediverse node{%endtrans%}
+            <span class='required'>●</span>
+        </label>
+    		<input type="text"
+               class="form-control"
+               id="pleroma_url"
+               value=""
+               placeholder="https://node.fediverse"
+               required />
+        
     		<div id="generate_token_form"
              class="form-actions">
           <button class="btn btn-success"
@@ -124,7 +110,6 @@
   </div>
 </div>
 
-
 <script>
   function elem(el) {
   	return document.getElementById(el);
@@ -201,12 +186,15 @@
   elem("sbmt").addEventListener("submit", function(event) {
   	event.preventDefault();
   	var url = elem("pleroma_url").value+"/api/v1/apps";
-  	var s = elem("scopes");
-  	var scopes = s.options[s.selectedIndex].value;
-  	var args = {client_name: elem("client_name").value,
-  	redirect_uris: redirect_uri,
-  	website: elem("website").value,
-  	scopes: scopes};
+  	//var s = elem("scopes");
+  	//var scopes = s.options[s.selectedIndex].value;
+    var scopes = "write"
+  	var args = {
+      client_name: elem("client_name").value,
+    	redirect_uris: redirect_uri,
+    	website: elem("website").value,
+    	scopes: scopes
+    };
   	post(url ,args, function(data) {
   		localStorage.setItem("PLEROMA_URL", elem("pleroma_url").value);
   		localStorage.setItem("PLEROMA_CLIENT_ID", data.client_id);

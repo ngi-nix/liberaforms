@@ -190,3 +190,7 @@ class EmailBranding(FlaskForm):
 class FediverseAuth(FlaskForm):
     node_url = StringField(_("Fediverse node"), validators=[DataRequired()])
     access_token = StringField(validators=[DataRequired()])
+
+class FormPublish(FlaskForm):
+    image_source = StringField()
+    text = TextAreaField(validators=[DataRequired()])
