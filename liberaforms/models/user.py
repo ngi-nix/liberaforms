@@ -26,9 +26,7 @@ from pprint import pprint
 class User(db.Model, CRUD):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
@@ -47,6 +45,7 @@ class User(db.Model, CRUD):
                             cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
+        self.created = datetime.now(timezone.utc)
         self.username = kwargs["username"]
         self.email = kwargs["email"]
         self.password_hash = validators.hash_password(kwargs["password"])

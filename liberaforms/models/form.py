@@ -36,9 +36,7 @@ class Form(db.Model, CRUD):
     __tablename__ = "forms"
     _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
@@ -63,6 +61,7 @@ class Form(db.Model, CRUD):
                                      cascade="all, delete, delete-orphan")
 
     def __init__(self, author, **kwargs):
+        self.created = datetime.now(timezone.utc)
         self.author_id = author.id
         self.editors = {self.author_id: self.new_editor_preferences(author)}
         self.expiryConditions = {"totalAnswers": 0,

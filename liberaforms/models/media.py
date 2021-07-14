@@ -21,9 +21,7 @@ from pprint import pprint as pp
 class Media(db.Model, CRUD, Storage):
     __tablename__ = "media"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id',
                                                   ondelete="CASCADE"),
                                                   nullable=False)
@@ -36,6 +34,7 @@ class Media(db.Model, CRUD, Storage):
 
     def __init__(self):
         Storage.__init__(self)
+        self.created = datetime.now(timezone.utc)
         self.encrypted = False
 
     def __str__(self):

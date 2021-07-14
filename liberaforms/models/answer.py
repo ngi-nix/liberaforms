@@ -21,9 +21,7 @@ from pprint import pprint as pp
 class Answer(db.Model, CRUD):
     __tablename__ = "answers"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     marked = db.Column(db.Boolean, default=False)
@@ -34,6 +32,7 @@ class Answer(db.Model, CRUD):
                                     cascade = "all, delete, delete-orphan")
 
     def __init__(self, form_id, author_id, data):
+        self.created = datetime.now(timezone.utc)
         self.form_id = form_id
         self.author_id = author_id
         self.marked = False
@@ -64,9 +63,7 @@ class Answer(db.Model, CRUD):
 class AnswerAttachment(db.Model, CRUD, Storage):
     __tablename__ = "attachments"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id',
                                                     ondelete="CASCADE"),
                                                     nullable=True)
@@ -80,6 +77,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
 
     def __init__(self, answer):
         Storage.__init__(self)
+        self.created = datetime.now(timezone.utc)
         self.answer_id = answer.id
         self.form_id = answer.form.id
 
