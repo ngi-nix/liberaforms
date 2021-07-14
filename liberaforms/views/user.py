@@ -125,7 +125,7 @@ def send_email_validation():
     status = Dispatcher().send_email_address_confirmation(g.current_user,
                                                           g.current_user.email)
     if status['email_sent'] == True:
-        flash(_("We've sent an email to %s") % g.current_user.email, 'info')
+        flash(_("We have sent an email to %s") % g.current_user.email, 'info')
     else:
         flash(status['msg'], 'warning')
         current_app.logger.warning(status['msg'])
@@ -160,7 +160,7 @@ def change_email():
         status = Dispatcher().send_email_address_confirmation(g.current_user,
                                                               wtform.email.data)
         if status['email_sent'] == True:
-            flash(_("We've sent an email to %s") % wtform.email.data, 'info')
+            flash(_("We have sent an email to %s") % wtform.email.data, 'info')
         else:
             # TODO: Tell the user that the email has not been sent
             pass
