@@ -59,6 +59,9 @@ git tag -l --sort=-version:refname "v*"
 
 # Internationalizating (i18n)
 ## Entering parameters into translatable strings
+**Python**
+`_("Text using a %s" % parameter)`
+
 **Jinja2 HTML**  
 `{%trans user=g.current_user.username%}Hello {{user}}!{%endtrans%}`  
 parameters must be aliased **in** the translation opening structure and then, use that alias **in** the string surrounded with two key-brackets
