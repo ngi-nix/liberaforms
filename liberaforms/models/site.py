@@ -31,9 +31,7 @@ from liberaforms.utils import utils
 class Site(db.Model, CRUD):
     __tablename__ = "site"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     hostname = db.Column(db.String, nullable=False)
     port = db.Column(db.Integer, nullable=True)
     scheme = db.Column(db.String, nullable=False, default="http")
@@ -50,6 +48,7 @@ class Site(db.Model, CRUD):
     blurb = db.Column(JSONB, nullable=False)
 
     def __init__(self, hostname, port, scheme):
+        self.created = datetime.now(timezone.utc)
         self.hostname = hostname
         self.port = port
         self.scheme = scheme
