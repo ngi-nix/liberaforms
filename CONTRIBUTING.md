@@ -57,8 +57,18 @@ You can list the tags
 git tag -l --sort=-version:refname "v*"
 ```
 
+# Internationalizating (i18n)
+## Entering parameters into translatable strings
+**Jinja2 HTML**  
+`{%trans user=g.current_user.username%}Hello {{user}}!{%endtrans%}`  
+parameters must be aliased **in** the translation opening structure and then, use that alias **in** the string surrounded with two key-brackets
 
-# Translating
+## Translator comments
++ Python files: `# i18n: a comment` before internationalized strings
++ Jinja2 HTML files: `{# i18n: a comment #}` before internationalized strings
+
+
+# Translating (L10n)
 ## Weblate
 > We are working on this feature. This part will be updated.
 
