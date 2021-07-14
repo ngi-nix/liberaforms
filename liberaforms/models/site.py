@@ -55,7 +55,7 @@ class Site(db.Model, CRUD):
         self.scheme = scheme
         self.siteName = "LiberaForms!"
         self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
-        self.primary_color = "#b71c1c"
+        self.primary_color = "#D63D3B"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
                                             name="terms"),
@@ -78,7 +78,7 @@ class Site(db.Model, CRUD):
                 "password": "",
                 "noreplyAddress": f"no-reply@{hostname}"
         }
-        blurb = os.path.join(current_app.root_path, 'templates/default_index.md')
+        blurb = os.path.join(current_app.root_path, '../assets/front-page.md')
         with open(blurb, 'r') as default_blurb:
             default_MD = default_blurb.read()
         self.blurb = {  'markdown': default_MD,
