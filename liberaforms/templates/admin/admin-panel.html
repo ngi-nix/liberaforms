@@ -15,7 +15,7 @@
 
     <div id="site_settings" class="title_2">
       {# i18n: Subtitle displayed on instance configuration page (/admin) #}
-      {%trans%}Site styling{%endtrans%}
+      {%trans%}Look and feel{%endtrans%}
     </div>
 
     <table class="table table-sm">
@@ -63,12 +63,12 @@
         </td>
       </tr>
       <tr>
-        {# i18n: Website's primary colour #}
-        <td>{%trans%}Primary colour{%endtrans%}</td>
+        {# i18n: Website's primary color #}
+        <td>{%trans%}Primary color{%endtrans%}</td>
         <td>{{g.site.primary_color}}</td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
-             role="button" href="/site/primary-colour">
+             role="button" href="/site/primary-color">
               {%trans%}Change{%endtrans%}
           </a>
         </td>
@@ -76,7 +76,7 @@
       <tr>
         {# i18n: Define the 'look' of emails #}
         <td colspan="2">
-          {%trans%}Email styling{%endtrans%}
+          {%trans%}Email branding{%endtrans%}
         </td>
         <td class="text-right">
           <a class="btn btn-primary btn-xs"
