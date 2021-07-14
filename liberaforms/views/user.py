@@ -233,7 +233,7 @@ def fediverse_delete(username):
     g.current_user.fedi_auth = {}
     g.current_user.save()
     flash(_("Fediverse configuration deleted OK"), 'success')
-    return redirect(make_url_for('user_bp.fediverse_config',
+    return redirect(make_url_for('user_bp.user_settings',
                                  username=g.current_user.username))
 
 
