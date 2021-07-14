@@ -51,7 +51,8 @@
                  form="save_token_form" />
           <button class="btn btn-danger"
                   type="button"
-                  id="delete_config">
+                  id="delete_config"
+                  onclick="js:$('form#delete_config').submit()">
              {%trans%}Delete{%endtrans%}
           </button>
         </div>
@@ -70,10 +71,16 @@
         <span id="client_id"></span>
         <span id="client_secret"></span>
     	</div>
-
     </div>
   </div>
 </div>
+
+<form id="delete_config"
+      action="/user/{{g.current_user.username}}/fediverse/delete-auth"
+      method="post"
+      style="display:none">
+  {{ wtform.csrf_token }}
+</form>
 
 <script>
 
