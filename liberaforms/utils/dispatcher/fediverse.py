@@ -7,16 +7,13 @@ This file is part of LiberaForms.
 
 import os, json
 import requests
+from pathlib import Path
 from flask import current_app, g
+from liberaforms.utils import utils
 
 #from pprint import pprint
-# https://stackoverflow.com/questions/22346158/python-requests-how-to-limit-received-size-transfer-rate-and-or-total-time
 
 ALLOWED_IMAGE_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
-
-def allowed_file(filename):
-    return '.' in filename and \
-            filename.rsplit('.', 1)[1].lower() in ALLOWED_IMAGE_EXTENSIONS
 
 
 class FediPublisher():
@@ -47,27 +44,50 @@ class FediPublisher():
             return False, error
 
     def _upload_media_to_node(self, img_src):
-        if not allowed_file(img_src):
+        filename = Path(img_src).name
+        if '.' in filename:
+            file_extension = filename.rsplit('.', 1)[1].lower()
+        else:
+            return None
+        if not file_extension in ALLOWED_IMAGE_EXTENSIONS:
+            return None
+
+        """ first download the media file
+        """
+        tmp_filename = f"{utils.gen_random_string()}.{file_extension}"
+        tmp_filepath = os.path.join(current_app.config['TMP_DIR'],
+                                    tmp_filename)
+        resp = requests.get(img_src, stream=True)
+        if resp.status_code != 200:
+            msg = f"Could not get media: {img_src} {resp.status_code}"
+            current_app.logger.warning(msg)
             return None
         try:
-            """ first download the media file
-            """
-            resp = requests.get(img_src)
-            if resp.status_code != 200:
-                msg = f"Could not get media: {img_src} {resp.status_code}"
-                current_app.logger.warning(msg)
-                return None
-            file_bytes=resp.content
+            with open(tmp_filepath, 'wb') as f:
+                size = 0
+                for chunk in resp.iter_content(1024):
+                    size += len(chunk)
+                    if size > current_app.config['MAX_MEDIA_SIZE']:
+                        resp.close()
+                        raise
+                    f.write(chunk)
+        except:
+            if os.path.exists(tmp_filepath):
+                os.remove(tmp_filepath)
+            return None
 
-            """ upload the media file to the node
-            """
-            fedi_auth = g.current_user.fedi_auth
-            endpoint = f"{fedi_auth['node_url']}/api/v1/media"
-            resp = requests.post(
-                endpoint,
-                files={"file": file_bytes},
-                headers={"Authorization": f"Bearer {fedi_auth['access_token']}"}
-            )
+        """ upload the media file to the node
+        """
+        fedi_auth = g.current_user.fedi_auth
+        endpoint = f"{fedi_auth['node_url']}/api/v1/media"
+        try:
+            with open(tmp_filepath, 'rb') as f:
+                resp = requests.post(
+                    endpoint,
+                    files={"file": f},
+                    headers={"Authorization": f"Bearer {fedi_auth['access_token']}"}
+                )
+            os.remove(tmp_filepath)
             if resp.status_code != 200:
                 msg = f"Could not post media: {endpoint} {resp.status_code}"
                 current_app.logger.warning(msg)
@@ -76,8 +96,9 @@ class FediPublisher():
             return response['id'] if 'id' in response else None
         except Exception as error:
             current_app.logger.warning(error)
+            if os.path.exists(tmp_filepath):
+                os.remove(tmp_filepath)
             return None
-
 
 
 """
