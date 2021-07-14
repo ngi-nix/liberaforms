@@ -224,6 +224,18 @@ def fediverse_config(username):
         wtform.access_token.data = g.current_user.fedi_auth['access_token']
     return render_template('fediverse-config.html', wtform=wtform)
 
+@user_bp.route('/user/<string:username>/fediverse/delete-auth', methods=['POST'])
+@enabled_user_required
+def fediverse_delete(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.fediverse_delete',
+                                     username=g.current_user.username))
+    g.current_user.fedi_auth = {}
+    g.current_user.save()
+    flash(_("Fediverse configuration deleted OK"), 'success')
+    return redirect(make_url_for('user_bp.fediverse_config',
+                                 username=g.current_user.username))
+
 
 @user_bp.route('/user/delete-account/<string:user_id>', methods=['GET', 'POST'])
 @enabled_user_required
