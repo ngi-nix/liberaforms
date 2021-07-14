@@ -15,7 +15,7 @@ def test_new_site(new_site):
     THEN check the smtpConfig, blurb fields
     """
     assert new_site.smtpConfig['host'] == "smtp.example.com"
-    assert "<h1>LiberaForms</h1>" in new_site.blurb['html']
+    assert "<h1>LiberaForms, ethical form software</h1>" in new_site.blurb['html']
 
 def test_new_user(test_user):
     """

@@ -391,7 +391,7 @@ class TestSiteConfig():
         response = admin_client.post(
                         "site/email/test-config",
                         data = {
-                            'email': users['admin'].email,
+                            'email': users['admin']['email'],
                         },
                         follow_redirects=True,
                     )
