@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-07-14 09:43+0200\n"
+"POT-Creation-Date: 2021-07-14 18:51+0200\n"
 "PO-Revision-Date: 2021-06-17 12:44+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: ca\n"
@@ -206,9 +206,8 @@ msgstr "Provar la configuració"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
-#, fuzzy
-msgid "Site styling"
-msgstr "Configuració del lloc"
+msgid "Look and feel"
+msgstr ""
 
 #. Name for the website/instance
 #: templates/admin/admin-panel.html:24
@@ -235,14 +234,14 @@ msgstr ""
 msgid "Icon and Favicon"
 msgstr ""
 
-#. Website's primary colour
+#. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
-msgid "Primary colour"
+msgid "Primary color"
 msgstr ""
 
 #. Define the 'look' of emails
-#: templates/admin/admin-panel.html:79
-msgid "Email styling"
+#: templates/admin/admin-panel.html:79 templates/site/email-branding.html:16
+msgid "Email branding"
 msgstr ""
 
 #. Subtitle displayed on instance configuration page (/admin)
@@ -260,8 +259,7 @@ msgstr "Només invitació"
 msgid "Consent"
 msgstr "Consentiment"
 
-#: templates/admin/admin-panel.html:121 templates/site/consent.html:28
-#: templates/user/new-user.html:51
+#: templates/admin/admin-panel.html:121 templates/user/new-user.html:51
 msgid "Terms and conditions"
 msgstr "Termes i Condicions"
 
@@ -525,7 +523,7 @@ msgstr "Convidar un nou usuari"
 
 #: templates/admin/list-invites.html:54 templates/answers/list-answers.html:342
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
-#: templates/user/fediverse-config.html:55
+#: templates/user/fediverse-config.html:56
 #: templates/user/user-settings.html:255
 msgid "Delete"
 msgstr "Esborrar"
@@ -569,7 +567,7 @@ msgid "Form details"
 msgstr "Detalls del formulari"
 
 #: templates/answers/chart-answers.html:52
-#: templates/answers/list-answers.html:118
+#: templates/answers/list-answers.html:118 templates/user/user-settings.html:95
 #, fuzzy
 msgid "Notify me on each new answer"
 msgstr "Avisa'm quan hi hagi una resposta nova"
@@ -948,7 +946,8 @@ msgid "Form templates"
 msgstr "Plantilles de formulari"
 
 #: templates/form/list-templates.html:15
-msgid "We've put together some forms you can use to get started."
+#, fuzzy
+msgid "We have put together some forms that you can use to get started."
 msgstr "Hem creat alguns formularis que pots fer servir per començar."
 
 #: templates/form/list-templates.html:16
@@ -1083,7 +1082,7 @@ msgid "Upload an image"
 msgstr ""
 
 #: templates/site/change-icon.html:23
-msgid "A small square image."
+msgid "A small square image"
 msgstr ""
 
 #: templates/site/change-icon.html:39
@@ -1103,12 +1102,18 @@ msgid "Submit"
 msgstr "Enviar"
 
 #: templates/site/consent.html:14
-msgid "Default texts"
-msgstr "Textos per omisió"
+#, fuzzy
+msgid "Consent texts"
+msgstr "Textos de consentiment"
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
 msgstr "Previsualitzar formulari de 'Nou usuari'"
+
+#: templates/site/consent.html:28
+#, fuzzy
+msgid "Site terms and conditions"
+msgstr "Termes i Condicions"
 
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
@@ -1131,10 +1136,10 @@ msgstr "Els nous usuaris han d'acceptar aquests termes i condicions"
 msgid "Required"
 msgstr "Obligatori"
 
-#: templates/site/consent.html:96 templates/user/user-settings.html:125
-#: templates/user/user-settings.html:171
-msgid "Consentment texts"
-msgstr "Textos de consentiment"
+#: templates/site/consent.html:96
+#, fuzzy
+msgid "Form consent texts"
+msgstr "Text de consentiment per omissió"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
@@ -1186,17 +1191,13 @@ msgstr "Creació d’enllaços públics"
 msgid "Scheme"
 msgstr "Esquema"
 
-#: templates/site/email-branding.html:16
-msgid "Email branding"
-msgstr ""
-
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
 
 #: templates/site/email-branding.html:24
 #, fuzzy
-msgid "Example email"
+msgid "Example email:"
 msgstr "Correu-e validat"
 
 #: templates/site/email-branding.html:46
@@ -1204,7 +1205,7 @@ msgid "Send test"
 msgstr ""
 
 #: templates/site/email-branding.html:64
-msgid "Keep the kilobytes to a minimum."
+msgid "Keep the kilobytes to a minimum"
 msgstr ""
 
 #: templates/site/email-branding.html:97
@@ -1317,15 +1318,20 @@ msgid "Letters and numbers. No accents."
 msgstr "Lletres i números. Sense accents"
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
-msgid "Use a passphrase, with spaces"
-msgstr "Fes servir una frase de contrasenya, amb espais"
+msgid "Use a password with spaces and/or special characters."
+msgstr ""
+
+#: templates/user/new-user.html:33 templates/user/reset-password.html:18
+msgid "We suggest you use a sentence you will remember."
+msgstr ""
 
 #: templates/user/new-user.html:34 templates/user/reset-password.html:19
-msgid "eg: No holidays this year"
-msgstr "Exemple: No tinc vancances aquest any"
+msgid "eg: Peter cooks delicious food"
+msgstr ""
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
-msgid "Another eg: My dog has fleas"
+#, fuzzy
+msgid "Another eg: The cat living with me has fleas"
 msgstr "Un altre exemple: El meu gos té puces"
 
 #: templates/user/new-user.html:106
@@ -1380,13 +1386,13 @@ msgid "Preferred language"
 msgstr "Idioma preferit"
 
 #: templates/user/user-settings.html:90
-msgid "By default"
-msgstr "Per omissió"
+#, fuzzy, python-format
+msgid "Email notifications"
+msgstr "S'ha esborrat %s de la llista de editors"
 
-#: templates/user/user-settings.html:95
-#, fuzzy
-msgid "New answer notification default"
-msgstr "Avisa'm quan hagin noves respostes"
+#: templates/user/user-settings.html:125 templates/user/user-settings.html:171
+msgid "Consentment texts"
+msgstr "Textos de consentiment"
 
 #: templates/user/user-settings.html:137
 msgid "Media"
@@ -1463,13 +1469,13 @@ msgstr "Si us plau, accepta la nostra política de protecció de dades"
 
 #: utils/wtf.py:72
 #, fuzzy
-msgid "Your username"
+msgid "Enter your username"
 msgstr "Nom d'usuari"
 
 #: utils/wtf.py:73
 #, fuzzy
-msgid "Your password"
-msgstr "Has oblidat la teva contrassenya? "
+msgid "Enter your password"
+msgstr "Recuperar la contrasenya"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
@@ -1709,8 +1715,8 @@ msgid "Can't find username %s"
 msgstr "No es troba l'usuari %s"
 
 #: views/admin.py:208
-#, python-format
-msgid "We've sent an invitation to %s"
+#, fuzzy, python-format
+msgid "We have sent an invitation to %s"
 msgstr "Hem enviat una invitació a %s"
 
 #. i18n: Invitation to dave@example.com deleted OK
@@ -1949,7 +1955,7 @@ msgstr "Text guardat correctament"
 msgid "Couldn't find that token"
 msgstr "No s'ha pogut trobar aquesta clau"
 
-#: views/site.py:50 views/user.py:272
+#: views/site.py:50 views/user.py:284
 msgid "Your petition has expired"
 msgstr "La teva petició ha caducat"
 
@@ -2038,8 +2044,8 @@ msgid "Welcome!"
 msgstr "Benvingut!"
 
 #: views/user.py:128 views/user.py:163
-#, python-format
-msgid "We've sent an email to %s"
+#, fuzzy, python-format
+msgid "We have sent an email to %s"
 msgstr "Hem enviat un correu a %s"
 
 #: views/user.py:179
@@ -2055,24 +2061,29 @@ msgstr "S'ha canviat el nom del lloc correctament"
 msgid "Connected to the Fediverse"
 msgstr ""
 
-#: views/user.py:236
+#: views/user.py:235
+#, fuzzy
+msgid "Fediverse configuration deleted OK"
+msgstr "Provar la configuració"
+
+#: views/user.py:248
 #, fuzzy
 msgid "Cannot delete. You are the only Admin on this site"
 msgstr "No es pot eliminar el lloc web actual"
 
-#: views/user.py:244
+#: views/user.py:256
 msgid "Thank you for using LiberaForms"
 msgstr ""
 
-#: views/user.py:269
+#: views/user.py:281
 msgid "We couldn't find that petition"
 msgstr "No hem pogut trobar aquesta petició"
 
-#: views/user.py:284
+#: views/user.py:296
 msgid "Your email address is valid"
 msgstr "La teva adreça de correu és vàlida"
 
-#: views/user.py:317
+#: views/user.py:329
 msgid "Bad credentials"
 msgstr "Les credencials són errònies"
 
@@ -2403,4 +2414,37 @@ msgstr "Les credencials són errònies"
 
 #~ msgid "Please validated your email to continue"
 #~ msgstr ""
+
+#~ msgid "Site styling"
+#~ msgstr "Configuració del lloc"
+
+#~ msgid "Primary colour"
+#~ msgstr ""
+
+#~ msgid "Email styling"
+#~ msgstr ""
+
+#~ msgid "A small square image."
+#~ msgstr ""
+
+#~ msgid "Default texts"
+#~ msgstr "Textos per omisió"
+
+#~ msgid "Keep the kilobytes to a minimum."
+#~ msgstr ""
+
+#~ msgid "Use a passphrase, with spaces"
+#~ msgstr "Fes servir una frase de contrasenya, amb espais"
+
+#~ msgid "eg: No holidays this year"
+#~ msgstr "Exemple: No tinc vancances aquest any"
+
+#~ msgid "By default"
+#~ msgstr "Per omissió"
+
+#~ msgid "New answer notification default"
+#~ msgstr "Avisa'm quan hagin noves respostes"
+
+#~ msgid "Your password"
+#~ msgstr "Has oblidat la teva contrassenya? "
 
