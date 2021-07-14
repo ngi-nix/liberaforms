@@ -205,7 +205,7 @@ def new_invite():
         new_invite.save()
         status = Dispatcher().send_invitation(new_invite)
         if status['email_sent'] == True:
-            flash_text = _("We've sent an invitation to %s" % new_invite.email)
+            flash_text = _("We have sent an invitation to %s" % new_invite.email)
             flash(flash_text, 'success')
         else:
             flash(status['msg'], 'warning')

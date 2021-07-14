@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-07-14 09:43+0200\n"
+"POT-Creation-Date: 2021-07-14 18:51+0200\n"
 "PO-Revision-Date: 2021-07-09 12:47+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
@@ -205,8 +205,8 @@ msgstr "Webgune konfigurazioa"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
-msgid "Site styling"
-msgstr "Webgunearen estiloa"
+msgid "Look and feel"
+msgstr ""
 
 #. Name for the website/instance
 #: templates/admin/admin-panel.html:24
@@ -233,15 +233,16 @@ msgstr "Hasiera orriko testua"
 msgid "Icon and Favicon"
 msgstr "Ikonoa eta favicona"
 
-#. Website's primary colour
+#. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
-msgid "Primary colour"
+#, fuzzy
+msgid "Primary color"
 msgstr "Kolore nagusia"
 
 #. Define the 'look' of emails
-#: templates/admin/admin-panel.html:79
-msgid "Email styling"
-msgstr "Eposta estiloa"
+#: templates/admin/admin-panel.html:79 templates/site/email-branding.html:16
+msgid "Email branding"
+msgstr "Eposta zerbitzaria"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:93
@@ -258,8 +259,7 @@ msgstr "Gonbidapena soilik"
 msgid "Consent"
 msgstr "Baldintza-onarpena"
 
-#: templates/admin/admin-panel.html:121 templates/site/consent.html:28
-#: templates/user/new-user.html:51
+#: templates/admin/admin-panel.html:121 templates/user/new-user.html:51
 msgid "Terms and conditions"
 msgstr "Erabilera-baldintzak"
 
@@ -519,7 +519,7 @@ msgstr "Gonbidatu erabiltzaile berria"
 
 #: templates/admin/list-invites.html:54 templates/answers/list-answers.html:342
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
-#: templates/user/fediverse-config.html:55
+#: templates/user/fediverse-config.html:56
 #: templates/user/user-settings.html:255
 msgid "Delete"
 msgstr "Ezabatu"
@@ -562,7 +562,7 @@ msgid "Form details"
 msgstr "Galdetegiaren xehetasunak"
 
 #: templates/answers/chart-answers.html:52
-#: templates/answers/list-answers.html:118
+#: templates/answers/list-answers.html:118 templates/user/user-settings.html:95
 msgid "Notify me on each new answer"
 msgstr "Jakinarazi erantzun berri bakoitzean"
 
@@ -929,7 +929,8 @@ msgid "Form templates"
 msgstr "Galdetegientzako txantiloiak"
 
 #: templates/form/list-templates.html:15
-msgid "We've put together some forms you can use to get started."
+#, fuzzy
+msgid "We have put together some forms that you can use to get started."
 msgstr "Hasteko erabil ditzakezun galdetegi batzuk bildu ditugu."
 
 #: templates/form/list-templates.html:16
@@ -1070,7 +1071,8 @@ msgid "Upload an image"
 msgstr "Igo irudia"
 
 #: templates/site/change-icon.html:23
-msgid "A small square image."
+#, fuzzy
+msgid "A small square image"
 msgstr "Irudi txiki eta karratu bat"
 
 #: templates/site/change-icon.html:39
@@ -1090,12 +1092,18 @@ msgid "Submit"
 msgstr "Bidali"
 
 #: templates/site/consent.html:14
-msgid "Default texts"
-msgstr "Lehenetsitako testuak"
+#, fuzzy
+msgid "Consent texts"
+msgstr "Baldintza-onarpen testuak"
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
 msgstr "Aurreikusi Erabiltzaile berriaren galdetegia"
+
+#: templates/site/consent.html:28
+#, fuzzy
+msgid "Site terms and conditions"
+msgstr "Erabilera-baldintzak"
 
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
@@ -1118,10 +1126,10 @@ msgstr "Erabiltzaile berriek erabilera-baldintza hauek onartu behar dituzte"
 msgid "Required"
 msgstr "Nahitaezkoa"
 
-#: templates/site/consent.html:96 templates/user/user-settings.html:125
-#: templates/user/user-settings.html:171
-msgid "Consentment texts"
-msgstr "Baldintza-onarpen testuak"
+#: templates/site/consent.html:96
+#, fuzzy
+msgid "Form consent texts"
+msgstr "Baimentze-testu lehenetsia"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
@@ -1173,16 +1181,13 @@ msgstr "Esteka publikoak sortzea"
 msgid "Scheme"
 msgstr "Egitasmoa"
 
-#: templates/site/email-branding.html:16
-msgid "Email branding"
-msgstr "Eposta zerbitzaria"
-
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr "LiberaFormsek noizean behin epostak bidaliko ditu."
 
 #: templates/site/email-branding.html:24
-msgid "Example email"
+#, fuzzy
+msgid "Example email:"
 msgstr "Adibiderako eposta"
 
 #: templates/site/email-branding.html:46
@@ -1190,7 +1195,8 @@ msgid "Send test"
 msgstr "Bidali proba"
 
 #: templates/site/email-branding.html:64
-msgid "Keep the kilobytes to a minimum."
+#, fuzzy
+msgid "Keep the kilobytes to a minimum"
 msgstr "Mantendu kilobyteak minimoan."
 
 #: templates/site/email-branding.html:97
@@ -1300,15 +1306,20 @@ msgid "Letters and numbers. No accents."
 msgstr "Letrak eta zenbakiak. Azenturik ez."
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
-msgid "Use a passphrase, with spaces"
-msgstr "Erabili pasaesaldia, zuriuneekin"
+msgid "Use a password with spaces and/or special characters."
+msgstr ""
+
+#: templates/user/new-user.html:33 templates/user/reset-password.html:18
+msgid "We suggest you use a sentence you will remember."
+msgstr ""
 
 #: templates/user/new-user.html:34 templates/user/reset-password.html:19
-msgid "eg: No holidays this year"
-msgstr "adib.: Oporrik ez aurten"
+msgid "eg: Peter cooks delicious food"
+msgstr ""
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
-msgid "Another eg: My dog has fleas"
+#, fuzzy
+msgid "Another eg: The cat living with me has fleas"
 msgstr "Beste adibide bat: Nirekin bizi den zakurrak arkakusoak ditu"
 
 #: templates/user/new-user.html:106
@@ -1362,12 +1373,13 @@ msgid "Preferred language"
 msgstr "Hobetsitako hizkuntza"
 
 #: templates/user/user-settings.html:90
-msgid "By default"
-msgstr "Lehenetsia"
+#, fuzzy
+msgid "Email notifications"
+msgstr "Partekatu jakinarazpenak"
 
-#: templates/user/user-settings.html:95
-msgid "New answer notification default"
-msgstr "Erantzun berrien jakinarazpen lehenetsia"
+#: templates/user/user-settings.html:125 templates/user/user-settings.html:171
+msgid "Consentment texts"
+msgstr "Baldintza-onarpen testuak"
 
 #: templates/user/user-settings.html:137
 #, fuzzy
@@ -1443,12 +1455,14 @@ msgid "Please accept our data protection policy"
 msgstr "Onartu gure datu datuen babeserako gidalerroak"
 
 #: utils/wtf.py:72
-msgid "Your username"
+#, fuzzy
+msgid "Enter your username"
 msgstr "Zure erabiltzaile-izena"
 
 #: utils/wtf.py:73
-msgid "Your password"
-msgstr "Zure pasahitza"
+#, fuzzy
+msgid "Enter your password"
+msgstr "Berreskuratu pasahitza"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
@@ -1676,8 +1690,8 @@ msgid "Can't find username %s"
 msgstr "Ezin da %s erabiltzailea aurkitu"
 
 #: views/admin.py:208
-#, python-format
-msgid "We've sent an invitation to %s"
+#, fuzzy, python-format
+msgid "We have sent an invitation to %s"
 msgstr "Gonbidapena bidali diogu %s(r)i"
 
 #. i18n: Invitation to dave@example.com deleted OK
@@ -1909,7 +1923,7 @@ msgstr "Testua ongi gorde da"
 msgid "Couldn't find that token"
 msgstr "Ezin izan da token hori aurkitu"
 
-#: views/site.py:50 views/user.py:272
+#: views/site.py:50 views/user.py:284
 msgid "Your petition has expired"
 msgstr "Zure eskaera iraungitu egin da"
 
@@ -1994,8 +2008,8 @@ msgid "Welcome!"
 msgstr "Ongi etorri!"
 
 #: views/user.py:128 views/user.py:163
-#, python-format
-msgid "We've sent an email to %s"
+#, fuzzy, python-format
+msgid "We have sent an email to %s"
 msgstr "Eposta mezu bat bidali dugu %s(e)ra"
 
 #: views/user.py:179
@@ -2011,23 +2025,28 @@ msgstr "Webgune-izena ongi aldatu da"
 msgid "Connected to the Fediverse"
 msgstr ""
 
-#: views/user.py:236
+#: views/user.py:235
+#, fuzzy
+msgid "Fediverse configuration deleted OK"
+msgstr "Probatu konfigurazioa"
+
+#: views/user.py:248
 msgid "Cannot delete. You are the only Admin on this site"
 msgstr "Ezin da ezabatu. Zu zara webgune honetako administratzaile bakarra"
 
-#: views/user.py:244
+#: views/user.py:256
 msgid "Thank you for using LiberaForms"
 msgstr "Eskerrik asko LiberaForms erabiltzeagatik"
 
-#: views/user.py:269
+#: views/user.py:281
 msgid "We couldn't find that petition"
 msgstr "Ezin izan dugu eskaera aurkitu"
 
-#: views/user.py:284
+#: views/user.py:296
 msgid "Your email address is valid"
 msgstr "Zure eposta helbidea baliozkoa da"
 
-#: views/user.py:317
+#: views/user.py:329
 msgid "Bad credentials"
 msgstr "Kredentzial okerrak"
 
@@ -2189,4 +2208,28 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Ethical form software."
 #~ msgstr ""
+
+#~ msgid "Site styling"
+#~ msgstr "Webgunearen estiloa"
+
+#~ msgid "Email styling"
+#~ msgstr "Eposta estiloa"
+
+#~ msgid "Default texts"
+#~ msgstr "Lehenetsitako testuak"
+
+#~ msgid "Use a passphrase, with spaces"
+#~ msgstr "Erabili pasaesaldia, zuriuneekin"
+
+#~ msgid "eg: No holidays this year"
+#~ msgstr "adib.: Oporrik ez aurten"
+
+#~ msgid "By default"
+#~ msgstr "Lehenetsia"
+
+#~ msgid "New answer notification default"
+#~ msgstr "Erantzun berrien jakinarazpen lehenetsia"
+
+#~ msgid "Your password"
+#~ msgstr "Zure pasahitza"
 

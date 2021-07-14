@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-07-14 09:43+0200\n"
+"POT-Creation-Date: 2021-07-14 18:51+0200\n"
 "PO-Revision-Date: 2021-04-18 13:34+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
@@ -206,9 +206,8 @@ msgstr "Prueba la configuración"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
-#, fuzzy
-msgid "Site styling"
-msgstr "Preferencias del sitio web"
+msgid "Look and feel"
+msgstr ""
 
 #. Name for the website/instance
 #: templates/admin/admin-panel.html:24
@@ -235,14 +234,14 @@ msgstr ""
 msgid "Icon and Favicon"
 msgstr ""
 
-#. Website's primary colour
+#. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
-msgid "Primary colour"
+msgid "Primary color"
 msgstr ""
 
 #. Define the 'look' of emails
-#: templates/admin/admin-panel.html:79
-msgid "Email styling"
+#: templates/admin/admin-panel.html:79 templates/site/email-branding.html:16
+msgid "Email branding"
 msgstr ""
 
 #. Subtitle displayed on instance configuration page (/admin)
@@ -260,8 +259,7 @@ msgstr "Solo invitaciones"
 msgid "Consent"
 msgstr "Texto de consentimiento por omisión"
 
-#: templates/admin/admin-panel.html:121 templates/site/consent.html:28
-#: templates/user/new-user.html:51
+#: templates/admin/admin-panel.html:121 templates/user/new-user.html:51
 msgid "Terms and conditions"
 msgstr "Términos y Condiciones"
 
@@ -525,7 +523,7 @@ msgstr "Invitar a un usuario nuevo"
 
 #: templates/admin/list-invites.html:54 templates/answers/list-answers.html:342
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
-#: templates/user/fediverse-config.html:55
+#: templates/user/fediverse-config.html:56
 #: templates/user/user-settings.html:255
 msgid "Delete"
 msgstr "Borrar"
@@ -569,7 +567,7 @@ msgid "Form details"
 msgstr "Detalles del formulario"
 
 #: templates/answers/chart-answers.html:52
-#: templates/answers/list-answers.html:118
+#: templates/answers/list-answers.html:118 templates/user/user-settings.html:95
 #, fuzzy
 msgid "Notify me on each new answer"
 msgstr "Notifíqueme cuando haya una nueva respuesta"
@@ -946,7 +944,8 @@ msgid "Form templates"
 msgstr "Plantillas de formularios"
 
 #: templates/form/list-templates.html:15
-msgid "We've put together some forms you can use to get started."
+#, fuzzy
+msgid "We have put together some forms that you can use to get started."
 msgstr "Hemos adjuntado unos formularios para ayudarte."
 
 #: templates/form/list-templates.html:16
@@ -1084,7 +1083,7 @@ msgstr "Subir imagen"
 
 #: templates/site/change-icon.html:23
 #, fuzzy
-msgid "A small square image."
+msgid "A small square image"
 msgstr "Una pequeña y cuadrada imagen PNG"
 
 #: templates/site/change-icon.html:39
@@ -1104,12 +1103,18 @@ msgid "Submit"
 msgstr "Enviar"
 
 #: templates/site/consent.html:14
-msgid "Default texts"
-msgstr "Textos por omisión"
+#, fuzzy
+msgid "Consent texts"
+msgstr "Textos de consentimiento"
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
 msgstr ""
+
+#: templates/site/consent.html:28
+#, fuzzy
+msgid "Site terms and conditions"
+msgstr "Términos y Condiciones"
 
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
@@ -1132,10 +1137,10 @@ msgstr "Nuevos usuarios deben estar de acuerdo con estos términos y condiciones
 msgid "Required"
 msgstr "Requerido"
 
-#: templates/site/consent.html:96 templates/user/user-settings.html:125
-#: templates/user/user-settings.html:171
-msgid "Consentment texts"
-msgstr "Textos de consentimiento"
+#: templates/site/consent.html:96
+#, fuzzy
+msgid "Form consent texts"
+msgstr "Texto de consentimiento por omisión"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
@@ -1185,17 +1190,13 @@ msgstr "Creación de enlaces públicos"
 msgid "Scheme"
 msgstr "Esquema"
 
-#: templates/site/email-branding.html:16
-msgid "Email branding"
-msgstr ""
-
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
 
 #: templates/site/email-branding.html:24
 #, fuzzy
-msgid "Example email"
+msgid "Example email:"
 msgstr "Correo-e validado"
 
 #: templates/site/email-branding.html:46
@@ -1203,7 +1204,7 @@ msgid "Send test"
 msgstr ""
 
 #: templates/site/email-branding.html:64
-msgid "Keep the kilobytes to a minimum."
+msgid "Keep the kilobytes to a minimum"
 msgstr ""
 
 #: templates/site/email-branding.html:97
@@ -1316,15 +1317,20 @@ msgid "Letters and numbers. No accents."
 msgstr "Letras y números. Nada de acentos."
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
-msgid "Use a passphrase, with spaces"
-msgstr "Usa una frase, con espacios"
+msgid "Use a password with spaces and/or special characters."
+msgstr ""
+
+#: templates/user/new-user.html:33 templates/user/reset-password.html:18
+msgid "We suggest you use a sentence you will remember."
+msgstr ""
 
 #: templates/user/new-user.html:34 templates/user/reset-password.html:19
-msgid "eg: No holidays this year"
-msgstr "ej.: No hay vacaciones este año"
+msgid "eg: Peter cooks delicious food"
+msgstr ""
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
-msgid "Another eg: My dog has fleas"
+#, fuzzy
+msgid "Another eg: The cat living with me has fleas"
 msgstr "Otro ejemplo: Mi perro tiene pulgas"
 
 #: templates/user/new-user.html:106
@@ -1379,13 +1385,13 @@ msgid "Preferred language"
 msgstr "Idioma preferido"
 
 #: templates/user/user-settings.html:90
-msgid "By default"
-msgstr "Por omisión"
+#, fuzzy, python-format
+msgid "Email notifications"
+msgstr "Se quitó el editor %s"
 
-#: templates/user/user-settings.html:95
-#, fuzzy
-msgid "New answer notification default"
-msgstr "Avísame cuando hayan nuevas respuestas"
+#: templates/user/user-settings.html:125 templates/user/user-settings.html:171
+msgid "Consentment texts"
+msgstr "Textos de consentimiento"
 
 #: templates/user/user-settings.html:137
 msgid "Media"
@@ -1462,13 +1468,13 @@ msgstr ""
 
 #: utils/wtf.py:72
 #, fuzzy
-msgid "Your username"
+msgid "Enter your username"
 msgstr "Nombre de usuario"
 
 #: utils/wtf.py:73
 #, fuzzy
-msgid "Your password"
-msgstr "¿Has olvidado tu contraseña?"
+msgid "Enter your password"
+msgstr "Recuperar la contraseña"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
@@ -1708,8 +1714,8 @@ msgid "Can't find username %s"
 msgstr "No se puede encontrar el nombre de usuario %s"
 
 #: views/admin.py:208
-#, python-format
-msgid "We've sent an invitation to %s"
+#, fuzzy, python-format
+msgid "We have sent an invitation to %s"
 msgstr "Hemos enviado una invitación a %s"
 
 #. i18n: Invitation to dave@example.com deleted OK
@@ -1948,7 +1954,7 @@ msgstr "Se ha guardado el texto correctamente"
 msgid "Couldn't find that token"
 msgstr "No se ha encontrado ese clave"
 
-#: views/site.py:50 views/user.py:272
+#: views/site.py:50 views/user.py:284
 msgid "Your petition has expired"
 msgstr "Tu petición ha caducado"
 
@@ -2038,8 +2044,8 @@ msgid "Welcome!"
 msgstr "¡Bienvenida!"
 
 #: views/user.py:128 views/user.py:163
-#, python-format
-msgid "We've sent an email to %s"
+#, fuzzy, python-format
+msgid "We have sent an email to %s"
 msgstr "Hemos enviado un correo-e a %s"
 
 #: views/user.py:179
@@ -2055,24 +2061,29 @@ msgstr "Se cambió el nombre de sitio correctamente"
 msgid "Connected to the Fediverse"
 msgstr ""
 
-#: views/user.py:236
+#: views/user.py:235
+#, fuzzy
+msgid "Fediverse configuration deleted OK"
+msgstr "Prueba la configuración"
+
+#: views/user.py:248
 #, fuzzy
 msgid "Cannot delete. You are the only Admin on this site"
 msgstr "Se se puede eliminar el sitio actual"
 
-#: views/user.py:244
+#: views/user.py:256
 msgid "Thank you for using LiberaForms"
 msgstr ""
 
-#: views/user.py:269
+#: views/user.py:281
 msgid "We couldn't find that petition"
 msgstr "No hemos encontrado esa petición"
 
-#: views/user.py:284
+#: views/user.py:296
 msgid "Your email address is valid"
 msgstr "Tu dirección de correo-e es válida"
 
-#: views/user.py:317
+#: views/user.py:329
 msgid "Bad credentials"
 msgstr "Las credenciales no son correctos"
 
@@ -2370,4 +2381,34 @@ msgstr "Las credenciales no son correctos"
 
 #~ msgid "Please validated your email to continue"
 #~ msgstr ""
+
+#~ msgid "Site styling"
+#~ msgstr "Preferencias del sitio web"
+
+#~ msgid "Primary colour"
+#~ msgstr ""
+
+#~ msgid "Email styling"
+#~ msgstr ""
+
+#~ msgid "Default texts"
+#~ msgstr "Textos por omisión"
+
+#~ msgid "Keep the kilobytes to a minimum."
+#~ msgstr ""
+
+#~ msgid "Use a passphrase, with spaces"
+#~ msgstr "Usa una frase, con espacios"
+
+#~ msgid "eg: No holidays this year"
+#~ msgstr "ej.: No hay vacaciones este año"
+
+#~ msgid "By default"
+#~ msgstr "Por omisión"
+
+#~ msgid "New answer notification default"
+#~ msgstr "Avísame cuando hayan nuevas respuestas"
+
+#~ msgid "Your password"
+#~ msgstr "¿Has olvidado tu contraseña?"
 

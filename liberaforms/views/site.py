@@ -255,7 +255,7 @@ def edit_site():
     return render_template('edit-site.html', site=queriedSite)
 
 
-@site_bp.route('/site/primary-colour', methods=['GET', 'POST'])
+@site_bp.route('/site/primary-color', methods=['GET', 'POST'])
 @admin_required
 def primary_color():
     wtform=wtf.ChangePrimaryColor()

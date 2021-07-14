@@ -11,7 +11,7 @@
     <div class="col-md-6">
 
     <div class="title_1 delimited">
-        {%trans%}Default texts{%endtrans%}
+        {%trans%}Consent texts{%endtrans%}
         <div style="float:right">
             <a class="btn btn-sm btn-primary" role="button" href="/site/preview-new-user-form">
                 {%trans%}Preview New user form{%endtrans%}
@@ -25,7 +25,7 @@
 
         <div anchor="{{consent.name}}" class="title_3 delimited" style="margin-top:2em">
             {% if consent.id == site.terms_consent_id %}
-            {%trans%}Terms and conditions{%endtrans%}
+            {%trans%}Site terms and conditions{%endtrans%}
             {% elif consent.id == site.DPL_consent_id %}
             {%trans%}Data protection{%endtrans%}
             {% else %}
@@ -93,7 +93,7 @@
         </div>
         {% if loop.index == 1 %}
         <div class="title_2 delimited" style="margin-top:2em">
-            {%trans%}Consentment texts{%endtrans%}
+            {%trans%}Form consent texts{%endtrans%}
         </div>
         <div style="font-size: 0.9em; margin-top: -0.7rem">
             {%trans%}Shared texts can be used by other users in their forms as templates{%endtrans%}
