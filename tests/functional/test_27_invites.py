@@ -52,7 +52,10 @@ class TestInvites():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div class="success flash_message">' in html
+        if not os.environ['SKIP_EMAILS']:
+            assert 'Recipient address rejected' in html
+        else:
+            assert '<div class="success flash_message">' in html
         assert '<!-- list_invites_page -->' in html
         new_invite = Invite.find(email=users['dummy_1']['email'])
         assert new_invite != None
@@ -131,7 +134,10 @@ class TestInvites():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div class="success flash_message">' in html
+        if not os.environ['SKIP_EMAILS']:
+            assert 'Recipient address rejected' in html
+        else:
+            assert '<div class="success flash_message">' in html
         assert '<!-- list_invites_page -->' in html
         new_invite = Invite.find(email=users['dummy_1']['email'])
         assert new_invite != None
