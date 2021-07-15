@@ -120,7 +120,7 @@ class TestSiteConfig():
         """ Tests valid and invalid html hex color
             Tests admin permission
         """
-        url = "/site/primary-colour"
+        url = "/site/primary-color"
         response = anon_client.get(
                         url,
                         follow_redirects=True,

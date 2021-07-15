@@ -253,12 +253,12 @@ class Form(db.Model, CRUD):
 
     def get_total_answers(self):
         return self.answers.count()
-        #return Answer.find_all(form_id=self.id).count()
 
     def get_last_answer_date(self):
         last_answer = Answer.find(form_id=self.id)
         if last_answer:
-            return last_answer.created.strftime('%Y-%m-%d %H:%M:%S')
+            frmt = "%Y-%m-%d %H:%M:%S"
+            return utils.utc_to_g_timezone(last_answer.created).strftime(frmt)
         return ""
 
     def is_enabled(self):
