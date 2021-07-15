@@ -214,14 +214,19 @@ def fediverse_config(username):
     if wtform.validate_on_submit():
         data = {"node_url": wtform.node_url.data,
                 "access_token": wtform.access_token.data}
-        g.current_user.fedi_auth = data
+        g.current_user.set_fedi_auth(data)
+        if not g.current_user.fedi_auth:
+            flash(_("Could not encrypt your access token"), 'warning')
+        else:
+            flash(_("Connected to the Fediverse"), 'success')
         g.current_user.save()
-        flash(_("Connected to the Fediverse"), 'success')
         return redirect(make_url_for('user_bp.user_settings',
                                      username=g.current_user.username))
     if request.method == 'GET' and g.current_user.fedi_auth:
-        wtform.node_url.data = g.current_user.fedi_auth['node_url']
-        wtform.access_token.data = g.current_user.fedi_auth['access_token']
+        fedi_auth = g.current_user.get_fedi_auth()
+        if fedi_auth: # successfully decrypted
+            wtform.node_url.data = fedi_auth['node_url']
+            wtform.access_token.data = fedi_auth['access_token']
     return render_template('fediverse-config.html', wtform=wtform)
 
 @user_bp.route('/user/<string:username>/fediverse/delete-auth', methods=['POST'])

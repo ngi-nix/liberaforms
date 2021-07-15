@@ -133,6 +133,7 @@
           </tr>
         </table>
 
+        {% if g.current_user.get_uploads_enabled() or config['CRYPTO_KEY'] %}
         <div class="title_2 delimited">
             {%trans%}Media{%endtrans%}
         </div>
@@ -150,13 +151,14 @@
             </td>
           </tr>
           {% endif %}
+          {% if config['CRYPTO_KEY'] %}
           <tr>
             <td>
               {%trans%}Fediverse connect{%endtrans%}
             </td>
             <td>
               {% if g.current_user.fedi_auth %}
-                {{ g.current_user.fedi_auth['node_url'] }}
+                {{ g.current_user.get_fedi_auth()['node_url'] }}
               {% endif %}
             </td>
             <td class="text-right">
@@ -166,6 +168,7 @@
               </a>
             </td>
           </tr>
+          {% endif %}
           <tr style="display:none">
             <td>
                 {%trans%}Consentment texts{%endtrans%}
@@ -178,6 +181,7 @@
             </td>
           </tr>
         </table>
+        {% endif %}
 
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">

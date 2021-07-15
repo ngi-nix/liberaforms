@@ -9,7 +9,7 @@ import os, shutil
 from io import BytesIO
 from flask import current_app
 from liberaforms.utils.storage.remote import RemoteStorage
-from liberaforms.utils.storage.crypto import encrypt_file, decrypt_file_content
+from liberaforms.utils.crypto import encrypt_file, decrypt_file_content
 from liberaforms.utils import utils
 
 
