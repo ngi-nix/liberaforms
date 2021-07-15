@@ -25,7 +25,7 @@ class FediPublisher():
             media_id = self._upload_media_to_node(image_src)
             if media_id:
                 data['media_ids']=[media_id]
-        fedi_auth = g.current_user.fedi_auth
+        fedi_auth = g.current_user.get_fedi_auth()
         try:
             endpoint = f"{fedi_auth['node_url']}/api/v1/statuses"
             resp = requests.post(
@@ -78,7 +78,7 @@ class FediPublisher():
 
         """ upload the media file to the node
         """
-        fedi_auth = g.current_user.fedi_auth
+        fedi_auth = g.current_user.get_fedi_auth()
         endpoint = f"{fedi_auth['node_url']}/api/v1/media"
         try:
             with open(tmp_filepath, 'rb') as f:

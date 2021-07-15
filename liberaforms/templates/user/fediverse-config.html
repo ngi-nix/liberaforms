@@ -118,15 +118,12 @@
     elem("toggle-token-display-button").addEventListener("click", function(event) {
       var button_icon = $("#toggle-token-display-button").find("i")
       if (button_icon.hasClass("fa-eye")) {
-        $("#access_token_diplay").val(access_token_value)
+        $("#access_token_diplay").val(elem('access_token').value)
         $("#access_token_diplay").prop("disabled", false)
         button_icon.removeClass("fa-eye").addClass("fa-eye-slash")
       } else {
-        $("#access_token_diplay").val(hidden_token)
-        $("#access_token_diplay").prop("disabled", true)
-        button_icon.removeClass("fa-eye-slash").addClass("fa-eye")
+        hide_token()
       }
-      return;
     });
     if ( access_token_value === "" ) {
       //elem("save_config").disabled = true;
@@ -134,6 +131,13 @@
     }
   });
 
+  function hide_token() {
+    $("#toggle-token-display-button").show()
+    var button_icon = $("#toggle-token-display-button").find("i")
+    $("#access_token_diplay").val(hidden_token)
+    $("#access_token_diplay").prop("disabled", true)
+    button_icon.removeClass("fa-eye-slash").addClass("fa-eye")
+  }
 
   elem("node_url").addEventListener("input", function(event) {
     elem('pleroma_url').value = elem("node_url").value
@@ -195,7 +199,7 @@
   		code: code};
   		post(url2, args2, function(data) {
   			elem('access_token').value = data.access_token;
-  			elem('access_token_diplay').value = data.access_token;
+        hide_token()
         //elem('pleroma_url').value = pleroma_url;
         //elem('node_url').value = pleroma_url;
   		});

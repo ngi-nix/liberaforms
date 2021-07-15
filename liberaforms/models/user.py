@@ -19,6 +19,7 @@ from liberaforms.models.answer import Answer
 from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
+from liberaforms.utils import crypto
 from liberaforms.utils import utils
 
 from pprint import pprint
@@ -217,6 +218,15 @@ class User(db.Model, CRUD):
             "notifyNewUser": False,
             "notifyNewForm": False
         }
+
+    def get_fedi_auth(self):
+        if not self.fedi_auth:
+            return {"node_url": "", "access_token": ""}
+        else:
+            return crypto.decrypt_dict(self.fedi_auth)
+
+    def set_fedi_auth(self, auth_dict):
+        self.fedi_auth = crypto.encrypt_dict(auth_dict)
 
     """
     send this admin an email when a new user registers at the site
