@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 import os, markdown, shutil
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
 from PIL import Image
@@ -293,8 +293,8 @@ class Site(db.Model, CRUD):
         return User.find_all(**kwargs)
 
     def get_statistics(self, **kwargs):
-        today = datetime.date.today().strftime("%Y-%m")
-        one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
+        today = datetime.now(timezone.utc)
+        one_year_ago = today - timedelta(days=365)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
@@ -308,14 +308,14 @@ class Site(db.Model, CRUD):
             two_digit_month="{0:0=2d}".format(month)
             year_month = f"{year}-{two_digit_month}"
             result['labels'].append(year_month)
-            if year_month == today:
+            if year_month == today.strftime("%Y-%m"):
                 break
         total_answers=0
         total_forms=0
         total_users=0
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
-            start_date = datetime.datetime.strptime(date_str, '%Y, %m')
+            start_date = datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
             monthy_users = User.query.filter(
                                     User.created >= start_date,
