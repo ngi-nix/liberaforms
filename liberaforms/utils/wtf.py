@@ -9,7 +9,7 @@ import os, re
 import mimetypes, pytz
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
-                     PasswordField, BooleanField, RadioField, FileField)
+                     PasswordField, BooleanField, RadioField, FileField, HiddenField)
 from wtforms.fields.html5 import URLField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask import current_app, g
@@ -191,7 +191,7 @@ class FediverseAuth(FlaskForm):
     node_url = StringField(_("Fediverse node"),
                           default="",
                           validators=[DataRequired()])
-    access_token = StringField(_("Access token"),
+    access_token = HiddenField(_("Access token"),
                                default="",
                                validators=[DataRequired()])
 
