@@ -13,24 +13,41 @@
     <div class="col-md-6">
 
     <div class="returnToForm">
-        <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Return to form{%endtrans%}</a>
-        {{ form.slug }}
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/view/{{form.id}}">
+        {%trans%}Return to form{%endtrans%}
+      </a>
+      {{ form.slug }}
     </div>
 
     <div class="row">
-        <div class="col">
-            <div id="toggle_notification" class="btn-group btn-toggle">
-                <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-                <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-            </div>
-            {%trans%}Notify me when this form expires{%endtrans%}
+      <div class="col">
+        <div id="toggle_notification" class="btn-group btn-toggle">
+          <button id="notification_true"
+                  class="btn btn-sm btn-default
+                  {% if form.editors[g.current_user.id|string]['notification']['expiredForm'] %}
+                  btn-success
+                  {% endif %}">
+            {%trans%}True{%endtrans%}
+          </button>
+          <button id="notification_false"
+                  class="btn btn-sm btn-default
+                  {% if not form.editors[g.current_user.id|string]['notification']['expiredForm'] %}
+                  btn-primary
+                  {% endif %}">
+            {%trans%}False{%endtrans%}
+          </button>
         </div>
-        <div class="col-auto">
-            <span id="expired_alert" {%if not form.expired%}style="display:none;"{%endif%}>
-            <i class="fa fa-exclamation-circle highlightedText" aria-hidden="true"></i>
-            {%trans%}Expired{%endtrans%}
-            </span>
-        </div>
+        {%trans%}Notify me when this form expires{%endtrans%}
+      </div>
+      <div class="col-auto">
+        <span id="expired_alert"
+              {%if not form.expired%}style="display:none;"{%endif%}>
+          <i class="fa fa-exclamation-circle highlightedText" aria-hidden="true"></i>
+          {%trans%}Expired{%endtrans%}
+        </span>
+      </div>
     </div>
     <p>&nbsp;</p>
 
@@ -43,23 +60,28 @@
     </div>
 
     <form id="date-form" method="POST" style="padding:0.5em">
-        <div class="row">
-            <div class="col-auto">
-                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-                <input id="date" name="date" type="date" class="form-control" onchange="js:dateSet(event);">
-                <div class="mr-2"></div>
-
-            </div>
-            <div class="col">
-                <input id="time" name="time" type="time" class="form-control">
-            </div>
-            <div class="col-auto">
-                <input  id="date-button"
-                        class="btn btn-success float-right"
-                        type="submit" value="{%trans%}Save changes{%endtrans%}" />
-            </div>
+      <div class="row">
+        <div class="col-auto">
+          <input type="hidden"
+                 name="csrf_token"
+                 value="{{ csrf_token() }}" />
+          <input id="date"
+                 name="date"
+                 type="date"
+                 class="form-control"
+                 onchange="js:dateSet(event);">
+          <div class="mr-2"></div>
         </div>
-        <span id="date-form-error" class="formError" style="display:none;"></span>
+        <div class="col">
+            <input id="time" name="time" type="time" class="form-control">
+        </div>
+        <div class="col-auto">
+            <input  id="date-button"
+                    class="btn btn-success float-right"
+                    type="submit" value="{%trans%}Save changes{%endtrans%}" />
+        </div>
+      </div>
+      <span id="date-form-error" class="formError" style="display:none;"></span>
     </form>
     </div>
 </div>
@@ -72,16 +94,23 @@
         </div>
 
         {% for field_name, values in form.get_available_number_type_fields().items() %}
-            <div class="input-group input-group-sm mb-3 flex-nowrap" style="padding:0.5em;">
+            {% set field_label = form.get_field_label(field_name) %}
+            {# i18n: Applies to 'Number' fields. Form will expire when the sum of all values of this field reaches a value #}
+            {% set placeholder=_("The sum of all '%s'" % field_label) %}
+
+            <div class="input-group input-group-sm mb-3 flex-nowrap"
+                 style="padding:0.5em;">
               <div class="input-group-prepend">
-                <span class="input-group-text" id="addon-{{field_name}}">
-                    {{ form.get_field_label(field_name)|safe }}
+                <span class="input-group-text"
+                      id="addon-{{field_name}}">
+                  {{ field_label }}
                 </span>
               </div>
               <input    id="{{field_name}}" type="number" class="form-control pl-sm-3 condition"
                         value="{{values.condition}}"
                         aria-label="{{ form.get_field_label(field_name) }}"
-                        aria-describedby="addon-{{field_name}}">
+                        aria-describedby="addon-{{field_label}}"
+                        placeholder="{{ placeholder }}">
               <div class="input-group-append">
                 <input  id="button-{{field_name}}"
                         class="btn btn-success"
@@ -94,39 +123,41 @@
     </div>
 {% endif %}
     <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
 
-        <div class="title_2" style="margin-top:1em">
-            {%trans%}Maximum answers{%endtrans%}
+      <div class="title_2" style="margin-top:1em">
+          {%trans%}Maximum answers{%endtrans%}
+      </div>
+        <div class="input-group input-group-sm mb-3 flex-nowrap"
+             style="padding:0.5em;">
+          <div class="input-group-prepend">
+            <span class="input-group-text"
+                  id="addon-total-answers">
+                {%trans%}The form will expire after{%endtrans%}
+            </span>
+          </div>
+          {% set total_answers = form.expiryConditions['totalAnswers'] %}
+          {% if total_answers == 0 %}
+                {% set total_answers = "" %}
+          {% endif %}
+          <input    id="total_answers" type="number" class="form-control pl-sm-3 condition"
+                    value="{{ total_answers }}"
+                    aria-label="{{ form.get_field_label(field_name) }}"
+                    aria-describedby="addon-total-answers">
+          <div class="input-group-append">
+            <input  id="button-total_answers"
+                    class="btn btn-success"
+                    type="button" value="{%trans%}responses{%endtrans%}"
+                    onClick="js:setTotalAnswers();" />
+          </div>
         </div>
-            <div class="input-group input-group-sm mb-3 flex-nowrap" style="padding:0.5em;">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="addon-total-answers">
-                    {%trans%}The form will expire after{%endtrans%}
-                </span>
-              </div>
-              {% set total_answers = form.expiryConditions['totalAnswers'] %}
-              {% if total_answers == 0 %}
-                    {% set total_answers = "" %}
-              {% endif %}
-              <input    id="total_answers" type="number" class="form-control pl-sm-3 condition"
-                        value="{{ total_answers }}"
-                        aria-label="{{ form.get_field_label(field_name) }}"
-                        aria-describedby="addon-total-answers">
-              <div class="input-group-append">
-                <input  id="button-total_answers"
-                        class="btn btn-success"
-                        type="button" value="{%trans%}responses{%endtrans%}"
-                        onClick="js:setTotalAnswers();" />
-              </div>
-            </div>
-        </div>
+      </div>
     </div>
 
     <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
+      <div class="col-md-3"></div>
+      <div class="col-md-6">
 
         <div class="title_1 delimited" style="margin-top:2em">
             {%trans%}When the form has expired{%endtrans%}
@@ -143,13 +174,18 @@
             {{ form.expired_text_html | safe }}
         </div>
         <div id="expired-editor" style="display:none">
-            <input id="save-expired-mde" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
-            <input id="cancel-expired-mde" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
+            <input id="save-expired-mde"
+                   class="btn-success btn btn-sm"
+                   type="button"
+                   value="{%trans%}Save{%endtrans%}" />
+            <input id="cancel-expired-mde"
+                   class="btn-primary btn btn-sm"
+                   type="button"
+                   value="{%trans%}Cancel{%endtrans%}" />
             <p></p>
             <textarea id="expired-mde">{{ form.expired_text_markdown }}</textarea>
         </div>
-
-        </div>
+      </div>
     </div>
 </div>
 
