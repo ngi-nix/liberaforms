@@ -143,8 +143,21 @@
 
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
-  AGPLv3
-  <a href="https://liberaforms.org">LiberaForms</a>
+    <i class="fa fa-question-circle" aria-hidden="true"></i>
+    {% if ('current_user' in g and g.current_user) %}
+    <a href="https://docs.liberaforms.org/{{g.current_user['preferences']['language']}}"
+       target="_blank">
+      {%trans%}User guide{%endtrans%}
+    </a>
+    {% else %}
+    <a href="https://docs.liberaforms.org"
+       target="_blank">
+      {%trans%}User guide{%endtrans%}
+    </a>
+    {% endif %}
+    | <i class="fa fa-copyright" aria-hidden="true"></i>
+    AGPLv3 |
+    <a href="https://liberaforms.org">LiberaForms</a>
 </div>
 
 
