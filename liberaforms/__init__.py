@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, logging
+import sys, os, logging
 from datetime import datetime
 
 #import sys
@@ -25,7 +25,7 @@ babel = Babel()
 session = Session()
 csrf = CSRFProtect()
 
-#sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
+sys.path.append(os.path.dirname(os.path.realpath(__file__)) + "/form_templates")
 
 def create_app():
     from liberaforms.config.logging import dictConfig
@@ -37,7 +37,7 @@ def create_app():
 
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
-    
+
     db.init_app(app)
     ma.init_app(app)
     babel.init_app(app)
