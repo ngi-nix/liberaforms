@@ -211,6 +211,12 @@
           </div>
         </td>
       </tr>
+      <tr>
+        <td colspan="2">
+          {%trans%}Default timezone{%endtrans%}
+        </td>
+        <td class="text-right">{{config['DEFAULT_TIMEZONE']}}</td>
+      </tr>
       {% endif %}
     </table>
 
@@ -224,10 +230,6 @@
       <tr>
         <td>{%trans%}Created{%endtrans%}</td>
         <td>{{site.created.astimezone(g.timezone).strftime("%Y-%m-%d")}}</td>
-      </tr>
-      <tr>
-        <td>{%trans%}Default timezone{%endtrans%}</td>
-        <td>{{config['DEFAULT_TIMEZONE']}}</td>
       </tr>
       <tr>
         <td>{%trans%}Version{%endtrans%}</td>
