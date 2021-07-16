@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-07-16 14:32+0200\n"
-"PO-Revision-Date: 2021-07-16 16:41+0200\n"
+"PO-Revision-Date: 2021-07-16 18:02+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
@@ -202,7 +202,7 @@ msgstr "Erabilera-gida"
 #. Main title displayed on site configuration page (/admin)
 #: templates/admin/admin-panel.html:13
 msgid "Site configuration"
-msgstr "Webgune konfigurazioa"
+msgstr "Webguneko konfigurazioa"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
