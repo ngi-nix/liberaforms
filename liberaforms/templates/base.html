@@ -144,12 +144,14 @@
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
     {% if ('current_user' in g and g.current_user) %}
-    <i class="fa fa-question-circle" aria-hidden="true"></i>
-    <a href="https://docs.liberaforms.org/{{g.current_user['preferences']['language']}}"
-       target="_blank">
-      {%trans%}User guide{%endtrans%}
-    </a>
-    |
+      {% set user_lang = g.current_user['preferences']['language'] %}
+      {% set docs_lang = g.site.get_liberaforms_docs_language(user_lang) %}
+      <i class="fa fa-question-circle" aria-hidden="true"></i>
+      <a href="https://docs.liberaforms.org/{{docs_lang}}"
+         target="_blank">
+        {%trans%}User guide{%endtrans%}
+      </a>
+      |
     {% endif %}
     <i class="fa fa-copyright" aria-hidden="true"></i>
     AGPLv3 |
