@@ -374,5 +374,5 @@ class Site(db.Model, CRUD):
     """
     @staticmethod
     def get_liberaforms_docs_language(lang):
-        DOCS_LANGUAGES = ['en', 'eu', 'ca']
+        DOCS_LANGUAGES = ['en', 'eu', 'ca', 'es']
         return lang if lang in DOCS_LANGUAGES else "en"
