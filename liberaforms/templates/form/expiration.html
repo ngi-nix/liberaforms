@@ -141,14 +141,14 @@
           {% if total_answers == 0 %}
                 {% set total_answers = "" %}
           {% endif %}
-          <input    id="total_answers" type="number" class="form-control pl-sm-3 condition"
+          <input    id="total_answers" type="number" min="0" class="form-control pl-sm-3 condition"
                     value="{{ total_answers }}"
                     aria-label="{{ form.get_field_label(field_name) }}"
                     aria-describedby="addon-total-answers">
           <div class="input-group-append">
             <input  id="button-total_answers"
                     class="btn btn-success"
-                    type="button" value="{%trans%}responses{%endtrans%}"
+                    type="button" value="{%trans%}answers{%endtrans%}"
                     onClick="js:setTotalAnswers();" />
           </div>
         </div>
