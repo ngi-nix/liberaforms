@@ -8,13 +8,14 @@ This file is part of LiberaForms.
 import os
 import json
 from flask import g, request, render_template, redirect
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app, jsonify
 from flask import flash
 from flask_babel import gettext as _
-from liberaforms.utils import wtf
 from liberaforms.models.media import Media
+from liberaforms.models.schemas.media import MediaSchema
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse, human_readable_bytes
+from liberaforms.utils import wtf
 from liberaforms.utils import validators
 
 from pprint import pprint
@@ -38,7 +39,9 @@ def save_media():
                              request.files['media_file'],
                              request.form['alt_text'])
     if saved:
-        return JsonResponse(json.dumps(media.get_values()))
+        return jsonify(
+            media=MediaSchema().dump(media)
+        ), 200
     return JsonResponse(json.dumps(False))
 
 @media_bp.route('/user/<string:username>/media', methods=['GET'])
@@ -74,5 +77,7 @@ def remove_media(media_id):
 def get_values(media_id):
     media = Media.find(id=media_id, user_id=g.current_user.id)
     if media:
-        return JsonResponse(json.dumps(media.get_values()))
+        return jsonify(
+            media=MediaSchema().dump(media)
+        ), 200
     return JsonResponse(json.dumps(False))
