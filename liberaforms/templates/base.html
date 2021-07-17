@@ -7,7 +7,19 @@
   {% endif %}
   {% if 'site' in g and g.site %}
   <title>{{ g.site.siteName }}</title>
-  {% endif %}
+    <meta property="og:type" content="website" />
+    {% if not opengraph -%}
+    <meta property="og:title" content="{{ g.site.siteName }}" />
+    <meta property="og:url" content="{{ g.site.host_url }}" />
+    <meta property="og:image" content="{{ g.site.host_url }}favicon.ico" />
+    {% else -%}
+    <meta property="og:site_name" content="{{ g.site.siteName }}" />
+    <meta property="og:title" content="{{ opengraph['title'] }}" />
+    <meta property="og:url" content="{{ opengraph['url'] }}" />
+    <meta property="og:description" content="{{ opengraph['description'] }}" />
+    <meta property="og:image" content="{{ opengraph['image'] }}" />
+    {% endif -%}
+  {% endif -%}
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
@@ -143,14 +155,14 @@
 
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
-    {% if ('current_user' in g and g.current_user) %}
+    {% if ('current_user' in g and g.current_user) -%}
     <i class="fa fa-question-circle" aria-hidden="true"></i>
     <a href="https://docs.liberaforms.org/{{g.current_user['preferences']['language']}}"
        target="_blank">
       {%trans%}User guide{%endtrans%}
     </a>
     |
-    {% endif %}
+    {% endif -%}
     <i class="fa fa-copyright" aria-hidden="true"></i>
     AGPLv3 |
     <a href="https://liberaforms.org">LiberaForms</a>
