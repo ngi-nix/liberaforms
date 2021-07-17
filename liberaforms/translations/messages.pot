@@ -1153,6 +1153,10 @@ msgstr ""
 msgid "Scheme"
 msgstr ""
 
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr ""
+
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
@@ -1435,10 +1439,6 @@ msgstr ""
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr ""
-
-#: utils/wtf.py:109
-msgid "Port"
 msgstr ""
 
 #: utils/wtf.py:110
@@ -2012,4 +2012,3 @@ msgstr ""
 #: views/user.py:334
 msgid "Bad credentials"
 msgstr ""
-

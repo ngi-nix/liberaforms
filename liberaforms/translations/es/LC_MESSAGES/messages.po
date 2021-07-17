@@ -1196,6 +1196,10 @@ msgstr "Creación de enlaces públicos"
 msgid "Scheme"
 msgstr "Esquema"
 
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr "Puerto"
+
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
@@ -1494,10 +1498,6 @@ msgstr "¿Has olvidado tu contraseña?"
 #: utils/wtf.py:90
 msgid "New email address"
 msgstr "Nueva dirección de correo-e"
-
-#: utils/wtf.py:109
-msgid "Port"
-msgstr "Puerto"
 
 #: utils/wtf.py:110
 msgid "Encryption"
@@ -2424,4 +2424,3 @@ msgstr "Las credenciales no son correctos"
 
 #~ msgid "responses"
 #~ msgstr "respuestas"
-

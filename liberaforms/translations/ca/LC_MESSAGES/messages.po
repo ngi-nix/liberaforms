@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2021-07-17 12:00+0200\n"
+=======
+"POT-Creation-Date: 2021-07-17 15:19+0200\n"
+>>>>>>> develop
 "PO-Revision-Date: 2021-06-17 12:44+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: ca\n"
@@ -25,7 +29,11 @@ msgid "Marked"
 msgstr "Anotat"
 
 #. i18n: Used for sort items by creation order, almost always as column title
+<<<<<<< HEAD
 #: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:235
+=======
+#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:231
+>>>>>>> develop
 #: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:154
 #: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
 #: templates/admin/list-users.html:41 templates/form/inspect-form.html:363
@@ -198,7 +206,11 @@ msgstr "Crear un compte"
 msgid "Login"
 msgstr "Entrar"
 
+<<<<<<< HEAD
 #: templates/base.html:152
+=======
+#: templates/base.html:150
+>>>>>>> develop
 msgid "User guide"
 msgstr ""
 
@@ -316,6 +328,7 @@ msgstr "Idioma per omissió"
 msgid "Enable form attachments"
 msgstr "Esborrar el formulari i respostes"
 
+<<<<<<< HEAD
 #: templates/admin/admin-panel.html:220
 #, fuzzy
 msgid "Default timezone"
@@ -328,6 +341,20 @@ msgid "Installation"
 msgstr "Invitacions"
 
 #: templates/admin/admin-panel.html:239
+=======
+#: templates/admin/admin-panel.html:216
+#, fuzzy
+msgid "Default timezone"
+msgstr "Usa'n un per defecte"
+
+#. Title in Admin panel displaying info about installation
+#: templates/admin/admin-panel.html:226
+#, fuzzy
+msgid "Installation"
+msgstr "Invitacions"
+
+#: templates/admin/admin-panel.html:235
+>>>>>>> develop
 msgid "Version"
 msgstr ""
 
@@ -1197,6 +1224,10 @@ msgstr "Creació d’enllaços públics"
 msgid "Scheme"
 msgstr "Esquema"
 
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr "Port"
+
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
@@ -1495,10 +1526,6 @@ msgstr "Has oblidat la teva contrassenya? "
 #: utils/wtf.py:90
 msgid "New email address"
 msgstr "Nova adreça de correu"
-
-#: utils/wtf.py:109
-msgid "Port"
-msgstr "Port"
 
 #: utils/wtf.py:110
 msgid "Encryption"
