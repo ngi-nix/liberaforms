@@ -154,7 +154,7 @@
           {%trans%}Public links{%endtrans%}
         </td>
         <td>
-          <span id="site_scheme">{{site.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.port %}style="display:none"{% endif %}>:{{ site.port }}</span>/xxxx
+          <span >{{site.scheme}}</span>://{{site.hostname}}<span {%if not site.port%}style="display:none"{%endif%}>:{{site.port}}</span>/xxxx
         </td>
         <td class="text-right">
           <input  class="btn-primary btn btn-xs"
