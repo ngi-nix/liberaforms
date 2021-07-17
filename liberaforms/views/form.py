@@ -344,7 +344,8 @@ def fedi_publish(id):
                                            wtform.image_source.data,
                                            fediverse=True)
         if status['published'] == True:
-            flash(_("Published at %s" % status['msg']), 'success')
+            status_uri = status['msg']
+            flash(_("Published at %s" % status_uri), 'success')
         else:
             flash(status['msg'], 'warning')
         return redirect(make_url_for('form_bp.inspect_form', id=id))
