@@ -75,7 +75,7 @@ class TestUserMedia():
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert response.json['file_name'] == valid_media_name
+        assert response.json['media']['file_name'] == valid_media_name
         assert g.current_user.media.count() == initial_media_count + 1
         media = Media.find(id=1)
         media_path = os.path.join(current_app.config['MEDIA_DIR'], str(g.current_user.id))
