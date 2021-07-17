@@ -736,6 +736,7 @@ def view_form(slug):
     return render_template('view-form.html',
                             form=queriedForm,
                             max_attachment_size_for_humans=max_attach_size,
+                            opengraph=queriedForm.get_opengraph(),
                             navbar=False,
                             no_bot=True)
 
