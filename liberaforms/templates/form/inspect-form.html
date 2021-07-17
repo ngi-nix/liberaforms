@@ -400,9 +400,8 @@
                    type="button"
                    value="{%trans%}Cancel{%endtrans%}" />
             <p></p>
-            <textarea id="after-submit-mde">
-              {{ form.after_submit_text_markdown }}
-            </textarea>
+            <!-- keep textarea on one line -->
+            <textarea id="after-submit-mde">{{ form.after_submit_text_markdown }}</textarea>
         </div>
         {% endif %}
 
@@ -435,9 +434,8 @@
                    type="button"
                    value="{%trans%}Cancel{%endtrans%}" />
             <p></p>
-            <textarea id="expired-mde">
-              {{ form.expired_text_markdown }}
-            </textarea>
+            <!-- keep textarea on one line -->
+            <textarea id="expired-mde">{{ form.expired_text_markdown }}</textarea>
         </div>
         {% endif %}
         {% endif %}
