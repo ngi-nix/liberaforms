@@ -117,17 +117,6 @@ class Media(db.Model, CRUD, Storage):
         #except Exception as error:
         #    current_app.logger.warning(f"Could not create thumbnail: {error}")
 
-    def get_values(self):
-        return {
-                    "id": self.id,
-                    "created": self.created.strftime('%Y-%m-%d'),
-                    "file_name": self.file_name,
-                    "file_size": self.file_size,
-                    "image_url": self.get_url(),
-                    "thumbnail_url": self.get_thumbnail_url(),
-                    "alt_text": self.alt_text,
-                }
-
 
 #@event.listens_for(Media, "after_delete")
 #def delete_user_media(mapper, connection, target):
