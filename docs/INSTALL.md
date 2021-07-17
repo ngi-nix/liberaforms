@@ -84,6 +84,40 @@ If you need to delete the database
 flask database drop
 ```
 
+## Encryption
+
+LiberaForms encrypts passwords by default.
+
+These other values are also encrypted:
+
+* Form attachments when they are submitted
+* Fediverse authentification
+
+You need to create a key for those to work.
+
+### Create the key
+
+```
+flask cryptokey create
+
+olYyUwGT--example-key--c9AkH_HoMEWg9Q=
+
+```
+
+> Important. Save this key somewhere safe and do not lose it!
+
+Copy the generated key and save it in a file with a name you will recognize.
+Something like `my.domain.com.key`.
+
+Now add the key you have generated to your `.env` file
+
+```
+CRYPTO_KEY=olYyUwGT--example-key--c9AkH_HoMEWg9Q=
+```
+
+Restart LiberaForms to take efect.
+
+
 ### Database backup
 
 Run this and check if a copy is dumped correctly.
