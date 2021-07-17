@@ -8,17 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-07-16 14:32+0200\n"
+"POT-Creation-Date: 2021-07-17 15:19+0200\n"
 "PO-Revision-Date: 2021-07-16 18:02+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"X-Generator: Poedit 3.0\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
 #. not
@@ -27,7 +26,7 @@ msgid "Marked"
 msgstr "Markatuta"
 
 #. i18n: Used for sort items by creation order, almost always as column title
-#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:225
+#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:231
 #: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:154
 #: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
 #: templates/admin/list-users.html:41 templates/form/inspect-form.html:363
@@ -66,19 +65,23 @@ msgstr "Testuingurua"
 
 #. i18n: Example content in template for new form. '\n' is used for linebreak.
 #: models/form.py:752
-msgid " * Describe your form.\n"
+msgid ""
+" * Describe your form.\n"
 " * Add relevant content, links, images, etc."
-msgstr " * Deskribatu zure galdetegia.\n"
+msgstr ""
+" * Deskribatu zure galdetegia.\n"
 " * Gehitu beharrezko edukia, estekak, irudiak etab."
 
 #. i18n: Template message for email invitation. '\n' is used for linebreak.
 #: models/invite.py:65
-msgid "Hello,\n"
+msgid ""
+"Hello,\n"
 "\n"
 "You have been invited to LiberaForms.\n"
 "\n"
 "Regards."
-msgstr "Kaixo!\n"
+msgstr ""
+"Kaixo!\n"
 "\n"
 "LiberaForms-era gonbidatu zaituzte.\n"
 "\n"
@@ -195,7 +198,7 @@ msgstr "Sortu kontua"
 msgid "Login"
 msgstr "Hasi saioa"
 
-#: templates/base.html:150 templates/base.html:155
+#: templates/base.html:150
 msgid "User guide"
 msgstr "Erabilera-gida"
 
@@ -310,16 +313,16 @@ msgstr "Hizkuntza lehenetsia"
 msgid "Enable form attachments"
 msgstr "Gaitu galdetegiko eranskinak"
 
-#. Title in Admin panel displaying info about installation
-#: templates/admin/admin-panel.html:220
-msgid "Installation"
-msgstr "Instalazioa"
-
-#: templates/admin/admin-panel.html:229
+#: templates/admin/admin-panel.html:216
 msgid "Default timezone"
 msgstr "Lehenetsitako ordu-zona"
 
-#: templates/admin/admin-panel.html:233
+#. Title in Admin panel displaying info about installation
+#: templates/admin/admin-panel.html:226
+msgid "Installation"
+msgstr "Instalazioa"
+
+#: templates/admin/admin-panel.html:235
 msgid "Version"
 msgstr "Bertsioa"
 
@@ -931,7 +934,9 @@ msgstr "Hasteko erabil ditzakezun galdetegi batzuk bildu ditugu."
 
 #: templates/form/list-templates.html:16
 msgid "Choose the template that best suits your needs and edit it to fit."
-msgstr "Aukeratu zure beharretara hobekien egokitzen den txantiloia eta editatu, egokitzeko."
+msgstr ""
+"Aukeratu zure beharretara hobekien egokitzen den txantiloia eta editatu, "
+"egokitzeko."
 
 #: templates/form/list-templates.html:31
 msgid "Show more"
@@ -981,7 +986,9 @@ msgstr "Gehitu editore berria"
 
 #: templates/form/share-form.html:82
 msgid "Send 'new answer' and expiry notifications to these other addresses"
-msgstr "Bidali \"erantzun berria\" abisuak eta iraungitze jakinarazpenak beste helbide hauetara"
+msgstr ""
+"Bidali \"erantzun berria\" abisuak eta iraungitze jakinarazpenak beste "
+"helbide hauetara"
 
 #: templates/form/share-form.html:113
 msgid "Add address"
@@ -993,11 +1000,15 @@ msgstr "Partekatu emaitzak"
 
 #: templates/form/share-form.html:129
 msgid "Readonly access for <b>anyone</b> with a copy of these links"
-msgstr "Irakurtzeko soilik den sarbidea, esteka hauen kopia duen <b>edozein</b> erabiltzailerentzat"
+msgstr ""
+"Irakurtzeko soilik den sarbidea, esteka hauen kopia duen <b>edozein</b> "
+"erabiltzailerentzat"
 
 #: templates/form/share-form.html:182
 msgid "Only visible to people with a user account (login required)"
-msgstr "Erabiltzaile-kontu bat duten pertsonentzat bakarrik ikusgai (saioa hasi behar da)"
+msgstr ""
+"Erabiltzaile-kontu bat duten pertsonentzat bakarrik ikusgai (saioa hasi "
+"behar da)"
 
 #: templates/form/share-form.html:187
 msgid "Restricted"
@@ -1039,7 +1050,9 @@ msgstr "Fitxategi hauek zure galdetegietan gehitu daitezke."
 
 #: templates/media/list-media.html:44
 msgid "You can help save disk space on the server by deleting unused files."
-msgstr "Zerbitzarian disko lekua libratzen lagun dezakezu erabiltzen ez diren fitxategiak ezabatuz."
+msgstr ""
+"Zerbitzarian disko lekua libratzen lagun dezakezu erabiltzen ez diren "
+"fitxategiak ezabatuz."
 
 #: templates/media/list-media.html:94 templates/site/change-icon.html:35
 msgid "Upload"
@@ -1112,7 +1125,9 @@ msgstr "Galdetegietako baldintza-onarpen testuak"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
-msgstr "Partekatutako testuak beste erabiltzaile batzuk erabili ditzakete bere galdetegietan, txantiloi gisa"
+msgstr ""
+"Partekatutako testuak beste erabiltzaile batzuk erabili ditzakete bere "
+"galdetegietan, txantiloi gisa"
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
@@ -1156,7 +1171,11 @@ msgstr "Esteka publikoak sortzea"
 
 #: templates/site/edit-site.html:20
 msgid "Scheme"
-msgstr "Egitasmoa"
+msgstr "Protokoloa"
+
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr "Ataka"
 
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
@@ -1235,7 +1254,9 @@ msgstr "Baimentze-testu lehenetsia"
 
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
-msgstr "Erabiltzaileek honako testu hauek sartu beharko lituzkete haien galdetegietan"
+msgstr ""
+"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien "
+"galdetegietan"
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:54
 msgid "Delete account"
@@ -1381,8 +1402,12 @@ msgid "Please accept our terms and conditions."
 msgstr "Onartu gure erabilera-baldintzak."
 
 #: utils/consent_texts.py:127
-msgid "We take your data protection seriously. Please contact us for any inquiries."
-msgstr "Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin harremanetan edozein kontsultatarako."
+msgid ""
+"We take your data protection seriously. Please contact us for any "
+"inquiries."
+msgstr ""
+"Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
+"harremanetan edozein kontsultatarako."
 
 #: utils/wraps.py:115
 msgid "That's a nasty key!"
@@ -1439,10 +1464,6 @@ msgstr "Hori ez da zure pasahitza"
 #: utils/wtf.py:90
 msgid "New email address"
 msgstr "Eposta helbide berria"
-
-#: utils/wtf.py:109
-msgid "Port"
-msgstr "Ataka"
 
 #: utils/wtf.py:110
 msgid "Encryption"
@@ -2198,3 +2219,4 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Your password"
 #~ msgstr "Zure pasahitza"
+

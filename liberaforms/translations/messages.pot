@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-07-16 14:32+0200\n"
+"POT-Creation-Date: 2021-07-17 15:19+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,7 +24,7 @@ msgid "Marked"
 msgstr ""
 
 #. i18n: Used for sort items by creation order, almost always as column title
-#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:225
+#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:231
 #: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:154
 #: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
 #: templates/admin/list-users.html:41 templates/form/inspect-form.html:363
@@ -189,7 +189,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:150 templates/base.html:155
+#: templates/base.html:150
 msgid "User guide"
 msgstr ""
 
@@ -304,16 +304,16 @@ msgstr ""
 msgid "Enable form attachments"
 msgstr ""
 
-#. Title in Admin panel displaying info about installation
-#: templates/admin/admin-panel.html:220
-msgid "Installation"
-msgstr ""
-
-#: templates/admin/admin-panel.html:229
+#: templates/admin/admin-panel.html:216
 msgid "Default timezone"
 msgstr ""
 
-#: templates/admin/admin-panel.html:233
+#. Title in Admin panel displaying info about installation
+#: templates/admin/admin-panel.html:226
+msgid "Installation"
+msgstr ""
+
+#: templates/admin/admin-panel.html:235
 msgid "Version"
 msgstr ""
 
@@ -1152,6 +1152,10 @@ msgstr ""
 msgid "Scheme"
 msgstr ""
 
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr ""
+
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
@@ -1434,10 +1438,6 @@ msgstr ""
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr ""
-
-#: utils/wtf.py:109
-msgid "Port"
 msgstr ""
 
 #: utils/wtf.py:110
