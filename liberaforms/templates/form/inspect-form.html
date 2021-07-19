@@ -88,21 +88,21 @@
             </tr>
             {% if current_user_is_editor and g.current_user.fedi_auth %}
             <tr>
-                <td>
-                  {%trans%}Fediverse{%endtrans%}
-                </td>
-                <td>
-                  <button id="fediverse-publish"
-                          class="btn btn-primary btn-xs"
-                          style="padding:5px 4px 3px 4px"
-                          onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
-                          {% if not form.is_public() %}disabled{% endif %}>
-                    {%trans%}Publish{%endtrans%}
-                    <span class="badge badge-light">
-                      {{ form.published_cnt }}
-                    </span>
-                  </button>
-                </td>
+              <td>
+                {%trans%}Fediverse{%endtrans%}
+              </td>
+              <td>
+                <button id="fediverse-publish"
+                        class="btn btn-primary btn-xs"
+                        style="padding:5px 4px 3px 4px"
+                        onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
+                        {% if not form.is_public() %}disabled{% endif %}>
+                  {%trans%}Published{%endtrans%}
+                  <span class="badge badge-light">
+                    {{ form.published_cnt }}
+                  </span>
+                </button>
+              </td>
             </tr>
             {% endif %}
             <tr>

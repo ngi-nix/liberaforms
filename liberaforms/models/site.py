@@ -24,6 +24,7 @@ from liberaforms.models.user import User
 
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
+from liberaforms.utils import html_parser
 from liberaforms.utils import utils
 
 #from pprint import pprint as pp
@@ -36,7 +37,6 @@ class Site(db.Model, CRUD):
     port = db.Column(db.Integer, nullable=True)
     scheme = db.Column(db.String, nullable=False, default="http")
     siteName = db.Column(db.String, nullable=False)
-    short_desc = db.Column(db.String, nullable=True)
     defaultLanguage = db.Column(db.String, nullable=False)
     primary_color = db.Column(db.String, nullable=False)
     invitationOnly = db.Column(db.Boolean, default=True)
@@ -84,6 +84,8 @@ class Site(db.Model, CRUD):
         self.blurb = {  'markdown': default_MD,
                         'html': markdown.markdown(default_MD)
                      }
+        text = html_parser.extract_text(self.blurb['html'])
+        self.blurb['short_text'] = f"{text[0:150]}..."
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -159,6 +161,13 @@ class Site(db.Model, CRUD):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
                         'html': sanitizers.markdown2HTML(MDtext)}
         self.save()
+
+    def set_short_description(self, text):
+        # TODO: Sanitize text
+        self.blurb['short_text'] = f"{text[0:150]}..."
+
+    def get_short_description(self):
+        return self.blurb['short_text'] if 'short_text' in self.blurb else ""
 
     @property
     def terms_consent_id(self):

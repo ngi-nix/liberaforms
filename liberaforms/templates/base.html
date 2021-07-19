@@ -12,6 +12,7 @@
     <meta property="og:title" content="{{ g.site.siteName }}" />
     <meta property="og:url" content="{{ g.site.host_url }}" />
     <meta property="og:image" content="{{ g.site.host_url }}favicon.ico" />
+    <meta property="og:description" content="{{ g.site.get_short_description() }}" />
     {% else -%}
     <meta property="og:site_name" content="{{ g.site.siteName }}" />
     <meta property="og:title" content="{{ opengraph['title'] }}" />
@@ -19,7 +20,7 @@
     <meta property="og:description" content="{{ opengraph['description'] }}" />
     <meta property="og:image" content="{{ opengraph['image'] }}" />
     {% endif -%}
-  {% endif -%}
+  {% endif %}
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
