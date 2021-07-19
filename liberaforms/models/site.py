@@ -172,6 +172,7 @@ class Site(db.Model, CRUD):
     def set_short_description(self):
         text = html_parser.extract_text(self.blurb['html']).strip('\n')
         text = sanitizers.truncate_text(text, truncate_at=155)
+        flag_modified(self, "blurb")
         self.blurb['short_text'] = text
 
     def get_short_description(self):
