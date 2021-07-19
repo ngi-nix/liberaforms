@@ -370,3 +370,10 @@ class Site(db.Model, CRUD):
                         }
                 writer.writerow(row)
         return csv_name
+
+    """ Returns an avaiable docs.liberaforms.org language
+    """
+    @staticmethod
+    def get_liberaforms_docs_language(lang):
+        DOCS_LANGUAGES = ['en', 'eu', 'ca', 'es']
+        return lang if lang in DOCS_LANGUAGES else "en"

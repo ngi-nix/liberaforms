@@ -346,7 +346,8 @@ def fedi_publish(id):
         if status['published'] == True:
             queriedForm.published_cnt += 1
             queriedForm.save()
-            flash(_("Published at %s" % status['msg']), 'success')
+            status_uri = status['msg']
+            flash(_("Published at %s" % status_uri), 'success')
         else:
             flash(status['msg'], 'warning')
         return redirect(make_url_for('form_bp.inspect_form', id=id))
@@ -738,6 +739,7 @@ def view_form(slug):
     return render_template('view-form.html',
                             form=queriedForm,
                             max_attachment_size_for_humans=max_attach_size,
+                            opengraph=queriedForm.get_opengraph(),
                             navbar=False,
                             no_bot=True)
 

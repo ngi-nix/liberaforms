@@ -150,14 +150,18 @@
       {% endif %}
       {% if g.current_user.is_root_user() %}
       <tr>
-        <td colspan="2">
+        <td>
           {%trans%}Public links{%endtrans%}
+        </td>
+        <td>
+          <span >{{site.scheme}}</span>://{{site.hostname}}<span {%if not site.port%}style="display:none"{%endif%}>:{{site.port}}</span>/xxxx
         </td>
         <td class="text-right">
           <input  class="btn-primary btn btn-xs"
                   type="button" value="{%trans%}Edit{%endtrans%}"
                   onClick="location.href='/site/edit'">
         </td>
+
       </tr>
       {% endif %}
       <tr>

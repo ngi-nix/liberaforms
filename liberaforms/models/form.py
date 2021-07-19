@@ -23,6 +23,7 @@ from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
+from liberaforms.utils import html_parser
 from liberaforms.utils import utils
 
 from pprint import pprint
@@ -302,6 +303,19 @@ class Form(db.Model, CRUD):
     @property
     def embed_url(self):
         return f"{self.site.host_url}embed/{self.slug}"
+
+    def get_opengraph(self):
+        html = self.introductionText['html']
+        images_src = html_parser.extract_images_src(html)
+        image_src = images_src[0] if images_src else f"{self.site.host_url}favicon.ico"
+        text = html_parser.extract_text(html).strip('\n')
+        opengraph = {
+            "title": self.slug,
+            "url": self.url,
+            "image": image_src,
+            "description": f"{text[0:100]}...".replace('\n', ' '),
+        }
+        return opengraph
 
     @property
     def data_consent(self):

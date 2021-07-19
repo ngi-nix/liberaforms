@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-07-16 14:32+0200\n"
+"POT-Creation-Date: 2021-07-17 12:00+0200\n"
 "PO-Revision-Date: 2021-07-09 12:47+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
@@ -26,7 +26,7 @@ msgid "Marked"
 msgstr "Markatuta"
 
 #. i18n: Used for sort items by creation order, almost always as column title
-#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:225
+#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:235
 #: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:154
 #: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
 #: templates/admin/list-users.html:41 templates/form/inspect-form.html:363
@@ -128,12 +128,12 @@ msgstr "Administratzailea"
 
 #. i18n: Boolean option: True or False
 #: models/site.py:361 models/site.py:362 templates/admin/admin-panel.html:106
-#: templates/admin/admin-panel.html:204 templates/admin/inspect-user.html:49
+#: templates/admin/admin-panel.html:208 templates/admin/inspect-user.html:49
 #: templates/admin/inspect-user.html:66 templates/admin/inspect-user.html:87
 #: templates/admin/inspect-user.html:109 templates/admin/inspect-user.html:169
 #: templates/answers/chart-answers.html:71
 #: templates/answers/list-answers.html:107
-#: templates/answers/list-answers.html:170 templates/form/expiration.html:23
+#: templates/answers/list-answers.html:170 templates/form/expiration.html:32
 #: templates/form/inspect-form.html:111 templates/form/inspect-form.html:121
 #: templates/form/inspect-form.html:155 templates/form/inspect-form.html:185
 #: templates/form/inspect-form.html:214 templates/form/inspect-form.html:229
@@ -144,12 +144,12 @@ msgid "True"
 msgstr "Egia"
 
 #: models/site.py:361 models/site.py:362 templates/admin/admin-panel.html:112
-#: templates/admin/admin-panel.html:209 templates/admin/inspect-user.html:51
+#: templates/admin/admin-panel.html:213 templates/admin/inspect-user.html:51
 #: templates/admin/inspect-user.html:73 templates/admin/inspect-user.html:93
 #: templates/admin/inspect-user.html:116 templates/admin/inspect-user.html:171
 #: templates/answers/chart-answers.html:78
 #: templates/answers/list-answers.html:115
-#: templates/answers/list-answers.html:172 templates/form/expiration.html:24
+#: templates/answers/list-answers.html:172 templates/form/expiration.html:39
 #: templates/form/inspect-form.html:116 templates/form/inspect-form.html:123
 #: templates/form/inspect-form.html:148 templates/form/inspect-form.html:157
 #: templates/form/inspect-form.html:187 templates/form/inspect-form.html:216
@@ -198,19 +198,19 @@ msgstr "Sortu kontua"
 msgid "Login"
 msgstr "Hasi saioa"
 
-#: templates/base.html:150 templates/base.html:155
+#: templates/base.html:152
 msgid "User guide"
-msgstr ""
+msgstr "Erabilera-gida"
 
 #. Main title displayed on site configuration page (/admin)
 #: templates/admin/admin-panel.html:13
 msgid "Site configuration"
-msgstr "Webgune konfigurazioa"
+msgstr "Webguneko konfigurazioa"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
 msgid "Look and feel"
-msgstr ""
+msgstr "Itxura"
 
 #. Name for the website/instance
 #: templates/admin/admin-panel.html:24
@@ -220,7 +220,7 @@ msgstr "Webgune-izena"
 #. Button to change some option
 #: templates/admin/admin-panel.html:33 templates/admin/admin-panel.html:46
 #: templates/admin/admin-panel.html:61 templates/admin/admin-panel.html:72
-#: templates/admin/admin-panel.html:84 templates/admin/admin-panel.html:190
+#: templates/admin/admin-panel.html:84 templates/admin/admin-panel.html:194
 #: templates/site/edit-site.html:53 templates/user/user-settings.html:41
 #: templates/user/user-settings.html:59 templates/user/user-settings.html:70
 #: templates/user/user-settings.html:83
@@ -239,7 +239,6 @@ msgstr "Ikonoa eta favicona"
 
 #. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
-#, fuzzy
 msgid "Primary color"
 msgstr "Kolore nagusia"
 
@@ -274,7 +273,7 @@ msgstr "etab."
 
 #. Button to edit some option
 #: templates/admin/admin-panel.html:131 templates/admin/admin-panel.html:146
-#: templates/admin/admin-panel.html:158 templates/site/consent.html:35
+#: templates/admin/admin-panel.html:161 templates/site/consent.html:35
 #: templates/user/consent.html:33 templates/user/user-settings.html:130
 #: templates/user/user-settings.html:149 templates/user/user-settings.html:179
 msgid "Edit"
@@ -290,47 +289,47 @@ msgid "Public links"
 msgstr "Esteka publikoak"
 
 #. Settings about email server used by website to send email messages
-#: templates/admin/admin-panel.html:165 utils/wtf.py:108
+#: templates/admin/admin-panel.html:169 utils/wtf.py:108
 msgid "Email server"
 msgstr "Eposta zerbitzaria"
 
 #. Button to configure some option
-#: templates/admin/admin-panel.html:170 templates/user/user-settings.html:167
+#: templates/admin/admin-panel.html:174 templates/user/user-settings.html:167
 msgid "Configure"
 msgstr "Konfiguratu"
 
 #. Title in Admin panel refering to configurations concerning new users
-#: templates/admin/admin-panel.html:179 templates/user/new-user.html:12
+#: templates/admin/admin-panel.html:183 templates/user/new-user.html:12
 msgid "New user"
 msgstr "Erabiltzaile berria"
 
 #. Default language for instance, setting on Instance configuration
-#: templates/admin/admin-panel.html:184
+#: templates/admin/admin-panel.html:188
 msgid "Default language"
 msgstr "Hizkuntza lehenetsia"
 
 #. Whether to enable new users attaching documents into forms
-#: templates/admin/admin-panel.html:197
+#: templates/admin/admin-panel.html:201
 msgid "Enable form attachments"
 msgstr "Gaitu galdetegiko eranskinak"
 
-#. Title in Admin panel displaying info about installation
 #: templates/admin/admin-panel.html:220
-msgid "Installation"
-msgstr "Instalazioa"
-
-#: templates/admin/admin-panel.html:229
 #, fuzzy
 msgid "Default timezone"
 msgstr "Erabili irudi lehenetsia"
 
-#: templates/admin/admin-panel.html:233
+#. Title in Admin panel displaying info about installation
+#: templates/admin/admin-panel.html:230
+msgid "Installation"
+msgstr "Instalazioa"
+
+#: templates/admin/admin-panel.html:239
 msgid "Version"
 msgstr "Bertsioa"
 
 #. Button for going back to form
 #: templates/admin/change-author.html:16 templates/form/delete-form.html:16
-#: templates/form/edit-form.html:27 templates/form/expiration.html:16
+#: templates/form/edit-form.html:27 templates/form/expiration.html:19
 #: templates/form/fedi-publish.html:15 templates/form/list-log.html:17
 #: templates/form/share-form.html:15
 msgid "Return to form"
@@ -437,8 +436,8 @@ msgstr "Ezabatu erabiltzailea eta galdetegiak"
 #: templates/answers/list-answers.html:343
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:125
-#: templates/form/edit-form.html:131 templates/form/expiration.html:147
-#: templates/form/fedi-publish.html:49 templates/form/inspect-form.html:316
+#: templates/form/edit-form.html:131 templates/form/expiration.html:184
+#: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:316
 #: templates/form/inspect-form.html:400 templates/form/inspect-form.html:435
 #: templates/form/preview-form.html:69 templates/form/preview-form.html:80
 #: templates/main/index.html:31 templates/site/change-icon.html:44
@@ -589,7 +588,8 @@ msgid "You are going to delete"
 msgstr "Honakoa ezabatzera zoaz:"
 
 #: templates/answers/delete-all-answers.html:22
-#: templates/form/delete-form.html:27 templates/site/delete-site.html:22
+#: templates/form/delete-form.html:27 templates/form/expiration.html:151
+#: templates/site/delete-site.html:22
 msgid "answers"
 msgstr "erantzunak"
 
@@ -633,7 +633,7 @@ msgstr "Ezabatu erantzuna"
 
 #: templates/answers/list-answers.html:296
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
-#: templates/form/expiration.html:146 templates/form/inspect-form.html:312
+#: templates/form/expiration.html:180 templates/form/inspect-form.html:312
 #: templates/form/inspect-form.html:396 templates/form/inspect-form.html:431
 #: templates/form/preview-form.html:59 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
@@ -705,57 +705,53 @@ msgstr "Ados, erabili URL hau"
 msgid "Cannot modify because an answer with this value exists in the database"
 msgstr "Ezin da aldatu jada badagoelako balio hau duen erantzun bat datu-basean"
 
-#: templates/form/expiration.html:26
+#: templates/form/expiration.html:42
 msgid "Notify me when this form expires"
 msgstr "Jakinarazi galdetegi hau iraungitzean"
 
-#: templates/form/expiration.html:31 templates/form/inspect-form.html:153
+#: templates/form/expiration.html:48 templates/form/inspect-form.html:153
 msgid "Expired"
 msgstr "Iraungitua"
 
-#: templates/form/expiration.html:38
+#: templates/form/expiration.html:55
 msgid "Expiration conditions"
 msgstr "Iraungitze-baldintzak"
 
-#: templates/form/expiration.html:42
+#: templates/form/expiration.html:59
 msgid "Date / Time"
 msgstr "Data / Ordua"
 
-#: templates/form/expiration.html:59 templates/site/smtp-config.html:56
+#: templates/form/expiration.html:81 templates/site/smtp-config.html:56
 msgid "Save changes"
 msgstr "Gorde aldaketak"
 
-#: templates/form/expiration.html:71
+#: templates/form/expiration.html:93
 msgid "Fields"
 msgstr "Esparruak"
 
-#: templates/form/expiration.html:88
+#: templates/form/expiration.html:117
 msgid "Save max."
 msgstr "Gorde gehienez"
 
-#: templates/form/expiration.html:101
+#: templates/form/expiration.html:130
 #, fuzzy
 msgid "Maximum answers"
 msgstr "Gehienezko erantzunak"
 
-#: templates/form/expiration.html:106
+#: templates/form/expiration.html:137
 msgid "The form will expire after"
 msgstr "Galdetegia honen ostean iraungiko da:"
 
-#: templates/form/expiration.html:120
-msgid "responses"
-msgstr "erantzun"
-
-#: templates/form/expiration.html:132 templates/form/inspect-form.html:410
+#: templates/form/expiration.html:163 templates/form/inspect-form.html:410
 msgid "When the form has expired"
 msgstr "Galdetegia iraungitzean"
 
-#: templates/form/expiration.html:135 templates/form/inspect-form.html:380
+#: templates/form/expiration.html:166 templates/form/inspect-form.html:380
 #: templates/form/inspect-form.html:415 templates/main/index.html:43
 msgid "Edit text"
 msgstr "Editatu testua"
 
-#: templates/form/expiration.html:140 templates/form/inspect-form.html:421
+#: templates/form/expiration.html:171 templates/form/inspect-form.html:421
 msgid "Say something to the user if the form has expired"
 msgstr "Esan zerbait erabiltzaileari galdetegia iraungitu bada"
 
@@ -763,12 +759,17 @@ msgstr "Esan zerbait erabiltzaileari galdetegia iraungitu bada"
 #: templates/form/fedi-publish.html:22
 #, python-format
 msgid "Publish on %(node_name)s"
-msgstr ""
+msgstr "Argitaratu %(node_name)s(e)n"
 
-#: templates/form/fedi-publish.html:44 templates/form/inspect-form.html:98
+#: templates/form/fedi-publish.html:38
+#, fuzzy
+msgid "Total characters:"
+msgstr "Erantzunak guztira"
+
+#: templates/form/fedi-publish.html:48 templates/form/inspect-form.html:98
 #, fuzzy
 msgid "Publish"
-msgstr "Publikoa"
+msgstr "Argitaratu"
 
 #: templates/form/inspect-form.html:22
 msgid "Details"
@@ -791,7 +792,7 @@ msgstr "Desgaituta"
 
 #: templates/form/inspect-form.html:91
 msgid "Fediverse"
-msgstr ""
+msgstr "Fedibertsoa"
 
 #: templates/form/inspect-form.html:129
 msgid "Expiration"
@@ -933,7 +934,6 @@ msgid "Form templates"
 msgstr "Galdetegientzako txantiloiak"
 
 #: templates/form/list-templates.html:15
-#, fuzzy
 msgid "We have put together some forms that you can use to get started."
 msgstr "Hasteko erabil ditzakezun galdetegi batzuk bildu ditugu."
 
@@ -945,30 +945,27 @@ msgstr ""
 
 #: templates/form/list-templates.html:31
 msgid "Show more"
-msgstr ""
+msgstr "Erakutsi gehiago"
 
 #: templates/form/my-forms.html:21
 msgid "New form"
 msgstr "Galdetegi berria"
 
 #: templates/form/my-forms.html:27
-#, fuzzy
 msgid "Templates"
-msgstr "Galdetegientzako txantiloiak"
+msgstr "Txantiloiak"
 
 #: templates/form/my-forms.html:53 templates/site/consent.html:38
 msgid "Shared"
 msgstr "Partekatua"
 
 #: templates/form/preview-form.html:15
-#, fuzzy
 msgid "Template"
-msgstr "Galdetegientzako txantiloiak"
+msgstr "Txantiloia"
 
 #: templates/form/preview-form.html:45
-#, fuzzy
 msgid "Create a form with this template"
-msgstr "Erabili txantiloi hau"
+msgstr "Sortu galdetegi bat txantiloi honekin"
 
 #: templates/form/preview-form.html:50 templates/site/consent.html:105
 #: templates/site/edit-site.html:59 templates/user/new-user.html:91
@@ -1029,12 +1026,12 @@ msgstr "Galdetegi publikoa"
 #: templates/form/view-form.html:171 templates/form/view-form.html:172
 #: templates/form/view-form.html:173 templates/form/view-form.html:174
 msgid "The file should be no larger than"
-msgstr ""
+msgstr "Fitxategiak hau baino txikiagoa izan behar du:"
 
 #: templates/form/view-form.html:192 templates/form/view-form.html:193
 #: templates/form/view-form.html:194 templates/form/view-form.html:195
 msgid "Valid file types"
-msgstr ""
+msgstr "Onartutako fitxategi motak"
 
 #: templates/main/page-not-found.html:9
 msgid "Opps! 404"
@@ -1075,7 +1072,6 @@ msgid "Upload an image"
 msgstr "Igo irudia"
 
 #: templates/site/change-icon.html:23
-#, fuzzy
 msgid "A small square image"
 msgstr "Irudi txiki eta karratu bat"
 
@@ -1096,7 +1092,6 @@ msgid "Submit"
 msgstr "Bidali"
 
 #: templates/site/consent.html:14
-#, fuzzy
 msgid "Consent texts"
 msgstr "Baldintza-onarpen testuak"
 
@@ -1105,9 +1100,8 @@ msgid "Preview New user form"
 msgstr "Aurreikusi Erabiltzaile berriaren galdetegia"
 
 #: templates/site/consent.html:28
-#, fuzzy
 msgid "Site terms and conditions"
-msgstr "Erabilera-baldintzak"
+msgstr "Guneko erabilera-baldintzak"
 
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
@@ -1131,9 +1125,8 @@ msgid "Required"
 msgstr "Nahitaezkoa"
 
 #: templates/site/consent.html:96
-#, fuzzy
 msgid "Form consent texts"
-msgstr "Baimentze-testu lehenetsia"
+msgstr "Galdetegietako baldintza-onarpen testuak"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
@@ -1183,25 +1176,27 @@ msgstr "Esteka publikoak sortzea"
 
 #: templates/site/edit-site.html:20
 msgid "Scheme"
-msgstr "Egitasmoa"
+msgstr "Protokoloa"
+
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr "Ataka"
 
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr "LiberaFormsek noizean behin epostak bidaliko ditu."
 
 #: templates/site/email-branding.html:24
-#, fuzzy
 msgid "Example email:"
-msgstr "Adibiderako eposta"
+msgstr "Adibiderako eposta:"
 
 #: templates/site/email-branding.html:46
 msgid "Send test"
 msgstr "Bidali proba"
 
 #: templates/site/email-branding.html:64
-#, fuzzy
 msgid "Keep the kilobytes to a minimum"
-msgstr "Mantendu kilobyteak minimoan."
+msgstr "Mantendu kilobyteak minimoan"
 
 #: templates/site/email-branding.html:97
 msgid "Use default image"
@@ -1247,16 +1242,16 @@ msgstr "Aldatu eposta helbidea"
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
-msgstr ""
+msgstr "Aldatu zure ordu-zona"
 
 #: templates/user/change-timezone.html:26
 msgid "Search for country or city name"
-msgstr ""
+msgstr "Bilatu herrialdea edo hiria"
 
 #: templates/user/change-timezone.html:27 templates/user/user-settings.html:75
 #: utils/wtf.py:139
 msgid "Time zone"
-msgstr ""
+msgstr "Ordu-zona"
 
 #: templates/user/consent.html:14
 msgid "Default consent text"
@@ -1291,15 +1286,15 @@ msgstr "Atzeraezina da hau!"
 #: templates/user/fediverse-config.html:14
 #: templates/user/user-settings.html:157
 msgid "Fediverse connect"
-msgstr ""
+msgstr "Fedibertsoarekin konexioa"
 
 #: templates/user/fediverse-config.html:17
 msgid "Publish your forms on the descentralized social media network"
-msgstr ""
+msgstr "Argitaratu zure galdetegiak sare sozial deszentralizatuan"
 
 #: templates/user/fediverse-config.html:37
 msgid "Generate"
-msgstr ""
+msgstr "Sortu"
 
 #: templates/user/login.html:25
 msgid "Forgot your password?"
@@ -1311,20 +1306,19 @@ msgstr "Letrak eta zenbakiak. Azenturik ez."
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
 msgid "Use a password with spaces and/or special characters."
-msgstr ""
+msgstr "Erabili zuriuneak edota karaktere bereziak dituen pasahitza."
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
 msgid "We suggest you use a sentence you will remember."
-msgstr ""
+msgstr "Gogoratuko duzun esaldi bat erabiltzea gomendatzen dizugu."
 
 #: templates/user/new-user.html:34 templates/user/reset-password.html:19
 msgid "eg: Peter cooks delicious food"
-msgstr ""
+msgstr "Adb.: Itsasok sekulako janaria kozinatzen du"
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
-#, fuzzy
 msgid "Another eg: The cat living with me has fleas"
-msgstr "Beste adibide bat: Nirekin bizi den zakurrak arkakusoak ditu"
+msgstr "Beste adibide bat: Nirekin bizi den katuak arkakusoak ditu"
 
 #: templates/user/new-user.html:106
 msgid "We sent you an email!"
@@ -1377,18 +1371,16 @@ msgid "Preferred language"
 msgstr "Hobetsitako hizkuntza"
 
 #: templates/user/user-settings.html:90
-#, fuzzy
 msgid "Email notifications"
-msgstr "Partekatu jakinarazpenak"
+msgstr "Eposta jakinarazpenak"
 
 #: templates/user/user-settings.html:125 templates/user/user-settings.html:174
 msgid "Consentment texts"
 msgstr "Baldintza-onarpen testuak"
 
 #: templates/user/user-settings.html:138
-#, fuzzy
 msgid "Media"
-msgstr "Nire multimedia"
+msgstr "Multimedia"
 
 #: templates/user/user-settings.html:144
 msgid "Add and delete uploaded files"
@@ -1459,14 +1451,12 @@ msgid "Please accept our data protection policy"
 msgstr "Onartu gure datu datuen babeserako gidalerroak"
 
 #: utils/wtf.py:72
-#, fuzzy
 msgid "Enter your username"
-msgstr "Zure erabiltzaile-izena"
+msgstr "Sartu zure erabiltzaile-izena"
 
 #: utils/wtf.py:73
-#, fuzzy
 msgid "Enter your password"
-msgstr "Berreskuratu pasahitza"
+msgstr "Sartu zure pasahitza"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
@@ -1479,10 +1469,6 @@ msgstr "Hori ez da zure pasahitza"
 #: utils/wtf.py:90
 msgid "New email address"
 msgstr "Eposta helbide berria"
-
-#: utils/wtf.py:109
-msgid "Port"
-msgstr "Ataka"
 
 #: utils/wtf.py:110
 msgid "Encryption"
@@ -1514,7 +1500,7 @@ msgstr "Ez da baliozko HTML kolore kodea"
 
 #: utils/wtf.py:142
 msgid "Not a valid time zone"
-msgstr ""
+msgstr "Ez da baliozko ordu-zona"
 
 #: utils/wtf.py:145
 msgid "Extensions"
@@ -1543,11 +1529,11 @@ msgstr "Goiburuko irudia"
 
 #: utils/wtf.py:191
 msgid "Fediverse node"
-msgstr ""
+msgstr "Fedibertsoko nodoa"
 
 #: utils/wtf.py:194
 msgid "Access token"
-msgstr ""
+msgstr "Sarbide tokena"
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
@@ -1694,7 +1680,7 @@ msgid "Can't find username %s"
 msgstr "Ezin da %s erabiltzailea aurkitu"
 
 #: views/admin.py:208
-#, fuzzy, python-format
+#, python-format
 msgid "We have sent an invitation to %s"
 msgstr "Gonbidapena bidali diogu %s(r)i"
 
@@ -1810,12 +1796,12 @@ msgstr "Baimena behar da galdetegia ikusteko"
 
 #: views/form.py:339
 msgid "Fediverse connect is not configured"
-msgstr ""
+msgstr "Fedibertsoarekin konexioa ez dago konfiguratua"
 
 #: views/form.py:347
-#, python-format
+#, fuzzy, python-format
 msgid "Published at %smsg"
-msgstr ""
+msgstr "%s helbidean argitaratuta"
 
 #: views/form.py:388
 msgid "Can't find a user with that email"
@@ -1917,7 +1903,7 @@ msgstr "Galdetegi hori ez da publikoa"
 
 #: views/form.py:773
 msgid "Copied template OK. You can edit your new form"
-msgstr ""
+msgstr "Txantiloia ongi kopiatu da. Orain zure galdetegi berria editatu dezakezu"
 
 #: views/site.py:35
 msgid "Text saved OK"
@@ -1961,7 +1947,7 @@ msgstr "Irudi fitxategi bat behar da"
 
 #: views/site.py:174
 msgid "Favicon reset OK. Refresh with  &lt;F5&gt;"
-msgstr "Favicona ongi berrezarri da. Freskatu  &lt;F5&gt; sakatuta."
+msgstr "Favicona ongi berrezarri da. Freskatu  &lt;F5&gt; sakatuta"
 
 #: views/site.py:195
 msgid "Enabled file extensions updated OK"
@@ -2012,7 +1998,7 @@ msgid "Welcome!"
 msgstr "Ongi etorri!"
 
 #: views/user.py:128 views/user.py:163
-#, fuzzy, python-format
+#, python-format
 msgid "We have sent an email to %s"
 msgstr "Eposta mezu bat bidali dugu %s(e)ra"
 
@@ -2021,22 +2007,20 @@ msgid "Password changed OK"
 msgstr "Pasahitza ongi aldatu da"
 
 #: views/user.py:192
-#, fuzzy
 msgid "Time zone changed OK"
-msgstr "Webgune-izena ongi aldatu da"
+msgstr "Ordu-zona ongi aldatu da"
 
 #: views/user.py:219
 msgid "Could not encrypt your access token"
-msgstr ""
+msgstr "Ezin izan da zure sarbide tokena enkriptatu"
 
 #: views/user.py:221
 msgid "Connected to the Fediverse"
-msgstr ""
+msgstr "Fedibertsoarekin konektatuta"
 
 #: views/user.py:240
-#, fuzzy
 msgid "Fediverse configuration deleted OK"
-msgstr "Probatu konfigurazioa"
+msgstr "Fedibertsorako konfigurazioa ongi ezabatu da"
 
 #: views/user.py:253
 msgid "Cannot delete. You are the only Admin on this site"
@@ -2241,3 +2225,5 @@ msgstr "Kredentzial okerrak"
 #~ msgid "Your password"
 #~ msgstr "Zure pasahitza"
 
+#~ msgid "responses"
+#~ msgstr "erantzun"

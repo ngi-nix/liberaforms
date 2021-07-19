@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-07-16 14:32+0200\n"
+"POT-Creation-Date: 2021-07-17 12:00+0200\n"
 "PO-Revision-Date: 2020-09-23 13:09+0200\n"
 "Last-Translator: \n"
 "Language: en\n"
@@ -25,7 +25,7 @@ msgid "Marked"
 msgstr ""
 
 #. i18n: Used for sort items by creation order, almost always as column title
-#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:225
+#: models/form.py:141 models/site.py:343 templates/admin/admin-panel.html:235
 #: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:154
 #: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
 #: templates/admin/list-users.html:41 templates/form/inspect-form.html:363
@@ -120,12 +120,12 @@ msgstr ""
 
 #. i18n: Boolean option: True or False
 #: models/site.py:361 models/site.py:362 templates/admin/admin-panel.html:106
-#: templates/admin/admin-panel.html:204 templates/admin/inspect-user.html:49
+#: templates/admin/admin-panel.html:208 templates/admin/inspect-user.html:49
 #: templates/admin/inspect-user.html:66 templates/admin/inspect-user.html:87
 #: templates/admin/inspect-user.html:109 templates/admin/inspect-user.html:169
 #: templates/answers/chart-answers.html:71
 #: templates/answers/list-answers.html:107
-#: templates/answers/list-answers.html:170 templates/form/expiration.html:23
+#: templates/answers/list-answers.html:170 templates/form/expiration.html:32
 #: templates/form/inspect-form.html:111 templates/form/inspect-form.html:121
 #: templates/form/inspect-form.html:155 templates/form/inspect-form.html:185
 #: templates/form/inspect-form.html:214 templates/form/inspect-form.html:229
@@ -136,12 +136,12 @@ msgid "True"
 msgstr ""
 
 #: models/site.py:361 models/site.py:362 templates/admin/admin-panel.html:112
-#: templates/admin/admin-panel.html:209 templates/admin/inspect-user.html:51
+#: templates/admin/admin-panel.html:213 templates/admin/inspect-user.html:51
 #: templates/admin/inspect-user.html:73 templates/admin/inspect-user.html:93
 #: templates/admin/inspect-user.html:116 templates/admin/inspect-user.html:171
 #: templates/answers/chart-answers.html:78
 #: templates/answers/list-answers.html:115
-#: templates/answers/list-answers.html:172 templates/form/expiration.html:24
+#: templates/answers/list-answers.html:172 templates/form/expiration.html:39
 #: templates/form/inspect-form.html:116 templates/form/inspect-form.html:123
 #: templates/form/inspect-form.html:148 templates/form/inspect-form.html:157
 #: templates/form/inspect-form.html:187 templates/form/inspect-form.html:216
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:150 templates/base.html:155
+#: templates/base.html:152
 msgid "User guide"
 msgstr ""
 
@@ -212,7 +212,7 @@ msgstr ""
 #. Button to change some option
 #: templates/admin/admin-panel.html:33 templates/admin/admin-panel.html:46
 #: templates/admin/admin-panel.html:61 templates/admin/admin-panel.html:72
-#: templates/admin/admin-panel.html:84 templates/admin/admin-panel.html:190
+#: templates/admin/admin-panel.html:84 templates/admin/admin-panel.html:194
 #: templates/site/edit-site.html:53 templates/user/user-settings.html:41
 #: templates/user/user-settings.html:59 templates/user/user-settings.html:70
 #: templates/user/user-settings.html:83
@@ -265,7 +265,7 @@ msgstr ""
 
 #. Button to edit some option
 #: templates/admin/admin-panel.html:131 templates/admin/admin-panel.html:146
-#: templates/admin/admin-panel.html:158 templates/site/consent.html:35
+#: templates/admin/admin-panel.html:161 templates/site/consent.html:35
 #: templates/user/consent.html:33 templates/user/user-settings.html:130
 #: templates/user/user-settings.html:149 templates/user/user-settings.html:179
 msgid "Edit"
@@ -281,46 +281,46 @@ msgid "Public links"
 msgstr ""
 
 #. Settings about email server used by website to send email messages
-#: templates/admin/admin-panel.html:165 utils/wtf.py:108
+#: templates/admin/admin-panel.html:169 utils/wtf.py:108
 msgid "Email server"
 msgstr ""
 
 #. Button to configure some option
-#: templates/admin/admin-panel.html:170 templates/user/user-settings.html:167
+#: templates/admin/admin-panel.html:174 templates/user/user-settings.html:167
 msgid "Configure"
 msgstr ""
 
 #. Title in Admin panel refering to configurations concerning new users
-#: templates/admin/admin-panel.html:179 templates/user/new-user.html:12
+#: templates/admin/admin-panel.html:183 templates/user/new-user.html:12
 msgid "New user"
 msgstr ""
 
 #. Default language for instance, setting on Instance configuration
-#: templates/admin/admin-panel.html:184
+#: templates/admin/admin-panel.html:188
 msgid "Default language"
 msgstr ""
 
 #. Whether to enable new users attaching documents into forms
-#: templates/admin/admin-panel.html:197
+#: templates/admin/admin-panel.html:201
 msgid "Enable form attachments"
 msgstr ""
 
-#. Title in Admin panel displaying info about installation
 #: templates/admin/admin-panel.html:220
-msgid "Installation"
-msgstr ""
-
-#: templates/admin/admin-panel.html:229
 msgid "Default timezone"
 msgstr ""
 
-#: templates/admin/admin-panel.html:233
+#. Title in Admin panel displaying info about installation
+#: templates/admin/admin-panel.html:230
+msgid "Installation"
+msgstr ""
+
+#: templates/admin/admin-panel.html:239
 msgid "Version"
 msgstr ""
 
 #. Button for going back to form
 #: templates/admin/change-author.html:16 templates/form/delete-form.html:16
-#: templates/form/edit-form.html:27 templates/form/expiration.html:16
+#: templates/form/edit-form.html:27 templates/form/expiration.html:19
 #: templates/form/fedi-publish.html:15 templates/form/list-log.html:17
 #: templates/form/share-form.html:15
 msgid "Return to form"
@@ -427,8 +427,8 @@ msgstr ""
 #: templates/answers/list-answers.html:343
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:125
-#: templates/form/edit-form.html:131 templates/form/expiration.html:147
-#: templates/form/fedi-publish.html:49 templates/form/inspect-form.html:316
+#: templates/form/edit-form.html:131 templates/form/expiration.html:184
+#: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:316
 #: templates/form/inspect-form.html:400 templates/form/inspect-form.html:435
 #: templates/form/preview-form.html:69 templates/form/preview-form.html:80
 #: templates/main/index.html:31 templates/site/change-icon.html:44
@@ -579,7 +579,8 @@ msgid "You are going to delete"
 msgstr ""
 
 #: templates/answers/delete-all-answers.html:22
-#: templates/form/delete-form.html:27 templates/site/delete-site.html:22
+#: templates/form/delete-form.html:27 templates/form/expiration.html:151
+#: templates/site/delete-site.html:22
 msgid "answers"
 msgstr ""
 
@@ -623,7 +624,7 @@ msgstr ""
 
 #: templates/answers/list-answers.html:296
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
-#: templates/form/expiration.html:146 templates/form/inspect-form.html:312
+#: templates/form/expiration.html:180 templates/form/inspect-form.html:312
 #: templates/form/inspect-form.html:396 templates/form/inspect-form.html:431
 #: templates/form/preview-form.html:59 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
@@ -695,56 +696,52 @@ msgstr ""
 msgid "Cannot modify because an answer with this value exists in the database"
 msgstr ""
 
-#: templates/form/expiration.html:26
+#: templates/form/expiration.html:42
 msgid "Notify me when this form expires"
 msgstr ""
 
-#: templates/form/expiration.html:31 templates/form/inspect-form.html:153
+#: templates/form/expiration.html:48 templates/form/inspect-form.html:153
 msgid "Expired"
 msgstr ""
 
-#: templates/form/expiration.html:38
+#: templates/form/expiration.html:55
 msgid "Expiration conditions"
 msgstr ""
 
-#: templates/form/expiration.html:42
+#: templates/form/expiration.html:59
 msgid "Date / Time"
 msgstr ""
 
-#: templates/form/expiration.html:59 templates/site/smtp-config.html:56
+#: templates/form/expiration.html:81 templates/site/smtp-config.html:56
 msgid "Save changes"
 msgstr ""
 
-#: templates/form/expiration.html:71
+#: templates/form/expiration.html:93
 msgid "Fields"
 msgstr ""
 
-#: templates/form/expiration.html:88
+#: templates/form/expiration.html:117
 msgid "Save max."
 msgstr ""
 
-#: templates/form/expiration.html:101
+#: templates/form/expiration.html:130
 msgid "Maximum answers"
 msgstr ""
 
-#: templates/form/expiration.html:106
+#: templates/form/expiration.html:137
 msgid "The form will expire after"
 msgstr ""
 
-#: templates/form/expiration.html:120
-msgid "responses"
-msgstr ""
-
-#: templates/form/expiration.html:132 templates/form/inspect-form.html:410
+#: templates/form/expiration.html:163 templates/form/inspect-form.html:410
 msgid "When the form has expired"
 msgstr ""
 
-#: templates/form/expiration.html:135 templates/form/inspect-form.html:380
+#: templates/form/expiration.html:166 templates/form/inspect-form.html:380
 #: templates/form/inspect-form.html:415 templates/main/index.html:43
 msgid "Edit text"
 msgstr ""
 
-#: templates/form/expiration.html:140 templates/form/inspect-form.html:421
+#: templates/form/expiration.html:171 templates/form/inspect-form.html:421
 msgid "Say something to the user if the form has expired"
 msgstr ""
 
@@ -754,7 +751,11 @@ msgstr ""
 msgid "Publish on %(node_name)s"
 msgstr ""
 
-#: templates/form/fedi-publish.html:44 templates/form/inspect-form.html:98
+#: templates/form/fedi-publish.html:38
+msgid "Total characters:"
+msgstr ""
+
+#: templates/form/fedi-publish.html:48 templates/form/inspect-form.html:98
 msgid "Publish"
 msgstr ""
 
@@ -1153,6 +1154,10 @@ msgstr ""
 msgid "Scheme"
 msgstr ""
 
+#: templates/site/edit-site.html:41 utils/wtf.py:109
+msgid "Port"
+msgstr ""
+
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
 msgstr ""
@@ -1435,10 +1440,6 @@ msgstr ""
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr ""
-
-#: utils/wtf.py:109
-msgid "Port"
 msgstr ""
 
 #: utils/wtf.py:110
@@ -2345,3 +2346,5 @@ msgstr ""
 #~ msgid "Maximum responses"
 #~ msgstr ""
 
+#~ msgid "responses"
+#~ msgstr ""
