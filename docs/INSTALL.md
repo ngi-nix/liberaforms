@@ -1,14 +1,20 @@
 # Install LiberaForms
 
-Requires python3.7 or greater.
+Requires
+* Python3.7 or greater.
+* A PostgreSQL server
+
 
 If you want to use Docker, please follow the instructions in `docs/docker.md`
 
 ## Clone LiberaForms
 
+You can install LiberaForms in the directory of your choice.
+
 ```
 apt-get install git
 git clone https://gitlab.com/liberaforms/liberaforms.git
+cd liberaforms
 ```
 
 ## Create a Python venv
@@ -26,21 +32,6 @@ pip install -r ./requirements.txt
 
 ## Configure
 
-#### Filesystem
-Create this directory. session data will be saved there.
-```
-# mkdir ./liberaforms/flask_session
-# chown www-data ./liberaforms/flask_session
-```
-
-#### Memory
-If you prefer to use memcached, you need to do this.
-```
-apt-get install memcached
-source ./liberaforms/venv/bin/activate
-pip install pylibmc
-```
-
 ### Create and edit `.env`
 ```
 cp dotenv.example .env
@@ -51,21 +42,21 @@ You can create a SECRET_KEY like this
 openssl rand -base64 32
 ```
 
-## Database
+Now run LiberaForms, LiberaForms needs to be running for the next steps
 
-Install PostgreSQL
+```
+flask run
+```
+
+> Note: Every time you change values in `.env` you need to restart LiberaForms
+
+## Database
 
 ### Create the empty database
 
 This will use the DB values in your `.env` file
 ```
 flask database create
-```
-
-### Initialize schema versioning
-
-```
-flask database init
 ```
 
 ### Create tables
@@ -117,27 +108,18 @@ CRYPTO_KEY=olYyUwGT--example-key--c9AkH_HoMEWg9Q=
 
 Restart LiberaForms to take efect.
 
-
-### Database backup
-
-Run this and check if a copy is dumped correctly.
-```
-/usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
-```
-
-Add a line to your crontab to run it every night.
-```
-30 3 * * * /usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
-```
-Note: This overwrites the last copy. You might want to change that.
-
-Don't forget to check that the cronjob is dumping the database correctly.
-
-## Test your installation
+### Session data
 
 ```
-flask run
-ctrl-c
+SESSION_TYPE = "filesystem"
+#SESSION_TYPE = "memcached"
+```
+
+If you use `filesystem` you must ensure the user running LiberaForms has write permissions
+on the directory. For example
+
+```
+chown www-data ./liberaforms/flask_session
 ```
 
 ## Configure Gunicorn
@@ -152,11 +134,6 @@ flask config hint gunicorn
 
 Copy the content. Create the file `./gunicorn.py` and paste.
 
-You can test gunicorn like this
-
-```
-gunicorn -c gunicorn.py wsgi:app
-```
 
 ## Install Supervisor
 
@@ -164,6 +141,7 @@ Supervisor manages Gunicorn. It will start the process when the server boots.
 ```
 sudo apt-get install supervisor
 ```
+
 ### Configure Supervisor
 
 This command will suggest a configuration file path and it's content.
@@ -183,8 +161,33 @@ sudo supervisorctl start liberaforms
 sudo supervisorctl stop liberaforms
 ```
 
+# Backups
 
-## Debugging
+## Database
+
+Run this and check if a copy is dumped correctly.
+```
+/usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
+```
+
+Add a line to your crontab to run it every night.
+```
+30 3 * * * /usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
+```
+Note: This overwrites the last copy. You might want to change that.
+
+Don't forget to check that the cronjob is dumping the database correctly.
+
+## Uploaded files
+
+If you enabled `ENABLE_UPLOADS` in the `.env` file, LiberaForm will save
+uploaded files in the `./uploads` directory, you should make copies of this directory.
+
+## CRYPTO_KEY
+
+Do not lose it!
+
+# Debugging
 You can check supervisor's log at `/var/log/supervisor/...`
 
 You can also run LiberaForms in debug mode.
@@ -193,7 +196,7 @@ sudo supervisorctl stop liberaforms
 FLASK_ENV=development flask run
 ```
 
-## Configure nginx proxy
+# Configure nginx proxy
 See `docs/nginx.example`
 
 
