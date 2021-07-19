@@ -93,9 +93,13 @@
                 <td>
                   <button id="fediverse-publish"
                           class="btn btn-primary btn-xs"
+                          style="padding:5px 4px 3px 4px"
                           onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
                           {% if not form.is_public() %}disabled{% endif %}>
                     {%trans%}Publish{%endtrans%}
+                    <span class="badge badge-light">
+                      {{ form.published_cnt }}
+                    </span>
                   </button>
                 </td>
             </tr>

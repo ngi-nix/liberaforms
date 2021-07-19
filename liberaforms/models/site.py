@@ -36,6 +36,7 @@ class Site(db.Model, CRUD):
     port = db.Column(db.Integer, nullable=True)
     scheme = db.Column(db.String, nullable=False, default="http")
     siteName = db.Column(db.String, nullable=False)
+    short_desc = db.Column(db.String, nullable=True)
     defaultLanguage = db.Column(db.String, nullable=False)
     primary_color = db.Column(db.String, nullable=False)
     invitationOnly = db.Column(db.Boolean, default=True)

@@ -53,6 +53,8 @@ class Form(db.Model, CRUD):
     introductionText = db.Column(JSONB, nullable=False)
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
+    short_desc = db.Column(db.String, nullable=True)
+    published_cnt = db.Column(db.Integer, default=0, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
     answers = db.relationship("Answer", lazy='dynamic',

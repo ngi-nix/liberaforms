@@ -344,6 +344,8 @@ def fedi_publish(id):
                                            wtform.image_source.data,
                                            fediverse=True)
         if status['published'] == True:
+            queriedForm.published_cnt += 1
+            queriedForm.save()
             flash(_("Published at %s" % status['msg']), 'success')
         else:
             flash(status['msg'], 'warning')
