@@ -318,6 +318,20 @@ def send_branding_preview():
     return redirect(make_url_for('site_bp.email_branding'))
 
 
+@site_bp.route('/site/open-graph', methods=['GET', 'POST'])
+@admin_required
+def open_graph():
+    wtform = wtf.FormShortDescription()
+    if wtform.validate_on_submit():
+        description = sanitizers.strip_html_tags(wtform.short_desc.data)
+        description = sanitizers.truncate_text(description, truncate_at=155)
+        g.site.set_short_description(description)
+        g.site.save()
+        flash(_("Text saved OK"), 'success')
+    wtform.short_desc.data = g.site.get_short_description()
+    return render_template('open-graph.html', wtform=wtform)
+
+
 @site_bp.route('/site/stats', methods=['GET'])
 @admin_required
 def stats():

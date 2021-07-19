@@ -25,6 +25,9 @@ class TestSiteConfig():
             assert os.environ['FQDN'] in app.config['BRAND_DIR']
             assert os.environ['FQDN'] in app.config['ATTACHMENT_DIR']
 
+    def test_site_default_values(self, app):
+        pass
+
     def test_change_sitename(cls, site, users, admin_client, anon_client):
         login(admin_client, users['admin'])
         url = "/site/change-sitename"

@@ -55,6 +55,10 @@ def remove_first_and_last_newlines(string):
     RE="^[\r\n]+|[\r\n]+$"
     return re.sub(RE, '', string)
 
+def truncate_text(text, truncate_at=155): # 155 recommened opengraph length
+    if len(text) > truncate_at:
+        text = f"{text[0:truncate_at-3]}..."
+    return text
 
 """
 def isSaneUsername(username):

@@ -54,6 +54,8 @@ class Form(db.Model, CRUD):
     introductionText = db.Column(JSONB, nullable=False)
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
+    thumbnail = db.Column(db.String, nullable=True)
+    published_cnt = db.Column(db.Integer, default=0, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
     answers = db.relationship("Answer", lazy='dynamic',
@@ -303,17 +305,33 @@ class Form(db.Model, CRUD):
         return f"{self.site.host_url}embed/{self.slug}"
 
     def get_opengraph(self):
-        html = self.introductionText['html']
-        images_src = html_parser.extract_images_src(html)
-        image_src = images_src[0] if images_src else f"{self.site.host_url}favicon.ico"
-        text = html_parser.extract_text(html).strip('\n')
+        default_img_src = f"{self.site.host_url}favicon.ico"
+        image_src = self.thumbnail if self.thumbnail else default_img_src
         opengraph = {
             "title": self.slug,
             "url": self.url,
             "image": image_src,
-            "description": f"{text[0:100]}...".replace('\n', ' '),
+            "description": self.get_short_description(),
         }
         return opengraph
+
+    def set_thumbnail(self):
+        html = self.introductionText['html']
+        images_src = html_parser.extract_images_src(html)
+        self.thumbnail = images_src[0] if images_src else None
+
+    def set_description(self):
+        html = self.introductionText['html']
+        text = html_parser.extract_text(html, with_links=True).rstrip('\n')
+        self.introductionText['text'] = text
+
+    def get_description(self):
+        description = self.introductionText['text']
+        return description if description else ""
+
+    def get_short_description(self):
+        description = self.get_description().replace('\n', ' ')
+        return f"{description[0:150]}..." if description else ""
 
     @property
     def data_consent(self):

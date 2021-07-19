@@ -24,6 +24,7 @@ from liberaforms.models.user import User
 
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
+from liberaforms.utils import html_parser
 from liberaforms.utils import utils
 
 #from pprint import pprint as pp
@@ -83,6 +84,8 @@ class Site(db.Model, CRUD):
         self.blurb = {  'markdown': default_MD,
                         'html': markdown.markdown(default_MD)
                      }
+        text = html_parser.extract_text(self.blurb['html'])
+        self.blurb['short_text'] = sanitizers.truncate_text(text)
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -158,6 +161,13 @@ class Site(db.Model, CRUD):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
                         'html': sanitizers.markdown2HTML(MDtext)}
         self.save()
+
+    def set_short_description(self, text):
+        self.blurb['short_text'] = text
+        flag_modified(self, "blurb")
+
+    def get_short_description(self):
+        return self.blurb['short_text'] if 'short_text' in self.blurb else ""
 
     @property
     def terms_consent_id(self):
