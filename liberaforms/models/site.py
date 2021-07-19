@@ -85,7 +85,7 @@ class Site(db.Model, CRUD):
                         'html': markdown.markdown(default_MD)
                      }
         text = html_parser.extract_text(self.blurb['html'])
-        self.blurb['short_text'] = f"{text[0:150]}..."
+        self.blurb['short_text'] = sanitizers.truncate_text(text)
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -163,8 +163,8 @@ class Site(db.Model, CRUD):
         self.save()
 
     def set_short_description(self, text):
-        # TODO: Sanitize text
-        self.blurb['short_text'] = f"{text[0:150]}..."
+        self.blurb['short_text'] = text
+        flag_modified(self, "blurb")
 
     def get_short_description(self):
         return self.blurb['short_text'] if 'short_text' in self.blurb else ""

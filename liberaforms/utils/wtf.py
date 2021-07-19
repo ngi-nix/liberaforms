@@ -198,3 +198,6 @@ class FediverseAuth(FlaskForm):
 class FormPublish(FlaskForm):
     image_source = StringField()
     text = TextAreaField(validators=[DataRequired()])
+
+class FormShortDescription(FlaskForm):
+    short_desc = TextAreaField(_("Short description"), validators=[DataRequired()])
