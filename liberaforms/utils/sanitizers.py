@@ -56,6 +56,7 @@ def remove_first_and_last_newlines(string):
     return re.sub(RE, '', string)
 
 def truncate_text(text, truncate_at=155): # 155 recommened opengraph length
+    text = text.replace('\n', ' ').strip(' ').replace('  ', ' ')
     if len(text) > truncate_at:
         text = f"{text[0:truncate_at-3]}..."
     return text
