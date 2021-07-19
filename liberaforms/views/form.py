@@ -175,7 +175,7 @@ def save_form(id=None):
         queriedForm.update_field_index(session['formFieldIndex'])
         queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
-        queriedForm.set_description()
+        queriedForm.set_short_description()
         queriedForm.set_thumbnail()
         queriedForm.save()
         form_helper.clear_session_form_data()
@@ -212,10 +212,11 @@ def save_form(id=None):
                     }
         try:
             new_form = Form(g.current_user, **new_form_data)
-            new_form.set_description()
+            new_form.set_short_description()
             new_form.set_thumbnail()
             new_form.save()
-        except:
+        except Exception as error:
+            current_app.logger.error(error)
             flash(_("Failed to save form"), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         form_helper.clear_session_form_data()
@@ -356,7 +357,7 @@ def fedi_publish(id):
             flash(status['msg'], 'warning')
         return redirect(make_url_for('form_bp.inspect_form', id=id))
     if request.method == 'GET':
-        text = f"{queriedForm.get_description()}\n\n{queriedForm.url}"
+        text = f"{queriedForm.get_short_description()}\n\n{queriedForm.url}"
         wtform.text.data = text
         wtform.image_source.data = queriedForm.thumbnail
     node_name = urlparse(g.current_user.get_fedi_auth()['node_url']).hostname

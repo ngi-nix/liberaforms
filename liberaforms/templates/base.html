@@ -11,7 +11,7 @@
     {% if not opengraph -%}
     <meta property="og:title" content="{{ g.site.siteName }}" />
     <meta property="og:url" content="{{ g.site.host_url }}" />
-    <meta property="og:image" content="{{ g.site.host_url }}favicon.ico" />
+    <meta property="og:image" content="{{ g.site.get_logo_uri() }}" />
     <meta property="og:description" content="{{ g.site.get_short_description() }}" />
     {% else -%}
     <meta property="og:site_name" content="{{ g.site.siteName }}" />

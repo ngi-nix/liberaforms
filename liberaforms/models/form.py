@@ -305,7 +305,7 @@ class Form(db.Model, CRUD):
         return f"{self.site.host_url}embed/{self.slug}"
 
     def get_opengraph(self):
-        default_img_src = f"{self.site.host_url}favicon.ico"
+        default_img_src = self.site.get_logo_uri()
         image_src = self.thumbnail if self.thumbnail else default_img_src
         opengraph = {
             "title": self.slug,
@@ -320,18 +320,18 @@ class Form(db.Model, CRUD):
         images_src = html_parser.extract_images_src(html)
         self.thumbnail = images_src[0] if images_src else None
 
-    def set_description(self):
+    def set_short_description(self):
         html = self.introductionText['html']
-        text = html_parser.extract_text(html, with_links=True).rstrip('\n')
-        self.introductionText['text'] = text
-
-    def get_description(self):
-        description = self.introductionText['text']
-        return description if description else ""
+        text = html_parser.extract_text(html, with_links=True).strip('\n')
+        text = sanitizers.truncate_text(text, truncate_at=155)
+        self.introductionText['short_text'] = text
 
     def get_short_description(self):
-        description = self.get_description().replace('\n', ' ')
-        return f"{description[0:150]}..." if description else ""
+        if 'short_text' in self.introductionText:
+            return self.introductionText['short_text']
+        self.set_short_description()
+        self.save()
+        return self.introductionText['short_text']
 
     @property
     def data_consent(self):
