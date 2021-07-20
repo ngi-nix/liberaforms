@@ -94,7 +94,7 @@ Remember to modify your `nginx` configuration to fit.
 
 ### Remote storage
 
-> The local volume created in the previous step is neccesary becauee it is used if the Minio server becomes unavailable.
+> The local volume created in the previous step is neccesary because it is used if the Minio server becomes unavailable.
 
 Add these lines to your `docker-compose.yml`
 
