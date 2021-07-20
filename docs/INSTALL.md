@@ -42,11 +42,19 @@ You can create a SECRET_KEY like this
 openssl rand -base64 32
 ```
 
-Now run LiberaForms, LiberaForms needs to be running for the next steps
+LiberaForms is still not ready. However, we will use it to finish the installation.
+
+Open a new terminal and run
 
 ```
+cd liberaforms
+source venv/bin/activate
 flask run
 ```
+
+Leave it running the the terminal.
+
+We will now use the `flask` command to finish the installation.
 
 > Note: Every time you change values in `.env` you need to restart LiberaForms
 
@@ -203,6 +211,21 @@ FLASK_ENV=development flask run
 
 # Configure nginx proxy
 See `docs/nginx.example`
+
+
+# Installation finished!
+
+Stop the flask server if you still have it running in a terminal.
+
+Start LiberaForms
+
+```
+supervisorctl start liberaforms
+```
+
+## Bootstrap the first admin user
+
+## Setup SMTP
 
 
 # Utilities

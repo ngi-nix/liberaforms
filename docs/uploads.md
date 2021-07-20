@@ -54,7 +54,7 @@ MINIO_ACCESS_KEY=
 MINIO_SECRET_KEY=
 ```
 
-Now you can create the remote buckets. LiberaForms uses two buckets:
+Create the remote buckets. LiberaForms uses two buckets:
 
 * `my.domain.com.media`: Media files go here. Anonymous Internet users can download these files.
 * `my.domain.com.attachments`: Documents attached to forms are stored here.
