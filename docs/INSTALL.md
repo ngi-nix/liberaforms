@@ -62,19 +62,18 @@ This will use the DB values in your `.env` file
 flask database create
 ```
 
-### Initialize schema versioning
-
-```
-flask database init
-```
-
 ### Create tables
 
-Update the database to the latest version
+Upgrade the database to the latest version
 
 ```
-flask database update
+flask database alembic upgrade
 ```
+
+Note that `flask database alembic` is a wrapper for the `flask db` command.
+
+See more options here https://flask-migrate.readthedocs.io/en/latest/#api-reference
+
 
 ### Drop database
 
