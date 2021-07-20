@@ -90,7 +90,7 @@ class ChangeEmail(FlaskForm):
     email = StringField(_("New email address"), validators=[DataRequired(), Email()])
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in current_app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 class ResetPassword(FlaskForm):
@@ -125,7 +125,7 @@ class NewInvite(FlaskForm):
     admin = BooleanField(_("Make the new user an Admin"))
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in current_app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 

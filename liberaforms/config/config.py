@@ -64,7 +64,7 @@ class Config(object):
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
     }
-    #ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
+    ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     TMP_DIR = os.environ['TMP_DIR']
     ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']

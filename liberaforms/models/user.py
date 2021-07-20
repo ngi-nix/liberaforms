@@ -130,7 +130,7 @@ class User(db.Model, CRUD):
         return True if self.admin['isAdmin']==True else False
 
     def is_root_user(self):
-        return True if self.email in os.environ['ROOT_USERS'] else False
+        return True if self.email in current_app.config['ROOT_USERS'] else False
 
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)

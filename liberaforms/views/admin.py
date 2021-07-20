@@ -145,43 +145,6 @@ def toggle_form_public_admin_prefs(id):
     return redirect(make_url_for('form_bp.inspect_form', id=id))
 
 
-@admin_bp.route('/admin/forms/change-author/<int:id>', methods=['GET', 'POST'])
-@admin_required
-def change_author(id):
-    queriedForm = Form.find(id=id)
-    if not queriedForm:
-        flash(_("Can't find that form"), 'warning')
-        return redirect(make_url_for('user_bp.my_forms'))
-    if request.method == 'POST':
-        author = queriedForm.author
-        if not ('old_author_username' in request.form and \
-                request.form['old_author_username']==author.username):
-            flash(_("Current author incorrect"), 'warning')
-            return render_template('change-author.html', form=queriedForm)
-        if 'new_author_username' in request.form:
-            new_author=User.find(username=request.form['new_author_username'])
-            if new_author:
-                if new_author.enabled:
-                    old_author=author
-                    if queriedForm.change_author(new_author):
-                        log_text = _("Changed author from %s to %s" % (
-                                                        old_author.username,
-                                                        new_author.username))
-                        queriedForm.add_log(log_text)
-                        flash(_("Changed author OK"), 'success')
-                        return redirect(make_url_for('form_bp.inspect_form',
-                                                     id=queriedForm.id))
-                else:
-                    flash(_("Cannot use %s. The user is not enabled" % (
-                                    request.form['new_author_username']),
-                         ), 'warning')
-            else:
-                flash(_("Can't find username %s" % (
-                                request.form['new_author_username'])
-                     ), 'warning')
-    return render_template('change-author.html', form=queriedForm)
-
-
 """ Invitations """
 
 @admin_bp.route('/admin/invites', methods=['GET'])
@@ -241,3 +204,43 @@ def toggle_newUser_notification():
 @admin_required
 def toggle_newForm_notification():
     return json.dumps({'notify': g.current_user.toggle_new_form_notification()})
+
+
+""" ROOT_USERS functions
+"""
+
+@admin_bp.route('/admin/forms/change-author/<int:id>', methods=['GET', 'POST'])
+@rootuser_required
+def change_author(id):
+    queriedForm = Form.find(id=id)
+    if not queriedForm:
+        flash(_("Can't find that form"), 'warning')
+        return redirect(make_url_for('user_bp.my_forms'))
+    if request.method == 'POST':
+        author = queriedForm.author
+        if not ('old_author_username' in request.form and \
+                request.form['old_author_username']==author.username):
+            flash(_("Current author incorrect"), 'warning')
+            return render_template('change-author.html', form=queriedForm)
+        if 'new_author_username' in request.form:
+            new_author=User.find(username=request.form['new_author_username'])
+            if new_author:
+                if new_author.enabled:
+                    old_author=author
+                    if queriedForm.change_author(new_author):
+                        log_text = _("Changed author from %s to %s" % (
+                                                        old_author.username,
+                                                        new_author.username))
+                        queriedForm.add_log(log_text)
+                        flash(_("Changed author OK"), 'success')
+                        return redirect(make_url_for('form_bp.inspect_form',
+                                                     id=queriedForm.id))
+                else:
+                    flash(_("Cannot use %s. The user is not enabled" % (
+                                    request.form['new_author_username']),
+                         ), 'warning')
+            else:
+                flash(_("Can't find username %s" % (
+                                request.form['new_author_username'])
+                     ), 'warning')
+    return render_template('change-author.html', form=queriedForm)
