@@ -84,8 +84,7 @@ class Site(db.Model, CRUD):
         self.blurb = {  'markdown': default_MD,
                         'html': markdown.markdown(default_MD)
                      }
-        text = html_parser.extract_text(self.blurb['html'])
-        self.blurb['short_text'] = sanitizers.truncate_text(text)
+        self.set_short_description()
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -113,43 +112,50 @@ class Site(db.Model, CRUD):
         return url+'/'
 
     def change_email_header(self, file):
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
         """ Convert file to .png """
         new_header = Image.open(file)
-        new_header.save(os.path.join(current_app.config['UPLOADS_DIR'],
-                                     current_app.config['BRAND_DIR'],
-                                     'emailheader.png'))
+        new_header.save(os.path.join(brand_dir, 'emailheader.png'))
 
     def reset_email_header(self):
-        email_header_path = os.path.join(current_app.config['UPLOADS_DIR'],
-                                         current_app.config['BRAND_DIR'],
-                                         'emailheader.png')
-        default_email_header = os.path.join(current_app.config['UPLOADS_DIR'],
-                                            current_app.config['BRAND_DIR'],
-                                            'emailheader-default.png')
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
+        email_header_path = os.path.join(brand_dir, 'emailheader.png')
+        default_email_header = os.path.join(brand_dir, 'emailheader-default.png')
         shutil.copyfile(default_email_header, email_header_path)
         return True
 
     def change_favicon(self, file):
-        """ Convert file to .ico and make the it square """
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
+        """ Save the original image as logo.png. # used by opengraph
+        """
+        new_logo = Image.open(file)
+        new_logo.save(os.path.join(brand_dir, 'logo.png'))
+        """ Convert file to .ico and make the it square
+        """
         img = Image.open(file)
         x, y = img.size
         size = max(32, x, y)
         #icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
         new_favicon = Image.new('RGBA', (size, size), (0, 0, 0, 0))
         new_favicon.paste(img, (int((size - x) / 2), int((size - y) / 2)))
-        new_favicon.save(os.path.join(current_app.config['UPLOADS_DIR'],
-                                      current_app.config['BRAND_DIR'],
-                                      'favicon.ico'))
+        new_favicon.save(os.path.join(brand_dir, 'favicon.ico'))
 
     def reset_favicon(self):
-        favicon_path = os.path.join(current_app.config['UPLOADS_DIR'],
-                                    current_app.config['BRAND_DIR'],
-                                    'favicon.ico')
-        default_favicon = os.path.join(current_app.config['UPLOADS_DIR'],
-                                       current_app.config['BRAND_DIR'],
-                                       'favicon-default.ico')
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
+        logo_path =os.path.join(brand_dir, 'logo.png')
+        default_logo =os.path.join(brand_dir, 'logo-default.png')
+        shutil.copyfile(default_logo, logo_path)
+        favicon_path = os.path.join(brand_dir, 'favicon.ico')
+        default_favicon = os.path.join(brand_dir, 'favicon-default.ico')
         shutil.copyfile(default_favicon, favicon_path)
         return True
+
+    def get_logo_uri(self):
+        return f"{self.host_url}logo.png"
 
     def get_email_footer(self):
         return self.email_footer if self.email_footer else _("Ethical form software")
@@ -160,14 +166,21 @@ class Site(db.Model, CRUD):
     def save_blurb(self, MDtext):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
                         'html': sanitizers.markdown2HTML(MDtext)}
+        self.set_short_description()
         self.save()
 
-    def set_short_description(self, text):
-        self.blurb['short_text'] = text
+    def set_short_description(self):
+        text = html_parser.extract_text(self.blurb['html']).strip('\n')
+        text = sanitizers.truncate_text(text, truncate_at=155)
         flag_modified(self, "blurb")
+        self.blurb['short_text'] = text
 
     def get_short_description(self):
-        return self.blurb['short_text'] if 'short_text' in self.blurb else ""
+        if 'short_text' in self.blurb:
+            return self.blurb['short_text']
+        self.set_short_description()
+        self.save()
+        return self.blurb['short_text']
 
     @property
     def terms_consent_id(self):
