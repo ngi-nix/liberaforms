@@ -67,7 +67,7 @@ def recover_password(token=None):
         if user:
             user.set_token()
             Dispatcher().send_account_recovery(user)
-        if not user and wtform.email.data in os.environ['ROOT_USERS']:
+        if not user and wtform.email.data in current_app.config['ROOT_USERS']:
             if not User.find(email=wtform.email.data):
                 # auto invite root user
                 invite=Invite(  email=wtform.email.data,

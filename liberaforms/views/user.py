@@ -62,7 +62,7 @@ def new_user(token=None):
                 # a validation email fails to be sent because SMTP is not congifured.
                 if not g.site.get_admins():
                     validatedEmail=True
-        if wtform.email.data in os.environ['ROOT_USERS']:
+        if wtform.email.data in current_app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
         new_user = User(
