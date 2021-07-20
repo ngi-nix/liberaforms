@@ -148,33 +148,6 @@
         </td>
       </tr>
       {% endif %}
-      {% if g.current_user.is_root_user() %}
-      <tr>
-        <td>
-          {%trans%}Public links{%endtrans%}
-        </td>
-        <td>
-          <span >{{site.scheme}}</span>://{{site.hostname}}<span {%if not site.port%}style="display:none"{%endif%}>:{{site.port}}</span>/xxxx
-        </td>
-        <td class="text-right">
-          <input  class="btn-primary btn btn-xs"
-                  type="button" value="{%trans%}Edit{%endtrans%}"
-                  onClick="location.href='/site/edit'">
-        </td>
-
-      </tr>
-      {% endif %}
-      <tr>
-        {# i18n: Settings about email server used by website to send email messages #}
-        <td>{%trans%}Email server{%endtrans%}</td>
-        <td>{{g.site.smtpConfig["host"]}}</td>
-        <td class="text-right">
-          {# i18n: Button to configure some option #}
-          <input class="btn-primary btn btn-xs"
-                  type="button" value="{%trans%}Configure{%endtrans%}"
-                  onClick="location.href='/site/email/config'" />
-        </td>
-      </tr>
     </table>
 
     <p>&nbsp;</p>
@@ -224,12 +197,46 @@
       {% endif %}
     </table>
 
+    {% if g.current_user.is_root_user() %}
+    <p>&nbsp;</p>
+    <div class="title_2">
+      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+      {%trans%}Super admin options{%endtrans%}
+    </div>
+    <table class="table table-sm">
+      <tr>
+        <td>
+          {# i18n: Settings about the generated public URL #}
+          {%trans%}Public links{%endtrans%}
+        </td>
+        <td>
+          <span >{{site.scheme}}</span>://{{site.hostname}}<span {%if not site.port%}style="display:none"{%endif%}>:{{site.port}}</span>/xxxx
+        </td>
+        <td class="text-right">
+          <input  class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Edit{%endtrans%}"
+                  onClick="location.href='/site/edit-host-url'">
+        </td>
+      </tr>
+      <tr>
+        {# i18n: Settings about email server used by website to send email messages #}
+        <td>{%trans%}Email server{%endtrans%}</td>
+        <td>{{g.site.smtpConfig["host"]}}</td>
+        <td class="text-right">
+          {# i18n: Button to configure some option #}
+          <input class="btn-primary btn btn-xs"
+                  type="button" value="{%trans%}Configure{%endtrans%}"
+                  onClick="location.href='/site/email/config'" />
+        </td>
+      </tr>
+    </table>
+    {% endif %}
+
     <p>&nbsp;</p>
     <div class="title_2">
       {# i18n: Title in Admin panel displaying info about installation #}
       {%trans%}Installation{%endtrans%}
     </div>
-
     <table class="table table-sm">
       <tr>
         <td>{%trans%}Created{%endtrans%}</td>

@@ -1,66 +1,70 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- edit_host_url_page -->
 
 <div class="container">
-<div class="row">
+  <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-5">
 
-    <div class="title_1 delimited">
-      {%trans%}Public link creation{%endtrans%}
-    </div>
+      <div class="title_1 delimited">
+        {%trans%}Public link creation{%endtrans%}
+      </div>
 
-    <div class="title_2 link">
+      <div class="title_2 link">
         <span id="site_scheme">{{site.scheme}}</span>://{{ site.hostname }}<span id="site_port" {% if not site.port %}style="display:none"{% endif %}>:{{ site.port }}</span>/xxxx
-    </div>
-    <table class="table table-sm" style="margin-top: 2em">
-      <tr>
-        <td>
-          {%trans%}Scheme{%endtrans%}
-        </td>
-        <td class="text-right">
-          <div id="toggle_scheme" class="btn-group btn-toggle">
-          <button id="site_scheme_http"
-                  class="btn btn-xs btn-default {% if site.scheme=='http' %}btn-primary{% endif %}"
-                  >
-                  HTTP
-          </button>
-          <button id="site_scheme_https"
-                  class="btn btn-xs btn-default {% if site.scheme=='https' %}btn-primary{% endif %}"
-                  >
-                  HTTPS
-          </button>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <div class="input-group input-group-sm mb-3">
-      <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1">{%trans%}Port{%endtrans%}</span>
       </div>
-      <input id="port"
-             type="text"
-             class="form-control"
-             value="{% if site.port %}{{site.port}}{% endif %}"
-             aria-label="Port"
-             aria-describedby="basic-addon1">
-      <div class="input-group-append">
-        <input id="port_button"
-               class="btn-primary btn btn-md"
-               type="button"
-               value="{%trans%}Change{%endtrans%}" >
+      <table class="table table-sm" style="margin-top: 2em">
+        <tr>
+          <td>
+            {%trans%}Scheme{%endtrans%}
+          </td>
+          <td class="text-right">
+            <div id="toggle_scheme" class="btn-group btn-toggle">
+            <button id="site_scheme_http"
+                    class="btn btn-xs btn-default
+                          {% if site.scheme=='http' %}btn-primary{% endif %}">
+              HTTP
+            </button>
+            <button id="site_scheme_https"
+                    class="btn btn-xs btn-default
+                          {% if site.scheme=='https' %}btn-primary{% endif %}">
+              HTTPS
+            </button>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <div class="input-group input-group-sm mb-3">
+        <div class="input-group-prepend">
+          <span class="input-group-text"
+                id="basic-addon1">
+            {%trans%}Port{%endtrans%}
+          </span>
+        </div>
+        <input id="port"
+               type="text"
+               class="form-control"
+               value="{% if site.port %}{{site.port}}{% endif %}"
+               aria-label="Port"
+               aria-describedby="basic-addon1">
+        <div class="input-group-append">
+          <input id="port_button"
+                 class="btn-primary btn btn-md"
+                 type="button"
+                 value="{%trans%}Change{%endtrans%}" >
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn-primary" role="button" href="/admin">
+          {%trans%}Go back{%endtrans%}
+        </a>
       </div>
     </div>
-
-    <div class="form-actions">
-      <a class="btn btn-primary" role="button" href="/admin">
-        {%trans%}Go back{%endtrans%}
-      </a>
-    </div>
-    </div>
-</div>
+  </div>
 </div>
 
 <script>

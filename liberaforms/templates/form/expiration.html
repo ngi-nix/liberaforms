@@ -96,7 +96,7 @@
         {% for field_name, values in form.get_available_number_type_fields().items() %}
             {% set field_label = form.get_field_label(field_name) %}
             {# i18n: Applies to 'Number' fields. Form will expire when the sum of all values of this field reaches a value #}
-            {% set placeholder=_("The sum of all '%s'" % field_label) %}
+            {% set placeholder=_("The sum of all the answers to '%s'" % field_label) %}
 
             <div class="input-group input-group-sm mb-3 flex-nowrap"
                  style="padding:0.5em;">
