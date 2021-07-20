@@ -52,19 +52,16 @@ VERSION=$(cat VERSION.txt) docker-compose up -d
 flask database create --docker-container liberaforms-db
 ```
 
-### Initialize schema versioning
-
-```
-flask database init --docker-container liberaforms-app
-```
-
 ### Create tables
 
-Update the database to the latest version
+Upgrade the database to the latest version
 
 ```
-flask database update --docker-container liberaforms-app
+flask database alembic update --docker-container liberaforms-app
 ```
+Note that `flask database alembic` is a wrapper for the `flask db` command.
+
+See more options here https://flask-migrate.readthedocs.io/en/latest/#api-reference
 
 ### Drop database
 
@@ -97,9 +94,9 @@ Remember to modify your `nginx` configuration to fit.
 
 ### Remote storage
 
-The volume created in the previous step is neccesary. It is used if the Minio server becomes unavailable.
+> The local volume created in the previous step is neccesary becauee it is used if the Minio server becomes unavailable.
 
-Now add these lines to your `docker-compose.yml`
+Add these lines to your `docker-compose.yml`
 
 ```
 MINIO_URL: ${MINIO_URL}
