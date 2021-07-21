@@ -51,16 +51,17 @@ def new_user(token=None):
     wtform=wtf.NewUser()
     if wtform.validate_on_submit():
         validatedEmail=False
+        is_first_admin = False if g.site.get_admins() else True
         adminSettings=User.default_admin_settings()
         if invite:
             if invite.email == wtform.email.data:
                 validatedEmail=True
             if invite.admin == True:
                 adminSettings['isAdmin']=True
-                # the first admin of a new Site needs to config.
-                # SMTP before we can send emails, but when validatedEmail=False,
-                # a validation email fails to be sent because SMTP is not congifured.
-                if not g.site.get_admins():
+                # the first admin of a new Site needs to config SMTP before
+                # we can send emails, but when validatedEmail=False we cannot
+                # send a validation email because SMTP is not congifured.
+                if is_first_admin:
                     validatedEmail=True
         if wtform.email.data in current_app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True
@@ -76,21 +77,20 @@ def new_user(token=None):
         )
         try:
             new_user.save()
-        except:
+        except Exception as error:
+            current_app.logger.error(error)
             flash(_("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
         if invite:
             invite.delete()
-        Dispatcher().send_new_user_notification(new_user)
+        if not is_first_admin:
+            Dispatcher().send_new_user_notification(new_user)
         session["user_id"]=str(new_user.id)
         g.current_user = new_user
         babel_refresh()
         flash(_("Welcome!"), 'success')
-        if validatedEmail == True:
-            return redirect(make_url_for('form_bp.my_forms'))
-        else:
-            return redirect(make_url_for('user_bp.user_settings',
-                                         username=new_user.username))
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=new_user.username))
     if "user_id" in session:
         session.pop("user_id")
     if not wtform.email.data and invite:
@@ -216,6 +216,7 @@ def fediverse_config(username):
                 "access_token": wtform.access_token.data}
         g.current_user.set_fedi_auth(data)
         if not g.current_user.fedi_auth:
+            current_app.logger.warning('Could not encrypt access token')
             flash(_("Could not encrypt your access token"), 'warning')
         else:
             flash(_("Connected to the Fediverse"), 'success')
@@ -331,6 +332,7 @@ def login():
             else:
                 return redirect(make_url_for('form_bp.my_forms'))
         else:
+            current_app.logger.info('Failed login')
             flash(_("Bad credentials"), 'warning')
     return render_template('login.html', wtform=wtform)
 
