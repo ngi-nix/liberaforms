@@ -52,7 +52,7 @@ source venv/bin/activate
 flask run
 ```
 
-Leave it running the the terminal.
+Leave it running in the terminal.
 
 We will now use the `flask` command to finish the installation.
 
