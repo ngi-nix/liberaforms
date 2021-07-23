@@ -357,7 +357,9 @@ def fedi_publish(id):
             flash(status['msg'], 'warning')
         return redirect(make_url_for('form_bp.inspect_form', id=id))
     if request.method == 'GET':
-        text = f"{queriedForm.get_short_description()}\n\n{queriedForm.url}"
+        html = queriedForm.introductionText['html']
+        text = html_parser.get_short_text(html, with_links=True)
+        text = f"{text}\n\n{queriedForm.url}"
         wtform.text.data = text
         wtform.image_source.data = queriedForm.thumbnail
     node_name = urlparse(g.current_user.get_fedi_auth()['node_url']).hostname

@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 #import html
 from bs4 import BeautifulSoup
+from liberaforms.utils import sanitizers
 
 
 def extract_text(html, with_links=False):
@@ -27,3 +28,11 @@ def extract_images_src(html):
         for image in images:
             sources.append(image.get('src'))
     return sources
+
+def get_short_text(html, truncate_at=155, with_links=False):
+    text = extract_text(html, with_links=with_links).strip('\n')
+    text = sanitizers.truncate_text(text, truncate_at=truncate_at)
+    return text.strip('\n').strip(' ')
+
+def get_opengraph_text(html):
+    return get_short_text(html, truncate_at=155).replace('\n', ' ').replace('  ', ' ')

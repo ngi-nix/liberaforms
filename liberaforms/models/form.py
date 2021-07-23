@@ -321,9 +321,7 @@ class Form(db.Model, CRUD):
         self.thumbnail = images_src[0] if images_src else None
 
     def set_short_description(self):
-        html = self.introductionText['html']
-        text = html_parser.extract_text(html, with_links=True).strip('\n')
-        text = sanitizers.truncate_text(text, truncate_at=155)
+        text = html_parser.get_opengraph_text(self.introductionText['html'])
         self.introductionText['short_text'] = text
 
     def get_short_description(self):
