@@ -51,7 +51,7 @@ class Form(db.Model, CRUD):
     shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    introductionText = db.Column(JSONB, nullable=False)
+    introductionText = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
     thumbnail = db.Column(db.String, nullable=True)
