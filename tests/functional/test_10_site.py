@@ -163,8 +163,10 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
-    def test_change_favicon(self, app, admin_client, anon_client):
+    def test_change_logo(self, app, admin_client, anon_client):
         """ Tests valid and invalid image files in ./tests/assets
+            Tests jpeg to png logo conversion
+            Tests favicon creation
             Tests admin permission
         """
         url = "/site/change-icon"
@@ -181,16 +183,19 @@ class TestSiteConfig():
                 )
         html = response.data.decode()
         assert '<!-- change_icon_page -->' in html
-        favicon_path = os.path.join(app.config['UPLOADS_DIR'],
-                                    app.config['BRAND_DIR'],
-                                    'favicon.ico')
+        brand_dir = os.path.join(app.config['UPLOADS_DIR'],
+                                 app.config['BRAND_DIR'])
+        logo_path = os.path.join(brand_dir, 'logo.png')
+        favicon_path = os.path.join(brand_dir, 'favicon.ico')
+        initial_logo_stats = os.stat(logo_path)
         initial_favicon_stats = os.stat(favicon_path)
-        invalid_favicon = "favicon_invalid.jpeg"
-        with open(f'./assets/{invalid_favicon}', 'rb') as f:
+        invalid_logo = "invalid_logo.jpeg"
+        #invalid_favicon = "favicon_invalid.jpeg"
+        with open(f'./assets/{invalid_logo}', 'rb') as f:
             stream = BytesIO(f.read())
         invalid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
-            filename=invalid_favicon,
+            filename=invalid_logo,
             content_type="plain/txt",
         )
         response = admin_client.post(
@@ -202,15 +207,16 @@ class TestSiteConfig():
                     content_type='multipart/form-data',
                 )
         assert response.status_code == 200
+        assert initial_logo_stats.st_size == os.stat(logo_path).st_size
         assert initial_favicon_stats.st_size == os.stat(favicon_path).st_size
         html = response.data.decode()
         assert '<!-- change_icon_page -->' in html
-        valid_favicon = "favicon_valid.jpeg"
-        with open(f'./assets/{valid_favicon}', 'rb') as f:
+        valid_logo = "valid_logo.jpeg"
+        with open(f'./assets/{valid_logo}', 'rb') as f:
             stream = BytesIO(f.read())
         valid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
-            filename=valid_favicon,
+            filename=valid_logo,
             content_type="image/png",
         )
         response = admin_client.post(
@@ -222,6 +228,7 @@ class TestSiteConfig():
                     content_type='multipart/form-data',
                 )
         assert response.status_code == 200
+        assert initial_logo_stats.st_size != os.stat(logo_path).st_size
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
         html = response.data.decode()
         assert '<!-- admin-panel_page -->' in html
@@ -235,16 +242,23 @@ class TestSiteConfig():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        favicon_path = os.path.join(app.config['UPLOADS_DIR'],
-                                    app.config['BRAND_DIR'],
-                                    'favicon.ico')
+        brand_dir = os.path.join(app.config['UPLOADS_DIR'],
+                                 app.config['BRAND_DIR'])
+        logo_path = os.path.join(brand_dir, 'logo.png')
+        default_logo_path = os.path.join(brand_dir, 'logo-default.png')
+        favicon_path = os.path.join(brand_dir, 'favicon.ico')
+        default_favicon_path = os.path.join(brand_dir, 'favicon-default.ico')
+        initial_logo_stats = os.stat(logo_path)
         initial_favicon_stats = os.stat(favicon_path)
         response = admin_client.get(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
+        assert initial_logo_stats.st_size != os.stat(logo_path).st_size
+        assert os.stat(logo_path).st_size == os.stat(default_logo_path).st_size
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
+        assert os.stat(favicon_path).st_size == os.stat(default_favicon_path).st_size
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
@@ -275,14 +289,14 @@ class TestSiteConfig():
             Tests admin permission
         """
         response = anon_client.get(
-                        "/site/edit",
+                        "/site/edit-host-url",
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
         response = admin_client.get(
-                        "/site/edit",
+                        "/site/edit-host-url",
                         follow_redirects=False,
                     )
         assert response.status_code == 200

@@ -112,7 +112,7 @@ class TestInvites():
         assert user.validatedEmail == True
         assert user.admin['isAdmin'] == False
         html = response.data.decode()
-        assert '<!-- my_forms_page -->' in html
+        assert '<!-- user_settings_page -->' in html
         assert '<a class="nav-link" href="/user/logout">' in html
         # delete test_user to continue testing
         user.delete()
@@ -164,7 +164,7 @@ class TestInvites():
         assert user.validatedEmail == True
         assert user.admin['isAdmin'] == True
         html = response.data.decode()
-        assert '<!-- my_forms_page -->' in html
+        assert '<!-- user_settings_page -->' in html
         assert '<a class="nav-link" href="/user/logout">' in html
         # remove admin permission from test user to continue testing
         user.admin['isAdmin'] = False
