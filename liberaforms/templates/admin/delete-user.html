@@ -38,7 +38,7 @@
           <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
             <td>{{form.editors|length}}</td>
-            <td>{{form.answers|length}}</td>
+            <td>{{form.answers.count()}}</td>
           </tr>
           {% endfor %}
         </table>

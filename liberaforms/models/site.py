@@ -46,7 +46,7 @@ class Site(db.Model, CRUD):
     newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
     mimetypes = db.Column(JSONB, nullable=False)
     email_footer = db.Column(db.String, nullable=True)
-    blurb = db.Column(JSONB, nullable=False)
+    blurb = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
 
     def __init__(self, hostname, port, scheme):
         self.created = datetime.now(timezone.utc)
@@ -172,7 +172,6 @@ class Site(db.Model, CRUD):
     def set_short_description(self):
         text = html_parser.extract_text(self.blurb['html']).strip('\n')
         text = sanitizers.truncate_text(text, truncate_at=155)
-        flag_modified(self, "blurb")
         self.blurb['short_text'] = text
 
     def get_short_description(self):

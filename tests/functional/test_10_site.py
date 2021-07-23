@@ -9,6 +9,7 @@ import os
 import pytest
 import werkzeug
 from io import BytesIO
+from liberaforms.models.site import Site
 from .utils import login, logout
 
 
@@ -233,7 +234,7 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<!-- admin-panel_page -->' in html
 
-    def test_restore_default_favicon(self, app, admin_client, anon_client):
+    def test_restore_default_logo(self, app, admin_client, anon_client):
         url = "/site/reset-favicon"
         response = anon_client.get(
                         url,
@@ -327,8 +328,8 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert site.port != initial_port
 
-    def test_edit_landing_page(self, site, admin_client, anon_client):
-        """ Posts markdown and tests resulting HTML
+    def test_edit_blurb(self, site, admin_client, anon_client):
+        """ Posts markdown and tests resulting HTML and short_text
             Tests admin permission
         """
         url = "/site/save-blurb"
@@ -350,6 +351,9 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<h1>Tested !!</h1>' in html
         assert '<p>line1<br />\nline2</p>' in html
+        assert '<h1>Tested !!</h1>' in site.blurb['html']
+        assert '# Tested !!' in site.blurb['markdown']
+        assert 'Tested !!' in site.blurb['short_text']
 
     def test_save_smtp_config(self, site, admin_client):
         """ Tests invalid and valid smtp configuration
