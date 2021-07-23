@@ -43,7 +43,7 @@ $(document).on("wheel", "input[type=number]", function (e) {
         if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
           if ({{available}} > 0){
               var hint=$("<div class='hint'>")
-              hint.text("{%trans max=available%}Note: Maximum is now {{max}}s{%endtrans%}");
+              hint.text("{%trans max=available%}Note: Maximum is now {{max}}{%endtrans%}");
               hint.insertBefore("#{{field}}");
               $("#{{field}}").prop("max", {{available}});
           }
