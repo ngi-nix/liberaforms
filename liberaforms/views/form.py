@@ -358,8 +358,8 @@ def fedi_publish(id):
         return redirect(make_url_for('form_bp.inspect_form', id=id))
     if request.method == 'GET':
         html = queriedForm.introductionText['html']
-        text = html_parser.get_short_text(html, with_links=True)
-        text = f"{text}\n\n{queriedForm.url}"
+        text = html_parser.extract_text(html, with_links=True).strip('\n')
+        text = f"{queriedForm.url}\n\n{text}"
         wtform.text.data = text
         wtform.image_source.data = queriedForm.thumbnail
     node_name = urlparse(g.current_user.get_fedi_auth()['node_url']).hostname

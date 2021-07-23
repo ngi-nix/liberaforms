@@ -29,8 +29,8 @@ def extract_images_src(html):
             sources.append(image.get('src'))
     return sources
 
-def get_short_text(html, truncate_at=155, with_links=False):
-    text = extract_text(html, with_links=with_links).strip('\n')
+def get_short_text(html, truncate_at=155):
+    text = extract_text(html, with_links=False).strip('\n')
     text = sanitizers.truncate_text(text, truncate_at=truncate_at)
     return text.strip('\n').strip(' ')
 
