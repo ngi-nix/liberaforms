@@ -253,9 +253,7 @@ class User(db.Model, CRUD):
         return Answer.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
-        #today = datetime.date.today().strftime("%Y-%m")
         today = datetime.now(timezone.utc).strftime("%Y-%m")
-        #one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
         one_year_ago = datetime.now(timezone.utc) - timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
@@ -280,13 +278,19 @@ class User(db.Model, CRUD):
             date_str = year_month.replace('-', ', ')
             start_date = datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
-            answers_filter = answer_filter + [Answer.created >= start_date]
-            answers_filter = answer_filter + [Answer.created < stop_date]
-            forms_filter = form_filter + [Form.created >= start_date]
-            forms_filter = form_filter + [Form.created < stop_date]
-            monthy_answers = Answer.query.filter(*answers_filter).count()
-            monthy_forms = Form.query.filter(*forms_filter).count()
-            total_answers= total_answers + monthy_answers
+            monthy_users = User.query.filter(
+                                    User.id == self.id,
+                                    User.created >= start_date,
+                                    User.created < stop_date).count()
+            monthy_forms = Form.query.filter(
+                                    Form.author_id == self.id,
+                                    Form.created >= start_date,
+                                    Form.created < stop_date).count()
+            monthy_answers = Answer.query.filter(
+                                    Answer.author_id == self.id,
+                                    Answer.created >= start_date,
+                                    Answer.created < stop_date).count()
+            total_answers = total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
             result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)
