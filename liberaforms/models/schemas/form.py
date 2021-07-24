@@ -16,8 +16,12 @@ class FormSchema(ma.SQLAlchemySchema):
     id = ma.auto_field()
     created = ma.auto_field()
     slug = ma.auto_field()
+    url = ma.Method('get_url')
     structure = ma.auto_field()
     introduction_md = ma.Method('get_introduction_md')
+
+    def get_url(self, obj):
+        return obj.url
 
     def get_introduction_md(self, obj):
         return obj.introductionText['markdown']

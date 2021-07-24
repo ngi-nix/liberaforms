@@ -156,6 +156,14 @@
 
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
+  <div style="float:left">
+    <a href="/feed/rss"
+       style="color: #bbb"
+       alt_text="RSS feed">
+      <i class="fa fa-rss" aria-hidden="true"></i>
+    </a>
+  </div>
+  <div style="float:right">
     {% if ('current_user' in g and g.current_user) %}
       {% set user_lang = g.current_user['preferences']['language'] %}
       {% set docs_lang = g.site.get_liberaforms_docs_language(user_lang) %}
@@ -169,6 +177,7 @@
     <i class="fa fa-copyright" aria-hidden="true"></i>
     AGPLv3 |
     <a href="https://liberaforms.org">LiberaForms</a>
+  </div>
 </div>
 
 
