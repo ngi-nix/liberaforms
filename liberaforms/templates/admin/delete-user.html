@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- delete_user_page -->
+
 {% set form_count = user.authored_forms|length %}
 
 <div class="container">
@@ -56,6 +58,7 @@
           <input type="text"
                  name="username"
                  class="form-control"
+                 autocomplete="off"
                  required >
         </p>
 
