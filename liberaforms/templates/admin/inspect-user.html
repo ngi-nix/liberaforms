@@ -283,12 +283,28 @@ var time_chart = new Chart(ctx, {
 
             },
             {
-                label: ["{{ _('Forms')}}"],
-                data: {{ stats['forms']|tojson }},
+                label: ["{{ _('Total answers')}}"],
+                data: {{ stats['total_answers']|tojson }},
                 fill: true,
                 borderWidth: 0,
+                backgroundColor: "rgba(0, 190, 0, 0.7)",
+            },
+            {
+                label: ["{{ _('New forms')}}"],
+                data: {{ stats['forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
                 backgroundColor: "rgba(233, 132, 0, 0.7)",
-            }
+            },
+            {
+                label: ["{{ _('Total forms')}}"],
+                data: {{ stats['total_forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(255, 228, 0, 0.7)",
+            },
         ],
     },
     options: {
