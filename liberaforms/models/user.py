@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, shutil
 from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import pathlib

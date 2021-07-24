@@ -513,12 +513,14 @@ class Form(db.Model, CRUD):
         self.delete_all_answers()
         super().delete()
 
+    def get_attachment_dir(self):
+        return os.path.join(current_app.config['UPLOADS_DIR'],
+                            current_app.config['ATTACHMENT_DIR'],
+                            str(self.id))
+
     def delete_all_answers(self):
         self.answers.delete()
-        attachment_dir = os.path.join(current_app.config['ATTACHMENT_DIR'],
-                                      str(self.id))
-        attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
-                                      attachment_dir)
+        attachment_dir = self.get_attachment_dir()
         if os.path.isdir(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
         else:
