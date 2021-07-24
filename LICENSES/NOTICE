@@ -13,6 +13,8 @@ Python password_strength: BSD License
 Python validate_email: LGPL License
 Python Unidecode: GPLv2+ license
 Python Beautiful Soup 4: MIT license
+Python pytest: MIT License
+Python feedgen: BSD License, GNU Lesser General Public License v3 or later (LGPLv3+) (FreeBSD and LGPLv3+)
 
 Bootstrap4: MIT license
 Jquery and Jquery-UI: MIT license

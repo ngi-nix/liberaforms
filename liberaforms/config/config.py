@@ -36,7 +36,7 @@ class Config(object):
         "site", "sites",
         "update",
         "embed",
-        "api", "metrics",
+        "api", "metrics", "feed"
         "media", "file",
     ]
     # DPL = Data Protection Law
