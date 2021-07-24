@@ -66,10 +66,14 @@ def rss_feed(feed_type=None):
     if feed_type == 'atom':
         fg.description(html_parser.extract_text(g.site.blurb['html'],
                                                 with_links=True))
-    forms = Form.query.order_by(Form.created.desc()) \
-                      .paginate(page=1, per_page=10) \
-                      .items
+    forms = Form.query.filter_by(enabled=True) \
+                .order_by(Form.created.desc()) \
+                .paginate(page=1, per_page=10) \
+                .items
     for form in forms:
+        if not form.is_enabled():
+            # disabled by admin
+            continue
         feed_entry = fg.add_entry()
         feed_entry.id(form.url)
         feed_entry.pubDate(form.created)

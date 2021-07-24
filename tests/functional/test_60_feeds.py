@@ -10,7 +10,7 @@ import pytest
 
 class TestFeeds():
     def test_rss_feed(self, anon_client):
-        """ Test the generation of an RSS response
+        """ Test the generation of an RSS feed
         """
         response = anon_client.get(
                         "/feed/rss",
@@ -22,7 +22,7 @@ class TestFeeds():
         assert "<?xml version=\'1.0\' encoding=\'UTF-8\'?>" in data
 
     def test_atom_feed(self, anon_client):
-        """ Test the generation of an RSS response
+        """ Test the generation of an atom feed
         """
         response = anon_client.get(
                         "/feed/atom",
