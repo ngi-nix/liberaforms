@@ -35,7 +35,7 @@ class TestForm():
                         "/forms/edit",
                         data = {
                             "structure": valid_structure,
-                            "introductionTextMD": "hello",
+                            "introductionTextMD": "# hello",
                             "slug": slug,
                         },
                         follow_redirects=True,
@@ -50,6 +50,9 @@ class TestForm():
         assert response.status_code == 200
         forms['test_form'] = Form.find(slug=slug)
         assert forms['test_form'] != None
+        assert '<h1>hello</h1>' in forms['test_form'].introductionText['html']
+        assert '# hello' in forms['test_form'].introductionText['markdown']
+        assert forms['test_form'].introductionText['short_text'] == 'hello'
         html = response.data.decode()
         assert '<!-- inspect_form_page -->' in html
         assert forms['test_form'].log.count() == 1

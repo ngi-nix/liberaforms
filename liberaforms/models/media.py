@@ -5,10 +5,10 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime
-import pathlib
+import os, pathlib
+from datetime import datetime, timezone
 from PIL import Image
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
@@ -21,7 +21,7 @@ from pprint import pprint as pp
 class Media(db.Model, CRUD, Storage):
     __tablename__ = "media"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id',
                                                   ondelete="CASCADE"),
                                                   nullable=False)
@@ -34,7 +34,7 @@ class Media(db.Model, CRUD, Storage):
 
     def __init__(self):
         Storage.__init__(self)
-        self.created = datetime.datetime.now().isoformat()
+        self.created = datetime.now(timezone.utc)
         self.encrypted = False
 
     def __str__(self):
@@ -116,17 +116,6 @@ class Media(db.Model, CRUD, Storage):
         storage.save_file(tmp_thumbnail_path, storage_name, self.directory)
         #except Exception as error:
         #    current_app.logger.warning(f"Could not create thumbnail: {error}")
-
-    def get_values(self):
-        return {
-                    "id": self.id,
-                    "created": self.created.strftime('%Y-%m-%d'),
-                    "file_name": self.file_name,
-                    "file_size": self.file_size,
-                    "image_url": self.get_url(),
-                    "thumbnail_url": self.get_thumbnail_url(),
-                    "alt_text": self.alt_text,
-                }
 
 
 #@event.listens_for(Media, "after_delete")

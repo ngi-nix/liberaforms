@@ -5,7 +5,8 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, markdown, shutil
+import os, markdown, shutil
+from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import unicodecsv as csv
 from PIL import Image
@@ -13,7 +14,7 @@ from flask import current_app
 from flask_babel import gettext as _
 
 from liberaforms import db
-from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
@@ -23,6 +24,7 @@ from liberaforms.models.user import User
 
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
+from liberaforms.utils import html_parser
 from liberaforms.utils import utils
 
 #from pprint import pprint as pp
@@ -30,7 +32,7 @@ from liberaforms.utils import utils
 class Site(db.Model, CRUD):
     __tablename__ = "site"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.Date, nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     hostname = db.Column(db.String, nullable=False)
     port = db.Column(db.Integer, nullable=True)
     scheme = db.Column(db.String, nullable=False, default="http")
@@ -44,16 +46,16 @@ class Site(db.Model, CRUD):
     newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
     mimetypes = db.Column(JSONB, nullable=False)
     email_footer = db.Column(db.String, nullable=True)
-    blurb = db.Column(JSONB, nullable=False)
+    blurb = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
 
     def __init__(self, hostname, port, scheme):
-        self.created = datetime.datetime.now().isoformat()
+        self.created = datetime.now(timezone.utc)
         self.hostname = hostname
         self.port = port
         self.scheme = scheme
         self.siteName = "LiberaForms!"
         self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
-        self.primary_color = "#b71c1c"
+        self.primary_color = "#D63D3B"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
                                             name="terms"),
@@ -76,12 +78,13 @@ class Site(db.Model, CRUD):
                 "password": "",
                 "noreplyAddress": f"no-reply@{hostname}"
         }
-        blurb = os.path.join(current_app.root_path, 'templates/default_index.md')
+        blurb = os.path.join(current_app.root_path, '../assets/front-page.md')
         with open(blurb, 'r') as default_blurb:
             default_MD = default_blurb.read()
         self.blurb = {  'markdown': default_MD,
                         'html': markdown.markdown(default_MD)
                      }
+        self.set_short_description()
 
     def __str__(self):
         return utils.print_obj_values(self)
@@ -109,43 +112,50 @@ class Site(db.Model, CRUD):
         return url+'/'
 
     def change_email_header(self, file):
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
         """ Convert file to .png """
         new_header = Image.open(file)
-        new_header.save(os.path.join(current_app.config['UPLOADS_DIR'],
-                                     current_app.config['BRAND_DIR'],
-                                     'emailheader.png'))
+        new_header.save(os.path.join(brand_dir, 'emailheader.png'))
 
     def reset_email_header(self):
-        email_header_path = os.path.join(current_app.config['UPLOADS_DIR'],
-                                         current_app.config['BRAND_DIR'],
-                                         'emailheader.png')
-        default_email_header = os.path.join(current_app.config['UPLOADS_DIR'],
-                                            current_app.config['BRAND_DIR'],
-                                            'emailheader-default.png')
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
+        email_header_path = os.path.join(brand_dir, 'emailheader.png')
+        default_email_header = os.path.join(brand_dir, 'emailheader-default.png')
         shutil.copyfile(default_email_header, email_header_path)
         return True
 
     def change_favicon(self, file):
-        """ Convert file to .ico and make the it square """
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
+        """ Save the original image as logo.png. # used by opengraph
+        """
+        new_logo = Image.open(file)
+        new_logo.save(os.path.join(brand_dir, 'logo.png'))
+        """ Convert file to .ico and make the it square
+        """
         img = Image.open(file)
         x, y = img.size
         size = max(32, x, y)
         #icon_sizes = [(16,16), (32, 32), (48, 48), (64,64)]
         new_favicon = Image.new('RGBA', (size, size), (0, 0, 0, 0))
         new_favicon.paste(img, (int((size - x) / 2), int((size - y) / 2)))
-        new_favicon.save(os.path.join(current_app.config['UPLOADS_DIR'],
-                                      current_app.config['BRAND_DIR'],
-                                      'favicon.ico'))
+        new_favicon.save(os.path.join(brand_dir, 'favicon.ico'))
 
     def reset_favicon(self):
-        favicon_path = os.path.join(current_app.config['UPLOADS_DIR'],
-                                    current_app.config['BRAND_DIR'],
-                                    'favicon.ico')
-        default_favicon = os.path.join(current_app.config['UPLOADS_DIR'],
-                                       current_app.config['BRAND_DIR'],
-                                       'favicon-default.ico')
+        brand_dir = os.path.join(current_app.config['UPLOADS_DIR'],
+                                 current_app.config['BRAND_DIR'])
+        logo_path =os.path.join(brand_dir, 'logo.png')
+        default_logo =os.path.join(brand_dir, 'logo-default.png')
+        shutil.copyfile(default_logo, logo_path)
+        favicon_path = os.path.join(brand_dir, 'favicon.ico')
+        default_favicon = os.path.join(brand_dir, 'favicon-default.ico')
         shutil.copyfile(default_favicon, favicon_path)
         return True
+
+    def get_logo_uri(self):
+        return f"{self.host_url}logo.png"
 
     def get_email_footer(self):
         return self.email_footer if self.email_footer else _("Ethical form software")
@@ -156,7 +166,19 @@ class Site(db.Model, CRUD):
     def save_blurb(self, MDtext):
         self.blurb = {  'markdown': sanitizers.escape_markdown(MDtext),
                         'html': sanitizers.markdown2HTML(MDtext)}
+        self.set_short_description()
         self.save()
+
+    def set_short_description(self):
+        text = html_parser.get_opengraph_text(self.blurb['html'])
+        self.blurb['short_text'] = text
+
+    def get_short_description(self):
+        if 'short_text' in self.blurb:
+            return self.blurb['short_text']
+        self.set_short_description()
+        self.save()
+        return self.blurb['short_text']
 
     @property
     def terms_consent_id(self):
@@ -292,8 +314,8 @@ class Site(db.Model, CRUD):
         return User.find_all(**kwargs)
 
     def get_statistics(self, **kwargs):
-        today = datetime.date.today().strftime("%Y-%m")
-        one_year_ago = datetime.date.today() - datetime.timedelta(days=365)
+        today = datetime.now(timezone.utc)
+        one_year_ago = today - timedelta(days=365)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
@@ -307,14 +329,14 @@ class Site(db.Model, CRUD):
             two_digit_month="{0:0=2d}".format(month)
             year_month = f"{year}-{two_digit_month}"
             result['labels'].append(year_month)
-            if year_month == today:
+            if year_month == today.strftime("%Y-%m"):
                 break
         total_answers=0
         total_forms=0
         total_users=0
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
-            start_date = datetime.datetime.strptime(date_str, '%Y, %m')
+            start_date = datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
             monthy_users = User.query.filter(
                                     User.created >= start_date,
@@ -342,11 +364,11 @@ class Site(db.Model, CRUD):
                         "created": _("Created"),
                         # i18n: Used as column title
                         "enabled": _("Enabled"),
-                        # i18n: Email direction, used as column title
+                        # i18n: Email address, used as column title
                         "email": _("Email"),
                         # i18n: Used as column title
                         "forms": _("Forms"),
-                        # i18n: Whether user is admin, used as column title
+                        # i18n: Whether user is admin
                         "admin": _("Admin")
                         }
         csv_name = os.path.join(os.environ['TMP_DIR'], f"{self.hostname}.users.csv")
@@ -368,3 +390,10 @@ class Site(db.Model, CRUD):
                         }
                 writer.writerow(row)
         return csv_name
+
+    """ Returns an avaiable docs.liberaforms.org language
+    """
+    @staticmethod
+    def get_liberaforms_docs_language(lang):
+        DOCS_LANGUAGES = ['en', 'eu', 'ca', 'es']
+        return lang if lang in DOCS_LANGUAGES else "en"

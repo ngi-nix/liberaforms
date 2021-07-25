@@ -62,7 +62,7 @@
           {% if dataConsent['enabled'] %}
           <div class="consentText
                       form-group">
-            <div id="dataConsentText" >
+            <div class="dataConsentText" >
               {{ dataConsent['html'] | safe }}
             </div>
             <div class="form-check">
@@ -117,14 +117,6 @@ jQuery(function($) {
         },
         notify: {
             success: function(message) {
-                $('input[type=file]').each(function() {
-                  $(this).attr('data-parsley-max-file-size',
-                               {{ config['MAX_ATTACHMENT_SIZE']/1024 }}
-                  );
-                  $(this).attr('data-parsley-filemimetypes',
-                              "{{ ', '.join(g.site.mimetypes['mimetypes']) }}"
-                  );
-                });
                 $('#liberaform').show();
                 postFormRender();
                 return;
@@ -138,9 +130,8 @@ jQuery(function($) {
 {% endwith %}
 
 
-var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
-
 $(function () {
+  var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
   var parsley_options = {
     // append the error message to the input group
     errorsContainer: function (field) {
@@ -168,20 +159,24 @@ $(function () {
         //alert('You are making all developpers in the world cringe. Upgrade your browser!');
         return true;
       }
+      var form_group = parsleyInstance.$element.closest('.form-group');
+      if (form_group.length != 0){
+        $(form_group).find('.file_hints').hide()
+      }
       var files = parsleyInstance.$element[0].files;
       return files.length != 1  || files[0].size <= maxSize * 1024;
     },
     requirementType: 'integer',
     messages: {
-      en: 'This file should not be larger than {{max_attachment_size_for_humans}}',
-      es: 'El fichero no debe ser mas grande de {{max_attachment_size_for_humans}}',
-      ca: 'El fitxer no ha de ser més gran de {{max_attachment_size_for_humans}}',
-      fr: 'Ce fichier est plus grand que {{max_attachment_size_for_humans}}'
+      en: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
+      es: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
+      eu: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
+      ca: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
     }
   })
   .addValidator('filemimetypes', {
     validateString: function(_value, requirement, parsleyInstance) {
-      console.log(requirement)
+      //console.log(requirement)
       if (!window.FormData) {
         return true;
       }
@@ -194,10 +189,10 @@ $(function () {
     },
     requirementType: 'string',
     messages: {
-      en: 'Valid file types: '+allowed_extensions,
-      es: 'Tipos de fichero válidos: '+allowed_extensions,
-      eu: 'Valid file types: '+allowed_extensions,
-      ca: 'Valid file types: '+allowed_extensions,
+      en: '{%trans%}Valid file types{%endtrans%}'+': '+allowed_extensions,
+      es: '{%trans%}Valid file types{%endtrans%}'+': '+allowed_extensions,
+      eu: '{%trans%}Valid file types{%endtrans%}'+': '+allowed_extensions,
+      ca: '{%trans%}Valid file types{%endtrans%}'+': '+allowed_extensions,
     }
   });
   {% endif %}

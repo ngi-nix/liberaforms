@@ -15,6 +15,8 @@ DB_PASSWORD=""
 # 86400 seconds = 24h
 TOKEN_EXPIRATION = 604800
 
+CRYPTO_KEY=
+
 # Session management (see docs/INSTALL)
 SESSION_TYPE = "filesystem"
 #SESSION_TYPE = "memcached"
@@ -28,10 +30,12 @@ ENABLE_REMOTE_STORAGE=False
 MAX_MEDIA_SIZE=512000
 # 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
 MAX_ATTACHMENT_SIZE=1572864
-CRYPTO_KEY=
 
 # Directory where logs will be saved
 LOG_DIR=logs
+
+# see assets/timezones.txt for valid options
+DEFAULT_TIMEZONE="Europe/Madrid"
 
 # FLASK_ENV
 # this sets the Flask running mode

@@ -60,27 +60,11 @@ def create(container_name=None):
 @database_cli.command()
 @click.option('--docker-container', 'container_name',
               help="LiberaForms container name")
-def init(container_name=None):
+def alembic(container_name=None):
     if container_name:
         flask_cmd = f"docker exec {container_name} flask db".split()
     else:
         flask_cmd = "flask db".split()
-    cmdline = flask_cmd + ['init']
-    click.echo(" ".join(cmdline))
-    run_subprocess(cmdline)
-
-@database_cli.command()
-@click.option('--docker-container', 'container_name',
-              help="LiberaForms container name")
-def update(container_name=None):
-    if container_name:
-        flask_cmd = f"docker exec {container_name} flask db".split()
-    else:
-        flask_cmd = "flask db".split()
-    cmdline = flask_cmd + ['migrate']
-    click.echo(" ".join(cmdline))
-    run_subprocess(cmdline)
-    cmdline = flask_cmd + ['upgrade']
     click.echo(" ".join(cmdline))
     run_subprocess(cmdline)
 

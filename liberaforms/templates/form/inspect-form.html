@@ -16,7 +16,8 @@
 
 <div class="container">
 <div class="row">
-    <div class="col-md-6">
+    <div id="details_col"
+         class="col-md-6">
 
         <div class="title_1 delimited">
             {%trans%}Details{%endtrans%}
@@ -85,6 +86,25 @@
                    {% endif %}
                 </td>
             </tr>
+            {% if current_user_is_editor and g.current_user.fedi_auth %}
+            <tr>
+              <td>
+                {%trans%}Fediverse{%endtrans%}
+              </td>
+              <td>
+                <button id="fediverse-publish"
+                        class="btn btn-primary btn-xs"
+                        style="padding:5px 4px 3px 4px"
+                        onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
+                        {% if not form.is_public() %}disabled{% endif %}>
+                  {%trans%}Published{%endtrans%}
+                  <span class="badge badge-light">
+                    {{ form.published_cnt }}
+                  </span>
+                </button>
+              </td>
+            </tr>
+            {% endif %}
             <tr>
                <td>{%trans%}Public{%endtrans%}</td>
                <td>
@@ -175,7 +195,7 @@
                <td>
                    {% if current_user_is_editor %}
                         {% if form.is_shared() %}
-                        <a class="btn btn-success btn-xs"
+                        <a class="btn btn-primary btn-xs"
                            role="button"
                            href="/forms/share/{{form.id}}"
                            style="padding:5px 4px 3px 4px">
@@ -205,7 +225,7 @@
                <td>
                    {% if current_user_is_editor %}
                         {% if form.shared_notifications %}
-                        <a class="btn btn-success btn-xs"
+                        <a class="btn btn-primary btn-xs"
                            role="button"
                            href="/forms/share/{{form.id}}#notifications"
                            style="padding:5px 4px 3px 4px">
@@ -347,7 +367,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="DPL-html" class="DPL-html consentText" style="display:none">
+                <div class="dataConsentText" style="display:none">
                     {{ dataConsent['html']|safe }}
                 </div>
                 </td>
@@ -372,7 +392,7 @@
             </tr>
             <tr>
                <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ form.created }}</td>
+               <td>{{ form.get_created_date() }}</td>
             </tr>
             {% if g.is_root_user_enabled %}
             <tr>
@@ -401,32 +421,31 @@
         </div>
         {% if current_user_is_editor %}
         <div id="after-submit-editor" style="display:none">
-            <input id="save-after-submit-mde"
-                   class="btn-success btn btn-sm"
-                   type="button"
-                   value="{%trans%}Save{%endtrans%}" />
-            <input id="cancel-after-submit-mde"
-                   class="btn-primary btn btn-sm"
-                   type="button"
-                   value="{%trans%}Cancel{%endtrans%}" />
-            <p></p>
-            <textarea id="after-submit-mde">
-              {{ form.after_submit_text_markdown }}
-            </textarea>
+          <input id="save-after-submit-mde"
+                 class="btn-success btn btn-sm"
+                 type="button"
+                 value="{%trans%}Save{%endtrans%}" />
+          <input id="cancel-after-submit-mde"
+                 class="btn-primary btn btn-sm"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}" />
+          <p></p>
+          <!-- keep textarea on one line -->
+          <textarea id="after-submit-mde">{{ form.after_submit_text_markdown }}</textarea>
         </div>
         {% endif %}
 
         {% if form.can_expire() %}
         <div class="title_1 delimited" style="margin-top:2.5em">
-            {%trans%}When the form has expired{%endtrans%}
-            {% if current_user_is_editor %}
-                <div style="float:right">
-                <button id="show-expired-editor-button"
-                        class="btn btn-primary btn-xs">
-                    {%trans%}Edit text{%endtrans%}
-                </button>
-                </div>
-            {% endif %}
+          {%trans%}When the form has expired{%endtrans%}
+          {% if current_user_is_editor %}
+              <div style="float:right">
+              <button id="show-expired-editor-button"
+                      class="btn btn-primary btn-xs">
+                  {%trans%}Edit text{%endtrans%}
+              </button>
+              </div>
+          {% endif %}
         </div>
         <div class="title_text_subtext">
         {%trans%}Say something to the user if the form has expired{%endtrans%}
@@ -436,18 +455,17 @@
         </div>
         {% if current_user_is_editor %}
         <div id="expired-editor" style="display:none">
-            <input id="save-expired-mde"
-                   class="btn-success btn btn-sm"
-                   type="button"
-                   value="{%trans%}Save{%endtrans%}" />
-            <input id="cancel-expired-mde"
-                   class="btn-primary btn btn-sm"
-                   type="button"
-                   value="{%trans%}Cancel{%endtrans%}" />
-            <p></p>
-            <textarea id="expired-mde">
-              {{ form.expired_text_markdown }}
-            </textarea>
+          <input id="save-expired-mde"
+                 class="btn-success btn btn-sm"
+                 type="button"
+                 value="{%trans%}Save{%endtrans%}" />
+          <input id="cancel-expired-mde"
+                 class="btn-primary btn btn-sm"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}" />
+          <p></p>
+          <!-- keep textarea on one line -->
+          <textarea id="expired-mde">{{ form.expired_text_markdown }}</textarea>
         </div>
         {% endif %}
         {% endif %}
@@ -457,7 +475,9 @@
             {%trans%}Other options{%endtrans%}
         </div>
         <div id="embed_snippet">
-        <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
+        <code>
+          {{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}
+        </code>
         </div>
         <p>
         <a class="btn btn-primary btn-sm"
@@ -501,11 +521,6 @@
            href="/forms/duplicate/{{form.id}}">
            {%trans%}Duplicate{%endtrans%}
         </a>
-        <a class="btn btn-primary"
-           role="button"
-           href="/admin/forms/change-author/{{form.id}}">
-           {%trans%}Change author{%endtrans%}
-        </a>
             {% if form.adminPreferences['public'] %}
             <a class="btn btn-danger"
                role="button"
@@ -519,6 +534,16 @@
                {%trans%}Enable{%endtrans%}
             </a>
             {% endif %}
+        {% endif %}
+        {% if g.current_user.is_root_user() %}
+        <div class="title_1 delimited" style="margin-top:2.5em">
+            {%trans%}Super Admin options{%endtrans%}
+        </div>
+        <a class="btn btn-primary"
+           role="button"
+           href="/admin/forms/change-author/{{form.id}}">
+           {%trans%}Change author{%endtrans%}
+        </a>
         {% endif %}
         <p>&nbsp;</p>
     </div>
@@ -539,57 +564,57 @@
         </div>
 
         <div id="liberaform" class="liberaform">
-            <div class="formIntroduction marked-up">
-            {{ form.introductionText['html'] | safe }}
-            </div>
-            <div id='required_message'
-                 class='required'
-                 style="display:none">
-                 ● {%trans%}Required fields{%endtrans%}
-            </div>
-            <div id="fb-render"></div>
-            {% if form.has_email_field() %}
-            <div id="sendConfirmation"
-                 class="form-group form-check confirmation-group"
-                 {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
-              <input id="confirmation_checkbox"
-                     class="form-check-input send-confirmation"
+          <div class="formIntroduction marked-up">
+          {{ form.introductionText['html'] | safe }}
+          </div>
+          <div id='required_message'
+               class='required'
+               style="display:none">
+               ● {%trans%}Required fields{%endtrans%}
+          </div>
+          <div id="fb-render"></div>
+          {% if form.has_email_field() %}
+          <div id="sendConfirmation"
+               class="form-group form-check confirmation-group"
+               {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
+            <input id="confirmation_checkbox"
+                   class="form-check-input send-confirmation"
+                   type="checkbox"
+                   name="send-confirmation"
+                   value="ok"
+                   disabled />
+            <label for="confirmation_checkbox"
+                   class="form-check-label
+                   send-confirmation">
+                {%trans%}Send me confirmation by mail{%endtrans%}
+                <span id='confirmation_email'></span>
+            </label>
+          </div>
+          {% endif %}
+          <div id="data_consent_preview"
+               class="consentText form-group"
+               {% if dataConsent['enabled']==False %}style="display:none;"{% endif %}>
+            <div class="dataConsentText">{{ dataConsent['html']|safe }}</div>
+            <div class="form-check">
+              <input id="dummy-consent-checkbox"
                      type="checkbox"
-                     name="send-confirmation"
-                     value="ok"
-                     disabled />
-              <label for="confirmation_checkbox"
-                     class="form-check-label
-                     send-confirmation">
-                  {%trans%}Send me confirmation by mail{%endtrans%}
-                  <span id='confirmation_email'></span>
+                     name="DPL"
+                     class="form-check-input consent"
+                     required />
+              <label id="DPL-label"
+                     for="dummy-consent-checkbox"
+                     class="form-check-label consent required">
+                  {{ dataConsent['label'] }}
+                  <span class="required-dot">●</span>
               </label>
             </div>
-            {% endif %}
-            <div id="dataConsent"
-                 class="consentText form-group"
-                 {% if dataConsent['enabled']==False %}style="display:none;"{% endif %}>
-              <div class="DPL-html">{{ dataConsent['html']|safe }}</div>
-              <div class="form-check">
-                <input id="dummy-consent-checkbox"
-                       type="checkbox"
-                       name="DPL"
-                       class="form-check-input consent"
-                       required />
-                <label id="DPL-label"
-                       for="dummy-consent-checkbox"
-                       class="form-check-label consent required">
-                    {{ dataConsent['label'] }}
-                    <span class="required-dot">●</span>
-                </label>
-              </div>
-            </div>
-            <button class="btn btn-lg btn-success"
-                   type="submit"
-                   value=""
-                   disabled >
-                {%trans%}Send{%endtrans%}
-            </button>
+          </div>
+          <button class="btn btn-lg btn-success"
+                 type="submit"
+                 value=""
+                 disabled >
+              {%trans%}Send{%endtrans%}
+          </button>
         </div>
     </div>
 </div>
@@ -598,6 +623,7 @@
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
+var allowed_extensions = "{{ ', '.join(g.site.mimetypes['extensions']).upper() }}";
 jQuery(function($) {
     var fbRender = document.getElementById('fb-render');
     var formData = {{ form.structure | tojson }};
@@ -671,12 +697,14 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
                 $('#enabled_false').removeClass('btn-primary');
                 $('#formURL').hide();
                 $('#formLink').show();
+                $('#fediverse-publish').prop('disabled', false);
             }
             else if (data.enabled == false) {
                 $('#enabled_true').removeClass('btn-success');
                 $('#enabled_false').addClass('btn-primary');
                 $('#formURL').show();
                 $('#formLink').hide();
+                $('#fediverse-publish').prop('disabled', true);
             }
         }
     });
@@ -697,14 +725,14 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
             if (data.enabled == true) {
                 $('#dataConsent_true').addClass('btn-success');
                 $('#dataConsent_false').removeClass('btn-primary');
-                $('#dataConsent').show();
+                $('#data_consent_preview').show();
             }
             else if (data.enabled == false) {
                 $('#dataConsent_true').removeClass('btn-success');
                 $('#dataConsent_false').addClass('btn-primary');
-                $('#dataConsent').hide();
+                $('#data_consent_preview').hide();
             }
-            if ($('#gngform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
+            if ($('#liberaform').find("span.formbuilder-required, #data_consent_preview").filter(":visible").length) {
                 $("#required_message").show()
             }else{
                 $("#required_message").hide()
@@ -750,7 +778,7 @@ $(document).ready(function() {
                              });
     $("#show-DPL-text-button").click(function(){
         $("#show-DPL-text-button").prop('disabled', true);
-        $("#DPL-html").hide()
+        $("#details_col").find(".dataConsentText").hide()
         $("#DPL-text-block").show()
         $("#DPL-text-editor").show(0, function() {
                     dpl_MDE.codemirror.refresh();
@@ -779,9 +807,9 @@ $(document).ready(function() {
                 //console.log(data)
                 $("#show-DPL-text-button").prop('disabled', false);
                 $("#DPL-text-editor").hide()
-                $(".DPL-html").html(data.html)
-                $("#DPL-html").show(0)
-                fadeOutHighlight($("#DPL-html"))
+                $(".dataConsentText").html(data.html)
+                $(".dataConsentText").show(0)
+                fadeOutHighlight($(".dataConsentText"))
                 $("#DPL-mde").val(data.markdown)
                 dpl_MDE.value($("#DPL-mde").val())
                 if (! data.label ){

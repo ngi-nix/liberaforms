@@ -57,8 +57,21 @@ You can list the tags
 git tag -l --sort=-version:refname "v*"
 ```
 
+# Internationalizating (i18n)
+## Entering parameters into translatable strings
+**Python**
+`_("Text using a %s" % parameter)`
 
-# Translating
+**Jinja2 HTML**  
+`{%trans user=g.current_user.username%}Hello {{user}}!{%endtrans%}`  
+parameters must be aliased **in** the translation opening structure and then, use that alias **in** the string surrounded with two key-brackets
+
+## Translator comments
++ Python files: `# i18n: a comment` before internationalized strings
++ Jinja2 HTML files: `{# i18n: a comment #}` before internationalized strings
+
+
+# Translating (L10n)
 ## Weblate
 > We are working on this feature. This part will be updated.
 
@@ -143,11 +156,20 @@ We use `pybabel` python module to manage this
 `pybabel compile -d ./translations`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#compile)
 
+> For Form Templates:
+
+`pybabel compile -d form_templates/translations`
+
 ### Extracting
 > Updates .pot file from code, extracting comments starting with 'i18n:' and adding relevant metadata
 
 `pybabel extract -F babel/messages.cfg -o translations/messages.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='info@liberaforms.org'`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#extract)
+
+> For Form Templates:
+
+`pybabel extract -F babel/form_templates.cfg -o form_templates/translations/form_templates.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='i
+nfo@liberaforms.org'`
 
 ### Creating
 > Creates new .po file from .pot.  
@@ -156,9 +178,17 @@ _You must specify the target language adding its [ISO-639-1](https://en.wikipedi
 `pybabel init -i ./translations/messages.pot -d ./translations -l eo`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#init)
 
+> For Form Templates:
+
+`pybabel init -i form_templates/translations/form_templates.pot -d form_templates/translations -l eo`
+
 ### Updating
 > Updates .po files according to .pot.  
 _You must specify the target language adding its [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) code at the end of command_
 
 `pybabel update -i ./translations/messages.pot -d ./translations -l es`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#update)
+
+> For Form Templates:
+
+`pybabel update -i form_templates/translations/form_templates.pot -d form_templates/translations -l es`

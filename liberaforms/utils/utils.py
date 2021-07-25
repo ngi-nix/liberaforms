@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import json, string, random, datetime, uuid
+import json, string, random, datetime, uuid, pytz
 from pprint import pformat
 
 from flask import Response, redirect, request, url_for
@@ -45,6 +45,7 @@ def populate_flask_g():
     from liberaforms.models.site import Site
     from liberaforms.models.user import User
     g.site=Site.find(urlparse(request.host_url))
+    g.timezone = pytz.timezone(current_app.config['DEFAULT_TIMEZONE'])
     if 'user_id' in session and session["user_id"] != None:
         g.current_user=User.find(id=session["user_id"])
         if not g.current_user:
@@ -52,7 +53,10 @@ def populate_flask_g():
             return
         if g.current_user.is_admin():
             g.is_admin=True
-        g.app_version = get_app_version()
+        g.timezone = pytz.timezone(g.current_user.get_timezone())
+
+def utc_to_g_timezone(utc_datetime):
+    return utc_datetime.astimezone(g.timezone)
 
 def get_app_version():
     try:

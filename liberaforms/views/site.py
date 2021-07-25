@@ -18,7 +18,7 @@ from liberaforms.models.user import User
 from liberaforms.utils.wraps import *
 from liberaforms.utils import utils
 from liberaforms.utils.utils import make_url_for, JsonResponse
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher import Dispatcher
 import liberaforms.utils.wtf as wtf
 
 from pprint import pprint
@@ -67,7 +67,7 @@ def recover_password(token=None):
         if user:
             user.set_token()
             Dispatcher().send_account_recovery(user)
-        if not user and wtform.email.data in os.environ['ROOT_USERS']:
+        if not user and wtform.email.data in current_app.config['ROOT_USERS']:
             if not User.find(email=wtform.email.data):
                 # auto invite root user
                 invite=Invite(  email=wtform.email.data,
@@ -209,53 +209,7 @@ def toggle_invitation_only():
 def toggle_newuser_uploads_default():
     return JsonResponse(json.dumps({'uploads': g.site.toggle_newuser_uploads_default()}))
 
-@site_bp.route('/site/email/config', methods=['GET', 'POST'])
-@admin_required
-def smtp_config():
-    wtf_smtp=wtf.smtpConfig(**g.site.smtpConfig)
-    if wtf_smtp.validate_on_submit():
-        if not wtf_smtp.encryption.data == "None":
-            encryption = wtf_smtp.encryption.data
-        else:
-            encryption = ""
-        config={}
-        config['host'] = wtf_smtp.host.data
-        config['port'] = wtf_smtp.port.data
-        config['encryption'] = encryption
-        config['user'] = wtf_smtp.user.data
-        config['password'] = wtf_smtp.password.data
-        config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
-        g.site.save_smtp_config(**config)
-        flash(_("Confguration saved OK"), 'success')
-    wtf_email=wtf.GetEmail()
-    return render_template('smtp-config.html',
-                            wtf_smtp=wtf_smtp,
-                            wtf_email=wtf_email)
-
-
-@site_bp.route('/site/email/test-config', methods=['POST'])
-@admin_required
-def test_smtp():
-    wtform=wtf.GetEmail()
-    if wtform.validate_on_submit():
-        status = Dispatcher().send_test_email(wtform.email.data)
-        if status['email_sent'] == True:
-            flash(_("SMTP config works!"), 'success')
-        else:
-            flash(status['msg'], 'warning')
-    else:
-        flash("Email not valid", 'warning')
-    return redirect(make_url_for('site_bp.smtp_config'))
-
-
-@site_bp.route('/site/edit', methods=['GET'])
-@rootuser_required
-def edit_site():
-    queriedSite=Site.find()
-    return render_template('edit-site.html', site=queriedSite)
-
-
-@site_bp.route('/site/primary-colour', methods=['GET', 'POST'])
+@site_bp.route('/site/primary-color', methods=['GET', 'POST'])
 @admin_required
 def primary_color():
     wtform=wtf.ChangePrimaryColor()
@@ -272,7 +226,7 @@ def primary_color():
 @site_bp.route('/site/email-branding', methods=['GET', 'POST'])
 @admin_required
 def email_branding():
-    from liberaforms.utils.email.dispatcher import HTML_email
+    from liberaforms.utils.dispatcher.dispatcher import HTML_email
     wtform = wtf.EmailBranding()
     if wtform.validate_on_submit():
         if request.files['header_image']:
@@ -298,7 +252,7 @@ def reset_email_header():
 @site_bp.route('/site/example-email-preview', methods=['GET'])
 @admin_required
 def email_preview():
-    from liberaforms.utils.email import dispatcher
+    from liberaforms.utils.dispatcher import dispatcher
     return dispatcher.branding_body_preview()['html']
 
 
@@ -322,6 +276,55 @@ def send_branding_preview():
 @admin_required
 def stats():
     return render_template('stats.html', site=g.site)
+
+
+""" ROOT_USERS functions
+"""
+
+@site_bp.route('/site/email/config', methods=['GET', 'POST'])
+@rootuser_required
+def smtp_config():
+    wtf_smtp=wtf.smtpConfig(**g.site.smtpConfig)
+    if wtf_smtp.validate_on_submit():
+        if not wtf_smtp.encryption.data == "None":
+            encryption = wtf_smtp.encryption.data
+        else:
+            encryption = ""
+        config={}
+        config['host'] = wtf_smtp.host.data
+        config['port'] = wtf_smtp.port.data
+        config['encryption'] = encryption
+        config['user'] = wtf_smtp.user.data
+        config['password'] = wtf_smtp.password.data
+        config['noreplyAddress'] = wtf_smtp.noreplyAddress.data
+        g.site.save_smtp_config(**config)
+        flash(_("Confguration saved OK"), 'success')
+    wtf_email=wtf.GetEmail()
+    return render_template('smtp-config.html',
+                            wtf_smtp=wtf_smtp,
+                            wtf_email=wtf_email)
+
+
+@site_bp.route('/site/email/test-config', methods=['POST'])
+@rootuser_required
+def test_smtp():
+    wtform=wtf.GetEmail()
+    if wtform.validate_on_submit():
+        status = Dispatcher().send_test_email(wtform.email.data)
+        if status['email_sent'] == True:
+            flash(_("SMTP config works!"), 'success')
+        else:
+            flash(status['msg'], 'warning')
+    else:
+        flash("Email not valid", 'warning')
+    return redirect(make_url_for('site_bp.smtp_config'))
+
+
+@site_bp.route('/site/edit-host-url', methods=['GET'])
+@rootuser_required
+def edit_host_url():
+    queriedSite=Site.find()
+    return render_template('edit-host-url.html', site=queriedSite)
 
 
 @site_bp.route('/site/toggle-scheme', methods=['POST'])

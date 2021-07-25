@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os, json, datetime
 from threading import Thread
+from urllib.parse import urlparse
 from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
 from flask import session, flash, send_file, after_this_request
@@ -17,11 +18,13 @@ from liberaforms.models.form import Form
 from liberaforms.models.user import User
 from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.models.media import Media
+from liberaforms.form_templates import form_templates
 from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils import html_parser
+from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import (make_url_for, JsonResponse,
                                      logout_user, human_readable_bytes)
@@ -124,11 +127,14 @@ def is_slug_available():
 def preview_form():
     if not ('slug' in session and 'formStructure' in session):
         return redirect(make_url_for('form_bp.my_forms'))
+    max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template( 'preview-form.html',
                             slug=session['slug'],
                             introductionText=sanitizers.markdown2HTML(
-                                                session['introductionTextMD'])
-                                            )
+                                                session['introductionTextMD']
+                            ),
+                            max_attachment_size_for_humans=max_attach_size,
+                        )
 
 @form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
 @enabled_user_required
@@ -169,6 +175,8 @@ def save_form(id=None):
         queriedForm.update_field_index(session['formFieldIndex'])
         queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
+        queriedForm.set_short_description()
+        queriedForm.set_thumbnail()
         queriedForm.save()
         form_helper.clear_session_form_data()
         flash(_("Updated form OK"), 'success')
@@ -204,8 +212,11 @@ def save_form(id=None):
                     }
         try:
             new_form = Form(g.current_user, **new_form_data)
+            new_form.set_short_description()
+            new_form.set_thumbnail()
             new_form.save()
-        except:
+        except Exception as error:
+            current_app.logger.error(error)
             flash(_("Failed to save form"), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         form_helper.clear_session_form_data()
@@ -316,7 +327,46 @@ def inspect_form(id):
     # prepare the session for possible form edit
     #pprint(queriedForm.structure)
     form_helper.populate_session_with_form(queriedForm)
-    return render_template('inspect-form.html', form=queriedForm)
+    max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
+    return render_template('inspect-form.html',
+                            form=queriedForm,
+                            max_attachment_size_for_humans=max_attach_size)
+
+
+@form_bp.route('/form/<int:id>/fediverse-publish', methods=['GET', 'POST'])
+@enabled_user_required
+def fedi_publish(id):
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+    if not queriedForm:
+        flash(_("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    if not g.current_user.fedi_auth:
+        flash(_("Fediverse connect is not configured"), 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    wtform = wtf.FormPublish()
+    if wtform.validate_on_submit():
+        status = Dispatcher().publish_form(wtform.text.data,
+                                           wtform.image_source.data,
+                                           fediverse=True)
+        if status['published'] == True:
+            queriedForm.published_cnt += 1
+            queriedForm.save()
+            status_uri = status['msg']
+            flash(_("Published at %s" % status_uri), 'success')
+        else:
+            flash(status['msg'], 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    if request.method == 'GET':
+        html = queriedForm.introductionText['html']
+        text = html_parser.extract_text(html, with_links=True).strip('\n')
+        text = f"{queriedForm.url}\n\n{text}"
+        wtform.text.data = text
+        wtform.image_source.data = queriedForm.thumbnail
+    node_name = urlparse(g.current_user.get_fedi_auth()['node_url']).hostname
+    return render_template('fedi-publish.html',
+                            node_name=node_name,
+                            form=queriedForm,
+                            wtform=wtform)
 
 
 @form_bp.route('/forms/share/<int:id>', methods=['GET'])
@@ -394,8 +444,6 @@ def remove_shared_notification(id):
     if not (queriedForm and 'email' in request.form):
         return JsonResponse(json.dumps(False))
     email = request.form.get('email')
-    if not validators.is_valid_email(email):
-        return JsonResponse(json.dumps(False))
     if email in queriedForm.shared_notifications:
         queriedForm.shared_notifications.remove(email)
         queriedForm.add_log(_("Removed shared notification: %s" % email))
@@ -693,5 +741,40 @@ def view_form(slug):
     return render_template('view-form.html',
                             form=queriedForm,
                             max_attachment_size_for_humans=max_attach_size,
+                            opengraph=queriedForm.get_opengraph(),
                             navbar=False,
                             no_bot=True)
+
+
+@form_bp.route('/forms/templates', methods=['GET'])
+@enabled_user_required
+def list_templates():
+    return render_template('list-templates.html',
+                            templates = form_templates.templates)
+
+@form_bp.route('/forms/template/<int:template_id>', methods=['GET'])
+@enabled_user_required
+def view_template(template_id):
+    form_helper.clear_session_form_data()
+    template = next((sub for sub in form_templates.templates if sub['id'] == template_id), None)
+    if not template:
+        return redirect(make_url_for('form_bp.list_templates'))
+    introduction_text = sanitizers.markdown2HTML(str(template['introduction_md']))
+    session['formStructure'] = template['structure']
+    return render_template('preview-form.html',
+                            is_template=True,
+                            slug=template['name'],
+                            introductionText=introduction_text,
+                            template = template)
+
+@form_bp.route('/forms/template/<int:template_id>/create-form', methods=['GET'])
+@enabled_user_required
+def create_form_from_template(template_id):
+    form_helper.clear_session_form_data()
+    template = next((sub for sub in form_templates.templates if sub['id'] == template_id), None)
+    if not template:
+        return redirect(make_url_for('form_bp.list_templates'))
+    session['introductionTextMD']=template['introduction_md']
+    session['formStructure'] = template['structure']
+    flash(_("Copied template OK. You can edit your new form"), 'success')
+    return redirect(make_url_for('form_bp.edit_form'))

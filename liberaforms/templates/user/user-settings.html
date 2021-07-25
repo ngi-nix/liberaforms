@@ -15,7 +15,7 @@
         {% if g.current_user.validatedEmail != True %}
         <div class="row">
             <div class="col title_2">
-                {%trans%}Please validated your email to continue{%endtrans%}
+                {%trans%}Please validate your email to continue{%endtrans%}
             </div>
             <div class="col-auto">
                 <a  class="btn btn-sm btn-success"
@@ -29,127 +29,159 @@
         {% endif %}
 
         <table class="table table-sm sparse-table">
-            <tr>
-                <td>{%trans%}Email address{%endtrans%}</td>
-                <td>
-                {{ g.current_user.email }}
-                </td>
-                <td class="text-right">
-                  <a class="btn btn-primary btn-xs"
-                     role="button"
-                     href="/user/change-email">
-                     {%trans%}Change{%endtrans%}
-                  </a>
-                </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Password{%endtrans%}</td>
-                <td>
-                    <i class="fa fa-asterisk" aria-hidden="true"></i>
-                    <i class="fa fa-asterisk" aria-hidden="true"></i>
-                    <i class="fa fa-asterisk" aria-hidden="true"></i>
-                    <i class="fa fa-asterisk" aria-hidden="true"></i>
-                    <i class="fa fa-asterisk" aria-hidden="true"></i>
-                    <i class="fa fa-asterisk" aria-hidden="true"></i>
-                </td>
-                <td class="text-right">
-                  <a class="btn btn-primary btn-xs"
-                     role="button"
-                     href="/user/reset-password">
-                     {%trans%}Change{%endtrans%}
-                   </a>
-                </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Preferred language{%endtrans%}</td>
-                <td>{{ config['LANGUAGES'][g.current_user.language][0] }}</td>
-                <td class="text-right">
-                  <a class="btn btn-primary btn-xs"
-                     role="button"
-                     href="/user/change-language">
-                     {%trans%}Change{%endtrans%}
-                   </a>
-                </td>
-            </tr>
-            <tr>
-            </tr>
+          <tr>
+            <td>{%trans%}Email address{%endtrans%}</td>
+            <td>
+            {{ g.current_user.email }}
+            </td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/user/change-email">
+                 {%trans%}Change{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Password{%endtrans%}</td>
+            <td>
+              <i class="fa fa-asterisk" aria-hidden="true"></i>
+              <i class="fa fa-asterisk" aria-hidden="true"></i>
+              <i class="fa fa-asterisk" aria-hidden="true"></i>
+              <i class="fa fa-asterisk" aria-hidden="true"></i>
+              <i class="fa fa-asterisk" aria-hidden="true"></i>
+              <i class="fa fa-asterisk" aria-hidden="true"></i>
+            </td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/user/reset-password">
+                 {%trans%}Change{%endtrans%}
+               </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Preferred language{%endtrans%}</td>
+            <td>{{ config['LANGUAGES'][g.current_user.language][0] }}</td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/user/change-language">
+                 {%trans%}Change{%endtrans%}
+               </a>
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Time zone{%endtrans%}</td>
+            <td>
+                {{ g.current_user.get_timezone() }}
+            </td>
+            <td class="text-right">
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/user/change-timezone">
+                 {%trans%}Change{%endtrans%}
+               </a>
+            </td>
+          </tr>
         </table>
 {% if g.current_user.enabled %}
         <div class="title_2 delimited">
-            {%trans%}By default{%endtrans%}
+            {%trans%}Email notifications{%endtrans%}
         </div>
         <table class="table table-sm sparse-table">
-            <tr>
-                <td>
-                  {%trans%}New answer notification default{%endtrans%}
-                </td>
-                <td class="text-right">
-                    <div id="toggle_new_answer_notification"
-                         class="btn-group btn-toggle">
-                    <button id="new_answer_notification_true"
-                            class="btn
-                                   btn-xs
-                                   btn-default
-                                   {% if user.new_answer_notification_default %}
-                                   btn-success
-                                   {% endif %}
-                            ">
-                        {%trans%}True{%endtrans%}
-                    </button>
-                    <button id="new_answer_notification_false"
-                            class="btn
-                                   btn-xs
-                                   btn-default
-                                   {% if not user.new_answer_notification_default %}
-                                   btn-primary
-                                   {% endif %}
-                            ">
-                        {%trans%}False{%endtrans%}
-                    </button>
-                    </div>
-                </td>
-            </tr>
-            <tr style="display:none">
-                <td>
-                    {%trans%}Consentment texts{%endtrans%}
-                </td>
-                <td class="text-right">
-                  <a href="/user/{{g.current_user.username}}/consent"
-                     class="btn btn-xs btn-primary">
-                     {%trans%}Edit{%endtrans%}
-                  </a>
-                </td>
-            </tr>
+          <tr>
+            <td>
+              {%trans%}Notify me on each new answer{%endtrans%}
+            </td>
+            <td class="text-right">
+              <div id="toggle_new_answer_notification"
+                   class="btn-group btn-toggle">
+                <button id="new_answer_notification_true"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if user.new_answer_notification_default %}
+                               btn-success
+                               {% endif %}
+                        ">
+                    {%trans%}True{%endtrans%}
+                </button>
+                <button id="new_answer_notification_false"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if not user.new_answer_notification_default %}
+                               btn-primary
+                               {% endif %}
+                        ">
+                    {%trans%}False{%endtrans%}
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr style="display:none">
+            <td>
+              {%trans%}Consentment texts{%endtrans%}
+            </td>
+            <td class="text-right">
+              <a href="/user/{{g.current_user.username}}/consent"
+                 class="btn btn-xs btn-primary">
+                 {%trans%}Edit{%endtrans%}
+              </a>
+            </td>
+          </tr>
         </table>
-  {% if g.current_user.get_uploads_enabled() %}
+
+        {% if g.current_user.get_uploads_enabled() or config['CRYPTO_KEY'] %}
         <div class="title_2 delimited">
-            {%trans%}My media{%endtrans%}
+            {%trans%}Media{%endtrans%}
         </div>
         <table class="table table-sm sparse-table">
-            <tr>
-                <td>
-                  {%trans%}Add and delete uploaded files{%endtrans%}
-                </td>
-                <td class="text-right">
-                  <a href="/user/{{g.current_user.username}}/media"
-                     class="btn btn-xs btn-primary">
-                     {%trans%}Edit{%endtrans%}
-                  </a>
-                </td>
-            </tr>
-            <tr style="display:none">
-                <td>
-                    {%trans%}Consentment texts{%endtrans%}
-                </td>
-                <td class="text-right">
-                  <a href="/user/{{g.current_user.username}}/consent"
-                     class="btn btn-xs btn-primary">
-                     {%trans%}Edit{%endtrans%}
-                  </a>
-                </td>
-            </tr>
+          {% if g.current_user.get_uploads_enabled() %}
+          <tr>
+            <td colspan="2">
+              {%trans%}Add and delete uploaded files{%endtrans%}
+            </td>
+            <td class="text-right">
+              <a href="/user/{{g.current_user.username}}/media"
+                 class="btn btn-xs btn-primary">
+                 {%trans%}Edit{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          {% endif %}
+          {% if config['CRYPTO_KEY'] %}
+          <tr>
+            <td>
+              {%trans%}Fediverse connect{%endtrans%}
+            </td>
+            <td>
+              {% if g.current_user.fedi_auth %}
+                {{ g.current_user.get_fedi_auth()['node_url'] }}
+              {% endif %}
+            </td>
+            <td class="text-right">
+              <a href="/user/{{g.current_user.username}}/fediverse"
+                 class="btn btn-xs btn-primary">
+                 {%trans%}Configure{%endtrans%}
+              </a>
+            </td>
+          </tr>
+          {% endif %}
+          <tr style="display:none">
+            <td>
+                {%trans%}Consentment texts{%endtrans%}
+            </td>
+            <td class="text-right">
+              <a href="/user/{{g.current_user.username}}/consent"
+                 class="btn btn-xs btn-primary">
+                 {%trans%}Edit{%endtrans%}
+              </a>
+            </td>
+          </tr>
         </table>
-  {% endif %}
+        {% endif %}
 
 {% if g.is_admin %}
         <div id="admin_settings" class="title_2" style="margin-top:2em">
@@ -157,78 +189,77 @@
         </div>
 
         <table class="table table-sm">
-            <tr>
-                <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
-                <td class="text-right">
-                    <div id="toggle_notify_newuser"
-                         class="btn-group btn-toggle">
-                    <button id="notify_newuser_true"
-                            class="btn
-                                   btn-xs
-                                   btn-default
-                                   {% if user.admin['notifyNewUser'] %}
-                                   btn-success
-                                   {% endif %}
-                                   ">
-                        {%trans%}True{%endtrans%}
-                    </button>
-                    <button id="notify_newuser_false"
-                            class="btn
-                                   btn-xs
-                                   btn-default
-                                   {% if not user.admin['notifyNewUser'] %}
-                                   btn-primary
-                                   {% endif %}
-                                   ">
-                        {%trans%}False{%endtrans%}
-                    </button>
-                    </div>
-               </td>
-            </tr>
-            <tr>
-                <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
-                <td class="text-right">
-                    <div id="toggle_notify_newform" class="btn-group btn-toggle">
-                      <button id="notify_newform_true"
-                              class="btn
-                                     btn-xs
-                                     btn-default
-                                     {% if user.admin['notifyNewForm'] %}
-                                     btn-success
-                                     {% endif %}
-                              ">
-                          {%trans%}True{%endtrans%}
-                      </button>
-                      <button id="notify_newform_false"
-                              class="btn
-                                     btn-xs
-                                     btn-default
-                                     {% if not user.admin['notifyNewForm'] %}
-                                     btn-primary
-                                     {% endif %}
-                              ">
-                          {%trans%}False{%endtrans%}
-                      </button>
-                    </div>
-               </td>
-            </tr>
+          <tr>
+            <td>{%trans%}Notify me when new user has registered{%endtrans%}</td>
+            <td class="text-right">
+              <div id="toggle_notify_newuser"
+                   class="btn-group btn-toggle">
+                <button id="notify_newuser_true"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if user.admin['notifyNewUser'] %}
+                               btn-success
+                               {% endif %}
+                               ">
+                    {%trans%}True{%endtrans%}
+                </button>
+                <button id="notify_newuser_false"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if not user.admin['notifyNewUser'] %}
+                               btn-primary
+                               {% endif %}
+                               ">
+                    {%trans%}False{%endtrans%}
+                </button>
+              </div>
+             </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Notify me when new form has been created{%endtrans%}</td>
+            <td class="text-right">
+              <div id="toggle_notify_newform" class="btn-group btn-toggle">
+                <button id="notify_newform_true"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if user.admin['notifyNewForm'] %}
+                               btn-success
+                               {% endif %}
+                        ">
+                    {%trans%}True{%endtrans%}
+                </button>
+                <button id="notify_newform_false"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if not user.admin['notifyNewForm'] %}
+                               btn-primary
+                               {% endif %}
+                        ">
+                    {%trans%}False{%endtrans%}
+                </button>
+              </div>
+            </td>
+          </tr>
         </table>
   {% endif %}
         <hr />
 {% endif %}
         <div class="row" style="margin-top: 2em">
-            <div class="col title_2">
-                {%trans%}Delete my account{%endtrans%}
-            </div>
-            <div class="col-auto">
-                <a  class="btn btn-sm btn-warning"
-                    role="button"
-                    href="/user/delete-account/{{ g.current_user.id }}">
-                    {%trans%}Delete{%endtrans%}
-                </a>
-            </div>
+          <div class="col title_2">
+            {%trans%}Delete my account{%endtrans%}
+          </div>
+          <div class="col-auto">
+            <a  class="btn btn-sm btn-warning"
+                role="button"
+                href="/user/delete-account/{{ g.current_user.id }}">
+                {%trans%}Delete{%endtrans%}
+            </a>
+          </div>
         </div>
-
     </div>
 </div>
 </div>

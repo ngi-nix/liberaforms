@@ -46,6 +46,18 @@ def enabled_user_required(f):
         return redirect(url_for('main_bp.index'))
     return wrap
 
+def enabled_user_required__json(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if g.current_user and g.current_user.enabled:
+            return f(*args, **kwargs)
+        elif g.current_user:
+            current_app.logger.info(f'Disabled user denied: {request.path}')
+        else:
+            current_app.logger.info(f'Anon user denied: {request.path}')
+        return jsonify("Denied"), 401
+    return wrap
+
 def admin_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):

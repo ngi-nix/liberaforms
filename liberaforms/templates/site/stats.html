@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
 
+<!-- site_stats_page -->
+
 {% set stats = site.get_statistics() %}
 
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
@@ -12,7 +14,7 @@
             {%trans%}Site statistics{%endtrans%}
         </div>
         <canvas id="site-usage-chart" height="100"></canvas>
-        
+
         {% if sites|length > 1 %}
             {% for site in sites %}
             <div class="title_2 delimited" style="margin-top:2.5em">
@@ -21,7 +23,7 @@
             <canvas id="{{site.id}}-usage-chart" height="100"></canvas>
             {% endfor %}
         {% endif %}
-        
+
     </div>
 </div>
 

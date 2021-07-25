@@ -6,10 +6,11 @@ This file is part of LiberaForms.
 """
 
 import os, re
-import mimetypes
+import mimetypes, pytz
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
-                     PasswordField, BooleanField, RadioField, FileField)
+                     PasswordField, BooleanField, RadioField, FileField, HiddenField)
+from wtforms.fields.html5 import URLField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask import current_app, g
 from flask_babel import lazy_gettext as _
@@ -68,8 +69,8 @@ class Login(FlaskForm):
 
 
 class DeleteAccount(FlaskForm):
-    delete_username = StringField(_("Your username"), validators=[DataRequired()])
-    delete_password = PasswordField(_("Your password"), validators=[DataRequired()])
+    delete_username = StringField(_("Enter your username"), validators=[DataRequired()])
+    delete_password = PasswordField(_("Enter your password"), validators=[DataRequired()])
 
     def validate_delete_username(self, delete_username):
         if delete_username.data != g.current_user.username:
@@ -89,12 +90,14 @@ class ChangeEmail(FlaskForm):
     email = StringField(_("New email address"), validators=[DataRequired(), Email()])
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in current_app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 class ResetPassword(FlaskForm):
     password = PasswordField(_("Password"), validators=[DataRequired()])
-    password2 = PasswordField(_("Password again"), validators=[DataRequired(), EqualTo('password')])
+    password2 = PasswordField(_("Password again"),
+                              validators=[DataRequired(),
+                              EqualTo('password')])
 
     def validate_password(self, password):
         if validators.pwd_policy.test(password.data):
@@ -122,7 +125,7 @@ class NewInvite(FlaskForm):
     admin = BooleanField(_("Make the new user an Admin"))
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in current_app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 
@@ -132,6 +135,11 @@ class ChangePrimaryColor(FlaskForm):
         if not validators.is_hex_color(hex_color.data):
             raise ValidationError(_("Not a valid HTML color code"))
 
+class ChangeTimeZone(FlaskForm):
+    timezone = StringField(_("Time zone"), validators=[DataRequired()])
+    def validate_timezone(self, timezone):
+        if not timezone.data in pytz.common_timezones:
+            raise ValidationError(_("Not a valid time zone"))
 
 class FileExtensions(FlaskForm):
     extensions = TextAreaField(_("Extensions"), validators=[DataRequired()])
@@ -178,3 +186,18 @@ class EmailBranding(FlaskForm):
                 max_size = human_readable_bytes(max_size)
                 err_msg = "File too big. Maximum size is %s" % max_size
                 raise ValidationError(err_msg)
+
+class FediverseAuth(FlaskForm):
+    node_url = StringField(_("Fediverse node"),
+                          default="",
+                          validators=[DataRequired()])
+    access_token = HiddenField(_("Access token"),
+                               default="",
+                               validators=[DataRequired()])
+
+class FormPublish(FlaskForm):
+    image_source = StringField()
+    text = TextAreaField(validators=[DataRequired()])
+
+class FormShortDescription(FlaskForm):
+    short_desc = TextAreaField(_("Short description"), validators=[DataRequired()])

@@ -27,8 +27,11 @@ server {
         location /favicon.ico {
             alias /path/to/liberaforms/uploads/media/brand/favicon.ico;
         }
-        location /brand/emailheader.png {
-            alias  /path/to/liberaforms/uploads/media/emailheader.png;
+        location /logo.png {
+            alias  /path/to/liberaforms/uploads/media/brand/logo.png;
+        }
+        location /emailheader.png {
+            alias  /path/to/liberaforms/uploads/media/brand/emailheader.png;
         }
         location /file/media/ {
             alias /path/to/liberaforms/uploads/media/;

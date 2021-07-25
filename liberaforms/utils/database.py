@@ -16,3 +16,17 @@ class CRUD():
     def delete(self):
         db.session.delete(self)
         return db.session.commit()
+
+
+"""
+from datetime import datetime
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import DateTime
+class utc_now(expression.FunctionElement):
+    type = DateTime()
+
+@compiles(utc_now, 'postgresql')
+def pg_utcnow(element, compiler, **kw):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP AT TIME ZONE 'UTC')"
+"""

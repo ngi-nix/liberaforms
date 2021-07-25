@@ -2,28 +2,29 @@
 // Load this after Parsley
 
 Parsley.addMessages('eu', {
-  defaultMessage: "Balio hau baliogabekoa dirudi.",
+  defaultMessage: "Eremu hau ez da baliozkoa.",
   type: {
-    email:        "Balio honek posta balioduna izan behar da.",
-    url:          "Balio honek URL balioduna izan behar da.",
-    number:       "Balio honek zenbaki balioduna izan behar da.",
-    integer:      "Balio honek zenbaki balioduna izan behar da.",
-    digits:       "Balio honek digitu balioduna izan behar da.",
-    alphanum:     "Balio honek alfanumerikoa izan behar da."
+    email:        "Eremu honek baliozko eposta izan behar du.",
+    url:          "Eremu honek baliozko URLs izan behar du.",
+    number:       "Eremu honek baliozko zenbakia izan behar du.",
+    integer:      "Eremu honek baliozko zenbakia izan behar du.",
+    digits:       "Eremu honek baliozko digitua izan behar du.",
+    alphanum:     "Eremu honek alfanumerikoa izan behar du."
   },
-  notblank:       "Balio honek ezin da hutsik egon.",
-  required:       "Balio hau nahitaezkoa da.",
-  pattern:        "Balio hau ez da zuzena.",
-  min:            "Balio honek %s baino baxuagoa ezin da izan.",
-  max:            "Balio honek %s baino altuagoa ezin da izan.",
-  range:          "Balio honek %s eta %s artean egon behar da.",
-  minlength:      "Balio hau oso motza da. Gutxienezko luzera %s karakteretakoa da.",
-  maxlength:      "Balio hau oso luzea da. Gehienezko luzera %s karakteretakoa da.",
-  length:         "Balio honen luzera %s eta %s karaketere artean egon behar da.",
+  notblank:       "Eremu honek ezin du hutsik egon.",
+  required:       "Eremu hau nahitaezkoa da.",
+  pattern:        "Eremu hau ez da zuzena.",
+  min:            "Eremu honek %s edo altuagoa izan behar du.",
+  max:            "Eremu honek %s edo baxuagoa izan behar du.",
+  range:          "Eremu honek %s eta %s artean egon behar du.",
+  minlength:      "Eremu hau motzegia da. Gutxieneko luzera %s karakteretakoa da.",
+  maxlength:      "Eremu hau luzeegia da. Gehieneko luzera %s karakteretakoa da.",
+  length:         "Eremu honen luzera %s eta %s karaketere artean egon behar du.",
   mincheck:       "%s aukera hautatu behar dituzu gutxienez.",
   maxcheck:       "%s aukera edo gutxiago hautatu behar dituzu.",
   check:          "%s eta %s aukeren artean hautatu behar duzu.",
-  equalto:        "Balio honek berbera izan behar da."
+  equalto:        "Eremu honek berbera izan behar du.",
+  euvatin:        "Hau ez da baliozko BEZaren identifikazio zenbaki bat.",
 });
 
 Parsley.setLocale('eu');

@@ -37,7 +37,7 @@ class TestBootstrapAdmin():
                         )
         assert response.status_code == 200
         html = response.data.decode()
-        assert "<!-- my_forms_page -->" in html
+        assert "<!-- user_settings_page -->" in html
         assert '<a class="nav-link" href="/user/logout">' in html
         user = User.find(username=users['admin']['username'])
         assert user.admin['isAdmin'] == True

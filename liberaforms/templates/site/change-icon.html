@@ -20,7 +20,10 @@
       <form id="upload_form" method="POST" enctype=multipart/form-data >
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 
-          <span class="hint">{%trans%}A small square image.{%endtrans%}</span>
+          <span class="hint">
+            {%trans%}A square image{%endtrans%}.
+            {%trans%}Keep the kilobytes to a minimum{%endtrans%}
+          </span>
           <div class="form-group">
             <input type=file
                    name=file
