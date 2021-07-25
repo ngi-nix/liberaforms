@@ -135,6 +135,11 @@ class User(db.Model, CRUD):
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
 
+    def get_media_dir(self):
+        return os.path.join(current_app.config['UPLOADS_DIR'],
+                            current_app.config['MEDIA_DIR'],
+                            str(self.id))
+
     def delete_user(self):
         # remove this user from other form.editors{}
         forms = Form.find_all(editor_id=self.id)
@@ -143,8 +148,7 @@ class User(db.Model, CRUD):
                 del form.editors[str(self.id)]
                 form.save()
         # delete uploaded media files
-        media_dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
-        shutil.rmtree(media_dir, ignore_errors=True)
+        shutil.rmtree(self.get_media_dir(), ignore_errors=True)
         if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
             prefix = "media/{}".format(self.id)
             RemoteStorage().remove_directory(prefix)
@@ -182,12 +186,11 @@ class User(db.Model, CRUD):
         return self.uploads_enabled
 
     def get_media_directory_size(self, for_humans=False):
-        dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
-        if not os.path.isdir(dir):
+        media_dir = self.get_media_dir()
+        if not os.path.isdir(media_dir):
             bytes = 0
         else:
-            dir = pathlib.Path(dir)
-            bytes = sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+            bytes = sum(f.stat().st_size for f in media_dir.glob('**/*') if f.is_file())
         return bytes if not for_humans else utils.human_readable_bytes(bytes)
 
     def toggle_uploads_enabled(self):
