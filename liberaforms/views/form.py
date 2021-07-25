@@ -444,8 +444,6 @@ def remove_shared_notification(id):
     if not (queriedForm and 'email' in request.form):
         return JsonResponse(json.dumps(False))
     email = request.form.get('email')
-    if not validators.is_valid_email(email):
-        return JsonResponse(json.dumps(False))
     if email in queriedForm.shared_notifications:
         queriedForm.shared_notifications.remove(email)
         queriedForm.add_log(_("Removed shared notification: %s" % email))

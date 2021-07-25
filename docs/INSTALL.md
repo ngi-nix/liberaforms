@@ -52,10 +52,6 @@ source venv/bin/activate
 flask run
 ```
 
-Leave it running in the terminal.
-
-We will now use the `flask` command to finish the installation.
-
 > Note: Every time you change values in `.env` you need to restart LiberaForms
 
 ## Database
@@ -139,7 +135,7 @@ chown www-data ./liberaforms/flask_session
 
 Gunicorn serves LiberaForms.
 
-This command will suggest a configuration file path and it's content.
+This command suggests a configuration file path and it's content.
 
 ```
 flask config hint gunicorn
@@ -157,18 +153,23 @@ sudo apt-get install supervisor
 
 ### Configure Supervisor
 
-This command will suggest a configuration file path and it's content.
+This command suggests a configuration file path and it's content.
+
 ```
 flask config hint supervisor
 ```
+
 Copy the content. Create the `liberaforms.conf` file and paste.
 
 Restart supervisor and check if LiberaForms is running.
+
 ```
 sudo systemctl restart supervisor
 sudo supervisorctl status liberaforms
 ```
+
 Other supervisor commands
+
 ```
 sudo supervisorctl start liberaforms
 sudo supervisorctl stop liberaforms
