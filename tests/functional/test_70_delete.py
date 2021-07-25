@@ -8,23 +8,26 @@ This file is part of LiberaForms.
 import os
 import pytest
 from liberaforms.models.user import User
+from liberaforms.models.media import Media
 from liberaforms.models.form import Form
 from liberaforms.models.answer import Answer, AnswerAttachment
-from liberaforms.models.log import FormLog
+from .utils import login
 
 class TestDeleteUser():
-    def test_delete_user(self, client, anon_client, admin_client, forms):
-        """ Uses form with slug: form-with-file-field
+    def test_delete_user(self, users, client, anon_client, admin_client, forms):
+        """ Deletes a user with form, attachments, and media
             Creates answers with attachments
-            Deletes the user
-            Tests the deletion of the user, form, answers and attachments
+            Tests the deletion of the user, media, form, answers and attachments
+        """
+        """ Create 5 form answers and attachments
         """
         form = Form.find(slug="form-with-file-field")
+        form_id = form.id
+        user = form.author  # the user we will delete
+        user_id = user.id
         attachment_dir = form.get_attachment_dir()
         valid_attachment_name = "valid_attachment.pdf"
         valid_attachment_path = f"./assets/{valid_attachment_name}"
-        """ Create 5 answers
-        """
         answer_cnt = 0
         while answer_cnt < 5:
             answer_cnt = answer_cnt +1
@@ -41,10 +44,29 @@ class TestDeleteUser():
             assert form.answers.count() == answer_cnt
             assert len(os.listdir(attachment_dir)) == answer_cnt
 
+        """ Upload media
+        """
+        login(client, users['editor'])
+        url = "/media/save"
+        valid_media_name = "valid_media.png"
+        valid_media_path = f"./assets/{valid_media_name}"
+        initial_media_file_cnt = len(os.listdir(user.get_media_dir()))
+        with open(valid_media_path, 'rb') as file:
+            response = client.post(
+                            url,
+                            data = {
+                                'media_file': file,
+                                'alt_text': "valid alternative text",
+                            },
+                            follow_redirects=False,
+                    )
+        assert response.status_code == 200
+        assert response.is_json == True
+        # both 1. the media file is uploaded and 2. a thumbnail created
+        assert initial_media_file_cnt+2 == len(os.listdir(user.get_media_dir()))
+
         """ Delete user
         """
-        user = form.author
-        user_id = user.id
         delete_user_url = f"/admin/users/delete/{user_id}"
         response = admin_client.get(
                         delete_user_url,
@@ -54,7 +76,6 @@ class TestDeleteUser():
         html = response.data.decode()
         assert '<!-- delete_user_page -->' in html
         assert f'<td>{answer_cnt}</td>' in html
-        form_id = form.id
         response = admin_client.post(
                         delete_user_url,
                         data = {
@@ -65,6 +86,8 @@ class TestDeleteUser():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- list_users_page -->' in html
+        assert os.path.isdir(user.get_media_dir()) == False
+        assert Media.find(user_id=user_id) == None
         assert Form.find(id=form_id) == None
         assert Answer.find(form_id=form_id) == None
         assert AnswerAttachment.find(form_id=form_id) == None
