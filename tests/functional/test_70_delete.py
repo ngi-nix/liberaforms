@@ -88,8 +88,7 @@ class TestDeleteUser():
         assert '<!-- list_users_page -->' in html
         assert os.path.isdir(user.get_media_dir()) == False
         assert Media.find(user_id=user_id) == None
-        assert Form.find(id=form_id) == None
-        assert Answer.find(form_id=form_id) == None
-        assert AnswerAttachment.find(form_id=form_id) == None
+        assert Form.find(author_id=user_id) == None
+        assert Answer.find(author_id=user_id) == None
         assert len(os.listdir(attachment_dir)) == 0
         assert User.find(id=user_id) == None
