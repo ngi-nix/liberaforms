@@ -10,6 +10,7 @@ from .database import database_cli
 from .config import config_hint_cli
 from .cryptokey import cryptokey_cli
 from .storage import storage_cli
+from .usage import usage_cli
 
 
 def register_commands(app):
@@ -18,3 +19,4 @@ def register_commands(app):
     app.cli.add_command(config_hint_cli)
     app.cli.add_command(cryptokey_cli)
     app.cli.add_command(storage_cli)
+    app.cli.add_command(usage_cli)
