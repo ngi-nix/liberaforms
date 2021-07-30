@@ -23,6 +23,8 @@ from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import validators
 from liberaforms.utils import wtf
 
+from liberaforms.metrics import countNewUsers
+
 from pprint import pprint
 
 user_bp = Blueprint('user_bp',
@@ -95,6 +97,7 @@ def new_user(token=None):
         session.pop("user_id")
     if not wtform.email.data and invite:
         wtform.email.data = invite.email
+    countNewUsers.inc(); # Monitorization with prometheus
     return render_template('new-user.html', wtform=wtform)
 
 
