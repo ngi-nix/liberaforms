@@ -16,6 +16,10 @@ from flask_marshmallow import Marshmallow
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
+# Prometheus monitoring needs this block
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from prometheus_client import make_wsgi_app
+
 from liberaforms.utils import setup
 from liberaforms.config.config import config
 
@@ -34,6 +38,11 @@ def create_app():
     config_name = os.getenv('FLASK_CONFIG') or 'default'
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+
+    # Prometheus monitoring activation
+    app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+        '/metrics': make_wsgi_app()
+    })
 
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
