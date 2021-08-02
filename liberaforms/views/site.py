@@ -157,7 +157,7 @@ def change_icon():
         if "image/" in file.content_type:
             try:
                 g.site.change_favicon(file)
-                flash(_("Icon changed OK. Refresh with  &lt;F5&gt;"), 'success')
+                flash(_("Logo changed OK. Refresh with  &lt;F5&gt;"), 'success')
                 return redirect(make_url_for('admin_bp.site_admin'))
             except Exception as error:
                 current_app.logger.error(error)
@@ -171,7 +171,7 @@ def change_icon():
 @admin_required
 def reset_site_favicon():
     if g.site.reset_favicon():
-        flash(_("Favicon reset OK. Refresh with  &lt;F5&gt;"), 'success')
+        flash(_("Logo reset OK. Refresh with  &lt;F5&gt;"), 'success')
     return redirect(make_url_for('admin_bp.site_admin'))
 
 
