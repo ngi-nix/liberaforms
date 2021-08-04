@@ -60,7 +60,7 @@ def migrateMongoSchema(schemaVersion):
                         _id=uuid.uuid4()
                         entry['id']=str(_id)
                 collection.update_one(  {"_id": form["_id"]},
-                                        {"$set": {"entries": form["entries"]} })                
+                                        {"$set": {"entries": form["entries"]} })
         except Exception as e:
             print(e)
             return schemaVersion
@@ -168,7 +168,7 @@ def migrateMongoSchema(schemaVersion):
                                 "required": True,
                                 "markdown": form["dataConsent"]["markdown"],
                                 "html": form["dataConsent"]["html"]
-                            }                       
+                            }
                     form_collection.update_one( {"_id": form["_id"]},
                                                 {"$set": { "consentTexts": [DPL_text]}})
                     form_collection.update_one( {"_id": form["_id"]},
@@ -200,7 +200,8 @@ def migrateMongoSchema(schemaVersion):
         try:
             form_collection = Form._get_collection()
             for form in form_collection.find():
-                if hasattr(form, 'entries'):
+                #if hasattr(form, 'entries'):
+                try:
                     for entry in form['entries']:
                         created=entry['created']
                         marked=entry['marked']
@@ -216,8 +217,10 @@ def migrateMongoSchema(schemaVersion):
                                 "data": entry}
                         response = FormResponse(**new_data)
                         response.save()
+                except:
+                    print("Can't import form['entries'")
             form_collection.update_many( {}, {"$unset": {"entries": 1} })
-    
+
         except Exception as e:
             print(e)
             return schemaVersion
