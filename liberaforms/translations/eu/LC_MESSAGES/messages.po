@@ -9,15 +9,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-08-04 12:35+0200\n"
-"PO-Revision-Date: 2021-07-09 12:47+0200\n"
+"PO-Revision-Date: 2021-08-04 12:38+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
 "Language-Team: Librezale <librezale@librezale.eus>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"X-Generator: Poedit 3.0\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
 #. not
@@ -65,23 +66,19 @@ msgstr "Testuingurua"
 
 #. i18n: Example content in template for new form. '\n' is used for linebreak.
 #: models/form.py:784
-msgid ""
-" * Describe your form.\n"
+msgid " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
-msgstr ""
-" * Deskribatu zure galdetegia.\n"
+msgstr " * Deskribatu zure galdetegia.\n"
 " * Gehitu beharrezko edukia, estekak, irudiak etab."
 
 #. i18n: Template message for email invitation. '\n' is used for linebreak.
 #: models/invite.py:65
-msgid ""
-"Hello,\n"
+msgid "Hello,\n"
 "\n"
 "You have been invited to LiberaForms.\n"
 "\n"
 "Regards."
-msgstr ""
-"Kaixo!\n"
+msgstr "Kaixo!\n"
 "\n"
 "LiberaForms-era gonbidatu zaituzte.\n"
 "\n"
@@ -233,9 +230,8 @@ msgstr "Hasiera orriko testua"
 
 #. Icon for the website
 #: templates/admin/admin-panel.html:53
-#, fuzzy
 msgid "Logo"
-msgstr "Irten"
+msgstr "Logoa"
 
 #. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
@@ -263,7 +259,6 @@ msgid "Enable form attachments"
 msgstr "Gaitu galdetegiko eranskinak"
 
 #: templates/admin/admin-panel.html:130
-#, fuzzy
 msgid "Default timezone"
 msgstr "Erabili irudi lehenetsia"
 
@@ -306,9 +301,8 @@ msgstr "Eranskin motak"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:514
-#, fuzzy
 msgid "Super Admin options"
-msgstr "Administratzaile-aukerak"
+msgstr "Super-administratzaile aukerak"
 
 #. Settings about the generated public URL
 #: templates/admin/admin-panel.html:210
@@ -757,7 +751,6 @@ msgid "Save max."
 msgstr "Gorde gehienez"
 
 #: templates/form/expiration.html:130
-#, fuzzy
 msgid "Maximum answers"
 msgstr "Gehienezko erantzunak"
 
@@ -785,12 +778,10 @@ msgid "Publish on %(node_name)s"
 msgstr "Argitaratu %(node_name)s(e)n"
 
 #: templates/form/fedi-publish.html:38
-#, fuzzy
 msgid "Total characters:"
-msgstr "Erantzunak guztira"
+msgstr "Karaktereak guztira:"
 
 #: templates/form/fedi-publish.html:48
-#, fuzzy
 msgid "Publish"
 msgstr "Argitaratu"
 
@@ -813,9 +804,8 @@ msgid "Fediverse"
 msgstr "Fedibertsoa"
 
 #: templates/form/inspect-form.html:100
-#, fuzzy
 msgid "Published"
-msgstr "Argitaratu"
+msgstr "Argitaratuta"
 
 #: templates/form/inspect-form.html:134
 msgid "Expiration"
@@ -962,9 +952,7 @@ msgstr "Hasteko erabil ditzakezun galdetegi batzuk bildu ditugu."
 
 #: templates/form/list-templates.html:16
 msgid "Choose the template that best suits your needs and edit it to fit."
-msgstr ""
-"Aukeratu zure beharretara hobekien egokitzen den txantiloia eta editatu, "
-"egokitzeko."
+msgstr "Aukeratu zure beharretara hobekien egokitzen den txantiloia eta editatu, egokitzeko."
 
 #: templates/form/list-templates.html:31
 msgid "Show more"
@@ -1014,9 +1002,7 @@ msgstr "Gehitu editore berria"
 
 #: templates/form/share-form.html:82
 msgid "Send 'new answer' and expiry notifications to these other addresses"
-msgstr ""
-"Bidali \"erantzun berria\" abisuak eta iraungitze jakinarazpenak beste "
-"helbide hauetara"
+msgstr "Bidali \"erantzun berria\" abisuak eta iraungitze jakinarazpenak beste helbide hauetara"
 
 #: templates/form/share-form.html:113
 msgid "Add address"
@@ -1028,15 +1014,11 @@ msgstr "Partekatu emaitzak"
 
 #: templates/form/share-form.html:129
 msgid "Readonly access for <b>anyone</b> with a copy of these links"
-msgstr ""
-"Irakurtzeko soilik den sarbidea, esteka hauen kopia duen <b>edozein</b> "
-"erabiltzailerentzat"
+msgstr "Irakurtzeko soilik den sarbidea, esteka hauen kopia duen <b>edozein</b> erabiltzailerentzat"
 
 #: templates/form/share-form.html:182
 msgid "Only visible to people with a user account (login required)"
-msgstr ""
-"Erabiltzaile-kontu bat duten pertsonentzat bakarrik ikusgai (saioa hasi "
-"behar da)"
+msgstr "Erabiltzaile-kontu bat duten pertsonentzat bakarrik ikusgai (saioa hasi behar da)"
 
 #: templates/form/share-form.html:187
 msgid "Restricted"
@@ -1078,9 +1060,7 @@ msgstr "Fitxategi hauek zure galdetegietan gehitu daitezke."
 
 #: templates/media/list-media.html:44
 msgid "You can help save disk space on the server by deleting unused files."
-msgstr ""
-"Zerbitzarian disko lekua libratzen lagun dezakezu erabiltzen ez diren "
-"fitxategiak ezabatuz."
+msgstr "Zerbitzarian disko lekua libratzen lagun dezakezu erabiltzen ez diren fitxategiak ezabatuz."
 
 #: templates/media/list-media.html:94 templates/site/change-icon.html:38
 msgid "Upload"
@@ -1095,9 +1075,8 @@ msgid "Upload an image"
 msgstr "Igo irudia"
 
 #: templates/site/change-icon.html:24
-#, fuzzy
 msgid "A square image"
-msgstr "Irudi txiki eta karratu bat"
+msgstr "Irudi karratu bat"
 
 #: templates/site/change-icon.html:25 templates/site/email-branding.html:64
 msgid "Keep the kilobytes to a minimum"
@@ -1158,9 +1137,7 @@ msgstr "Galdetegietako baldintza-onarpen testuak"
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
-msgstr ""
-"Partekatutako testuak beste erabiltzaile batzuk erabili ditzakete bere "
-"galdetegietan, txantiloi gisa"
+msgstr "Partekatutako testuak beste erabiltzaile batzuk erabili ditzakete bere galdetegietan, txantiloi gisa"
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
@@ -1273,9 +1250,7 @@ msgstr "Baimentze-testu lehenetsia"
 
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
-msgstr ""
-"Erabiltzaileek honako testu hauek sartu beharko lituzkete haien "
-"galdetegietan"
+msgstr "Erabiltzaileek honako testu hauek sartu beharko lituzkete haien galdetegietan"
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:54
 msgid "Delete account"
@@ -1421,12 +1396,8 @@ msgid "Please accept our terms and conditions."
 msgstr "Onartu gure erabilera-baldintzak."
 
 #: utils/consent_texts.py:127
-msgid ""
-"We take your data protection seriously. Please contact us for any "
-"inquiries."
-msgstr ""
-"Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin "
-"harremanetan edozein kontsultatarako."
+msgid "We take your data protection seriously. Please contact us for any inquiries."
+msgstr "Serioski hartzen dugu zure datuen babesa. Mesedez, jarri gurekin harremanetan edozein kontsultatarako."
 
 #: utils/wraps.py:115
 msgid "That's a nasty key!"
@@ -1551,7 +1522,7 @@ msgstr "Sarbide tokena"
 
 #: utils/wtf.py:203
 msgid "Short description"
-msgstr ""
+msgstr "Deskribapen motza"
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
@@ -1817,7 +1788,7 @@ msgid "Fediverse connect is not configured"
 msgstr "Fedibertsoarekin konexioa ez dago konfiguratua"
 
 #: views/form.py:355
-#, fuzzy, python-format
+#, python-format
 msgid "Published at %s"
 msgstr "%s helbidean argitaratuta"
 
@@ -1956,18 +1927,16 @@ msgid "Required file is missing"
 msgstr "Behar den fitxategia falta da"
 
 #: views/site.py:160
-#, fuzzy
 msgid "Logo changed OK. Refresh with  &lt;F5&gt;"
-msgstr "Ikonoa ongi aldatu da. Freskatu  &lt;F5&gt; sakatuta"
+msgstr "Logoa ongi aldatu da. Freskatu  &lt;F5&gt; sakatuta"
 
 #: views/site.py:165
 msgid "An image file is required"
 msgstr "Irudi fitxategi bat behar da"
 
 #: views/site.py:174
-#, fuzzy
 msgid "Logo reset OK. Refresh with  &lt;F5&gt;"
-msgstr "Favicona ongi berrezarri da. Freskatu  &lt;F5&gt; sakatuta"
+msgstr "Logoa ongi berrezarri da. Freskatu  &lt;F5&gt; sakatuta"
 
 #: views/site.py:195
 msgid "Enabled file extensions updated OK"
@@ -2253,4 +2222,3 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Super admin options"
 #~ msgstr "Administratzaile-aukerak"
-
