@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-08-04 12:26+0200\n"
+"POT-Creation-Date: 2021-08-04 12:35+0200\n"
 "PO-Revision-Date: 2021-04-18 13:34+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
@@ -307,9 +307,9 @@ msgid "Attachment types"
 msgstr ""
 
 #. Subtitle displayed on instance configuration page (/admin)
-#: templates/admin/admin-panel.html:204
+#: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:514
 #, fuzzy
-msgid "Super admin options"
+msgid "Super Admin options"
 msgstr "Opciones de Admin"
 
 #. Settings about the generated public URL
@@ -933,11 +933,6 @@ msgstr "Deshabilitar"
 #: templates/form/inspect-form.html:508
 msgid "Enable"
 msgstr "Habilitar"
-
-#: templates/form/inspect-form.html:514
-#, fuzzy
-msgid "Super Admin options"
-msgstr "Opciones de Admin"
 
 #: templates/form/inspect-form.html:533
 msgid "Edit form"
@@ -2453,4 +2448,7 @@ msgstr "Las credenciales no son correctos"
 
 #~ msgid "Published at %smsg"
 #~ msgstr ""
+
+#~ msgid "Super admin options"
+#~ msgstr "Opciones de Admin"
 

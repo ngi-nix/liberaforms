@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-08-04 12:26+0200\n"
+"POT-Creation-Date: 2021-08-04 12:35+0200\n"
 "PO-Revision-Date: 2021-07-09 12:47+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
@@ -305,9 +305,9 @@ msgid "Attachment types"
 msgstr "Eranskin motak"
 
 #. Subtitle displayed on instance configuration page (/admin)
-#: templates/admin/admin-panel.html:204
+#: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:514
 #, fuzzy
-msgid "Super admin options"
+msgid "Super Admin options"
 msgstr "Administratzaile-aukerak"
 
 #. Settings about the generated public URL
@@ -917,11 +917,6 @@ msgstr "Desgaitu"
 #: templates/form/inspect-form.html:508
 msgid "Enable"
 msgstr "Gaitu"
-
-#: templates/form/inspect-form.html:514
-#, fuzzy
-msgid "Super Admin options"
-msgstr "Administratzaile-aukerak"
 
 #: templates/form/inspect-form.html:533
 msgid "Edit form"
@@ -2255,4 +2250,7 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Icon and Favicon"
 #~ msgstr "Ikonoa eta favicona"
+
+#~ msgid "Super admin options"
+#~ msgstr "Administratzaile-aukerak"
 
