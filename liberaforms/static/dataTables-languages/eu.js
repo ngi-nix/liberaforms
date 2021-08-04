@@ -1,6 +1,6 @@
 {
 	"sEmptyTable":     "Ez dago datu erabilgarririk taulan",
-	"sInfo":           "_START_-_END_ erakusten, guztirazko _TOTAL_ erantzunetatik",
+	"sInfo":           "_START_(e)tik _END_(e)ra erakusten, guztirazko _TOTAL_ erantzunetatik",
 	"sInfoEmpty":      "0-0 erakusten, guztirazko 0 erantzunetatik",
 	"sInfoFiltered":   "(guztirazko _MAX_ erantzunetatik iragazita)",
 	"sInfoPostFix":    "",
