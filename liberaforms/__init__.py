@@ -19,6 +19,7 @@ from flask_wtf.csrf import CSRFProtect
 # Prometheus monitoring needs this block
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from prometheus_client import make_wsgi_app
+from liberaforms.metrics import initialize_metrics
 
 from liberaforms.utils import setup
 from liberaforms.config.config import config
@@ -46,13 +47,14 @@ def create_app():
 
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
-    
+
     db.init_app(app)
     ma.init_app(app)
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
     setup.ensure_uploads_dir_tree(app)
+
 
     from liberaforms.commands import register_commands
     register_commands(app)
@@ -88,6 +90,10 @@ def create_app():
             #request.user_agent,
         )
         return response
+
+    @app.before_first_request
+    def before_first_request():
+        initialize_metrics()
 
     return app
 

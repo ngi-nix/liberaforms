@@ -46,6 +46,10 @@ class Answer(db.Model, CRUD):
         return cls.find_all(**kwargs).first()
 
     @classmethod
+    def count(cls):
+        return cls.query.count()
+
+    @classmethod
     def find_all(cls, **kwargs):
         order = cls.created.desc()
         if 'oldest_first' in kwargs:

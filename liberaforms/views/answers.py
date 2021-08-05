@@ -16,6 +16,8 @@ from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, get_locale, JsonResponse
 
+from liberaforms.metrics import countForms, countAnswers
+
 #from pprint import pprint as pp
 
 answers_bp = Blueprint('answers_bp', __name__,
@@ -76,6 +78,7 @@ def delete_answer(id):
     queriedForm.expired = queriedForm.has_expired()
     queriedForm.save()
     queriedForm.add_log(_("Deleted an answer"))
+    countAnswers.dec() # Prometheus metrics
     return JsonResponse(json.dumps({'deleted': True}))
 
 
@@ -138,6 +141,7 @@ def delete_answers(id):
         if queriedForm.get_total_answers() == totalAnswers:
             queriedForm.delete_all_answers()
             queriedForm.add_log(_("Deleted all answers"))
+            countAnswers.set(Answer.count()) # Prometheus metrics
             if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
                 queriedForm.save()

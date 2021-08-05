@@ -30,6 +30,8 @@ from liberaforms.utils.utils import (make_url_for, JsonResponse,
                                      logout_user, human_readable_bytes)
 import liberaforms.utils.wtf as wtf
 
+from liberaforms.metrics import countForms, countAnswers
+
 #from pprint import pprint
 
 form_bp = Blueprint('form_bp', __name__,
@@ -215,6 +217,7 @@ def save_form(id=None):
             new_form.set_short_description()
             new_form.set_thumbnail()
             new_form.save()
+            countForms.inc() # Prometheus metrics
         except Exception as error:
             current_app.logger.error(error)
             flash(_("Failed to save form"), 'error')
@@ -308,6 +311,7 @@ def delete_form(id):
                                                         queriedForm.slug,
                                                         answer_cnt))
             flash(flash_text, 'success')
+            countForms.dec() # Prometheus metrics
             return redirect(make_url_for('form_bp.my_forms'))
         else:
             flash(_("Form name does not match"), 'warning')
@@ -734,6 +738,7 @@ def view_form(slug):
             Dispatcher().send_new_answer_notification(  emails,
                                                         data,
                                                         queriedForm.slug)
+        countAnswers.inc() # Prometheus monitoring
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)
