@@ -61,15 +61,17 @@
           #  "0al490gi0qda1nkb9289z2msgpc633rv5hn3w5qihkl1rh88dmjd";
         });
 
-    in {
+    in
+    {
 
       # A Nixpkgs overlay.
       overlay = final: prev:
         with final.pkgs; {
 
+          # Adding cffi to the requirements list was necessary for the cryptography package to build properly.
+          # The cryptography build also gave a similar warning about the "packaging" package so I added it as well.
           pythonEnv = machnixFor.${system}.mkPython {
-            requirements =
-              builtins.readFile (liberaforms-src + "/requirements.txt");
+            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9";
           };
 
           liberaforms = stdenv.mkDerivation {
@@ -111,6 +113,17 @@
       # The default package for 'nix build'.
       defaultPackage =
         forAllSystems (system: self.packages.${system}.liberaforms);
+
+      # For now I'm using a postgres.nix in my system-wide NixOS config.
+      # A NixOS module.
+      #nixosModules.liberaforms =
+      #  { pkgs, ... }:
+      #  {
+      #    nixpkgs.overlays = [ self.overlay ];
+
+      #    services.postgresql.enable = true;
+      #    services.postgresql.package = pkgs.postgresql_11;
+      #  };
 
       # Tests run by 'nix flake check' and by Hydra.
       #      checks = forAllSystems
