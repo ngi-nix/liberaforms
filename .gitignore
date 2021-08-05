@@ -7,3 +7,4 @@ flask_session
 __pycache__
 *.backup
 .pytest_cache
+result
