@@ -739,6 +739,7 @@ def view_form(slug):
                                                         data,
                                                         queriedForm.slug)
         countAnswers.inc() # Prometheus monitoring
+        countAnswerAttachmentSize.set(AnswerAttachment.calc_total_size()) # Prometheus metrics
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)

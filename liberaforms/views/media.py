@@ -18,6 +18,8 @@ from liberaforms.utils.utils import make_url_for, JsonResponse, human_readable_b
 from liberaforms.utils import wtf
 from liberaforms.utils import validators
 
+from liberaforms.metrics import countMediaSize
+
 from pprint import pprint
 
 media_bp = Blueprint('media_bp',
@@ -39,6 +41,7 @@ def save_media():
                              request.files['media_file'],
                              request.form['alt_text'])
     if saved:
+        countMediaSize.set(Media.calc_total_size()) # Prometheus monitoring
         return jsonify(
             media=MediaSchema().dump(media)
         ), 200
@@ -70,6 +73,7 @@ def remove_media(media_id):
     if media:
         removed = media.delete_media()
         if removed:
+            countMediaSize.set(Media.calc_total_size()) # Prometheus monitoring
             return JsonResponse(json.dumps(media.id))
     return JsonResponse(json.dumps(False))
 
