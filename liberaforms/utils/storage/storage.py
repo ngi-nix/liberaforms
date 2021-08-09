@@ -62,8 +62,7 @@ class Storage:
             except Exception as error:
                 current_app.logger.error(f"Cannot save to tmp_file. : {error}")
                 return False
-        file_size = os.path.getsize(tmp_file_path)
-        self.file_size = utils.human_readable_bytes(file_size)
+        self.file_size = os.path.getsize(tmp_file_path)
         if sub_dir.startswith('attachment'):
             """ attachments get encrypted """
             enc_file_path = encrypt_file(tmp_file_path)

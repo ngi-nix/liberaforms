@@ -114,7 +114,7 @@
             {{ image.created.strftime('%Y-%m-%d') }}
           </td>
           <td>
-            {{ image.file_size }}
+            {{ human_readable_bytes(image.file_size) }}
           </td>
           <td>
             <a href="{{ image.get_url()}}"

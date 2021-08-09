@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 from liberaforms import ma
 from liberaforms.models.media import Media
 from liberaforms.utils import utils
+from liberaforms.utils.utils import human_readable_bytes
 
 
 class MediaSchema(ma.SQLAlchemySchema):
@@ -17,7 +18,7 @@ class MediaSchema(ma.SQLAlchemySchema):
     id = ma.Integer()
     created = ma.Method('get_created')
     file_name = ma.auto_field()
-    file_size = ma.auto_field()
+    file_size = ma.Method('get_file_size')
     image_url =  ma.Method('get_image_url')
     thumbnail_url = ma.Method('get_thumbnail_url')
     alt_text = ma.auto_field()
@@ -30,3 +31,6 @@ class MediaSchema(ma.SQLAlchemySchema):
 
     def get_thumbnail_url(self, obj):
         return obj.get_thumbnail_url()
+
+    def get_file_size(self, obj):
+        return human_readable_bytes(obj.file_size)
