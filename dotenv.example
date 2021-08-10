@@ -45,3 +45,7 @@ FLASK_ENV=production
 # this sets the config to use (see config.py)
 # can be 'production' or 'development'
 FLASK_CONFIG=production
+
+# ENABLE_PROMETHEUS_METRICS
+# this activates Prometheus' /metrics route and metrics generation
+ENABLE_PROMETHEUS_METRICS=True

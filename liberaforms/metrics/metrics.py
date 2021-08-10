@@ -1,22 +1,4 @@
-# TODO CAPTURE FROM ENVIRONMENT
-PROMETHEUS_METRICS_ACTIVE = True
-
-if PROMETHEUS_METRICS_ACTIVE:
-    from prometheus_client import Gauge
-else:
-    class _Dummy(object):
-        _instance = None
-        def __new__(cls, *args, **kwargs):
-            if cls._instance is None:
-                cls._instance = object.__new__(cls)
-            return cls._instance
-        def __init__(self, *args, **kwargs):
-            pass
-        def __getattr__(self, attr):
-            return _Dummy()
-        def __call__(self, *args, **kwargs):
-            return _Dummy()
-    Gauge = _Dummy
+from prometheus_client import Gauge
 
 Users   = Gauge("liberaforms_users_total", "Total users in tenant")
 Forms   = Gauge("liberaforms_forms_total", "Total forms in tenant")
