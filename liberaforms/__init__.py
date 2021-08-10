@@ -55,6 +55,7 @@ def create_app():
     csrf.init_app(app)
     setup.ensure_uploads_dir_tree(app)
 
+    initialize_metrics(app)
 
     from liberaforms.commands import register_commands
     register_commands(app)
@@ -90,10 +91,6 @@ def create_app():
             #request.user_agent,
         )
         return response
-
-    @app.before_first_request
-    def before_first_request():
-        initialize_metrics()
 
     return app
 

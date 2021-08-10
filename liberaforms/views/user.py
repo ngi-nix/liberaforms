@@ -23,8 +23,6 @@ from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import validators
 from liberaforms.utils import wtf
 
-from liberaforms.metrics import countUsers
-
 from pprint import pprint
 
 user_bp = Blueprint('user_bp',
@@ -97,7 +95,6 @@ def new_user(token=None):
         session.pop("user_id")
     if not wtform.email.data and invite:
         wtform.email.data = invite.email
-    countUsers.inc() # Monitorization with prometheus
     return render_template('new-user.html', wtform=wtform)
 
 
@@ -262,7 +259,6 @@ def delete_account(user_id):
     if wtform.validate_on_submit():
         g.current_user.delete_user()
         logout_user()
-        countUsers.dec() # Monitorization with prometheus
         flash(_("Thank you for using LiberaForms"), 'success')
         return redirect(make_url_for('main_bp.index'))
     return render_template( 'delete-account.html',
