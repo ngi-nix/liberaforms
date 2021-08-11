@@ -20,9 +20,9 @@
         {%trans%}LiberaForms will occasionally send emails.{%endtrans%}
       </p>
 
-      <div class="title_2">
-        {%trans%}Example email:{%endtrans%}
-      </div>
+      <p style="font-size: 1.2em">
+        {%trans%}Example email{%endtrans%}.
+      </p>
       <iframe id="html_email_preview"
               src="/site/example-email-preview">
       </iframe>
@@ -111,12 +111,11 @@
   var frame = document.getElementById("html_email_preview");
   frame.onload = function()
   {
-    frame.style.height =
-    frame.contentWindow.document.body.scrollHeight + 'px';
-    frame.style.width  =
-    frame.contentWindow.document.body.scrollWidth+'px';
+    var height = frame.contentWindow.document.body.scrollHeight + 5
+    frame.style.height = height + 'px'
+    var width = frame.contentWindow.document.body.scrollWidth
+    frame.style.width  = width + 'px'
   }
-
 
   $(function () {
     $('#html_email_preview').attr('src', $('html_email_preview').attr('src'));
