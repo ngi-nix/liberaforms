@@ -59,8 +59,8 @@ def list_media(username):
                         )
     max_media_size=human_readable_bytes(current_app.config['MAX_MEDIA_SIZE'])
     return render_template('list-media.html',
-                            max_media_size_for_human=max_media_size,
-                            human_readable_bytes=human_readable_bytes
+                            max_media_size_for_humans=max_media_size,
+                            human_readable_bytes=human_readable_bytes,
                             wtform=wtf.UploadMedia())
 
 @media_bp.route('/media/delete/<int:media_id>', methods=['POST'])
