@@ -27,7 +27,7 @@ class Media(db.Model, CRUD, Storage):
                                                   nullable=False)
     alt_text = db.Column(db.String, nullable=True)
     file_name = db.Column(db.String, nullable=False)
-    file_size = db.Column(db.String, nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
     local_filesystem = db.Column(db.Boolean, default=True) #Remote storage = False
     user = db.relationship("User", viewonly=True)

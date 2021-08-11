@@ -10,7 +10,7 @@ ROOT_USERS=['dave@example.com']
 TEST_DB_HOST=localhost
 TEST_DB_NAME=test_db
 TEST_DB_USER=db_user
-TEST_DB_PASSWORD="db_password"
+TEST_DB_PASSWORD=db_password
 
 TOKEN_EXPIRATION=604800
 SESSION_TYPE=filesystem
