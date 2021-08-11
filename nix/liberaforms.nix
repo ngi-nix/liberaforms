@@ -39,6 +39,16 @@
   };
 
 
+  ## Database backup ##
+
+  services.cron = {
+    enable = true;
+    systemCronJobs = [
+      "30 3 * * *   root   /run/current-system/sw/bin/pg_dump -U liberaforms liberaforms > /home/cleeyv/dev/backups/liberaforms_$(date +\\%Y\\%m\\%d\\%H\\%M).sql"
+    ];
+  };
+
+
   ## Nginx reverse proxy ##
 
   # Based on https://gitlab.com/liberaforms/liberaforms/-/blob/main/docs/nginx.example
