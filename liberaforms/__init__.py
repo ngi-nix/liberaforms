@@ -16,9 +16,6 @@ from flask_marshmallow import Marshmallow
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
 
-# Prometheus monitoring needs this block
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
-
 from liberaforms.utils import setup
 from liberaforms.config.config import config
 
@@ -49,6 +46,7 @@ def create_app():
     setup.ensure_uploads_dir_tree(app)
 
     if app.config["ENABLE_PROMETHEUS_METRICS"]:
+        from werkzeug.middleware.dispatcher import DispatcherMiddleware
         from liberaforms.metrics import initialize_metrics
         from prometheus_client import make_wsgi_app
         # Prometheus monitoring activation
