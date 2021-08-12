@@ -22,5 +22,5 @@ def initialize_metrics(app):
     Forms.set_function(wrap_context(Form.count))
     Users.set_function(wrap_context(User.count))
     Answers.set_function(wrap_context(Answer.count))
-    #AttachmentSize.set_function(wrap_context(AnswerAttachment.calc_total_size))
-    #MediaSize.set_function(wrap_context(Media.calc_total_size))
+    AttachmentSize.set_function(wrap_context(AnswerAttachment.calc_total_size))
+    MediaSize.set_function(wrap_context(Media.calc_total_size))
