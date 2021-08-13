@@ -3,6 +3,8 @@
 
 <!-- list_answers_page -->
 
+<link rel="stylesheet" href="/static/dataTable/data-table.css">
+
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
 {% set answers = form.get_answers_for_display() %}
 {% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
@@ -10,9 +12,12 @@
 <div class="container">
   <div class="row"
      style="font-size:1.5em">
+
     <div class="col">
       <div data-vue-component="data-table"
-           data-items_endpoint="/api/form/{{form.id}}/answers">
+           data-items_endpoint="/api/form/{{form.id}}/answers"
+           data-item_endpoint="/api/answer/"
+           data-csrf_token="{{ csrf_token() }}">
       </div>
     </div>
 
@@ -20,7 +25,6 @@
 </div>
 
 
-<script>var csrftoken = "{{ csrf_token() }}"</script>
 <script src="/static/data-table.js"></script>
 
 {% endblock %}

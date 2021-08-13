@@ -665,7 +665,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        answer_data = {'marked': False}
+        answer_data = {}
         for key in formData:
             if key=='csrf_token':
                 continue
