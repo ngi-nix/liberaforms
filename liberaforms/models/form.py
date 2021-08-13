@@ -188,6 +188,8 @@ class Form(db.Model, CRUD):
             # append dynamic DPL field
             # i18n: Acronym for 'Data Privacy Law'
             result.append({"name": "DPL", "label": _("DPL")})
+        if result[1]['name'] == 'created':  # pos 1 should always be 'created'
+            result.insert(len(result), result.pop(1))
         return result
 
     def has_removed_fields(self):

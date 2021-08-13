@@ -40,6 +40,6 @@ def form_answers(form_id):
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'total': form.answers.count(),
-              'field_index': form.fieldIndex,
+              'field_index': form.get_field_index_for_data_display(),
         }
     ), 200
