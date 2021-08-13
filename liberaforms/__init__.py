@@ -37,7 +37,7 @@ def create_app():
 
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
-    
+
     db.init_app(app)
     ma.init_app(app)
     babel.init_app(app)
@@ -93,6 +93,7 @@ def register_blueprints(app):
     from liberaforms.views.admin import admin_bp
     from liberaforms.views.answers import answers_bp
     from liberaforms.api.api import api_bp
+    from liberaforms.api.form import form_api_bp
 
     app.register_blueprint(errors_bp)
     app.register_blueprint(main_bp)
@@ -103,4 +104,6 @@ def register_blueprints(app):
     app.register_blueprint(admin_bp)
     app.register_blueprint(answers_bp)
     app.register_blueprint(api_bp)
+    app.register_blueprint(form_api_bp)
+
     return None

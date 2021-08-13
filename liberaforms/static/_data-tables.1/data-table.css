@@ -1,0 +1,267 @@
+
+table.lb-data-table {
+  width: 100%;
+  max-width: 100%;
+	opacity: 0;
+}
+
+table.lb-data-table tr,
+table.pinned-table tr
+{
+  /*display: table-row;*/
+  border-top: 1px solid #ddd;
+}
+
+table.lb-data-table th,
+table.pinned-table th
+{
+	font-weight: bold;
+}
+table.lb-data-table th,
+table.lb-data-table tr > td,
+table.pinned-table th,
+table.pinned-table tr > td
+{
+  /*display: block-inline;*/
+	padding: 0 9px;
+	text-align: left;
+	height: 3em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+table.lb-data-table th,
+table.lb-data-table tr > td
+{
+	max-width: 300px;
+}
+
+table.lb-data-table th:nth-child(n+2),
+table.lb-data-table td:nth-child(n+2),
+table.pinned-table th:nth-child(2),
+table.pinned-table td:nth-child(2)
+{
+  border-left: 1px solid #ccc;
+}
+/*
+table.lb-data-table td, table.lb-data-table th {
+  height: 2.5em;
+}
+*/
+/*
+table.lb-data-table tbody tr:hover,
+table.pinned-table tbody tr:hover
+{
+  background-color: rgba(0,0,0,.05);
+}
+*/
+table.lb-data-table thead th:last-child,
+table.lb-data-table tr > td:last-child
+{
+  width: 10px;
+  white-space: nowrap;
+}
+
+table.lb-data-table td.row-controls,
+table.pinned-table td.row-controls
+{
+  /*display: table-cell;*/
+  width: 10px;
+  text-align: left;
+  padding: 0 0.2rem 0 0.2rem;
+}
+table.lb-data-table td.row-controls i.toggle-card,
+table.pinned-table td.row-controls i.toggle-card
+{
+  display: none;
+}
+table.lb-data-table td.row-controls span.card-title,
+table.pinned-table td.row-controls span.card-title
+{
+  display: none;
+}
+
+.pinned-table {
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: #fff;
+	width: 220px;
+	overflow: hidden;
+	overflow-x: scroll;
+	border-right: 2px solid #ccc;
+	border-left: none;
+}
+table.pinned-table th,
+table.pinned-table td {
+	max-width: 100px;
+}
+.pinned-table td:last-child {
+	border-bottom: 0;
+}
+
+div.responsive-table {
+	position: relative;
+	margin-bottom: 20px;
+	overflow: hidden;
+	/*border-right: 1px solid #ccc;*/
+}
+div.responsive-table div.scrollable-wrap {
+	margin-left: 220px;
+  /*cursor: ew-resize;*/
+}
+div.responsive-table div.scrollable-wrap {
+	overflow: scroll;
+	overflow-y: hidden;
+}
+
+.responsive-table table.lb-data-table.hidden-cols-for-pinned-table th:nth-child(-n+2),
+.responsive-table table.lb-data-table.hidden-cols-for-pinned-table td:nth-child(-n+2)
+/* hide first two */
+{
+	display: none;
+}
+
+table.lb-data-table td.row-controls,
+table.pinned-table td.row-controls
+{
+	width: 10px;
+}
+
+
+/*
+table.lb-data-table td.row-controls i,
+table.pinned-table td.row-controls i {
+  font-size: 1.1em;
+  vertical-align: middle;
+  cursor: pointer;
+}
+*/
+
+table.lb-data-table i.action,
+table.pinned-table i.action
+{
+  font-size: 1.1em;
+  vertical-align: middle;
+  /*display: inline;*/
+  cursor: pointer;
+}
+i.delete-row {
+  color: #d9534f;
+  margin-right: 0.4em;
+}
+.answer-time
+{
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  table.pinned-table {
+		visibility: hidden;
+	}
+  table.lb-data-table  {
+    border: 0;
+    width: 100%;
+  }
+  /*
+  table.lb-data-table tbody tr:hover {
+    background-color: initial;
+  }
+  */
+  table.lb-data-table thead {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+  }
+  table.lb-data-table tr {
+    /*border-top: 1px solid #ddd;*/
+    /*display: block;*/
+
+  }
+  table.lb-data-table tr > td:nth-child(n+2)
+  /*table.lb-data-table tr > td:last-child*/
+	{
+    padding: 9px 0px;
+		height: auto;
+		max-width: 100%;
+		width: 100%;
+		white-space: normal;
+		overflow: auto;
+		text-overflow: clip;
+    border-left: 0;
+	}
+  table.lb-data-table tr > td:nth-child(2) {
+    margin-top: -0.5em;
+  }
+  table.lb-data-table th:nth-child(n+2)
+  {
+    border-left: 0;
+  }
+  table.lb-data-table tr > td:nth-child(n+3) {
+    border-top: 1px solid #ddd;
+  }
+  table.lb-data-table tr > td:not(.row-controls)
+  {
+    display: none;
+  }
+
+  table.lb-data-table td.row-controls
+  {
+    width: 100%;
+    height: auto;
+    padding: 0.75em 0;
+  }
+  table.lb-data-table td.row-controls span.card-title
+  {
+    display: inline;
+    white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+    margin-left: 0.3em;
+  }
+  table.lb-data-table tbody td:before {
+    content: attr(data-label);
+    font-weight: bold;
+    display: block;
+  }
+
+  table.lb-data-table td.row-controls i.action {
+    font-size: 1.5em;
+  }
+
+  table.lb-data-table td.row-controls i.toggle-card
+  {
+    display: inline;
+    color: #337ab7;
+    cursor: pointer;
+    margin-right: 0.25em;
+  }
+  table.lb-data-table i.delete-row {
+    vertical-align: middle;
+    margin: 0 0.4em 0 0em;
+  }
+  .answer-time {
+    display: inline;
+  }
+}
+
+.deletion-in-progress {
+    background-color: #FAAFBE;
+    text-decoration: line-through;
+    cursor: auto;
+}
+.retrieve_items_button {
+  display: none;
+}
+
+tr.not_found_by_search {
+  display: none;
+}
+.edition-components {
+  display: none;
+}
