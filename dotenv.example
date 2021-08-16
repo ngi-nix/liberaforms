@@ -48,4 +48,4 @@ FLASK_CONFIG=production
 
 # ENABLE_PROMETHEUS_METRICS
 # this activates Prometheus' /metrics route and metrics generation
-ENABLE_PROMETHEUS_METRICS=True
+ENABLE_PROMETHEUS_METRICS=False

@@ -123,16 +123,17 @@ class TestUserMedia():
         """ Tests delete media
             Tests Permissions
         """
+        initial_total_media = Media.query.count()
         user = User.find(username=users['editor']['username'])
         media = Media.find_all(user_id=user.id).first()
-        url = f"media/delete/{media.id}"
+        url = f"/media/delete/{media.id}"
         response = anon_client.post(
                         url,
                         follow_redirects=True,
                     )
-        assert response.status_code == 200
+        assert response.status_code == 401
         html = response.data.decode()
-        assert '<!-- site_index_page -->' in html
+        # create a new user and attempt to delete media
         runner = app.test_cli_runner()
         with app.app_context():
             result = runner.invoke(create_user, [users['dummy_1']['username'],
@@ -150,8 +151,9 @@ class TestUserMedia():
         assert response.status_code == 200
         assert response.is_json == True
         assert response.json == False
-        assert '<!-- site_index_page -->' in html
+        assert initial_total_media == Media.query.count()
         dummy_1.delete()
+        # attempt media delete with editor user
         login(client, users['editor'])
         response = client.post(
                         url,
@@ -159,3 +161,4 @@ class TestUserMedia():
                     )
         assert response.status_code == 200
         assert response.is_json == True
+        assert initial_total_media -1 == Media.query.count()
