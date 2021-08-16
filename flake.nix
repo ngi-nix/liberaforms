@@ -63,7 +63,6 @@
 
     in
     {
-
       # A Nixpkgs overlay.
       overlay = final: prev:
         with final.pkgs; {
@@ -114,57 +113,96 @@
       defaultPackage =
         forAllSystems (system: self.packages.${system}.liberaforms);
 
-      # For now I'm using a postgres.nix in my system-wide NixOS config.
-      # A NixOS module.
-      #nixosModules.liberaforms =
-      #  { pkgs, ... }:
-      #  {
-      #    nixpkgs.overlays = [ self.overlay ];
+      nixosConfigurations.container = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules =
+          [
+            ({ pkgs, ... }: {
 
-      #    services.postgresql.enable = true;
-      #    services.postgresql.package = pkgs.postgresql_11;
-      #  };
+              imports = [ ./nix/module.nix ];
 
-      # Tests run by 'nix flake check' and by Hydra.
-      #      checks = forAllSystems
-      #        (system: {
-      #          inherit (self.packages.${system}) liberaforms;
-      #
-      #  liberaforms-test = with nixpkgsFor.${system};
-      #    stdenv.mkDerivation {
-      #      name = "${liberaforms.name}-test";
-      #
-      #      buildInputs = [ wget liberaforms ];
-      #
-      #      # Used by pygit2.
-      #      # See https://github.com/NixOS/nixpkgs/pull/72544#issuecomment-582674047.
-      #      SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-      #
-      #      unpackPhase = "true";
-      #
-      #      buildPhase = ''
-      #        source ${libSh}
-      #        initPostgres $(pwd)
-      #        export DJANGO_DEV=1
-      #        ${vulnerablecode}/manage.py migrate
-      #      '';
-      #
-      #      doCheck = true;
-      #      checkPhase = ''
-      #        # Run pytest on the installed version. A running postgres
-      #        # database server is needed.
-      #        (cd ${vulnerablecode} && pytest)
-      #
-      #         # Launch the webserver and call the API.
-      #         ${vulnerablecode}/manage.py runserver &
-      #        sleep 2
-      #        wget http://127.0.0.1:8000/api/
-      #        kill %1 # kill background task (i.e. webserver)
-      #      '';
-      #
-      #        installPhase =
-      #        "mkdir -p $out"; # make this derivation return success
-      #    };
-      #});
+              boot.isContainer = true;
+
+              # Let 'nixos-version --json' know about the Git revisiof this flake.
+              system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+
+              nixpkgs.overlays = [ self.overlay ];
+              environment.systemPackages = [ pkgs.liberaforms ];
+
+              services.liberaforms = {
+                enable = true;
+                rootEmail = "cleeyv@riseup.net";
+                secretKeyFile = "/home/cleeyv/dev/keys/liberaforms-secret.key";
+                dbPasswordFile = "/home/cleeyv/dev/keys/liberaforms-db-password.key";
+              };
+            })
+          ];
+
+        #nixosModule = self.nixosModules.liberaforms;
+        #
+        #nixosModules =
+        #  {
+        #    liberaforms = import /home/cleeyv/dev/liberaforms/nix/module.nix;
+        #  };
+
+
+
+        # nixosModules.liberaforms = import ./nix/module.nix self.overlay;
+
+
+
+        # For now I'm using a postgres.nix in my system-wide NixOS config.
+        # A NixOS module.
+        #nixosModules.liberaforms =
+        #  { pkgs, ... }:
+        #  {
+        #    nixpkgs.overlays = [ self.overlay ];
+
+        #    services.postgresql.enable = true;
+        #    services.postgresql.package = pkgs.postgresql_11;
+        #  };
+
+        # Tests run by 'nix flake check' and by Hydra.
+        #      checks = forAllSystems
+        #        (system: {
+        #          inherit (self.packages.${system}) liberaforms;
+        #
+        #  liberaforms-test = with nixpkgsFor.${system};
+        #    stdenv.mkDerivation {
+        #      name = "${liberaforms.name}-test";
+        #
+        #      buildInputs = [ wget liberaforms ];
+        #
+        #      # Used by pygit2.
+        #      # See https://github.com/NixOS/nixpkgs/pull/72544#issuecomment-582674047.
+        #      SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
+        #
+        #      unpackPhase = "true";
+        #
+        #      buildPhase = ''
+        #        source ${libSh}
+        #        initPostgres $(pwd)
+        #        export DJANGO_DEV=1
+        #        ${vulnerablecode}/manage.py migrate
+        #      '';
+        #
+        #      doCheck = true;
+        #      checkPhase = ''
+        #        # Run pytest on the installed version. A running postgres
+        #        # database server is needed.
+        #        (cd ${vulnerablecode} && pytest)
+        #
+        #         # Launch the webserver and call the API.
+        #         ${vulnerablecode}/manage.py runserver &
+        #        sleep 2
+        #        wget http://127.0.0.1:8000/api/
+        #        kill %1 # kill background task (i.e. webserver)
+        #      '';
+        #
+        #        installPhase =
+        #        "mkdir -p $out"; # make this derivation return success
+        #    };
+        #});
+      };
     };
 }
