@@ -122,8 +122,13 @@
               imports = [ ./nix/module.nix ];
 
               boot.isContainer = true;
+              networking.useDHCP = false;
+              networking.interfaces.eth0.useDHCP = true;
+              networking.dhcpcd.wait = "background";
 
-              # Let 'nixos-version --json' know about the Git revisiof this flake.
+              time.timeZone = "America/Montreal";
+
+              # Let 'nixos-version --json' know about the Git revision of this flake.
               system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
 
               nixpkgs.overlays = [ self.overlay ];
@@ -132,8 +137,8 @@
               services.liberaforms = {
                 enable = true;
                 rootEmail = "cleeyv@riseup.net";
-                secretKeyFile = "/home/cleeyv/dev/keys/liberaforms-secret.key";
-                dbPasswordFile = "/home/cleeyv/dev/keys/liberaforms-db-password.key";
+                secretKeyFile = "";
+                dbPasswordFile = "";
               };
             })
           ];
@@ -145,11 +150,7 @@
         #    liberaforms = import /home/cleeyv/dev/liberaforms/nix/module.nix;
         #  };
 
-
-
         # nixosModules.liberaforms = import ./nix/module.nix self.overlay;
-
-
 
         # For now I'm using a postgres.nix in my system-wide NixOS config.
         # A NixOS module.
