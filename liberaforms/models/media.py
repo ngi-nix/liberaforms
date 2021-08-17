@@ -9,11 +9,15 @@ import os, pathlib
 from datetime import datetime, timezone
 from PIL import Image
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
+from sqlalchemy import func
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
 from liberaforms.utils.database import CRUD
 from liberaforms.utils import utils
+
+import sqlalchemy
+from sqlalchemy.sql.expression import cast
 
 from pprint import pprint as pp
 
@@ -27,7 +31,7 @@ class Media(db.Model, CRUD, Storage):
                                                   nullable=False)
     alt_text = db.Column(db.String, nullable=True)
     file_name = db.Column(db.String, nullable=False)
-    file_size = db.Column(db.String, nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
     local_filesystem = db.Column(db.Boolean, default=True) #Remote storage = False
     user = db.relationship("User", viewonly=True)
@@ -47,6 +51,13 @@ class Media(db.Model, CRUD, Storage):
     @classmethod
     def find_all(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
+
+    @classmethod
+    def calc_total_size(cls):
+        q = cls.query.with_entities(
+                func.sum(cls.file_size.cast(sqlalchemy.Integer))
+            ).scalar()
+        return q if q is not None else 0
 
     @property
     def directory(self):

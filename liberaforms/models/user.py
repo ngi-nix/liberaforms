@@ -71,6 +71,10 @@ class User(db.Model, CRUD):
         return cls.find_all(**kwargs).first()
 
     @classmethod
+    def count(cls):
+        return cls.query.count()
+
+    @classmethod
     def find_all(cls, **kwargs):
         filters = []
         if 'token' in kwargs:

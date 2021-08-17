@@ -9,12 +9,15 @@ import os
 from datetime import datetime, timezone
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm.attributes import flag_modified
-from sqlalchemy import event
+from sqlalchemy import event, func
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
 from liberaforms.utils.database import CRUD
 from liberaforms.utils import utils
+
+import sqlalchemy
+from sqlalchemy.sql.expression import cast
 
 from pprint import pprint as pp
 
@@ -46,6 +49,10 @@ class Answer(db.Model, CRUD):
         return cls.find_all(**kwargs).first()
 
     @classmethod
+    def count(cls):
+        return cls.query.count()
+
+    @classmethod
     def find_all(cls, **kwargs):
         order = cls.created.desc()
         if 'oldest_first' in kwargs:
@@ -71,7 +78,7 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     file_name = db.Column(db.String, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
     local_filesystem = db.Column(db.Boolean, default=True) #Remote storage = False
-    file_size = db.Column(db.String, nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
     encrypted = db.Column(db.Boolean, default=False)
     form = db.relationship("Form", viewonly=True)
 
@@ -91,6 +98,13 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     @classmethod
     def find_all(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
+
+    @classmethod
+    def calc_total_size(cls):
+        q = cls.query.with_entities(
+                func.sum(cls.file_size.cast(sqlalchemy.Integer))
+            ).scalar()
+        return q if q is not None else 0
 
     @property
     def directory(self):

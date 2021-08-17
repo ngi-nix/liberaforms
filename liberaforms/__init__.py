@@ -37,13 +37,23 @@ def create_app():
 
     #print("LOG LEVEL: ", app.config['LOG_LEVEL'])
     #print("LOG TYPE: ", app.config['LOG_TYPE'])
-    
+
     db.init_app(app)
     ma.init_app(app)
     babel.init_app(app)
     session.init_app(app)
     csrf.init_app(app)
     setup.ensure_uploads_dir_tree(app)
+
+    if app.config["ENABLE_PROMETHEUS_METRICS"]:
+        from werkzeug.middleware.dispatcher import DispatcherMiddleware
+        from liberaforms.metrics import initialize_metrics
+        from prometheus_client import make_wsgi_app
+        # Prometheus monitoring activation
+        app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+            '/metrics': make_wsgi_app()
+        })
+        initialize_metrics(app)
 
     from liberaforms.commands import register_commands
     register_commands(app)

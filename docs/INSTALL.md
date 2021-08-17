@@ -7,6 +7,12 @@ Requires
 
 If you want to use Docker, please follow the instructions in `docs/docker.md`
 
+
+Install development libraries to compile pip packages
+```
+apt-get install python3-dev
+```
+
 ## Clone LiberaForms
 
 You can install LiberaForms in the directory of your choice.
@@ -27,6 +33,7 @@ python3 -m venv ./venv
 ### Install python packages
 ```
 source ./venv/bin/activate
+pip install --upgrade pip
 pip install -r ./requirements.txt
 ```
 
@@ -42,46 +49,43 @@ You can create a SECRET_KEY like this
 openssl rand -base64 32
 ```
 
-LiberaForms is still not ready. However, we will use it to finish the installation.
-
-Open a new terminal and run
-
+Add the database config.
 ```
-cd liberaforms
-source venv/bin/activate
-flask run
+DB_HOST=localhost
+DB_NAME=liberaforms
+DB_USER=liberaforms
+DB_PASSWORD=a_secret_db_password
 ```
 
-> Note: Every time you change values in `.env` you need to restart LiberaForms
+### Database
 
-## Database
+Create a user and database with the `.env` values
 
-### Create the empty database
-
-This will use the DB values in your `.env` file
 ```
-flask database create
+sudo su
+su postgres -c "liberaforms/commands/postgres.sh create-db"
+exit
 ```
 
-### Create tables
+#### Create tables
 
 Upgrade the database to the latest version
 
 ```
-flask database alembic upgrade
+flask db upgrade
 ```
 
-Note that `flask database alembic` is a wrapper for the `flask db` command.
-
-See more options here https://flask-migrate.readthedocs.io/en/latest/#api-reference
+See more db options here https://flask-migrate.readthedocs.io/en/latest/#api-reference
 
 
 ### Drop database
 
-If you need to delete the database
+If you need to delete the database (and user)
 
 ```
-flask database drop
+sudo su
+su postgres -c "liberaforms/commands/postgres.sh drop-db"
+exit
 ```
 
 ## Encryption
@@ -179,15 +183,27 @@ sudo supervisorctl stop liberaforms
 
 ## Database
 
-Run this and check if a copy is dumped correctly.
+Create a directory for the backup and set permissions
+
 ```
-/usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
+mkdir /var/backups/liberaforms
+chown postgres /var/backups/liberaforms/
 ```
 
-Add a line to your crontab to run it every night.
+Run this and check if a copy is dumped correctly.
 ```
-30 3 * * * /usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
+su postgres -c "/usr/bin/pg_dump <db_name> > /var/backups/liberaforms/backup.sql"
 ```
+
+Add a line to postgres user's crontab
+```
+crontab -u postgres -e
+```
+to run it every night..
+```
+30 3 * * * /usr/bin/pg_dump -U <db_name> > /var/backups/liberaforms/backup.sql"
+```
+
 Note: This overwrites the last copy. You might want to change that.
 
 Don't forget to check that the cronjob is dumping the database correctly.
