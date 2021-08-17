@@ -69,7 +69,7 @@
 
           # Adding cffi to the requirements list was necessary for the cryptography package to build properly.
           # The cryptography build also gave a similar warning about the "packaging" package so I added it as well.
-          pythonEnv = machnixFor.${system}.mkPython {
+          liberaforms-env = machnixFor.${system}.mkPython {
             requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9";
           };
 
@@ -78,7 +78,7 @@
             name = "liberaforms-${version}";
             src = liberaforms-src;
             dontConfigure = true; # do not use ./configure
-            propagatedBuildInputs = [ pythonEnv ];
+            propagatedBuildInputs = [ liberaforms-env ];
 
             postPatch = ''
               # Make sure the pycodestyle binary in $PATH is used.
@@ -133,12 +133,15 @@
 
               nixpkgs.overlays = [ self.overlay ];
               environment.systemPackages = [ pkgs.liberaforms ];
+              environment.etc."liberaforms.secret".text = "asdfasdf";
+              environment.etc."liberaforms.db".text = "asdfasdf";
 
               services.liberaforms = {
                 enable = true;
                 rootEmail = "cleeyv@riseup.net";
-                secretKeyFile = "";
-                dbPasswordFile = "";
+                secretKeyFile = "/etc/liberaforms.secret";
+                dbPasswordFile = "/etc/liberaforms.db";
+                cryptoKeyFile = "/etc/liberaforms.secret";
               };
             })
           ];
