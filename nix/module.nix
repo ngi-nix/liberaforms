@@ -235,6 +235,10 @@ in
           # 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
           MAX_ATTACHMENT_SIZE=1572864
 
+          # ENABLE_PROMETHEUS_METRICS
+          # this activates Prometheus' /metrics route and metrics generation
+          ENABLE_PROMETHEUS_METRICS=False
+
           ${cfg.extraConfig}
           EOF
           cat > ${cfg.workDir}/gunicorn.py <<EOF
