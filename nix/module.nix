@@ -172,13 +172,19 @@ in
         "d /var/log/liberaforms 755 liberaforms"
       ];
 
+    environment.systemPackages = [ pkgs.liberaforms-env ];
+
     systemd.services.liberaforms = {
       description = "LiberaForms server";
       wantedBy = [ "multi-user.target" ];
       after = [ "network.target" "postgresql.service" ];
       requires = [ "postgresql.service" ];
       restartIfChanged = true;
-      path = with pkgs; [ postgresql_11 ];
+      path = with pkgs; [ postgresql_11 liberaforms-env ];
+      environment =
+        {
+          "MEDIA_DIR" = "${cfg.workDir}/uploads/media";
+        };
 
       serviceConfig = {
         Type = "simple";
@@ -256,9 +262,13 @@ in
           workers = ${toString cfg.workers}
           user = '${user}'
           EOF
+
           cd ${cfg.workDir}
           ln -sf ${liberaforms}/* .
-          rm uploads
+          # wsgi.py cannot be symlink because its location determines working dir of gunicorn/flask.
+          rm ./wsgi.py
+          cp ${liberaforms}/wsgi.py ./wsgi.py
+          rm -r ./uploads
           cp -rL ${liberaforms}/uploads .
           chmod -R +w uploads
 
@@ -268,6 +278,7 @@ in
           psql -U postgres -c "CREATE DATABASE liberaforms ENCODING 'UTF8' TEMPLATE template0"
           psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE liberaforms TO liberaforms"
 
+          flask db upgrade
         '';
         ExecStart = "${penv}/bin/gunicorn -c ${cfg.workDir}/gunicorn.py 'wsgi:create_app()'";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
@@ -292,11 +303,11 @@ in
       enable = true;
       package = pkgs.postgresql_11;
       authentication = lib.mkForce ''
-        # TYPE  DATABASE             USER                 ADDRESS                 METHOD
-        local   postgres             postgres                                     trust
-        # Add these later if necessary...
-        #host    liberaforms          liberaforms        127.0.0.1/32              trust
-        #host    liberaforms          liberaforms        ::1/128                   trust
+        # TYPE  DATABASE         USER            ADDRESS          METHOD
+        local   postgres         postgres                         trust
+        local   liberaforms      liberaforms                      trust
+        host    liberaforms      liberaforms     127.0.0.1/32     trust
+        host    liberaforms      liberaforms     ::1/128          trust
       '';
 
     };
