@@ -117,7 +117,7 @@
         system = "x86_64-linux";
         modules =
           [
-            ({ pkgs, ... }: {
+            ({ pkgs, lib, ... }: {
 
               imports = [ ./nix/module.nix ];
 
@@ -134,15 +134,17 @@
               nixpkgs.overlays = [ self.overlay ];
               environment.systemPackages = [ pkgs.liberaforms ];
               environment.etc."liberaforms.secret".text = "asdfasdf";
-              environment.etc."liberaforms.db".text = "asdfasdf";
+              environment.etc."liberaforms.db".text = "a-better-password";
 
               services.liberaforms = {
                 enable = true;
+                enablePostgres = true;
                 rootEmail = "cleeyv@riseup.net";
                 secretKeyFile = "/etc/liberaforms.secret";
                 dbPasswordFile = "/etc/liberaforms.db";
                 cryptoKeyFile = "/etc/liberaforms.secret";
               };
+
             })
           ];
 
