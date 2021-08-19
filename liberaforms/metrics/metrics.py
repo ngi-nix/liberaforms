@@ -1,3 +1,10 @@
+"""
+This file is part of LiberaForms.
+
+# SPDX-FileCopyrightText: 2021 LiberaForms.org
+# SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 from prometheus_client import Gauge
 
 Users   = Gauge("liberaforms_users_total", "Total users in tenant")
@@ -8,6 +15,7 @@ AttachmentSize = Gauge("liberaforms_attachments_bytes_total",
                        "Total attachment size (bytes) in tenant")
 MediaSize = Gauge("liberaforms_media_bytes_total",
                   "Total media size (bytes) in tenant")
+
 
 def initialize_metrics(app):
     from liberaforms.models.form import Form
