@@ -2,11 +2,7 @@
 
 with lib;
 let
-  gunicorn = pkgs.python3Packages.gunicorn;
-  dotenv = pkgs.python3Packages.python-dotenv;
   liberaforms = pkgs.liberaforms;
-  flask = pkgs.python3Packages.flask;
-  python = pkgs.python3Packages.python;
   cfg = config.services.liberaforms;
   user = "liberaforms";
   group = "liberaforms";
@@ -35,7 +31,6 @@ in
       example = "forms.example.org";
       default = "localhost";
     };
-
 
     rootEmail = mkOption {
       type = types.str;
@@ -73,15 +68,6 @@ in
       default = "127.0.0.1:5000";
     };
 
-    #Not configured anywhere...
-    #    uploadsDir = mkOption {
-    #      type = types.str;
-    #      description = ''
-    #        Path to the directory where the uploads will be saved to
-    #      '';
-    #      default = default_home + "/uploads";
-    #    };
-
     extraConfig = mkOption {
       type = types.lines;
       description = ''
@@ -97,46 +83,30 @@ in
       '';
     };
 
-    secretKey = mkOption {
-      type = types.str;
-      description = ''
-        server secret for safe session cookies, must be set.
-        Created with `openssl rand -base64 32`.
-        Warning: this secret is stored in the WORLD-READABLE Nix store!
-        It's recommended to use <option>secretKeyFile</option>
-        which takes precedence over <option>secretKey</option>.
-      '';
-      default = "";
-    };
-
     secretKeyFile = mkOption {
-      type = types.nullOr types.str;
-      # type = types.str;
-      default = null;
+      type = types.str;
+      default = "/etc/liberaforms/secret.key";
       description = ''
         A file that contains the server secret for safe session cookies, must be set.
-        Created with `openssl rand -base64 32`.
-        <option>secretKeyFile</option> takes precedence over <option>secretKey</option>.
-        Warning: when <option>secretKey</option> is non-empty <option>secretKeyFile</option>
-        defaults to a file in the WORLD-READABLE Nix store containing that secret.
+        Created at default location by liberaforms-init script with `openssl rand -base64 32`.
       '';
     };
 
     dbPasswordFile = mkOption {
-      type = types.nullOr types.str;
-      default = null;
+      type = types.str;
+      default = "/etc/liberaforms/db-password.key";
       description = ''    
         A file that contains a password for the liberaforms user in postgres, must be set.
-        Use a strong password.
+        Created at default location by liberaforms-init script with `openssl rand -base64 32`.
       '';
     };
 
     cryptoKeyFile = mkOption {
       type = types.str;
-      default = "";
+      default = "/etc/liberaforms/crypto.key";
       description = ''    
         A file that contains a key to encrypt files uploaded to liberaforms.
-        Key is generated after initial install using `flask cryptokey create`.
+        Created at default location by liberaforms-init script with `flask cryptokey create`.
       '';
     };
 
@@ -152,7 +122,7 @@ in
     workDir = mkOption {
       type = types.str;
       description = ''
-        Path to the working directory (used for config and pidfile).
+        Path to the working directory for LiberaForms.
       '';
       default = default_home;
     };
@@ -165,19 +135,6 @@ in
         The number of gunicorn worker processes for handling requests.
       '';
     };
-
-    #config = {
-    #  secretKeyFile = mkDefault (
-    #    if config.secretKey != ""
-    #    then
-    #      toString
-    #        (pkgs.writeTextFile {
-    #          name = "liberaforms-secret-key";
-    #          text = config.secretKey;
-    #        })
-    #    else null
-    #  );
-    #};
   };
 
   config = mkIf cfg.enable {
@@ -187,6 +144,7 @@ in
         "d /var/lib/liberaforms 755 liberaforms"
         "d /var/log/liberaforms 755 liberaforms"
         "d /var/backups/liberaforms 755 postgres"
+        "d /etc/liberaforms 700 liberaforms"
       ];
 
     systemd.services.liberaforms = {
@@ -195,17 +153,33 @@ in
       after = [ "network.target" "postgresql.service" ];
       requires = [ "postgresql.service" ];
       restartIfChanged = true;
-      path = with pkgs; [ postgresql_11 liberaforms-env ];
+      path = with pkgs; [ postgresql_11 liberaforms-env openssl ];
 
       serviceConfig = {
         Type = "simple";
         PrivateTmp = true;
-        ExecStartPre = assert cfg.secretKeyFile != null; pkgs.writeScript "liberaforms-init" ''
+        ExecStartPre = pkgs.writeScript "liberaforms-init" ''
           #!/bin/sh
           set -x
-          mkdir -p ${cfg.workDir}
+
+          ########################
+          ## Generating secrets ##
+          ########################
+          if [ ! -f /etc/liberaforms/secret.key ]; then
+            openssl rand -base64 32 > /etc/liberaforms/secret.key
+          fi
+          if [ ! -f /etc/liberaforms/db-password.key ]; then
+            openssl rand -base64 32 > /etc/liberaforms/db-password.key
+          fi
+            if [ ! -f /etc/liberaforms/crypto.key ]; then
+            cd ${cfg.workDir} ; flask cryptokey create > /etc/liberaforms/crypto.key
+          fi
+
+          #############################################
+          ## Generating liberaforms .env config file ##
+          #############################################
           cat > ${cfg.workDir}/.env <<EOF
-          # Do not edit this file, it is automatically generated by liberaforms.service
+          # Do not edit this file, it is automatically generated by liberaforms.service.
 
           SECRET_KEY="$(cat ${cfg.secretKeyFile})"
 
@@ -247,7 +221,7 @@ in
           # can be 'production' or 'development'
           FLASK_CONFIG=production
 
-          # To enable these options, use services.liberforms.extraConfig
+          # To enable these options, use services.liberaforms.extraConfig
           # See docs/upload.md for more info
           ENABLE_UPLOADS=FALSE
           ENABLE_REMOTE_STORAGE=False
@@ -263,32 +237,39 @@ in
           ${cfg.extraConfig}
           EOF
 
+          #####################################
+          ## Generating gunicorn config file ##
+          #####################################
           cat > ${cfg.workDir}/gunicorn.py <<EOF
-          # Do not edit this file, it is automatically generated by liberaforms.service
+          # Do not edit this file, it is automatically generated by liberaforms.service.
           from dotenv import load_dotenv
           load_dotenv(dotenv_path="/var/lib/liberaforms/.env")
-          # pythonpath = '${liberaforms}'
           command = '${penv}/bin/gunicorn'
           bind = '${cfg.bind}'
           workers = ${toString cfg.workers}
           user = '${user}'
           EOF
 
+          ############################################
+          ## Setting up working dir for liberaforms ##
+          ############################################
           cd ${cfg.workDir}
           ln -sf ${liberaforms}/* .
-          # wsgi.py cannot be symlink because its location determines working dir of gunicorn/flask.
+          # wsgi.py cannot be a symlink because its location determines working dir of gunicorn/flask.
           rm ./wsgi.py
           cp ${liberaforms}/wsgi.py ./wsgi.py
           rm -r ./uploads
           cp -rL ${liberaforms}/uploads .
           chmod -R +w uploads
 
+          #####################################################
+          ## Creating database, user, and tables in postgres ##
+          #####################################################
           # "${cfg.workDir}/liberaforms/commands/postgres.sh create-db"
-          # psql commands from create-db script rewritten here to include -U postgres
+          # psql commands from `postgres.sh create-db` script rewritten here to add `-U postgres`.
           psql -U postgres -c "CREATE USER liberaforms WITH PASSWORD '$(cat ${cfg.dbPasswordFile})'"
           psql -U postgres -c "CREATE DATABASE liberaforms ENCODING 'UTF8' TEMPLATE template0"
           psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE liberaforms TO liberaforms"
-
           flask db upgrade
         '';
         ExecStart = "${penv}/bin/gunicorn -c ${cfg.workDir}/gunicorn.py 'wsgi:create_app()'";
