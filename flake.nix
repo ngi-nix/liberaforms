@@ -139,6 +139,7 @@
               services.liberaforms = {
                 enable = true;
                 enablePostgres = true;
+                enableNginx = true;
                 rootEmail = "cleeyv@riseup.net";
                 secretKeyFile = "/etc/liberaforms.secret";
                 dbPasswordFile = "/etc/liberaforms.db";
