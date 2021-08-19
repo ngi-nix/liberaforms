@@ -21,6 +21,20 @@ in
 
     enablePostgres = mkEnableOption "Postgres database";
 
+    enableNginx = mkEnableOption "Nginx reverse proxy web server";
+
+    enableHTTPS = mkEnableOption "HTTPS for connections to nginx";
+
+    domain = mkOption {
+      type = types.str;
+      description = ''
+        Domain for LiberaForms instance.
+      '';
+      example = "forms.example.org";
+      default = "localhost";
+    };
+
+
     rootEmail = mkOption {
       type = types.str;
       description = ''
@@ -172,8 +186,6 @@ in
         "d /var/log/liberaforms 755 liberaforms"
       ];
 
-    environment.systemPackages = [ pkgs.liberaforms-env ];
-
     systemd.services.liberaforms = {
       description = "LiberaForms server";
       wantedBy = [ "multi-user.target" ];
@@ -181,10 +193,6 @@ in
       requires = [ "postgresql.service" ];
       restartIfChanged = true;
       path = with pkgs; [ postgresql_11 liberaforms-env ];
-      environment =
-        {
-          "MEDIA_DIR" = "${cfg.workDir}/uploads/media";
-        };
 
       serviceConfig = {
         Type = "simple";
@@ -309,7 +317,48 @@ in
         host    liberaforms      liberaforms     127.0.0.1/32     trust
         host    liberaforms      liberaforms     ::1/128          trust
       '';
+    };
 
+    # Based on https://gitlab.com/liberaforms/liberaforms/-/blob/main/docs/nginx.example
+
+    networking.extraHosts =
+      ''
+        127.0.0.1 liberaforms
+      '';
+
+    services.nginx = mkIf cfg.enableNginx {
+      enable = true;
+      # Send all nginx error and access logs to journald.
+      appendHttpConfig = ''
+        error_log stderr;
+        access_log syslog:server=unix:/dev/log combined;
+        types_hash_bucket_size 128; # Clean warning from nginx log
+      '';
+
+      virtualHosts."${cfg.domain}" = {
+        # Send liberaforms error and access logs to files.
+        extraConfig = ''
+          access_log /var/log/nginx/liberaforms.access.log;
+          error_log /var/log/nginx/liberaforms.error.log notice;
+        '';
+        locations."/" = {
+          # Aliases for static, favicon, logo, emailheader, and media paths could be added here later.
+          proxyPass = "http://liberaforms:5000";
+          extraConfig = ''
+            proxy_set_header    Host    $host;
+            proxy_set_header    X-Forwarded-For $remote_addr;
+            proxy_set_header    X-Real-IP   $remote_addr;
+            proxy_pass_header   server;
+            proxy_set_header Host $host;
+          '';
+        };
+        enableACME = mkIf cfg.enableHTTPS true;
+        forceSSL = mkIf cfg.enableHTTPS true;
+      };
+    };
+    security.acme = mkIf cfg.enableHTTPS {
+      acceptTerms = true;
+      email = "${cfg.rootEmail}";
     };
   };
 }
