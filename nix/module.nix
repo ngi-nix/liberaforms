@@ -25,6 +25,8 @@ in
 
     enableHTTPS = mkEnableOption "HTTPS for connections to nginx";
 
+    enableDatabaseBackup = mkEnableOption "Cron job for pg_dump";
+
     domain = mkOption {
       type = types.str;
       description = ''
@@ -184,6 +186,7 @@ in
       [
         "d /var/lib/liberaforms 755 liberaforms"
         "d /var/log/liberaforms 755 liberaforms"
+        "d /var/backups/liberaforms 755 postgres"
       ];
 
     systemd.services.liberaforms = {
@@ -317,6 +320,13 @@ in
         host    liberaforms      liberaforms     127.0.0.1/32     trust
         host    liberaforms      liberaforms     ::1/128          trust
       '';
+    };
+
+    services.cron = mkIf cfg.enableDatabaseBackup {
+      enable = true;
+      systemCronJobs = [
+        "30 3 * * *   postgres   /run/current-system/sw/bin/pg_dump -U liberaforms liberaforms > /var/backups/liberaforms/db-backup-$(date +\\%Y\\%m\\%d\\%H\\%M).sql"
+      ];
     };
 
     # Based on https://gitlab.com/liberaforms/liberaforms/-/blob/main/docs/nginx.example
