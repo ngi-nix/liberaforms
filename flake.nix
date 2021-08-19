@@ -140,6 +140,7 @@
                 enable = true;
                 enablePostgres = true;
                 enableNginx = true;
+                enableDatabaseBackup = true;
                 rootEmail = "cleeyv@riseup.net";
                 secretKeyFile = "/etc/liberaforms.secret";
                 dbPasswordFile = "/etc/liberaforms.db";
