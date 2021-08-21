@@ -223,7 +223,7 @@ in
 
           # To enable these options, use services.liberaforms.extraConfig
           # See docs/upload.md for more info
-          ENABLE_UPLOADS=FALSE
+          ENABLE_UPLOADS=True
           ENABLE_REMOTE_STORAGE=False
           # 1024 * 500 = 512000 = 500 KiB
           MAX_MEDIA_SIZE=512000
