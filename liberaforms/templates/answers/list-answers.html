@@ -6,31 +6,21 @@
 <link rel="stylesheet" href="/static/dataTable/data-table.css">
 
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
-{% set answers = form.get_answers_for_display() %}
-{% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
 
 
-
+<div class="container">
+  <div class="row">
+      <div class="col" style="font-size:1.5em">
+        {{ form.slug }}
+      </div>
+  </div>
+</div>
 
 <div data-vue-component="data-table"
      data-items_endpoint="/api/form/{{form.id}}/answers"
      data-item_endpoint="/api/answer/"
+     data-can_edit={{ form.is_editor(g.current_user) | tojson }}
      data-csrf_token="{{ csrf_token() }}">
-</div>
-
-
-
-<div class="container">
-  <div class="row"
-     style="font-size:1.5em">
-
-    <div class="col-12">
-
-
-
-    </div>
-
-  </div>
 </div>
 
 
