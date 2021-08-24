@@ -17,8 +17,8 @@
 </div>
 
 <div data-vue-component="data-table"
-     data-items_endpoint="/api/form/{{form.id}}/answers"
-     data-item_endpoint="/api/answer/"
+     data-items_endpoint="/data-table/form/{{form.id}}/answers"
+     data-item_endpoint="/data-table/answer/"
      data-can_edit={{ form.is_editor(g.current_user) | tojson }}
      data-csrf_token="{{ csrf_token() }}">
 </div>

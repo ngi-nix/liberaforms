@@ -8,13 +8,14 @@ This file is part of LiberaForms.
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
+from liberaforms.models.answer import Answer
 from liberaforms.models.schemas.form import FormSchemaForDataTable
 from liberaforms.models.schemas.answer import AnswerSchema
 from liberaforms.utils.wraps import *
 
 from pprint import pprint
 
-form_api_bp = Blueprint('form_api_bp', __name__)
+data_table_bp = Blueprint('data_table_bp', __name__)
 
 default_forms_field_index = [
                 {'name': 'form__html', 'label': _('Form name')},
@@ -25,17 +26,13 @@ default_forms_field_index = [
                 {'name': 'created', 'label': _('Created')}
             ]
 
-
 def get_field_index(user):
     if 'forms_field_index' in user.preferences:
         return user.preferences['forms_field_index']
     else:
         return default_forms_field_index
 
-def update_field_index(user, first_field):
-    pass
-
-@form_api_bp.route('/api/forms/<int:user_id>', methods=['GET'])
+@data_table_bp.route('/data-table/forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
 def my_forms(user_id):
     """ Returns json required by Vue dataTable component.
@@ -82,7 +79,7 @@ def my_forms(user_id):
     ), 200
 
 
-@form_api_bp.route('/api/form/<int:form_id>/answers', methods=['GET'])
+@data_table_bp.route('/data-table/form/<int:form_id>/answers', methods=['GET'])
 @enabled_user_required__json
 def form_answers(form_id):
     """ Return json required by vue data-table component
@@ -104,7 +101,7 @@ def form_answers(form_id):
     ), 200
 
 
-@form_api_bp.route('/api/forms/<int:user_id>/change-index', methods=['POST'])
+@data_table_bp.route('/data-table/forms/<int:user_id>/change-index', methods=['POST'])
 @enabled_user_required__json
 def change_forms_field_index(user_id):
     """ Changes Users' Form (all forms) field index preference
@@ -130,7 +127,7 @@ def change_forms_field_index(user_id):
     return jsonify("Not Acceptable"), 406
 
 
-@form_api_bp.route('/api/forms/<int:user_id>/reset-index', methods=['POST'])
+@data_table_bp.route('/data-table/forms/<int:user_id>/reset-index', methods=['POST'])
 @enabled_user_required__json
 def reset_forms_field_index(user_id):
     """ Resets Users' Form field index preference
@@ -141,4 +138,77 @@ def reset_forms_field_index(user_id):
     g.current_user.save()
     return jsonify(
         {'field_index': g.current_user.preferences['forms_field_index']}
+    ), 200
+
+
+@data_table_bp.route('/data-table/answer/<int:answer_id>/mark', methods=['POST'])
+@enabled_user_required__json
+def toggle_answer_mark(answer_id):
+    answer = Answer.find(id=answer_id)
+    if not answer:
+        return jsonify("Not found"), 404
+    if not str(g.current_user.id) in answer.form.editors:
+        return jsonify("Forbidden"), 403
+    answer.marked = False if answer.marked == True else True
+    answer.save()
+    return jsonify(marked=answer.marked), 200
+
+
+@data_table_bp.route('/data-table/answer/<int:answer_id>/delete', methods=['DELETE'])
+@enabled_user_required__json
+def delete_answer(answer_id):
+    answer = Answer.find(id=answer_id)
+    if not answer:
+        return jsonify("Not found"), 404
+    form = answer.form
+    if not str(g.current_user.id) in form.editors:
+        return jsonify("Forbidden"), 403
+    answer.delete()
+    form.expired = form.has_expired()
+    form.save()
+    form.add_log(_("Deleted an answer"))
+    return jsonify(deleted=True), 200
+
+
+@data_table_bp.route('/data-table/form/<int:form_id>/answers/change-index', methods=['POST'])
+@enabled_user_required__json
+def change_answer_field_index(form_id):
+    """ Changes User's Answer field index preference for this form
+    """
+    form = Form.find(id=form_id, editor_id=g.current_user.id)
+    if not form:
+        return jsonify("Not found"), 404
+    field_index = form.get_editor_field_index_preference(g.current_user.id)
+    if not field_index:
+        field_index = form.get_field_index_for_data_display()
+
+    data = request.get_json(silent=True)
+    new_first_field_name = data['field_name']
+    field_to_move = None
+    for field in field_index:
+        if field['name'] == new_first_field_name:
+            field_to_move = field
+            break
+    if field_to_move:
+        old_index = field_index.index(field_to_move)
+        field_index.insert(1, field_index.pop(old_index))
+        form.save_editor_field_index_preference(g.current_user.id, field_index)
+        return jsonify(
+            {'field_index': field_index}
+        ), 200
+    return jsonify("Not Acceptable"), 406
+
+
+@data_table_bp.route('/data-table/form/<int:form_id>/answers/reset-index', methods=['POST'])
+@enabled_user_required__json
+def reset_answers_field_index(form_id):
+    """ Resets User's Answer field index preference for this form
+    """
+    form = Form.find(id=form_id, editor_id=g.current_user.id)
+    if not form:
+        return jsonify("Not found"), 404
+    field_index = form.get_field_index_for_data_display()
+    form.save_editor_field_index_preference(g.current_user.id, field_index)
+    return jsonify(
+        {'field_index': field_index}
     ), 200
