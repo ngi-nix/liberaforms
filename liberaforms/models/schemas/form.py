@@ -17,15 +17,35 @@ class FormSchema(ma.SQLAlchemySchema):
     created = ma.auto_field()
     slug = ma.auto_field()
     url = ma.Method('get_url')
-    total_answers = ma.Method('get_total_answers')
     structure = ma.auto_field()
     introduction_md = ma.Method('get_introduction_md')
 
     def get_url(self, obj):
         return obj.url
 
+    def get_introduction_md(self, obj):
+        return obj.introductionText['markdown']
+
+class FormSchemaForDataTable(ma.SQLAlchemySchema):
+    class Meta:
+        model = Form
+
+    id = ma.auto_field()
+    created = ma.auto_field()
+    slug = ma.auto_field()
+    total_answers = ma.Method('get_total_answers')
+    last_answer_date = ma.Method('get_last_answer_date')
+    is_public = ma.Method('get_is_public')
+    is_shared = ma.Method('get_is_shared')
+
     def get_total_answers(self, obj):
         return obj.answers.count()
 
-    def get_introduction_md(self, obj):
-        return obj.introductionText['markdown']
+    def get_last_answer_date(self, obj):
+        return obj.get_last_answer_date()
+
+    def get_is_public(self, obj):
+        return obj.is_public()
+
+    def get_is_shared(self, obj):
+        return obj.is_shared()
