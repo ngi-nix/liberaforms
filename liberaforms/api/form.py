@@ -95,18 +95,19 @@ def form_answers(form_id):
         answers = form.answers.paginate(page, 10, False).items
     else:
         answers = form.answers
+    field_index = form.get_editor_field_index_preference(g.current_user.id)
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'total': form.answers.count(),
-              'field_index': form.get_field_index_for_data_display(),
+              'field_index': field_index,
         }
     ), 200
 
 
 @form_api_bp.route('/api/forms/<int:user_id>/change-index', methods=['POST'])
 @enabled_user_required__json
-def change_field_index(user_id):
-    """ Changes Users' Form field index preference
+def change_forms_field_index(user_id):
+    """ Changes Users' Form (all forms) field index preference
     """
     if not user_id == g.current_user.id:
         return jsonify("Forbidden"), 403
@@ -131,7 +132,7 @@ def change_field_index(user_id):
 
 @form_api_bp.route('/api/forms/<int:user_id>/reset-index', methods=['POST'])
 @enabled_user_required__json
-def reset_field_index(user_id):
+def reset_forms_field_index(user_id):
     """ Resets Users' Form field index preference
     """
     if not user_id == g.current_user.id:

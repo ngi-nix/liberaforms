@@ -302,6 +302,22 @@ class Form(db.Model, CRUD):
             return editor_id
         return None
 
+    def get_editor_field_index_preference(self, editor_id):
+        editor_id = str(editor_id)
+        if editor_id in self.editors:
+            if 'field_index' in self.editors[editor_id]:
+                return self.editors[editor_id]['field_index']
+        return self.get_field_index_for_data_display()
+
+    def save_editor_field_index_preference(self, editor_id, field_index):
+        editor_id = str(editor_id)
+        if editor_id in self.editors:
+            self.editors[editor_id]['field_index'] = field_index
+            flag_modified(self, 'editors')
+            self.save()
+            return self.editors[editor_id]['field_index']
+        return False
+
     @property
     def url(self):
         return f"{self.site.host_url}{self.slug}"
