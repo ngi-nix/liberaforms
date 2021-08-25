@@ -31,12 +31,16 @@
       </a>
     </div>
   </div>
-</div>
 
-<div data-vue-component="data-table"
-     data-items_endpoint="/data-table/forms/{{g.current_user.id}}"
-     data-can_edit=false
-     data-csrf_token="{{ csrf_token() }}">
+  <div class="row">
+    <div class="col">
+      <div data-vue-component="data-table"
+           data-items_endpoint="/data-table/forms/{{g.current_user.id}}"
+           data-can_edit=false
+           data-csrf_token="{{ csrf_token() }}">
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="/static/data-table.js"></script>

@@ -26,7 +26,7 @@ default_forms_field_index = [
                 {'name': 'created', 'label': _('Created')}
             ]
 
-def get_field_index(user):
+def get_forms_field_index(user):
     if 'forms_field_index' in user.preferences:
         return user.preferences['forms_field_index']
     else:
@@ -41,8 +41,13 @@ def my_forms(user_id):
     if not user_id == g.current_user.id:
         return jsonify("Denied"), 401
     forms = Form.find_all(editor_id=g.current_user.id)
-    form_count = forms.count()
-    field_index = get_field_index(g.current_user)
+    form_count = Form.find_all(editor_id=g.current_user.id).count()
+    page = request.args.get('page', type=int)
+    if page:
+        print(f"page: {page}")
+        forms = Form.find_all(editor_id=g.current_user.id).paginate(page, 10, False).items
+        
+    field_index = get_forms_field_index(g.current_user)
     items = []
     for form in FormSchemaForDataTable(many=True).dump(forms):
         item = {}
@@ -89,6 +94,7 @@ def form_answers(form_id):
         return jsonify("Not found"), 404
     page = request.args.get('page', type=int)
     if page:
+        print(f"page: {page}")
         answers = form.answers.paginate(page, 10, False).items
     else:
         answers = form.answers
@@ -110,7 +116,7 @@ def change_forms_field_index(user_id):
         return jsonify("Forbidden"), 403
     data = request.get_json(silent=True)
     new_first_field_name = data['field_name']
-    field_index = get_field_index(g.current_user)
+    field_index = get_forms_field_index(g.current_user)
     field_to_move = None
     for field in field_index:
         if field['name'] == new_first_field_name:
