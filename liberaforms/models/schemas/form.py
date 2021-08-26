@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 from liberaforms import ma
 from liberaforms.models.form import Form
+from liberaforms.utils import utils
 
 
 class FormSchema(ma.SQLAlchemySchema):
@@ -31,7 +32,7 @@ class FormSchemaForDataTable(ma.SQLAlchemySchema):
         model = Form
 
     id = ma.auto_field()
-    created = ma.auto_field()
+    created = ma.Method('get_created')
     slug = ma.auto_field()
     total_answers = ma.Method('get_total_answers')
     last_answer_date = ma.Method('get_last_answer_date')
@@ -49,3 +50,6 @@ class FormSchemaForDataTable(ma.SQLAlchemySchema):
 
     def get_is_shared(self, obj):
         return obj.is_shared()
+
+    def get_created(self, obj):
+        return utils.utc_to_g_timezone(obj.created)

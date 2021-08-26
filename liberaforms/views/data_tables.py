@@ -46,7 +46,7 @@ def my_forms(user_id):
     if page:
         print(f"page: {page}")
         forms = Form.find_all(editor_id=g.current_user.id).paginate(page, 10, False).items
-        
+
     field_index = get_forms_field_index(g.current_user)
     items = []
     for form in FormSchemaForDataTable(many=True).dump(forms):
@@ -75,6 +75,7 @@ def my_forms(user_id):
                 continue;
             data[key] = form[key]
         item['data'] = data
+        #pprint(data)
         items.append(item)
         #pprint(items)
 
