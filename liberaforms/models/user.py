@@ -10,11 +10,13 @@ from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import pathlib
 from liberaforms import db
+from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict
 from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
+from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
 from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
@@ -114,17 +116,34 @@ class User(db.Model, CRUD):
             return self.timezone
         return current_app.config['DEFAULT_TIMEZONE']
 
+    def get_form(self, form_id, **kwargs):
+        kwargs = {**{'form_id':form_id}, **kwargs}
+        return self.get_forms(**kwargs).first()
+
     def get_forms(self, **kwargs):
-        kwargs['editor_id']=self.id
-        return Form.find_all(**kwargs)
+        kwargs = {**{'user_id': self.id}, **kwargs}
+        return Form.query.join(FormUser, Form.id == FormUser.form_id) \
+                         .filter_by(**kwargs)
 
     def authored_forms_total(self, **kwargs):
         kwargs["author_id"] = self.id
         return Form.find_all(**kwargs).count()
 
+    def can_inspect_form(self, form):
+        if self.is_admin():
+            return True
+        return True if FormUser.find(user_id=self.id,
+                                     form_id=form.id,
+                                     can_edit=True) \
+                    else False
+
     @property
     def language(self):
         return self.preferences["language"]
+
+    def new_form_notifications(self):
+        return {'newAnswer': self.preferences["newAnswerNotification"],
+                'expiredForm': True}
 
     @property
     def new_answer_notification_default(self):
@@ -304,8 +323,3 @@ class User(db.Model, CRUD):
             result['total_answers'].append(total_answers)
             result['total_forms'].append(total_forms)
         return result
-
-    def can_inspect_form(self, form):
-        if str(self.id) in form.editors or self.is_admin():
-            return True
-        return False

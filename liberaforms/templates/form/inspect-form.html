@@ -167,26 +167,58 @@
             <tr>
                <td>{%trans%}Editors{%endtrans%}</td>
                <td>
+                   {% set editors=form.get_editors() %}
                    {% if current_user_is_editor %}
-                        {% if form.is_shared() %}
+                        {% if editors.count() > 1 %}
                         <a class="btn btn-primary btn-xs"
                            role="button"
                            href="/forms/share/{{form.id}}"
                            style="padding:5px 4px 3px 4px">
-                           {%trans%}Shared with{%endtrans%}
+                           {%trans%}Form shared with{%endtrans%}
                            <span class="badge badge-light">
-                             {{ form.editors|length -1 }}
+                             {{ editors.count() -1 }}
                            </span>
                         </a>
                         {% else %}
                         <a class="btn btn-primary btn-xs"
                            role="button"
                            href="/forms/share/{{form.id}}">
-                           {%trans%}Not shared{%endtrans%}
+                           {%trans%}Add editors{%endtrans%}
                         </a>
                         {% endif %}
                    {% else %}
-                        {% if form.is_shared() %}
+                        {% if editors.count() -1 > 0 %}
+                          {%trans%}True{%endtrans%}
+                        {% else %}
+                          {%trans%}False{%endtrans%}
+                        {% endif %}
+                   {% endif %}
+               </td>
+            </tr>
+            <tr>
+               <td>{%trans%}Shared answers{%endtrans%}</td>
+               <td>
+                   {% set readers=form.get_readers() %}
+                   {% if current_user_is_editor %}
+                        {% if readers.count() > 0 %}
+                        <a class="btn btn-primary btn-xs"
+                           role="button"
+                           href="/forms/share/{{form.id}}"
+                           style="padding:5px 4px 3px 4px">
+                           {%trans%}Answers shared with{%endtrans%}
+                           <span class="badge badge-light">
+                             {{ readers.count() }}
+                           </span>
+                        </a>
+                        {% else %}
+                        <a class="btn btn-primary btn-xs"
+                           role="button"
+                           href="/forms/share/{{form.id}}">
+                           {%trans%}Share{%endtrans%}
+                        </a>
+                        {% endif %}
+                   {% else %}
+                        {% if readers %}
                           {%trans%}True{%endtrans%}
                         {% else %}
                           {%trans%}False{%endtrans%}

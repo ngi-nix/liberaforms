@@ -3,6 +3,7 @@
 
 <!-- list_answers_page -->
 
+{% set user_preferences = form.get_user_preferences(g.current_user.id) %}
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
 {% set answers = form.get_answers_for_display() %}
 {% set tallyColumns = form.get_expiry_numberfield_positions_in_field_index() %}
@@ -95,12 +96,12 @@
   <div class="col-md-12">
     <hr />
 
-    {% if form.editors[g.current_user.id|string] is defined %}
+    {% if user_preferences != None %}
       <div id="toggle_notification"
            class="btn-group btn-toggle">
         <button id="notification_true"
                 class="btn btn-sm btn-default
-                {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                {% if user_preferences['notifications']['newAnswer'] %}
                   btn-success
                 {% endif %}
         ">
@@ -108,7 +109,7 @@
         </button>
         <button id="notification_false"
                 class="btn btn-sm btn-default
-                {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                {% if not user_preferences['notifications']['newAnswer'] %}
                   btn-primary
                 {% endif %}
         ">
@@ -186,7 +187,7 @@
   </div>
 </div>
 
-{% if form.editors[g.current_user.id|string] is defined %}
+{% if user_preferences['can_edit'] == True %}
 <script>
 var csrftoken = "{{ csrf_token() }}";
 var fieldIndex={{fieldIndex|tojson}};
