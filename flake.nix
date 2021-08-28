@@ -140,6 +140,7 @@
                 enable = true;
                 enablePostgres = true;
                 enableNginx = true;
+                #enableHTTPS = true;
                 enableDatabaseBackup = true;
                 rootEmail = "cleeyv@riseup.net";
               };
