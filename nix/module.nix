@@ -312,10 +312,13 @@ in
 
     # Based on https://gitlab.com/liberaforms/liberaforms/-/blob/main/docs/nginx.example
 
-    networking.extraHosts =
-      ''
-        127.0.0.1 liberaforms
-      '';
+    networking = mkIf cfg.enableNginx {
+      extraHosts =
+        ''
+          127.0.0.1 liberaforms
+        '';
+      firewall.allowedTCPPorts = [ 80 ];
+    };
 
     services.nginx = mkIf cfg.enableNginx {
       enable = true;
