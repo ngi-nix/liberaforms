@@ -29,7 +29,7 @@ in
         Domain for LiberaForms instance.
       '';
       example = "forms.example.org";
-      default = "localhost";
+      default = "liberaforms.local";
     };
 
     rootEmail = mkOption {
@@ -312,12 +312,12 @@ in
 
     # Based on https://gitlab.com/liberaforms/liberaforms/-/blob/main/docs/nginx.example
 
-    networking = mkIf cfg.enableNginx {
+    networking = {
       extraHosts =
         ''
           127.0.0.1 liberaforms
         '';
-      firewall.allowedTCPPorts = [ 80 ];
+      firewall.allowedTCPPorts = mkIf cfg.enableNginx [ 80 ];
     };
 
     services.nginx = mkIf cfg.enableNginx {

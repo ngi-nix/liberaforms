@@ -125,6 +125,8 @@
               networking.useDHCP = false;
               networking.interfaces.eth0.useDHCP = true;
               networking.dhcpcd.wait = "background";
+              #networking.hostName = "liberaforms";
+              #networking.fqdn = "liberaforms.local";
 
               time.timeZone = "America/Montreal";
 
