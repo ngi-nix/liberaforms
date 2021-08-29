@@ -125,8 +125,6 @@
               networking.useDHCP = false;
               networking.interfaces.eth0.useDHCP = true;
               networking.dhcpcd.wait = "background";
-              #networking.hostName = "liberaforms";
-              #networking.fqdn = "liberaforms.local";
 
               time.timeZone = "America/Montreal";
 
@@ -157,16 +155,6 @@
 
         # nixosModules.liberaforms = import ./nix/module.nix self.overlay;
 
-        # For now I'm using a postgres.nix in my system-wide NixOS config.
-        # A NixOS module.
-        #nixosModules.liberaforms =
-        #  { pkgs, ... }:
-        #  {
-        #    nixpkgs.overlays = [ self.overlay ];
-
-        #    services.postgresql.enable = true;
-        #    services.postgresql.package = pkgs.postgresql_11;
-        #  };
 
         # Tests run by 'nix flake check' and by Hydra.
         #      checks = forAllSystems
