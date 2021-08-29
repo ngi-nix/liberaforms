@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 import os, json, datetime
 from threading import Thread
+from urllib.parse import urlparse
 from flask import current_app, Blueprint
 from flask import g, request, render_template, redirect
 from flask import session, flash, send_file, after_this_request
@@ -22,7 +23,8 @@ from liberaforms.utils.wraps import *
 from liberaforms.utils import form_helper
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils import html_parser
+from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils.utils import (make_url_for, JsonResponse,
                                      logout_user, human_readable_bytes)
@@ -173,6 +175,8 @@ def save_form(id=None):
         queriedForm.update_field_index(session['formFieldIndex'])
         queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
+        queriedForm.set_short_description()
+        queriedForm.set_thumbnail()
         queriedForm.save()
         form_helper.clear_session_form_data()
         flash(_("Updated form OK"), 'success')
@@ -208,8 +212,11 @@ def save_form(id=None):
                     }
         try:
             new_form = Form(g.current_user, **new_form_data)
+            new_form.set_short_description()
+            new_form.set_thumbnail()
             new_form.save()
-        except:
+        except Exception as error:
+            current_app.logger.error(error)
             flash(_("Failed to save form"), 'error')
             return redirect(make_url_for('form_bp.edit_form'))
         form_helper.clear_session_form_data()
@@ -326,6 +333,42 @@ def inspect_form(id):
                             max_attachment_size_for_humans=max_attach_size)
 
 
+@form_bp.route('/form/<int:id>/fediverse-publish', methods=['GET', 'POST'])
+@enabled_user_required
+def fedi_publish(id):
+    queriedForm = Form.find(id=id, editor_id=g.current_user.id)
+    if not queriedForm:
+        flash(_("Can't find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    if not g.current_user.fedi_auth:
+        flash(_("Fediverse connect is not configured"), 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    wtform = wtf.FormPublish()
+    if wtform.validate_on_submit():
+        status = Dispatcher().publish_form(wtform.text.data,
+                                           wtform.image_source.data,
+                                           fediverse=True)
+        if status['published'] == True:
+            queriedForm.published_cnt += 1
+            queriedForm.save()
+            status_uri = status['msg']
+            flash(_("Published at %s" % status_uri), 'success')
+        else:
+            flash(status['msg'], 'warning')
+        return redirect(make_url_for('form_bp.inspect_form', id=id))
+    if request.method == 'GET':
+        html = queriedForm.introductionText['html']
+        text = html_parser.extract_text(html, with_links=True).strip('\n')
+        text = f"{queriedForm.url}\n\n{text}"
+        wtform.text.data = text
+        wtform.image_source.data = queriedForm.thumbnail
+    node_name = urlparse(g.current_user.get_fedi_auth()['node_url']).hostname
+    return render_template('fedi-publish.html',
+                            node_name=node_name,
+                            form=queriedForm,
+                            wtform=wtform)
+
+
 @form_bp.route('/forms/share/<int:id>', methods=['GET'])
 @enabled_user_required
 def share_form(id):
@@ -401,8 +444,6 @@ def remove_shared_notification(id):
     if not (queriedForm and 'email' in request.form):
         return JsonResponse(json.dumps(False))
     email = request.form.get('email')
-    if not validators.is_valid_email(email):
-        return JsonResponse(json.dumps(False))
     if email in queriedForm.shared_notifications:
         queriedForm.shared_notifications.remove(email)
         queriedForm.add_log(_("Removed shared notification: %s" % email))
@@ -700,6 +741,7 @@ def view_form(slug):
     return render_template('view-form.html',
                             form=queriedForm,
                             max_attachment_size_for_humans=max_attach_size,
+                            opengraph=queriedForm.get_opengraph(),
                             navbar=False,
                             no_bot=True)
 

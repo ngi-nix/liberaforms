@@ -5,11 +5,12 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime
+import os, shutil
+from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import pathlib
 from liberaforms import db
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict
 from flask import current_app
 from liberaforms.utils.database import CRUD
@@ -18,6 +19,7 @@ from liberaforms.models.answer import Answer
 from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
+from liberaforms.utils import crypto
 from liberaforms.utils import utils
 
 from pprint import pprint
@@ -25,7 +27,7 @@ from pprint import pprint
 class User(db.Model, CRUD):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.Date, nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
@@ -37,13 +39,14 @@ class User(db.Model, CRUD):
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
-    #media = db.relationship("Media", viewonly=True)
+    timezone = db.Column(db.String, nullable=True)
+    fedi_auth = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     media = db.relationship("Media",
                             lazy='dynamic',
                             cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
-        self.created = datetime.datetime.now().isoformat()
+        self.created = datetime.now(timezone.utc)
         self.username = kwargs["username"]
         self.email = kwargs["email"]
         self.password_hash = validators.hash_password(kwargs["password"])
@@ -68,6 +71,10 @@ class User(db.Model, CRUD):
         return cls.find_all(**kwargs).first()
 
     @classmethod
+    def count(cls):
+        return cls.query.count()
+
+    @classmethod
     def find_all(cls, **kwargs):
         filters = []
         if 'token' in kwargs:
@@ -90,6 +97,10 @@ class User(db.Model, CRUD):
             filters.append(getattr(cls, key) == value)
         return cls.query.filter(*filters)
 
+    def get_created_date(self):
+        return utils.utc_to_g_timezone(self.created).strftime("%Y-%m-%d")
+        #return self.created.astimezone(g.timezone).strftime("%Y-%m-%d")
+
     @property
     def enabled(self):
         if not self.validatedEmail:
@@ -97,6 +108,11 @@ class User(db.Model, CRUD):
         if self.blocked:
             return False
         return True
+
+    def get_timezone(self):
+        if self.timezone:
+            return self.timezone
+        return current_app.config['DEFAULT_TIMEZONE']
 
     def get_forms(self, **kwargs):
         kwargs['editor_id']=self.id
@@ -118,10 +134,15 @@ class User(db.Model, CRUD):
         return True if self.admin['isAdmin']==True else False
 
     def is_root_user(self):
-        return True if self.email in os.environ['ROOT_USERS'] else False
+        return True if self.email in current_app.config['ROOT_USERS'] else False
 
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
+
+    def get_media_dir(self):
+        return os.path.join(current_app.config['UPLOADS_DIR'],
+                            current_app.config['MEDIA_DIR'],
+                            str(self.id))
 
     def delete_user(self):
         # remove this user from other form.editors{}
@@ -131,8 +152,7 @@ class User(db.Model, CRUD):
                 del form.editors[str(self.id)]
                 form.save()
         # delete uploaded media files
-        media_dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
-        shutil.rmtree(media_dir, ignore_errors=True)
+        shutil.rmtree(self.get_media_dir(), ignore_errors=True)
         if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
             prefix = "media/{}".format(self.id)
             RemoteStorage().remove_directory(prefix)
@@ -170,12 +190,11 @@ class User(db.Model, CRUD):
         return self.uploads_enabled
 
     def get_media_directory_size(self, for_humans=False):
-        dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
-        if not os.path.isdir(dir):
+        media_dir = self.get_media_dir()
+        if not os.path.isdir(media_dir):
             bytes = 0
         else:
-            dir = pathlib.Path(dir)
-            bytes = sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+            bytes = sum(f.stat().st_size for f in media_dir.glob('**/*') if f.is_file())
         return bytes if not for_humans else utils.human_readable_bytes(bytes)
 
     def toggle_uploads_enabled(self):
@@ -207,6 +226,15 @@ class User(db.Model, CRUD):
             "notifyNewForm": False
         }
 
+    def get_fedi_auth(self):
+        if not self.fedi_auth:
+            return {"node_url": "", "access_token": ""}
+        else:
+            return crypto.decrypt_dict(self.fedi_auth)
+
+    def set_fedi_auth(self, auth_dict):
+        self.fedi_auth = crypto.encrypt_dict(auth_dict)
+
     """
     send this admin an email when a new user registers at the site
     """
@@ -232,8 +260,8 @@ class User(db.Model, CRUD):
         return Answer.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
-        today = datetime.date.today().strftime("%Y-%m")
-        one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
+        today = datetime.now(timezone.utc).strftime("%Y-%m")
+        one_year_ago = datetime.now(timezone.utc) - timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
         year = int(year)
@@ -255,15 +283,21 @@ class User(db.Model, CRUD):
         form_filter=[Form.author_id == self.id]
         for year_month in result['labels']:
             date_str = year_month.replace('-', ', ')
-            start_date = datetime.datetime.strptime(date_str, '%Y, %m')
+            start_date = datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
-            answers_filter = answer_filter + [Answer.created >= start_date]
-            answers_filter = answer_filter + [Answer.created < stop_date]
-            forms_filter = form_filter + [Form.created >= start_date]
-            forms_filter = form_filter + [Form.created < stop_date]
-            monthy_answers = Answer.query.filter(*answers_filter).count()
-            monthy_forms = Form.query.filter(*forms_filter).count()
-            total_answers= total_answers + monthy_answers
+            monthy_users = User.query.filter(
+                                    User.id == self.id,
+                                    User.created >= start_date,
+                                    User.created < stop_date).count()
+            monthy_forms = Form.query.filter(
+                                    Form.author_id == self.id,
+                                    Form.created >= start_date,
+                                    Form.created < stop_date).count()
+            monthy_answers = Answer.query.filter(
+                                    Answer.author_id == self.id,
+                                    Answer.created >= start_date,
+                                    Answer.created < stop_date).count()
+            total_answers = total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
             result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)

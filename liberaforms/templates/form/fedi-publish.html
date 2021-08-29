@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- fedi_publish_page -->
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+
+    <div class="col-md-5 publishingPreview">
+      <div class="returnToForm">
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/view/{{form.id}}">
+          {%trans%}Return to form{%endtrans%}
+        </a>
+        {{ form.slug }}
+      </div>
+
+      <div class="title_2">
+        {# i18n: node_name stands for name of a Fediverse node: 'Publish on barcelona.social'#}
+        {%trans%}Publish on {{ node_name }}{%endtrans%}
+      </div>
+
+      <form method="POST">
+        {{ wtform.csrf_token }}
+        <input name="image_source"
+               type="hidden"
+               value="{{wtform.image_source.data}}" />
+        {% if wtform.image_source.data %}
+        <img src="{{wtform.image_source.data}}" />
+        {% endif %}
+        <p style="margin-top: 0.5em">
+        {{ wtform.text.label }}
+        <span class='required'>●</span>
+        {{ wtform.text(class_="form-control", rows="7") }}
+        <span class="hint">
+          {%trans%}Total characters:{%endtrans%}
+          <span id="char_count"></span>
+        </span>
+        {% for error in wtform.text.errors %}
+            <span class="formError">{{ error }}</span><br />
+        {% endfor %}
+        </p>
+        <div class="form-actions">
+          <input class="btn-success btn"
+                 type="submit"
+                 value="{%trans%}Publish{%endtrans%}">
+          <a class="btn
+                    btn-primary"
+             role="button"
+             href="/forms/view/{{form.id}}">
+             {%trans%}Cancel{%endtrans%}
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function update_total_chars(){
+    var total_chars = $('textarea[id=text]').val().length;
+    $("#char_count").html(total_chars);
+  }
+
+  $(document).ready(function() {
+    update_total_chars();
+  });
+
+  $("form").submit(function( event ) {
+    $("input[type=submit]").prop("disabled", true);
+    return;
+  });
+
+  $('textarea[id=text]').on("input", function(){
+    update_total_chars();
+  });
+</script>
+
+{% endblock %}

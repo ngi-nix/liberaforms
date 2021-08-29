@@ -30,7 +30,9 @@
         </thead>
         {% for log in form.log %}
         <tr>
-            <td>{{log.created.strftime('%Y-%m-%d %H:%M:%S')}}</td>
+            <td>
+              {{log.created.astimezone(g.timezone).strftime('%Y-%m-%d %H:%M:%S')}}
+            </td>
             <td>{{log.user.username}}</td>
             <td>{{log.message}}</td>
         </tr>

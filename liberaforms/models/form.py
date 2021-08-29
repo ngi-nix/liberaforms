@@ -5,15 +5,15 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime, re
-import shutil
+import os, re, shutil
+from datetime import datetime, timezone
 import unicodecsv as csv
 
 from flask import current_app, g
 from flask_babel import gettext as _
 
 from liberaforms import db
-from sqlalchemy.dialects.postgresql import JSONB, ARRAY
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
@@ -23,6 +23,7 @@ from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
+from liberaforms.utils import html_parser
 from liberaforms.utils import utils
 
 from pprint import pprint
@@ -36,7 +37,7 @@ class Form(db.Model, CRUD):
     __tablename__ = "forms"
     _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.Date, nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
@@ -50,9 +51,11 @@ class Form(db.Model, CRUD):
     shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    introductionText = db.Column(JSONB, nullable=False)
+    introductionText = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
+    thumbnail = db.Column(db.String, nullable=True)
+    published_cnt = db.Column(db.Integer, default=0, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
     answers = db.relationship("Answer", lazy='dynamic',
@@ -61,7 +64,7 @@ class Form(db.Model, CRUD):
                                      cascade="all, delete, delete-orphan")
 
     def __init__(self, author, **kwargs):
-        self.created = datetime.datetime.now().isoformat()
+        self.created = datetime.now(timezone.utc)
         self.author_id = author.id
         self.editors = {self.author_id: self.new_editor_preferences(author)}
         self.expiryConditions = {"totalAnswers": 0,
@@ -98,6 +101,10 @@ class Form(db.Model, CRUD):
         return cls.find_all(**kwargs).first()
 
     @classmethod
+    def count(cls):
+        return cls.query.count()
+
+    @classmethod
     def find_all(cls, **kwargs):
         filters = []
         if 'editor_id' in kwargs:
@@ -112,6 +119,9 @@ class Form(db.Model, CRUD):
 
     def get_author(self):
         return self.author
+
+    def get_created_date(self):
+        return utils.utc_to_g_timezone(self.created).strftime("%Y-%m-%d")
 
     def change_author(self, new_author):
         if new_author.enabled:
@@ -238,21 +248,24 @@ class Form(db.Model, CRUD):
     def get_answers_for_display(self, oldest_first=False):
         answers = self.get_answers(oldest_first=oldest_first)
         result = []
+        frmt = "%Y-%m-%d %H:%M:%S"
         for answer in answers:
-            result.append({ 'id': answer.id,
-                            'created': answer.created.strftime("%Y-%m-%d %H:%M:%S"),
-                            'marked': answer.marked,
-                            **answer.data})
+            result.append({
+                        'id': answer.id,
+                        'created': utils.utc_to_g_timezone(answer.created)
+                                        .strftime(frmt),
+                        'marked': answer.marked,
+                        **answer.data})
         return result
 
     def get_total_answers(self):
         return self.answers.count()
-        #return Answer.find_all(form_id=self.id).count()
 
     def get_last_answer_date(self):
         last_answer = Answer.find(form_id=self.id)
         if last_answer:
-            return last_answer.created.strftime('%Y-%m-%d %H:%M:%S')
+            frmt = "%Y-%m-%d %H:%M:%S"
+            return utils.utc_to_g_timezone(last_answer.created).strftime(frmt)
         return ""
 
     def is_enabled(self):
@@ -294,6 +307,33 @@ class Form(db.Model, CRUD):
     @property
     def embed_url(self):
         return f"{self.site.host_url}embed/{self.slug}"
+
+    def get_opengraph(self):
+        default_img_src = self.site.get_logo_uri()
+        image_src = self.thumbnail if self.thumbnail else default_img_src
+        opengraph = {
+            "title": self.slug,
+            "url": self.url,
+            "image": image_src,
+            "description": self.get_short_description(),
+        }
+        return opengraph
+
+    def set_thumbnail(self):
+        html = self.introductionText['html']
+        images_src = html_parser.extract_images_src(html)
+        self.thumbnail = images_src[0] if images_src else None
+
+    def set_short_description(self):
+        text = html_parser.get_opengraph_text(self.introductionText['html'])
+        self.introductionText['short_text'] = text
+
+    def get_short_description(self):
+        if 'short_text' in self.introductionText:
+            return self.introductionText['short_text']
+        self.set_short_description()
+        self.save()
+        return self.introductionText['short_text']
 
     @property
     def data_consent(self):
@@ -477,12 +517,14 @@ class Form(db.Model, CRUD):
         self.delete_all_answers()
         super().delete()
 
+    def get_attachment_dir(self):
+        return os.path.join(current_app.config['UPLOADS_DIR'],
+                            current_app.config['ATTACHMENT_DIR'],
+                            str(self.id))
+
     def delete_all_answers(self):
         self.answers.delete()
-        attachment_dir = os.path.join(current_app.config['ATTACHMENT_DIR'],
-                                      str(self.id))
-        attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
-                                      attachment_dir)
+        attachment_dir = self.get_attachment_dir()
         if os.path.isdir(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
         else:

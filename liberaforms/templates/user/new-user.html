@@ -30,15 +30,15 @@
         </p>
         <p>
             {{ wtform.password.label }} <span class='required-dot'>●</span><br />
-            <span class="hint">{%trans%}Use a passphrase, with spaces{%endtrans%}</span>
-            {{ wtform.password(class_="form-control", placeholder=_('eg: No holidays this year')) }}
+            <span class="hint">{%trans%}Use a password with spaces and/or special characters.{%endtrans%} {%trans%}We suggest you use a sentence you will remember.{%endtrans%}</span>
+            {{ wtform.password(class_="form-control", placeholder=_('eg: Peter cooks delicious food')) }}
             {% for error in wtform.password.errors %}
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}
         </p>
         <p>
             {{ wtform.password2.label }} <span class='required-dot'>●</span><br />
-            {{ wtform.password2(class_="form-control", placeholder=_('Another eg: My dog has fleas')) }}
+            {{ wtform.password2(class_="form-control", placeholder=_('Another eg: The cat living with me has fleas')) }}
             {% for error in wtform.password2.errors %}
                 <span class="formError">{{ error }}</span><br />
             {% endfor %}

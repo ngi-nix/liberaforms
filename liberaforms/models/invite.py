@@ -5,9 +5,9 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import datetime
+from datetime import datetime, timezone
 from flask_babel import gettext as _
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from liberaforms.utils.database import CRUD
 from liberaforms import db
 from liberaforms.models.site import Site
@@ -18,12 +18,14 @@ from pprint import pprint
 class Invite(db.Model, CRUD):
     __tablename__ = "invites"
     id = db.Column(db.Integer, primary_key=True, index=True)
+    created = db.Column(TIMESTAMP, nullable=False)
     email = db.Column(db.String, nullable=False)
     message = db.Column(db.String, nullable=True)
     token = db.Column(JSONB, nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, **kwargs):
+        self.created = datetime.now(timezone.utc)
         self.email = kwargs["email"]
         self.message = kwargs["message"]
         self.token = kwargs["token"]

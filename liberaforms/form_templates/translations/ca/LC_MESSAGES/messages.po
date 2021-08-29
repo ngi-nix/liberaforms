@@ -1,0 +1,88 @@
+# Catalan translations for PROJECT.
+# Copyright (C) 2021 LiberaForms, CC-BY-SA
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: info@liberaforms.org\n"
+"POT-Creation-Date: 2021-08-04 12:30+0200\n"
+"PO-Revision-Date: 2021-07-16 14:39+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: ca\n"
+"Language-Team: ca <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: form_templates/form_templates.py:13
+msgid "One day congress"
+msgstr ""
+
+#: form_templates/form_templates.py:15
+msgid ""
+"# hello\n"
+"one two three"
+msgstr ""
+
+#: form_templates/form_templates.py:19
+msgid "Room 1. Municipal Strategies"
+msgstr ""
+
+#: form_templates/form_templates.py:20
+msgid "Room 2. Decentralized tech. Freedom of speech"
+msgstr ""
+
+#: form_templates/form_templates.py:31
+msgid "Vegan"
+msgstr ""
+
+#: form_templates/form_templates.py:32
+msgid "Vegaterian"
+msgstr ""
+
+#: form_templates/form_templates.py:33
+msgid "I'm eating else where"
+msgstr ""
+
+#: form_templates/form_templates.py:40
+msgid "Summer courses"
+msgstr ""
+
+#: form_templates/form_templates.py:41
+msgid ""
+"Students can enroll in a variety of activities spread out across three "
+"days."
+msgstr ""
+
+#: form_templates/form_templates.py:42 form_templates/form_templates.py:73
+msgid "# hello"
+msgstr ""
+
+#: form_templates/form_templates.py:49
+msgid "Tuesday 25th"
+msgstr ""
+
+#: form_templates/form_templates.py:71
+msgid "Save our shelter"
+msgstr ""
+
+#: form_templates/form_templates.py:72
+msgid "Petition citizen support for your local initiative."
+msgstr ""
+
+#: form_templates/form_templates.py:75
+msgid "ID number"
+msgstr ""
+
+#: form_templates/form_templates.py:76
+msgid "Email"
+msgstr ""
+
+#: form_templates/form_templates.py:77
+msgid "Comments"
+msgstr ""
+

@@ -9,69 +9,99 @@
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
 <div class="container">
-<div class="row" style="font-size:1.5em">
-
-    {% if shared %}
+  <div class="row" style="font-size:1.5em">
+  {% if shared %}
     <div class="col">
-    {{ form.slug }}
+      {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="{{form.get_shared_answers_url()}}">
-        {%trans%}View answers{%endtrans%}
-        <span class="badge badge-light">{{total_answers}}</span>
-    </a>
-    <a class="btn btn-primary btn-sm" role="button" href="{{ form.get_shared_answers_url('csv')}}">
-        {%trans%}Download CSV{%endtrans%}<i class="fa fa-download" aria-hidden="true"></i>
-    </a>
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="{{form.get_shared_answers_url()}}">
+          {%trans%}View answers{%endtrans%}
+          <span class="badge badge-light">
+            {{total_answers}}
+          </span>
+      </a>
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="{{ form.get_shared_answers_url('csv')}}">
+        {%trans%}Download CSV{%endtrans%}
+        <i class="fa fa-download" aria-hidden="true"></i>
+      </a>
     </div>
-    {% else %}
+  {% else %}
     <div class="col">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">{%trans%}Form details{%endtrans%}</a>
-    {{ form.slug }}
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/view/{{form.id}}">
+        {%trans%}Form details{%endtrans%}
+      </a>
+      {{ form.slug }}
     </div>
     <div class="col-auto">
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/answers/{{form.id}}">
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/answers/{{form.id}}">
         {%trans%}View answers{%endtrans%}
         <span class="badge badge-light">{{total_answers}}</span>
-    </a>
-    <a class="btn btn-primary btn-sm" role="button" href="/forms/csv/{{form.id}}">{%trans%}Download CSV{%endtrans%}</a>
+      </a>
+      <a class="btn btn-primary btn-sm"
+         role="button"
+         href="/forms/csv/{{form.id}}">
+        {%trans%}Download CSV{%endtrans%}
+      </a>
     </div>
-    {% endif %}
-</div>
+  {% endif %}
+  </div>
 
-<div class="row">
+  <div class="row">
     <div class="col-md-12">
-    <hr />
+      <hr />
 
     {% if not shared %}
-    {% if form.editors[g.current_user.id|string] is defined %}
-        <div id="toggle_notification" class="btn-group btn-toggle">
-            <button id="notification_true" class="btn btn-sm btn-default {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-success{% endif %}">{%trans%}True{%endtrans%}</button>
-            <button id="notification_false" class="btn btn-sm btn-default {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}btn-primary{% endif %}">{%trans%}False{%endtrans%}</button>
-        </div>
-        {%trans%}Notify me on each new answer{%endtrans%}
-    {% endif %}
-    <p>&nbsp;</p>
+      {% if form.editors[g.current_user.id|string] is defined %}
+      <div id="toggle_notification"
+           class="btn-group btn-toggle">
+        <button id="notification_true"
+                class="btn btn-sm btn-default
+                      {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                      btn-success
+                      {% endif %}">
+            {%trans%}True{%endtrans%}
+        </button>
+        <button id="notification_false"
+                class="btn btn-sm btn-default
+                      {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                      btn-primary
+                      {% endif %}">
+            {%trans%}False{%endtrans%}
+        </button>
+      </div>
+      {%trans%}Notify me on each new answer{%endtrans%}
+      {% endif %}
+      <p>&nbsp;</p>
     {% endif %}
 
-    <canvas id="time_chart" height="100"></canvas>
+      <canvas id="time_chart" height="100"></canvas>
+
     </div>
-</div>
+  </div>
 
 {% if chart_data['multi_choice']|length %}
-    <div class="row">
-        <div class="col-md-12" style="margin-top:2rem;">
-        <div class="title_1 delimited">{%trans%}Multiple choice{%endtrans%}</div>
-        </div>
-
-        {% for field in chart_data['multi_choice'] %}
-        <div class="col-md-4" height="100" style="margin-top:2em">
-        <canvas id="{{ loop.index }}_multi_choice_chart"></canvas>
-        </div>
-        {% endfor %}
+  <div class="row">
+    <div class="col-md-12" style="margin-top:2rem;">
+    <div class="title_1 delimited">{%trans%}Multiple choice{%endtrans%}</div>
     </div>
-{% endif %}
 
+    {% for field in chart_data['multi_choice'] %}
+    <div class="col-md-4" height="100" style="margin-top:2em">
+    <canvas id="{{ loop.index }}_multi_choice_chart"></canvas>
+    </div>
+    {% endfor %}
+  </div>
+{% endif %}
+</div>
 
 <script>
 {% set fg_colors = [    "rgba(233, 132, 0, 1)", "rgba(182, 0, 181, 1)", "rgba(255, 228, 0, 1)",
@@ -121,7 +151,10 @@ var time_chart = new Chart(ctx, {
         legend: {
             onHover: function (e) { e.target.style.cursor = 'pointer' },
             onLeave: function (e) { e.target.style.cursor = 'default' }
-        }
+        },
+        animation: { duration: 0 },
+        hover: { animationDuration: 0 },
+        responsiveAnimationDuration: 0,
     }
 });
 

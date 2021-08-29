@@ -127,8 +127,8 @@ jQuery(function($) {
         success: function(data, textStatus, jqXHR)
         {
             if (data !== false) {
-              $('#alt_text').val(data.alt_text);
-              $('#image_url').val(data.image_url);
+              $('#alt_text').val(data.media.alt_text);
+              $('#image_url').val(data.media.image_url);
               $('#media_file').val('');
               $(document).trigger("insert_image");
             }
@@ -169,8 +169,8 @@ jQuery(function($) {
             {
               if (data.errors === undefined) {
                 console.log(data)
-                $('#image_url').val(data.image_url);
-                $('#alt_text').val(data.alt_text)
+                $('#image_url').val(data.media.image_url);
+                $('#alt_text').val(data.media.alt_text)
                 $("#upload_spinner").hide();
                 $(document).trigger("insert_image");
               }

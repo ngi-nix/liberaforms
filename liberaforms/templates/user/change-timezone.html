@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script src="/static/bootstrap/bootstrap-4-autocomplete.min.js"></script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+
+    <div class="col-md-5">
+      <div class="title_1 delimited">
+        {%trans%}Change your time zone{%endtrans%}
+      </div>
+
+      <form method="POST">
+        {{ wtform.csrf_token }}
+
+          {{ wtform.timezone.label }}<br />
+
+          <div class="input-group">
+            <input id="select_timezone"
+                   type="text"
+                   name="timezone"
+                   class="form-control"
+                   autocomplete="off"
+                   placeholder="{%trans%}Search for country or city name{%endtrans%}"
+                   aria-label="{%trans%}Time zone{%endtrans%}"
+                   aria-describedby="timezone">
+          </div>
+          {% for error in wtform.timezone.errors %}
+              <span class="formError">{{ error }}</span><br />
+          {% endfor %}
+
+
+        <div class="form-actions">
+          <input class="btn-success btn"
+                 type="submit"
+                 value="{%trans%}Save{%endtrans%}">
+          <a class="btn btn-primary"
+             role="button"
+             href="/user/{{ g.current_user.username }}">
+            {%trans%}Cancel{%endtrans%}
+           </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  $('#select_timezone').autocomplete({
+    source: {{ timezones|tojson }},
+    highlightClass: 'text-danger',
+    treshold: 2,
+  });
+
+
+</script>
+
+{% endblock %}

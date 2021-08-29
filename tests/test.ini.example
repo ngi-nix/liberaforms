@@ -10,7 +10,7 @@ ROOT_USERS=['dave@example.com']
 TEST_DB_HOST=localhost
 TEST_DB_NAME=test_db
 TEST_DB_USER=db_user
-TEST_DB_PASSWORD="db_password"
+TEST_DB_PASSWORD=db_password
 
 TOKEN_EXPIRATION=604800
 SESSION_TYPE=filesystem
@@ -30,6 +30,8 @@ MINIO_SECRET_KEY=
 LOG_TYPE=stream
 LOG_DIR=./logs
 
+DEFAULT_TIMEZONE="Europe/Madrid"
+
 USER1_USERNAME=test_user
 USER1_PASSWORD=""
 USER1_EMAIL= # YOUR_EMAIL_ADDRESS
@@ -46,3 +48,7 @@ TEST_SMTP_NO_REPLY=noreply@example.com
 SKIP_EMAILS=True
 
 TMP_DIR=/tmp
+
+# ENABLE_PROMETHEUS_METRICS
+# this activates Prometheus' /metrics route and metrics generation
+ENABLE_PROMETHEUS_METRICS=True

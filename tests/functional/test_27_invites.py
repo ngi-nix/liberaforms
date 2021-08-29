@@ -52,7 +52,10 @@ class TestInvites():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div class="success flash_message">' in html
+        if not os.environ['SKIP_EMAILS']:
+            assert 'Recipient address rejected' in html
+        else:
+            assert '<div class="success flash_message">' in html
         assert '<!-- list_invites_page -->' in html
         new_invite = Invite.find(email=users['dummy_1']['email'])
         assert new_invite != None
@@ -109,7 +112,7 @@ class TestInvites():
         assert user.validatedEmail == True
         assert user.admin['isAdmin'] == False
         html = response.data.decode()
-        assert '<!-- my_forms_page -->' in html
+        assert '<!-- user_settings_page -->' in html
         assert '<a class="nav-link" href="/user/logout">' in html
         # delete test_user to continue testing
         user.delete()
@@ -131,7 +134,10 @@ class TestInvites():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert '<div class="success flash_message">' in html
+        if not os.environ['SKIP_EMAILS']:
+            assert 'Recipient address rejected' in html
+        else:
+            assert '<div class="success flash_message">' in html
         assert '<!-- list_invites_page -->' in html
         new_invite = Invite.find(email=users['dummy_1']['email'])
         assert new_invite != None
@@ -158,7 +164,7 @@ class TestInvites():
         assert user.validatedEmail == True
         assert user.admin['isAdmin'] == True
         html = response.data.decode()
-        assert '<!-- my_forms_page -->' in html
+        assert '<!-- user_settings_page -->' in html
         assert '<a class="nav-link" href="/user/logout">' in html
         # remove admin permission from test user to continue testing
         user.admin['isAdmin'] = False

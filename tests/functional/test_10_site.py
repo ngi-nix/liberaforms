@@ -9,6 +9,7 @@ import os
 import pytest
 import werkzeug
 from io import BytesIO
+from liberaforms.models.site import Site
 from .utils import login, logout
 
 
@@ -24,6 +25,9 @@ class TestSiteConfig():
             assert os.environ['FQDN'] in app.config['MEDIA_DIR']
             assert os.environ['FQDN'] in app.config['BRAND_DIR']
             assert os.environ['FQDN'] in app.config['ATTACHMENT_DIR']
+
+    def test_site_default_values(self, app):
+        pass
 
     def test_change_sitename(cls, site, users, admin_client, anon_client):
         login(admin_client, users['admin'])
@@ -120,7 +124,7 @@ class TestSiteConfig():
         """ Tests valid and invalid html hex color
             Tests admin permission
         """
-        url = "/site/primary-colour"
+        url = "/site/primary-color"
         response = anon_client.get(
                         url,
                         follow_redirects=True,
@@ -160,8 +164,10 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
-    def test_change_favicon(self, app, admin_client, anon_client):
+    def test_change_logo(self, app, admin_client, anon_client):
         """ Tests valid and invalid image files in ./tests/assets
+            Tests jpeg to png logo conversion
+            Tests favicon creation
             Tests admin permission
         """
         url = "/site/change-icon"
@@ -178,16 +184,19 @@ class TestSiteConfig():
                 )
         html = response.data.decode()
         assert '<!-- change_icon_page -->' in html
-        favicon_path = os.path.join(app.config['UPLOADS_DIR'],
-                                    app.config['BRAND_DIR'],
-                                    'favicon.ico')
+        brand_dir = os.path.join(app.config['UPLOADS_DIR'],
+                                 app.config['BRAND_DIR'])
+        logo_path = os.path.join(brand_dir, 'logo.png')
+        favicon_path = os.path.join(brand_dir, 'favicon.ico')
+        initial_logo_stats = os.stat(logo_path)
         initial_favicon_stats = os.stat(favicon_path)
-        invalid_favicon = "favicon_invalid.jpeg"
-        with open(f'./assets/{invalid_favicon}', 'rb') as f:
+        invalid_logo = "invalid_logo.jpeg"
+        #invalid_favicon = "favicon_invalid.jpeg"
+        with open(f'./assets/{invalid_logo}', 'rb') as f:
             stream = BytesIO(f.read())
         invalid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
-            filename=invalid_favicon,
+            filename=invalid_logo,
             content_type="plain/txt",
         )
         response = admin_client.post(
@@ -199,15 +208,16 @@ class TestSiteConfig():
                     content_type='multipart/form-data',
                 )
         assert response.status_code == 200
+        assert initial_logo_stats.st_size == os.stat(logo_path).st_size
         assert initial_favicon_stats.st_size == os.stat(favicon_path).st_size
         html = response.data.decode()
         assert '<!-- change_icon_page -->' in html
-        valid_favicon = "favicon_valid.jpeg"
-        with open(f'./assets/{valid_favicon}', 'rb') as f:
+        valid_logo = "valid_logo.jpeg"
+        with open(f'./assets/{valid_logo}', 'rb') as f:
             stream = BytesIO(f.read())
         valid_file = werkzeug.datastructures.FileStorage(
             stream=stream,
-            filename=valid_favicon,
+            filename=valid_logo,
             content_type="image/png",
         )
         response = admin_client.post(
@@ -219,11 +229,12 @@ class TestSiteConfig():
                     content_type='multipart/form-data',
                 )
         assert response.status_code == 200
+        assert initial_logo_stats.st_size != os.stat(logo_path).st_size
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
         html = response.data.decode()
         assert '<!-- admin-panel_page -->' in html
 
-    def test_restore_default_favicon(self, app, admin_client, anon_client):
+    def test_restore_default_logo(self, app, admin_client, anon_client):
         url = "/site/reset-favicon"
         response = anon_client.get(
                         url,
@@ -232,16 +243,23 @@ class TestSiteConfig():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        favicon_path = os.path.join(app.config['UPLOADS_DIR'],
-                                    app.config['BRAND_DIR'],
-                                    'favicon.ico')
+        brand_dir = os.path.join(app.config['UPLOADS_DIR'],
+                                 app.config['BRAND_DIR'])
+        logo_path = os.path.join(brand_dir, 'logo.png')
+        default_logo_path = os.path.join(brand_dir, 'logo-default.png')
+        favicon_path = os.path.join(brand_dir, 'favicon.ico')
+        default_favicon_path = os.path.join(brand_dir, 'favicon-default.ico')
+        initial_logo_stats = os.stat(logo_path)
         initial_favicon_stats = os.stat(favicon_path)
         response = admin_client.get(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
+        assert initial_logo_stats.st_size != os.stat(logo_path).st_size
+        assert os.stat(logo_path).st_size == os.stat(default_logo_path).st_size
         assert initial_favicon_stats.st_size != os.stat(favicon_path).st_size
+        assert os.stat(favicon_path).st_size == os.stat(default_favicon_path).st_size
         html = response.data.decode()
         assert '<div id="site_settings"' in html
 
@@ -272,14 +290,14 @@ class TestSiteConfig():
             Tests admin permission
         """
         response = anon_client.get(
-                        "/site/edit",
+                        "/site/edit-host-url",
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
         response = admin_client.get(
-                        "/site/edit",
+                        "/site/edit-host-url",
                         follow_redirects=False,
                     )
         assert response.status_code == 200
@@ -310,8 +328,8 @@ class TestSiteConfig():
         assert response.status_code == 200
         assert site.port != initial_port
 
-    def test_edit_landing_page(self, site, admin_client, anon_client):
-        """ Posts markdown and tests resulting HTML
+    def test_edit_blurb(self, site, admin_client, anon_client):
+        """ Posts markdown and tests resulting HTML and short_text
             Tests admin permission
         """
         url = "/site/save-blurb"
@@ -333,6 +351,9 @@ class TestSiteConfig():
         html = response.data.decode()
         assert '<h1>Tested !!</h1>' in html
         assert '<p>line1<br />\nline2</p>' in html
+        assert '<h1>Tested !!</h1>' in site.blurb['html']
+        assert '# Tested !!' in site.blurb['markdown']
+        assert 'Tested !!' in site.blurb['short_text']
 
     def test_save_smtp_config(self, site, admin_client):
         """ Tests invalid and valid smtp configuration
@@ -391,7 +412,7 @@ class TestSiteConfig():
         response = admin_client.post(
                         "site/email/test-config",
                         data = {
-                            'email': users['admin'].email,
+                            'email': users['admin']['email'],
                         },
                         follow_redirects=True,
                     )

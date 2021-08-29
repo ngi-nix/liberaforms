@@ -36,7 +36,7 @@ class Config(object):
         "site", "sites",
         "update",
         "embed",
-        "api",
+        "api", "metrics", "feed"
         "media", "file",
     ]
     # DPL = Data Protection Law
@@ -64,7 +64,7 @@ class Config(object):
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
     }
-    #ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
+    ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     TMP_DIR = os.environ['TMP_DIR']
     ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
@@ -79,6 +79,8 @@ class Config(object):
         SESSION_MEMCACHED = memcache.Client([server])
     if 'SESSION_KEY_PREFIX' in os.environ:
         SESSION_KEY_PREFIX = os.environ['SESSION_KEY_PREFIX']
+    DEFAULT_TIMEZONE = os.environ['DEFAULT_TIMEZONE']
+    CRYPTO_KEY = os.environ['CRYPTO_KEY'] if 'CRYPTO_KEY' in os.environ else None
     ENABLE_UPLOADS = True if os.environ['ENABLE_UPLOADS'] == 'True' else False
     ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
@@ -93,6 +95,7 @@ class Config(object):
         MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
         BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
         SESSION_KEY_PREFIX = os.environ['FQDN']
+    ENABLE_PROMETHEUS_METRICS = True if os.environ['ENABLE_PROMETHEUS_METRICS'] == 'True' else False
 
     @staticmethod
     def init_app(app):
