@@ -26,43 +26,12 @@ class Form(Base):
     __tablename__ = "forms"
     _site=None
     id = sa.Column(sa.Integer, primary_key=True, index=True)
-    created = sa.Column(TIMESTAMP, nullable=False)
-    slug = sa.Column(sa.String, unique=True, nullable=False)
-    author_id = sa.Column(sa.Integer, sa.ForeignKey('users.id'), nullable=False)
-    structure = sa.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
-    fieldIndex = sa.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
     editors = sa.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    enabled = sa.Column(sa.Boolean, default=False)
-    expired = sa.Column(sa.Boolean, default=False)
-    sendConfirmation = sa.Column(sa.Boolean, default=False)
-    expiryConditions = sa.Column(JSONB, nullable=False)
-    sharedAnswers = sa.Column(MutableDict.as_mutable(JSONB), nullable=True)
-    shared_notifications = sa.Column(MutableList.as_mutable(ARRAY(sa.String)), nullable=False)
-    restrictedAccess = sa.Column(sa.Boolean, default=False)
-    adminPreferences = sa.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    introductionText = sa.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    afterSubmitText = sa.Column(JSONB, nullable=False)
-    expiredText = sa.Column(JSONB, nullable=False)
-    thumbnail = sa.Column(sa.String, nullable=True)
-    published_cnt = sa.Column(sa.Integer, default=0, nullable=False)
-    consentTexts = sa.Column(ARRAY(JSONB), nullable=True)
 
 class User(Base):
     __tablename__ = "users"
     id = sa.Column(sa.Integer, primary_key=True, index=True)
-    created = sa.Column(TIMESTAMP, nullable=False)
-    username = sa.Column(sa.String, unique=True, nullable=False)
-    email = sa.Column(sa.String, unique=True, nullable=False)
-    password_hash = sa.Column(sa.String, nullable=False)
-    preferences = sa.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    blocked = sa.Column(sa.Boolean, default=False)
-    admin = sa.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    validatedEmail = sa.Column(sa.Boolean, default=False)
-    uploads_enabled = sa.Column(sa.Boolean, default=False, nullable=False)
-    token = sa.Column(JSONB, nullable=True)
-    consentTexts = sa.Column(ARRAY(JSONB), nullable=True)
-    timezone = sa.Column(sa.String, nullable=True)
-    fedi_auth = sa.Column(MutableDict.as_mutable(JSONB), nullable=True)
+
 
 class FormUser(Base):
     __tablename__ = "form_users"
@@ -74,7 +43,7 @@ class FormUser(Base):
     user_id = sa.Column(sa.Integer, sa.ForeignKey('users.id',
                                                 ondelete="CASCADE"),
                                                 nullable=False)
-    can_edit = sa.Column(sa.Boolean, default=False)
+    is_editor = sa.Column(sa.Boolean, default=False)
     notifications = sa.Column(JSONB, nullable=False)
     field_index = sa.Column(JSONB, nullable=True)
     order_by = sa.Column(sa.String, nullable=True)
@@ -86,7 +55,7 @@ def upgrade():
     sa.Column('created', postgresql.TIMESTAMP(), nullable=False),
     sa.Column('form_id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('can_edit', sa.Boolean(), nullable=True),
+    sa.Column('is_editor', sa.Boolean(), nullable=True),
     sa.Column('notifications', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
     sa.Column('field_index', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('order_by', sa.String(), nullable=True),
@@ -100,15 +69,16 @@ def upgrade():
     forms = session.query(Form).all()
     for form in forms:
         for editor_id in form.editors.keys():
+            #print("Form id: {}, User id: {}".format(form.id, editor_id))
             new_user_data = {
                 'user_id': editor_id,
                 'form_id': form.id,
-                'can_edit': True,
+                'is_editor': True,
                 'notifications': form.editors[editor_id]['notification'],
             }
-        form_user = FormUser(**new_user_data)
-        form_user.created = datetime.now(timezone.utc)
-        session.add(form_user)
+            form_user = FormUser(**new_user_data)
+            form_user.created = datetime.now(timezone.utc)
+            session.add(form_user)
     session.commit()
     session.close()
 

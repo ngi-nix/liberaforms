@@ -4,196 +4,143 @@
 <!-- share_form_page -->
 
 <div class="container">
-<div class="row">
+  <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-7">
-
-        <div class="returnToForm">
-            <a class="btn btn-primary btn-sm"
-               role="button"
-               href="/forms/view/{{form.id}}">
-              {%trans%}Return to form{%endtrans%}
-            </a>
-            {{ form.slug }}
-        </div>
+      <div class="returnToForm">
+        <a class="btn btn-primary btn-sm"
+           role="button"
+           href="/forms/view/{{form.id}}">
+          {%trans%}Return to form{%endtrans%}
+        </a>
+        {{ form.slug }}
+      </div>
     </div>
     <div class="col-md-2"></div>
-</div>
-<div class="row">
+  </div>
+  <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
-        <br />
-        <div class="title_1"
-             style="margin-bottom:0">
-             {%trans%}Editors{%endtrans%}
-        </div>
-        <p>
-          {%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}
-        </p>
-
-        <table class="table table-sm">
-        {% for editor in form.get_editors() %}
-            <tr id="editor_{{editor.id}}">
-                <td>
-                    {{ editor.email }}
-                </td>
-                <td class="text-right">
-                {% if form.is_author(editor) %}
-                    <span class="badge badge-pill badge-light author-badge">
-                        {%trans%}Author{%endtrans%}
-                    </span>
-                {% else %}
-                    <input class="btn btn-xs btn-danger"
-                           type="button" value="{%trans%}Remove{%endtrans%}"
-                           onClick="js:removeEditor('{{editor.id}}');">
-                {% endif %}
-                </td>
-            </tr>
-        {% endfor %}
-        </table>
-
-        <form action="/forms/add-editor/{{form.id}}" method="POST">
-          {{ wtform.csrf_token }}
-          <div class="input-group input-group-sm mb-3">
-            <input name="email"
-                   type="text"
-                   class="form-control"
-                   placeholder="person@example.com"
-                   aria-label="Recipient's username"
-                   aria-describedby="button-editor">
-            <div class="input-group-append">
-              <button class="btn btn-primary" type="submit" id="button-editor">
-                {%trans%}Add new editor{%endtrans%}
-              </button>
-            </div>
-          </div>
-        </form>
-    </div>
-</div>
-<div class="row">
-    <div class="col-md-3"></div>
-    <div id="notifications" class="col-md-6">
       <br />
       <div class="title_1"
            style="margin-bottom:0">
-           {%trans%}Share notifications{%endtrans%}
+           {%trans%}Editors{%endtrans%}
       </div>
-      <p style="margin">
-        {%trans%}Send 'new answer' and expiry notifications to these other addresses{%endtrans%}
+      <p>
+        {%trans%}Users listed here have the <b>same permissions</b> as you{%endtrans%}
       </p>
 
-      {% if form.shared_notifications %}
       <table class="table table-sm">
-      {% for email in form.shared_notifications  %}
-        <tr id="shared_notification_{{loop.index}}">
+      {% for editor in form.get_editors() %}
+        <tr id="editor_{{editor.id}}">
           <td>
-            {{ email }}
+              {{ editor.email }}
           </td>
           <td class="text-right">
+          {% if form.is_author(editor) %}
+            <span class="badge badge-pill badge-light author-badge">
+              {%trans%}Author{%endtrans%}
+            </span>
+          {% else %}
             <input class="btn btn-xs btn-danger"
                    type="button" value="{%trans%}Remove{%endtrans%}"
-                   onClick="js:removeSharedNotification({{loop.index}}, '{{email}}');">
+                   onClick="js:removeEditor('{{editor.id}}');">
+          {% endif %}
           </td>
         </tr>
       {% endfor %}
       </table>
-      {% endif %}
 
-      <form action="/forms/add-shared-notification/{{form.id}}" method="POST">
-          {{ wtform.csrf_token }}
-          <div class="input-group input-group-sm mb-3">
-            <input name="email"
-                   type="text"
-                   class="form-control"
-                   placeholder="person@example.com"
-                   aria-label="Recipient's email address"
-                   aria-describedby="button-email">
-            <div class="input-group-append">
-              <button class="btn btn-primary" type="submit" id="button-email">
-                {%trans%}Add address{%endtrans%}
-              </button>
-            </div>
+      <form action="/forms/add-editor/{{form.id}}" method="POST">
+        {{ wtform.csrf_token }}
+        <div class="input-group input-group-sm mb-3">
+          <input name="email"
+                 type="text"
+                 class="form-control"
+                 placeholder="person@example.com"
+                 aria-label="Recipient's username"
+                 aria-describedby="button-editor">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit" id="button-editor">
+              {%trans%}Add new editor{%endtrans%}
+            </button>
           </div>
+        </div>
       </form>
     </div>
-</div>
-<div class="row">
+  </div>
 
+  <p>&nbsp;</p>
+  <div class="row">
     <div class="col-md-3"></div>
-    <div class="col-md-9">
-        <br />
-        <div class="title_1"
-             style="margin-bottom:0">
-             {%trans%}Share results{%endtrans%}
-        </div>
-        <p>{%trans%}Readonly access for <b>anyone</b> with a copy of these links{%endtrans%}</p>
+    <div id="notifications" class="col-md-6">
 
-        <div id="toggle_sharedAnswers" class="btn-group btn-toggle">
-            <button id="sharedAnswers_true"
-                    class="btn btn-sm btn-default {% if form.are_answers_shared() %}btn-success{% endif %}">
-              {%trans%}Enabled{%endtrans%}
+      <div class="title_1"
+           style="margin-bottom:0">
+           {%trans%}Share the results with other users{%endtrans%}
+      </div>
+      <p>
+        {%trans%}Those listed here can view this form's answers{%endtrans%}
+      </p>
+      <table class="table table-sm">
+      {% for user in form.get_readers() %}
+        <tr id="reader_{{user.id}}">
+          <td>
+            {{ user.email }}
+          </td>
+          <td class="text-right">
+            <input class="btn btn-xs btn-danger"
+                   type="button" value="{%trans%}Remove{%endtrans%}"
+                   onClick="js:removeReader('{{user.id}}');">
+          </td>
+        </tr>
+      {% endfor %}
+      </table>
+
+      <form action="/forms/add-reader/{{form.id}}" method="POST">
+        {{ wtform.csrf_token }}
+        <div class="input-group input-group-sm mb-3">
+          <input name="email"
+                 type="text"
+                 class="form-control"
+                 placeholder="person@example.com"
+                 aria-label="Recipient's username"
+                 aria-describedby="button-editor">
+          <div class="input-group-append">
+            <button class="btn btn-primary" type="submit" id="button-editor">
+              {%trans%}Add new editor{%endtrans%}
             </button>
-            <button id="sharedAnswers_false"
-                    class="btn btn-sm btn-default {% if not form.are_answers_shared() %}btn-primary{% endif %}">
-                {%trans%}Disabled{%endtrans%}
-            </button>
+          </div>
         </div>
-        <p></p>
-        <div id="disabled_links" {%if form.are_answers_shared()%}style="display:None"{%endif%}>
-            <span class="badge badge-secondary">CSV</span>
-            <span style="text-decoration:line-through;">
-              {{ form.get_shared_answers_url('csv') }}
-            </span>
-            <br />
-            <span class="badge badge-secondary">JSON</span>
-            <span style="text-decoration:line-through;">
-              {{ form.get_shared_answers_url('json') }}
-            </span>
-            <br />
-            <span class="badge badge-secondary">WEB</span>
-            <span style="text-decoration:line-through;">
-              {{ form.get_shared_answers_url() }}
-            </span>
-        </div>
-        <div id="enabled_links" {%if not form.are_answers_shared()%}style="display:None"{%endif%}>
-            <span class="badge badge-secondary">CSV</span>
-            <a href="{{ form.get_shared_answers_url('csv') }}">
-              {{ form.get_shared_answers_url('csv') }}
-            </a>
-            <br />
-            <span class="badge badge-secondary">JSON</span>
-            <a href="{{ form.get_shared_answers_url('json') }}">
-              {{ form.get_shared_answers_url('json') }}
-            </a>
-            <br />
-            <span class="badge badge-secondary">WEB</span>
-            <a href="{{ form.get_shared_answers_url() }}">
-              {{ form.get_shared_answers_url() }}
-            </a>
-        </div>
+      </form>
     </div>
-</div>
-<p>&nbsp;</p>
-<div class="row">
+  </div>
+
+  <p>&nbsp;</p>
+  <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-9">
 
-        <div id="restricted_access" class="title_1">{%trans%}Restricted access{%endtrans%}</div>
-        <p>{%trans%}Only visible to people with a user account (login required){%endtrans%}</p>
-        <div>
-            <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
-                <button id="restrictedAccess_true"
-                        class="btn btn-sm btn-default {% if form.restrictedAccess %}btn-success{% endif %}">
-                  {%trans%}Restricted{%endtrans%}
-                </button>
-                <button id="restrictedAccess_false"
-                        class="btn btn-sm btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">
-                  {%trans%}Public form{%endtrans%}
-                </button>
-            </span>
-        </div>
+      <div id="restricted_access"
+           class="title_1"
+           style="margin-bottom:0">
+           {%trans%}Restricted access{%endtrans%}
+      </div>
+      <p>{%trans%}Only visible to people with a user account (login required){%endtrans%}</p>
+      <div>
+        <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
+          <button id="restrictedAccess_true"
+                  class="btn btn-sm btn-default {% if form.restrictedAccess %}btn-success{% endif %}">
+            {%trans%}Restricted{%endtrans%}
+          </button>
+          <button id="restrictedAccess_false"
+                  class="btn btn-sm btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">
+            {%trans%}Public form{%endtrans%}
+          </button>
+        </span>
+      </div>
     </div>
-</div>
+  </div>
 </div>
 
 <script>
@@ -216,28 +163,9 @@ function removeEditor(editor_id){
         }
     });
 }
-function removeSharedNotification(id, email) {
-  $.ajax({
-      url : "/forms/remove-shared-notification/{{form.id}}",
-      type: "POST",
-      dataType: "json",
-      data: {"email": email},
-      beforeSend: function(xhr, settings) {
-          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken)
-          }
-      },
-      success: function(data, textStatus, jqXHR)
-      {
-          if (data == true) {
-              $('#shared_notification_'+id).hide();
-          }
-      }
-  });
-}
-document.getElementById('toggle_sharedAnswers').addEventListener('click', function(evt){
+function removeReader(reader_id){
     $.ajax({
-        url : "/form/toggle-shared-answers/{{ form.id }}",
+        url : "/forms/remove-reader/{{form.id}}/"+reader_id,
         type: "POST",
         dataType: "json",
         beforeSend: function(xhr, settings) {
@@ -247,22 +175,12 @@ document.getElementById('toggle_sharedAnswers').addEventListener('click', functi
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data.enabled == true) {
-                $('#sharedAnswers_true').addClass('btn-success');
-                $('#sharedAnswers_false').removeClass('btn-primary');
-                $('#enabled_links').show()
-                $('#disabled_links').hide()
-            }
-            else if (data.enabled == false) {
-                $('#sharedAnswers_true').removeClass('btn-success');
-                $('#sharedAnswers_false').addClass('btn-primary');
-                $('#enabled_links').hide()
-                $('#disabled_links').show()
+            if (data == editor_id) {
+                $('#reader_'+reader_id).hide();
             }
         }
     });
-});
-
+}
 document.getElementById('toggle_restrictedAccess').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-restricted-access/{{ form.id }}",

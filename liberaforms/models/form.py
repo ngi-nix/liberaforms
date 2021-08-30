@@ -132,13 +132,13 @@ class Form(db.Model, CRUD):
             return False
         form_user = FormUser.find(form_id=self.id, user_id=new_author.id)
         if form_user:
-            form_user.can_edit=True
+            form_user.is_editor=True
             form_user.save()
         else:
             form_user=FormUser(form_id=self.id,
                                user_id=new_author.id,
                                notifications=new_author.new_form_notifications(),
-                               can_edit=True)
+                               is_editor=True)
             form_user.save()
         self.author_id=new_author.id
         self.save()
@@ -517,14 +517,14 @@ class Form(db.Model, CRUD):
     def is_editor(self, user):
         return True if FormUser.find(user_id=user.id,
                                      form_id=self.id,
-                                     can_edit=True) else False
+                                     is_editor=True) else False
 
     def get_editors(self, **kwargs):
-        kwargs = {**{'can_edit': True}, **kwargs}
+        kwargs = {**{'is_editor': True}, **kwargs}
         return self.get_users(**kwargs)
 
     def get_readers(self, **kwargs):
-        kwargs = {**{'can_edit': False}, **kwargs}
+        kwargs = {**{'is_editor': False}, **kwargs}
         return self.get_users(**kwargs)
 
     def get_users(self, **kwargs):
@@ -575,7 +575,7 @@ class Form(db.Model, CRUD):
 
     def are_answers_shared(self):
         return True if FormUser.find_all(form_id=self.id,
-                                         can_edit=False).count() > 0 else False
+                                         is_editor=False).count() > 0 else False
 
     def get_shared_answers_url(self, part="results"):
         return f"{self.url}/{part}/{self.id}"

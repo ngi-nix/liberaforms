@@ -21,7 +21,7 @@ class FormUser(db.Model, CRUD):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id',
                                                 ondelete="CASCADE"),
                                                 nullable=False)
-    can_edit = db.Column(db.Boolean, default=False)
+    is_editor = db.Column(db.Boolean, default=False)
     notifications = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     field_index = db.Column(JSONB, nullable=True)
     order_by = db.Column(db.String, nullable=True)
@@ -33,7 +33,7 @@ class FormUser(db.Model, CRUD):
         self.created = datetime.now(timezone.utc)
         self.user_id = kwargs['user_id']
         self.form_id = kwargs['form_id']
-        self.can_edit = kwargs['can_edit']
+        self.is_editor = kwargs['is_editor']
         self.notifications = kwargs['notifications']
 
     @classmethod

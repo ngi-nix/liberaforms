@@ -68,7 +68,7 @@ def edit_form(form_id=None):
             flash_text = _("Something went wrong. id does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
-        queriedForm = g.current_user.get_form(form_id, can_edit=True)
+        queriedForm = g.current_user.get_form(form_id, is_editor=True)
         if not queriedForm:
             flash(_("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
@@ -140,7 +140,7 @@ def preview_form():
 @form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
 @enabled_user_required
 def conditions_form(id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -170,7 +170,7 @@ def save_form(id=None):
     introductionText={  'markdown': md_text,
                         'html': html}
     if id:
-        queriedForm = g.current_user.get_form(form_id=id, can_edit=True)
+        queriedForm = g.current_user.get_form(form_id=id, is_editor=True)
     else:
         queriedForm = None
     if queriedForm:
@@ -221,7 +221,7 @@ def save_form(id=None):
             form_user = FormUser(
                     user_id = g.current_user.id,
                     form_id = new_form.id,
-                    can_edit = True,
+                    is_editor = True,
                     notifications = g.current_user.new_form_notifications()
             )
             form_user.save()
@@ -241,7 +241,7 @@ def save_form(id=None):
 @form_bp.route('/forms/save-consent/<int:form_id>/<string:consent_id>', methods=['POST'])
 @enabled_user_required
 def save_data_consent(form_id, consent_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         pay_load = {'html': "Info: Queried form not found",
                     'markdown': "", "label": ""}
@@ -262,7 +262,7 @@ def save_data_consent(form_id, consent_id):
 @form_bp.route('/forms/default-consent/<int:form_id>/<string:consent_id>', methods=['GET'])
 @enabled_user_required
 def default_consent_text(form_id, consent_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if queriedForm:
         pay_load = json.dumps(g.site.get_consent_for_display(consent_id))
         return JsonResponse(pay_load)
@@ -273,7 +273,7 @@ def default_consent_text(form_id, consent_id):
 @form_bp.route('/forms/save-after-submit-text/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def save_after_submit_text(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
@@ -290,7 +290,7 @@ def save_after_submit_text(form_id):
 @form_bp.route('/forms/save-expired-text/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def save_expired_text(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps({'html': "", 'markdown': ""}))
     if 'markdown' in request.form:
@@ -307,7 +307,7 @@ def save_expired_text(form_id):
 @form_bp.route('/forms/delete/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_form(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -347,7 +347,7 @@ def inspect_form(form_id):
 @form_bp.route('/form/<int:form_id>/fediverse-publish', methods=['GET', 'POST'])
 @enabled_user_required
 def fedi_publish(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -383,7 +383,7 @@ def fedi_publish(form_id):
 @form_bp.route('/forms/share/<int:form_id>', methods=['GET'])
 @enabled_user_required
 def share_form(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -395,7 +395,7 @@ def share_form(form_id):
 @form_bp.route('/forms/add-editor/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def add_editor(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -405,27 +405,27 @@ def add_editor(form_id):
         if not new_editor or new_editor.enabled==False:
             flash(_("Can't find a user with that email"), 'warning')
             return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
-        if FormUser.find(form_id=queriedForm.id, user_id=new_editor.id, can_edit=True):
-            flash(_("%s is already an editor" % new_editor.email), 'warning')
+        if FormUser.find(form_id=queriedForm.id, user_id=new_editor.id):
+            flash(_("This form is already shared with %s" % new_editor.email), 'warning')
             return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
         try:
             form_user=FormUser(form_id=queriedForm.id,
                                user_id=new_editor.id,
                                notifications=new_editor.new_form_notifications(),
-                               can_edit=True)
+                               is_editor=True)
             form_user.save()
-            flash(_("New editor added ok"), 'success')
+            flash(_("New user added ok"), 'success')
             queriedForm.add_log(_("Added editor %s" % new_editor.email))
         except Exception as error:
             current_app.logger.error(error)
-            flash(_("Could not add new editor"), 'error')
+            flash(_("Could not add the user"), 'error')
     return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
 
 
 @form_bp.route('/forms/remove-editor/<int:form_id>/<int:editor_id>', methods=['POST'])
 @enabled_user_required
 def remove_editor(form_id, editor_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Cannot find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -434,57 +434,71 @@ def remove_editor(form_id, editor_id):
         return redirect(make_url_for('form_bp.my_forms'))
     form_user = FormUser.find(form_id=queriedForm.id,
                               user_id=editor_id,
-                              can_edit=True)
+                              is_editor=True)
     if form_user:
         editor = User.find(id=editor_id)
         form_user.delete()
         queriedForm.add_log(_("Removed editor %s" % editor.email))
         return json.dumps(str(editor.id))
     else:
-        flash(_("Cannot find editor %" % editor.email), 'warning')
+        flash(_("Cannot find user %" % editor.email), 'warning')
         return JsonResponse(json.dumps(False))
 
 
-@form_bp.route('/forms/add-shared-notification/<int:form_id>', methods=['POST'])
+@form_bp.route('/forms/add-reader/<int:form_id>', methods=['POST'])
 @enabled_user_required
-def add_shared_notification(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+def add_reader(form_id):
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     wtform=wtf.GetEmail()
-    if request.method == 'POST':
-        if wtform.validate():
-            email = wtform.email.data
-            if not wtform.email.data in queriedForm.shared_notifications:
-                queriedForm.shared_notifications.append(email)
-                log_msg = _("Added shared notification: %s" % email)
-                queriedForm.add_log(log_msg)
-                queriedForm.save()
-    return redirect(make_url_for('form_bp.share_form',
-                                 form_id=queriedForm.id,
-                                 _anchor='notifications'))
+    if wtform.validate_on_submit():
+        new_reader=User.find(email=wtform.email.data)
+        if not new_reader or new_reader.enabled==False:
+            flash(_("Can't find a user with that email"), 'warning')
+            return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
+        if FormUser.find(form_id=queriedForm.id, user_id=new_reader.id):
+            flash(_("This form is already shared with %s" % new_reader.email), 'warning')
+            return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
+        try:
+            form_user=FormUser(form_id=queriedForm.id,
+                               user_id=new_reader.id,
+                               notifications=new_reader.new_form_notifications(),
+                               is_editor=False)
+            form_user.save()
+            flash(_("New user added ok"), 'success')
+            queriedForm.add_log(_("Added read only user %s" % new_reader.email))
+        except Exception as error:
+            current_app.logger.error(error)
+            flash(_("Could not add the user"), 'error')
+    return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
 
 
-@form_bp.route('/forms/remove-shared-notification/<int:form_id>', methods=['POST'])
+@form_bp.route('/forms/remove-reader/<int:form_id>/<int:user_id>', methods=['POST'])
 @enabled_user_required
-def remove_shared_notification(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
-    if not (queriedForm and 'email' in request.form):
+def remove_reader(form_id, user_id):
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
+    if not queriedForm:
+        flash(_("Cannot find that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    form_user = FormUser.find(form_id=queriedForm.id,
+                              user_id=editor_id,
+                              is_editor=False)
+    if form_user:
+        reader = User.find(id=user_id)
+        form_user.delete()
+        queriedForm.add_log(_("Removed user %s" % reader.email))
+        return json.dumps(str(reader.id))
+    else:
+        flash(_("Cannot find user %" % reader.email), 'warning')
         return JsonResponse(json.dumps(False))
-    email = request.form.get('email')
-    if email in queriedForm.shared_notifications:
-        queriedForm.shared_notifications.remove(email)
-        queriedForm.add_log(_("Removed shared notification: %s" % email))
-        queriedForm.save()
-        return JsonResponse(json.dumps(True))
-    return JsonResponse(json.dumps(False))
 
 
 @form_bp.route('/forms/expiration/<int:form_id>', methods=['GET'])
 @enabled_user_required
 def expiration(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -494,7 +508,7 @@ def expiration(form_id):
 @form_bp.route('/forms/set-expiration-date/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def set_expiration_date(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps())
     if 'date' in request.form and 'time' in request.form:
@@ -521,7 +535,7 @@ def set_expiration_date(form_id):
 @form_bp.route('/forms/set-expiry-field-condition/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def set_expiry_field_condition(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps({'condition': False}))
     if 'field_name' in request.form and 'condition' in request.form:
@@ -541,7 +555,7 @@ def set_expiry_field_condition(form_id):
 @form_bp.route('/forms/set-expiry-total-answers/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def set_expiry_total_answers(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not (queriedForm and 'total_answers' in request.form):
         return JsonResponse(json.dumps({'expired': False, 'total_answers':0}))
     total_answers = request.form['total_answers']
@@ -570,7 +584,7 @@ def duplicate_form(id):
 @form_bp.route('/forms/log/list/<int:form_id>', methods=['GET'])
 @enabled_user_required
 def list_log(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
@@ -583,7 +597,7 @@ def list_log(form_id):
 @form_bp.route('/form/toggle-enabled/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_enabled(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps())
     enabled=queriedForm.toggle_enabled()
@@ -591,21 +605,10 @@ def toggle_form_enabled(form_id):
     return JsonResponse(json.dumps({'enabled': enabled}))
 
 
-@form_bp.route('/form/toggle-shared-answers/<int:form_id>', methods=['POST'])
-@enabled_user_required
-def toggle_shared_answers(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
-    if not queriedForm:
-        return JsonResponse(json.dumps())
-    shared=queriedForm.toggle_shared_answers()
-    queriedForm.add_log(_("Shared answers set to: %s" % shared))
-    return JsonResponse(json.dumps({'enabled':shared}))
-
-
 @form_bp.route('/form/toggle-restricted-access/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def toggle_restricted_access(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps())
     access=queriedForm.toggle_restricted_access()
@@ -616,7 +619,7 @@ def toggle_restricted_access(form_id):
 @form_bp.route('/form/toggle-data-consent/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_dataconsent(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps())
     dataConsentBool=queriedForm.toggle_data_consent_enabled()
@@ -627,7 +630,7 @@ def toggle_form_dataconsent(form_id):
 @form_bp.route('/form/toggle-send-confirmation/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def toggle_form_sendconfirmation(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         return JsonResponse(json.dumps())
     sendConfirmationBool=queriedForm.toggle_send_confirmation()
@@ -729,7 +732,7 @@ def view_form(slug):
             queriedForm.expired=True
             queriedForm.save()
             emails=[]
-            for form_user in FormUser.find_all(form_id=queriedForm.id, can_edit=True):
+            for form_user in FormUser.find_all(form_id=queriedForm.id, is_editor=True):
                 if form_user.user.enabled and form_user.notifications["expiredForm"]:
                     emails.append(form_user.user.email)
             emails = list(set(emails + queriedForm.shared_notifications))
@@ -743,7 +746,7 @@ def view_form(slug):
                 Dispatcher().send_answer_confirmation(email, queriedForm)
 
         emails=[]
-        for form_user in FormUser.find_all(form_id=queriedForm.id, can_edit=True):
+        for form_user in FormUser.find_all(form_id=queriedForm.id, is_editor=True):
             if form_user.user.enabled and form_user.notifications["newAnswer"]:
                 emails.append(form_user.user.email)
         emails = list(set(emails + queriedForm.shared_notifications))

@@ -100,7 +100,7 @@ def toggle_marked_answer(form_id):
 @answers_bp.route('/forms/change-answer-field-value/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def change_answer(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not (queriedForm and 'id' in request.json):
         return JsonResponse(json.dumps({'saved': False}))
     try:
@@ -125,7 +125,7 @@ def change_answer(form_id):
 @answers_bp.route('/forms/delete-all-answers/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_answers(form_id):
-    queriedForm = g.current_user.get_form(form_id, can_edit=True)
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))

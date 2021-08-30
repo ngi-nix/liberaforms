@@ -134,7 +134,7 @@ class User(db.Model, CRUD):
             return True
         return True if FormUser.find(user_id=self.id,
                                      form_id=form.id,
-                                     can_edit=True) \
+                                     is_editor=True) \
                     else False
 
     @property
