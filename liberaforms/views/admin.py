@@ -142,7 +142,7 @@ def toggle_form_public_admin_prefs(id):
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     queriedForm.toggle_admin_form_public()
-    return redirect(make_url_for('form_bp.inspect_form', id=id))
+    return redirect(make_url_for('form_bp.inspect_form', form_id=id))
 
 
 """ Invitations """

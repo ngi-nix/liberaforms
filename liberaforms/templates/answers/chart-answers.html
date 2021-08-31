@@ -60,20 +60,20 @@
       <hr />
 
     {% if not shared %}
-      {% set user_preferences = form.get_user_preferences(g.current_user.id) %}
-      {% if user_preferences != None %}
+      {% set form_user = form.get_form_user(g.current_user.id) %}
+      {% if form_user != None %}
       <div id="toggle_notification"
            class="btn-group btn-toggle">
         <button id="notification_true"
                 class="btn btn-sm btn-default
-                      {% if user_preferences['notifications']['newAnswer'] %}
+                      {% if form_user['notifications']['newAnswer'] %}
                       btn-success
                       {% endif %}">
             {%trans%}True{%endtrans%}
         </button>
         <button id="notification_false"
                 class="btn btn-sm btn-default
-                      {% if not user_preferences['notifications']['newAnswer'] %}
+                      {% if not form_user['notifications']['newAnswer'] %}
                       btn-primary
                       {% endif %}">
             {%trans%}False{%endtrans%}

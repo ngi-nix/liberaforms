@@ -47,7 +47,6 @@ class Form(db.Model, CRUD):
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
-    #sharedAnswers = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
@@ -62,8 +61,8 @@ class Form(db.Model, CRUD):
                                         cascade="all, delete, delete-orphan")
     log = db.relationship("FormLog", lazy='dynamic',
                                      cascade="all, delete, delete-orphan")
-    form_users = db.relationship("FormUser", lazy='dynamic',
-                                     cascade="all, delete, delete-orphan")
+    users = db.relationship("FormUser", lazy='dynamic',
+                                        cascade="all, delete, delete-orphan")
 
 
     def __init__(self, author, **kwargs):
@@ -75,12 +74,6 @@ class Form(db.Model, CRUD):
         self.slug = kwargs["slug"]
         self.structure = kwargs["structure"]
         self.fieldIndex = kwargs["fieldIndex"]
-        """
-        self.sharedAnswers = {  "enabled": False,
-                                "key": utils.gen_random_string(),
-                                "password": False,
-                                "expireDate": False}
-        """
         self.shared_notifications = []
         self.introductionText = kwargs["introductionText"]
         self.consentTexts = kwargs["consentTexts"]
@@ -119,7 +112,7 @@ class Form(db.Model, CRUD):
     def get_author(self):
         return self.author
 
-    def get_user_preferences(self, user_id):
+    def get_form_user(self, user_id):
         return FormUser.find(form_id=self.id, user_id=user_id)
 
     def get_created_date(self):

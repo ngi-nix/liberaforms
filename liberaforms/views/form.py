@@ -332,12 +332,14 @@ def inspect_form(form_id):
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    if not g.current_user.can_inspect_form(queriedForm):
+    form_user = FormUser.find(form_id=form_id, user_id=g.current_user.id)
+    if not (g.is_admin or form_user):
         flash(_("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    # prepare the session for possible form edit
-    #pprint(queriedForm.structure)
-    form_helper.populate_session_with_form(queriedForm)
+    if not g.current_user.can_inspect_form(queriedForm):
+        return redirect(make_url_for('answers_bp.list_answers', form_id=form_id))
+
+    form_helper.populate_session_with_form(queriedForm) # prepare for possible form edit
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('inspect-form.html',
                             form=queriedForm,

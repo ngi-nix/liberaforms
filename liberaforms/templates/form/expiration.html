@@ -3,7 +3,7 @@
 
 <!-- form_expiration_page -->
 
-{% set user_preferences = form.get_user_preferences(user_id = g.current_user.id) %}
+{% set form_user = form.get_form_user(user_id = g.current_user.id) %}
 
 <script src="/static/simplemde/simplemde.min.js"></script>
 <script src="/static/jquery/jquery.color-2.1.2.min.js"></script>
@@ -28,14 +28,14 @@
         <div id="toggle_notification" class="btn-group btn-toggle">
           <button id="notification_true"
                   class="btn btn-sm btn-default
-                  {% if user_preferences['notifications']['expiredForm'] %}
+                  {% if form_user['notifications']['expiredForm'] %}
                   btn-success
                   {% endif %}">
             {%trans%}True{%endtrans%}
           </button>
           <button id="notification_false"
                   class="btn btn-sm btn-default
-                  {% if not user_preferences['notifications']['expiredForm'] %}
+                  {% if not form_user['notifications']['expiredForm'] %}
                   btn-primary
                   {% endif %}">
             {%trans%}False{%endtrans%}
