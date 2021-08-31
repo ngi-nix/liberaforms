@@ -416,7 +416,7 @@ def add_editor(form_id):
                                notifications=new_editor.new_form_notifications(),
                                is_editor=True)
             form_user.save()
-            flash(_("New user added ok"), 'success')
+            flash(_("Added user ok"), 'success')
             queriedForm.add_log(_("Added editor %s" % new_editor.email))
         except Exception as error:
             current_app.logger.error(error)
@@ -469,7 +469,7 @@ def add_reader(form_id):
                                notifications=new_reader.new_form_notifications(),
                                is_editor=False)
             form_user.save()
-            flash(_("New user added ok"), 'success')
+            flash(_("Added user ok"), 'success')
             queriedForm.add_log(_("Added read only user %s" % new_reader.email))
         except Exception as error:
             current_app.logger.error(error)
@@ -485,7 +485,7 @@ def remove_reader(form_id, user_id):
         flash(_("Cannot find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     form_user = FormUser.find(form_id=queriedForm.id,
-                              user_id=editor_id,
+                              user_id=user_id,
                               is_editor=False)
     if form_user:
         reader = User.find(id=user_id)

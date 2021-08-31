@@ -227,35 +227,6 @@
                </td>
             </tr>
             <tr>
-               <td>{%trans%}Share notifications{%endtrans%}</td>
-               <td>
-                   {% if current_user_is_editor %}
-                        {% if form.shared_notifications %}
-                        <a class="btn btn-primary btn-xs"
-                           role="button"
-                           href="/forms/share/{{form.id}}#notifications"
-                           style="padding:5px 4px 3px 4px">
-                           {%trans%}Send emails to other people{%endtrans%}
-                           <span class="badge badge-light">
-                             {{ form.shared_notifications | length }}
-                           </span>
-                        </a>
-                        {% else %}
-                        <a class="btn btn-primary btn-xs" role="button"
-                           href="/forms/share/{{form.id}}#notifications">
-                           {%trans%}Send emails to other people{%endtrans%}
-                        </a>
-                        {% endif %}
-                   {% else %}
-                     {% if form.shared_notifications %}
-                       {%trans%}True{%endtrans%}
-                     {% else %}
-                       {%trans%}False{%endtrans%}
-                     {% endif %}
-                   {% endif %}
-               </td>
-            </tr>
-            <tr>
                <td>{%trans%}Restricted access{%endtrans%}</td>
                <td>
                    {% if current_user_is_editor %}
