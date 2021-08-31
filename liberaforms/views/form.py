@@ -737,7 +737,6 @@ def view_form(slug):
             for form_user in FormUser.find_all(form_id=queriedForm.id, is_editor=True):
                 if form_user.user.enabled and form_user.notifications["expiredForm"]:
                     emails.append(form_user.user.email)
-            emails = list(set(emails + queriedForm.shared_notifications))
             if emails:
                 Dispatcher().send_expired_form_notification(emails, queriedForm)
 
@@ -748,10 +747,9 @@ def view_form(slug):
                 Dispatcher().send_answer_confirmation(email, queriedForm)
 
         emails=[]
-        for form_user in FormUser.find_all(form_id=queriedForm.id, is_editor=True):
+        for form_user in FormUser.find_all(form_id=queriedForm.id):
             if form_user.user.enabled and form_user.notifications["newAnswer"]:
                 emails.append(form_user.user.email)
-        emails = list(set(emails + queriedForm.shared_notifications))
         if emails:
             data=[]
             for field in queriedForm.get_field_index_for_data_display():
