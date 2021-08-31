@@ -77,10 +77,10 @@
 
       <div class="title_1"
            style="margin-bottom:0">
-           {%trans%}Share the results with other users{%endtrans%}
+           {%trans%}Share the answers{%endtrans%}
       </div>
       <p>
-        {%trans%}Those listed here can view this form's answers{%endtrans%}
+        {%trans%}Users listed here can view this form's answers{%endtrans%}
       </p>
       <table class="table table-sm">
       {% for user in form.get_readers() %}
@@ -108,7 +108,7 @@
                  aria-describedby="button-editor">
           <div class="input-group-append">
             <button class="btn btn-primary" type="submit" id="button-editor">
-              {%trans%}Add new editor{%endtrans%}
+              {%trans%}Add user{%endtrans%}
             </button>
           </div>
         </div>
