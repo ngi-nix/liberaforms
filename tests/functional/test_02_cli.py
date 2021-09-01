@@ -26,6 +26,7 @@ class TestCommandLine():
 
     @pytest.mark.skipif(os.environ['ENABLE_REMOTE_STORAGE'] != 'True',
                         reason="ENABLE_REMOTE_STORAGE=False in test.ini")
+    
     def test_create_remote_storage(self, app):
         """ Tests local storage directory creation
             Tests remote minio bucket creation if enabled

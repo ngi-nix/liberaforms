@@ -164,12 +164,10 @@ class User(db.Model, CRUD):
                             str(self.id))
 
     def delete_user(self):
-        # remove this user from other form.editors{}
-        forms = Form.find_all(editor_id=self.id)
-        for form in forms:
-            if form.author_id != self.id:
-                del form.editors[str(self.id)]
-                form.save()
+        # remove this user from FormUser
+        for formuser in FormUser.find_all(user_id=self.id):
+            if formuser.form.author_id != self.id:
+                formuser.delete()
         # delete uploaded media files
         shutil.rmtree(self.get_media_dir(), ignore_errors=True)
         if current_app.config['ENABLE_REMOTE_STORAGE'] == True:

@@ -7,8 +7,10 @@ This file is part of LiberaForms.
 
 import os
 import pytest
-from flask import current_app
+from flask import g, current_app
+from liberaforms.commands.user import create as create_user
 from liberaforms.models.user import User
+from .utils import logout
 
 
 class TestNewUser():
@@ -20,6 +22,7 @@ class TestNewUser():
             Tests RESERVED_USERNAMES
             Tests invalid email and passwords
         """
+        #logout(client)
         url = "/user/new"
         site.invitationOnly = True
         site.save()
@@ -59,6 +62,7 @@ class TestNewUser():
 
     def test_create_user_account(self, client, users):
         """ Creates the first non-admin user
+            users['editor'] is our main test editor account
             Saves to database
         """
         url = "/user/new"
@@ -75,6 +79,7 @@ class TestNewUser():
                     )
         assert response.status_code == 200
         html = response.data.decode()
+        print(html)
         assert '<!-- user_settings_page -->' in html
         assert '<a class="nav-link" href="/user/logout">' in html
         user = User.find(username=users['editor']['username'])
@@ -86,6 +91,15 @@ class TestNewUser():
         user.validatedEmail = True
         user.save()
 
+    def test_create_user_via_cli(self, app, users):
+        runner = app.test_cli_runner()
+        with app.app_context():
+            result = runner.invoke(create_user, [users['dummy_1']['username'],
+                                                 users['dummy_1']['email'],
+                                                 users['dummy_1']['password']
+                                                 ])
+        assert 'User created' in result.output
+
 
 class TestUniqueNewUser():
     def test_new_user_form(self, anon_client):
@@ -95,10 +109,10 @@ class TestUniqueNewUser():
         response = anon_client.post(
                         url,
                         data = {
-                            "username": os.environ['USER1_USERNAME'],
-                            "email": os.environ['USER1_EMAIL'],
-                            "password": os.environ['USER1_PASSWORD'],
-                            "password2": os.environ['USER1_PASSWORD'],
+                            "username": os.environ['EDITOR_1_USERNAME'],
+                            "email": os.environ['EDITOR_1_EMAIL'],
+                            "password": os.environ['EDITOR_1_PASSWORD'],
+                            "password2": os.environ['EDITOR_1_PASSWORD'],
                             "termsAndConditions": True,
                         },
                         follow_redirects=True,
