@@ -31,7 +31,7 @@
             <tr>
               {# i18n: Table column title, indicating name of a user or a form #}
               <th>{%trans%}Name{%endtrans%}</th>
-              <th>{%trans%}Editors{%endtrans%}</th>
+              <th>{%trans%}Users{%endtrans%}</th>
               {# i18n: Table column title, indicating answers recived for a form #}
               <th>{%trans%}Answers{%endtrans%}</th>
             </tr>
@@ -39,7 +39,7 @@
           {% for form in user.authored_forms %}
           <tr>
             <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-            <td>{{form.editors|length}}</td>
+            <td>{{form.users.count()}}</td>
             <td>{{form.answers.count()}}</td>
           </tr>
           {% endfor %}

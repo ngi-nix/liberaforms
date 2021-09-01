@@ -187,11 +187,8 @@
                         </a>
                         {% endif %}
                    {% else %}
-                        {% if editors.count() -1 > 0 %}
-                          {%trans%}True{%endtrans%}
-                        {% else %}
-                          {%trans%}False{%endtrans%}
-                        {% endif %}
+                        {%trans%}Form shared with{%endtrans%}:
+                        {{ editors.count() -1 }}
                    {% endif %}
                </td>
             </tr>
@@ -218,11 +215,7 @@
                         </a>
                         {% endif %}
                    {% else %}
-                        {% if readers %}
-                          {%trans%}True{%endtrans%}
-                        {% else %}
-                          {%trans%}False{%endtrans%}
-                        {% endif %}
+                        {{ readers.count() }}
                    {% endif %}
                </td>
             </tr>
