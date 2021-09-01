@@ -9,13 +9,13 @@ import os
 import pytest
 from flask import g
 from liberaforms.models.user import User
-from .utils import login
+from .utils import login, logout
 
 
 class TestAdminUsers():
     """ The admin can set some users' properties. Test those.
     """
-    def test_toggle_admin(self, users, client, anon_client, admin_client):
+    def test_toggle_admin(self, users, client, anon_client):
         """ Test permissions
             Test toggle admin
         """
@@ -30,6 +30,7 @@ class TestAdminUsers():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        login(client, users['editor'])
         response = client.post(
                         url,
                         follow_redirects=True,
@@ -38,7 +39,9 @@ class TestAdminUsers():
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
         initial_is_admin = users['tested_user'].admin['isAdmin']
-        response = admin_client.post(
+        logout(client)
+        login(client, users['admin'])
+        response = client.post(
                         url,
                         follow_redirects=False,
                     )
@@ -50,7 +53,7 @@ class TestAdminUsers():
         users['tested_user'].admin['isAdmin'] = False
         users['tested_user'].save()
 
-    def test_toggle_uploads(self, users, client, anon_client, admin_client):
+    def test_toggle_uploads(self, users, client, anon_client):
         """ Test permissions
             Test toggle
         """
@@ -62,6 +65,7 @@ class TestAdminUsers():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        login(client, users['editor'])
         response = client.post(
                         url,
                         follow_redirects=True,
@@ -70,7 +74,9 @@ class TestAdminUsers():
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
         initial_uploads_enabled = users['tested_user'].uploads_enabled
-        response = admin_client.post(
+        logout(client)
+        login(client, users['admin'])
+        response = client.post(
                         url,
                         follow_redirects=False,
                     )

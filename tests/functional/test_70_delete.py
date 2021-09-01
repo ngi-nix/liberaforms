@@ -10,11 +10,12 @@ import pytest
 from liberaforms.models.user import User
 from liberaforms.models.media import Media
 from liberaforms.models.form import Form
+from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer, AnswerAttachment
-from .utils import login
+from .utils import login, logout
 
 class TestDeleteUser():
-    def test_delete_user(self, users, client, anon_client, admin_client, forms):
+    def test_delete_user(self, users, client, anon_client, forms):
         """ Deletes a user with form, attachments, and media
             Creates answers with attachments
             Tests the deletion of the user, media, form, answers and attachments
@@ -68,7 +69,9 @@ class TestDeleteUser():
         """ Delete user
         """
         delete_user_url = f"/admin/users/delete/{user_id}"
-        response = admin_client.get(
+        logout(client)
+        login(client, users['admin'])
+        response = client.get(
                         delete_user_url,
                         follow_redirects=False,
                     )
@@ -76,7 +79,7 @@ class TestDeleteUser():
         html = response.data.decode()
         assert '<!-- delete_user_page -->' in html
         assert f'<td>{answer_cnt}</td>' in html
-        response = admin_client.post(
+        response = client.post(
                         delete_user_url,
                         data = {
                             "username": user.username,
@@ -85,10 +88,11 @@ class TestDeleteUser():
                     )
         assert response.status_code == 200
         html = response.data.decode()
+        assert FormUser.find_all(user_id=user_id).count() == 0
+        assert Form.find_all(author_id=user_id).count() == 0
+        assert Answer.find_all(author_id=user_id).count() == 0
         assert '<!-- list_users_page -->' in html
         assert os.path.isdir(user.get_media_dir()) == False
         assert Media.find(user_id=user_id) == None
-        assert Form.find(author_id=user_id) == None
-        assert Answer.find(author_id=user_id) == None
         assert len(os.listdir(attachment_dir)) == 0
         assert User.find(id=user_id) == None

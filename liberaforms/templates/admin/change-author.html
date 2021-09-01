@@ -69,7 +69,7 @@
       </form>
 
     {% set editors=form.get_editors() %}
-    {% if editors|length > 1 %}
+    {% if editors.count() > 1 %}
       <p>&nbsp;</p>
       {# i18n: Users who can edit a specific form, but is not the original author #}
       <div class="title_2">{%trans%}Editors{%endtrans%}</div>

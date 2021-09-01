@@ -21,7 +21,19 @@ def forms():
         'test_form_2': None,
     }
 
-@pytest.fixture(scope='module')
+"""
+@pytest.fixture(scope='session')
+def admin_client(app):
+    with app.test_client() as client:
+        yield client
+"""
+
+@pytest.fixture(scope='session')
+def anon_client(app):
+    with app.test_client() as client:
+        yield client
+
+@pytest.fixture(scope='function')
 def client(app):
     with app.test_client() as client:
         yield client
