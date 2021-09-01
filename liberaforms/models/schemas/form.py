@@ -49,7 +49,7 @@ class FormSchemaForDataTable(ma.SQLAlchemySchema):
         return obj.is_public()
 
     def get_is_shared(self, obj):
-        return obj.is_shared()
+        return True if obj.users.count() > 0 else False
 
     def get_created(self, obj):
         return utils.utc_to_g_timezone(obj.created)

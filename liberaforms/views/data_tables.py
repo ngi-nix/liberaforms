@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
+#from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
 from liberaforms.models.schemas.form import FormSchemaForDataTable
 from liberaforms.models.schemas.answer import AnswerSchema
@@ -40,8 +41,8 @@ def my_forms(user_id):
     """
     if not user_id == g.current_user.id:
         return jsonify("Denied"), 401
-    forms = Form.find_all(editor_id=g.current_user.id)
-    form_count = Form.find_all(editor_id=g.current_user.id).count()
+    forms = g.current_user.get_forms()
+    form_count = forms.count()
     page = request.args.get('page', type=int)
     if page:
         print(f"page: {page}")
@@ -90,7 +91,7 @@ def my_forms(user_id):
 def form_answers(form_id):
     """ Return json required by vue data-table component
     """
-    form = Form.find(id=form_id, editor_id=g.current_user.id)
+    form = g.current_user.get_form(form_id)
     if not form:
         return jsonify("Not found"), 404
     page = request.args.get('page', type=int)
@@ -99,7 +100,7 @@ def form_answers(form_id):
         answers = form.answers.paginate(page, 10, False).items
     else:
         answers = form.answers
-    field_index = form.get_editor_field_index_preference(g.current_user.id)
+    field_index = form.get_user_field_index_preference(g.current_user.id)
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'total': form.answers.count(),
@@ -154,7 +155,7 @@ def toggle_answer_mark(answer_id):
     answer = Answer.find(id=answer_id)
     if not answer:
         return jsonify("Not found"), 404
-    if not str(g.current_user.id) in answer.form.editors:
+    if not g.current_user.get_form(answer.form.id):
         return jsonify("Forbidden"), 403
     answer.marked = False if answer.marked == True else True
     answer.save()
@@ -167,8 +168,8 @@ def delete_answer(answer_id):
     answer = Answer.find(id=answer_id)
     if not answer:
         return jsonify("Not found"), 404
-    form = answer.form
-    if not str(g.current_user.id) in form.editors:
+    form = g.current_user.get_form(answer.form.id, is_editor=True)
+    if not form:
         return jsonify("Forbidden"), 403
     answer.delete()
     form.expired = form.has_expired()
@@ -182,10 +183,10 @@ def delete_answer(answer_id):
 def change_answer_field_index(form_id):
     """ Changes User's Answer field index preference for this form
     """
-    form = Form.find(id=form_id, editor_id=g.current_user.id)
+    form = g.current_user.get_form(form_id)
     if not form:
         return jsonify("Not found"), 404
-    field_index = form.get_editor_field_index_preference(g.current_user.id)
+    field_index = form.get_user_field_index_preference(g.current_user.id)
     if not field_index:
         field_index = form.get_field_index_for_data_display()
 
@@ -199,7 +200,7 @@ def change_answer_field_index(form_id):
     if field_to_move:
         old_index = field_index.index(field_to_move)
         field_index.insert(1, field_index.pop(old_index))
-        form.save_editor_field_index_preference(g.current_user.id, field_index)
+        form.save_user_field_index_preference(g.current_user.id, field_index)
         return jsonify(
             {'field_index': field_index}
         ), 200
@@ -211,11 +212,11 @@ def change_answer_field_index(form_id):
 def reset_answers_field_index(form_id):
     """ Resets User's Answer field index preference for this form
     """
-    form = Form.find(id=form_id, editor_id=g.current_user.id)
+    form = g.current_user.get_form(form_id)
     if not form:
         return jsonify("Not found"), 404
     field_index = form.get_field_index_for_data_display()
-    form.save_editor_field_index_preference(g.current_user.id, field_index)
+    form.save_user_field_index_preference(g.current_user.id, field_index)
     return jsonify(
         {'field_index': field_index}
     ), 200

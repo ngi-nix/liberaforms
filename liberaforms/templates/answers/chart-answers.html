@@ -60,19 +60,20 @@
       <hr />
 
     {% if not shared %}
-      {% if form.editors[g.current_user.id|string] is defined %}
+      {% set form_user = form.get_form_user(g.current_user.id) %}
+      {% if form_user != None %}
       <div id="toggle_notification"
            class="btn-group btn-toggle">
         <button id="notification_true"
                 class="btn btn-sm btn-default
-                      {% if form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                      {% if form_user['notifications']['newAnswer'] %}
                       btn-success
                       {% endif %}">
             {%trans%}True{%endtrans%}
         </button>
         <button id="notification_false"
                 class="btn btn-sm btn-default
-                      {% if not form.editors[g.current_user.id|string]['notification']['newAnswer'] %}
+                      {% if not form_user['notifications']['newAnswer'] %}
                       btn-primary
                       {% endif %}">
             {%trans%}False{%endtrans%}

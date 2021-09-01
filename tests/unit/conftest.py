@@ -26,9 +26,9 @@ def test_user():
     """ The default test user as defined in ./tests/test.ini
     """
     user = User(
-        username = os.environ['USER1_USERNAME'],
-        email = os.environ['USER1_EMAIL'],
-        password = os.environ['USER1_PASSWORD'],
+        username = os.environ['EDITOR_1_USERNAME'],
+        email = os.environ['EDITOR_1_EMAIL'],
+        password = os.environ['EDITOR_1_PASSWORD'],
         preferences = User.default_user_preferences(),
         admin = User.default_admin_settings(),
         validatedEmail = True,

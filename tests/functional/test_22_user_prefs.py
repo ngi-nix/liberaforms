@@ -10,27 +10,17 @@ import pytest
 from flask import g
 from liberaforms.models.user import User
 from liberaforms.utils import validators
-from liberaforms.commands.user import create as create_user
 from .utils import login, logout
 
 
 class TestUserPreferences():
     def test_cli_user_create(self, app, users, client):
-        """ Tests cli 'user create'
-            Login the created user dummy_1
+        """ Login the created user dummy_1
             Tests user preferences
             Logout dummy_1
-            Deletes dummy_1
         """
-        runner = app.test_cli_runner()
-        with app.app_context():
-            result = runner.invoke(create_user, [users['dummy_1']['username'],
-                                                 users['dummy_1']['email'],
-                                                 users['dummy_1']['password']
-                                                 ])
-        assert 'User created' in result.output
+
         response = login(client, users['dummy_1'])
-        assert g.current_user.username == users['dummy_1']['username']
         assert "<!-- my_forms_page -->" in response.data.decode()
 
     def test_change_language(self, users, client, anon_client):
@@ -46,14 +36,16 @@ class TestUserPreferences():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        login(client, users['dummy_1'])
+        dummy_1 = User.find(username=users['dummy_1']['username'])
         response = client.get(
                         url,
-                        follow_redirects=True,
+                        follow_redirects=False,
                     )
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- change_language_page -->' in html
-        initial_language = g.current_user.preferences['language']
+        initial_language = dummy_1.preferences['language']
         unavailable_language = 'af' # Afrikaans
         response = client.post(
                         url,
@@ -63,7 +55,7 @@ class TestUserPreferences():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert g.current_user.preferences['language'] == initial_language
+        assert dummy_1.preferences['language'] == initial_language
         available_language = 'ca'
         response = client.post(
                         url,
@@ -73,8 +65,8 @@ class TestUserPreferences():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert g.current_user.preferences['language'] == available_language
-        g.current_user.save()
+        assert dummy_1.preferences['language'] == available_language
+        dummy_1.save()
 
     def test_change_password(self, users, client, anon_client):
         """ Tests invalid and valid password
@@ -89,6 +81,8 @@ class TestUserPreferences():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        login(client, users['dummy_1'])
+        dummy_1 = User.find(username=users['dummy_1']['username'])
         response = client.get(
                         url,
                         follow_redirects=True,
@@ -96,7 +90,7 @@ class TestUserPreferences():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- reset_password_page -->' in html
-        password_hash = g.current_user.password_hash
+        initial_password_hash = dummy_1.password_hash
         invalid_password="1234"
         response = client.post(
                         url,
@@ -107,7 +101,7 @@ class TestUserPreferences():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        assert g.current_user.password_hash == password_hash
+        assert dummy_1.password_hash == initial_password_hash
         valid_password="this is another valid password"
         response = client.post(
                         url,
@@ -118,13 +112,12 @@ class TestUserPreferences():
                         follow_redirects=True,
                     )
         assert response.status_code == 200
-        # assert g.current_user.username.password_hash == validators.hash_password(valid_password)
-        assert g.current_user.password_hash != password_hash
+        assert dummy_1.password_hash != initial_password_hash
         # reset the password to the value defined in ./tests/test.env. Required by other tests
         #password_hash = validators.hash_password(users['editor']['password'])
-        #g.current_user.password_hash = password_hash
-        #g.current_user.save()
-        #print(g.current_user.username)
+        dummy_1.password_hash = initial_password_hash
+        dummy_1.save()
+
 
     @pytest.mark.skip(reason="No way of currently testing this")
     def test_change_email(self, client):
@@ -132,8 +125,6 @@ class TestUserPreferences():
         pass
 
     def test_toggle_new_answer_default_notification(self, users, client, anon_client):
-        #print(g.current_user.username)
-        #print(g.current_user.preferences["newAnswerNotification"])
         """ Tests permission
             # Tests POST only
             Tests toggle bool
@@ -146,23 +137,19 @@ class TestUserPreferences():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        # Why is this line necessary??
+
         login(client, users['dummy_1'])
-        #response = client.get(
-        #                url,
-        #                follow_redirects=True,
-        #            )
-        #assert response.status_code == 405
-        initial_default = g.current_user.preferences["newAnswerNotification"]
+        dummy_1 = User.find(username=users['dummy_1']['username'])
+        initial_default = dummy_1.preferences["newAnswerNotification"]
         response = client.post(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert g.current_user.preferences["newAnswerNotification"] != initial_default
-        assert type(g.current_user.preferences["newAnswerNotification"]) == type(bool())
+        assert dummy_1.preferences["newAnswerNotification"] != initial_default
+        assert type(dummy_1.preferences["newAnswerNotification"]) == type(bool())
 
-        logout(client)
-        user=User.find(username=users['dummy_1']['username'])
-        user.delete()
+        #logout(client)
+        #user=User.find(username=users['dummy_1']['username'])
+        #user.delete()

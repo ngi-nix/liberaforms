@@ -13,7 +13,7 @@ from .utils import login, logout
 
 
 class TestSiteStatistics():
-    def test_site_stats_graph(cls, site, anon_client, client, admin_client):
+    def test_site_stats_graph(cls, users, site, anon_client, client):
         """ Tests site statistics page
             Only tests if the page was generated
             Tests permissions
@@ -26,17 +26,20 @@ class TestSiteStatistics():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+
+        #response = client.get(
+        #                    url,
+        #                    follow_redirects=True
+        #                )
+        #assert response.status_code == 200
+        #html = response.data.decode()
+        #assert '<!-- site_index_page -->' in html
+        
+        login(client, users['admin'])
         response = client.get(
-                            url,
-                            follow_redirects=True
-                        )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<!-- site_index_page -->' in html
-        response = admin_client.get(
-                            url,
-                            follow_redirects=True
-                        )
+                        url,
+                        follow_redirects=True
+                    )
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_stats_page -->' in html

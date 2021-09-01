@@ -32,9 +32,9 @@ LOG_DIR=./logs
 
 DEFAULT_TIMEZONE="Europe/Madrid"
 
-USER1_USERNAME=test_user
-USER1_PASSWORD=""
-USER1_EMAIL= # YOUR_EMAIL_ADDRESS
+EDITOR_1_USERNAME="editor1"
+EDITOR_1_PASSWORD="libraforms forms"
+EDITOR_1_EMAIL= # YOUR_EMAIL_ADDRESS
 
 # Valid SMTP configuration. Tests will send emails with this config.
 TEST_SMTP_HOST=

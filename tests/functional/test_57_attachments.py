@@ -13,7 +13,7 @@ import mimetypes
 from flask import current_app
 from liberaforms.models.form import Form
 from liberaforms.models.answer import AnswerAttachment
-from .utils import login
+from .utils import login, logout
 
 class TestAnswerAttachment():
 
@@ -90,12 +90,13 @@ class TestAnswerAttachment():
         assert attachment.does_attachment_exist() == True
         assert attachment.file_name == valid_attachment_name
 
-    def test_delete_answer_with_attachment(self, client, forms):
+    def test_delete_answer_with_attachment(self, users, client, forms):
         initial_log_count = forms['test_form_2'].log.count()
         initial_answers_count = forms['test_form_2'].answers.count()
         answer = forms['test_form_2'].answers[-1]
         attachment = AnswerAttachment.find(form_id=forms['test_form_2'].id,
                                            answer_id=vars(answer)['id'])
+        login(client, users['editor'])
         response = client.post(
                         f"/forms/delete-answer/{forms['test_form_2'].id}",
                         json = {
@@ -110,7 +111,7 @@ class TestAnswerAttachment():
         assert forms['test_form_2'].log.count() == initial_log_count + 1
         assert attachment.does_attachment_exist() == False
 
-    def test_delete_all_answers(self, anon_client, client, forms):
+    def test_delete_all_answers(self, users, anon_client, client, forms):
         form_url = forms['test_form_2'].url
         name = "Julia"
         valid_attachment_name = "valid_attachment.pdf"
@@ -136,6 +137,7 @@ class TestAnswerAttachment():
         assert "<!-- thank_you_page -->" in html
         initial_answers_count = forms['test_form_2'].answers.count()
         initial_log_count = forms['test_form_2'].log.count()
+        login(client, users['editor'])
         response = client.get(
                         f"/forms/delete-all-answers/{forms['test_form_2'].id}",
                         follow_redirects=False,
