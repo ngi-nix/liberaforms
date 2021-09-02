@@ -115,10 +115,6 @@
 
       nixosConfigurations.container = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        #privateNetwork = true;
-        #hostBridge = "br0";
-        #hostAddress = "10.233.1.1";
-        #localAddress = "10.233.1.2";
         modules =
           [
             ({ pkgs, lib, ... }: {
@@ -127,11 +123,6 @@
 
               boot.isContainer = true;
               networking.useDHCP = false;
-              #networking.interfaces.eth0.useDHCP = true;
-              #networking.dhcpcd.wait = "background";
-
-              networking.useHostResolvConf = true;
-              networking.firewall.enable = false;
 
               time.timeZone = "America/Montreal";
 
