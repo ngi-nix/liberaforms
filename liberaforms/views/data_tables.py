@@ -82,7 +82,9 @@ def my_forms(user_id):
 
     return jsonify(
         items=items,
-        meta={'total': form_count, 'field_index': field_index}
+        meta={'total': form_count,
+              'field_index': field_index,
+              'editable_fields': False}
     ), 200
 
 
@@ -105,6 +107,7 @@ def form_answers(form_id):
         items=AnswerSchema(many=True).dump(answers),
         meta={'total': form.answers.count(),
               'field_index': field_index,
+              'editable_fields': False,
         }
     ), 200
 
