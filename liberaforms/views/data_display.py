@@ -10,7 +10,7 @@ from flask_babel import gettext as _
 from liberaforms.models.form import Form
 #from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
-from liberaforms.models.schemas.form import FormSchemaForDataTable
+from liberaforms.models.schemas.form import FormSchemaForDataDisplay
 from liberaforms.models.schemas.answer import AnswerSchema
 from liberaforms.utils.wraps import *
 
@@ -19,7 +19,7 @@ from pprint import pprint
 data_display_bp = Blueprint('data_display_bp', __name__)
 
 default_forms_field_index = [
-                {'name': 'form__html', 'label': _('Form name')},
+                {'name': 'form_name__html', 'label': _('Form name')},
                 {'name': 'answers__html', 'label': _('Answers')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
                 {'name': 'is_public', 'label': _('Public')},
@@ -27,18 +27,23 @@ default_forms_field_index = [
                 {'name': 'created', 'label': _('Created')}
             ]
 
-def get_forms_order_ascending(user):
-    if 'forms_order_ascending' in user.preferences:
-        return user.preferences['forms_order_ascending']
-    else:
-        return True
-
 def get_forms_field_index(user):
     if 'forms_field_index' in user.preferences:
         return user.preferences['forms_field_index']
     else:
         return default_forms_field_index
 
+def get_forms_order_ascending(user):
+    if 'forms_order_ascending' in user.preferences:
+        return user.preferences['forms_order_ascending']
+    else:
+        return True
+
+def get_forms_order_by(user):
+    if 'forms_order_by' in user.preferences:
+        return user.preferences['forms_order_by']
+    else:
+        return 'created'
 
 """ Forms """
 
@@ -59,21 +64,24 @@ def my_forms(user_id):
 
     field_index = get_forms_field_index(g.current_user)
     items = []
-    for form in FormSchemaForDataTable(many=True).dump(forms):
+    for form in FormSchemaForDataDisplay(many=True).dump(forms):
         item = {}
         data = {}
         id = form['id']
         slug = form['slug']
+        data['form_name__html'] = {
+            'value': slug,
+            'html': f"<a href='/forms/view/{id}'>{slug}</a>"
+        }
         total_answers = form['total_answers']
-        icon =f"<i class='fa fa-bar-chart' aria-label=\"{_('Statistics')}\"></i>"
+        stats_icon = f"<i class='fa fa-bar-chart' aria-label=\"{_('Statistics')}\"></i>"
+        stats_url = f"<a href='/forms/answers/stats/{id}'>{stats_icon}</a>"
+        count_url = f"<a href='/forms/answers/{id}' alt_text=\"{_('Answers')}\">{total_answers}</a>"
+        data['answers__html'] = {
+            'value': total_answers,
+            'html': f"{stats_url} {count_url}"
 
-        stats_link = f"<a href='/forms/answers/stats/{id}'>{icon}</a>"
-        answers_link = f"<a href='/forms/answers/{id}' \
-                            alt_text=\"{_('Answers')}\"> \
-                            {total_answers} \
-                            </a>"
-        data['form__html'] = f"<a href='/forms/view/{id}'>{slug}</a>"
-        data['answers__html'] = f"{stats_link} {answers_link}"
+        }
         for key in form.keys():
             if key == 'slug' or key == 'total_answers':
                 continue
@@ -93,6 +101,7 @@ def my_forms(user_id):
         items=items,
         meta={'total': form_count,
               'field_index': field_index,
+              'order_by': get_forms_order_by(g.current_user),
               'ascending': get_forms_order_ascending(g.current_user),
               'editable_fields': False}
     ), 200
@@ -134,6 +143,25 @@ def reset_forms_field_index(user_id):
     g.current_user.save()
     return jsonify(
         {'field_index': g.current_user.preferences['forms_field_index']}
+    ), 200
+
+@data_display_bp.route('/data-display/forms/<int:user_id>/order-by-field', methods=['POST'])
+@enabled_user_required__json
+def forms_order_by_field(user_id):
+    """ Set User's forms order_by preference
+    """
+    if not user_id == g.current_user.id:
+        return jsonify("Forbidden"), 403
+    data = request.get_json(silent=True)
+    if not 'order_by_field_name' in data:
+        return jsonify("Not Acceptable"), 406
+    field_names = [ field['name'] for field in default_forms_field_index ]
+    if not data['order_by_field_name'] in field_names:
+        return jsonify("Not Acceptable"), 406
+    g.current_user.preferences['forms_order_by'] = data['order_by_field_name']
+    g.current_user.save()
+    return jsonify(
+        {'order_by_field_name': g.current_user.preferences['forms_order_by']}
     ), 200
 
 @data_display_bp.route('/data-display/forms/<int:user_id>/toggle-ascending', methods=['POST'])

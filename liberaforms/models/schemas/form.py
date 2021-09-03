@@ -27,12 +27,12 @@ class FormSchema(ma.SQLAlchemySchema):
     def get_introduction_md(self, obj):
         return obj.introductionText['markdown']
 
-class FormSchemaForDataTable(ma.SQLAlchemySchema):
+class FormSchemaForDataDisplay(ma.SQLAlchemySchema):
     class Meta:
         model = Form
 
     id = ma.auto_field()
-    created = ma.Method('get_created')
+    created = ma.auto_field()
     slug = ma.auto_field()
     total_answers = ma.Method('get_total_answers')
     last_answer_date = ma.Method('get_last_answer_date')
@@ -51,5 +51,5 @@ class FormSchemaForDataTable(ma.SQLAlchemySchema):
     def get_is_shared(self, obj):
         return True if obj.users.count() > 0 else False
 
-    def get_created(self, obj):
-        return utils.utc_to_g_timezone(obj.created)
+    #def get_created(self, obj):
+    #    return utils.utc_to_g_timezone(obj.created)
