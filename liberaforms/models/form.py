@@ -272,20 +272,30 @@ class Form(db.Model, CRUD):
             return False
         return self.enabled
 
-    def get_user_field_index_preference(self, user_id):
-        formuser = FormUser.find(form_id=self.id, user_id=user_id)
+    def get_user_field_index_preference(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
         if formuser and formuser.field_index != None:
             return formuser.field_index
         else:
             return self.get_field_index_for_data_display()
 
-    def save_user_field_index_preference(self, user_id, field_index):
-        formuser = FormUser.find(form_id=self.id, user_id=user_id)
+    def save_user_field_index_preference(self, user, field_index):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
         if formuser:
             formuser.field_index = field_index
             formuser.save()
             return formuser.field_index
         return False
+
+    def toggle_user_answers_ascending_order(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        formuser.asc = False if formuser.asc else True
+        formuser.save()
+        return formuser.asc
+
+    def get_answers_order_ascending(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        return formuser.asc
 
     @property
     def url(self):

@@ -39,6 +39,9 @@ def get_forms_field_index(user):
     else:
         return default_forms_field_index
 
+
+""" Forms """
+
 @data_display_bp.route('/data-display/forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
 def my_forms(user_id):
@@ -94,31 +97,6 @@ def my_forms(user_id):
               'editable_fields': False}
     ), 200
 
-
-@data_display_bp.route('/data-display/form/<int:form_id>/answers', methods=['GET'])
-@enabled_user_required__json
-def form_answers(form_id):
-    """ Return json required by vue data-table component
-    """
-    form = g.current_user.get_form(form_id)
-    if not form:
-        return jsonify("Not found"), 404
-    page = request.args.get('page', type=int)
-    if page:
-        print(f"page: {page}")
-        answers = form.answers.paginate(page, 10, False).items
-    else:
-        answers = form.answers
-    field_index = form.get_user_field_index_preference(g.current_user.id)
-    return jsonify(
-        items=AnswerSchema(many=True).dump(answers),
-        meta={'total': form.answers.count(),
-              'field_index': field_index,
-              'editable_fields': False,
-        }
-    ), 200
-
-
 @data_display_bp.route('/data-display/forms/<int:user_id>/change-index', methods=['POST'])
 @enabled_user_required__json
 def change_forms_field_index(user_id):
@@ -172,6 +150,33 @@ def forms_toggle_ascending(user_id):
         {'ascending': g.current_user.preferences['forms_order_ascending']}
     ), 200
 
+
+""" Answers """
+
+@data_display_bp.route('/data-display/form/<int:form_id>/answers', methods=['GET'])
+@enabled_user_required__json
+def form_answers(form_id):
+    """ Return json required by vue data-table component
+    """
+    form = g.current_user.get_form(form_id)
+    if not form:
+        return jsonify("Not found"), 404
+    page = request.args.get('page', type=int)
+    if page:
+        print(f"page: {page}")
+        answers = form.answers.paginate(page, 10, False).items
+    else:
+        answers = form.answers
+    field_index = form.get_user_field_index_preference(g.current_user)
+    return jsonify(
+        items=AnswerSchema(many=True).dump(answers),
+        meta={'total': form.answers.count(),
+              'field_index': field_index,
+              'ascending': form.get_answers_order_ascending(g.current_user),
+              'editable_fields': False,
+        }
+    ), 200
+
 @data_display_bp.route('/data-display/answer/<int:answer_id>/mark', methods=['POST'])
 @enabled_user_required__json
 def toggle_answer_mark(answer_id):
@@ -223,7 +228,7 @@ def change_answer_field_index(form_id):
     if field_to_move:
         old_index = field_index.index(field_to_move)
         field_index.insert(1, field_index.pop(old_index))
-        form.save_user_field_index_preference(g.current_user.id, field_index)
+        form.save_user_field_index_preference(g.current_user, field_index)
         return jsonify(
             {'field_index': field_index}
         ), 200
@@ -239,7 +244,19 @@ def reset_answers_field_index(form_id):
     if not form:
         return jsonify("Not found"), 404
     field_index = form.get_field_index_for_data_display()
-    form.save_user_field_index_preference(g.current_user.id, field_index)
+    form.save_user_field_index_preference(g.current_user, field_index)
     return jsonify(
         {'field_index': field_index}
+    ), 200
+
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/toggle-ascending', methods=['POST'])
+@enabled_user_required__json
+def answers_toggle_ascending(form_id):
+    """ Toggle user's asnwers ascending order preference
+    """
+    form = g.current_user.get_form(form_id)
+    if not form:
+        return jsonify("Not found"), 404
+    return jsonify(
+        {'ascending': form.toggle_user_answers_ascending_order(g.current_user)}
     ), 200
