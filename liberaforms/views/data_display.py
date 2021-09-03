@@ -27,6 +27,12 @@ default_forms_field_index = [
                 {'name': 'created', 'label': _('Created')}
             ]
 
+def get_forms_order_ascending(user):
+    if 'forms_order_ascending' in user.preferences:
+        return user.preferences['forms_order_ascending']
+    else:
+        return True
+
 def get_forms_field_index(user):
     if 'forms_field_index' in user.preferences:
         return user.preferences['forms_field_index']
@@ -84,6 +90,7 @@ def my_forms(user_id):
         items=items,
         meta={'total': form_count,
               'field_index': field_index,
+              'ascending': get_forms_order_ascending(g.current_user),
               'editable_fields': False}
     ), 200
 
@@ -151,6 +158,19 @@ def reset_forms_field_index(user_id):
         {'field_index': g.current_user.preferences['forms_field_index']}
     ), 200
 
+@data_display_bp.route('/data-display/forms/<int:user_id>/toggle-ascending', methods=['POST'])
+@enabled_user_required__json
+def forms_toggle_ascending(user_id):
+    """ Toggle User's forms ascending order preference
+    """
+    if not user_id == g.current_user.id:
+        return jsonify("Forbidden"), 403
+    preference = get_forms_order_ascending(g.current_user)
+    g.current_user.preferences['forms_order_ascending'] = False if preference else True
+    g.current_user.save()
+    return jsonify(
+        {'ascending': g.current_user.preferences['forms_order_ascending']}
+    ), 200
 
 @data_display_bp.route('/data-display/answer/<int:answer_id>/mark', methods=['POST'])
 @enabled_user_required__json
