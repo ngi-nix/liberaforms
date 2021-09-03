@@ -34,8 +34,8 @@
 
   <div class="row">
     <div class="col">
-      <div data-vue-component="data-table"
-           data-items_endpoint="/data-table/forms/{{g.current_user.id}}"
+      <div data-vue-component="data-display"
+           data-items_endpoint="/data-display/forms/{{g.current_user.id}}"
            data-can_edit=false
            data-csrf_token="{{ csrf_token() }}">
       </div>
@@ -43,6 +43,6 @@
   </div>
 </div>
 
-<script src="/static/data-table.js"></script>
+<script src="/static/data-display/data-display.js"></script>
 
 {% endblock %}

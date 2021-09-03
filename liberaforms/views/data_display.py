@@ -16,7 +16,7 @@ from liberaforms.utils.wraps import *
 
 from pprint import pprint
 
-data_table_bp = Blueprint('data_table_bp', __name__)
+data_display_bp = Blueprint('data_display_bp', __name__)
 
 default_forms_field_index = [
                 {'name': 'form__html', 'label': _('Form name')},
@@ -33,7 +33,7 @@ def get_forms_field_index(user):
     else:
         return default_forms_field_index
 
-@data_table_bp.route('/data-table/forms/<int:user_id>', methods=['GET'])
+@data_display_bp.route('/data-display/forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
 def my_forms(user_id):
     """ Returns json required by Vue dataTable component.
@@ -88,7 +88,7 @@ def my_forms(user_id):
     ), 200
 
 
-@data_table_bp.route('/data-table/form/<int:form_id>/answers', methods=['GET'])
+@data_display_bp.route('/data-display/form/<int:form_id>/answers', methods=['GET'])
 @enabled_user_required__json
 def form_answers(form_id):
     """ Return json required by vue data-table component
@@ -112,7 +112,7 @@ def form_answers(form_id):
     ), 200
 
 
-@data_table_bp.route('/data-table/forms/<int:user_id>/change-index', methods=['POST'])
+@data_display_bp.route('/data-display/forms/<int:user_id>/change-index', methods=['POST'])
 @enabled_user_required__json
 def change_forms_field_index(user_id):
     """ Changes Users' Form (all forms) field index preference
@@ -138,7 +138,7 @@ def change_forms_field_index(user_id):
     return jsonify("Not Acceptable"), 406
 
 
-@data_table_bp.route('/data-table/forms/<int:user_id>/reset-index', methods=['POST'])
+@data_display_bp.route('/data-display/forms/<int:user_id>/reset-index', methods=['POST'])
 @enabled_user_required__json
 def reset_forms_field_index(user_id):
     """ Resets Users' Form field index preference
@@ -152,7 +152,7 @@ def reset_forms_field_index(user_id):
     ), 200
 
 
-@data_table_bp.route('/data-table/answer/<int:answer_id>/mark', methods=['POST'])
+@data_display_bp.route('/data-display/answer/<int:answer_id>/mark', methods=['POST'])
 @enabled_user_required__json
 def toggle_answer_mark(answer_id):
     answer = Answer.find(id=answer_id)
@@ -165,7 +165,7 @@ def toggle_answer_mark(answer_id):
     return jsonify(marked=answer.marked), 200
 
 
-@data_table_bp.route('/data-table/answer/<int:answer_id>/delete', methods=['DELETE'])
+@data_display_bp.route('/data-display/answer/<int:answer_id>/delete', methods=['DELETE'])
 @enabled_user_required__json
 def delete_answer(answer_id):
     answer = Answer.find(id=answer_id)
@@ -181,7 +181,7 @@ def delete_answer(answer_id):
     return jsonify(deleted=True), 200
 
 
-@data_table_bp.route('/data-table/form/<int:form_id>/answers/change-index', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/change-index', methods=['POST'])
 @enabled_user_required__json
 def change_answer_field_index(form_id):
     """ Changes User's Answer field index preference for this form
@@ -210,7 +210,7 @@ def change_answer_field_index(form_id):
     return jsonify("Not Acceptable"), 406
 
 
-@data_table_bp.route('/data-table/form/<int:form_id>/answers/reset-index', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/reset-index', methods=['POST'])
 @enabled_user_required__json
 def reset_answers_field_index(form_id):
     """ Resets User's Answer field index preference for this form
