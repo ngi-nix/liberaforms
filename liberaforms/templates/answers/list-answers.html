@@ -3,7 +3,7 @@
 
 <!-- list_answers_page -->
 
-<link rel="stylesheet" href="/static/dataTable/data-table.css">
+<link rel="stylesheet" href="/static/data-display/data-display.css">
 
 {% set form_user = form.get_form_user(g.current_user.id) %}
 {% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
@@ -113,9 +113,9 @@
   </div>
   <div class="row">
     <div class="col">
-      <div data-vue-component="data-table"
-           data-items_endpoint="/data-table/form/{{form.id}}/answers"
-           data-item_endpoint="/data-table/answer/"
+      <div data-vue-component="data-display"
+           data-items_endpoint="/data-display/form/{{form.id}}/answers"
+           data-item_endpoint="/data-display/answer/"
            data-can_edit={{ form.is_editor(g.current_user) | tojson }}
            data-csrf_token="{{ csrf_token() }}">
       </div>
@@ -123,7 +123,7 @@
   </div>
 </div>
 
-<script src="/static/data-table.js"></script>
+<script src="/static/data-display/data-display.js"></script>
 <script>
   document.getElementById('toggle_notification').addEventListener('click', function(evt){
       $.ajax({
