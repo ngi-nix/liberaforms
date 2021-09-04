@@ -5,6 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+from copy import copy
 from flask import Blueprint, request, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
@@ -80,7 +81,6 @@ def my_forms(user_id):
         data['answers__html'] = {
             'value': total_answers,
             'html': f"{stats_url} {count_url}"
-
         }
         for key in form.keys():
             if key == 'slug' or key == 'total_answers':
@@ -101,6 +101,7 @@ def my_forms(user_id):
         items=items,
         meta={'total': form_count,
               'field_index': field_index,
+              #'default_field_index': default_forms_field_index,
               'order_by': get_forms_order_by(g.current_user),
               'ascending': get_forms_order_ascending(g.current_user),
               'editable_fields': False}
@@ -115,17 +116,18 @@ def change_forms_field_index(user_id):
         return jsonify("Forbidden"), 403
     data = request.get_json(silent=True)
     new_first_field_name = data['field_name']
-    field_index = get_forms_field_index(g.current_user)
+    field_index = copy(default_forms_field_index)
     field_to_move = None
     for field in field_index:
         if field['name'] == new_first_field_name:
             field_to_move = field
             break
     if field_to_move:
-        old_index = field_index.index(field_to_move)
-        field_index.insert(0, field_index.pop(old_index))
+        field_to_move_pos = field_index.index(field_to_move)
+        field_index.insert(0, field_index.pop(field_to_move_pos))
         g.current_user.preferences['forms_field_index'] = field_index
         g.current_user.save()
+        pprint(g.current_user.preferences['forms_field_index'])
         return jsonify(
             {'field_index': g.current_user.preferences['forms_field_index']}
         ), 200
@@ -147,7 +149,7 @@ def reset_forms_field_index(user_id):
 
 @data_display_bp.route('/data-display/forms/<int:user_id>/order-by-field', methods=['POST'])
 @enabled_user_required__json
-def forms_order_by_field(user_id):
+def order_forms_by_field(user_id):
     """ Set User's forms order_by preference
     """
     if not user_id == g.current_user.id:
@@ -195,11 +197,12 @@ def form_answers(form_id):
         answers = form.answers.paginate(page, 10, False).items
     else:
         answers = form.answers
-    field_index = form.get_user_field_index_preference(g.current_user)
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'total': form.answers.count(),
-              'field_index': field_index,
+              'field_index': form.get_user_field_index_preference(g.current_user),
+              #'default_field_index': form.get_field_index_for_data_display(),
+              'order_by': form.get_answers_order_by(g.current_user),
               'ascending': form.get_answers_order_ascending(g.current_user),
               'editable_fields': False,
         }
@@ -242,20 +245,18 @@ def change_answer_field_index(form_id):
     form = g.current_user.get_form(form_id)
     if not form:
         return jsonify("Not found"), 404
-    field_index = form.get_user_field_index_preference(g.current_user.id)
-    if not field_index:
-        field_index = form.get_field_index_for_data_display()
-
     data = request.get_json(silent=True)
     new_first_field_name = data['field_name']
+    field_index = copy(form.get_field_index_for_data_display())
     field_to_move = None
     for field in field_index:
         if field['name'] == new_first_field_name:
             field_to_move = field
             break
     if field_to_move:
-        old_index = field_index.index(field_to_move)
-        field_index.insert(1, field_index.pop(old_index))
+        field_to_move_pos = field_index.index(field_to_move)
+        # insert at 1 because 0 is reserved for 'marked'
+        field_index.insert(1, field_index.pop(field_to_move_pos))
         form.save_user_field_index_preference(g.current_user, field_index)
         return jsonify(
             {'field_index': field_index}
@@ -277,10 +278,32 @@ def reset_answers_field_index(form_id):
         {'field_index': field_index}
     ), 200
 
+
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/order-by-field', methods=['POST'])
+@enabled_user_required__json
+def order_answers_by_field(form_id):
+    """ Set User's order answers by preference for this form
+    """
+    form = g.current_user.get_form(form_id)
+    if not form:
+        return jsonify("Not found"), 404
+    data = request.get_json(silent=True)
+    if not 'order_by_field_name' in data:
+        return jsonify("order_by_field_name required"), 406
+    field_preference = data['order_by_field_name']
+    field_names = [ field['name'] for field in form.fieldIndex ]
+    if not field_preference in field_names:
+        return jsonify("Not a valid field name"), 406
+    form.save_user_order_answers_by(g.current_user, field_preference)
+    return jsonify(
+        {'order_by_field_name': field_preference}
+    ), 200
+
+
 @data_display_bp.route('/data-display/form/<int:form_id>/answers/toggle-ascending', methods=['POST'])
 @enabled_user_required__json
 def answers_toggle_ascending(form_id):
-    """ Toggle user's asnwers ascending order preference
+    """ Toggle user's answers ascending order preference for this form
     """
     form = g.current_user.get_form(form_id)
     if not form:

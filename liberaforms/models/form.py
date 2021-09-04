@@ -293,6 +293,18 @@ class Form(db.Model, CRUD):
         formuser.save()
         return formuser.asc
 
+    def get_answers_order_by(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        return formuser.order_by if formuser.order_by else 'created'
+
+    def save_user_order_answers_by(self, user, field_name):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser:
+            formuser.order_by = field_name
+            formuser.save()
+            return formuser.order_by
+        return 'created'
+
     def get_answers_order_ascending(self, user):
         formuser = FormUser.find(form_id=self.id, user_id=user.id)
         return formuser.asc
