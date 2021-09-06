@@ -113,13 +113,15 @@
       defaultPackage =
         forAllSystems (system: self.packages.${system}.liberaforms);
 
-      nixosConfigurations.container = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.liberaforms = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules =
           [
             ({ pkgs, lib, ... }: {
 
               imports = [ ./nix/module.nix ];
+
+              networking.hostName = "liberaforms";
 
               boot.isContainer = true;
               networking.useDHCP = false;
@@ -137,6 +139,7 @@
                 enablePostgres = true;
                 enableNginx = true;
                 #enableHTTPS = true;
+                #domain = "forms.example.org";
                 enableDatabaseBackup = true;
                 rootEmail = "cleeyv@riseup.net";
               };
