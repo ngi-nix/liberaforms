@@ -113,15 +113,29 @@
       defaultPackage =
         forAllSystems (system: self.packages.${system}.liberaforms);
 
-      nixosConfigurations.container = nixpkgs.lib.nixosSystem {
+      nixosConfigurations.liberaforms = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules =
           [
             ({ pkgs, lib, ... }: {
 
-              imports = [ ./nix/module.nix ];
+              imports = [
+                ./nix/hardware-configuration.nix
+                ./nix/linode.nix
+                ./nix/common.nix
+                ./nix/module.nix
+              ];
 
-              boot.isContainer = true;
+              networking.hostName = "liberaforms";
+
+              nix = {
+                package = pkgs.nixUnstable;
+                extraOptions = ''
+                  experimental-features = nix-command flakes
+                '';
+              };
+
+              # boot.isContainer = true;
               networking.useDHCP = false;
 
               time.timeZone = "America/Montreal";
@@ -136,7 +150,8 @@
                 enable = true;
                 enablePostgres = true;
                 enableNginx = true;
-                #enableHTTPS = true;
+                enableHTTPS = true;
+                domain = "forms.cleeyv.tech";
                 enableDatabaseBackup = true;
                 rootEmail = "cleeyv@riseup.net";
               };
