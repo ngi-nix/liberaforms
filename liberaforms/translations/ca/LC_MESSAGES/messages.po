@@ -8,14 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2021-08-04 12:35+0200\n"
-"PO-Revision-Date: 2021-06-17 12:44+0200\n"
-"Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
+"PO-Revision-Date: 2021-09-08 20:50+0000\n"
+"Last-Translator: Marcel Costa <marcelcosta@mcosta.cat>\n"
+"Language-Team: Catalan <https://hosted.weblate.org/projects/liberaforms/"
+"server-liberaforms/ca/>\n"
 "Language: ca\n"
-"Language-Team: ca <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
@@ -260,14 +262,12 @@ msgstr "Idioma per omissió"
 
 #. Whether to enable new users attaching documents into forms
 #: templates/admin/admin-panel.html:111
-#, fuzzy
 msgid "Enable form attachments"
-msgstr "Esborrar el formulari i respostes"
+msgstr "Activar adjunts en formularis"
 
 #: templates/admin/admin-panel.html:130
-#, fuzzy
 msgid "Default timezone"
-msgstr "Usa'n un per defecte"
+msgstr "Fus horari per defecte"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:140
@@ -304,7 +304,7 @@ msgstr "Editar"
 #. Which type of attachments are allowed
 #: templates/admin/admin-panel.html:186
 msgid "Attachment types"
-msgstr ""
+msgstr "Tipus d'adjunts."
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:514
@@ -428,9 +428,8 @@ msgstr "Nom"
 #: templates/answers/chart-answers.html:117 templates/form/my-forms.html:49
 #: templates/site/stats.html:46 templates/site/stats.html:122
 #: templates/user/statistics.html:31
-#, fuzzy
 msgid "Answers"
-msgstr "usuaris"
+msgstr "Respostes"
 
 #: templates/admin/delete-user.html:49
 msgid "Write the name of the user below"
@@ -488,7 +487,7 @@ msgstr "Correu-e validat"
 #. Whether user is able to upload attached documents to form
 #: templates/admin/inspect-user.html:58
 msgid "Attachments enabled"
-msgstr ""
+msgstr "Adjunts activats"
 
 #. Whether user is blocked by admin
 #: templates/admin/inspect-user.html:100
@@ -606,9 +605,8 @@ msgstr ""
 
 #: templates/answers/delete-all-answers.html:15
 #: templates/answers/delete-all-answers.html:42
-#, fuzzy
 msgid "Delete answers"
-msgstr "Esborrar l'usuari"
+msgstr "Esborrar respostes"
 
 #: templates/answers/delete-all-answers.html:18
 #: templates/form/inspect-form.html:527 views/form.py:164
@@ -622,9 +620,8 @@ msgstr "Eliminaràs"
 #: templates/answers/delete-all-answers.html:22
 #: templates/form/delete-form.html:27 templates/form/expiration.html:151
 #: templates/site/delete-site.html:22
-#, fuzzy
 msgid "answers"
-msgstr "usuaris"
+msgstr "respostes"
 
 #: templates/answers/delete-all-answers.html:25
 #, fuzzy
@@ -662,9 +659,8 @@ msgid "Mark"
 msgstr "Anotar"
 
 #: templates/answers/list-answers.html:252
-#, fuzzy
 msgid "Delete answer"
-msgstr "Esborrar l'usuari"
+msgstr "Esborrar resposta"
 
 #: templates/answers/list-answers.html:296
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
@@ -685,7 +681,7 @@ msgstr "Canviar d'idioma"
 
 #: templates/form/_image-modal.html:41 templates/media/list-media.html:66
 msgid "A photo of a horse galloping on the beach."
-msgstr ""
+msgstr "Foto d'un cavall galopant a la platja."
 
 #: templates/form/delete-form.html:22 templates/form/inspect-form.html:478
 msgid "Delete form"
@@ -824,7 +820,7 @@ msgstr "Deshabilitat"
 
 #: templates/form/inspect-form.html:92
 msgid "Fediverse"
-msgstr ""
+msgstr "Fedivers"
 
 #: templates/form/inspect-form.html:100
 #, fuzzy
@@ -1008,9 +1004,8 @@ msgid "Template"
 msgstr "Plantilles de formulari"
 
 #: templates/form/preview-form.html:45
-#, fuzzy
 msgid "Create a form with this template"
-msgstr "Fes servir aquesta plantilla"
+msgstr "Fes servir aquesta plantilla per a crear un formulari"
 
 #: templates/form/preview-form.html:50 templates/site/consent.html:105
 #: templates/site/edit-host-url.html:63 templates/user/new-user.html:91
@@ -1039,9 +1034,8 @@ msgid "Send 'new answer' and expiry notifications to these other addresses"
 msgstr ""
 
 #: templates/form/share-form.html:113
-#, fuzzy
 msgid "Add address"
-msgstr "Adreça electrònica"
+msgstr "Afegeix adreça electrònica"
 
 #: templates/form/share-form.html:127
 msgid "Share results"
@@ -1102,9 +1096,8 @@ msgid "Upload"
 msgstr "Puja"
 
 #: templates/site/change-icon.html:16
-#, fuzzy
 msgid "Change site icon"
-msgstr "Canviar el nom del lloc"
+msgstr "Canviar la icona del lloc web"
 
 #: templates/site/change-icon.html:18
 msgid "Upload an image"
@@ -1112,7 +1105,7 @@ msgstr ""
 
 #: templates/site/change-icon.html:24
 msgid "A square image"
-msgstr ""
+msgstr "Una imatge quadrada"
 
 #: templates/site/change-icon.html:25 templates/site/email-branding.html:64
 msgid "Keep the kilobytes to a minimum"
@@ -1233,9 +1226,8 @@ msgid "LiberaForms will occasionally send emails."
 msgstr ""
 
 #: templates/site/email-branding.html:24
-#, fuzzy
 msgid "Example email:"
-msgstr "Correu-e validat"
+msgstr "Correu d'exemple:"
 
 #: templates/site/email-branding.html:46
 msgid "Send test"
@@ -1247,9 +1239,8 @@ msgid "Use default image"
 msgstr "Usa'n un per defecte"
 
 #: templates/site/list-admins.html:12
-#, fuzzy
 msgid "Admins"
-msgstr "Admin"
+msgstr "Administradores"
 
 #: templates/site/smtp-config.html:10
 msgid "Email server configuration"
@@ -1277,7 +1268,7 @@ msgstr "Canviar l'adreça de correu"
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
-msgstr ""
+msgstr "Canvia el teu fus horari"
 
 #: templates/user/change-timezone.html:26
 msgid "Search for country or city name"
@@ -1297,9 +1288,8 @@ msgid "Users may include the following texts in their forms"
 msgstr "Usuaris podran incloure aquests textos en els seus formularis"
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:54
-#, fuzzy
 msgid "Delete account"
-msgstr "Crear una compta"
+msgstr "Eliminar un compte"
 
 #: templates/user/delete-account.html:13
 msgid "You will delete your account and the following data"
@@ -1322,7 +1312,7 @@ msgstr ""
 #: templates/user/fediverse-config.html:14
 #: templates/user/user-settings.html:159
 msgid "Fediverse connect"
-msgstr ""
+msgstr "connectat al Fedivers"
 
 #: templates/user/fediverse-config.html:17
 msgid "Publish your forms on the descentralized social media network"
@@ -1350,12 +1340,11 @@ msgstr ""
 
 #: templates/user/new-user.html:34 templates/user/reset-password.html:19
 msgid "eg: Peter cooks delicious food"
-msgstr ""
+msgstr "ex: en Peter cuina menjar deliciós"
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
-#, fuzzy
 msgid "Another eg: The cat living with me has fleas"
-msgstr "Un altre exemple: El meu gos té puces"
+msgstr "Un altre exemple: El meu gat té puces"
 
 #: templates/user/new-user.html:106
 msgid "We sent you an email!"
@@ -1409,9 +1398,8 @@ msgid "Preferred language"
 msgstr "Idioma preferit"
 
 #: templates/user/user-settings.html:91
-#, fuzzy
 msgid "Email notifications"
-msgstr "S'ha esborrat %s de la llista de editors"
+msgstr "Notificacions de correu electrònic"
 
 #: templates/user/user-settings.html:126 templates/user/user-settings.html:176
 msgid "Consentment texts"
@@ -1423,7 +1411,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:146
 msgid "Add and delete uploaded files"
-msgstr ""
+msgstr "Afegeix i elimina fitxers carregats"
 
 #: templates/user/user-settings.html:191
 msgid "My admin settings"
@@ -1438,9 +1426,8 @@ msgid "Notify me when new form has been created"
 msgstr "Avisa'm quan es creï un nou formulari"
 
 #: templates/user/user-settings.html:256
-#, fuzzy
 msgid "Delete my account"
-msgstr "Crear una compta"
+msgstr "Eliminar el meu compte"
 
 #: utils/consent_texts.py:115
 msgid "Please accept our terms and conditions."
@@ -1491,14 +1478,12 @@ msgid "Please accept our data protection policy"
 msgstr "Si us plau, accepta la nostra política de protecció de dades"
 
 #: utils/wtf.py:72
-#, fuzzy
 msgid "Enter your username"
-msgstr "Nom d'usuari"
+msgstr "Introduir nom d'usuària"
 
 #: utils/wtf.py:73
-#, fuzzy
 msgid "Enter your password"
-msgstr "Recuperar la contrasenya"
+msgstr "Introdueix la teva contrasenya"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
@@ -1515,7 +1500,7 @@ msgstr "Nova adreça de correu"
 
 #: utils/wtf.py:110
 msgid "Encryption"
-msgstr ""
+msgstr "Encriptació"
 
 #: utils/wtf.py:117
 msgid "Sender address"
@@ -1547,7 +1532,7 @@ msgstr ""
 
 #: utils/wtf.py:145
 msgid "Extensions"
-msgstr ""
+msgstr "Extensions"
 
 #: utils/wtf.py:152
 #, python-format
@@ -1555,9 +1540,8 @@ msgid "Unknown file extension: %s"
 msgstr ""
 
 #: utils/wtf.py:155
-#, fuzzy
 msgid "Descriptive text"
-msgstr "Editar el text"
+msgstr "Text descriptiu"
 
 #: utils/wtf.py:156
 #, fuzzy
@@ -1587,7 +1571,7 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
-msgstr ""
+msgstr "Un butó"
 
 #: utils/dispatcher/dispatcher.py:70
 msgid "Congratulations!"
@@ -1753,9 +1737,8 @@ msgid "Can't find username %s"
 msgstr "No es troba l'usuari %s"
 
 #: views/answers.py:78
-#, fuzzy
 msgid "Deleted an answer"
-msgstr "Es va recuperar una resposta"
+msgstr "Una resposta eliminada"
 
 #: views/answers.py:121
 #, fuzzy
@@ -1767,9 +1750,8 @@ msgid "We expected a number"
 msgstr "Esperàvem un número"
 
 #: views/answers.py:140
-#, fuzzy
 msgid "Deleted all answers"
-msgstr "Es va recuperar una resposta"
+msgstr "Totes les respostes eliminades"
 
 #: views/answers.py:144
 #, fuzzy, python-format
@@ -1816,9 +1798,8 @@ msgid "Slug is not available. %s"
 msgstr "La nom del formulari no és únic %sfitxa"
 
 #: views/form.py:220
-#, fuzzy
 msgid "Failed to save form"
-msgstr "Esborra el formulari"
+msgstr "No s'ha desat el formulari"
 
 #: views/form.py:223
 msgid "Form created"
@@ -1829,9 +1810,8 @@ msgid "Saved form OK"
 msgstr "Formulari guardat correctament"
 
 #: views/form.py:245
-#, fuzzy
 msgid "Edited GDPR text"
-msgstr "Editar el text"
+msgstr "Editar text GDPR"
 
 #: views/form.py:247 views/form.py:258 views/form.py:274 views/form.py:291
 #: views/site.py:102
@@ -1840,7 +1820,7 @@ msgstr "Hi ha hagut un error"
 
 #: views/form.py:270
 msgid "Edited Thankyou text"
-msgstr ""
+msgstr "Text d'agraïment editat"
 
 #: views/form.py:287
 msgid "Edited expiry text"
@@ -1894,7 +1874,7 @@ msgstr "S'ha esborrat %s de la llista de editors"
 #: views/form.py:432
 #, python-format
 msgid "Added shared notification: %s"
-msgstr ""
+msgstr "Notificacions compartides afegides: %s"
 
 #: views/form.py:449
 #, fuzzy, python-format
@@ -1925,9 +1905,9 @@ msgstr ""
 
 #. i18n: Expire when total answers set to: 3
 #: views/form.py:521
-#, fuzzy, python-format
+#, python-format
 msgid "Expire when total answers set to: %s"
-msgstr "Data de caducitat: %s"
+msgstr "Caduca quan el total de respostes sigui: %s"
 
 #: views/form.py:537
 msgid "You can edit the duplicate now"
@@ -1968,7 +1948,7 @@ msgstr "Aquest formulari no és públic"
 
 #: views/form.py:779
 msgid "Copied template OK. You can edit your new form"
-msgstr ""
+msgstr "Plantilla copiada OK. Ara ja pots editar el teu nou formulari"
 
 #: views/site.py:35
 msgid "Text saved OK"
@@ -2009,7 +1989,7 @@ msgstr "Favicon reiniciat correctament. Refresca amb &lt;F5&gt;"
 
 #: views/site.py:165
 msgid "An image file is required"
-msgstr ""
+msgstr "Es requereix un arxiu d'imatge"
 
 #: views/site.py:174
 #, fuzzy
@@ -2040,9 +2020,8 @@ msgid "Sent email OK"
 msgstr "Enviar el correu"
 
 #: views/site.py:271
-#, fuzzy
 msgid "Email address is not valid"
-msgstr "La teva adreça de correu és vàlida"
+msgstr "La teva adreça de correu no és vàlida"
 
 #: views/site.py:301
 msgid "Confguration saved OK"
@@ -2084,21 +2063,19 @@ msgstr "S'ha canviat el nom del lloc correctament"
 
 #: views/user.py:220
 msgid "Could not encrypt your access token"
-msgstr ""
+msgstr "El teu símbol d'accés no s'ha pogut encriptar"
 
 #: views/user.py:222
 msgid "Connected to the Fediverse"
-msgstr ""
+msgstr "Connectat al Fedivers"
 
 #: views/user.py:241
-#, fuzzy
 msgid "Fediverse configuration deleted OK"
-msgstr "Provar la configuració"
+msgstr "Configuració de Fedivers esborrada OK"
 
 #: views/user.py:254
-#, fuzzy
 msgid "Cannot delete. You are the only Admin on this site"
-msgstr "No es pot eliminar el lloc web actual"
+msgstr "No es pot eliminar. Ets l'única administradora al lloc web actual"
 
 #: views/user.py:262
 msgid "Thank you for using LiberaForms"
@@ -2494,4 +2471,3 @@ msgstr "Les credencials són errònies"
 
 #~ msgid "Super admin options"
 #~ msgstr "Opcions d'Admin"
-
