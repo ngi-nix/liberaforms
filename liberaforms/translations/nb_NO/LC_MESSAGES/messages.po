@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-08-04 12:36+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-09-08 20:50+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"Language-Team: Norwegian Bokmål <https://hosted.weblate.org/projects/"
+"liberaforms/server-liberaforms/nb_NO/>\n"
 "Language: nb_NO\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
@@ -30,11 +33,11 @@ msgstr ""
 #: templates/admin/list-users.html:43 templates/form/inspect-form.html:368
 #: templates/form/my-forms.html:51 templates/site/list-admins.html:26
 msgid "Created"
-msgstr ""
+msgstr "Opprettet"
 
 #: models/form.py:148 utils/form_helper.py:53
 msgid "Label"
-msgstr ""
+msgstr "Etikett"
 
 #. i18n: Acronym for 'Data Privacy Law'
 #: models/form.py:190 templates/admin/admin-panel.html:169
@@ -101,7 +104,7 @@ msgstr ""
 #: templates/admin/list-invites.html:27 templates/admin/list-users.html:48
 #: templates/site/list-admins.html:28 utils/wtf.py:27
 msgid "Email"
-msgstr ""
+msgstr "E-post"
 
 #. i18n: Used as column title
 #: models/site.py:370 templates/admin/delete-user.html:27
@@ -159,7 +162,7 @@ msgstr ""
 #. configuration
 #: templates/base.html:76
 msgid "Config"
-msgstr ""
+msgstr "Oppsett"
 
 #. Used as website menu title, linking to page about user's forms
 #: templates/base.html:95 templates/form/my-forms.html:15
@@ -180,7 +183,7 @@ msgstr ""
 #. enabled, linking to page to create new user
 #: templates/base.html:124
 msgid "Create an account"
-msgstr ""
+msgstr "Opprett en konto"
 
 #. Used as website menu title before logging in, linking to page to log in
 #: templates/base.html:131 templates/user/login.html:11
@@ -220,17 +223,17 @@ msgstr ""
 #. Option in admin settings about changing instance welcoming text
 #: templates/admin/admin-panel.html:40
 msgid "Front page text"
-msgstr ""
+msgstr "Forsidetekst"
 
 #. Icon for the website
 #: templates/admin/admin-panel.html:53
 msgid "Logo"
-msgstr ""
+msgstr "Logo"
 
 #. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
 msgid "Primary color"
-msgstr ""
+msgstr "Hovedfarge"
 
 #. Define the 'look' of emails
 #: templates/admin/admin-panel.html:79 templates/site/email-branding.html:16
@@ -254,7 +257,7 @@ msgstr ""
 
 #: templates/admin/admin-panel.html:130
 msgid "Default timezone"
-msgstr ""
+msgstr "Forvalgt tidssone"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:140
@@ -264,12 +267,12 @@ msgstr ""
 #. Whether to enable open registration, or remain invitation only
 #: templates/admin/admin-panel.html:145
 msgid "Invitation only"
-msgstr ""
+msgstr "Kun ved invitasjon"
 
 #. Noun, meaning agreement with terms/conditions of use
 #: templates/admin/admin-panel.html:166
 msgid "Consent"
-msgstr ""
+msgstr "Samtykke"
 
 #: templates/admin/admin-panel.html:168 templates/user/new-user.html:51
 msgid "Terms and conditions"
@@ -286,12 +289,12 @@ msgstr ""
 #: templates/user/consent.html:33 templates/user/user-settings.html:131
 #: templates/user/user-settings.html:151 templates/user/user-settings.html:181
 msgid "Edit"
-msgstr ""
+msgstr "Rediger"
 
 #. Which type of attachments are allowed
 #: templates/admin/admin-panel.html:186
 msgid "Attachment types"
-msgstr ""
+msgstr "Vedleggstyper"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:514
@@ -305,18 +308,19 @@ msgstr ""
 
 #. Settings about email server used by website to send email messages
 #: templates/admin/admin-panel.html:223 utils/wtf.py:108
+#, fuzzy
 msgid "Email server"
-msgstr ""
+msgstr "E-posttjener"
 
 #. Button to configure some option
 #: templates/admin/admin-panel.html:228 templates/user/user-settings.html:169
 msgid "Configure"
-msgstr ""
+msgstr "Sett opp"
 
 #. Title in Admin panel displaying info about installation
 #: templates/admin/admin-panel.html:238
 msgid "Installation"
-msgstr ""
+msgstr "Installasjonstekst"
 
 #: templates/admin/admin-panel.html:246
 msgid "Version"
@@ -343,7 +347,7 @@ msgstr ""
 
 #: templates/admin/change-author.html:34
 msgid "Current author"
-msgstr ""
+msgstr "Nåværende skaper"
 
 #: templates/admin/change-author.html:39
 msgid "You are going to change the author of this form."
@@ -352,7 +356,7 @@ msgstr ""
 #: templates/admin/change-author.html:41
 #: templates/answers/list-answers.html:341
 msgid "Are you sure?"
-msgstr ""
+msgstr "Er du sikker?"
 
 #. Username of current author of form
 #: templates/admin/change-author.html:54
@@ -376,7 +380,7 @@ msgstr ""
 #: templates/admin/list-forms.html:28 templates/form/inspect-form.html:352
 #: templates/form/share-form.html:43
 msgid "Author"
-msgstr ""
+msgstr "Skaper"
 
 #. Editor of the form
 #: templates/admin/change-author.html:88
@@ -387,7 +391,7 @@ msgstr ""
 #: templates/admin/delete-user.html:15 templates/admin/delete-user.html:73
 #: templates/admin/inspect-user.html:133
 msgid "Delete user"
-msgstr ""
+msgstr "Slett bruker"
 
 #: templates/admin/delete-user.html:18
 msgid "You are going to delete a user"
@@ -404,7 +408,7 @@ msgstr ""
 #: templates/admin/list-forms.html:26 templates/form/inspect-form.html:50
 #: templates/form/my-forms.html:48
 msgid "Name"
-msgstr ""
+msgstr "Navn"
 
 #. Table column title, indicating answers recived for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:159
@@ -413,7 +417,7 @@ msgstr ""
 #: templates/site/stats.html:46 templates/site/stats.html:122
 #: templates/user/statistics.html:31
 msgid "Answers"
-msgstr ""
+msgstr "Svar"
 
 #: templates/admin/delete-user.html:49
 msgid "Write the name of the user below"
@@ -421,7 +425,7 @@ msgstr ""
 
 #: templates/admin/delete-user.html:69
 msgid "Delete user and forms"
-msgstr ""
+msgstr "Slett bruker og skjemaer"
 
 #. Button to cancel operation
 #: templates/admin/delete-user.html:77 templates/admin/new-invite.html:53
@@ -444,7 +448,7 @@ msgstr ""
 #: templates/user/consent.html:61 templates/user/delete-account.html:58
 #: templates/user/new-user.html:93 templates/user/recover-password.html:25
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: templates/admin/inspect-user.html:16
 msgid "User details"
@@ -456,12 +460,12 @@ msgstr ""
 #: templates/admin/list-users.html:45 templates/form/inspect-form.html:373
 #: templates/site/list-admins.html:24
 msgid "Hostname"
-msgstr ""
+msgstr "Vertsnavn"
 
 #. Language selected by user
 #: templates/admin/inspect-user.html:38
 msgid "Language"
-msgstr ""
+msgstr "Språk"
 
 #. Whether the email of user was validated
 #: templates/admin/inspect-user.html:47
@@ -471,12 +475,12 @@ msgstr ""
 #. Whether user is able to upload attached documents to form
 #: templates/admin/inspect-user.html:58
 msgid "Attachments enabled"
-msgstr ""
+msgstr "Vedlegg påskrudd"
 
 #. Whether user is blocked by admin
 #: templates/admin/inspect-user.html:100
 msgid "Blocked by admin"
-msgstr ""
+msgstr "Blokkert av administrator"
 
 #: templates/admin/inspect-user.html:127
 msgid "Delete user and authored forms"
@@ -491,7 +495,7 @@ msgstr ""
 #: templates/admin/inspect-user.html:158 templates/admin/list-forms.html:29
 #: templates/form/inspect-form.html:109 templates/form/my-forms.html:52
 msgid "Public"
-msgstr ""
+msgstr "Offentlig"
 
 #: templates/admin/inspect-user.html:286 templates/form/inspect-form.html:42
 #: templates/site/stats.html:53 templates/site/stats.html:129
@@ -502,7 +506,7 @@ msgstr ""
 #: templates/admin/inspect-user.html:293 templates/site/stats.html:61
 #: templates/site/stats.html:137 templates/user/statistics.html:48
 msgid "New forms"
-msgstr ""
+msgstr "Nye skjemaer"
 
 #: templates/admin/inspect-user.html:301 templates/site/stats.html:68
 #: templates/site/stats.html:144 templates/user/statistics.html:55
@@ -524,23 +528,23 @@ msgstr ""
 #: templates/admin/list-invites.html:14 templates/admin/list-invites.html:69
 #: templates/admin/list-users.html:27
 msgid "Invitations"
-msgstr ""
+msgstr "Invitasjoner"
 
 #. Button to invite new user
 #: templates/admin/list-invites.html:19 templates/admin/list-users.html:22
 msgid "Invite a new user"
-msgstr ""
+msgstr "Inviter en ny bruker"
 
 #: templates/admin/list-invites.html:54 templates/answers/list-answers.html:342
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
 #: templates/user/fediverse-config.html:72
 #: templates/user/user-settings.html:262
 msgid "Delete"
-msgstr ""
+msgstr "Slett"
 
 #: templates/admin/list-invites.html:61
 msgid "Invitation message"
-msgstr ""
+msgstr "Invitasjonsmelding"
 
 #. Button to download answers received on form in CSV document format
 #: templates/admin/list-users.html:33 templates/answers/chart-answers.html:29
@@ -549,7 +553,7 @@ msgstr ""
 #: templates/answers/list-answers.html:52
 #: templates/answers/view-results.html:25 templates/site/list-admins.html:15
 msgid "Download CSV"
-msgstr ""
+msgstr "Last ned CSV"
 
 #. Title on /admin/invites/new page
 #: templates/admin/new-invite.html:13
@@ -582,17 +586,17 @@ msgstr ""
 
 #: templates/answers/chart-answers.html:94
 msgid "Multiple choice"
-msgstr ""
+msgstr "Flervalg"
 
 #: templates/answers/delete-all-answers.html:15
 #: templates/answers/delete-all-answers.html:42
 msgid "Delete answers"
-msgstr ""
+msgstr "Slett svar"
 
 #: templates/answers/delete-all-answers.html:18
 #: templates/form/inspect-form.html:527 views/form.py:164
 msgid "Form"
-msgstr ""
+msgstr "Skjema"
 
 #: templates/answers/delete-all-answers.html:21
 msgid "You are going to delete"
@@ -602,7 +606,7 @@ msgstr ""
 #: templates/form/delete-form.html:27 templates/form/expiration.html:151
 #: templates/site/delete-site.html:22
 msgid "answers"
-msgstr ""
+msgstr "svar"
 
 #: templates/answers/delete-all-answers.html:25
 msgid "Write the total number of answers below"
@@ -631,7 +635,7 @@ msgstr ""
 
 #: templates/answers/list-answers.html:88
 msgid "Delete all"
-msgstr ""
+msgstr "Slett alle"
 
 #: templates/answers/list-answers.html:164
 #: templates/answers/list-answers.html:166
@@ -640,7 +644,7 @@ msgstr ""
 
 #: templates/answers/list-answers.html:252
 msgid "Delete answer"
-msgstr ""
+msgstr "Slett svar"
 
 #: templates/answers/list-answers.html:296
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
@@ -657,7 +661,7 @@ msgstr ""
 
 #: templates/common/change-language.html:12
 msgid "Change language"
-msgstr ""
+msgstr "Endre språk"
 
 #: templates/form/_image-modal.html:41 templates/media/list-media.html:66
 msgid "A photo of a horse galloping on the beach."
@@ -665,7 +669,7 @@ msgstr ""
 
 #: templates/form/delete-form.html:22 templates/form/inspect-form.html:478
 msgid "Delete form"
-msgstr ""
+msgstr "Slett skjema"
 
 #: templates/form/delete-form.html:25
 msgid "You are going to delete this form and"
@@ -677,11 +681,11 @@ msgstr ""
 
 #: templates/form/edit-form.html:31
 msgid "Build your form here"
-msgstr ""
+msgstr "Bygg ditt skjema her"
 
 #: templates/form/edit-form.html:41
 msgid "Introduction text"
-msgstr ""
+msgstr "Introduksjonstekst"
 
 #: templates/form/edit-form.html:44
 msgid "This is a markdown editor, an easy way to write HTML."
@@ -710,7 +714,7 @@ msgstr ""
 
 #: templates/form/edit-form.html:265
 msgid "OK, use this URL"
-msgstr ""
+msgstr "OK, bruk denne nettadressen"
 
 #: templates/form/edit-form.html:316
 msgid "Cannot modify because an answer with this value exists in the database"
@@ -722,15 +726,15 @@ msgstr ""
 
 #: templates/form/expiration.html:48 templates/form/inspect-form.html:158
 msgid "Expired"
-msgstr ""
+msgstr "Utløpt"
 
 #: templates/form/expiration.html:55
 msgid "Expiration conditions"
-msgstr ""
+msgstr "Utløpsvilkår"
 
 #: templates/form/expiration.html:59
 msgid "Date / Time"
-msgstr ""
+msgstr "Dato/tid"
 
 #: templates/form/expiration.html:81 templates/site/smtp-config.html:56
 msgid "Save changes"
@@ -738,7 +742,7 @@ msgstr ""
 
 #: templates/form/expiration.html:93
 msgid "Fields"
-msgstr ""
+msgstr "Felter"
 
 #: templates/form/expiration.html:117
 msgid "Save max."
@@ -759,7 +763,7 @@ msgstr ""
 #: templates/form/expiration.html:166 templates/form/inspect-form.html:385
 #: templates/form/inspect-form.html:419 templates/main/index.html:43
 msgid "Edit text"
-msgstr ""
+msgstr "Rediger tekst"
 
 #: templates/form/expiration.html:171 templates/form/inspect-form.html:425
 msgid "Say something to the user if the form has expired"
@@ -781,7 +785,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:23
 msgid "Details"
-msgstr ""
+msgstr "Detaljer"
 
 #: templates/form/inspect-form.html:69
 msgid "Public URL"
@@ -791,7 +795,7 @@ msgstr ""
 #: templates/form/inspect-form.html:291 templates/form/inspect-form.html:355
 #: templates/form/share-form.html:138 templates/user/consent.html:30
 msgid "Disabled"
-msgstr ""
+msgstr "Avskrudd"
 
 #: templates/form/inspect-form.html:92
 msgid "Fediverse"
@@ -803,7 +807,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:134
 msgid "Expiration"
-msgstr ""
+msgstr "Utløp"
 
 #: templates/form/inspect-form.html:141
 msgid "This form has expired"
@@ -819,7 +823,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:185
 msgid "Not shared"
-msgstr ""
+msgstr "Ikke delt"
 
 #: templates/form/inspect-form.html:198 templates/form/share-form.html:79
 msgid "Share notifications"
@@ -835,7 +839,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:254
 msgid "Confirmation"
-msgstr ""
+msgstr "Bekreftelse"
 
 #: templates/form/inspect-form.html:297 templates/site/email-branding.html:54
 msgid "Personalize"
@@ -844,7 +848,7 @@ msgstr ""
 #: templates/form/inspect-form.html:312 templates/site/consent.html:30
 #: templates/user/consent.html:22
 msgid "Data protection"
-msgstr ""
+msgstr "Databeskyttelse"
 
 #: templates/form/inspect-form.html:327
 msgid "Use the template"
@@ -856,7 +860,7 @@ msgstr ""
 #: templates/user/consent.html:67 templates/user/new-user.html:66
 #: utils/consent_texts.py:61
 msgid "I agree"
-msgstr ""
+msgstr "Jeg samtykker"
 
 #: templates/form/inspect-form.html:380
 msgid "After replying to the form"
@@ -884,7 +888,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:484
 msgid "Delete form and answers"
-msgstr ""
+msgstr "Slett skjema og svar"
 
 #: templates/form/inspect-form.html:491
 msgid "Admin options"
@@ -896,7 +900,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:502
 msgid "Disable"
-msgstr ""
+msgstr "Skru av"
 
 #: templates/form/inspect-form.html:508
 msgid "Enable"
@@ -904,7 +908,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:533
 msgid "Edit form"
-msgstr ""
+msgstr "Rediger skjema"
 
 #: templates/form/inspect-form.html:547 templates/form/preview-form.html:26
 #: templates/form/view-form.html:30
@@ -934,7 +938,7 @@ msgstr ""
 
 #: templates/form/list-log.html:28
 msgid "Message"
-msgstr ""
+msgstr "Melding"
 
 #: templates/form/list-templates.html:11
 msgid "Form templates"
@@ -958,7 +962,7 @@ msgstr ""
 
 #: templates/form/my-forms.html:27
 msgid "New form"
-msgstr ""
+msgstr "Nytt skjema"
 
 #: templates/form/my-forms.html:53 templates/site/consent.html:38
 msgid "Shared"
@@ -970,16 +974,16 @@ msgstr ""
 
 #: templates/form/preview-form.html:45
 msgid "Create a form with this template"
-msgstr ""
+msgstr "Opprett et skjema med denne malen"
 
 #: templates/form/preview-form.html:50 templates/site/consent.html:105
 #: templates/site/edit-host-url.html:63 templates/user/new-user.html:91
 msgid "Go back"
-msgstr ""
+msgstr "Gå tilbake"
 
 #: templates/form/preview-form.html:64 templates/form/preview-form.html:75
 msgid "Edit again"
-msgstr ""
+msgstr "Rediger igjen"
 
 #: templates/form/share-form.html:31
 msgid "Users listed here have the <b>same permissions</b> as you"
@@ -1000,7 +1004,7 @@ msgstr ""
 
 #: templates/form/share-form.html:113
 msgid "Add address"
-msgstr ""
+msgstr "Legg til adresse"
 
 #: templates/form/share-form.html:127
 msgid "Share results"
@@ -1062,7 +1066,7 @@ msgstr ""
 
 #: templates/site/change-icon.html:16
 msgid "Change site icon"
-msgstr ""
+msgstr "Endre sidens ikon"
 
 #: templates/site/change-icon.html:18
 msgid "Upload an image"
@@ -1070,7 +1074,7 @@ msgstr ""
 
 #: templates/site/change-icon.html:24
 msgid "A square image"
-msgstr ""
+msgstr "Et kvadratisk bilde"
 
 #: templates/site/change-icon.html:25 templates/site/email-branding.html:64
 msgid "Keep the kilobytes to a minimum"
@@ -1082,11 +1086,11 @@ msgstr ""
 
 #: templates/site/change-sitename.html:10
 msgid "Change site name"
-msgstr ""
+msgstr "Endre sidens navn"
 
 #: templates/site/change-sitename.html:12
 msgid "New site name"
-msgstr ""
+msgstr "Nytt sidenavn"
 
 #: templates/site/change-sitename.html:28 templates/user/new-user.html:89
 msgid "Submit"
@@ -1094,7 +1098,7 @@ msgstr ""
 
 #: templates/site/consent.html:14
 msgid "Consent texts"
-msgstr ""
+msgstr "Samtykketekster"
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
@@ -1111,7 +1115,7 @@ msgstr ""
 
 #: templates/site/consent.html:39
 msgid "No"
-msgstr ""
+msgstr "Nei"
 
 #: templates/site/consent.html:44
 msgid "Add to New user form"
@@ -1123,7 +1127,7 @@ msgstr ""
 
 #: templates/site/consent.html:88 templates/user/consent.html:72
 msgid "Required"
-msgstr ""
+msgstr "Påkrevd"
 
 #: templates/site/consent.html:96
 msgid "Form consent texts"
@@ -1135,7 +1139,7 @@ msgstr ""
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
-msgstr ""
+msgstr "Slett side"
 
 #: templates/site/delete-site.html:13
 msgid "You are going to delete this Site"
@@ -1215,7 +1219,7 @@ msgstr ""
 
 #: templates/site/stats.html:77 templates/site/stats.html:153
 msgid "New users"
-msgstr ""
+msgstr "Nye brukere"
 
 #: templates/site/stats.html:85 templates/site/stats.html:161
 msgid "Total users"
@@ -1223,11 +1227,11 @@ msgstr ""
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr ""
+msgstr "Endre e-postadresse"
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
-msgstr ""
+msgstr "Endre din tidssone"
 
 #: templates/user/change-timezone.html:26
 msgid "Search for country or city name"
@@ -1240,7 +1244,7 @@ msgstr ""
 
 #: templates/user/consent.html:14
 msgid "Default consent text"
-msgstr ""
+msgstr "Forvalgt samtykketekst"
 
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
@@ -1248,7 +1252,7 @@ msgstr ""
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:54
 msgid "Delete account"
-msgstr ""
+msgstr "Slett konto"
 
 #: templates/user/delete-account.html:13
 msgid "You will delete your account and the following data"
@@ -1277,11 +1281,11 @@ msgstr ""
 
 #: templates/user/fediverse-config.html:37
 msgid "Generate"
-msgstr ""
+msgstr "Generer"
 
 #: templates/user/login.html:25
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Glemt passordet ditt?"
 
 #: templates/user/new-user.html:18
 msgid "Letters and numbers. No accents."
@@ -1317,15 +1321,15 @@ msgstr ""
 
 #: templates/user/reset-password.html:12
 msgid "Change password"
-msgstr ""
+msgstr "Endre passord"
 
 #: templates/user/reset-password.html:32
 msgid "Reset password"
-msgstr ""
+msgstr "Tilbakestill passord"
 
 #: templates/user/statistics.html:12
 msgid "My statistics"
-msgstr ""
+msgstr "Min statistikk"
 
 #: templates/user/user-settings.html:12
 #, python-format
@@ -1342,7 +1346,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:33 utils/wtf.py:86
 msgid "Email address"
-msgstr ""
+msgstr "E-postadresse"
 
 #: templates/user/user-settings.html:46 utils/wtf.py:28 utils/wtf.py:64
 #: utils/wtf.py:97 utils/wtf.py:116
@@ -1355,11 +1359,11 @@ msgstr ""
 
 #: templates/user/user-settings.html:91
 msgid "Email notifications"
-msgstr ""
+msgstr "E-postmerknader"
 
 #: templates/user/user-settings.html:126 templates/user/user-settings.html:176
 msgid "Consentment texts"
-msgstr ""
+msgstr "Samtykketekster"
 
 #: templates/user/user-settings.html:140
 msgid "Media"
@@ -1371,7 +1375,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:191
 msgid "My admin settings"
-msgstr ""
+msgstr "Mine administratorinnstillinger"
 
 #: templates/user/user-settings.html:196
 msgid "Notify me when new user has registered"
@@ -1383,7 +1387,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:256
 msgid "Delete my account"
-msgstr ""
+msgstr "Slett kontoen min"
 
 #: utils/consent_texts.py:115
 msgid "Please accept our terms and conditions."
@@ -1433,11 +1437,11 @@ msgstr ""
 
 #: utils/wtf.py:72
 msgid "Enter your username"
-msgstr ""
+msgstr "Skriv inn brukernavnet"
 
 #: utils/wtf.py:73
 msgid "Enter your password"
-msgstr ""
+msgstr "Skriv inn passordet ditt"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
@@ -1449,11 +1453,11 @@ msgstr ""
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr ""
+msgstr "Ny e-postadresse"
 
 #: utils/wtf.py:110
 msgid "Encryption"
-msgstr ""
+msgstr "Kryptering"
 
 #: utils/wtf.py:117
 msgid "Sender address"
@@ -1473,15 +1477,15 @@ msgstr ""
 
 #: utils/wtf.py:133
 msgid "HTML color code"
-msgstr ""
+msgstr "HTML-fargemodus"
 
 #: utils/wtf.py:136
 msgid "Not a valid HTML color code"
-msgstr ""
+msgstr "Ikke en gyldig HTML-fargekode"
 
 #: utils/wtf.py:142
 msgid "Not a valid time zone"
-msgstr ""
+msgstr "Ikke en gyldig tidssone"
 
 #: utils/wtf.py:145
 msgid "Extensions"
@@ -1494,7 +1498,7 @@ msgstr ""
 
 #: utils/wtf.py:155
 msgid "Descriptive text"
-msgstr ""
+msgstr "Beskrivende tekst"
 
 #: utils/wtf.py:156
 msgid "Select a file"
@@ -1510,11 +1514,11 @@ msgstr ""
 
 #: utils/wtf.py:191
 msgid "Fediverse node"
-msgstr ""
+msgstr "Fediversnode"
 
 #: utils/wtf.py:194
 msgid "Access token"
-msgstr ""
+msgstr "Tilgangssymbol"
 
 #: utils/wtf.py:203
 msgid "Short description"
@@ -1522,11 +1526,11 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
-msgstr ""
+msgstr "En knapp"
 
 #: utils/dispatcher/dispatcher.py:70
 msgid "Congratulations!"
-msgstr ""
+msgstr "Gratulerer"
 
 #: utils/dispatcher/dispatcher.py:72
 msgid "MAIL test"
@@ -1534,11 +1538,11 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:82
 msgid "Join LiberaForms"
-msgstr ""
+msgstr "Ta del i LiberaForms"
 
 #: utils/dispatcher/dispatcher.py:85
 msgid "Invitation to LiberaForms"
-msgstr ""
+msgstr "Invitasjon til LiberaForms"
 
 #: utils/dispatcher/dispatcher.py:93
 msgid "Please use this link to create a new password"
@@ -1578,9 +1582,9 @@ msgid "LiberaForms. New user notification"
 msgstr ""
 
 #: utils/dispatcher/dispatcher.py:145
-#, python-format
+#, fuzzy, python-format
 msgid "New form '%s' created at %s"
-msgstr ""
+msgstr "Nytt skjema «%s» opprettet i %s"
 
 #: utils/dispatcher/dispatcher.py:147
 msgid "LiberaForms. New form notification"
@@ -1597,7 +1601,7 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:178
 msgid "Confirmation message"
-msgstr ""
+msgstr "Bekreftelsesmelding"
 
 #: utils/dispatcher/dispatcher.py:184
 #, python-format
@@ -1618,16 +1622,16 @@ msgstr ""
 
 #: views/admin.py:103
 msgid "Cannot delete root user"
-msgstr ""
+msgstr "Kan ikke slette rot-bruker"
 
 #: views/admin.py:106
 msgid "Cannot delete yourself"
-msgstr ""
+msgstr "Kan ikke slette deg selv"
 
 #: views/admin.py:111
 #, python-format
 msgid "Deleted user '%s'"
-msgstr ""
+msgstr "Slettet brukeren «%s»"
 
 #: views/admin.py:114
 msgid "Username does not match"
@@ -1639,7 +1643,7 @@ msgstr ""
 #: views/form.py:377 views/form.py:389 views/form.py:424 views/form.py:460
 #: views/form.py:531 views/form.py:546 views/form.py:646
 msgid "Can't find that form"
-msgstr ""
+msgstr "Finner ikke det skjemaet"
 
 #: views/admin.py:171
 #, python-format
@@ -1663,7 +1667,7 @@ msgstr ""
 #: views/admin.py:231
 #, python-format
 msgid "Changed author from %s to %s"
-msgstr ""
+msgstr "Endret skaper fra %s til %s"
 
 #: views/admin.py:235
 msgid "Changed author OK"
@@ -1677,11 +1681,11 @@ msgstr ""
 #: views/admin.py:243
 #, python-format
 msgid "Can't find username %s"
-msgstr ""
+msgstr "Finner ikke brukernavnet «%s»"
 
 #: views/answers.py:78
 msgid "Deleted an answer"
-msgstr ""
+msgstr "Slettet ett svar"
 
 #: views/answers.py:121
 msgid "Modified an answer"
@@ -1693,12 +1697,12 @@ msgstr ""
 
 #: views/answers.py:140
 msgid "Deleted all answers"
-msgstr ""
+msgstr "Slettet alle svar"
 
 #: views/answers.py:144
 #, python-format
 msgid "Deleted %s answers"
-msgstr ""
+msgstr "Slettet %s svar"
 
 #: views/answers.py:148
 msgid "Number of answers does not match"
@@ -1756,7 +1760,7 @@ msgstr ""
 #: views/form.py:247 views/form.py:258 views/form.py:274 views/form.py:291
 #: views/site.py:102
 msgid "An error occured"
-msgstr ""
+msgstr "En feil inntraff"
 
 #: views/form.py:270
 msgid "Edited Thankyou text"
@@ -1764,12 +1768,12 @@ msgstr ""
 
 #: views/form.py:287
 msgid "Edited expiry text"
-msgstr ""
+msgstr "Rediger utløpstekst"
 
 #: views/form.py:307
 #, python-format
 msgid "Deleted '%s' and %s answers"
-msgstr ""
+msgstr "Slettet «%s» og %s svar"
 
 #: views/form.py:313
 msgid "Form name does not match"
@@ -1790,7 +1794,7 @@ msgstr ""
 
 #: views/form.py:395
 msgid "Can't find a user with that email"
-msgstr ""
+msgstr "Finner ingen bruker med den e-postadressen"
 
 #: views/form.py:398
 #, python-format
@@ -1836,12 +1840,12 @@ msgstr ""
 
 #: views/form.py:486
 msgid "Missing date or time"
-msgstr ""
+msgstr "Manglende dato eller tid"
 
 #: views/form.py:503
 #, python-format
 msgid "Field '%s' expiry set to: %s"
-msgstr ""
+msgstr "Utløp for feltet «%s» er satt til: %s"
 
 #. i18n: Expire when total answers set to: 3
 #: views/form.py:521
@@ -1871,7 +1875,7 @@ msgstr ""
 #: views/form.py:605
 #, python-format
 msgid "Data protection consent set to: %s"
-msgstr ""
+msgstr "Databeskyttelsessamtykke satt til: %s"
 
 #: views/form.py:616
 #, python-format
@@ -1896,7 +1900,7 @@ msgstr ""
 
 #: views/site.py:47
 msgid "Couldn't find that token"
-msgstr ""
+msgstr "Fant ikke det symbolet"
 
 #: views/site.py:50 views/user.py:290
 msgid "Your petition has expired"
@@ -1928,7 +1932,7 @@ msgstr ""
 
 #: views/site.py:165
 msgid "An image file is required"
-msgstr ""
+msgstr "En bildefil kreves"
 
 #: views/site.py:174
 msgid "Logo reset OK. Refresh with  &lt;F5&gt;"
@@ -1956,7 +1960,7 @@ msgstr ""
 
 #: views/site.py:271
 msgid "Email address is not valid"
-msgstr ""
+msgstr "E-postadressen er ikke gyldig"
 
 #: views/site.py:301
 msgid "Confguration saved OK"
@@ -1997,11 +2001,11 @@ msgstr ""
 
 #: views/user.py:220
 msgid "Could not encrypt your access token"
-msgstr ""
+msgstr "Kunne ikke kryptere tilgangssymbolet ditt"
 
 #: views/user.py:222
 msgid "Connected to the Fediverse"
-msgstr ""
+msgstr "Tilkoblet til Fediverset"
 
 #: views/user.py:241
 msgid "Fediverse configuration deleted OK"
@@ -2025,4 +2029,4 @@ msgstr ""
 
 #: views/user.py:336
 msgid "Bad credentials"
-msgstr ""
+msgstr "Feilaktige identitetsdetaljer"
