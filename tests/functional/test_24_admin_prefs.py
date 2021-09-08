@@ -16,7 +16,7 @@ from .utils import login, logout
 class TestAdmin():
     """ Tests admin's admin preferences
     """
-    def test_toggle_new_user_notification(self, users, admin_client, anon_client):
+    def test_toggle_new_user_notification(self, users, client, anon_client):
         """ Tests admin permission
             Tests POST only
             Tests toggle bool
@@ -29,19 +29,19 @@ class TestAdmin():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        #login(admin_client, users['admin'])
-        response = admin_client.get(
+        login(client, users['admin'])
+        response = client.get(
                         url,
                         follow_redirects=True,
                     )
         assert response.status_code == 405
         notification = g.current_user.admin["notifyNewUser"]
-        response = admin_client.post(url)
+        response = client.post(url)
         assert response.status_code == 200
         assert g.current_user.admin["notifyNewUser"] != notification
         assert type(g.current_user.admin["notifyNewUser"]) == type(bool())
 
-    def test_toggle_new_form_notification(self, users, admin_client, anon_client):
+    def test_toggle_new_form_notification(self, users, client, anon_client):
         """ Tests admin permission
             Tests POST only
             Tests toggle bool
@@ -54,8 +54,8 @@ class TestAdmin():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-
-        response = admin_client.get(
+        login(client, users['admin'])
+        response = client.get(
                         url,
                         follow_redirects=True,
                     )
@@ -63,10 +63,10 @@ class TestAdmin():
         #assert g.current_user.username == users['admin']['username']
         assert response.status_code == 405
         notification = g.current_user.admin["notifyNewForm"]
-        response = admin_client.post(url)
+        response = client.post(url)
         assert response.status_code == 200
         assert g.current_user.admin["notifyNewForm"] != notification
         assert type(g.current_user.admin["notifyNewForm"]) == type(bool())
 
-    def test_toggle_newuser_uploadsenabled(self, users, admin_client, anon_client):
+    def test_toggle_newuser_uploadsenabled(self, users, client, anon_client):
         pass

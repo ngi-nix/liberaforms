@@ -15,53 +15,24 @@ git clone ..
 
 ## Configuration
 
-```
-mv config.cfg .env
-```
-
-Edit `.env` and add these lines
+The configuration has changed. The file is now called `.env`
 
 ```
-# See docs/upload.md
-ENABLE_UPLOADS = False
-# 1024 * 500 = 512000 = 500 KiB
-MAX_MEDIA_SIZE=512000
-# 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
-MAX_ATTACHMENT_SIZE=1572864
-ENABLE_REMOTE_STORAGE=False
-
-# Logging [watched|stream]
-LOG_TYPE=watched
-LOG_DIR=./logs
-
-FLASK_ENV=production
-FLASK_CONFIG=production
+cp dotenv.example .env
 ```
-See a complete example at `./dotenv.example`
 
+Edit `.env` and adjust
+
+The `DB_USER` and `DB_PASSWORD` are the values you used during the mongo - postgres migration
 
 ## Nginx
 
 Nginx is much faster serving static files than Flask.
 We have added new locations to take load off the LiberaForms app.
 
-```
-location /static/ {
-    alias  /path/to/liberaforms/static;
-}
-location /favicon.ico {
-    alias /path/to/liberaforms/uploads/media/brand/favicon.ico;
-}
-location /brand/emailheader.png {
-    alias  /path/to/liberaforms/uploads/media/emailheader.png;
-}
-location /file/media/ {
-    alias /path/to/liberaforms/uploads/media/;
-}
-```
-See `docs/nginx.example` for a complete example configuration.
+See `docs/nginx.example` and adjust your nginx config.
 
 
-## Site icon
+## Caveats
 
 The favicon file type has been changed to `ico`. You need to upload your site icon (`png` or `jpg`) again. It will be converted to `ico` for you.
