@@ -8,13 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-08-04 12:36+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2021-09-09 23:33+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"Language-Team: French <https://hosted.weblate.org/projects/liberaforms/"
+"server-liberaforms/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 4.8.1-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
@@ -101,7 +104,7 @@ msgstr ""
 #: templates/admin/list-invites.html:27 templates/admin/list-users.html:48
 #: templates/site/list-admins.html:28 utils/wtf.py:27
 msgid "Email"
-msgstr ""
+msgstr "Courriel"
 
 #. i18n: Used as column title
 #: models/site.py:370 templates/admin/delete-user.html:27
@@ -215,7 +218,7 @@ msgstr ""
 #: templates/user/user-settings.html:59 templates/user/user-settings.html:70
 #: templates/user/user-settings.html:83
 msgid "Change"
-msgstr ""
+msgstr "Changer"
 
 #. Option in admin settings about changing instance welcoming text
 #: templates/admin/admin-panel.html:40
@@ -306,7 +309,7 @@ msgstr ""
 #. Settings about email server used by website to send email messages
 #: templates/admin/admin-panel.html:223 utils/wtf.py:108
 msgid "Email server"
-msgstr ""
+msgstr "Serveur de messagerie"
 
 #. Button to configure some option
 #: templates/admin/admin-panel.html:228 templates/user/user-settings.html:169
@@ -334,7 +337,7 @@ msgstr ""
 #: templates/admin/change-author.html:22 templates/admin/change-author.html:67
 #: templates/form/inspect-form.html:519
 msgid "Change author"
-msgstr ""
+msgstr "Changer l'auteur"
 
 #. Table row showing form site, instance
 #: templates/admin/change-author.html:29
@@ -466,7 +469,7 @@ msgstr ""
 #. Whether the email of user was validated
 #: templates/admin/inspect-user.html:47
 msgid "Validated email"
-msgstr ""
+msgstr "Courriel validé"
 
 #. Whether user is able to upload attached documents to form
 #: templates/admin/inspect-user.html:58
@@ -563,7 +566,7 @@ msgstr ""
 #. Button to send new user invitation message via email
 #: templates/admin/new-invite.html:47
 msgid "Send email"
-msgstr ""
+msgstr "Envoyer un courriel"
 
 #: templates/answers/chart-answers.html:21
 #: templates/answers/chart-answers.html:46 templates/form/inspect-form.html:29
@@ -827,7 +830,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:206 templates/form/inspect-form.html:214
 msgid "Send emails to other people"
-msgstr ""
+msgstr "Envoyer des courriels aux autres personnes"
 
 #: templates/form/inspect-form.html:227 templates/form/share-form.html:181
 msgid "Restricted access"
@@ -913,7 +916,7 @@ msgstr ""
 
 #: templates/form/inspect-form.html:563 templates/form/view-form.html:57
 msgid "Send me confirmation by mail"
-msgstr ""
+msgstr "M'envoyer une confirmation par courriel"
 
 #: templates/form/inspect-form.html:590 templates/form/preview-form.html:35
 #: templates/form/view-form.html:87 templates/site/smtp-config.html:84
@@ -1000,7 +1003,7 @@ msgstr ""
 
 #: templates/form/share-form.html:113
 msgid "Add address"
-msgstr ""
+msgstr "Ajouter une adresse"
 
 #: templates/form/share-form.html:127
 msgid "Share results"
@@ -1046,7 +1049,7 @@ msgstr ""
 
 #: templates/media/list-media.html:35 templates/media/list-media.html:56
 msgid "Upload a file"
-msgstr ""
+msgstr "Téléverser un fichier"
 
 #: templates/media/list-media.html:41
 msgid "These files can be included in your forms."
@@ -1058,7 +1061,7 @@ msgstr ""
 
 #: templates/media/list-media.html:94 templates/site/change-icon.html:38
 msgid "Upload"
-msgstr ""
+msgstr "Téléverser"
 
 #: templates/site/change-icon.html:16
 msgid "Change site icon"
@@ -1066,7 +1069,7 @@ msgstr ""
 
 #: templates/site/change-icon.html:18
 msgid "Upload an image"
-msgstr ""
+msgstr "Téléverser une image"
 
 #: templates/site/change-icon.html:24
 msgid "A square image"
@@ -1183,11 +1186,11 @@ msgstr ""
 
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
-msgstr ""
+msgstr "LiberaForms enverra occasionnellement des courriels."
 
 #: templates/site/email-branding.html:24
 msgid "Example email:"
-msgstr ""
+msgstr "Courriel d'exemple :"
 
 #: templates/site/email-branding.html:46
 msgid "Send test"
@@ -1203,7 +1206,7 @@ msgstr ""
 
 #: templates/site/smtp-config.html:10
 msgid "Email server configuration"
-msgstr ""
+msgstr "Configuration du serveur de messagerie"
 
 #: templates/site/smtp-config.html:67
 msgid "Test configuration"
@@ -1223,7 +1226,7 @@ msgstr ""
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr ""
+msgstr "Changer l'adresse courriel"
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
@@ -1289,7 +1292,7 @@ msgstr ""
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
 msgid "Use a password with spaces and/or special characters."
-msgstr ""
+msgstr "Utilisez un mot de passe avec des espaces ou des caractères spéciaux"
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
 msgid "We suggest you use a sentence you will remember."
@@ -1305,7 +1308,7 @@ msgstr ""
 
 #: templates/user/new-user.html:106
 msgid "We sent you an email!"
-msgstr ""
+msgstr "Nous vous avons envoyé un courriel !"
 
 #: templates/user/recover-password.html:11
 msgid "Recover password"
@@ -1334,7 +1337,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:18
 msgid "Please validate your email to continue"
-msgstr ""
+msgstr "Veuillez confirmer votre adresse courriel pour continuer"
 
 #: templates/user/user-settings.html:24
 msgid "Validate"
@@ -1342,7 +1345,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:33 utils/wtf.py:86
 msgid "Email address"
-msgstr ""
+msgstr "Adresse courriel"
 
 #: templates/user/user-settings.html:46 utils/wtf.py:28 utils/wtf.py:64
 #: utils/wtf.py:97 utils/wtf.py:116
@@ -1355,7 +1358,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:91
 msgid "Email notifications"
-msgstr ""
+msgstr "Notifications par courriel"
 
 #: templates/user/user-settings.html:126 templates/user/user-settings.html:176
 msgid "Consentment texts"
@@ -1367,7 +1370,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:146
 msgid "Add and delete uploaded files"
-msgstr ""
+msgstr "Ajouter et supprimer les fichiers téléversés"
 
 #: templates/user/user-settings.html:191
 msgid "My admin settings"
@@ -1417,7 +1420,7 @@ msgstr ""
 
 #: utils/wtf.py:45 utils/wtf.py:94 utils/wtf.py:129
 msgid "Please use a different email address"
-msgstr ""
+msgstr "Veuillez utiliser une autre adresse courriel"
 
 #: utils/wtf.py:49 utils/wtf.py:104
 msgid "Your password is weak"
@@ -1441,15 +1444,15 @@ msgstr ""
 
 #: utils/wtf.py:77
 msgid "That is not your username"
-msgstr ""
+msgstr "Ce n'est pas votre nom d'utilisateur"
 
 #: utils/wtf.py:82
 msgid "That is not your password"
-msgstr ""
+msgstr "Ce n'est pas votre mot de passe"
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr ""
+msgstr "Nouvelle adresse courriel"
 
 #: utils/wtf.py:110
 msgid "Encryption"
@@ -1461,7 +1464,7 @@ msgstr ""
 
 #: utils/wtf.py:123
 msgid "New user's email"
-msgstr ""
+msgstr "Courriel du nouvel utilisateur"
 
 #: utils/wtf.py:124
 msgid "Include message"
@@ -1514,7 +1517,7 @@ msgstr ""
 
 #: utils/wtf.py:194
 msgid "Access token"
-msgstr ""
+msgstr "Jeton d'accès"
 
 #: utils/wtf.py:203
 msgid "Short description"
@@ -1522,7 +1525,7 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
-msgstr ""
+msgstr "Un bouton"
 
 #: utils/dispatcher/dispatcher.py:70
 msgid "Congratulations!"
@@ -1546,7 +1549,7 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:94
 msgid "If you did not request this email you can ignore it"
-msgstr ""
+msgstr "Si vous n'avez pas demandé ce courriel, vous pouvez l'ignorer."
 
 #: utils/dispatcher/dispatcher.py:98
 msgid "Recover your password"
@@ -1558,15 +1561,15 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:110
 msgid "Use this link to validate your email"
-msgstr ""
+msgstr "Utilisez ce lien pour valider votre adresse courriel"
 
 #: utils/dispatcher/dispatcher.py:114
 msgid "Validate email"
-msgstr ""
+msgstr "Courriel validé"
 
 #: utils/dispatcher/dispatcher.py:117
 msgid "LiberaForms. Change email"
-msgstr ""
+msgstr "LiberaForms. Changer de courriel"
 
 #: utils/dispatcher/dispatcher.py:128
 #, python-format
@@ -1639,7 +1642,7 @@ msgstr ""
 #: views/form.py:377 views/form.py:389 views/form.py:424 views/form.py:460
 #: views/form.py:531 views/form.py:546 views/form.py:646
 msgid "Can't find that form"
-msgstr ""
+msgstr "Impossible de trouver ce formulaire"
 
 #: views/admin.py:171
 #, python-format
@@ -1677,7 +1680,7 @@ msgstr ""
 #: views/admin.py:243
 #, python-format
 msgid "Can't find username %s"
-msgstr ""
+msgstr "Impossible de trouver le nom d'utilisateur %s"
 
 #: views/answers.py:78
 msgid "Deleted an answer"
@@ -1790,7 +1793,7 @@ msgstr ""
 
 #: views/form.py:395
 msgid "Can't find a user with that email"
-msgstr ""
+msgstr "Impossible d'ajouter un utilisateur avec ce courriel"
 
 #: views/form.py:398
 #, python-format
@@ -1851,7 +1854,7 @@ msgstr ""
 
 #: views/form.py:537
 msgid "You can edit the duplicate now"
-msgstr ""
+msgstr "Vous pouvez modifier le duplicata maintenant"
 
 #: views/form.py:561
 #, python-format
@@ -1880,11 +1883,11 @@ msgstr ""
 
 #: views/form.py:653
 msgid "That form has expired"
-msgstr ""
+msgstr "Ce formulaire a expiré"
 
 #: views/form.py:655
 msgid "That form is not public"
-msgstr ""
+msgstr "Ce formulaire n'est pas public"
 
 #: views/form.py:779
 msgid "Copied template OK. You can edit your new form"
@@ -1908,7 +1911,7 @@ msgstr ""
 
 #: views/site.py:80
 msgid "We may have sent you an email"
-msgstr ""
+msgstr "Nous vous avons peut-être envoyé un courriel"
 
 #: views/site.py:130
 msgid "Site name changed OK"
@@ -1952,11 +1955,11 @@ msgstr ""
 
 #: views/site.py:267
 msgid "Sent email OK"
-msgstr ""
+msgstr "Courriel bien envoyé"
 
 #: views/site.py:271
 msgid "Email address is not valid"
-msgstr ""
+msgstr "L'adresse courriel n'est paa valide"
 
 #: views/site.py:301
 msgid "Confguration saved OK"
@@ -1985,7 +1988,7 @@ msgstr ""
 #: views/user.py:128 views/user.py:163
 #, python-format
 msgid "We have sent an email to %s"
-msgstr ""
+msgstr "Nous avons envoyé un courriel à %s"
 
 #: views/user.py:179
 msgid "Password changed OK"
@@ -2021,7 +2024,7 @@ msgstr ""
 
 #: views/user.py:302
 msgid "Your email address is valid"
-msgstr ""
+msgstr "Votre adresse électronique est valide"
 
 #: views/user.py:336
 msgid "Bad credentials"
