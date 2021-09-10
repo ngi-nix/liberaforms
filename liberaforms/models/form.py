@@ -235,8 +235,8 @@ class Form(db.Model, CRUD):
     def get_confirmation_email_address(self, answer):
         for element in self.structure:
             if Form.is_email_field(element):
-                if element["name"] in answer and answer[element["name"]]:
-                    return answer[element["name"]].strip()
+                if element["name"] in answer.data and answer.data[element["name"]]:
+                    return answer.data[element["name"]].strip()
         return False
 
     def get_answers(self, oldest_first=False, **kwargs):
