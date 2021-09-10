@@ -65,7 +65,7 @@ def edit_form(form_id=None):
     queriedForm=None
     if form_id:
         if session['form_id'] != str(form_id):
-            flash_text = _("Something went wrong. id does not match session['form_id']")
+            flash_text = _("Something went wrong. ID does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
         queriedForm = g.current_user.get_form(form_id, is_editor=True)
