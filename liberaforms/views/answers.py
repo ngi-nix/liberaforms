@@ -38,7 +38,7 @@ def list_answers(form_id):
 
 @answers_bp.route('/forms/answers/stats/<int:form_id>', methods=['GET'])
 @enabled_user_required
-def answer_stats(form_id):
+def answers_stats(form_id):
     queriedForm = g.current_user.get_form(form_id)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
@@ -48,7 +48,7 @@ def answer_stats(form_id):
 
 @answers_bp.route('/forms/csv/<int:form_id>', methods=['GET'])
 @enabled_user_required
-def csv_form(form_id):
+def answers_csv(form_id):
     queriedForm = g.current_user.get_form(form_id)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')

@@ -12,111 +12,25 @@
 <div class="container">
   <div class="row"
        style="font-size:1.5em">
-      <div class="col">
-        {% if form_user['is_editor'] == True %}
-        <a class="btn btn-primary btn-sm"
-           role="button"
-           href="/forms/view/{{form.id}}">
-           {%trans%}Form details{%endtrans%}
-        </a>
-        {% endif %}
-        {{ form.slug }}
-      </div>
-
-      <div class="col-auto">
+    <div class="col mb-1">
+      {% if form_user['is_editor'] == True %}
       <a class="btn btn-primary btn-sm"
          role="button"
-         href="/forms/answers/stats/{{form.id}}">
-         {%trans%}Graphs{%endtrans%}
-        <i class="fa fa-bar-chart" aria-hidden="true"></i>
+         href="/forms/view/{{form.id}}">
+         {%trans%}Form details{%endtrans%}
       </a>
-      {% if with_deleted_columns %}
-          <a class="btn btn-primary btn-sm"
-             role="button"
-             href="/forms/csv/{{form.id}}?with_deleted_columns=true">
-             {%trans%}Download CSV{%endtrans%}
-          </a>
-      {% else %}
-          <a class="btn btn-primary btn-sm"
-             role="button"
-             href="/forms/csv/{{form.id}}">
-              {%trans%}Download CSV{%endtrans%}
-          </a>
       {% endif %}
-
-      {% if answers|length and form_user['is_editor'] == True %}
-        {% if edit_mode %}
-        <a class="btn btn-success btn-sm"
-           role="button"
-           href="/forms/answers/{{form.id}}">
-          {%trans%}Disable edition{%endtrans%}
-        </a>
-        {% else %}
-        <a class="btn btn-primary btn-sm"
-           role="button"
-           href="?edit_mode=true">
-          {%trans%}Enable edition{%endtrans%}
-        </a>
-        {% endif %}
-
-        {% if form.has_removed_fields() %}
-          {% if with_deleted_columns %}
-              <a class="btn btn-success btn-sm"
-                 role="button"
-                 href="/forms/answers/{{form.id}}">
-                  {%trans%}Hide deleted columns{%endtrans%}
-              </a>
-          {% else %}
-              <a class="btn btn-primary btn-sm"
-                 role="button"
-                 href="?with_deleted_columns=true">
-                  {%trans%}Show deleted columns{%endtrans%}
-              </a>
-          {% endif %}
-        {% endif %}
-        <a class="btn btn-warning btn-sm"
-           role="button"
-           href="/forms/delete-all-answers/{{form.id}}">
-            {%trans%}Delete all{%endtrans%}
-        </a>
-      {%endif%}
-      </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <hr />
-
-      <div id="toggle_notification"
-           class="btn-group btn-toggle">
-        <button id="notification_true"
-                class="btn btn-sm btn-default
-                {% if form_user['notifications']['newAnswer'] %}
-                  btn-success
-                {% endif %}
-        ">
-          {%trans%}True{%endtrans%}
-        </button>
-        <button id="notification_false"
-                class="btn btn-sm btn-default
-                {% if not form_user['notifications']['newAnswer'] %}
-                  btn-primary
-                {% endif %}
-        ">
-          {%trans%}False{%endtrans%}
-        </button>
-      </div>
-      {%trans%}Notify me on each new answer{%endtrans%}
-
-      <p>&nbsp;</p>
+      {{ form.slug }}
     </div>
   </div>
+
   <div class="row">
     <div class="col">
       <div data-vue-component="data-display"
            data-items_endpoint="/data-display/form/{{form.id}}/answers"
            data-item_endpoint="/data-display/answer/"
            data-can_edit={{ form.is_editor(g.current_user) | tojson }}
+           data-exportable="true"
            data-csrf_token="{{ csrf_token() }}">
       </div>
     </div>
@@ -124,30 +38,5 @@
 </div>
 
 <script src="/static/data-display/data-display.js"></script>
-<script>
-  document.getElementById('toggle_notification').addEventListener('click', function(evt){
-      $.ajax({
-          url : "/form/toggle-notification/{{ form.id }}",
-          type: "POST",
-          dataType: "json",
-          beforeSend: function(xhr, settings) {
-              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
-                  xhr.setRequestHeader("X-CSRFToken", csrftoken)
-              }
-          },
-          success: function(data, textStatus, jqXHR)
-          {
-              if (data.notification == true) {
-                  $('#notification_true').addClass('btn-success');
-                  $('#notification_false').removeClass('btn-primary');
-              }
-              else if (data.notification == false) {
-                  $('#notification_true').removeClass('btn-success');
-                  $('#notification_false').addClass('btn-primary');
-              }
-          }
-      });
-  });
-</script>
 
 {% endblock %}

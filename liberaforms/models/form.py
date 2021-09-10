@@ -193,8 +193,8 @@ class Form(db.Model, CRUD):
             result.insert(len(result), result.pop(1))
         return result
 
-    def has_removed_fields(self):
-        return any('removed' in field for field in self.fieldIndex)
+    def get_deleted_fields(self):
+        return [field for field in self.fieldIndex if 'removed' in field]
 
     @staticmethod
     def is_email_field(field):

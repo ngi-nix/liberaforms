@@ -6,13 +6,14 @@ This file is part of LiberaForms.
 """
 
 from copy import copy
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, redirect, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
-#from liberaforms.models.formuser import FormUser
+from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
 from liberaforms.models.schemas.form import FormSchemaForDataDisplay
 from liberaforms.models.schemas.answer import AnswerSchema
+from liberaforms.utils.utils import make_url_for
 from liberaforms.utils.wraps import *
 
 from pprint import pprint
@@ -46,7 +47,7 @@ def get_forms_order_by(user):
     else:
         return 'created'
 
-""" Forms """
+""" My Forms """
 
 @data_display_bp.route('/data-display/forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
@@ -82,29 +83,34 @@ def my_forms(user_id):
             'value': total_answers,
             'html': f"{stats_url} {count_url}"
         }
-        for key in form.keys():
-            if key == 'slug' or key == 'total_answers':
+        for field_name in form.keys():
+            if field_name == 'slug' or field_name == 'total_answers':
                 continue
-            if key == 'id':
-                item[key] = form[key]
+            if field_name == 'id':
+                item[field_name] = form[field_name]
                 continue;
-            if key == 'created':
-                item[key] = form[key]
+            if field_name == 'created':
+                item[field_name] = form[field_name]
                 continue;
-            data[key] = form[key]
+            data[field_name] = form[field_name]
         item['data'] = data
         #pprint(data)
         items.append(item)
         #pprint(items)
-
     return jsonify(
         items=items,
+        deleted=None,
         meta={'total': form_count,
               'field_index': field_index,
+              'deleted_fields': [],
+              'item_id': None,
               #'default_field_index': default_forms_field_index,
-              'order_by': get_forms_order_by(g.current_user),
-              'ascending': get_forms_order_ascending(g.current_user),
-              'editable_fields': False}
+              'editable_fields': False
+        },
+        user_prefs={'order_by': get_forms_order_by(g.current_user),
+                    'ascending': get_forms_order_ascending(g.current_user),
+
+        }
     ), 200
 
 @data_display_bp.route('/data-display/forms/<int:user_id>/change-index', methods=['POST'])
@@ -191,22 +197,22 @@ def form_answers(form_id):
     form = g.current_user.get_form(form_id)
     if not form:
         return jsonify("Not found"), 404
-    page = request.args.get('page', type=int)
-    if page:
-        print(f"page: {page}")
-        answers = form.answers.paginate(page, 10, False).items
-    else:
-        answers = form.answers
+    answers = form.answers
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
-        meta={'total': form.answers.count(),
+        deleted_fields=form.get_deleted_fields(),
+        meta={'total': answers.count(),
               'field_index': form.get_user_field_index_preference(g.current_user),
+              'item_id': form.id,
               #'default_field_index': form.get_field_index_for_data_display(),
-              'order_by': form.get_answers_order_by(g.current_user),
-              'ascending': form.get_answers_order_ascending(g.current_user),
               'editable_fields': False,
+        },
+        user_prefs={'order_by': form.get_answers_order_by(g.current_user),
+                    'ascending': form.get_answers_order_ascending(g.current_user),
+
         }
     ), 200
+
 
 @data_display_bp.route('/data-display/answer/<int:answer_id>/mark', methods=['POST'])
 @enabled_user_required__json
@@ -263,7 +269,6 @@ def change_answer_field_index(form_id):
         ), 200
     return jsonify("Not Acceptable"), 406
 
-
 @data_display_bp.route('/data-display/form/<int:form_id>/answers/reset-index', methods=['POST'])
 @enabled_user_required__json
 def reset_answers_field_index(form_id):
@@ -277,7 +282,6 @@ def reset_answers_field_index(form_id):
     return jsonify(
         {'field_index': field_index}
     ), 200
-
 
 @data_display_bp.route('/data-display/form/<int:form_id>/answers/order-by-field', methods=['POST'])
 @enabled_user_required__json
@@ -299,7 +303,6 @@ def order_answers_by_field(form_id):
         {'order_by_field_name': field_preference}
     ), 200
 
-
 @data_display_bp.route('/data-display/form/<int:form_id>/answers/toggle-ascending', methods=['POST'])
 @enabled_user_required__json
 def answers_toggle_ascending(form_id):
@@ -311,3 +314,34 @@ def answers_toggle_ascending(form_id):
     return jsonify(
         {'ascending': form.toggle_user_answers_ascending_order(g.current_user)}
     ), 200
+
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/stats', methods=['GET'])
+@enabled_user_required__json
+def answers_stats(form_id):
+    """ Redirect to the answers' stats page
+    """
+    form = g.current_user.get_form(form_id)
+    if not form:
+        return jsonify("Not found"), 404
+    return redirect(make_url_for('answers_bp.answers_stats', form_id=form.id))
+
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/csv', methods=['GET'])
+@enabled_user_required__json
+def answers_csv(form_id):
+    """ Redirect to the CSV download
+    """
+    form = g.current_user.get_form(form_id)
+    if not form:
+        return jsonify("Not found"), 404
+    return redirect(make_url_for('answers_bp.answers_csv', form_id=form.id))
+
+@data_display_bp.route('/data-display/form/<int:form_id>/answers/toggle-item-notification', methods=['POST'])
+@enabled_user_required__json
+def answers_notification(form_id):
+    """ Toggle new answer notification
+    """
+    form_user = FormUser.find(form_id=form_id, user_id=g.current_user.id)
+    if not form_user:
+        return jsonify("Forbidden"), 403
+    pay_load = {'notification':form_user.toggle_notification()}
+    return jsonify(pay_load)

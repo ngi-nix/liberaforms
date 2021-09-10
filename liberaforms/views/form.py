@@ -176,6 +176,10 @@ def save_form(id=None):
     if queriedForm:
         queriedForm.structure=formStructure
         queriedForm.update_field_index(session['formFieldIndex'])
+        # reset formuser's field_index order preference
+        FormUser.find_all(form_id=queriedForm.id).update({
+                                                FormUser.field_index: None,
+                                                FormUser.order_by: None})
         queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
         queriedForm.set_short_description()
