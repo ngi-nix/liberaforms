@@ -424,12 +424,12 @@ class TestSiteConfig():
 
     @pytest.mark.skipif(os.environ['SKIP_EMAILS'] == 'True',
                         reason="SKIP_EMAILS=True in test.ini")
-    def test_test_smtp_config(self, site, client, users):
+    def test_test_smtp_config(self, client, users):
         """ Sends a test email to admin user
         """
         login(client, users['admin'])
         response = client.post(
-                        "site/email/test-config",
+                        "/site/email/test-config",
                         data = {
                             'email': users['admin']['email'],
                         },
