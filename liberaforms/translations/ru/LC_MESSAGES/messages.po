@@ -1,22 +1,23 @@
-# Catalan translations for PROJECT.
-# Copyright (C) 2019 ORGANIZATION
+# Translations template for PROJECT.
+# Copyright (C) 2021 LiberaForms, CC-BY-SA
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-08-04 12:35+0200\n"
+"Report-Msgid-Bugs-To: info@liberaforms.org\n"
+"POT-Creation-Date: 2021-08-04 12:36+0200\n"
 "PO-Revision-Date: 2021-09-08 20:50+0000\n"
-"Last-Translator: Marcel Costa <marcelcosta@mcosta.cat>\n"
-"Language-Team: Catalan <https://hosted.weblate.org/projects/liberaforms/"
-"server-liberaforms/ca/>\n"
-"Language: ca\n"
+"Last-Translator: Artem <Localizer_in_Russian@protonmail.com>\n"
+"Language-Team: Russian <https://hosted.weblate.org/projects/liberaforms/"
+"server-liberaforms/ru/>\n"
+"Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.8.1-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
@@ -24,7 +25,7 @@ msgstr ""
 #. not
 #: models/form.py:142
 msgid "Marked"
-msgstr "Anotat"
+msgstr ""
 
 #. i18n: Used for sort items by creation order, almost always as column title
 #: models/form.py:144 models/site.py:364 templates/admin/admin-panel.html:242
@@ -33,36 +34,36 @@ msgstr "Anotat"
 #: templates/admin/list-users.html:43 templates/form/inspect-form.html:368
 #: templates/form/my-forms.html:51 templates/site/list-admins.html:26
 msgid "Created"
-msgstr "Creat"
+msgstr "Создано"
 
 #: models/form.py:148 utils/form_helper.py:53
 msgid "Label"
-msgstr "Etiqueta"
+msgstr ""
 
 #. i18n: Acronym for 'Data Privacy Law'
 #: models/form.py:190 templates/admin/admin-panel.html:169
 #: templates/form/inspect-form.html:279 utils/consent_texts.py:126
 msgid "DPL"
-msgstr "LOPD"
+msgstr ""
 
 #: models/form.py:365
 msgid "Sorry, this form has expired."
-msgstr "Ho sentim, aquest formulari s'ha caducat"
+msgstr ""
 
 #. i18n: Thanks text displayed when completing form as user
 #: models/form.py:394
 msgid "Thank you!!"
-msgstr "Gràcies!"
+msgstr ""
 
 #. i18n: Example title in template for new form
 #: models/form.py:780
 msgid "Form title"
-msgstr "Títol del formulari"
+msgstr ""
 
 #. i18n: Example subtitle in template for new form
 #: models/form.py:782
 msgid "Context"
-msgstr "Context"
+msgstr "Контекст"
 
 #. i18n: Example content in template for new form. '\n' is used for linebreak.
 #: models/form.py:784
@@ -70,8 +71,6 @@ msgid ""
 " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
 msgstr ""
-" * Descriu el formulari.\n"
-" * Afegeix contingut rellevant, imatges, enllaços, etc."
 
 #. i18n: Template message for email invitation. '\n' is used for linebreak.
 #: models/invite.py:65
@@ -82,11 +81,6 @@ msgid ""
 "\n"
 "Regards."
 msgstr ""
-"Hola,\n"
-"\n"
-"Has estat convidat a LiberaForms.\n"
-"\n"
-"Salutacions."
 
 #: models/site.py:161 templates/site/email-branding.html:82
 msgid "Ethical form software"
@@ -96,7 +90,7 @@ msgstr ""
 #: templates/admin/list-users.html:42 templates/site/list-admins.html:25
 #: utils/wtf.py:26 utils/wtf.py:63
 msgid "Username"
-msgstr "Nom d'usuari"
+msgstr "Имя пользователя"
 
 #. i18n: Used as column title
 #: models/site.py:366 templates/admin/list-users.html:47
@@ -104,27 +98,27 @@ msgstr "Nom d'usuari"
 #: templates/form/share-form.html:134 templates/site/list-admins.html:27
 #: templates/user/consent.html:29
 msgid "Enabled"
-msgstr "Habilitat"
+msgstr "Включено"
 
 #. i18n: Email address, used as column title
 #: models/site.py:368 templates/admin/inspect-user.html:42
 #: templates/admin/list-invites.html:27 templates/admin/list-users.html:48
 #: templates/site/list-admins.html:28 utils/wtf.py:27
 msgid "Email"
-msgstr "Correu electrònic"
+msgstr ""
 
 #. i18n: Used as column title
 #: models/site.py:370 templates/admin/delete-user.html:27
 #: templates/admin/inspect-user.html:147 templates/admin/list-users.html:49
 #: templates/base.html:64 templates/site/list-admins.html:29
 msgid "Forms"
-msgstr "Formularis"
+msgstr "Формы"
 
 #. i18n: Whether user is admin
 #: models/site.py:372 templates/admin/inspect-user.html:80
 #: templates/admin/list-invites.html:31 templates/admin/list-users.html:50
 msgid "Admin"
-msgstr "Admin"
+msgstr "Админ"
 
 #. i18n: Boolean option: True or False
 #: models/site.py:382 models/site.py:383 templates/admin/admin-panel.html:118
@@ -141,7 +135,7 @@ msgstr "Admin"
 #: templates/user/user-settings.html:109 templates/user/user-settings.html:208
 #: templates/user/user-settings.html:235
 msgid "True"
-msgstr "Cert"
+msgstr ""
 
 #: models/site.py:382 models/site.py:383 templates/admin/admin-panel.html:123
 #: templates/admin/admin-panel.html:159 templates/admin/inspect-user.html:51
@@ -157,47 +151,46 @@ msgstr "Cert"
 #: templates/form/inspect-form.html:303 templates/user/user-settings.html:119
 #: templates/user/user-settings.html:218 templates/user/user-settings.html:245
 msgid "False"
-msgstr "Fals"
+msgstr ""
 
 #. Used as website menu title, only for admin, linking to page about instance
 #. users
 #: templates/admin/list-users.html:14 templates/base.html:70
 msgid "Users"
-msgstr "Usuaris"
+msgstr "Пользователи"
 
 #. Used as website menu title, only for admin, linking to page about instance
 #. configuration
 #: templates/base.html:76
 msgid "Config"
-msgstr "Configuració"
+msgstr ""
 
 #. Used as website menu title, linking to page about user's forms
 #: templates/base.html:95 templates/form/my-forms.html:15
 msgid "My forms"
-msgstr "Els meus formularis"
+msgstr ""
 
 #. Used as website menu title, linking to page about user's settings
 #: templates/base.html:102
-#, fuzzy
 msgid "Settings"
-msgstr "Configuració del lloc"
+msgstr "Настройки"
 
 #. Used as website menu title, to log out
 #: templates/base.html:108
 msgid "Logout"
-msgstr "Sortir"
+msgstr "Выход"
 
 #. Used as website menu title before logging in, when open registration is
 #. enabled, linking to page to create new user
 #: templates/base.html:124
 msgid "Create an account"
-msgstr "Crear un compte"
+msgstr ""
 
 #. Used as website menu title before logging in, linking to page to log in
 #: templates/base.html:131 templates/user/login.html:11
 #: templates/user/login.html:24
 msgid "Login"
-msgstr "Entrar"
+msgstr "Вход"
 
 #: templates/base.html:173
 msgid "User guide"
@@ -205,9 +198,8 @@ msgstr ""
 
 #. Main title displayed on site configuration page (/admin)
 #: templates/admin/admin-panel.html:13
-#, fuzzy
 msgid "Site configuration"
-msgstr "Provar la configuració"
+msgstr ""
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
@@ -217,7 +209,7 @@ msgstr ""
 #. Name for the website/instance
 #: templates/admin/admin-panel.html:24
 msgid "Site name"
-msgstr "Nom del lloc"
+msgstr ""
 
 #. Button to change some option
 #: templates/admin/admin-panel.html:33 templates/admin/admin-panel.html:46
@@ -227,7 +219,7 @@ msgstr "Nom del lloc"
 #: templates/user/user-settings.html:59 templates/user/user-settings.html:70
 #: templates/user/user-settings.html:83
 msgid "Change"
-msgstr "Canviar"
+msgstr "Изменить"
 
 #. Option in admin settings about changing instance welcoming text
 #: templates/admin/admin-panel.html:40
@@ -236,9 +228,8 @@ msgstr ""
 
 #. Icon for the website
 #: templates/admin/admin-panel.html:53
-#, fuzzy
 msgid "Logo"
-msgstr "Sortir"
+msgstr "Логотип"
 
 #. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
@@ -253,45 +244,45 @@ msgstr ""
 #. Title in Admin panel refering to configurations concerning new users
 #: templates/admin/admin-panel.html:93 templates/user/new-user.html:12
 msgid "New user"
-msgstr "Nou usuari"
+msgstr ""
 
 #. Default language for instance, setting on Instance configuration
 #: templates/admin/admin-panel.html:98
 msgid "Default language"
-msgstr "Idioma per omissió"
+msgstr ""
 
 #. Whether to enable new users attaching documents into forms
 #: templates/admin/admin-panel.html:111
 msgid "Enable form attachments"
-msgstr "Activar adjunts en formularis"
+msgstr ""
 
 #: templates/admin/admin-panel.html:130
 msgid "Default timezone"
-msgstr "Fus horari per defecte"
+msgstr ""
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:140
 msgid "Site settings"
-msgstr "Configuració del lloc"
+msgstr ""
 
 #. Whether to enable open registration, or remain invitation only
 #: templates/admin/admin-panel.html:145
 msgid "Invitation only"
-msgstr "Només invitació"
+msgstr ""
 
 #. Noun, meaning agreement with terms/conditions of use
 #: templates/admin/admin-panel.html:166
 msgid "Consent"
-msgstr "Consentiment"
+msgstr ""
 
 #: templates/admin/admin-panel.html:168 templates/user/new-user.html:51
 msgid "Terms and conditions"
-msgstr "Termes i Condicions"
+msgstr ""
 
 #. 'etc' here stands for "and so on" at the end of a list
 #: templates/admin/admin-panel.html:171
 msgid "etc"
-msgstr "etc"
+msgstr ""
 
 #. Button to edit some option
 #: templates/admin/admin-panel.html:178 templates/admin/admin-panel.html:193
@@ -299,44 +290,41 @@ msgstr "etc"
 #: templates/user/consent.html:33 templates/user/user-settings.html:131
 #: templates/user/user-settings.html:151 templates/user/user-settings.html:181
 msgid "Edit"
-msgstr "Editar"
+msgstr "Редактировать"
 
 #. Which type of attachments are allowed
 #: templates/admin/admin-panel.html:186
 msgid "Attachment types"
-msgstr "Tipus d'adjunts."
+msgstr ""
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:514
-#, fuzzy
 msgid "Super Admin options"
-msgstr "Opcions d'Admin"
+msgstr ""
 
 #. Settings about the generated public URL
 #: templates/admin/admin-panel.html:210
-#, fuzzy
 msgid "Public links"
-msgstr "Creació d’enllaços públics"
+msgstr ""
 
 #. Settings about email server used by website to send email messages
 #: templates/admin/admin-panel.html:223 utils/wtf.py:108
 msgid "Email server"
-msgstr "Servidor de correu"
+msgstr ""
 
 #. Button to configure some option
 #: templates/admin/admin-panel.html:228 templates/user/user-settings.html:169
 msgid "Configure"
-msgstr "Configurar"
+msgstr ""
 
 #. Title in Admin panel displaying info about installation
 #: templates/admin/admin-panel.html:238
-#, fuzzy
 msgid "Installation"
-msgstr "Invitacions"
+msgstr "Установка"
 
 #: templates/admin/admin-panel.html:246
 msgid "Version"
-msgstr ""
+msgstr "Версия"
 
 #. Button for going back to form
 #: templates/admin/change-author.html:16 templates/form/delete-form.html:16
@@ -344,83 +332,83 @@ msgstr ""
 #: templates/form/fedi-publish.html:15 templates/form/list-log.html:17
 #: templates/form/share-form.html:15
 msgid "Return to form"
-msgstr "Tornar al formulari"
+msgstr ""
 
 #. Changing author of the form
 #: templates/admin/change-author.html:22 templates/admin/change-author.html:67
 #: templates/form/inspect-form.html:519
 msgid "Change author"
-msgstr "Canviar l'autor"
+msgstr ""
 
 #. Table row showing form site, instance
 #: templates/admin/change-author.html:29
 msgid "Form site"
-msgstr "Lloc web del formulari"
+msgstr ""
 
 #: templates/admin/change-author.html:34
 msgid "Current author"
-msgstr "Autor actual"
+msgstr ""
 
 #: templates/admin/change-author.html:39
 msgid "You are going to change the author of this form."
-msgstr "Canviaràs l'autor d'aquest formulari"
+msgstr ""
 
 #: templates/admin/change-author.html:41
 #: templates/answers/list-answers.html:341
 msgid "Are you sure?"
-msgstr "N'estàs segur?"
+msgstr ""
 
 #. Username of current author of form
 #: templates/admin/change-author.html:54
 msgid "Current author's username"
-msgstr "Nom d'usuari de l'autor actual"
+msgstr ""
 
 #. Username of new author for form
 #: templates/admin/change-author.html:61
 msgid "New author's username"
-msgstr "Nom d'usuari del nou autor"
+msgstr ""
 
 #. Users who can edit a specific form, but is not the original author
 #: templates/admin/change-author.html:75 templates/admin/delete-user.html:34
 #: templates/admin/inspect-user.html:156 templates/form/inspect-form.html:168
 #: templates/form/share-form.html:28
 msgid "Editors"
-msgstr "Editors"
+msgstr ""
 
 #. Author of the form
 #: templates/admin/change-author.html:85 templates/admin/inspect-user.html:155
 #: templates/admin/list-forms.html:28 templates/form/inspect-form.html:352
 #: templates/form/share-form.html:43
 msgid "Author"
-msgstr "Autor"
+msgstr "Автор"
 
 #. Editor of the form
 #: templates/admin/change-author.html:88
 msgid "Editor"
-msgstr "Editor"
+msgstr ""
 
 #. Title and button to delete user
 #: templates/admin/delete-user.html:15 templates/admin/delete-user.html:73
 #: templates/admin/inspect-user.html:133
 msgid "Delete user"
-msgstr "Esborrar l'usuari"
+msgstr ""
 
 #: templates/admin/delete-user.html:18
 msgid "You are going to delete a user"
-msgstr "Esborraràs aquest usuari"
+msgstr ""
 
 #. consecution of the sentence "You are going to delete a user", if that user
 #. has any form
 #: templates/admin/delete-user.html:21
 msgid "and their forms"
-msgstr "i els seus formularis"
+msgstr ""
 
 #. Table column title, indicating name of a user or a form
 #: templates/admin/delete-user.html:33 templates/admin/inspect-user.html:153
 #: templates/admin/list-forms.html:26 templates/form/inspect-form.html:50
 #: templates/form/my-forms.html:48
 msgid "Name"
-msgstr "Nom"
+msgstr "Имя"
 
 #. Table column title, indicating answers recived for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:159
@@ -429,15 +417,15 @@ msgstr "Nom"
 #: templates/site/stats.html:46 templates/site/stats.html:122
 #: templates/user/statistics.html:31
 msgid "Answers"
-msgstr "Respostes"
+msgstr ""
 
 #: templates/admin/delete-user.html:49
 msgid "Write the name of the user below"
-msgstr "Escriu el nom de l'usuari a continuació"
+msgstr ""
 
 #: templates/admin/delete-user.html:69
 msgid "Delete user and forms"
-msgstr "Esborrar l'usuari i els seus formularis"
+msgstr ""
 
 #. Button to cancel operation
 #: templates/admin/delete-user.html:77 templates/admin/new-invite.html:53
@@ -460,11 +448,11 @@ msgstr "Esborrar l'usuari i els seus formularis"
 #: templates/user/consent.html:61 templates/user/delete-account.html:58
 #: templates/user/new-user.html:93 templates/user/recover-password.html:25
 msgid "Cancel"
-msgstr "Cancel·lar"
+msgstr "Отмена"
 
 #: templates/admin/inspect-user.html:16
 msgid "User details"
-msgstr "Detalls de l'usuari"
+msgstr ""
 
 #. Hostname of user, admin or form. The hostname is same as instance URL, for
 #. example "erabili.liberaforms.org"
@@ -472,64 +460,63 @@ msgstr "Detalls de l'usuari"
 #: templates/admin/list-users.html:45 templates/form/inspect-form.html:373
 #: templates/site/list-admins.html:24
 msgid "Hostname"
-msgstr "Nom de servidor"
+msgstr "Имя хоста"
 
 #. Language selected by user
 #: templates/admin/inspect-user.html:38
 msgid "Language"
-msgstr "Idioma"
+msgstr "Язык"
 
 #. Whether the email of user was validated
 #: templates/admin/inspect-user.html:47
 msgid "Validated email"
-msgstr "Correu-e validat"
+msgstr ""
 
 #. Whether user is able to upload attached documents to form
 #: templates/admin/inspect-user.html:58
 msgid "Attachments enabled"
-msgstr "Adjunts activats"
+msgstr ""
 
 #. Whether user is blocked by admin
 #: templates/admin/inspect-user.html:100
 msgid "Blocked by admin"
-msgstr "Bloquejat per l'admin"
+msgstr ""
 
 #: templates/admin/inspect-user.html:127
 msgid "Delete user and authored forms"
-msgstr "Esborrar l'usuari i els seus formularis"
+msgstr ""
 
 #: templates/admin/inspect-user.html:142 templates/admin/list-forms.html:18
 #: templates/admin/list-users.html:17 templates/form/my-forms.html:33
 msgid "Statistics"
-msgstr "Estadístiques"
+msgstr "Статистика"
 
 #. Whether for is public
 #: templates/admin/inspect-user.html:158 templates/admin/list-forms.html:29
 #: templates/form/inspect-form.html:109 templates/form/my-forms.html:52
 msgid "Public"
-msgstr "Públic"
+msgstr ""
 
 #: templates/admin/inspect-user.html:286 templates/form/inspect-form.html:42
 #: templates/site/stats.html:53 templates/site/stats.html:129
 #: templates/user/statistics.html:40
-#, fuzzy
 msgid "Total answers"
-msgstr "Total d'usuaris"
+msgstr ""
 
 #: templates/admin/inspect-user.html:293 templates/site/stats.html:61
 #: templates/site/stats.html:137 templates/user/statistics.html:48
 msgid "New forms"
-msgstr "Formularis nous"
+msgstr ""
 
 #: templates/admin/inspect-user.html:301 templates/site/stats.html:68
 #: templates/site/stats.html:144 templates/user/statistics.html:55
 msgid "Total forms"
-msgstr "Total de formularis"
+msgstr ""
 
 #. Title on /admin/forms page
 #: templates/admin/list-forms.html:15
 msgid "All forms"
-msgstr "Tots els formularis"
+msgstr ""
 
 #. Shows when was the last answer received on form
 #: templates/admin/list-forms.html:31 templates/form/inspect-form.html:54
@@ -541,23 +528,23 @@ msgstr ""
 #: templates/admin/list-invites.html:14 templates/admin/list-invites.html:69
 #: templates/admin/list-users.html:27
 msgid "Invitations"
-msgstr "Invitacions"
+msgstr ""
 
 #. Button to invite new user
 #: templates/admin/list-invites.html:19 templates/admin/list-users.html:22
 msgid "Invite a new user"
-msgstr "Convidar un nou usuari"
+msgstr ""
 
 #: templates/admin/list-invites.html:54 templates/answers/list-answers.html:342
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
 #: templates/user/fediverse-config.html:72
 #: templates/user/user-settings.html:262
 msgid "Delete"
-msgstr "Esborrar"
+msgstr "Удалить"
 
 #: templates/admin/list-invites.html:61
 msgid "Invitation message"
-msgstr "Missatge d'invitació"
+msgstr ""
 
 #. Button to download answers received on form in CSV document format
 #: templates/admin/list-users.html:33 templates/answers/chart-answers.html:29
@@ -566,38 +553,36 @@ msgstr "Missatge d'invitació"
 #: templates/answers/list-answers.html:52
 #: templates/answers/view-results.html:25 templates/site/list-admins.html:15
 msgid "Download CSV"
-msgstr "Baixar CSV"
+msgstr ""
 
 #. Title on /admin/invites/new page
 #: templates/admin/new-invite.html:13
 msgid "Send a new user invitation"
-msgstr "Enviar una invitació de nou usuari"
+msgstr ""
 
 #: templates/admin/new-invite.html:28
 msgid "The link to the invitation will be appended to this message"
-msgstr "L'enllaç de la invitació s'afegirà a aquest missatge"
+msgstr ""
 
 #. Button to send new user invitation message via email
 #: templates/admin/new-invite.html:47
 msgid "Send email"
-msgstr "Enviar el correu"
+msgstr ""
 
 #: templates/answers/chart-answers.html:21
 #: templates/answers/chart-answers.html:46 templates/form/inspect-form.html:29
-#, fuzzy
 msgid "View answers"
-msgstr "Usuaris nous"
+msgstr ""
 
 #: templates/answers/chart-answers.html:38
 #: templates/answers/list-answers.html:30
 msgid "Form details"
-msgstr "Detalls del formulari"
+msgstr ""
 
 #: templates/answers/chart-answers.html:81
 #: templates/answers/list-answers.html:118 templates/user/user-settings.html:96
-#, fuzzy
 msgid "Notify me on each new answer"
-msgstr "Avisa'm quan hi hagi una resposta nova"
+msgstr ""
 
 #: templates/answers/chart-answers.html:94
 msgid "Multiple choice"
@@ -606,61 +591,60 @@ msgstr ""
 #: templates/answers/delete-all-answers.html:15
 #: templates/answers/delete-all-answers.html:42
 msgid "Delete answers"
-msgstr "Esborrar respostes"
+msgstr ""
 
 #: templates/answers/delete-all-answers.html:18
 #: templates/form/inspect-form.html:527 views/form.py:164
 msgid "Form"
-msgstr "Formulari"
+msgstr "Форма"
 
 #: templates/answers/delete-all-answers.html:21
 msgid "You are going to delete"
-msgstr "Eliminaràs"
+msgstr ""
 
 #: templates/answers/delete-all-answers.html:22
 #: templates/form/delete-form.html:27 templates/form/expiration.html:151
 #: templates/site/delete-site.html:22
 msgid "answers"
-msgstr "respostes"
+msgstr ""
 
 #: templates/answers/delete-all-answers.html:25
-#, fuzzy
 msgid "Write the total number of answers below"
-msgstr "Escriu el nombre total de respostes "
+msgstr ""
 
 #: templates/answers/list-answers.html:39
 #: templates/answers/view-results.html:22 templates/form/inspect-form.html:37
 msgid "Graphs"
-msgstr "Gràfics"
+msgstr ""
 
 #: templates/answers/list-answers.html:61
 msgid "Disable edition"
-msgstr "Deshabilitar l'edició"
+msgstr ""
 
 #: templates/answers/list-answers.html:67
 msgid "Enable edition"
-msgstr "Habilitar l'edició"
+msgstr ""
 
 #: templates/answers/list-answers.html:75
 msgid "Hide deleted columns"
-msgstr "Amagar columnes esborrades"
+msgstr ""
 
 #: templates/answers/list-answers.html:81
 msgid "Show deleted columns"
-msgstr "Mostrar columnes esborrades"
+msgstr ""
 
 #: templates/answers/list-answers.html:88
 msgid "Delete all"
-msgstr "Esborra-ho tot"
+msgstr ""
 
 #: templates/answers/list-answers.html:164
 #: templates/answers/list-answers.html:166
 msgid "Mark"
-msgstr "Anotar"
+msgstr ""
 
 #: templates/answers/list-answers.html:252
 msgid "Delete answer"
-msgstr "Esborrar resposta"
+msgstr ""
 
 #: templates/answers/list-answers.html:296
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
@@ -673,120 +657,117 @@ msgstr "Esborrar resposta"
 #: templates/user/change-timezone.html:38 templates/user/consent.html:60
 #: templates/user/fediverse-config.html:66
 msgid "Save"
-msgstr "Desar"
+msgstr "Сохранить"
 
 #: templates/common/change-language.html:12
 msgid "Change language"
-msgstr "Canviar d'idioma"
+msgstr ""
 
 #: templates/form/_image-modal.html:41 templates/media/list-media.html:66
 msgid "A photo of a horse galloping on the beach."
-msgstr "Foto d'un cavall galopant a la platja."
+msgstr ""
 
 #: templates/form/delete-form.html:22 templates/form/inspect-form.html:478
 msgid "Delete form"
-msgstr "Esborra el formulari"
+msgstr ""
 
 #: templates/form/delete-form.html:25
 msgid "You are going to delete this form and"
-msgstr "Esborraras aquest formulari"
+msgstr ""
 
 #: templates/form/delete-form.html:30
 msgid "Write the name of the form below"
-msgstr "Escriu el nom del formulari"
+msgstr ""
 
 #: templates/form/edit-form.html:31
 msgid "Build your form here"
-msgstr "Crear el teu formulari aquí"
+msgstr ""
 
 #: templates/form/edit-form.html:41
 msgid "Introduction text"
-msgstr "Text introductori"
+msgstr ""
 
 #: templates/form/edit-form.html:44
 msgid "This is a markdown editor, an easy way to write HTML."
-msgstr "Aquest és un editor markdown, una manera senzilla d'escriure HTML"
+msgstr ""
 
 #: templates/form/edit-form.html:47
 msgid "Learn more"
-msgstr "Aprèn-ne més"
+msgstr ""
 
 #: templates/form/edit-form.html:57
 msgid "The form"
-msgstr "El formulari"
+msgstr ""
 
 #: templates/form/edit-form.html:84
 msgid "Your form will have this address"
-msgstr "El formulari tindrà aquesta adreça"
+msgstr ""
 
 #: templates/form/edit-form.html:107
 msgid "This URL is not available. Try another!"
-msgstr "Aquest URL no està disponible. Prova'n un altre!"
+msgstr ""
 
 #: templates/form/edit-form.html:115 templates/form/edit-form.html:280
 #: templates/form/preview-form.html:17
 msgid "Preview"
-msgstr "Previsualitzar"
+msgstr "Предпросмотр"
 
 #: templates/form/edit-form.html:265
 msgid "OK, use this URL"
-msgstr "OK, fes servir aquest URL"
+msgstr ""
 
 #: templates/form/edit-form.html:316
 msgid "Cannot modify because an answer with this value exists in the database"
 msgstr ""
-"No es pot modificar perquè ja hi ha una resposta amb aquest valor a la "
-"base de dades"
 
 #: templates/form/expiration.html:42
 msgid "Notify me when this form expires"
-msgstr "Avisa'm quan el formulari caduqui"
+msgstr ""
 
 #: templates/form/expiration.html:48 templates/form/inspect-form.html:158
 msgid "Expired"
-msgstr "Caducat"
+msgstr ""
 
 #: templates/form/expiration.html:55
 msgid "Expiration conditions"
-msgstr "Condicions de caducitat"
+msgstr ""
 
 #: templates/form/expiration.html:59
 msgid "Date / Time"
-msgstr "Data / Hora"
+msgstr ""
 
 #: templates/form/expiration.html:81 templates/site/smtp-config.html:56
 msgid "Save changes"
-msgstr "Desar els canvis"
+msgstr ""
 
 #: templates/form/expiration.html:93
 msgid "Fields"
-msgstr "Camps"
+msgstr ""
 
 #: templates/form/expiration.html:117
 msgid "Save max."
-msgstr "Desar el màxim"
+msgstr ""
 
 #: templates/form/expiration.html:130
-#, fuzzy
 msgid "Maximum answers"
-msgstr "Màxim de respostes"
+msgstr ""
 
 #: templates/form/expiration.html:137
 msgid "The form will expire after"
-msgstr "Aquest formulari caduca després de"
+msgstr ""
 
 #: templates/form/expiration.html:163 templates/form/inspect-form.html:414
 msgid "When the form has expired"
-msgstr "Quan el formulari caduqui"
+msgstr ""
 
 #: templates/form/expiration.html:166 templates/form/inspect-form.html:385
 #: templates/form/inspect-form.html:419 templates/main/index.html:43
 msgid "Edit text"
-msgstr "Editar el text"
+msgstr ""
 
 #: templates/form/expiration.html:171 templates/form/inspect-form.html:425
 msgid "Say something to the user if the form has expired"
-msgstr "Digues alguna cosa a l'usuari si el formulari ha caducat"
+msgstr ""
 
 #. node_name stands for name of a Fediverse node: 'Publish on barcelona.social'
 #: templates/form/fedi-publish.html:22
@@ -795,60 +776,54 @@ msgid "Publish on %(node_name)s"
 msgstr ""
 
 #: templates/form/fedi-publish.html:38
-#, fuzzy
 msgid "Total characters:"
-msgstr "Total d'usuaris"
+msgstr ""
 
 #: templates/form/fedi-publish.html:48
-#, fuzzy
 msgid "Publish"
-msgstr "Públic"
+msgstr ""
 
 #: templates/form/inspect-form.html:23
 msgid "Details"
-msgstr "Detalls"
+msgstr ""
 
 #: templates/form/inspect-form.html:69
 msgid "Public URL"
-msgstr "URL Públic"
+msgstr ""
 
 #: templates/form/inspect-form.html:72 templates/form/inspect-form.html:269
 #: templates/form/inspect-form.html:291 templates/form/inspect-form.html:355
 #: templates/form/share-form.html:138 templates/user/consent.html:30
 msgid "Disabled"
-msgstr "Deshabilitat"
+msgstr ""
 
 #: templates/form/inspect-form.html:92
 msgid "Fediverse"
-msgstr "Fedivers"
+msgstr ""
 
 #: templates/form/inspect-form.html:100
-#, fuzzy
 msgid "Published"
-msgstr "Públic"
+msgstr ""
 
 #: templates/form/inspect-form.html:134
 msgid "Expiration"
-msgstr "Caducitat"
+msgstr ""
 
 #: templates/form/inspect-form.html:141
-#, fuzzy
 msgid "This form has expired"
-msgstr "Aquest formulari ha caducat"
+msgstr ""
 
 #: templates/form/inspect-form.html:147
-#, fuzzy
 msgid "This form will expire"
-msgstr "Aquest formulari es caduca després de"
+msgstr ""
 
 #: templates/form/inspect-form.html:176
 msgid "Shared with"
 msgstr ""
 
 #: templates/form/inspect-form.html:185
-#, fuzzy
 msgid "Not shared"
-msgstr "Compartit"
+msgstr ""
 
 #: templates/form/inspect-form.html:198 templates/form/share-form.html:79
 msgid "Share notifications"
@@ -860,11 +835,11 @@ msgstr ""
 
 #: templates/form/inspect-form.html:227 templates/form/share-form.html:181
 msgid "Restricted access"
-msgstr "Accés restringit"
+msgstr ""
 
 #: templates/form/inspect-form.html:254
 msgid "Confirmation"
-msgstr "Confirmació"
+msgstr ""
 
 #: templates/form/inspect-form.html:297 templates/site/email-branding.html:54
 msgid "Personalize"
@@ -873,11 +848,11 @@ msgstr ""
 #: templates/form/inspect-form.html:312 templates/site/consent.html:30
 #: templates/user/consent.html:22
 msgid "Data protection"
-msgstr "Protecció de dades"
+msgstr ""
 
 #: templates/form/inspect-form.html:327
 msgid "Use the template"
-msgstr "Fes servir la plantilla"
+msgstr ""
 
 #: templates/form/inspect-form.html:334 templates/form/inspect-form.html:767
 #: templates/form/inspect-form.html:806 templates/site/consent.html:64
@@ -885,149 +860,143 @@ msgstr "Fes servir la plantilla"
 #: templates/user/consent.html:67 templates/user/new-user.html:66
 #: utils/consent_texts.py:61
 msgid "I agree"
-msgstr "Estic d'acord"
+msgstr ""
 
 #: templates/form/inspect-form.html:380
 msgid "After replying to the form"
-msgstr "Després de contestar el formulari"
+msgstr ""
 
 #: templates/form/inspect-form.html:391
 msgid "Say something to the user after the form has been submitted"
-msgstr "Digues alguna cosa a l'usuari després de que el formulari s'hagi enviat"
+msgstr ""
 
 #: templates/form/inspect-form.html:449
 msgid "Other options"
-msgstr "Altres opcions"
+msgstr ""
 
 #: templates/form/inspect-form.html:460
 msgid "View log"
-msgstr "Veure el registre"
+msgstr ""
 
 #: templates/form/inspect-form.html:465
 msgid "Duplicate form"
-msgstr "Duplicar el formulari"
+msgstr ""
 
 #: templates/form/inspect-form.html:471
 msgid "Embed form"
-msgstr "Incrustar formulari"
+msgstr ""
 
 #: templates/form/inspect-form.html:484
-#, fuzzy
 msgid "Delete form and answers"
-msgstr "Esborrar el formulari i respostes"
+msgstr ""
 
 #: templates/form/inspect-form.html:491
 msgid "Admin options"
-msgstr "Opcions d'Admin"
+msgstr ""
 
 #: templates/form/inspect-form.html:496
 msgid "Duplicate"
-msgstr "Duplicar"
+msgstr ""
 
 #: templates/form/inspect-form.html:502
 msgid "Disable"
-msgstr "Desactivar"
+msgstr ""
 
 #: templates/form/inspect-form.html:508
 msgid "Enable"
-msgstr "Activar"
+msgstr ""
 
 #: templates/form/inspect-form.html:533
 msgid "Edit form"
-msgstr "Editar el formulari"
+msgstr ""
 
 #: templates/form/inspect-form.html:547 templates/form/preview-form.html:26
 #: templates/form/view-form.html:30
 msgid "Required fields"
-msgstr "Camps obligatoris"
+msgstr ""
 
 #: templates/form/inspect-form.html:563 templates/form/view-form.html:57
 msgid "Send me confirmation by mail"
-msgstr "Envia'm confirmació per correu"
+msgstr ""
 
 #: templates/form/inspect-form.html:590 templates/form/preview-form.html:35
 #: templates/form/view-form.html:87 templates/site/smtp-config.html:84
 msgid "Send"
-msgstr "Enviar"
+msgstr ""
 
 #: templates/form/list-log.html:22
 msgid "Log"
-msgstr "Registre"
+msgstr ""
 
 #: templates/form/list-log.html:26
 msgid "Time"
-msgstr "Hora"
+msgstr ""
 
 #: templates/form/list-log.html:27 utils/wtf.py:115
 msgid "User"
-msgstr "Usuari"
+msgstr ""
 
 #: templates/form/list-log.html:28
 msgid "Message"
-msgstr "Missatge"
+msgstr ""
 
 #: templates/form/list-templates.html:11
 msgid "Form templates"
-msgstr "Plantilles de formulari"
+msgstr ""
 
 #: templates/form/list-templates.html:15
-#, fuzzy
 msgid "We have put together some forms that you can use to get started."
-msgstr "Hem creat alguns formularis que pots fer servir per començar."
+msgstr ""
 
 #: templates/form/list-templates.html:16
 msgid "Choose the template that best suits your needs and edit it to fit."
 msgstr ""
-"Tria la plantilla que s’adapta més a les teves necessitats i edita-la per"
-" adaptar-la."
 
 #: templates/form/list-templates.html:31
 msgid "Show more"
 msgstr ""
 
 #: templates/form/my-forms.html:21
-#, fuzzy
 msgid "Templates"
-msgstr "Plantilles de formulari"
+msgstr ""
 
 #: templates/form/my-forms.html:27
 msgid "New form"
-msgstr "Nou formulari"
+msgstr ""
 
 #: templates/form/my-forms.html:53 templates/site/consent.html:38
 msgid "Shared"
-msgstr "Compartit"
+msgstr ""
 
 #: templates/form/preview-form.html:15
-#, fuzzy
 msgid "Template"
-msgstr "Plantilles de formulari"
+msgstr ""
 
 #: templates/form/preview-form.html:45
 msgid "Create a form with this template"
-msgstr "Fes servir aquesta plantilla per a crear un formulari"
+msgstr ""
 
 #: templates/form/preview-form.html:50 templates/site/consent.html:105
 #: templates/site/edit-host-url.html:63 templates/user/new-user.html:91
 msgid "Go back"
-msgstr "Tornar enrera"
+msgstr ""
 
 #: templates/form/preview-form.html:64 templates/form/preview-form.html:75
 msgid "Edit again"
-msgstr "Editar de nou"
+msgstr ""
 
 #: templates/form/share-form.html:31
 msgid "Users listed here have the <b>same permissions</b> as you"
-msgstr "Els usuaris que figuren aquí tenen els <b> mateixos permisos </b> que tu"
+msgstr ""
 
 #: templates/form/share-form.html:47 templates/form/share-form.html:94
 #: templates/media/list-media.html:127 templates/media/list-media.html:178
 msgid "Remove"
-msgstr "Eliminar"
+msgstr ""
 
 #: templates/form/share-form.html:66
 msgid "Add new editor"
-msgstr "Afegir un nou editor"
+msgstr ""
 
 #: templates/form/share-form.html:82
 msgid "Send 'new answer' and expiry notifications to these other addresses"
@@ -1035,27 +1004,27 @@ msgstr ""
 
 #: templates/form/share-form.html:113
 msgid "Add address"
-msgstr "Afegeix adreça electrònica"
+msgstr ""
 
 #: templates/form/share-form.html:127
 msgid "Share results"
-msgstr "Compartir els resultats"
+msgstr ""
 
 #: templates/form/share-form.html:129
 msgid "Readonly access for <b>anyone</b> with a copy of these links"
-msgstr "Accés de només lectura per a <b>qualsevol</b> amb una còpia dels enllaços"
+msgstr ""
 
 #: templates/form/share-form.html:182
 msgid "Only visible to people with a user account (login required)"
-msgstr "Només visible per a usuaris registrats (cal autenticació)"
+msgstr ""
 
 #: templates/form/share-form.html:187
 msgid "Restricted"
-msgstr "Restringit"
+msgstr ""
 
 #: templates/form/share-form.html:191
 msgid "Public form"
-msgstr "Formulari públic"
+msgstr ""
 
 #: templates/form/view-form.html:171 templates/form/view-form.html:172
 #: templates/form/view-form.html:173 templates/form/view-form.html:174
@@ -1069,11 +1038,11 @@ msgstr ""
 
 #: templates/main/page-not-found.html:9
 msgid "Opps! 404"
-msgstr "Vaja! 404"
+msgstr ""
 
 #: templates/main/server-error.html:7
 msgid "Opps! 500 server error"
-msgstr "Vaja! Error del servidor 500"
+msgstr ""
 
 #: templates/media/list-media.html:27
 msgid "My media"
@@ -1093,11 +1062,11 @@ msgstr ""
 
 #: templates/media/list-media.html:94 templates/site/change-icon.html:38
 msgid "Upload"
-msgstr "Puja"
+msgstr ""
 
 #: templates/site/change-icon.html:16
 msgid "Change site icon"
-msgstr "Canviar la icona del lloc web"
+msgstr ""
 
 #: templates/site/change-icon.html:18
 msgid "Upload an image"
@@ -1105,7 +1074,7 @@ msgstr ""
 
 #: templates/site/change-icon.html:24
 msgid "A square image"
-msgstr "Una imatge quadrada"
+msgstr ""
 
 #: templates/site/change-icon.html:25 templates/site/email-branding.html:64
 msgid "Keep the kilobytes to a minimum"
@@ -1113,33 +1082,31 @@ msgstr ""
 
 #: templates/site/change-icon.html:42
 msgid "Use default"
-msgstr "Usa'n un per defecte"
+msgstr ""
 
 #: templates/site/change-sitename.html:10
 msgid "Change site name"
-msgstr "Canviar el nom del lloc"
+msgstr ""
 
 #: templates/site/change-sitename.html:12
 msgid "New site name"
-msgstr "Nou nom de lloc"
+msgstr ""
 
 #: templates/site/change-sitename.html:28 templates/user/new-user.html:89
 msgid "Submit"
-msgstr "Enviar"
+msgstr ""
 
 #: templates/site/consent.html:14
-#, fuzzy
 msgid "Consent texts"
-msgstr "Textos de consentiment"
+msgstr ""
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
-msgstr "Previsualitzar formulari de 'Nou usuari'"
+msgstr ""
 
 #: templates/site/consent.html:28
-#, fuzzy
 msgid "Site terms and conditions"
-msgstr "Termes i Condicions"
+msgstr ""
 
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
@@ -1148,66 +1115,63 @@ msgstr ""
 
 #: templates/site/consent.html:39
 msgid "No"
-msgstr "No"
+msgstr ""
 
 #: templates/site/consent.html:44
 msgid "Add to New user form"
-msgstr "Afegir a formulari de 'Nou usuari'"
+msgstr ""
 
 #: templates/site/consent.html:52
 msgid "New users must agree to these terms and conditions"
-msgstr "Els nous usuaris han d'acceptar aquests termes i condicions"
+msgstr ""
 
 #: templates/site/consent.html:88 templates/user/consent.html:72
 msgid "Required"
-msgstr "Obligatori"
+msgstr ""
 
 #: templates/site/consent.html:96
-#, fuzzy
 msgid "Form consent texts"
-msgstr "Text de consentiment per omissió"
+msgstr ""
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
 msgstr ""
-"Els textos compartits poden ser usats per tercers com a plantilles als "
-"seus formularis"
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
-msgstr "Esborrar lloc"
+msgstr ""
 
 #: templates/site/delete-site.html:13
 msgid "You are going to delete this Site"
-msgstr "Esborraràs aquest lloc"
+msgstr ""
 
 #: templates/site/delete-site.html:16
 msgid "Including"
-msgstr "Incloent"
+msgstr ""
 
 #: templates/site/delete-site.html:18
 msgid "users"
-msgstr "usuaris"
+msgstr ""
 
 #: templates/site/delete-site.html:20
 msgid "forms"
-msgstr "formularis"
+msgstr ""
 
 #: templates/site/delete-site.html:25
 msgid "Write the name of the site below"
-msgstr "Escriu el nom del lloc"
+msgstr ""
 
 #: templates/site/edit-host-url.html:12
 msgid "Public link creation"
-msgstr "Creació d’enllaços públics"
+msgstr ""
 
 #: templates/site/edit-host-url.html:21
 msgid "Scheme"
-msgstr "Esquema"
+msgstr ""
 
 #: templates/site/edit-host-url.html:44 utils/wtf.py:109
 msgid "Port"
-msgstr "Port"
+msgstr ""
 
 #: templates/site/edit-mimetypes.html:11
 msgid "Form attachments"
@@ -1227,48 +1191,47 @@ msgstr ""
 
 #: templates/site/email-branding.html:24
 msgid "Example email:"
-msgstr "Correu d'exemple:"
+msgstr ""
 
 #: templates/site/email-branding.html:46
 msgid "Send test"
 msgstr ""
 
 #: templates/site/email-branding.html:97
-#, fuzzy
 msgid "Use default image"
-msgstr "Usa'n un per defecte"
+msgstr ""
 
 #: templates/site/list-admins.html:12
 msgid "Admins"
-msgstr "Administradores"
+msgstr ""
 
 #: templates/site/smtp-config.html:10
 msgid "Email server configuration"
-msgstr "Configuració de servidor de correu"
+msgstr ""
 
 #: templates/site/smtp-config.html:67
 msgid "Test configuration"
-msgstr "Provar la configuració"
+msgstr ""
 
 #: templates/site/stats.html:14
 msgid "Site statistics"
-msgstr "Estadístiques del lloc"
+msgstr ""
 
 #: templates/site/stats.html:77 templates/site/stats.html:153
 msgid "New users"
-msgstr "Usuaris nous"
+msgstr ""
 
 #: templates/site/stats.html:85 templates/site/stats.html:161
 msgid "Total users"
-msgstr "Total d'usuaris"
+msgstr ""
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr "Canviar l'adreça de correu"
+msgstr ""
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
-msgstr "Canvia el teu fus horari"
+msgstr ""
 
 #: templates/user/change-timezone.html:26
 msgid "Search for country or city name"
@@ -1281,29 +1244,27 @@ msgstr ""
 
 #: templates/user/consent.html:14
 msgid "Default consent text"
-msgstr "Text de consentiment per omissió"
+msgstr ""
 
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
-msgstr "Usuaris podran incloure aquests textos en els seus formularis"
+msgstr ""
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:54
 msgid "Delete account"
-msgstr "Eliminar un compte"
+msgstr ""
 
 #: templates/user/delete-account.html:13
 msgid "You will delete your account and the following data"
 msgstr ""
 
 #: templates/user/delete-account.html:17
-#, fuzzy
 msgid "The forms you have created"
-msgstr "Avisam quan es crei un nou formulari"
+msgstr ""
 
 #: templates/user/delete-account.html:21
-#, fuzzy
 msgid "The replies to those forms"
-msgstr "Després de contestar el formulari"
+msgstr ""
 
 #: templates/user/delete-account.html:49
 msgid "This is irreversible!"
@@ -1312,7 +1273,7 @@ msgstr ""
 #: templates/user/fediverse-config.html:14
 #: templates/user/user-settings.html:159
 msgid "Fediverse connect"
-msgstr "connectat al Fedivers"
+msgstr ""
 
 #: templates/user/fediverse-config.html:17
 msgid "Publish your forms on the descentralized social media network"
@@ -1324,11 +1285,11 @@ msgstr ""
 
 #: templates/user/login.html:25
 msgid "Forgot your password?"
-msgstr "Has oblidat la teva contrassenya? "
+msgstr ""
 
 #: templates/user/new-user.html:18
 msgid "Letters and numbers. No accents."
-msgstr "Lletres i números. Sense accents"
+msgstr ""
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
 msgid "Use a password with spaces and/or special characters."
@@ -1340,35 +1301,35 @@ msgstr ""
 
 #: templates/user/new-user.html:34 templates/user/reset-password.html:19
 msgid "eg: Peter cooks delicious food"
-msgstr "ex: en Peter cuina menjar deliciós"
+msgstr ""
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
 msgid "Another eg: The cat living with me has fleas"
-msgstr "Un altre exemple: El meu gat té puces"
+msgstr ""
 
 #: templates/user/new-user.html:106
 msgid "We sent you an email!"
-msgstr "T'hem enviat un correu!"
+msgstr ""
 
 #: templates/user/recover-password.html:11
 msgid "Recover password"
-msgstr "Recuperar la contrasenya"
+msgstr ""
 
 #: templates/user/recover-password.html:24
 msgid "Recover"
-msgstr "Recuperar"
+msgstr ""
 
 #: templates/user/reset-password.html:12
 msgid "Change password"
-msgstr "Canviar la contrasenya"
+msgstr ""
 
 #: templates/user/reset-password.html:32
 msgid "Reset password"
-msgstr "Restablir la contrasenya"
+msgstr ""
 
 #: templates/user/statistics.html:12
 msgid "My statistics"
-msgstr "Les meves estadístiques"
+msgstr ""
 
 #: templates/user/user-settings.html:12
 #, python-format
@@ -1380,30 +1341,29 @@ msgid "Please validate your email to continue"
 msgstr ""
 
 #: templates/user/user-settings.html:24
-#, fuzzy
 msgid "Validate"
-msgstr "Correu-e validat"
+msgstr ""
 
 #: templates/user/user-settings.html:33 utils/wtf.py:86
 msgid "Email address"
-msgstr "Adreça electrònica"
+msgstr ""
 
 #: templates/user/user-settings.html:46 utils/wtf.py:28 utils/wtf.py:64
 #: utils/wtf.py:97 utils/wtf.py:116
 msgid "Password"
-msgstr "Contrasenya"
+msgstr ""
 
 #: templates/user/user-settings.html:64
 msgid "Preferred language"
-msgstr "Idioma preferit"
+msgstr ""
 
 #: templates/user/user-settings.html:91
 msgid "Email notifications"
-msgstr "Notificacions de correu electrònic"
+msgstr ""
 
 #: templates/user/user-settings.html:126 templates/user/user-settings.html:176
 msgid "Consentment texts"
-msgstr "Textos de consentiment"
+msgstr ""
 
 #: templates/user/user-settings.html:140
 msgid "Media"
@@ -1411,120 +1371,117 @@ msgstr ""
 
 #: templates/user/user-settings.html:146
 msgid "Add and delete uploaded files"
-msgstr "Afegeix i elimina fitxers carregats"
+msgstr ""
 
 #: templates/user/user-settings.html:191
 msgid "My admin settings"
-msgstr "La meva configuració d'administrador"
+msgstr ""
 
 #: templates/user/user-settings.html:196
 msgid "Notify me when new user has registered"
-msgstr "Avisa'm quan es registri un nou usuari"
+msgstr ""
 
 #: templates/user/user-settings.html:224
 msgid "Notify me when new form has been created"
-msgstr "Avisa'm quan es creï un nou formulari"
+msgstr ""
 
 #: templates/user/user-settings.html:256
 msgid "Delete my account"
-msgstr "Eliminar el meu compte"
+msgstr ""
 
 #: utils/consent_texts.py:115
 msgid "Please accept our terms and conditions."
-msgstr "Si us plau, accepta els nostres termes i condicions."
+msgstr ""
 
 #: utils/consent_texts.py:127
 msgid ""
 "We take your data protection seriously. Please contact us for any "
 "inquiries."
 msgstr ""
-"Ens prenem seriosament la protecció de les teves dades. Si us plau, "
-"contacta'ns per qualsevol consulta."
 
 #: utils/wraps.py:115
 msgid "That's a nasty key!"
-msgstr "Aquesta clau és errònia!"
+msgstr ""
 
 #: utils/wraps.py:126
 msgid "That's a nasty token!"
-msgstr "Aquesta clau és errònia!"
+msgstr ""
 
 #: utils/wtf.py:29 utils/wtf.py:98
 msgid "Password again"
-msgstr "Contrasenya de nou"
+msgstr ""
 
 #: utils/wtf.py:35
 msgid "Username is not valid"
-msgstr "El nom d'usuari no és vàlid"
+msgstr ""
 
 #: utils/wtf.py:38 utils/wtf.py:41
 msgid "Please use a different username"
-msgstr "Usa un altre nom s'usuari si us plau"
+msgstr ""
 
 #: utils/wtf.py:45 utils/wtf.py:94 utils/wtf.py:129
 msgid "Please use a different email address"
-msgstr "Usa una altra adreça de correu-e si us plau"
+msgstr ""
 
 #: utils/wtf.py:49 utils/wtf.py:104
 msgid "Your password is weak"
-msgstr "La teva contrasenya és feble"
+msgstr ""
 
 #: utils/wtf.py:54
 msgid "Please accept our terms and conditions"
-msgstr "Si us plau, accepta els nostres termes i condicions"
+msgstr ""
 
 #: utils/wtf.py:59
 msgid "Please accept our data protection policy"
-msgstr "Si us plau, accepta la nostra política de protecció de dades"
+msgstr ""
 
 #: utils/wtf.py:72
 msgid "Enter your username"
-msgstr "Introduir nom d'usuària"
+msgstr ""
 
 #: utils/wtf.py:73
 msgid "Enter your password"
-msgstr "Introdueix la teva contrasenya"
+msgstr ""
 
 #: utils/wtf.py:77
 msgid "That is not your username"
 msgstr ""
 
 #: utils/wtf.py:82
-#, fuzzy
 msgid "That is not your password"
-msgstr "Has oblidat la teva contrassenya? "
+msgstr ""
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr "Nova adreça de correu"
+msgstr ""
 
 #: utils/wtf.py:110
 msgid "Encryption"
-msgstr "Encriptació"
+msgstr ""
 
 #: utils/wtf.py:117
 msgid "Sender address"
-msgstr "Adreça de remitent"
+msgstr ""
 
 #: utils/wtf.py:123
 msgid "New user's email"
-msgstr "Adreça de nou usuari"
+msgstr ""
 
 #: utils/wtf.py:124
 msgid "Include message"
-msgstr "Incloure un missatge"
+msgstr ""
 
 #: utils/wtf.py:125
 msgid "Make the new user an Admin"
-msgstr "Fes que el nou usuari sigui un Admin"
+msgstr ""
 
 #: utils/wtf.py:133
 msgid "HTML color code"
-msgstr "Codi de color HTML"
+msgstr ""
 
 #: utils/wtf.py:136
 msgid "Not a valid HTML color code"
-msgstr "No és un codi de color HTML vàlid"
+msgstr ""
 
 #: utils/wtf.py:142
 msgid "Not a valid time zone"
@@ -1532,7 +1489,7 @@ msgstr ""
 
 #: utils/wtf.py:145
 msgid "Extensions"
-msgstr "Extensions"
+msgstr ""
 
 #: utils/wtf.py:152
 #, python-format
@@ -1541,17 +1498,15 @@ msgstr ""
 
 #: utils/wtf.py:155
 msgid "Descriptive text"
-msgstr "Text descriptiu"
+msgstr ""
 
 #: utils/wtf.py:156
-#, fuzzy
 msgid "Select a file"
-msgstr "Esborra-ho tot"
+msgstr ""
 
 #: utils/wtf.py:175
-#, fuzzy
 msgid "Footer text"
-msgstr "Editar el text"
+msgstr ""
 
 #: utils/wtf.py:176
 msgid "Header image"
@@ -1571,99 +1526,91 @@ msgstr ""
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
-msgstr "Un butó"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:70
 msgid "Congratulations!"
-msgstr "Enhorabona!"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:72
-#, fuzzy
 msgid "MAIL test"
-msgstr "Adreça electrònica"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:82
 msgid "Join LiberaForms"
 msgstr ""
 
 #: utils/dispatcher/dispatcher.py:85
-#, fuzzy
 msgid "Invitation to LiberaForms"
-msgstr "Invitació a %s"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:93
-#, fuzzy
 msgid "Please use this link to create a new password"
-msgstr "Fes servir aquest enllaç per recuperar la teva contrasenya"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:94
 msgid "If you did not request this email you can ignore it"
 msgstr ""
 
 #: utils/dispatcher/dispatcher.py:98
-#, fuzzy
 msgid "Recover your password"
-msgstr "Recuperar la contrasenya"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:102
 msgid "LiberaForms. Recover password"
-msgstr "LiberaForms. Recupera contrasenya"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:110
-#, fuzzy
 msgid "Use this link to validate your email"
-msgstr "Fes servir aquest enllaç per recuperar la teva contrasenya"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:114
-#, fuzzy
 msgid "Validate email"
-msgstr "Correu-e validat"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:117
-#, fuzzy
 msgid "LiberaForms. Change email"
-msgstr "LiberaForms. Confirma el correu electrònic"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:128
 #, python-format
 msgid "New user '%s' created at %s"
-msgstr "Nou usuari '%s' creat a %s"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:131
 msgid "LiberaForms. New user notification"
-msgstr "LiberaForms. Nova notificació d'usuari"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:145
 #, python-format
 msgid "New form '%s' created at %s"
-msgstr "Nou formulari '%s' creat a %s"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:147
 msgid "LiberaForms. New form notification"
-msgstr "LiberaForms. Nova notificació de formulari"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:158
-#, fuzzy, python-format
+#, python-format
 msgid "New form answer in %s at %s\n"
-msgstr "Nova resposta de formulari a %s en %s\n"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:162
-#, fuzzy
 msgid "LiberaForms. New form answer"
-msgstr "LiberaForms. Nova resposta de formulari"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:178
 msgid "Confirmation message"
-msgstr "Missatge de confirmació"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:184
 #, python-format
 msgid "The form '%s' has expired at %s"
-msgstr "El formulari '%s' ha caducat %s"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:185
 msgid "LiberaForms. A form has expired"
-msgstr "LiberaForms. Aquest formulari ha caducat"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:199
 msgid "LiberaForms. Email brand preview"
@@ -1671,24 +1618,24 @@ msgstr ""
 
 #: views/admin.py:52 views/admin.py:98
 msgid "User not found"
-msgstr "No es troba l'usuari"
+msgstr ""
 
 #: views/admin.py:103
 msgid "Cannot delete root user"
-msgstr "No es pot eliminar un usuari root"
+msgstr ""
 
 #: views/admin.py:106
 msgid "Cannot delete yourself"
-msgstr "No et pots eliminar a tu mateix"
+msgstr ""
 
 #: views/admin.py:111
 #, python-format
 msgid "Deleted user '%s'"
-msgstr "Usuari '%s' eliminat"
+msgstr ""
 
 #: views/admin.py:114
 msgid "Username does not match"
-msgstr "El nom d'usuari no coincideix"
+msgstr ""
 
 #: views/admin.py:142 views/admin.py:217 views/answers.py:31
 #: views/answers.py:44 views/answers.py:54 views/answers.py:130
@@ -1696,148 +1643,145 @@ msgstr "El nom d'usuari no coincideix"
 #: views/form.py:377 views/form.py:389 views/form.py:424 views/form.py:460
 #: views/form.py:531 views/form.py:546 views/form.py:646
 msgid "Can't find that form"
-msgstr "No es troba aquest formulari"
+msgstr ""
 
 #: views/admin.py:171
-#, fuzzy, python-format
+#, python-format
 msgid "We have sent an invitation to %s"
-msgstr "Hem enviat una invitació a %s"
+msgstr ""
 
 #. i18n: Invitation to dave@example.com deleted OK
 #: views/admin.py:189
-#, fuzzy, python-format
+#, python-format
 msgid "Invitation to %s deleted OK"
-msgstr "Invitació a %s"
+msgstr ""
 
 #: views/admin.py:191
 msgid "Opps! We can't find that invitation"
-msgstr "Vaja! No podem trobar aquesta invitació"
+msgstr ""
 
 #: views/admin.py:223
 msgid "Current author incorrect"
-msgstr "El nom d'autor no és correcte"
+msgstr ""
 
 #: views/admin.py:231
 #, python-format
 msgid "Changed author from %s to %s"
-msgstr "Autor canviat de %s a %s"
+msgstr ""
 
 #: views/admin.py:235
 msgid "Changed author OK"
-msgstr "S'ha canviat l'autor correctament"
+msgstr ""
 
 #: views/admin.py:239
 #, python-format
 msgid "Cannot use %s. The user is not enabled"
-msgstr "No es pot fer servir %s. L'usuari no està activat"
+msgstr ""
 
 #: views/admin.py:243
 #, python-format
 msgid "Can't find username %s"
-msgstr "No es troba l'usuari %s"
+msgstr ""
 
 #: views/answers.py:78
 msgid "Deleted an answer"
-msgstr "Una resposta eliminada"
+msgstr ""
 
 #: views/answers.py:121
-#, fuzzy
 msgid "Modified an answer"
-msgstr "Es va modificar una resposta"
+msgstr ""
 
 #: views/answers.py:136
 msgid "We expected a number"
-msgstr "Esperàvem un número"
+msgstr ""
 
 #: views/answers.py:140
 msgid "Deleted all answers"
-msgstr "Totes les respostes eliminades"
+msgstr ""
 
 #: views/answers.py:144
-#, fuzzy, python-format
+#, python-format
 msgid "Deleted %s answers"
-msgstr "S'ha eliminat %s respostes"
+msgstr ""
 
 #: views/answers.py:148
-#, fuzzy
 msgid "Number of answers does not match"
-msgstr "El nombre de respostes no coincideix"
+msgstr ""
 
 #: views/form.py:67
 msgid "Something went wrong. id does not match session['form_id']"
-msgstr "Alguna cosa ha fallat. El id no coincideix amb session['form_id']"
+msgstr ""
 
 #: views/form.py:72
 msgid "You can't edit that form"
-msgstr "No pots editar aquest formulari"
+msgstr ""
 
 #: views/form.py:80
-#, fuzzy
 msgid "Something went wrong. Slug not unique!"
-msgstr "Alguna cosa ha sortit malament. No hi ha un nom!"
+msgstr ""
 
 #: views/form.py:83
 msgid "Something went wrong. No slug!"
-msgstr "Alguna cosa ha sortit malament. No hi ha un nom!"
+msgstr ""
 
 #: views/form.py:182
 msgid "Updated form OK"
-msgstr "Formulari actualitzat correctament"
+msgstr ""
 
 #: views/form.py:183
 msgid "Form edited"
-msgstr "Formulari editat"
+msgstr ""
 
 #: views/form.py:188
 msgid "Slug is missing."
-msgstr "Ens falta el nom de formulari"
+msgstr ""
 
 #: views/form.py:192
-#, fuzzy, python-format
+#, python-format
 msgid "Slug is not available. %s"
-msgstr "La nom del formulari no és únic %sfitxa"
+msgstr ""
 
 #: views/form.py:220
 msgid "Failed to save form"
-msgstr "No s'ha desat el formulari"
+msgstr ""
 
 #: views/form.py:223
 msgid "Form created"
-msgstr "Formulari creat"
+msgstr ""
 
 #: views/form.py:224
 msgid "Saved form OK"
-msgstr "Formulari guardat correctament"
+msgstr ""
 
 #: views/form.py:245
 msgid "Edited GDPR text"
-msgstr "Editar text GDPR"
+msgstr ""
 
 #: views/form.py:247 views/form.py:258 views/form.py:274 views/form.py:291
 #: views/site.py:102
 msgid "An error occured"
-msgstr "Hi ha hagut un error"
+msgstr ""
 
 #: views/form.py:270
 msgid "Edited Thankyou text"
-msgstr "Text d'agraïment editat"
+msgstr ""
 
 #: views/form.py:287
 msgid "Edited expiry text"
 msgstr ""
 
 #: views/form.py:307
-#, fuzzy, python-format
+#, python-format
 msgid "Deleted '%s' and %s answers"
-msgstr "S'ha eliminat \"%s\" i %s respostes"
+msgstr ""
 
 #: views/form.py:313
 msgid "Form name does not match"
-msgstr "El nom del formulari no coincideix"
+msgstr ""
 
 #: views/form.py:325
 msgid "Permission needed to view form"
-msgstr "Necessites permís per veure aquest formulari"
+msgstr ""
 
 #: views/form.py:344
 msgid "Fediverse connect is not configured"
@@ -1850,56 +1794,56 @@ msgstr ""
 
 #: views/form.py:395
 msgid "Can't find a user with that email"
-msgstr "No es troba cap usuari amb aquest correu"
+msgstr ""
 
 #: views/form.py:398
 #, python-format
 msgid "%s is already an editor"
-msgstr "%s ja és un editor"
+msgstr ""
 
 #: views/form.py:402
 msgid "New editor added ok"
-msgstr "Nou editor afegit correctament"
+msgstr ""
 
 #: views/form.py:403
 #, python-format
 msgid "Added editor %s"
-msgstr "S'ha afegit %s com a editor"
+msgstr ""
 
 #: views/form.py:414
 #, python-format
 msgid "Removed editor %s"
-msgstr "S'ha esborrat %s de la llista de editors"
+msgstr ""
 
 #: views/form.py:432
 #, python-format
 msgid "Added shared notification: %s"
-msgstr "Notificacions compartides afegides: %s"
+msgstr ""
 
 #: views/form.py:449
-#, fuzzy, python-format
+#, python-format
 msgid "Removed shared notification: %s"
-msgstr "S'ha esborrat %s de la llista de editors"
+msgstr ""
 
 #: views/form.py:475
 msgid "Date-time is not valid"
-msgstr "La data i hora no són vàlids"
+msgstr ""
 
 #: views/form.py:480
 #, python-format
 msgid "Expiry date set to: %s"
-msgstr "Data de caducitat: %s"
+msgstr ""
 
 #: views/form.py:484
 msgid "Expiry date cancelled"
-msgstr "Data de caducitat cancel·lada"
+msgstr ""
 
 #: views/form.py:486
 msgid "Missing date or time"
-msgstr "Falta la data o hora"
+msgstr ""
 
 #: views/form.py:503
-#, fuzzy, python-format
+#, python-format
 msgid "Field '%s' expiry set to: %s"
 msgstr ""
 
@@ -1907,94 +1851,92 @@ msgstr ""
 #: views/form.py:521
 #, python-format
 msgid "Expire when total answers set to: %s"
-msgstr "Caduca quan el total de respostes sigui: %s"
+msgstr ""
 
 #: views/form.py:537
 msgid "You can edit the duplicate now"
-msgstr "Ara pots editar el duplicat"
+msgstr ""
 
 #: views/form.py:561
 #, python-format
 msgid "Public set to: %s"
-msgstr "Public posat a: %s"
+msgstr ""
 
 #: views/form.py:572
-#, fuzzy, python-format
+#, python-format
 msgid "Shared answers set to: %s"
-msgstr "Data de caducitat: %s"
+msgstr ""
 
 #: views/form.py:583
 #, python-format
 msgid "Restricted access set to: %s"
-msgstr "Accés restringit posat a: %s"
+msgstr ""
 
 #: views/form.py:605
 #, python-format
 msgid "Data protection consent set to: %s"
-msgstr "Consentiment a protecció de dades posat a: %s"
+msgstr ""
 
 #: views/form.py:616
 #, python-format
 msgid "Send Confirmation set to: %s"
-msgstr "Enviar confirmació posat a: %s"
+msgstr ""
 
 #: views/form.py:653
 msgid "That form has expired"
-msgstr "Aquest formulari ha caducat"
+msgstr ""
 
 #: views/form.py:655
 msgid "That form is not public"
-msgstr "Aquest formulari no és públic"
+msgstr ""
 
 #: views/form.py:779
 msgid "Copied template OK. You can edit your new form"
-msgstr "Plantilla copiada OK. Ara ja pots editar el teu nou formulari"
+msgstr ""
 
 #: views/site.py:35
 msgid "Text saved OK"
-msgstr "Text guardat correctament"
+msgstr ""
 
 #: views/site.py:47
 msgid "Couldn't find that token"
-msgstr "No s'ha pogut trobar aquesta clau"
+msgstr ""
 
 #: views/site.py:50 views/user.py:290
 msgid "Your petition has expired"
-msgstr "La teva petició ha caducat"
+msgstr ""
 
 #: views/site.py:55
 msgid "Your account has been blocked"
-msgstr "El teu compte ha sigut bloquejat"
+msgstr ""
 
 #: views/site.py:80
 msgid "We may have sent you an email"
-msgstr "És possible que t'hàgim enviat un correu electrònic"
+msgstr ""
 
 #: views/site.py:130
 msgid "Site name changed OK"
-msgstr "S'ha canviat el nom del lloc correctament"
+msgstr ""
 
 #: views/site.py:143 views/user.py:147
 msgid "Language updated OK"
-msgstr "Idioma actualitzat correctament"
+msgstr ""
 
 #: views/site.py:154
 msgid "Required file is missing"
-msgstr "Cap fitxer seleccionat"
+msgstr ""
 
 #: views/site.py:160
-#, fuzzy
 msgid "Logo changed OK. Refresh with  &lt;F5&gt;"
-msgstr "Favicon reiniciat correctament. Refresca amb &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:165
 msgid "An image file is required"
-msgstr "Es requereix un arxiu d'imatge"
+msgstr ""
 
 #: views/site.py:174
-#, fuzzy
 msgid "Logo reset OK. Refresh with  &lt;F5&gt;"
-msgstr "Favicon reiniciat correctament. Refresca amb &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:195
 msgid "Enabled file extensions updated OK"
@@ -2002,80 +1944,76 @@ msgstr ""
 
 #: views/site.py:221
 msgid "Color changed OK"
-msgstr "S'ha canviat el color correctament"
+msgstr ""
 
 #: views/site.py:236
-#, fuzzy
 msgid "Updated OK. Refresh with &lt;F5&gt;"
-msgstr "Favicon reiniciat correctament. Refresca amb &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:248
-#, fuzzy
 msgid "Reset image OK. Refresh with &lt;F5&gt;"
-msgstr "Favicon reiniciat correctament. Refresca amb &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:267
-#, fuzzy
 msgid "Sent email OK"
-msgstr "Enviar el correu"
+msgstr ""
 
 #: views/site.py:271
 msgid "Email address is not valid"
-msgstr "La teva adreça de correu no és vàlida"
+msgstr ""
 
 #: views/site.py:301
 msgid "Confguration saved OK"
-msgstr "S'ha guardat la configuració correctament"
+msgstr ""
 
 #: views/site.py:315
 msgid "SMTP config works!"
-msgstr "La configuració SMTP funciona!"
+msgstr ""
 
 #: views/user.py:44
 msgid "Invitation not found"
-msgstr "No s'ha trobat la invitació"
+msgstr ""
 
 #: views/user.py:47
 msgid "This invitation has expired"
-msgstr "Aquesta invitació s'ha caducat"
+msgstr ""
 
 #: views/user.py:82
 msgid "Opps! An error ocurred when creating the user"
-msgstr "Vaja! Hi ha hagut un error quan s'ha creat l'usuari"
+msgstr ""
 
 #: views/user.py:91
 msgid "Welcome!"
-msgstr "Benvingut!"
+msgstr ""
 
 #: views/user.py:128 views/user.py:163
-#, fuzzy, python-format
+#, python-format
 msgid "We have sent an email to %s"
-msgstr "Hem enviat un correu a %s"
+msgstr ""
 
 #: views/user.py:179
 msgid "Password changed OK"
-msgstr "Contrasenya canviada correctament"
+msgstr ""
 
 #: views/user.py:192
-#, fuzzy
 msgid "Time zone changed OK"
-msgstr "S'ha canviat el nom del lloc correctament"
+msgstr ""
 
 #: views/user.py:220
 msgid "Could not encrypt your access token"
-msgstr "El teu símbol d'accés no s'ha pogut encriptar"
+msgstr ""
 
 #: views/user.py:222
 msgid "Connected to the Fediverse"
-msgstr "Connectat al Fedivers"
+msgstr ""
 
 #: views/user.py:241
 msgid "Fediverse configuration deleted OK"
-msgstr "Configuració de Fedivers esborrada OK"
+msgstr ""
 
 #: views/user.py:254
 msgid "Cannot delete. You are the only Admin on this site"
-msgstr "No es pot eliminar. Ets l'única administradora al lloc web actual"
+msgstr ""
 
 #: views/user.py:262
 msgid "Thank you for using LiberaForms"
@@ -2083,391 +2021,12 @@ msgstr ""
 
 #: views/user.py:287
 msgid "We couldn't find that petition"
-msgstr "No hem pogut trobar aquesta petició"
+msgstr ""
 
 #: views/user.py:302
 msgid "Your email address is valid"
-msgstr "La teva adreça de correu és vàlida"
+msgstr ""
 
 #: views/user.py:336
 msgid "Bad credentials"
-msgstr "Les credencials són errònies"
-
-#~ msgid "Form is not available"
-#~ msgstr "El formulari no està disponible. 404"
-
-#~ msgid "No form found"
-#~ msgstr "No s'ha trobat cap formulari"
-
-#~ msgid "Form not found"
-#~ msgstr "Formulari no trobat"
-
-#~ msgid "Form is not available. 404"
-#~ msgstr "El formulari no està disponible. 404"
-
-#~ msgid "disabled"
-#~ msgstr "deshabitat"
-
-#~ msgid "2. Say something to the user after the form has been submitted"
-#~ msgstr ""
-
-#~ msgid "3. Your form will have this address"
-#~ msgstr "3. El teu formulari tindrà aquesta adreça"
-
-#~ msgid "Choose a template"
-#~ msgstr "Escull una plantilla"
-
-#~ msgid "Schema update"
-#~ msgstr "Esquema actualitzat"
-
-#~ msgid ""
-#~ msgstr ""
-
-#~ msgid "Start"
-#~ msgstr "Inici"
-
-#~ msgid "Users listed here have the <b>same permissions</b> as the author"
-#~ msgstr ""
-
-#~ msgid "Edition enabled"
-#~ msgstr "Edició habilitada"
-
-#~ msgid "Update"
-#~ msgstr "Actualitzar"
-
-#~ msgid "Schema is already up to date. Nothing to do."
-#~ msgstr "L’esquema ja està actualitzat. Res a fer."
-
-#~ msgid "Updated schema OK!"
-#~ msgstr "S'ha actualitzat l'esquema correctament!"
-
-#~ msgid "Do you want to receive confirmation by email?"
-#~ msgstr "Vols rebre confirmació per correu-e?"
-
-#~ msgid "We sent an email to %s"
-#~ msgstr ""
-
-#~ msgid "We could not send an email to %s"
-#~ msgstr ""
-
-#~ msgid "Send confirmation by mail"
-#~ msgstr "Enviar confirmació per correu"
-
-#~ msgid "Source code"
-#~ msgstr "Codi font"
-
-#~ msgid "Disable form"
-#~ msgstr "Deshabilitar el formulari"
-
-#~ msgid "Enable form"
-#~ msgstr "Habilitar el formulari"
-
-#~ msgid "This form has expired"
-#~ msgstr "Aquest formulari ha caducat"
-
-#~ msgid "People will see this text instead of the form."
-#~ msgstr "Persones veuran aquest text en lloc del formulari"
-
-#~ msgid "Will expire"
-#~ msgstr "Caducarà"
-
-#~ msgid "Publish your own form"
-#~ msgstr "Publica el teu propi formulari"
-
-#~ msgid "New user's terms"
-#~ msgstr ""
-
-#~ msgid "Default data protection law consent text"
-#~ msgstr "Llei de protecció de dades. Text de consentiment per omissió."
-
-#~ msgid "Save text"
-#~ msgstr "Desar el text"
-
-#~ msgid "to"
-#~ msgstr "a"
-
-#~ msgid "Note: Maximum is now %(max)s"
-#~ msgstr "Nota: El màxim és ara %(max)s"
-
-#~ msgid "LiberaForms. Invitation to %s"
-#~ msgstr "LiberaForms. Invitació a %s"
-
-#~ msgid "You have been invited to %s."
-#~ msgstr "Has estat convidat %s."
-
-#~ msgid "Multiple choice"
-#~ msgstr "Selecció múltiple"
-
-#~ msgid "New condition"
-#~ msgstr ""
-
-#~ msgid "Require consent"
-#~ msgstr "Consentiment"
-
-#~ msgid "Data protection consent"
-#~ msgstr "Protecció de dades"
-
-#~ msgid "You can include these texts in your forms"
-#~ msgstr ""
-
-#~ msgid "Data protection law"
-#~ msgstr "Llei de protecció de dades"
-
-#~ msgid "Marked"
-#~ msgstr "Anotat"
-
-#~ msgid "Sorry, this form has expired."
-#~ msgstr "Ho sentim, aquest formulari s'ha caducat"
-
-#~ msgid "Thank you!!"
-#~ msgstr "Gràcies!!"
-
-#~ msgid "Form title"
-#~ msgstr "Títol del formulari"
-
-#~ msgid "Context"
-#~ msgstr "Context"
-
-#~ msgid "User's forms"
-#~ msgstr "Formularis de l'usuari"
-
-#~ msgid "Cannot modify because an entry with this value exists in the database"
-#~ msgstr ""
-
-#~ msgid "Conditionals"
-#~ msgstr "Condicionals"
-
-#~ msgid "Schema"
-#~ msgstr ""
-
-#~ msgid "Curreny schema version"
-#~ msgstr ""
-
-#~ msgid "Required version"
-#~ msgstr ""
-
-#~ msgid "Your super secret key"
-#~ msgstr "La teva clau super secreta"
-
-#~ msgid "Start update"
-#~ msgstr "Començar l'actualització"
-
-#~ msgid "forms per user"
-#~ msgstr "formularis per usuari"
-
-#~ msgid "Administrator"
-#~ msgstr ""
-
-#~ msgid "Invitations"
-#~ msgstr "Invitacions"
-
-#~ msgid "Invite a new user"
-#~ msgstr "Invitar a un nou usuari"
-
-#~ msgid "Invitation message"
-#~ msgstr "Missatge de la invitació"
-
-#~ msgid "Site settings"
-#~ msgstr "Configuració del lloc"
-
-#~ msgid "Site name"
-#~ msgstr "Nom del lloc"
-
-#~ msgid "Default language"
-#~ msgstr "Idioma per omissió"
-
-#~ msgid "Consent"
-#~ msgstr "Consentiment"
-
-#~ msgid "etc"
-#~ msgstr ""
-
-#~ msgid "Favicon"
-#~ msgstr ""
-
-#~ msgid "Configure"
-#~ msgstr "Configurar"
-
-#~ msgid "Root user"
-#~ msgstr "Usuari root"
-
-#~ msgid "root mode"
-#~ msgstr ""
-
-#~ msgid "Installation"
-#~ msgstr "Instal·lació"
-
-#~ msgid "Total responses"
-#~ msgstr "Total de respostes"
-
-#~ msgid "Settings"
-#~ msgstr "Configuració"
-
-#~ msgid "Toggle root mode"
-#~ msgstr ""
-
-#~ msgid "Entries"
-#~ msgstr "Respostes"
-
-#~ msgid "Is Admin"
-#~ msgstr "És administrador"
-
-#~ msgid "Last entry"
-#~ msgstr "Darrera resposta"
-
-#~ msgid "Delete entries"
-#~ msgstr "Esborrar les respostes"
-
-#~ msgid "entries"
-#~ msgstr "respostes"
-
-#~ msgid "Delete entry"
-#~ msgstr "Esborrar el registre"
-
-#~ msgid "View entries"
-#~ msgstr "Veure les respostes"
-
-#~ msgid "Total entries"
-#~ msgstr "Suma de respostes"
-
-#~ msgid "Change site favicon"
-#~ msgstr ""
-
-#~ msgid "Upload image"
-#~ msgstr ""
-
-#~ msgid "A small, square PNG image"
-#~ msgstr ""
-
-#~ msgid "Sitename"
-#~ msgstr "Nom del lloc"
-
-#~ msgid "Root user options"
-#~ msgstr "Opcions d’usuari root"
-
-#~ msgid "Invite to one of these sites"
-#~ msgstr "Convidar a un d’aquests llocs"
-
-#~ msgid "Hello"
-#~ msgstr "Hola"
-
-#~ msgid "SMTP test"
-#~ msgstr "Prova SMTP"
-
-#~ msgid ""
-#~ "Hello %s\n"
-#~ "\n"
-#~ "Please confirm your email\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Hola %s\n"
-#~ "\n"
-#~ "Si us plau, confirma el teu correu electrònic.\n"
-#~ "\n"
-#~ "%s"
-
-#~ msgid "hostname"
-#~ msgstr ""
-
-#~ msgid "Deleted an entry"
-#~ msgstr "Es va esborra una resposta"
-
-#~ msgid "Shared entries set to: %s"
-#~ msgstr ""
-
-#~ msgid "Bad file name. PNG only"
-#~ msgstr ""
-
-#~ msgid "Favicon changed OK. Refresh with  &lt;F5&gt;"
-#~ msgstr ""
-
-#~ msgid "Site not found"
-#~ msgstr "No es troba el lloc web"
-
-#~ msgid "Deleted %s"
-#~ msgstr "Eliminiat %s"
-
-#~ msgid "Site name does not match"
-#~ msgstr "El nom del lloc web no coincideix"
-
-#~ msgid "Root disabled"
-#~ msgstr ""
-
-#~ msgid "Root enabled"
-#~ msgstr ""
-
-#~ msgid "Cannot modify because a response with this value exists in the database"
-#~ msgstr ""
-
-#~ msgid "Profile"
-#~ msgstr "Perfil"
-
-#~ msgid "Menu color"
-#~ msgstr "Color de menú"
-
-#~ msgid "Versions"
-#~ msgstr ""
-
-#~ msgid "Your email has not been validated"
-#~ msgstr "No s'ha validat el teu correu"
-
-#~ msgid "Validate my email"
-#~ msgstr "Validar el meu correu"
-
-#~ msgid "Ethical form software."
-#~ msgstr ""
-
-#~ msgid "Please validated your email to continue"
-#~ msgstr ""
-
-#~ msgid "Site styling"
-#~ msgstr "Configuració del lloc"
-
-#~ msgid "Primary colour"
-#~ msgstr ""
-
-#~ msgid "Email styling"
-#~ msgstr ""
-
-#~ msgid "A small square image."
-#~ msgstr ""
-
-#~ msgid "Default texts"
-#~ msgstr "Textos per omisió"
-
-#~ msgid "Keep the kilobytes to a minimum."
-#~ msgstr ""
-
-#~ msgid "Use a passphrase, with spaces"
-#~ msgstr "Fes servir una frase de contrasenya, amb espais"
-
-#~ msgid "eg: No holidays this year"
-#~ msgstr "Exemple: No tinc vancances aquest any"
-
-#~ msgid "By default"
-#~ msgstr "Per omissió"
-
-#~ msgid "New answer notification default"
-#~ msgstr "Avisa'm quan hagin noves respostes"
-
-#~ msgid "Your password"
-#~ msgstr "Has oblidat la teva contrassenya? "
-
-#~ msgid "responses"
-#~ msgstr "respostes"
-
-#~ msgid "Icon and Favicon"
-#~ msgstr ""
-
-#~ msgid "A small square image"
-#~ msgstr ""
-
-#~ msgid "Published at %smsg"
-#~ msgstr ""
-
-#~ msgid "Icon changed OK. Refresh with  &lt;F5&gt;"
-#~ msgstr ""
-
-#~ msgid "Super admin options"
-#~ msgstr "Opcions d'Admin"
+msgstr ""
