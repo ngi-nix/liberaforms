@@ -114,7 +114,7 @@ class Dispatcher(EmailServer):
                                             button_text=_("Validate email"),
                                             button_link=link)
         message = self.create_multipart_message(text_body, html_body)
-        header = Header(_("LiberaForms. Change email"))
+        header = Header(_("LiberaForms. Email validation"))
         message['Subject'] = header.encode()
         message['To'] = email_to_validate
         status = self.send_mail(message)

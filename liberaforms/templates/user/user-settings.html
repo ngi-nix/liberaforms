@@ -9,22 +9,23 @@
     <div class="col-md-6">
 
       <div class="title_1">
-          {%trans user=g.current_user.username%}Hello {{user}}!{%endtrans%}
+        {%trans user=g.current_user.username%}Hello {{user}}!{%endtrans%}
       </div>
 
       {% if g.current_user.validatedEmail != True %}
       <div class="row">
-          <div class="col title_2">
-              {%trans%}Please validate your email to continue{%endtrans%}
-          </div>
-          <div class="col-auto">
-              <a  class="btn btn-sm btn-success"
-                  role="button"
-                  href="/user/send-email-validation">
-                  {%trans%}Validate{%endtrans%}
-              </a>
-          </div>
+        <div class="col">
+          {%trans%}We have sent you a link to validate your email address{%endtrans%}
+        </div>
+        <div class="col-auto">
+          <a  class="btn btn-sm btn-success"
+              role="button"
+              href="/user/send-email-validation">
+              {%trans%}Send again{%endtrans%}
+          </a>
+        </div>
       </div>
+      <hr />
       <p>&nbsp;</p>
       {% endif %}
 
