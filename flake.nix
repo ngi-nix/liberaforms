@@ -28,9 +28,6 @@
       remove-newline = string: builtins.replaceStrings [ "\n" ] [ "" ] string;
       version = remove-newline (builtins.readFile (liberaforms-src + "/VERSION.txt"));
 
-      # Common shell code.
-      # libSh = ./lib.sh;
-
       # System types to support.
       supportedSystems = [ "x86_64-linux" ];
 
@@ -51,14 +48,12 @@
           pkgs = (nixpkgsFor.${system}).pkgs;
           python = "python38";
 
-          # Pin pypi repo to a specific commit which includes all necessary
-          # Python deps. The default version is updated with every mach-nix
-          # release might be be sufficient for newer releases.
+          # The default version of the pypi dependencies db that is updated with every mach-nix release
+          # might not be sufficient for newer releases of liberaforms. Edit here to pin to specific commit.
           # The corresponding sha256 hash can be obtained with:
           # $ nix-prefetch-url --unpack https://github.com/DavHau/pypi-deps-db/tarball/<pypiDataRev>
-          # pypiDataRev = "c86b4490a7d838bd54a2d82730455e96c6e4eb14";
-          # pypiDataSha256 =
-          #  "0al490gi0qda1nkb9289z2msgpc633rv5hn3w5qihkl1rh88dmjd";
+          #pypiDataRev = "c86b4490a7d838bd54a2d82730455e96c6e4eb14";
+          #pypiDataSha256 = "0al490gi0qda1nkb9289z2msgpc633rv5hn3w5qihkl1rh88dmjd";
         });
 
     in
@@ -80,12 +75,6 @@
             dontConfigure = true; # do not use ./configure
             propagatedBuildInputs = [ liberaforms-env ];
 
-            postPatch = ''
-              # Make sure the pycodestyle binary in $PATH is used.
-              # substituteInPlace tests/functional/*.py \
-              #  --replace 'join(bin_dir, "pycodestyle")' '"pycodestyle"'
-            '';
-
             installPhase = ''
               cp -r . $out
             '';
@@ -97,12 +86,7 @@
       devShell = forAllSystems (system:
         with nixpkgsFor.${system};
         mkShell {
-          # will be available as env var in `nix develop` / `nix-shell`.
-          LIBERAFORMS_INSTALL_DIR = liberaforms;
           buildInputs = [ liberaforms ];
-          #shellHook = ''
-          #  alias vulnerablecode-manage.py=${vulnerablecode}/manage.py
-          #'';
         });
 
       # Provide some packages for selected system types.
@@ -121,18 +105,13 @@
 
               imports = [ ./nix/module.nix ];
 
-              networking.hostName = "liberaforms";
-
               boot.isContainer = true;
               networking.useDHCP = false;
 
+              networking.hostName = "liberaforms";
+
+              # A timezone must be specified for use in the LiberaForms config file
               time.timeZone = "America/Montreal";
-
-              # Let 'nixos-version --json' know about the Git revision of this flake.
-              system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-
-              nixpkgs.overlays = [ self.overlay ];
-              environment.systemPackages = [ pkgs.liberaforms pkgs.traceroute ];
 
               services.liberaforms = {
                 enable = true;
@@ -144,18 +123,13 @@
                 rootEmail = "cleeyv@riseup.net";
               };
 
+              # Let 'nixos-version --json' know about the Git revision of this flake.
+              system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+
+              nixpkgs.overlays = [ self.overlay ];
+
             })
           ];
-
-        #nixosModule = self.nixosModules.liberaforms;
-        #
-        #nixosModules =
-        #  {
-        #    liberaforms = import /home/cleeyv/dev/liberaforms/nix/module.nix;
-        #  };
-
-        # nixosModules.liberaforms = import ./nix/module.nix self.overlay;
-
 
         # Tests run by 'nix flake check' and by Hydra.
         #      checks = forAllSystems
