@@ -37,7 +37,7 @@ Currently `rootEmail` is the only variable that must be edited before running th
 
 Within the cloned `liberaforms` directory, run the following commands to create and then start the nixos-container
 ```
-sudo nixos-container create liberaforms --flake ./
+sudo nixos-container create liberaforms --flake ./#liberaforms
 sudo nixos-container start liberaforms
 ```
 The `create` command will output a local container IP address (such as 10.233.1.2). Once the container is started, visiting this address in a browser on the host system will display the LiberaForms instance. Note that this initial visit will trigger the initalization of the LiberaForms app. This means that LiberaForms' hostname for itself will depend on the URL that is used to access it for the first time. 
@@ -53,7 +53,7 @@ sudo nixos-container root-login liberaforms
 
 If you make changes to the flake.nix or the nix/module.nix and would like to see them reflected in an already running container, you can use the update command for this purpose:
 ```
-sudo nixos-container update liberaforms --flake ./
+sudo nixos-container update liberaforms --flake ./liberaforms
 ```
 
 ### Stop and destroy
