@@ -160,19 +160,16 @@ in
         PrivateTmp = true;
         ExecStartPre = pkgs.writeScript "liberaforms-init" ''
           #!/bin/sh
-          set -x
+          #set -x
 
-          ########################
-          ## Generating secrets ##
-          ########################
+          ################################
+          ## Generating initial secrets ##
+          ################################
           if [ ! -f /etc/liberaforms/secret.key ]; then
             openssl rand -base64 32 > /etc/liberaforms/secret.key
           fi
           if [ ! -f /etc/liberaforms/db-password.key ]; then
             openssl rand -base64 32 > /etc/liberaforms/db-password.key
-          fi
-            if [ ! -f /etc/liberaforms/crypto.key ]; then
-            cd ${cfg.workDir} ; flask cryptokey create > /etc/liberaforms/crypto.key
           fi
 
           #############################################
@@ -221,7 +218,7 @@ in
           # can be 'production' or 'development'
           FLASK_CONFIG=production
 
-          # To enable these options, use services.liberaforms.extraConfig
+          # To modify these options, use services.liberaforms.extraConfig
           # See docs/upload.md for more info
           ENABLE_UPLOADS=True
           ENABLE_REMOTE_STORAGE=False
@@ -258,24 +255,42 @@ in
           # wsgi.py cannot be a symlink because its location determines working dir of gunicorn/flask.
           rm ./wsgi.py
           cp ${liberaforms}/wsgi.py ./wsgi.py
-          rm -r ./uploads
-          cp -rL ${liberaforms}/uploads .
-          chmod -R +w uploads
+          # After instance creation, ./uploads must remain stateful because it contains uploaded user data.
+          if [[ -L "./uploads" ]]; then
+            rm -r ./uploads
+            cp -rL ${liberaforms}/uploads .
+            chmod -R +w uploads
+          fi
+
+          #######################################
+          ## Generating crypto key for uploads ##
+          #######################################
+          if [ ! -f /etc/liberaforms/crypto.key ]; then
+            cd ${cfg.workDir} ; flask cryptokey create | tr -d '\n' > /etc/liberaforms/crypto.key
+            KEY=$(cat "${cfg.cryptoKeyFile}")
+            sed -i "s/CRYPTO_KEY=/CRYPTO_KEY=$KEY/" /var/lib/liberaforms/.env
+          fi
 
           #####################################################
           ## Creating database, user, and tables in postgres ##
           #####################################################
           # "${cfg.workDir}/liberaforms/commands/postgres.sh create-db"
-          # psql commands from `postgres.sh create-db` script rewritten here to add `-U postgres`.
-          psql -U postgres -c "CREATE USER liberaforms WITH PASSWORD '$(cat ${cfg.dbPasswordFile})'"
-          psql -U postgres -c "CREATE DATABASE liberaforms ENCODING 'UTF8' TEMPLATE template0"
+          # psql commands from `postgres.sh create-db` script rewritten here to add `-U postgres` and conditionals.
+          if ! psql -U postgres -c '\du' | cut -d \| -f 1 | grep -qw liberaforms ; then
+            psql -U postgres -c "CREATE USER liberaforms WITH PASSWORD '$(cat ${cfg.dbPasswordFile})'"
+          else
+            psql -U postgres -c "ALTER USER liberaforms PASSWORD '$(cat ${cfg.dbPasswordFile})';"
+          fi
+          if ! psql -U postgres -lt | cut -d \| -f 1 | grep -qw liberaforms ; then
+            psql -U postgres -c "CREATE DATABASE liberaforms ENCODING 'UTF8' TEMPLATE template0"
+          fi
           psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE liberaforms TO liberaforms"
           flask db upgrade
         '';
         ExecStart = "${penv}/bin/gunicorn -c ${cfg.workDir}/gunicorn.py 'wsgi:create_app()'";
         ExecReload = "${pkgs.coreutils}/bin/kill -HUP $MAINPID";
         User = "${user}";
-        #Group = "${group}";
+        Group = "${group}";
         WorkingDirectory = "${cfg.workDir}";
         KillMode = "mixed";
         TimeoutStopSec = "5";
@@ -284,12 +299,11 @@ in
 
     users.users.${user} =
       {
-        #uid = config.ids.uids.liberaforms;
-        #group = group;
+        group = group;
         home = default_home;
         isSystemUser = true;
       };
-    #users.groups.${group}.gid = config.ids.gids.liberaforms;
+    users.groups.${group} = { };
 
     services.postgresql = mkIf cfg.enablePostgres {
       enable = true;
