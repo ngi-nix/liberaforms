@@ -99,12 +99,11 @@ def my_forms(user_id):
         #pprint(items)
     return jsonify(
         items=items,
-        deleted=None,
         meta={'total': form_count,
               'field_index': field_index,
               'deleted_fields': [],
               'item_id': None,
-              #'default_field_index': default_forms_field_index,
+              'default_field_index': default_forms_field_index,
               'editable_fields': False
         },
         user_prefs={'order_by': get_forms_order_by(g.current_user),
@@ -200,11 +199,11 @@ def form_answers(form_id):
     answers = form.answers
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
-        deleted_fields=form.get_deleted_fields(),
         meta={'total': answers.count(),
               'field_index': form.get_user_field_index_preference(g.current_user),
+              'deleted_fields': form.get_deleted_fields(),
               'item_id': form.id,
-              #'default_field_index': form.get_field_index_for_data_display(),
+              'default_field_index': form.get_field_index_for_data_display(),
               'editable_fields': False,
         },
         user_prefs={'order_by': form.get_answers_order_by(g.current_user),
@@ -345,3 +344,22 @@ def answers_notification(form_id):
         return jsonify("Forbidden"), 403
     pay_load = {'notification':form_user.toggle_notification()}
     return jsonify(pay_load)
+
+@data_display_bp.route('/data-display/answer/<int:answer_id>/save', methods=['PATCH'])
+@enabled_user_required__json
+def update_answer(answer_id):
+    answer = Answer.find(id=answer_id)
+    if not (answer and FormUser.find(form_id=answer.form_id,
+                                     user_id=g.current_user.id,
+                                     is_editor=True)):
+        return jsonify("Forbidden"), 403
+    content = request.get_json()
+    try:
+        answer.update_field(content['field_name'], content['field_value'])
+        answer.form.expired = answer.form.has_expired()
+        answer.form.save()
+        answer.form.add_log(_("Modified an answer"))
+        return jsonify({'saved': True,
+                        'data': answer.data})
+    except:
+        return jsonify({'saved': False})

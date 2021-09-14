@@ -97,31 +97,6 @@ def toggle_marked_answer(form_id):
     return JsonResponse(json.dumps({'marked': answer.marked}))
 
 
-@answers_bp.route('/forms/change-answer-field-value/<int:form_id>', methods=['POST'])
-@enabled_user_required
-def change_answer(form_id):
-    queriedForm = g.current_user.get_form(form_id, is_editor=True)
-    if not (queriedForm and 'id' in request.json):
-        return JsonResponse(json.dumps({'saved': False}))
-    try:
-        answer_id = int(request.json['id'])
-        answer = Answer.find(id=answer_id, form_id=queriedForm.id)
-    except:
-        answer = None
-    if not answer:
-        return JsonResponse(json.dumps({'saved': False}))
-    answer.data = {}
-    for field in request.json['data']:
-        if field['name'] == 'marked' or field['name'] == 'created':
-            continue
-        answer.data[field['name']] = field['value']
-    answer.save()
-    queriedForm.expired = queriedForm.has_expired()
-    queriedForm.save()
-    queriedForm.add_log(_("Modified an answer"))
-    return JsonResponse(json.dumps({'saved': True}))
-
-
 @answers_bp.route('/forms/delete-all-answers/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required
 def delete_answers(form_id):
