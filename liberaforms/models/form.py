@@ -196,6 +196,12 @@ class Form(db.Model, CRUD):
     def get_deleted_fields(self):
         return [field for field in self.fieldIndex if 'removed' in field]
 
+    def get_field_structure(self, field_name):
+        for element in structure:
+            if element['name'] == field_name:
+                return element
+        return None
+
     @staticmethod
     def is_email_field(field):
         if  "type" in field and field["type"] == "text" and \

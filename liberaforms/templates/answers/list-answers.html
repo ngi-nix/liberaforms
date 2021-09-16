@@ -27,9 +27,7 @@
   <div class="row">
     <div class="col">
       <div data-vue-component="data-display"
-           data-items_endpoint="/data-display/form/{{form.id}}/answers"
-           data-item_endpoint="/data-display/answer/"
-           data-can_edit={{ form.is_editor(g.current_user) | tojson }}
+           data-endpoint="/data-display/form/{{form.id}}"
            data-exportable="true"
            data-csrf_token="{{ csrf_token() }}">
       </div>

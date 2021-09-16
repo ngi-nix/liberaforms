@@ -61,7 +61,7 @@ def answers_csv(form_id):
         return response
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
-
+"""
 @answers_bp.route('/forms/delete-answer/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def delete_answer(form_id):
@@ -77,8 +77,9 @@ def delete_answer(form_id):
     queriedForm.save()
     queriedForm.add_log(_("Deleted an answer"))
     return JsonResponse(json.dumps({'deleted': True}))
+"""
 
-
+"""
 @answers_bp.route('/forms/toggle-marked-answer/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def toggle_marked_answer(form_id):
@@ -95,7 +96,7 @@ def toggle_marked_answer(form_id):
     answer.marked = False if answer.marked == True else True
     answer.save()
     return JsonResponse(json.dumps({'marked': answer.marked}))
-
+"""
 
 @answers_bp.route('/forms/delete-all-answers/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required

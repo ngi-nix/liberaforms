@@ -137,16 +137,6 @@ def preview_form():
                             max_attachment_size_for_humans=max_attach_size,
                         )
 
-@form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
-@enabled_user_required
-def conditions_form(id):
-    queriedForm = g.current_user.get_form(form_id, is_editor=True)
-    if not queriedForm:
-        flash(_("Can't find that form"), 'warning')
-        return redirect(make_url_for('form_bp.my_forms'))
-    #pprint(queriedForm.structure)
-    return render_template('conditions.html', form=queriedForm)
-
 
 @form_bp.route('/forms/save', methods=['POST'])
 @form_bp.route('/forms/save/<int:id>', methods=['POST'])

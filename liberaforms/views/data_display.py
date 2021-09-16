@@ -49,7 +49,7 @@ def get_forms_order_by(user):
 
 """ My Forms """
 
-@data_display_bp.route('/data-display/forms/<int:user_id>', methods=['GET'])
+@data_display_bp.route('/data-display/my-forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
 def my_forms(user_id):
     """ Returns json required by Vue dataTable component.
@@ -102,9 +102,10 @@ def my_forms(user_id):
         meta={'total': form_count,
               'field_index': field_index,
               'deleted_fields': [],
-              'item_id': None,
               'default_field_index': default_forms_field_index,
-              'editable_fields': False
+              'editable_fields': False,
+              'item_endpoint': None,
+              'can_edit': False,
         },
         user_prefs={'order_by': get_forms_order_by(g.current_user),
                     'ascending': get_forms_order_ascending(g.current_user),
@@ -112,7 +113,7 @@ def my_forms(user_id):
         }
     ), 200
 
-@data_display_bp.route('/data-display/forms/<int:user_id>/change-index', methods=['POST'])
+@data_display_bp.route('/data-display/my-forms/<int:user_id>/change-index', methods=['POST'])
 @enabled_user_required__json
 def change_forms_field_index(user_id):
     """ Changes Users' Form (all forms) field index preference
@@ -139,7 +140,7 @@ def change_forms_field_index(user_id):
     return jsonify("Not Acceptable"), 406
 
 
-@data_display_bp.route('/data-display/forms/<int:user_id>/reset-index', methods=['POST'])
+@data_display_bp.route('/data-display/my-forms/<int:user_id>/reset-index', methods=['POST'])
 @enabled_user_required__json
 def reset_forms_field_index(user_id):
     """ Resets Users' Form field index preference
@@ -152,7 +153,7 @@ def reset_forms_field_index(user_id):
         {'field_index': g.current_user.preferences['forms_field_index']}
     ), 200
 
-@data_display_bp.route('/data-display/forms/<int:user_id>/order-by-field', methods=['POST'])
+@data_display_bp.route('/data-display/my-forms/<int:user_id>/order-by-field', methods=['POST'])
 @enabled_user_required__json
 def order_forms_by_field(user_id):
     """ Set User's forms order_by preference
@@ -171,7 +172,7 @@ def order_forms_by_field(user_id):
         {'order_by_field_name': g.current_user.preferences['forms_order_by']}
     ), 200
 
-@data_display_bp.route('/data-display/forms/<int:user_id>/toggle-ascending', methods=['POST'])
+@data_display_bp.route('/data-display/my-forms/<int:user_id>/toggle-ascending', methods=['POST'])
 @enabled_user_required__json
 def forms_toggle_ascending(user_id):
     """ Toggle User's forms ascending order preference
@@ -186,25 +187,29 @@ def forms_toggle_ascending(user_id):
     ), 200
 
 
-""" Answers """
+""" A my-form """
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers', methods=['GET'])
+@data_display_bp.route('/data-display/form/<int:form_id>', methods=['GET'])
 @enabled_user_required__json
 def form_answers(form_id):
-    """ Return json required by vue data-table component
+    """ Return json required by vue data-display component
     """
-    form = g.current_user.get_form(form_id)
-    if not form:
+    formuser = FormUser.find(form_id=form_id, user_id=g.current_user.id)
+    if not formuser:
         return jsonify("Not found"), 404
+    form = formuser.form
     answers = form.answers
+    #pprint(AnswerSchema(many=True).dump(answers))
+    #pprint(form.structure)
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
-        meta={'total': answers.count(),
+        meta={
               'field_index': form.get_user_field_index_preference(g.current_user),
               'deleted_fields': form.get_deleted_fields(),
-              'item_id': form.id,
               'default_field_index': form.get_field_index_for_data_display(),
-              'editable_fields': False,
+              'form_structure' : form.structure,
+              'item_endpoint': '/data-display/answer/',
+              'can_edit': formuser.is_editor,
         },
         user_prefs={'order_by': form.get_answers_order_by(g.current_user),
                     'ascending': form.get_answers_order_ascending(g.current_user),
@@ -212,37 +217,7 @@ def form_answers(form_id):
         }
     ), 200
 
-
-@data_display_bp.route('/data-display/answer/<int:answer_id>/mark', methods=['POST'])
-@enabled_user_required__json
-def toggle_answer_mark(answer_id):
-    answer = Answer.find(id=answer_id)
-    if not answer:
-        return jsonify("Not found"), 404
-    if not g.current_user.get_form(answer.form.id):
-        return jsonify("Forbidden"), 403
-    answer.marked = False if answer.marked == True else True
-    answer.save()
-    return jsonify(marked=answer.marked), 200
-
-
-@data_display_bp.route('/data-display/answer/<int:answer_id>/delete', methods=['DELETE'])
-@enabled_user_required__json
-def delete_answer(answer_id):
-    answer = Answer.find(id=answer_id)
-    if not answer:
-        return jsonify("Not found"), 404
-    form = g.current_user.get_form(answer.form.id, is_editor=True)
-    if not form:
-        return jsonify("Forbidden"), 403
-    answer.delete()
-    form.expired = form.has_expired()
-    form.save()
-    form.add_log(_("Deleted an answer"))
-    return jsonify(deleted=True), 200
-
-
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/change-index', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/change-index', methods=['POST'])
 @enabled_user_required__json
 def change_answer_field_index(form_id):
     """ Changes User's Answer field index preference for this form
@@ -268,7 +243,7 @@ def change_answer_field_index(form_id):
         ), 200
     return jsonify("Not Acceptable"), 406
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/reset-index', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/reset-index', methods=['POST'])
 @enabled_user_required__json
 def reset_answers_field_index(form_id):
     """ Resets User's Answer field index preference for this form
@@ -282,7 +257,7 @@ def reset_answers_field_index(form_id):
         {'field_index': field_index}
     ), 200
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/order-by-field', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/order-by-field', methods=['POST'])
 @enabled_user_required__json
 def order_answers_by_field(form_id):
     """ Set User's order answers by preference for this form
@@ -302,7 +277,7 @@ def order_answers_by_field(form_id):
         {'order_by_field_name': field_preference}
     ), 200
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/toggle-ascending', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/toggle-ascending', methods=['POST'])
 @enabled_user_required__json
 def answers_toggle_ascending(form_id):
     """ Toggle user's answers ascending order preference for this form
@@ -314,7 +289,7 @@ def answers_toggle_ascending(form_id):
         {'ascending': form.toggle_user_answers_ascending_order(g.current_user)}
     ), 200
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/stats', methods=['GET'])
+@data_display_bp.route('/data-display/form/<int:form_id>/stats', methods=['GET'])
 @enabled_user_required__json
 def answers_stats(form_id):
     """ Redirect to the answers' stats page
@@ -324,7 +299,19 @@ def answers_stats(form_id):
         return jsonify("Not found"), 404
     return redirect(make_url_for('answers_bp.answers_stats', form_id=form.id))
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/csv', methods=['GET'])
+@data_display_bp.route('/data-display/form/<int:form_id>/delete-all-items', methods=['GET'])
+@enabled_user_required__json
+def delete_all_answers(form_id):
+    """ Redirect to the delete all answers page
+    """
+    formuser =FormUser.find(form_id=form_id,
+                            user_id=g.current_user.id,
+                            is_editor=True)
+    if not formuser:
+        return jsonify("Not found"), 404
+    return redirect(make_url_for('answers_bp.delete_answers', form_id=form_id))
+
+@data_display_bp.route('/data-display/form/<int:form_id>/csv', methods=['GET'])
 @enabled_user_required__json
 def answers_csv(form_id):
     """ Redirect to the CSV download
@@ -334,7 +321,7 @@ def answers_csv(form_id):
         return jsonify("Not found"), 404
     return redirect(make_url_for('answers_bp.answers_csv', form_id=form.id))
 
-@data_display_bp.route('/data-display/form/<int:form_id>/answers/toggle-item-notification', methods=['POST'])
+@data_display_bp.route('/data-display/form/<int:form_id>/toggle-item-notification', methods=['POST'])
 @enabled_user_required__json
 def answers_notification(form_id):
     """ Toggle new answer notification
@@ -344,6 +331,34 @@ def answers_notification(form_id):
         return jsonify("Forbidden"), 403
     pay_load = {'notification':form_user.toggle_notification()}
     return jsonify(pay_load)
+
+@data_display_bp.route('/data-display/form/<int:form_id>/field-structure', methods=['GET'])
+@enabled_user_required__json
+def get_field_structure(form_id):
+    """ Toggle new answer notification
+    """
+    form = g.current_user.get_form(form_id)
+    if not form:
+        return jsonify("Not found"), 404
+    content = request.get_json()
+    field_name = content['field_name']
+    structure = form.get_field_structure(field_name) if field_name else None
+    return jsonify({'structure': structure})
+
+
+""" Answers """
+
+@data_display_bp.route('/data-display/answer/<int:answer_id>/mark', methods=['POST'])
+@enabled_user_required__json
+def toggle_answer_mark(answer_id):
+    answer = Answer.find(id=answer_id)
+    if not answer:
+        return jsonify("Not found"), 404
+    if not g.current_user.get_form(answer.form.id):
+        return jsonify("Forbidden"), 403
+    answer.marked = False if answer.marked == True else True
+    answer.save()
+    return jsonify(marked=answer.marked), 200
 
 @data_display_bp.route('/data-display/answer/<int:answer_id>/save', methods=['PATCH'])
 @enabled_user_required__json
@@ -355,7 +370,11 @@ def update_answer(answer_id):
         return jsonify("Forbidden"), 403
     content = request.get_json()
     try:
-        answer.update_field(content['field_name'], content['field_value'])
+        if not isinstance(content['item_data'], dict):
+            return jsonify("Not an array"), 406
+        #pprint(content['item_data'])
+        answer.data = content['item_data']
+        answer.save()
         answer.form.expired = answer.form.has_expired()
         answer.form.save()
         answer.form.add_log(_("Modified an answer"))
@@ -363,3 +382,18 @@ def update_answer(answer_id):
                         'data': answer.data})
     except:
         return jsonify({'saved': False})
+
+@data_display_bp.route('/data-display/answer/<int:answer_id>/delete', methods=['DELETE'])
+@enabled_user_required__json
+def delete_answer(answer_id):
+    answer = Answer.find(id=answer_id)
+    if not answer:
+        return jsonify("Not found"), 404
+    form = g.current_user.get_form(answer.form.id, is_editor=True)
+    if not form:
+        return jsonify("Forbidden"), 403
+    answer.delete()
+    form.expired = form.has_expired()
+    form.save()
+    form.add_log(_("Deleted an answer"))
+    return jsonify(deleted=True), 200
