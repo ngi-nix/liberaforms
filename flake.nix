@@ -73,7 +73,7 @@
             name = "liberaforms-${version}";
             src = liberaforms-src;
             dontConfigure = true; # do not use ./configure
-            propagatedBuildInputs = [ liberaforms-env ];
+            propagatedBuildInputs = [ liberaforms-env python38Packages.flask_migrate ];
 
             installPhase = ''
               cp -r . $out
@@ -97,81 +97,67 @@
       defaultPackage =
         forAllSystems (system: self.packages.${system}.liberaforms);
 
-      nixosConfigurations.liberaforms = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules =
-          [
-            ({ pkgs, lib, ... }: {
+      nixosConfigurations.liberaforms = nixpkgs.lib.nixosSystem
+        {
+          system = "x86_64-linux";
+          modules =
+            [
+              ({ pkgs, lib, ... }: {
 
-              imports = [ ./nix/module.nix ];
+                imports = [ ./nix/module.nix ];
 
-              boot.isContainer = true;
-              networking.useDHCP = false;
+                boot.isContainer = true;
+                networking.useDHCP = false;
 
-              networking.hostName = "liberaforms";
+                networking.hostName = "liberaforms";
 
-              # A timezone must be specified for use in the LiberaForms config file
-              time.timeZone = "America/Montreal";
+                # A timezone must be specified for use in the LiberaForms config file
+                time.timeZone = "America/Montreal";
 
-              services.liberaforms = {
-                enable = true;
-                enablePostgres = true;
-                enableNginx = true;
-                #enableHTTPS = true;
-                #domain = "forms.example.org";
-                enableDatabaseBackup = true;
-                rootEmail = "cleeyv@riseup.net";
-              };
+                services.liberaforms = {
+                  enable = true;
+                  enablePostgres = true;
+                  enableNginx = true;
+                  #enableHTTPS = true;
+                  #domain = "forms.example.org";
+                  enableDatabaseBackup = true;
+                  enableTests = true;
+                  rootEmail = "cleeyv@riseup.net";
+                };
 
-              # Let 'nixos-version --json' know about the Git revision of this flake.
-              system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
+                # Let 'nixos-version --json' know about the Git revision of this flake.
+                system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
 
-              nixpkgs.overlays = [ self.overlay ];
+                nixpkgs.overlays = [ self.overlay ];
 
-            })
-          ];
+              })
+            ];
+        };
 
-        # Tests run by 'nix flake check' and by Hydra.
-        #      checks = forAllSystems
-        #        (system: {
-        #          inherit (self.packages.${system}) liberaforms;
-        #
-        #  liberaforms-test = with nixpkgsFor.${system};
-        #    stdenv.mkDerivation {
-        #      name = "${liberaforms.name}-test";
-        #
-        #      buildInputs = [ wget liberaforms ];
-        #
-        #      # Used by pygit2.
-        #      # See https://github.com/NixOS/nixpkgs/pull/72544#issuecomment-582674047.
-        #      SSL_CERT_FILE = "${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt";
-        #
-        #      unpackPhase = "true";
-        #
-        #      buildPhase = ''
-        #        source ${libSh}
-        #        initPostgres $(pwd)
-        #        export DJANGO_DEV=1
-        #        ${vulnerablecode}/manage.py migrate
-        #      '';
-        #
-        #      doCheck = true;
-        #      checkPhase = ''
-        #        # Run pytest on the installed version. A running postgres
-        #        # database server is needed.
-        #        (cd ${vulnerablecode} && pytest)
-        #
-        #         # Launch the webserver and call the API.
-        #         ${vulnerablecode}/manage.py runserver &
-        #        sleep 2
-        #        wget http://127.0.0.1:8000/api/
-        #        kill %1 # kill background task (i.e. webserver)
-        #      '';
-        #
-        #        installPhase =
-        #        "mkdir -p $out"; # make this derivation return success
-        #    };
-        #});
-      };
+      # Tests run by 'nix flake check' and by Hydra.
+      checks = forAllSystems
+        (system: {
+          inherit (self.packages.${system}) liberaforms;
+          liberaforms-test = with nixpkgsFor.${system};
+            stdenv.mkDerivation {
+              name = "${liberaforms.name}-test";
+
+              buildInputs = [ liberaforms ];
+
+              buildPhase = ''
+              '';
+
+              doCheck = true;
+              checkPhase = ''
+                # Run pytest on the installed version. A running postgres
+                # database server is needed.
+                # TODO: figure out location pytest run can at build/check time, with custom test.ini
+                (cd .../tests && pytest)
+              '';
+
+              installPhase =
+                "mkdir -p $out"; # make this derivation return success
+            };
+        });
     };
 }
