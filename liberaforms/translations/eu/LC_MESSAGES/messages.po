@@ -9,14 +9,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-09-19 12:24+0200\n"
-"PO-Revision-Date: 2021-08-04 12:38+0200\n"
-"Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
+"PO-Revision-Date: 2021-09-19 10:44+0000\n"
+"Last-Translator: LiberaForms <info@liberaforms.org>\n"
+"Language-Team: Basque <https://hosted.weblate.org/projects/liberaforms/"
+"server-liberaforms/eu/>\n"
 "Language: eu\n"
-"Language-Team: Librezale <librezale@librezale.eus>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
@@ -476,9 +478,8 @@ msgstr "Balioztatutako eposta"
 
 #. Whether user is able to upload media and solicit attachments
 #: templates/admin/inspect-user.html:58
-#, fuzzy
 msgid "Uploads enabled"
-msgstr "Igo fitxategia"
+msgstr "Igotzea gaituta"
 
 #. Whether user is blocked by admin
 #: templates/admin/inspect-user.html:103
@@ -819,29 +820,24 @@ msgid "This form will expire"
 msgstr "Galdetegi hau iraungi egingo da"
 
 #: templates/form/inspect-form.html:177 templates/form/inspect-form.html:190
-#, fuzzy
 msgid "Form shared with"
-msgstr "Honekin partekatu da"
+msgstr ""
 
 #: templates/form/inspect-form.html:186
-#, fuzzy
 msgid "Add editors"
-msgstr "%s editorea gehitu da"
+msgstr "Gehitu editoreak"
 
 #: templates/form/inspect-form.html:196
-#, fuzzy
 msgid "Shared answers"
-msgstr "Ikusi erantzunak"
+msgstr "Partekatutako erantzunak"
 
 #: templates/form/inspect-form.html:205
-#, fuzzy
 msgid "Answers shared with"
-msgstr "Honekin partekatu da"
+msgstr ""
 
 #: templates/form/inspect-form.html:214
-#, fuzzy
 msgid "Share"
-msgstr "Partekatua"
+msgstr "Partekatu"
 
 #: templates/form/inspect-form.html:223 templates/form/share-form.html:127
 msgid "Restricted access"
@@ -1011,18 +1007,18 @@ msgid "Add new editor"
 msgstr "Gehitu editore berria"
 
 #: templates/form/share-form.html:80
-#, fuzzy
 msgid "Share the answers"
-msgstr "Ezabatu erantzunak"
+msgstr "Partekatu erantzunak"
 
 #: templates/form/share-form.html:83
 msgid "Users listed here can view this form's answers"
 msgstr ""
+"Hemen zerrendatutako erabiltzaileek galdetegi honen erantzunak ikusi "
+"ditzakete"
 
 #: templates/form/share-form.html:111
-#, fuzzy
 msgid "Add user"
-msgstr "Guztizko erabiltzaileak"
+msgstr "Gehitu erabiltzailea"
 
 #: templates/form/share-form.html:129
 msgid "Only visible to people with a user account (login required)"
@@ -1355,14 +1351,12 @@ msgid "Hello %(user)s!"
 msgstr "Kaixo %(user)s!"
 
 #: templates/user/user-settings.html:18
-#, fuzzy
 msgid "We have sent you a link to validate your email address"
-msgstr "Erabili esteka hau zure pasahitza baliozkotzeko"
+msgstr "Zure eposta helbidea balioztatzeko esteka bat bidali dizugu"
 
 #: templates/user/user-settings.html:24
-#, fuzzy
 msgid "Send again"
-msgstr "Editatu berriro"
+msgstr "Bidali berriro"
 
 #: templates/user/user-settings.html:34 utils/wtf.py:86
 msgid "Email address"
@@ -1584,16 +1578,15 @@ msgstr "LiberaForms. Berreskuratu pasahitza"
 
 #: utils/dispatcher/dispatcher.py:110
 msgid "Use this link to validate your email"
-msgstr "Erabili esteka hau zure pasahitza baliozkotzeko"
+msgstr "Erabili esteka hau zure pasahitza balioztatzeko"
 
 #: utils/dispatcher/dispatcher.py:114
 msgid "Validate email"
-msgstr "Baliozkotze eposta"
+msgstr "Balioztatu eposta"
 
 #: utils/dispatcher/dispatcher.py:117
-#, fuzzy
 msgid "LiberaForms. Email validation"
-msgstr "LiberaForms. Erabiltzaile berriaren jakinarazpena"
+msgstr "LiberaForms. Eposta bidezko balioztatzea"
 
 #: utils/dispatcher/dispatcher.py:128
 #, python-format
@@ -1732,9 +1725,8 @@ msgid "Number of answers does not match"
 msgstr "Erantzun kopurua ez dator bat"
 
 #: views/form.py:68
-#, fuzzy
 msgid "Something went wrong. ID does not match session['form_id']"
-msgstr "Zerbait gaizki atera da. id-a ez dator bat saioarekin ['form_id']"
+msgstr "Zerbait gaizki atera da. IDa ez dator bat saioarekin ['form_id']"
 
 #: views/form.py:73
 msgid "You can't edit that form"
@@ -1822,14 +1814,13 @@ msgstr "Ez da aurkitu eposta helbide hori duen erabiltzailerik"
 
 #. i18n: %s stands for the user name here
 #: views/form.py:412 views/form.py:465
-#, fuzzy, python-format
+#, python-format
 msgid "This form is already shared with %s"
-msgstr "%s editorea da dagoeneko"
+msgstr "Galdetegi hau dagoeneko partekatuta dago %s erabiltzailearekin"
 
 #: views/form.py:420 views/form.py:473
-#, fuzzy
 msgid "Added user OK"
-msgstr "Gehitu Erabiltzaile berriaren galdetegian"
+msgstr "Erabiltzailea ongi gehitu da"
 
 #: views/form.py:421
 #, python-format
@@ -1838,17 +1829,16 @@ msgstr "%s editorea gehitu da"
 
 #: views/form.py:424 views/form.py:478
 msgid "Could not add the user"
-msgstr ""
+msgstr "Ezin izan da gehitu erabiltzailea"
 
 #: views/form.py:433 views/form.py:487
-#, fuzzy
 msgid "Cannot find that form"
-msgstr "Ezin da galdetegi hori aurkitu"
+msgstr "Ezin da aurkitu galdetegi hori"
 
 #: views/form.py:436
 #, python-format
 msgid "%s is the form author"
-msgstr ""
+msgstr "%s galdetegiaren egilea da"
 
 #: views/form.py:444
 #, python-format
@@ -1856,21 +1846,20 @@ msgid "Removed editor %s"
 msgstr "%s editorea kendu da"
 
 #: views/form.py:447 views/form.py:499
-#, fuzzy
 msgid "Cannot find user %"
-msgstr "Ezin da %s erabiltzailea aurkitu"
+msgstr "Ezin da aurkitu % erabiltzailea"
 
 #. i18n: %s stands for the user name here
 #: views/form.py:475
-#, fuzzy, python-format
+#, python-format
 msgid "Added read only user %s"
-msgstr "%s editorea gehitu da"
+msgstr "%s irakurtzeko soilik den erabiltzailea gehitu da"
 
 #. i18n: %s stands for the user name here
 #: views/form.py:496
-#, fuzzy, python-format
+#, python-format
 msgid "Removed user %s"
-msgstr "%s editorea kendu da"
+msgstr "%s erabiltzailea kendu da"
 
 #: views/form.py:523
 msgid "Date-time is not valid"
@@ -2315,4 +2304,3 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Shared answers set to: %s"
 #~ msgstr "Partekatutako erantzunak zehaztuta: %s"
-
