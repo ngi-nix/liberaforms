@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-09-17 17:49+0200\n"
+"POT-Creation-Date: 2021-09-19 12:24+0200\n"
 "PO-Revision-Date: 2021-09-09 23:33+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language: nb_NO\n"
@@ -1653,8 +1653,8 @@ msgstr "Brukernavn stemmer ikke overens"
 #: views/admin.py:142 views/admin.py:217 views/answers.py:31
 #: views/answers.py:44 views/answers.py:54 views/answers.py:130
 #: views/form.py:145 views/form.py:312 views/form.py:333 views/form.py:354
-#: views/form.py:390 views/form.py:402 views/form.py:455 views/form.py:505
-#: views/form.py:576 views/form.py:591 views/form.py:678
+#: views/form.py:390 views/form.py:402 views/form.py:456 views/form.py:508
+#: views/form.py:579 views/form.py:594 views/form.py:681
 msgid "Can't find that form"
 msgstr "Finner ikke det skjemaet"
 
@@ -1805,119 +1805,123 @@ msgstr ""
 msgid "Published at %s"
 msgstr ""
 
-#: views/form.py:408 views/form.py:461
+#: views/form.py:408 views/form.py:462
 msgid "Can't find a user with that email"
 msgstr "Finner ingen bruker med den e-postadressen"
 
-#: views/form.py:411 views/form.py:464
+#. i18n: %s stands for the user name here
+#: views/form.py:412 views/form.py:465
 #, python-format
 msgid "This form is already shared with %s"
 msgstr ""
 
-#: views/form.py:419 views/form.py:472
-msgid "Added user ok"
-msgstr ""
+#: views/form.py:420 views/form.py:473
+#, fuzzy
+msgid "Added user OK"
+msgstr "Ny bruker"
 
-#: views/form.py:420
+#: views/form.py:421
 #, python-format
 msgid "Added editor %s"
 msgstr ""
 
-#: views/form.py:423 views/form.py:476
+#: views/form.py:424 views/form.py:478
 msgid "Could not add the user"
 msgstr ""
 
-#: views/form.py:432 views/form.py:485
+#: views/form.py:433 views/form.py:487
 #, fuzzy
 msgid "Cannot find that form"
 msgstr "Finner ikke det skjemaet"
 
-#: views/form.py:435
+#: views/form.py:436
 #, python-format
 msgid "%s is the form author"
 msgstr ""
 
-#: views/form.py:443
+#: views/form.py:444
 #, python-format
 msgid "Removed editor %s"
 msgstr ""
 
-#: views/form.py:446 views/form.py:496
-#, fuzzy, python-format
+#: views/form.py:447 views/form.py:499
+#, fuzzy
 msgid "Cannot find user %"
 msgstr "Finner ikke brukernavnet «%s»"
 
-#: views/form.py:473
+#. i18n: %s stands for the user name here
+#: views/form.py:475
 #, python-format
 msgid "Added read only user %s"
 msgstr ""
 
-#: views/form.py:493
+#. i18n: %s stands for the user name here
+#: views/form.py:496
 #, fuzzy, python-format
 msgid "Removed user %s"
 msgstr "Slettet brukeren «%s»"
 
-#: views/form.py:520
+#: views/form.py:523
 msgid "Date-time is not valid"
 msgstr ""
 
-#: views/form.py:525
+#: views/form.py:528
 #, python-format
 msgid "Expiry date set to: %s"
 msgstr ""
 
-#: views/form.py:529
+#: views/form.py:532
 msgid "Expiry date cancelled"
 msgstr ""
 
-#: views/form.py:531
+#: views/form.py:534
 msgid "Missing date or time"
 msgstr "Manglende dato eller tid"
 
-#: views/form.py:548
+#: views/form.py:551
 #, python-format
 msgid "Field '%s' expiry set to: %s"
 msgstr "Utløp for feltet «%s» er satt til: %s"
 
 #. i18n: Expire when total answers set to: 3
-#: views/form.py:566
+#: views/form.py:569
 #, python-format
 msgid "Expire when total answers set to: %s"
 msgstr ""
 
-#: views/form.py:582
+#: views/form.py:585
 msgid "You can edit the duplicate now"
 msgstr ""
 
-#: views/form.py:606
+#: views/form.py:609
 #, python-format
 msgid "Public set to: %s"
 msgstr ""
 
-#: views/form.py:617
+#: views/form.py:620
 #, python-format
 msgid "Restricted access set to: %s"
 msgstr ""
 
-#: views/form.py:628
+#: views/form.py:631
 #, python-format
 msgid "Data protection consent set to: %s"
 msgstr "Databeskyttelsessamtykke satt til: %s"
 
-#: views/form.py:639
+#: views/form.py:642
 #, python-format
 msgid "Send Confirmation set to: %s"
 msgstr ""
 
-#: views/form.py:685
+#: views/form.py:688
 msgid "That form has expired"
 msgstr ""
 
-#: views/form.py:687
+#: views/form.py:690
 msgid "That form is not public"
 msgstr "Skjemaet er ikke offentlig"
 
-#: views/form.py:805
+#: views/form.py:808
 #, fuzzy
 msgid "Copied template OK. You can edit your new form"
 msgstr "Mal kopiert OK. Du kan nå redigere ditt nye skjema"
@@ -2105,5 +2109,8 @@ msgstr "Feilaktige identitetsdetaljer"
 #~ msgstr ""
 
 #~ msgid "Shared answers set to: %s"
+#~ msgstr ""
+
+#~ msgid "Added user ok"
 #~ msgstr ""
 
