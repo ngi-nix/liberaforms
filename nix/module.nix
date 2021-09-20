@@ -208,9 +208,6 @@ in
           # see assets/timezones.txt for valid options
           DEFAULT_TIMEZONE="${config.time.timeZone}"
 
-          # LiberaForms on NixOS can currently only be run in production mode
-          # See issue for more details: TODO
-
           # FLASK_ENV
           # this sets the Flask running mode
           # can be 'production' or 'development'
