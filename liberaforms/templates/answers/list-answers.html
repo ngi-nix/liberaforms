@@ -6,8 +6,6 @@
 <link rel="stylesheet" href="/static/data-display/data-display.css">
 
 {% set form_user = form.get_form_user(g.current_user.id) %}
-{% set fieldIndex = form.get_field_index_for_data_display(with_deleted_columns=with_deleted_columns) %}
-
 
 <div class="container">
   <div class="row"
@@ -28,7 +26,6 @@
     <div class="col">
       <div data-vue-component="data-display"
            data-endpoint="/data-display/form/{{form.id}}"
-           data-exportable="true"
            data-csrf_token="{{ csrf_token() }}">
       </div>
     </div>

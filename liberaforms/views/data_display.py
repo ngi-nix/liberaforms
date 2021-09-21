@@ -11,7 +11,8 @@ from flask_babel import gettext as _
 from liberaforms.models.form import Form
 from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
-from liberaforms.models.schemas.form import FormSchemaForDataDisplay
+from liberaforms.models.schemas.form import FormSchemaForMyFormsDataDisplay, \
+                                            FormSchemaForAdminFormsDataDisplay
 from liberaforms.models.schemas.answer import AnswerSchema
 from liberaforms.utils.utils import make_url_for
 from liberaforms.utils.wraps import *
@@ -20,7 +21,80 @@ from pprint import pprint
 
 data_display_bp = Blueprint('data_display_bp', __name__)
 
-default_forms_field_index = [
+
+""" Admin Forms list """
+
+default_admin_forms_field_index = [
+                {'name': 'form_name__html', 'label': _('Form name')},
+                {'name': 'created', 'label': _('Created')},
+                {'name': 'author__html', 'label': _('Author')},
+                {'name': 'last_answer_date', 'label': _('Last answer')},
+                {'name': 'is_public', 'label': _('Public')},
+                {'name': 'total_answers', 'label': _('Anwsers')}
+            ]
+
+@data_display_bp.route('/data-display/admin-forms', methods=['GET'])
+@enabled_user_required__json
+def admin_forms():
+    """ Returns json required by Vue dataTable component.
+    """
+    if not g.is_admin :
+        return jsonify("Denied"), 401
+    forms = Form.find_all()
+    form_count = forms.count()
+
+    field_index = default_admin_forms_field_index
+    items = []
+    for form in FormSchemaForAdminFormsDataDisplay(many=True).dump(forms):
+        item = {}
+        data = {}
+        id = form['id']
+        slug = form['slug']
+        data['form_name__html'] = {
+            'value': slug,
+            'html': f"<a href='/forms/view/{id}'>{slug}</a>"
+        }
+        data['author__html'] = {
+            'value': form['author']['name'],
+            'html': f"<a href='/admin/users/{form['author']['id']}'>{form['author']['name']}</a>"
+        }
+        for field_name in form.keys():
+            if field_name == 'slug':
+                continue
+            if field_name == 'id':
+                item[field_name] = form[field_name]
+                continue;
+            if field_name == 'created':
+                item[field_name] = form[field_name]
+                continue;
+            data[field_name] = form[field_name]
+        item['data'] = data
+        #pprint(data)
+        items.append(item)
+        #pprint(items)
+    return jsonify(
+        items=items,
+        meta={'name': 'my-forms',
+              #'total': form_count,
+              'field_index': field_index,
+              'deleted_fields': [],
+              'default_field_index': default_admin_forms_field_index,
+              'editable_fields': False,
+              'item_endpoint': None,
+              'can_edit': False,
+              'enable_exports': False,
+              'enable_graphs': False,
+              'enable_notification': False,
+        },
+        user_prefs={'order_by': get_my_forms_order_by(g.current_user),
+                    'ascending': get_my_forms_order_ascending(g.current_user),
+
+        }
+    ), 200
+
+""" My Forms """
+
+default_my_forms_field_index = [
                 {'name': 'form_name__html', 'label': _('Form name')},
                 {'name': 'answers__html', 'label': _('Answers')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
@@ -29,25 +103,23 @@ default_forms_field_index = [
                 {'name': 'created', 'label': _('Created')}
             ]
 
-def get_forms_field_index(user):
+def get_my_forms_field_index(user):
     if 'forms_field_index' in user.preferences:
         return user.preferences['forms_field_index']
     else:
-        return default_forms_field_index
+        return default_my_forms_field_index
 
-def get_forms_order_ascending(user):
+def get_my_forms_order_ascending(user):
     if 'forms_order_ascending' in user.preferences:
         return user.preferences['forms_order_ascending']
     else:
         return True
 
-def get_forms_order_by(user):
+def get_my_forms_order_by(user):
     if 'forms_order_by' in user.preferences:
         return user.preferences['forms_order_by']
     else:
         return 'created'
-
-""" My Forms """
 
 @data_display_bp.route('/data-display/my-forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
@@ -64,9 +136,9 @@ def my_forms(user_id):
         print(f"page: {page}")
         forms = Form.find_all(editor_id=g.current_user.id).paginate(page, 10, False).items
 
-    field_index = get_forms_field_index(g.current_user)
+    field_index = get_my_forms_field_index(g.current_user)
     items = []
-    for form in FormSchemaForDataDisplay(many=True).dump(forms):
+    for form in FormSchemaForMyFormsDataDisplay(many=True).dump(forms):
         item = {}
         data = {}
         id = form['id']
@@ -99,16 +171,20 @@ def my_forms(user_id):
         #pprint(items)
     return jsonify(
         items=items,
-        meta={'total': form_count,
+        meta={'name': 'my-forms',
+              #'total': form_count,
               'field_index': field_index,
               'deleted_fields': [],
-              'default_field_index': default_forms_field_index,
+              'default_field_index': default_my_forms_field_index,
               'editable_fields': False,
               'item_endpoint': None,
               'can_edit': False,
+              'enable_exports': False,
+              'enable_graphs': False,
+              'enable_notification': False,
         },
-        user_prefs={'order_by': get_forms_order_by(g.current_user),
-                    'ascending': get_forms_order_ascending(g.current_user),
+        user_prefs={'order_by': get_my_forms_order_by(g.current_user),
+                    'ascending': get_my_forms_order_ascending(g.current_user),
 
         }
     ), 200
@@ -122,7 +198,7 @@ def change_forms_field_index(user_id):
         return jsonify("Forbidden"), 403
     data = request.get_json(silent=True)
     new_first_field_name = data['field_name']
-    field_index = copy(default_forms_field_index)
+    field_index = copy(default_my_forms_field_index)
     field_to_move = None
     for field in field_index:
         if field['name'] == new_first_field_name:
@@ -147,7 +223,7 @@ def reset_forms_field_index(user_id):
     """
     if not user_id == g.current_user.id:
         return jsonify("Forbidden"), 403
-    g.current_user.preferences['forms_field_index'] = default_forms_field_index
+    g.current_user.preferences['forms_field_index'] = default_my_forms_field_index
     g.current_user.save()
     return jsonify(
         {'field_index': g.current_user.preferences['forms_field_index']}
@@ -163,7 +239,7 @@ def order_forms_by_field(user_id):
     data = request.get_json(silent=True)
     if not 'order_by_field_name' in data:
         return jsonify("Not Acceptable"), 406
-    field_names = [ field['name'] for field in default_forms_field_index ]
+    field_names = [ field['name'] for field in default_my_forms_field_index ]
     if not data['order_by_field_name'] in field_names:
         return jsonify("Not Acceptable"), 406
     g.current_user.preferences['forms_order_by'] = data['order_by_field_name']
@@ -179,7 +255,7 @@ def forms_toggle_ascending(user_id):
     """
     if not user_id == g.current_user.id:
         return jsonify("Forbidden"), 403
-    preference = get_forms_order_ascending(g.current_user)
+    preference = get_my_forms_order_ascending(g.current_user)
     g.current_user.preferences['forms_order_ascending'] = False if preference else True
     g.current_user.save()
     return jsonify(
@@ -203,13 +279,16 @@ def form_answers(form_id):
     #pprint(form.structure)
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
-        meta={
+        meta={'name': form.slug,
               'field_index': form.get_user_field_index_preference(g.current_user),
               'deleted_fields': form.get_deleted_fields(),
               'default_field_index': form.get_field_index_for_data_display(),
               'form_structure' : form.structure,
               'item_endpoint': '/data-display/answer/',
               'can_edit': formuser.is_editor,
+              'enable_exports': True,
+              'enable_graphs': True,
+              'enable_notification': True,
         },
         user_prefs={'order_by': form.get_answers_order_by(g.current_user),
                     'ascending': form.get_answers_order_ascending(g.current_user),
@@ -319,7 +398,8 @@ def answers_csv(form_id):
     form = g.current_user.get_form(form_id)
     if not form:
         return jsonify("Not found"), 404
-    return redirect(make_url_for('answers_bp.answers_csv', form_id=form.id))
+    return redirect(make_url_for('answers_bp.answers_csv', form_id=form.id,
+                                 with_deleted_columns=request.args.get('with_deleted_columns')))
 
 @data_display_bp.route('/data-display/form/<int:form_id>/toggle-item-notification', methods=['POST'])
 @enabled_user_required__json
@@ -332,18 +412,6 @@ def answers_notification(form_id):
     pay_load = {'notification':form_user.toggle_notification()}
     return jsonify(pay_load)
 
-@data_display_bp.route('/data-display/form/<int:form_id>/field-structure', methods=['GET'])
-@enabled_user_required__json
-def get_field_structure(form_id):
-    """ Toggle new answer notification
-    """
-    form = g.current_user.get_form(form_id)
-    if not form:
-        return jsonify("Not found"), 404
-    content = request.get_json()
-    field_name = content['field_name']
-    structure = form.get_field_structure(field_name) if field_name else None
-    return jsonify({'structure': structure})
 
 
 """ Answers """

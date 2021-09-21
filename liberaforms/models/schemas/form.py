@@ -27,7 +27,7 @@ class FormSchema(ma.SQLAlchemySchema):
     def get_introduction_md(self, obj):
         return obj.introductionText['markdown']
 
-class FormSchemaForDataDisplay(ma.SQLAlchemySchema):
+class FormSchemaForMyFormsDataDisplay(ma.SQLAlchemySchema):
     class Meta:
         model = Form
 
@@ -51,5 +51,30 @@ class FormSchemaForDataDisplay(ma.SQLAlchemySchema):
     def get_is_shared(self, obj):
         return True if obj.users.count() > 0 else False
 
-    #def get_created(self, obj):
-    #    return utils.utc_to_g_timezone(obj.created)
+
+class FormSchemaForAdminFormsDataDisplay(ma.SQLAlchemySchema):
+    class Meta:
+        model = Form
+
+    id = ma.auto_field()
+    created = ma.auto_field()
+    slug = ma.auto_field()
+    total_answers = ma.Method('get_total_answers')
+    last_answer_date = ma.Method('get_last_answer_date')
+    is_public = ma.Method('get_is_public')
+    author = ma.Method('get_author')
+
+    def get_total_answers(self, obj):
+        return obj.answers.count()
+
+    def get_last_answer_date(self, obj):
+        return obj.get_last_answer_date()
+
+    def get_is_public(self, obj):
+        return obj.is_public()
+
+    def get_is_shared(self, obj):
+        return True if obj.users.count() > 0 else False
+
+    def get_author(slef, obj):
+        return {'id': obj.author.id, 'name': obj.author.username}
