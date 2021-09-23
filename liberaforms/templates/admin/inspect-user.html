@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
-<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
 {% set stats = user.get_statistics() %}
@@ -147,45 +144,19 @@
 
       <canvas id="usage_chart" height="125"></canvas>
 
-      <div class="title_1 delimited" style="margin-top:2em">
-        {%trans%}Forms{%endtrans%}
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div data-vue-component="data-display"
+           data-endpoint="/data-display/admin/user/{{user.id}}/forms"
+           data-csrf_token="{{ csrf_token() }}">
       </div>
-      <table id="forms"
-             style="display:none"
-             class="table table-sm table-striped">
-        <thead>
-          <tr>
-            <th>{%trans%}Name{%endtrans%}</th>
-            <th>{%trans%}Created{%endtrans%}</th>
-            <th>{%trans%}Author{%endtrans%}</th>
-            <th>{%trans%}Users{%endtrans%}</th>
-            {# i18n: Whether for is public #}
-            <th>{%trans%}Public{%endtrans%}</th>
-            <th>{%trans%}Answers{%endtrans%}</th>
-          </tr>
-        </thead>
-
-        {% for form in forms %}
-        <tr>
-          <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-          <td>{{form.get_created_date()}}</td>
-          <td>
-            {% if form.is_author(user) %}
-              {%trans%}True{%endtrans%}
-            {% else %}
-              {%trans%}False{%endtrans%}
-            {% endif %}
-          </td>
-          <td>{{form.users.count()}}</td>
-          <td>{{form.is_public()}}</td>
-          <td>{{form.get_answers().count()}}</td>
-        </tr>
-        {% endfor %}
-      </table>
-
     </div>
   </div>
 </div>
+
+<script src="/static/data-display/data-display.js"></script>
 
 <script>
 var csrftoken = "{{ csrf_token() }}";

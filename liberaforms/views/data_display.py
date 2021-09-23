@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 from copy import copy
+from sqlalchemy.orm.attributes import flag_modified
 from flask import Blueprint, request, redirect, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
@@ -24,7 +25,8 @@ from pprint import pprint
 data_display_bp = Blueprint('data_display_bp', __name__)
 
 
-""" Admin Forms list """
+""" Admin Forms list
+"""
 
 default_admin_forms_field_index = [
                 {'name': 'form_name__html', 'label': _('Form name')},
@@ -36,17 +38,37 @@ default_admin_forms_field_index = [
                 {'name': 'is_public', 'label': _('Public')}
             ]
 
-@data_display_bp.route('/data-display/admin-forms', methods=['GET'])
+def get_admin_forms_field_index(user):
+    if 'forms_field_index' in user.admin:
+        return user.admin['forms_field_index']
+    else:
+        return default_admin_forms_field_index
+
+def get_admin_forms_order_ascending(user):
+    if 'forms_order_ascending' in user.admin:
+        print(user.admin['forms_order_ascending'])
+        return user.admin['forms_order_ascending']
+    else:
+        return True
+
+def get_admin_forms_order_by(user):
+    if 'forms_order_by' in user.admin:
+        return user.admin['forms_order_by']
+    else:
+        return 'created'
+
+
+@data_display_bp.route('/data-display/admin/forms', methods=['GET'])
 @enabled_user_required__json
 def admin_forms():
-    """ Returns json required by Vue dataTable component.
+    """ Returns json required by Vue dataDisplay component.
     """
-    if not g.is_admin :
+    if not g.is_admin:
         return jsonify("Denied"), 401
     forms = Form.find_all()
-    form_count = forms.count()
+    #form_count = forms.count()
 
-    field_index = default_admin_forms_field_index
+    field_index = get_admin_forms_field_index(g.current_user)
     items = []
     for form in FormSchemaForAdminFormsDataDisplay(many=True).dump(forms):
         item = {}
@@ -72,13 +94,10 @@ def admin_forms():
                 continue;
             data[field_name] = form[field_name]
         item['data'] = data
-        #pprint(data)
         items.append(item)
-        #pprint(items)
     return jsonify(
         items=items,
-        meta={'name': 'my-forms',
-              #'total': form_count,
+        meta={'name': 'All forms',
               'field_index': field_index,
               'deleted_fields': [],
               'default_field_index': default_admin_forms_field_index,
@@ -89,22 +108,22 @@ def admin_forms():
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': get_my_forms_order_by(g.current_user),
-                    'ascending': get_my_forms_order_ascending(g.current_user),
+        user_prefs={'order_by': get_admin_forms_order_by(g.current_user),
+                    'ascending': get_admin_forms_order_ascending(g.current_user),
 
         }
     ), 200
 
-@data_display_bp.route('/data-display/admin-forms/<int:user_id>/change-index', methods=['POST'])
+@data_display_bp.route('/data-display/admin/forms/change-index', methods=['POST'])
 @enabled_user_required__json
-def change_admin_forms_field_index(user_id):
-    """ Changes Users' Form (all forms) field index preference
+def admin_forms_change_field_index():
+    """ Changes Admin's forms field index preference
     """
-    if not user_id == g.current_user.id:
+    if not g.is_admin:
         return jsonify("Forbidden"), 403
     data = request.get_json(silent=True)
     new_first_field_name = data['field_name']
-    field_index = copy(default_my_forms_field_index)
+    field_index = copy(default_admin_forms_field_index)
     field_to_move = None
     for field in field_index:
         if field['name'] == new_first_field_name:
@@ -113,59 +132,60 @@ def change_admin_forms_field_index(user_id):
     if field_to_move:
         field_to_move_pos = field_index.index(field_to_move)
         field_index.insert(0, field_index.pop(field_to_move_pos))
-        g.current_user.preferences['forms_field_index'] = field_index
+        g.current_user.admin['forms_field_index'] = field_index
         g.current_user.save()
-        pprint(g.current_user.preferences['forms_field_index'])
+        pprint(g.current_user.admin['forms_field_index'])
         return jsonify(
-            {'field_index': g.current_user.preferences['forms_field_index']}
+            {'field_index': g.current_user.admin['forms_field_index']}
         ), 200
     return jsonify("Not Acceptable"), 406
 
 
-@data_display_bp.route('/data-display/admin-forms/<int:user_id>/reset-index', methods=['POST'])
+@data_display_bp.route('/data-display/admin/forms/reset-index', methods=['POST'])
 @enabled_user_required__json
-def reset_admin_forms_field_index(user_id):
-    """ Resets Users' Form field index preference
+def admin_reset_forms_field_index():
+    """ Resets Admin's Form field index preference
     """
-    if not user_id == g.current_user.id:
+    if not g.is_admin:
         return jsonify("Forbidden"), 403
-    g.current_user.preferences['forms_field_index'] = default_my_forms_field_index
+    g.current_user.admin['forms_field_index'] = default_admin_forms_field_index
     g.current_user.save()
     return jsonify(
-        {'field_index': g.current_user.preferences['forms_field_index']}
+        {'field_index': g.current_user.admin['forms_field_index']}
     ), 200
 
-@data_display_bp.route('/data-display/admin-forms/<int:user_id>/order-by-field', methods=['POST'])
+@data_display_bp.route('/data-display/admin/forms/order-by-field', methods=['POST'])
 @enabled_user_required__json
-def order_admin_forms_by_field(user_id):
-    """ Set User's forms order_by preference
+def order_admin_forms_by_field():
+    """ Set Admin's forms order_by preference
     """
-    if not user_id == g.current_user.id:
+    if not g.is_admin:
         return jsonify("Forbidden"), 403
     data = request.get_json(silent=True)
     if not 'order_by_field_name' in data:
         return jsonify("Not Acceptable"), 406
-    field_names = [ field['name'] for field in default_my_forms_field_index ]
+    field_names = [ field['name'] for field in default_admin_forms_field_index ]
     if not data['order_by_field_name'] in field_names:
         return jsonify("Not Acceptable"), 406
-    g.current_user.preferences['forms_order_by'] = data['order_by_field_name']
+    g.current_user.admin['forms_order_by'] = data['order_by_field_name']
     g.current_user.save()
     return jsonify(
-        {'order_by_field_name': g.current_user.preferences['forms_order_by']}
+        {'order_by_field_name': g.current_user.admin['forms_order_by']}
     ), 200
 
-@data_display_bp.route('/data-display/admin-forms/<int:user_id>/toggle-ascending', methods=['POST'])
+@data_display_bp.route('/data-display/admin/forms/toggle-ascending', methods=['POST'])
 @enabled_user_required__json
-def admin_forms_toggle_ascending(user_id):
-    """ Toggle User's forms ascending order preference
+def admin_forms_toggle_ascending():
+    """ Toggle Admin's forms ascending order preference
     """
-    if not user_id == g.current_user.id:
+    if not g.is_admin:
         return jsonify("Forbidden"), 403
-    preference = get_my_forms_order_ascending(g.current_user)
-    g.current_user.preferences['forms_order_ascending'] = False if preference else True
+    preference = get_admin_forms_order_ascending(g.current_user)
+    g.current_user.admin['forms_order_ascending'] = False if preference else True
+    print("hello: ", g.current_user.admin['forms_order_ascending'])
     g.current_user.save()
     return jsonify(
-        {'ascending': g.current_user.preferences['forms_order_ascending']}
+        {'ascending': g.current_user.admin['forms_order_ascending']}
     ), 200
 
 
@@ -180,33 +200,33 @@ default_admin_users_field_index = [
                 {'name': 'is_admin', 'label': _('Admin')}
             ]
 
-def get_admin_forms_field_index(user):
-    if 'forms_field_index' in user.admin:
-        return user.admin['forms_field_index']
+def get_admin_users_field_index(user):
+    if 'users_field_index' in user.admin:
+        return user.admin['users_field_index']
     else:
         return default_admin_users_field_index
 
-def get_admin_forms_order_ascending(user):
-    if 'forms_order_ascending' in user.admin:
-        return user.admin['forms_order_ascending']
+def get_admin_users_order_ascending(user):
+    if 'users_order_ascending' in user.admin:
+        return user.admin['users_order_ascending']
     else:
         return True
 
-def get_admin_forms_order_by(user):
-    if 'forms_order_by' in user.admin:
-        return user.admin['forms_order_by']
+def get_admin_users_order_by(user):
+    if 'users_order_by' in user.admin:
+        return user.admin['users_order_by']
     else:
         return 'created'
 
-@data_display_bp.route('/data-display/admin-users', methods=['GET'])
+@data_display_bp.route('/data-display/admin/users', methods=['GET'])
 @enabled_user_required__json
 def admin_users():
-    """ Returns json required by Vue dataTable component.
+    """ Returns json required by Vue dataDisplay component.
     """
     if not g.is_admin :
         return jsonify("Denied"), 401
     users = User.find_all()
-    field_index = default_admin_users_field_index
+    field_index = get_admin_users_field_index(g.current_user)
     items = []
     for user in UserSchemaForAdminDataDisplay(many=True).dump(users):
         item = {}
@@ -228,13 +248,10 @@ def admin_users():
                 continue;
             data[field_name] = user[field_name]
         item['data'] = data
-        #pprint(data)
         items.append(item)
-        #pprint(items)
     return jsonify(
         items=items,
         meta={'name': 'Users',
-              #'total': form_count,
               'field_index': field_index,
               'deleted_fields': [],
               'default_field_index': default_admin_users_field_index,
@@ -250,10 +267,82 @@ def admin_users():
                     }
     ), 200
 
+@data_display_bp.route('/data-display/admin/users/change-index', methods=['POST'])
+@enabled_user_required__json
+def users_change_field_index():
+    """ Changes User's forms field index preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    data = request.get_json(silent=True)
+    new_first_field_name = data['field_name']
+    field_index = copy(default_admin_users_field_index)
+    field_to_move = None
+    for field in field_index:
+        if field['name'] == new_first_field_name:
+            field_to_move = field
+            break
+    if field_to_move:
+        field_to_move_pos = field_index.index(field_to_move)
+        field_index.insert(0, field_index.pop(field_to_move_pos))
+        g.current_user.admin['users_field_index'] = field_index
+        g.current_user.save()
+        #pprint(g.current_user.preferences['users_field_index'])
+        return jsonify(
+            {'field_index': g.current_user.admin['users_field_index']}
+        ), 200
+    return jsonify("Not Acceptable"), 406
+
+@data_display_bp.route('/data-display/admin/users/reset-index', methods=['POST'])
+@enabled_user_required__json
+def users_reset_field_index():
+    """ Resets Users field index preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    g.current_user.admin['users_field_index'] = default_admin_users_field_index
+    g.current_user.save()
+    return jsonify(
+        {'field_index': g.current_user.admin['users_field_index']}
+    ), 200
+
+@data_display_bp.route('/data-display/admin/users/order-by-field', methods=['POST'])
+@enabled_user_required__json
+def users_order_by_field():
+    """ Set User's forms order_by preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    data = request.get_json(silent=True)
+    if not 'order_by_field_name' in data:
+        return jsonify("Not Acceptable"), 406
+    field_names = [ field['name'] for field in default_admin_users_field_index ]
+    if not data['order_by_field_name'] in field_names:
+        return jsonify("Not Acceptable"), 406
+    g.current_user.admin['users_order_by'] = data['order_by_field_name']
+    g.current_user.save()
+    return jsonify(
+        {'order_by_field_name': g.current_user.admin['users_order_by']}
+    ), 200
+
+@data_display_bp.route('/data-display/admin/users/toggle-ascending', methods=['POST'])
+@enabled_user_required__json
+def users_toggle_ascending():
+    """ Toggle User's forms ascending order preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    preference = get_admin_users_order_by(g.current_user)
+    g.current_user.admin['users_order_ascending'] = False if preference else True
+    g.current_user.save()
+    return jsonify(
+        {'ascending': g.current_user.admin['users_order_ascending']}
+    ), 200
+
 
 """ Admin User's forms list """
 
-default_admin_users_form_field_index = [
+default_admin_user_forms_field_index = [
                 {'name': 'form_name__html', 'label': _('Form name')},
                 {'name': 'created', 'label': _('Created')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
@@ -262,44 +351,44 @@ default_admin_users_form_field_index = [
                 {'name': 'is_public', 'label': _('Public')}
             ]
 
-@data_display_bp.route('/data-display/admin-user-forms', methods=['GET'])
+@data_display_bp.route('/data-display/admin/user/<int:user_id>/forms', methods=['GET'])
 @enabled_user_required__json
-def admin_user_forms():
-    """ Returns json required by Vue dataTable component.
+def user_forms(user_id):
+    """ Returns json required by Vue dataDisplay component.
     """
     if not g.is_admin :
         return jsonify("Denied"), 401
-    users = User.find_all()
-    field_index = default_admin_users_form_field_index
+    user = User.find(id=user_id)
+    forms = user.get_forms()
+    field_index = default_admin_user_forms_field_index
     items = []
-    for user in UserSchemaForAdminDataDisplay(many=True).dump(users):
+    for form in FormSchemaForAdminFormsDataDisplay(many=True).dump(forms):
         item = {}
         data = {}
-        id = user['id']
+        id = form['id']
+        slug = form['slug']
         data['form_name__html'] = {
             'value': slug,
             'html': f"<a href='/forms/view/{id}'>{slug}</a>"
         }
-        for field_name in user.keys():
+        for field_name in form.keys():
             if field_name == 'slug':
                 continue
             if field_name == 'id':
-                item[field_name] = user[field_name]
+                item[field_name] = form[field_name]
                 continue;
             if field_name == 'created':
-                item[field_name] = user[field_name]
+                item[field_name] = form[field_name]
                 continue;
-            data[field_name] = user[field_name]
+            data[field_name] = form[field_name]
         item['data'] = data
-        #pprint(data)
         items.append(item)
-        #pprint(items)
     return jsonify(
         items=items,
         meta={'name': 'User forms',
               'field_index': field_index,
               'deleted_fields': [],
-              'default_field_index': default_admin_users_form_field_index,
+              'default_field_index': default_admin_user_forms_field_index,
               'editable_fields': False,
               'item_endpoint': None,
               'can_edit': False,
@@ -307,9 +396,81 @@ def admin_user_forms():
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': 'username',
+        user_prefs={'order_by': 'slug',
                     'ascending': True,
         }
+    ), 200
+
+@data_display_bp.route('/data-display/admin/user/<int:user_id>/forms/change-index', methods=['POST'])
+@enabled_user_required__json
+def user_forms_change_field_index(user_id):
+    """ Changes User's forms field index preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    data = request.get_json(silent=True)
+    new_first_field_name = data['field_name']
+    field_index = copy(default_my_forms_field_index)
+    field_to_move = None
+    for field in field_index:
+        if field['name'] == new_first_field_name:
+            field_to_move = field
+            break
+    if field_to_move:
+        field_to_move_pos = field_index.index(field_to_move)
+        field_index.insert(0, field_index.pop(field_to_move_pos))
+        g.current_user.preferences['forms_field_index'] = field_index
+        g.current_user.save()
+        pprint(g.current_user.preferences['forms_field_index'])
+        return jsonify(
+            {'field_index': g.current_user.preferences['forms_field_index']}
+        ), 200
+    return jsonify("Not Acceptable"), 406
+
+@data_display_bp.route('/data-display/admin/user/<int:user_id>/forms/reset-index', methods=['POST'])
+@enabled_user_required__json
+def user_forms_reset_field_index(user_id):
+    """ Resets Users field index preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    g.current_user.preferences['forms_field_index'] = default_my_forms_field_index
+    g.current_user.save()
+    return jsonify(
+        {'field_index': g.current_user.preferences['forms_field_index']}
+    ), 200
+
+@data_display_bp.route('/data-display/admin/user/<int:user_id>/forms/order-by-field', methods=['POST'])
+@enabled_user_required__json
+def user_forms_order_by_field(user_id):
+    """ Set User's forms order_by preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    data = request.get_json(silent=True)
+    if not 'order_by_field_name' in data:
+        return jsonify("Not Acceptable"), 406
+    field_names = [ field['name'] for field in default_my_forms_field_index ]
+    if not data['order_by_field_name'] in field_names:
+        return jsonify("Not Acceptable"), 406
+    g.current_user.preferences['forms_order_by'] = data['order_by_field_name']
+    g.current_user.save()
+    return jsonify(
+        {'order_by_field_name': g.current_user.preferences['forms_order_by']}
+    ), 200
+
+@data_display_bp.route('/data-display/admin/user/<int:user_id>/forms/toggle-ascending', methods=['POST'])
+@enabled_user_required__json
+def user_forms_toggle_ascending(user_id):
+    """ Toggle User's forms ascending order preference
+    """
+    if not g.is_admin:
+        return jsonify("Forbidden"), 403
+    preference = get_my_forms_order_ascending(g.current_user)
+    g.current_user.preferences['forms_order_ascending'] = False if preference else True
+    g.current_user.save()
+    return jsonify(
+        {'ascending': g.current_user.preferences['forms_order_ascending']}
     ), 200
 
 
@@ -345,17 +506,17 @@ def get_my_forms_order_by(user):
 @data_display_bp.route('/data-display/my-forms/<int:user_id>', methods=['GET'])
 @enabled_user_required__json
 def my_forms(user_id):
-    """ Returns json required by Vue dataTable component.
+    """ Returns json required by Vue dataDisplay component.
         Hyperlinks to be rendered by the component and are declared by trailing '__html'
     """
     if not user_id == g.current_user.id:
         return jsonify("Denied"), 401
     forms = g.current_user.get_forms()
     form_count = forms.count()
-    page = request.args.get('page', type=int)
-    if page:
-        print(f"page: {page}")
-        forms = Form.find_all(editor_id=g.current_user.id).paginate(page, 10, False).items
+    #page = request.args.get('page', type=int)
+    #if page:
+    #    print(f"page: {page}")
+    #    forms = Form.find_all(editor_id=g.current_user.id).paginate(page, 10, False).items
 
     field_index = get_my_forms_field_index(g.current_user)
     items = []
@@ -632,7 +793,6 @@ def answers_notification(form_id):
         return jsonify("Forbidden"), 403
     pay_load = {'notification':form_user.toggle_notification()}
     return jsonify(pay_load)
-
 
 
 """ Answers """
