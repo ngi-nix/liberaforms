@@ -44,7 +44,7 @@ def get_admin_forms_field_index(user):
     else:
         return default_admin_forms_field_index
 
-def get_admin_forms_order_ascending(user):
+def get_admin_forms_ascending(user):
     if 'ascending' in user.admin['forms']:
         #print(user.admin['forms']['ascending'])
         return user.admin['forms']['ascending']
@@ -109,7 +109,7 @@ def admin_forms():
               'enable_notification': False,
         },
         user_prefs={'order_by': get_admin_forms_order_by(g.current_user),
-                    'ascending': get_admin_forms_order_ascending(g.current_user),
+                    'ascending': get_admin_forms_ascending(g.current_user),
 
         }
     ), 200
@@ -140,7 +140,6 @@ def admin_forms_change_field_index():
             {'field_index': g.current_user.admin['forms']['field_index']}
         ), 200
     return jsonify("Not Acceptable"), 406
-
 
 @data_display_bp.route('/data-display/admin/forms/reset-index', methods=['POST'])
 @enabled_user_required__json
@@ -183,7 +182,7 @@ def admin_forms_toggle_ascending():
     """
     if not g.is_admin:
         return jsonify("Forbidden"), 403
-    preference = get_admin_forms_order_ascending(g.current_user)
+    preference = get_admin_forms_ascending(g.current_user)
     g.current_user.admin['forms']['ascending'] = False if preference else True
     flag_modified(g.current_user, 'admin')
     g.current_user.save()
@@ -209,7 +208,7 @@ def get_admin_users_field_index(user):
     else:
         return default_admin_users_field_index
 
-def get_admin_users_order_ascending(user):
+def get_admin_users_ascending(user):
     if 'ascending' in user.admin['users']:
         return user.admin['users']['ascending']
     else:
@@ -251,11 +250,10 @@ def admin_users():
             data[field_name] = user[field_name]
         item['data'] = data
         items.append(item)
-    field_index = get_admin_users_field_index(g.current_user)
     return jsonify(
         items=items,
         meta={'name': 'Users',
-              'field_index': field_index,
+              'field_index': get_admin_users_field_index(g.current_user),
               'deleted_fields': [],
               'default_field_index': default_admin_users_field_index,
               'editable_fields': False,
@@ -266,7 +264,7 @@ def admin_users():
               'enable_notification': False,
         },
         user_prefs={'order_by': get_admin_users_order_by(g.current_user),
-                    'ascending': get_admin_users_order_ascending(g.current_user)
+                    'ascending': get_admin_users_ascending(g.current_user)
                     }
     ), 200
 
@@ -359,6 +357,24 @@ default_admin_userforms_field_index = [
                 {'name': 'is_public', 'label': _('Public')}
             ]
 
+def get_admin_userforms_field_index(user):
+    if 'field_index' in user.admin['userforms']:
+        return user.admin['userforms']['field_index']
+    else:
+        return default_admin_userforms_field_index
+
+def get_admin_userforms_ascending(user):
+    if 'ascending' in user.admin['userforms']:
+        return user.admin['userforms']['ascending']
+    else:
+        return True
+
+def get_admin_userforms_order_by(user):
+    if 'order_by' in user.admin['userforms']:
+        return user.admin['userforms']['order_by']
+    else:
+        return 'created'
+
 @data_display_bp.route('/data-display/admin/user/<int:user_id>/forms', methods=['GET'])
 @enabled_user_required__json
 def admin_userforms(user_id):
@@ -368,7 +384,6 @@ def admin_userforms(user_id):
         return jsonify("Denied"), 401
     user = User.find(id=user_id)
     forms = user.get_forms()
-    field_index = default_admin_userforms_field_index
     items = []
     for form in FormSchemaForAdminFormsDataDisplay(many=True).dump(forms):
         item = {}
@@ -395,7 +410,7 @@ def admin_userforms(user_id):
     return jsonify(
         items=items,
         meta={'name': 'User forms',
-              'field_index': field_index,
+              'field_index': get_admin_userforms_field_index(g.current_user),
               'deleted_fields': [],
               'default_field_index': default_admin_userforms_field_index,
               'editable_fields': False,
@@ -405,8 +420,8 @@ def admin_userforms(user_id):
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': 'slug',
-                    'ascending': True,
+        user_prefs={'order_by': get_admin_userforms_order_by(g.current_user),
+                    'ascending': get_admin_userforms_ascending(g.current_user),
         }
     ), 200
 
@@ -477,7 +492,7 @@ def admin_userforms_toggle_ascending(user_id):
     """
     if not g.is_admin:
         return jsonify("Forbidden"), 403
-    preference = get_my_forms_order_ascending(g.current_user)
+    preference = get_my_forms_ascending(g.current_user)
     g.current_user.admin['userforms']['ascending'] = False if preference else True
     flag_modified(g.current_user, 'admin')
     g.current_user.save()
@@ -503,9 +518,9 @@ def get_my_forms_field_index(user):
     else:
         return default_my_forms_field_index
 
-def get_my_forms_order_ascending(user):
-    if 'forms_order_ascending' in user.preferences:
-        return user.preferences['forms_order_ascending']
+def get_my_forms_ascending(user):
+    if 'forms_ascending' in user.preferences:
+        return user.preferences['forms_ascending']
     else:
         return True
 
@@ -578,7 +593,7 @@ def my_forms(user_id):
               'enable_notification': False,
         },
         user_prefs={'order_by': get_my_forms_order_by(g.current_user),
-                    'ascending': get_my_forms_order_ascending(g.current_user),
+                    'ascending': get_my_forms_ascending(g.current_user),
 
         }
     ), 200
@@ -603,7 +618,6 @@ def change_forms_field_index(user_id):
         field_index.insert(0, field_index.pop(field_to_move_pos))
         g.current_user.preferences['forms_field_index'] = field_index
         g.current_user.save()
-        #pprint(g.current_user.preferences['forms_field_index'])
         return jsonify(
             {'field_index': g.current_user.preferences['forms_field_index']}
         ), 200
@@ -649,11 +663,11 @@ def forms_toggle_ascending(user_id):
     """
     if not user_id == g.current_user.id:
         return jsonify("Forbidden"), 403
-    preference = get_my_forms_order_ascending(g.current_user)
-    g.current_user.preferences['forms_order_ascending'] = False if preference else True
+    preference = get_my_forms_ascending(g.current_user)
+    g.current_user.preferences['forms_ascending'] = False if preference else True
     g.current_user.save()
     return jsonify(
-        {'ascending': g.current_user.preferences['forms_order_ascending']}
+        {'ascending': g.current_user.preferences['forms_ascending']}
     ), 200
 
 
@@ -669,8 +683,6 @@ def form_answers(form_id):
         return jsonify("Not found"), 404
     form = formuser.form
     answers = form.answers
-    #pprint(AnswerSchema(many=True).dump(answers))
-    #pprint(form.structure)
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'name': form.slug,
@@ -685,7 +697,7 @@ def form_answers(form_id):
               'enable_notification': True,
         },
         user_prefs={'order_by': form.get_answers_order_by(g.current_user),
-                    'ascending': form.get_answers_order_ascending(g.current_user),
+                    'ascending': form.get_answers_ascending(g.current_user),
 
         }
     ), 200
