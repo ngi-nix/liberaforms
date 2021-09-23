@@ -8,7 +8,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 mb-4">
       <div class="title_1 delimited">
           {%trans%}User details{%endtrans%}
       </div>
@@ -160,17 +160,6 @@
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
-$(document).ready(function() {
-    $('#forms').DataTable({
-        "language": {
-            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
-        },
-        "initComplete": function(settings, json) {
-            $("#forms").show();
-        },
-        "order": [[1, 'desc']]
-    });
-});
 document.getElementById('toggle_blocked').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/users/toggle-blocked/{{ user.id }}",

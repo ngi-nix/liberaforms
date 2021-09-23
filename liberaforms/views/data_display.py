@@ -46,7 +46,7 @@ def get_admin_forms_field_index(user):
 
 def get_admin_forms_order_ascending(user):
     if 'forms_order_ascending' in user.admin:
-        print(user.admin['forms_order_ascending'])
+        #print(user.admin['forms_order_ascending'])
         return user.admin['forms_order_ascending']
     else:
         return True
@@ -134,7 +134,7 @@ def admin_forms_change_field_index():
         field_index.insert(0, field_index.pop(field_to_move_pos))
         g.current_user.admin['forms_field_index'] = field_index
         g.current_user.save()
-        pprint(g.current_user.admin['forms_field_index'])
+        #pprint(g.current_user.admin['forms_field_index'])
         return jsonify(
             {'field_index': g.current_user.admin['forms_field_index']}
         ), 200
@@ -182,7 +182,7 @@ def admin_forms_toggle_ascending():
         return jsonify("Forbidden"), 403
     preference = get_admin_forms_order_ascending(g.current_user)
     g.current_user.admin['forms_order_ascending'] = False if preference else True
-    print("hello: ", g.current_user.admin['forms_order_ascending'])
+    #print(g.current_user.admin['forms_order_ascending'])
     g.current_user.save()
     return jsonify(
         {'ascending': g.current_user.admin['forms_order_ascending']}
@@ -347,6 +347,7 @@ default_admin_user_forms_field_index = [
                 {'name': 'created', 'label': _('Created')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
                 {'name': 'total_answers', 'label': _('Anwsers')},
+                {'name': 'is_author', 'label': _('Author')},
                 {'name': 'total_users', 'label': _('Users')},
                 {'name': 'is_public', 'label': _('Public')}
             ]
@@ -371,6 +372,7 @@ def user_forms(user_id):
             'value': slug,
             'html': f"<a href='/forms/view/{id}'>{slug}</a>"
         }
+        data['is_author'] = True if form['author_id'] == user.id else False
         for field_name in form.keys():
             if field_name == 'slug':
                 continue
@@ -421,7 +423,7 @@ def user_forms_change_field_index(user_id):
         field_index.insert(0, field_index.pop(field_to_move_pos))
         g.current_user.preferences['forms_field_index'] = field_index
         g.current_user.save()
-        pprint(g.current_user.preferences['forms_field_index'])
+        #pprint(g.current_user.preferences['forms_field_index'])
         return jsonify(
             {'field_index': g.current_user.preferences['forms_field_index']}
         ), 200
@@ -591,7 +593,7 @@ def change_forms_field_index(user_id):
         field_index.insert(0, field_index.pop(field_to_move_pos))
         g.current_user.preferences['forms_field_index'] = field_index
         g.current_user.save()
-        pprint(g.current_user.preferences['forms_field_index'])
+        #pprint(g.current_user.preferences['forms_field_index'])
         return jsonify(
             {'field_index': g.current_user.preferences['forms_field_index']}
         ), 200

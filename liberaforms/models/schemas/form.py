@@ -60,6 +60,7 @@ class FormSchemaForAdminFormsDataDisplay(ma.SQLAlchemySchema):
     id = ma.auto_field()
     created = ma.auto_field()
     slug = ma.auto_field()
+    author_id = ma.auto_field()
     total_answers = ma.Method('get_total_answers')
     total_users = ma.Method('get_total_formusers')
     last_answer_date = ma.Method('get_last_answer_date')
@@ -81,5 +82,5 @@ class FormSchemaForAdminFormsDataDisplay(ma.SQLAlchemySchema):
     def get_is_shared(self, obj):
         return True if obj.users.count() > 0 else False
 
-    def get_author(slef, obj):
+    def get_author(self, obj):
         return {'id': obj.author.id, 'name': obj.author.username}
