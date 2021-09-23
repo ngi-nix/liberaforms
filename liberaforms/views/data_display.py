@@ -106,8 +106,7 @@ def admin_forms():
         },
         user_prefs={'field_index': get_admin_forms_field_index(g.current_user),
                     'order_by': get_admin_forms_order_by(g.current_user),
-                    'ascending': get_admin_forms_ascending(g.current_user),
-
+                    'ascending': get_admin_forms_ascending(g.current_user)
         }
     ), 200
 
@@ -262,7 +261,7 @@ def admin_users():
         user_prefs={'field_index': get_admin_users_field_index(g.current_user),
                     'order_by': get_admin_users_order_by(g.current_user),
                     'ascending': get_admin_users_ascending(g.current_user)
-                    }
+        }
     ), 200
 
 @data_display_bp.route('/data-display/admin/users/change-index', methods=['POST'])
@@ -418,7 +417,7 @@ def admin_userforms(user_id):
         },
         user_prefs={'field_index': get_admin_userforms_field_index(g.current_user),
                     'order_by': get_admin_userforms_order_by(g.current_user),
-                    'ascending': get_admin_userforms_ascending(g.current_user),
+                    'ascending': get_admin_userforms_ascending(g.current_user)
         }
     ), 200
 
@@ -489,7 +488,7 @@ def admin_userforms_toggle_ascending(user_id):
     """
     if not g.is_admin:
         return jsonify("Forbidden"), 403
-    preference = get_my_forms_ascending(g.current_user)
+    preference = get_admin_userforms_ascending(g.current_user)
     g.current_user.admin['userforms']['ascending'] = False if preference else True
     flag_modified(g.current_user, 'admin')
     g.current_user.save()
@@ -587,8 +586,7 @@ def my_forms(user_id):
         },
         user_prefs={'field_index': get_my_forms_field_index(g.current_user),
                     'order_by': get_my_forms_order_by(g.current_user),
-                    'ascending': get_my_forms_ascending(g.current_user),
-
+                    'ascending': get_my_forms_ascending(g.current_user)
         }
     ), 200
 
@@ -691,8 +689,7 @@ def form_answers(form_id):
         },
         user_prefs={'field_index': form.get_user_field_index_preference(g.current_user),
                     'order_by': form.get_answers_order_by(g.current_user),
-                    'ascending': form.get_answers_order_ascending(g.current_user),
-
+                    'ascending': form.get_answers_order_ascending(g.current_user)
         }
     ), 200
 
