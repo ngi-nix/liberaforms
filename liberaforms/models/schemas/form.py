@@ -7,6 +7,7 @@ This file is part of LiberaForms.
 
 from liberaforms import ma
 from liberaforms.models.form import Form
+from liberaforms.models.formuser import FormUser
 from liberaforms.utils import utils
 
 
@@ -60,12 +61,16 @@ class FormSchemaForAdminFormsDataDisplay(ma.SQLAlchemySchema):
     created = ma.auto_field()
     slug = ma.auto_field()
     total_answers = ma.Method('get_total_answers')
+    total_users = ma.Method('get_total_formusers')
     last_answer_date = ma.Method('get_last_answer_date')
     is_public = ma.Method('get_is_public')
     author = ma.Method('get_author')
 
     def get_total_answers(self, obj):
         return obj.answers.count()
+
+    def get_total_formusers(self, obj):
+        return FormUser.find_all(form_id=obj.id).count()
 
     def get_last_answer_date(self, obj):
         return obj.get_last_answer_date()
