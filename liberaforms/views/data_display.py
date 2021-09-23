@@ -9,10 +9,12 @@ from copy import copy
 from flask import Blueprint, request, redirect, jsonify
 from flask_babel import gettext as _
 from liberaforms.models.form import Form
+from liberaforms.models.user import User
 from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
 from liberaforms.models.schemas.form import FormSchemaForMyFormsDataDisplay, \
                                             FormSchemaForAdminFormsDataDisplay
+from liberaforms.models.schemas.user import UserSchemaForAdminDataDisplay
 from liberaforms.models.schemas.answer import AnswerSchema
 from liberaforms.utils.utils import make_url_for
 from liberaforms.utils.wraps import *
@@ -91,6 +93,71 @@ def admin_forms():
 
         }
     ), 200
+
+
+""" Admin Users list """
+
+default_admin_users_field_index = [
+                {'name': 'username__html', 'label': _('User name')},
+                {'name': 'created', 'label': _('Created')},
+                {'name': 'enabled', 'label': _('Enabled')},
+                {'name': 'email', 'label': _('Email')},
+                {'name': 'total_forms', 'label': _('Forms')},
+                {'name': 'is_admin', 'label': _('Admin')}
+            ]
+
+@data_display_bp.route('/data-display/admin-users', methods=['GET'])
+@enabled_user_required__json
+def admin_users():
+    """ Returns json required by Vue dataTable component.
+    """
+    if not g.is_admin :
+        return jsonify("Denied"), 401
+    users = User.find_all()
+    field_index = default_admin_users_field_index
+    items = []
+    for user in UserSchemaForAdminDataDisplay(many=True).dump(users):
+        item = {}
+        data = {}
+        id = user['id']
+        username = user['username']
+        data['username__html'] = {
+            'value': username,
+            'html': f"<a href='/admin/users/{id}'>{username}</a>"
+        }
+        for field_name in user.keys():
+            if field_name == 'slug':
+                continue
+            if field_name == 'id':
+                item[field_name] = user[field_name]
+                continue;
+            if field_name == 'created':
+                item[field_name] = user[field_name]
+                continue;
+            data[field_name] = user[field_name]
+        item['data'] = data
+        #pprint(data)
+        items.append(item)
+        #pprint(items)
+    return jsonify(
+        items=items,
+        meta={'name': 'Users',
+              #'total': form_count,
+              'field_index': field_index,
+              'deleted_fields': [],
+              'default_field_index': default_admin_users_field_index,
+              'editable_fields': False,
+              'item_endpoint': None,
+              'can_edit': False,
+              'enable_exports': False,
+              'enable_graphs': False,
+              'enable_notification': False,
+        },
+        user_prefs={'order_by': 'username',
+                    'ascending': True,
+        }
+    ), 200
+
 
 """ My Forms """
 

@@ -5,8 +5,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col">
-
+    <div class="col mb-1">
       <div class="title_1">
         {# i18n: Title on /admin/forms page #}
           {%trans%}All forms{%endtrans%}
@@ -17,7 +16,10 @@
             </a>
           </div>
       </div>
-
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
       <div data-vue-component="data-display"
            data-endpoint="/data-display/admin-forms"
            data-csrf_token="{{ csrf_token() }}">
