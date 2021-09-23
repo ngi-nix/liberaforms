@@ -66,9 +66,6 @@ def admin_forms():
     if not g.is_admin:
         return jsonify("Denied"), 401
     forms = Form.find_all()
-    #form_count = forms.count()
-
-    field_index = get_admin_forms_field_index(g.current_user)
     items = []
     for form in FormSchemaForAdminFormsDataDisplay(many=True).dump(forms):
         item = {}
@@ -98,7 +95,6 @@ def admin_forms():
     return jsonify(
         items=items,
         meta={'name': 'All forms',
-              'field_index': field_index,
               'deleted_fields': [],
               'default_field_index': default_admin_forms_field_index,
               'editable_fields': False,
@@ -108,7 +104,8 @@ def admin_forms():
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': get_admin_forms_order_by(g.current_user),
+        user_prefs={'field_index': get_admin_forms_field_index(g.current_user),
+                    'order_by': get_admin_forms_order_by(g.current_user),
                     'ascending': get_admin_forms_ascending(g.current_user),
 
         }
@@ -253,7 +250,6 @@ def admin_users():
     return jsonify(
         items=items,
         meta={'name': 'Users',
-              'field_index': get_admin_users_field_index(g.current_user),
               'deleted_fields': [],
               'default_field_index': default_admin_users_field_index,
               'editable_fields': False,
@@ -263,7 +259,8 @@ def admin_users():
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': get_admin_users_order_by(g.current_user),
+        user_prefs={'field_index': get_admin_users_field_index(g.current_user),
+                    'order_by': get_admin_users_order_by(g.current_user),
                     'ascending': get_admin_users_ascending(g.current_user)
                     }
     ), 200
@@ -410,7 +407,6 @@ def admin_userforms(user_id):
     return jsonify(
         items=items,
         meta={'name': 'User forms',
-              'field_index': get_admin_userforms_field_index(g.current_user),
               'deleted_fields': [],
               'default_field_index': default_admin_userforms_field_index,
               'editable_fields': False,
@@ -420,7 +416,8 @@ def admin_userforms(user_id):
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': get_admin_userforms_order_by(g.current_user),
+        user_prefs={'field_index': get_admin_userforms_field_index(g.current_user),
+                    'order_by': get_admin_userforms_order_by(g.current_user),
                     'ascending': get_admin_userforms_ascending(g.current_user),
         }
     ), 200
@@ -544,8 +541,6 @@ def my_forms(user_id):
     #if page:
     #    print(f"page: {page}")
     #    forms = Form.find_all(editor_id=g.current_user.id).paginate(page, 10, False).items
-
-    field_index = get_my_forms_field_index(g.current_user)
     items = []
     for form in FormSchemaForMyFormsDataDisplay(many=True).dump(forms):
         item = {}
@@ -581,8 +576,6 @@ def my_forms(user_id):
     return jsonify(
         items=items,
         meta={'name': 'my-forms',
-              #'total': form_count,
-              'field_index': field_index,
               'deleted_fields': [],
               'default_field_index': default_my_forms_field_index,
               'editable_fields': False,
@@ -592,7 +585,8 @@ def my_forms(user_id):
               'enable_graphs': False,
               'enable_notification': False,
         },
-        user_prefs={'order_by': get_my_forms_order_by(g.current_user),
+        user_prefs={'field_index': get_my_forms_field_index(g.current_user),
+                    'order_by': get_my_forms_order_by(g.current_user),
                     'ascending': get_my_forms_ascending(g.current_user),
 
         }
@@ -686,7 +680,6 @@ def form_answers(form_id):
     return jsonify(
         items=AnswerSchema(many=True).dump(answers),
         meta={'name': form.slug,
-              'field_index': form.get_user_field_index_preference(g.current_user),
               'deleted_fields': form.get_deleted_fields(),
               'default_field_index': form.get_field_index_for_data_display(),
               'form_structure' : form.structure,
@@ -696,8 +689,9 @@ def form_answers(form_id):
               'enable_graphs': True,
               'enable_notification': True,
         },
-        user_prefs={'order_by': form.get_answers_order_by(g.current_user),
-                    'ascending': form.get_answers_ascending(g.current_user),
+        user_prefs={'field_index': form.get_user_field_index_preference(g.current_user),
+                    'order_by': form.get_answers_order_by(g.current_user),
+                    'ascending': form.get_answers_order_ascending(g.current_user),
 
         }
     ), 200
