@@ -30,10 +30,10 @@ data_display_bp = Blueprint('data_display_bp', __name__)
 
 default_admin_forms_field_index = [
                 {'name': 'form_name__html', 'label': _('Form name')},
-                {'name': 'author__html', 'label': _('Author')},
                 {'name': 'created', 'label': _('Created')},
-                {'name': 'last_answer_date', 'label': _('Last answer')},
                 {'name': 'total_answers', 'label': _('Anwsers')},
+                {'name': 'last_answer_date', 'label': _('Last answer')},
+                {'name': 'author__html', 'label': _('Author')},
                 {'name': 'total_users', 'label': _('Users')},
                 {'name': 'is_public', 'label': _('Public')}
             ]
@@ -103,6 +103,7 @@ def admin_forms():
               'enable_exports': False,
               'enable_graphs': False,
               'enable_notification': False,
+              'min_column_width': 150,
         },
         user_prefs={'field_index': get_admin_forms_field_index(g.current_user),
                     'order_by': get_admin_forms_order_by(g.current_user),
@@ -257,6 +258,7 @@ def admin_users():
               'enable_exports': False,
               'enable_graphs': False,
               'enable_notification': False,
+              'min_column_width': 150,
         },
         user_prefs={'field_index': get_admin_users_field_index(g.current_user),
                     'order_by': get_admin_users_order_by(g.current_user),
@@ -332,7 +334,7 @@ def users_toggle_ascending():
     """
     if not g.is_admin:
         return jsonify("Forbidden"), 403
-    preference = get_admin_users_order_by(g.current_user)
+    preference = get_admin_users_ascending(g.current_user)
     g.current_user.admin['users']['ascending'] = False if preference else True
     flag_modified(g.current_user, 'admin')
     g.current_user.save()
@@ -345,12 +347,13 @@ def users_toggle_ascending():
 
 default_admin_userforms_field_index = [
                 {'name': 'form_name__html', 'label': _('Form name')},
-                {'name': 'created', 'label': _('Created')},
-                {'name': 'last_answer_date', 'label': _('Last answer')},
                 {'name': 'total_answers', 'label': _('Anwsers')},
+                {'name': 'last_answer_date', 'label': _('Last answer')},
+
                 {'name': 'is_author', 'label': _('Author')},
                 {'name': 'total_users', 'label': _('Users')},
-                {'name': 'is_public', 'label': _('Public')}
+                {'name': 'is_public', 'label': _('Public')},
+                {'name': 'created', 'label': _('Created')},
             ]
 
 def get_admin_userforms_field_index(user):

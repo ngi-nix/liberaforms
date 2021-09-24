@@ -6,31 +6,51 @@
 <link rel="stylesheet" href="/static/data-display/data-display.css">
 
 <div class="container">
-  <div class="row">
-    <div class="col" style="font-size:1.5em">
-        {%trans%}My forms{%endtrans%}
+
+  <nav class="navbar navbar-expand-sm"
+       style="padding:0;">
+
+    <span class="navbar-brand navbar-text"
+          style="font-size: 1.5rem">
+      {%trans%}My forms{%endtrans%}
+    </span>
+    <button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#otherFormOptions"
+            aria-controls="otherFormOptions"
+            aria-expanded="false"
+            aria-label="Toggle other options">
+      <i class="fa fa-align-justify" style="color: gray;" aria-hidden="true"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="otherFormOptions">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item pb-2">
+          <a class="btn btn-sm btn-primary"
+             role="button"
+             href="/forms/templates">
+            {%trans%}Templates{%endtrans%}
+            <i class="fa fa-file-text" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="nav-item pb-2">
+          <a class="btn btn-sm btn-primary"
+             role="button"
+             href="/forms/new">
+            {%trans%}New form{%endtrans%}
+            <i class="fa fa-star" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li class="nav-item pb-2">
+          <a class="btn btn-sm btn-primary"
+             role="button"
+             href="/user/{{g.current_user.username}}/statistics">
+            {%trans%}Statistics{%endtrans%}
+            <i class="fa fa-bar-chart" aria-hidden="true"></i>
+          </a>
+        </li>
+      </ul>
     </div>
-    <div class="col-auto">
-      <a class="btn btn-sm btn-primary"
-         role="button"
-         href="/forms/templates">
-        {%trans%}Templates{%endtrans%}
-        <i class="fa fa-file-text" aria-hidden="true"></i>
-      </a>
-      <a class="btn btn-sm btn-primary"
-         role="button"
-         href="/forms/new">
-        {%trans%}New form{%endtrans%}
-        <i class="fa fa-star" aria-hidden="true"></i>
-      </a>
-      <a class="btn btn-sm btn-primary"
-         role="button"
-         href="/user/{{g.current_user.username}}/statistics">
-        {%trans%}Statistics{%endtrans%}
-        <i class="fa fa-bar-chart" aria-hidden="true"></i>
-      </a>
-    </div>
-  </div>
+  </nav>
 
   <div class="row">
     <div class="col">

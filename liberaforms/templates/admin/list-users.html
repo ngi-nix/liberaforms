@@ -3,36 +3,68 @@
 
 <!-- list_users_page -->
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-12">
+<link rel="stylesheet" href="/static/data-display/data-display.css">
 
-      <div class="title_1 delimited">{%trans%}Users{%endtrans%}
-        <div style="float:right">
-          <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
-              {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
+<div class="container">
+
+  <nav class="navbar navbar-expand-sm"
+       style="padding:0;">
+
+    <span class="navbar-brand navbar-text"
+          style="font-size: 1.5rem">
+      {%trans%}Users{%endtrans%}
+    </span>
+    <button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#otherFormOptions"
+            aria-controls="otherFormOptions"
+            aria-expanded="false"
+            aria-label="Toggle other options">
+      <i class="fa fa-align-justify" style="color: gray;" aria-hidden="true"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="otherFormOptions">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/site/stats">
+            {%trans%}Statistics{%endtrans%}
+            <i class="fa fa-bar-chart" aria-hidden="true"></i>
           </a>
-          {% set total_invites = invites.count() %}
-          {% if total_invites == 0 %}
-              <a class="btn btn-primary btn-sm" role="button" href="/admin/invites/new">
-                  {%trans%}Invite a new user{%endtrans%}
-                  <span class="badge badge-light">{{ total_invites }}</span>
-              </a>
-          {% else %}
-              <a class="btn btn-primary btn-sm" role="button" href="/admin/invites">
-                  {%trans%}Invitations{%endtrans%}
-                  <span class="badge badge-light">{{ total_invites }}</span>
-              </a>
-          {% endif %}
+        </li>
+        {% set total_invites = invites.count() %}
+        {% if total_invites == 0 %}
+        <li class="nav-item pb-2">
+          <a class="btn btn-sm btn-primary"
+             role="button"
+             href="/forms/new">
+            {%trans%}New form{%endtrans%}
+            <i class="fa fa-star" aria-hidden="true"></i>
+          </a>
+        </li>
+        {% else %}
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/admin/invites">
+            {%trans%}Invitations{%endtrans%}
+            <span class="badge badge-light">{{ total_invites }}</span>
+          </a>
+        </li>
+        {% endif %}
+        <li class="nav-item pb-2">
           {# i18n: Button to download answers received on form in CSV document format #}
-          <a class="btn btn-primary btn-sm" role="button" href="/admin/users/csv">
-              {%trans%}Download CSV{%endtrans%}
-              <i class="fa fa-download" aria-hidden="true"></i>
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/admin/users/csv">
+            {%trans%}Download CSV{%endtrans%}
+            <i class="fa fa-download" aria-hidden="true"></i>
           </a>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
-  </div>
+  </nav>
+
   <div class="row">
     <div class="col">
       <div data-vue-component="data-display"
