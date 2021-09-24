@@ -44,20 +44,20 @@
         </li>
         {% else %}
         <li class="nav-item pb-2">
-          {# i18n: Button to download answers received on form in CSV document format #}
           <a class="btn btn-primary btn-sm"
              role="button"
              href="/admin/users/csv">
+            {# i18n: Button to download CSV document format #}
             {%trans%}Download CSV{%endtrans%}
             <i class="fa fa-download" aria-hidden="true"></i>
           </a>
         </li>
         {% endif %}
         <li class="nav-item pb-2">
-          {# i18n: Button to download answers received on form in CSV document format #}
           <a class="btn btn-primary btn-sm"
              role="button"
              href="/admin/users/csv">
+            {# i18n: Button to download document format #}
             {%trans%}Download CSV{%endtrans%}
             <i class="fa fa-download" aria-hidden="true"></i>
           </a>
@@ -70,6 +70,7 @@
     <div class="col">
       <div data-vue-component="data-display"
            data-endpoint="/data-display/admin/users"
+           data-language="{{ g.current_user.language }}"
            data-csrf_token="{{ csrf_token() }}">
       </div>
     </div>

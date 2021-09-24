@@ -26,6 +26,7 @@
     <div class="col">
       <div data-vue-component="data-display"
            data-endpoint="/data-display/form/{{form.id}}"
+           data-language="{{ g.current_user.language }}"
            data-csrf_token="{{ csrf_token() }}">
       </div>
     </div>

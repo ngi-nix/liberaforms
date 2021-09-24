@@ -151,6 +151,7 @@
     <div class="col">
       <div data-vue-component="data-display"
            data-endpoint="/data-display/admin/user/{{user.id}}/forms"
+           data-language="{{ g.current_user.language }}"
            data-csrf_token="{{ csrf_token() }}">
       </div>
     </div>
