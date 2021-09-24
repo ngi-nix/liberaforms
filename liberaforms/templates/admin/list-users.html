@@ -35,20 +35,21 @@
         {% set total_invites = invites.count() %}
         {% if total_invites == 0 %}
         <li class="nav-item pb-2">
-          <a class="btn btn-sm btn-primary"
+          <a class="btn btn-primary btn-sm"
              role="button"
-             href="/forms/new">
-            {%trans%}New form{%endtrans%}
-            <i class="fa fa-star" aria-hidden="true"></i>
+             href="/admin/invites/new">
+            {%trans%}Invite a new user{%endtrans%}
+            <span class="badge badge-light">{{ total_invites }}</span>
           </a>
         </li>
         {% else %}
         <li class="nav-item pb-2">
+          {# i18n: Button to download answers received on form in CSV document format #}
           <a class="btn btn-primary btn-sm"
              role="button"
-             href="/admin/invites">
-            {%trans%}Invitations{%endtrans%}
-            <span class="badge badge-light">{{ total_invites }}</span>
+             href="/admin/users/csv">
+            {%trans%}Download CSV{%endtrans%}
+            <i class="fa fa-download" aria-hidden="true"></i>
           </a>
         </li>
         {% endif %}
