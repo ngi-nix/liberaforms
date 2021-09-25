@@ -29,9 +29,9 @@ data_display_bp = Blueprint('data_display_bp', __name__)
 """
 
 default_admin_forms_field_index = [
-                {'name': 'form_name__html', 'label': _('Form name')},
+                {'name': 'form_name__html', 'label': _('Name')},
                 {'name': 'created', 'label': _('Created')},
-                {'name': 'total_answers', 'label': _('Anwsers')},
+                {'name': 'total_answers', 'label': _('Answers')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
                 {'name': 'author__html', 'label': _('Author')},
                 {'name': 'total_users', 'label': _('Users')},
@@ -346,8 +346,8 @@ def users_toggle_ascending():
 """ Admin User's forms list """
 
 default_admin_userforms_field_index = [
-                {'name': 'form_name__html', 'label': _('Form name')},
-                {'name': 'total_answers', 'label': _('Anwsers')},
+                {'name': 'form_name__html', 'label': _('Name')},
+                {'name': 'total_answers', 'label': _('Answers')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
 
                 {'name': 'is_author', 'label': _('Author')},
@@ -503,7 +503,7 @@ def admin_userforms_toggle_ascending(user_id):
 """ My Forms """
 
 default_my_forms_field_index = [
-                {'name': 'form_name__html', 'label': _('Form name')},
+                {'name': 'form_name__html', 'label': _('Name')},
                 {'name': 'answers__html', 'label': _('Answers')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
                 {'name': 'is_public', 'label': _('Public')},
