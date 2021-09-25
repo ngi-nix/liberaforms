@@ -295,9 +295,9 @@ class Form(db.Model, CRUD):
 
     def toggle_user_answers_ascending_order(self, user):
         formuser = FormUser.find(form_id=self.id, user_id=user.id)
-        formuser.asc = False if formuser.asc else True
+        formuser.ascending = False if formuser.ascending else True
         formuser.save()
-        return formuser.asc
+        return formuser.ascending
 
     def get_answers_order_by(self, user):
         formuser = FormUser.find(form_id=self.id, user_id=user.id)
@@ -313,7 +313,7 @@ class Form(db.Model, CRUD):
 
     def get_answers_order_ascending(self, user):
         formuser = FormUser.find(form_id=self.id, user_id=user.id)
-        return formuser.asc
+        return formuser.ascending
 
     @property
     def url(self):
