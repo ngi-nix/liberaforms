@@ -240,7 +240,10 @@ class User(db.Model, CRUD):
         return {
             "isAdmin": False,
             "notifyNewUser": False,
-            "notifyNewForm": False
+            "notifyNewForm": False,
+            "forms": {},
+            "users": {},
+            "userforms": {}
         }
 
     def get_fedi_auth(self):

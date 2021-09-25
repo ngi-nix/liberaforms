@@ -137,16 +137,6 @@ def preview_form():
                             max_attachment_size_for_humans=max_attach_size,
                         )
 
-@form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
-@enabled_user_required
-def conditions_form(id):
-    queriedForm = g.current_user.get_form(form_id, is_editor=True)
-    if not queriedForm:
-        flash(_("Can't find that form"), 'warning')
-        return redirect(make_url_for('form_bp.my_forms'))
-    #pprint(queriedForm.structure)
-    return render_template('conditions.html', form=queriedForm)
-
 
 @form_bp.route('/forms/save', methods=['POST'])
 @form_bp.route('/forms/save/<int:id>', methods=['POST'])
@@ -176,6 +166,10 @@ def save_form(id=None):
     if queriedForm:
         queriedForm.structure=formStructure
         queriedForm.update_field_index(session['formFieldIndex'])
+        # reset formuser's field_index order preference
+        FormUser.find_all(form_id=queriedForm.id).update({
+                                                FormUser.field_index: None,
+                                                FormUser.order_by: None})
         queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
         queriedForm.set_short_description()
@@ -700,7 +694,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        answer_data = {'marked': False}
+        answer_data = {}
         for key in formData:
             if key=='csrf_token':
                 continue

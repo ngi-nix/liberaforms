@@ -47,7 +47,6 @@ class Form(db.Model, CRUD):
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
-    #shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     introductionText = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
@@ -74,7 +73,6 @@ class Form(db.Model, CRUD):
         self.slug = kwargs["slug"]
         self.structure = kwargs["structure"]
         self.fieldIndex = kwargs["fieldIndex"]
-        #self.shared_notifications = []
         self.introductionText = kwargs["introductionText"]
         self.consentTexts = kwargs["consentTexts"]
         self.afterSubmitText = kwargs["afterSubmitText"]
@@ -191,10 +189,18 @@ class Form(db.Model, CRUD):
             # append dynamic DPL field
             # i18n: Acronym for 'Data Privacy Law'
             result.append({"name": "DPL", "label": _("DPL")})
+        if result[1]['name'] == 'created':  # pos 1 should always be 'created'
+            result.insert(len(result), result.pop(1))
         return result
 
-    def has_removed_fields(self):
-        return any('removed' in field for field in self.fieldIndex)
+    def get_deleted_fields(self):
+        return [field for field in self.fieldIndex if 'removed' in field]
+
+    def get_field_structure(self, field_name):
+        for element in structure:
+            if element['name'] == field_name:
+                return element
+        return None
 
     @staticmethod
     def is_email_field(field):
@@ -271,6 +277,43 @@ class Form(db.Model, CRUD):
         if not (self.get_author().enabled and self.adminPreferences['public']):
             return False
         return self.enabled
+
+    def get_user_field_index_preference(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser and formuser.field_index != None:
+            return formuser.field_index
+        else:
+            return self.get_field_index_for_data_display()
+
+    def save_user_field_index_preference(self, user, field_index):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser:
+            formuser.field_index = field_index
+            formuser.save()
+            return formuser.field_index
+        return False
+
+    def toggle_user_answers_ascending_order(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        formuser.asc = False if formuser.asc else True
+        formuser.save()
+        return formuser.asc
+
+    def get_answers_order_by(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        return formuser.order_by if formuser.order_by else 'created'
+
+    def save_user_order_answers_by(self, user, field_name):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser:
+            formuser.order_by = field_name
+            formuser.save()
+            return formuser.order_by
+        return 'created'
+
+    def get_answers_order_ascending(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        return formuser.asc
 
     @property
     def url(self):
