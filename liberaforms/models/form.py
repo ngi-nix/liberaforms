@@ -457,11 +457,30 @@ class Form(db.Model, CRUD):
                     result.append(element)
         return result
 
-    def get_field_label(self, fieldName):
+    def get_field_label(self, field_name):
         for element in self.structure:
-            if 'name' in element and element['name']==fieldName:
+            if 'name' in element and element['name']==field_name:
                 return element['label']
         return None
+
+    def get_answer_label(self, field_name, answer_value):
+        label = ""
+        for element in self.structure:
+            if 'name' in element and element['name']==field_name:
+                if element["type"] == "checkbox-group" or \
+                   element["type"] == "radio-group" or \
+                   element["type"] == "select":
+                    option_labels = []
+                    for value in answer_value.split(', '):
+                        value_label = next((l for l in element['values'] if l['value'] == value), None)
+                        if value_label:
+                            option_labels.append(value_label['label'])
+                    label = ', '.join(option_labels)
+                    break
+                else:
+                    label = answer_value
+                    break
+        return label
 
     def save_expiry_date(self, expireDate):
         self.expiryConditions['expireDate']=expireDate
@@ -744,6 +763,12 @@ class Form(db.Model, CRUD):
         log.save()
 
     def write_csv(self, with_deleted_columns=False):
+        label_cache = {}
+        def get_label(field_name, answer_value):
+            if answer_value in label_cache:
+                return label_cache[answer_value]
+            label_cache[answer_value] = self.get_answer_label(field_name, answer_value)
+            return label_cache[answer_value]
         fieldnames=[]
         fieldheaders={}
         for field in self.get_field_index_for_data_display(with_deleted_columns):
@@ -764,6 +789,10 @@ class Form(db.Model, CRUD):
                                         answer[field_name])
                         if url:
                             answer[field_name] = url.group(0)
+                    elif field_name.startswith("checkbox-group") or \
+                         field_name.startswith("radio-group") or \
+                         field_name.startswith("select"):
+                        answer[field_name] = get_label(field_name, answer[field_name])
                 writer.writerow(answer)
         return csv_name
 

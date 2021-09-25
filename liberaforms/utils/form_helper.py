@@ -10,6 +10,7 @@ from flask import session, current_app
 from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
 from liberaforms.models.form import Form
+from liberaforms.utils import utils
 
 
 def clear_session_form_data():
@@ -50,22 +51,19 @@ def repair_form_structure(structure):
                 element['label'] = sanitizers.strip_html_tags(element['label']).strip()
                 element['label'] = sanitizers.remove_newlines(element['label'])
             if not 'label' in element or element['label']=="":
-                element['label']=_("Label")                
+                element['label']=_("Label")
             # formBuilder does not save select dropdown correctly
             if element["type"] == "select" and "multiple" in element:
                 if element["multiple"] == False:
                     del element["multiple"]
             # formBuilder does not enforce values for checkbox groups, radio groups and selects.
-            # we add a value when missing, and sanitize values (eg. a comma would be bad).
+            # we add a random value when missing
             if  element["type"] == "checkbox-group" or \
                 element["type"] == "radio-group" or \
                 element["type"] == "select":
-                for input_type in element["values"]:
-                    if not input_type["value"] and input_type["label"]:
-                        input_type["value"] = input_type["label"]
-                    input_type["value"] = input_type["value"].replace(" ", "-")
-                    input_type["value"] = sanitizers.sanitize_string(input_type["value"])
-                    input_type["value"] = sanitizers.remove_newlines(input_type["value"])
+                for input_option in element["values"]:
+                    if not input_option["value"]:
+                        input_option["value"] = utils.gen_random_string()
     return structure
 
 def is_slug_available(slug):
