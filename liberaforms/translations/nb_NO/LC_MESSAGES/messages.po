@@ -1,18 +1,19 @@
-# Spanish translations for PROJECT.
-# Copyright (C) 2020 ORGANIZATION
+# Norwegian Bokmål (Norway) translations for PROJECT.
+# Copyright (C) 2021 LiberaForms, CC-BY-SA
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-09-19 12:24+0200\n"
-"PO-Revision-Date: 2021-09-08 13:08+0000\n"
-"Last-Translator: LiberaForms <info@liberaforms.org>\n"
-"Language: es\n"
-"Language-Team: Spanish <https://hosted.weblate.org/projects/liberaforms"
-"/server-liberaforms/es/>\n"
+"PO-Revision-Date: 2021-09-09 23:33+0000\n"
+"Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
+"Language: nb_NO\n"
+"Language-Team: Norwegian Bokmål "
+"<https://hosted.weblate.org/projects/liberaforms/server-"
+"liberaforms/nb_NO/>\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -23,7 +24,7 @@ msgstr ""
 #. not
 #: models/form.py:145
 msgid "Marked"
-msgstr "Anotado"
+msgstr ""
 
 #. i18n: Used for sort items by creation order, almost always as column title
 #: models/form.py:147 models/site.py:364 templates/admin/admin-panel.html:242
@@ -32,36 +33,36 @@ msgstr "Anotado"
 #: templates/admin/list-users.html:43 templates/form/inspect-form.html:364
 #: templates/form/my-forms.html:51 templates/site/list-admins.html:26
 msgid "Created"
-msgstr "Creado"
+msgstr "Opprettet"
 
 #: models/form.py:151 utils/form_helper.py:53
 msgid "Label"
-msgstr "Etiqueta"
+msgstr "Etikett"
 
 #. i18n: Acronym for 'Data Privacy Law'
 #: models/form.py:193 templates/admin/admin-panel.html:169
 #: templates/form/inspect-form.html:275 utils/consent_texts.py:126
 msgid "DPL"
-msgstr "LOPD"
+msgstr ""
 
 #: models/form.py:341
 msgid "Sorry, this form has expired."
-msgstr "Lo sentimos, este formulario se ha caducado."
+msgstr ""
 
 #. i18n: Thanks text displayed when completing form as user
 #: models/form.py:370
 msgid "Thank you!!"
-msgstr "¡¡Gracias!!"
+msgstr ""
 
 #. i18n: Example title in template for new form
 #: models/form.py:730
 msgid "Form title"
-msgstr "Título del formulario"
+msgstr ""
 
 #. i18n: Example subtitle in template for new form
 #: models/form.py:732
 msgid "Context"
-msgstr "Contexto"
+msgstr ""
 
 #. i18n: Example content in template for new form. '\n' is used for linebreak.
 #: models/form.py:734
@@ -69,8 +70,6 @@ msgid ""
 " * Describe your form.\n"
 " * Add relevant content, links, images, etc."
 msgstr ""
-" * Describe el formulario.\n"
-" * Añade contenido relevante, imágenes, enlaces, etc."
 
 #. i18n: Template message for email invitation. '\n' is used for linebreak.
 #: models/invite.py:65
@@ -81,11 +80,11 @@ msgid ""
 "\n"
 "Regards."
 msgstr ""
-"Hola,\n"
+"Hei,\n"
 "\n"
-"Has estado invitado a GNGform.\n"
+"Du har blitt invitert til LiberaForms.\n"
 "\n"
-"Saludos."
+"Snakkes."
 
 #: models/site.py:161 templates/site/email-branding.html:82
 msgid "Ethical form software"
@@ -95,34 +94,34 @@ msgstr ""
 #: templates/admin/list-users.html:42 templates/site/list-admins.html:25
 #: utils/wtf.py:26 utils/wtf.py:63
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr "Brukernavn"
 
 #. i18n: Used as column title
 #: models/site.py:366 templates/admin/list-users.html:47
 #: templates/form/inspect-form.html:259 templates/form/inspect-form.html:282
 #: templates/site/list-admins.html:27 templates/user/consent.html:29
 msgid "Enabled"
-msgstr "Hablitado"
+msgstr ""
 
 #. i18n: Email address, used as column title
 #: models/site.py:368 templates/admin/inspect-user.html:42
 #: templates/admin/list-invites.html:27 templates/admin/list-users.html:48
 #: templates/site/list-admins.html:28 utils/wtf.py:27
 msgid "Email"
-msgstr "Correo-e"
+msgstr "E-post"
 
 #. i18n: Used as column title
 #: models/site.py:370 templates/admin/delete-user.html:27
 #: templates/admin/inspect-user.html:151 templates/admin/list-users.html:49
 #: templates/base.html:64 templates/site/list-admins.html:29
 msgid "Forms"
-msgstr "Formularios"
+msgstr ""
 
 #. i18n: Whether user is admin
 #: models/site.py:372 templates/admin/inspect-user.html:83
 #: templates/admin/list-invites.html:31 templates/admin/list-users.html:50
 msgid "Admin"
-msgstr "Admin"
+msgstr "Administrator"
 
 #. i18n: Boolean option: True or False
 #: models/site.py:382 models/site.py:383 templates/admin/admin-panel.html:118
@@ -138,7 +137,7 @@ msgstr "Admin"
 #: templates/user/user-settings.html:110 templates/user/user-settings.html:209
 #: templates/user/user-settings.html:236
 msgid "True"
-msgstr "Cierto"
+msgstr ""
 
 #: models/site.py:382 models/site.py:383 templates/admin/admin-panel.html:123
 #: templates/admin/admin-panel.html:159 templates/admin/inspect-user.html:51
@@ -153,58 +152,56 @@ msgstr "Cierto"
 #: templates/form/inspect-form.html:299 templates/user/user-settings.html:120
 #: templates/user/user-settings.html:219 templates/user/user-settings.html:246
 msgid "False"
-msgstr "Falso"
+msgstr ""
 
 #. Used as website menu title, only for admin, linking to page about instance
 #. users
 #: templates/admin/delete-user.html:34 templates/admin/inspect-user.html:161
 #: templates/admin/list-users.html:14 templates/base.html:70
 msgid "Users"
-msgstr "Usuarios"
+msgstr "Brukere"
 
 #. Used as website menu title, only for admin, linking to page about instance
 #. configuration
 #: templates/base.html:76
 msgid "Config"
-msgstr "Config"
+msgstr "Oppsett"
 
 #. Used as website menu title, linking to page about user's forms
 #: templates/base.html:95 templates/form/my-forms.html:15
 msgid "My forms"
-msgstr "Mis formularios"
+msgstr "Mine skjema"
 
 #. Used as website menu title, linking to page about user's settings
 #: templates/base.html:102
-#, fuzzy
 msgid "Settings"
-msgstr "Preferencias del sitio web"
+msgstr "Innstillinger"
 
 #. Used as website menu title, to log out
 #: templates/base.html:108
 msgid "Logout"
-msgstr "Salir"
+msgstr ""
 
 #. Used as website menu title before logging in, when open registration is
 #. enabled, linking to page to create new user
 #: templates/base.html:124
 msgid "Create an account"
-msgstr "Crear una cuenta"
+msgstr "Opprett en konto"
 
 #. Used as website menu title before logging in, linking to page to log in
 #: templates/base.html:131 templates/user/login.html:11
 #: templates/user/login.html:24
 msgid "Login"
-msgstr "Entrar"
+msgstr "Innlogging"
 
 #: templates/base.html:173
 msgid "User guide"
-msgstr ""
+msgstr "Brukerveiledning"
 
 #. Main title displayed on site configuration page (/admin)
 #: templates/admin/admin-panel.html:13
-#, fuzzy
 msgid "Site configuration"
-msgstr "Prueba la configuración"
+msgstr "Sideoppsett"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:18
@@ -214,7 +211,7 @@ msgstr ""
 #. Name for the website/instance
 #: templates/admin/admin-panel.html:24
 msgid "Site name"
-msgstr "Nombre de sitio web"
+msgstr "Sidenavn"
 
 #. Button to change some option
 #: templates/admin/admin-panel.html:33 templates/admin/admin-panel.html:46
@@ -224,23 +221,22 @@ msgstr "Nombre de sitio web"
 #: templates/user/user-settings.html:60 templates/user/user-settings.html:71
 #: templates/user/user-settings.html:84
 msgid "Change"
-msgstr "Cambiar"
+msgstr "Endre"
 
 #. Option in admin settings about changing instance welcoming text
 #: templates/admin/admin-panel.html:40
 msgid "Front page text"
-msgstr ""
+msgstr "Forsidetekst"
 
 #. Icon for the website
 #: templates/admin/admin-panel.html:53
-#, fuzzy
 msgid "Logo"
-msgstr "Salir"
+msgstr "Logo"
 
 #. Website's primary color
 #: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
 msgid "Primary color"
-msgstr ""
+msgstr "Hovedfarge"
 
 #. Define the 'look' of emails
 #: templates/admin/admin-panel.html:79 templates/site/email-branding.html:16
@@ -250,42 +246,40 @@ msgstr ""
 #. Title in Admin panel refering to configurations concerning new users
 #: templates/admin/admin-panel.html:93 templates/user/new-user.html:12
 msgid "New user"
-msgstr "Usuario nuevo"
+msgstr "Ny bruker"
 
 #. Default language for instance, setting on Instance configuration
 #: templates/admin/admin-panel.html:98
 msgid "Default language"
-msgstr "Idioma por omisión"
+msgstr "Forvalgt språk"
 
 #. Whether to enable new users attaching documents into forms
 #: templates/admin/admin-panel.html:111
-#, fuzzy
 msgid "Enable form attachments"
-msgstr "Borrar el formulario y los registros"
+msgstr ""
 
 #: templates/admin/admin-panel.html:130
-#, fuzzy
 msgid "Default timezone"
-msgstr "Utilizar predeterminado"
+msgstr "Forvalgt tidssone"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:140
 msgid "Site settings"
-msgstr "Preferencias del sitio web"
+msgstr "Sideinnstillinger"
 
 #. Whether to enable open registration, or remain invitation only
 #: templates/admin/admin-panel.html:145
 msgid "Invitation only"
-msgstr "Solo invitaciones"
+msgstr "Kun ved invitasjon"
 
 #. Noun, meaning agreement with terms/conditions of use
 #: templates/admin/admin-panel.html:166
 msgid "Consent"
-msgstr "Texto de consentimiento por omisión"
+msgstr "Samtykke"
 
 #: templates/admin/admin-panel.html:168 templates/user/new-user.html:51
 msgid "Terms and conditions"
-msgstr "Términos y Condiciones"
+msgstr ""
 
 #. 'etc' here stands for "and so on" at the end of a list
 #: templates/admin/admin-panel.html:171
@@ -298,44 +292,42 @@ msgstr ""
 #: templates/user/consent.html:33 templates/user/user-settings.html:132
 #: templates/user/user-settings.html:152 templates/user/user-settings.html:182
 msgid "Edit"
-msgstr "Editar"
+msgstr "Rediger"
 
 #. Which type of attachments are allowed
 #: templates/admin/admin-panel.html:186
 msgid "Attachment types"
-msgstr ""
+msgstr "Vedleggstyper"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:510
-#, fuzzy
 msgid "Super Admin options"
-msgstr "Opciones de Admin"
+msgstr ""
 
 #. Settings about the generated public URL
 #: templates/admin/admin-panel.html:210
-#, fuzzy
 msgid "Public links"
-msgstr "Creación de enlaces públicos"
+msgstr "Offentlige lenker"
 
 #. Settings about email server used by website to send email messages
 #: templates/admin/admin-panel.html:223 utils/wtf.py:108
+#, fuzzy
 msgid "Email server"
-msgstr "Servidor de correo"
+msgstr "E-posttjener"
 
 #. Button to configure some option
 #: templates/admin/admin-panel.html:228 templates/user/user-settings.html:170
 msgid "Configure"
-msgstr "Configurar"
+msgstr "Sett opp"
 
 #. Title in Admin panel displaying info about installation
 #: templates/admin/admin-panel.html:238
-#, fuzzy
 msgid "Installation"
-msgstr "Invitaciones"
+msgstr "Installasjonstekst"
 
 #: templates/admin/admin-panel.html:246
 msgid "Version"
-msgstr ""
+msgstr "Versjon"
 
 #. Button for going back to form
 #: templates/admin/change-author.html:16 templates/form/delete-form.html:16
@@ -343,82 +335,82 @@ msgstr ""
 #: templates/form/fedi-publish.html:15 templates/form/list-log.html:17
 #: templates/form/share-form.html:14
 msgid "Return to form"
-msgstr "Volver al formulario"
+msgstr "Gå tilbake til skjema"
 
 #. Changing author of the form
 #: templates/admin/change-author.html:22 templates/admin/change-author.html:67
 #: templates/form/inspect-form.html:515
 msgid "Change author"
-msgstr "Cambiar el autor"
+msgstr "Endre skaper"
 
 #. Table row showing form site, instance
 #: templates/admin/change-author.html:29
 msgid "Form site"
-msgstr "Hostname"
+msgstr ""
 
 #: templates/admin/change-author.html:34
 msgid "Current author"
-msgstr "Autor actual"
+msgstr "Nåværende skaper"
 
 #: templates/admin/change-author.html:39
 msgid "You are going to change the author of this form."
-msgstr "Vas a cambiar el autor de este formulario."
+msgstr ""
 
 #: templates/admin/change-author.html:41
 #: templates/answers/list-answers.html:342
 msgid "Are you sure?"
-msgstr "¿Estás seguro?"
+msgstr "Er du sikker?"
 
 #. Username of current author of form
 #: templates/admin/change-author.html:54
 msgid "Current author's username"
-msgstr "Nombre de autor actual"
+msgstr "Nåværende skapers brukernavn"
 
 #. Username of new author for form
 #: templates/admin/change-author.html:61
 msgid "New author's username"
-msgstr "Nombre del nuevo autor"
+msgstr ""
 
 #. Users who can edit a specific form, but is not the original author
 #: templates/admin/change-author.html:75 templates/form/inspect-form.html:168
 #: templates/form/share-form.html:27
 msgid "Editors"
-msgstr "Editores"
+msgstr ""
 
 #. Author of the form
 #: templates/admin/change-author.html:85 templates/admin/inspect-user.html:160
 #: templates/admin/list-forms.html:28 templates/form/inspect-form.html:348
 #: templates/form/share-form.html:42
 msgid "Author"
-msgstr "Autor"
+msgstr "Skaper"
 
 #. Editor of the form
 #: templates/admin/change-author.html:88
 msgid "Editor"
-msgstr "Editor"
+msgstr ""
 
 #. Title and button to delete user
 #: templates/admin/delete-user.html:15 templates/admin/delete-user.html:73
 #: templates/admin/inspect-user.html:136
 msgid "Delete user"
-msgstr "Borrar el usuario"
+msgstr "Slett bruker"
 
 #: templates/admin/delete-user.html:18
 msgid "You are going to delete a user"
-msgstr "Vas a borrar un usuario"
+msgstr ""
 
 #. consecution of the sentence "You are going to delete a user", if that user
 #. has any form
 #: templates/admin/delete-user.html:21
 msgid "and their forms"
-msgstr "i sus formularios"
+msgstr "og skjemaene til vedkommende"
 
 #. Table column title, indicating name of a user or a form
 #: templates/admin/delete-user.html:33 templates/admin/inspect-user.html:158
 #: templates/admin/list-forms.html:26 templates/form/inspect-form.html:50
 #: templates/form/my-forms.html:48
 msgid "Name"
-msgstr "Nombre"
+msgstr "Navn"
 
 #. Table column title, indicating answers recived for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:164
@@ -426,17 +418,16 @@ msgstr "Nombre"
 #: templates/answers/chart-answers.html:118 templates/form/my-forms.html:49
 #: templates/site/stats.html:46 templates/site/stats.html:122
 #: templates/user/statistics.html:31
-#, fuzzy
 msgid "Answers"
-msgstr "usuarios"
+msgstr "Svar"
 
 #: templates/admin/delete-user.html:49
 msgid "Write the name of the user below"
-msgstr "Escriba el nombre del usuario aquí abajo"
+msgstr ""
 
 #: templates/admin/delete-user.html:69
 msgid "Delete user and forms"
-msgstr "Borra el usuario y sus formularios"
+msgstr "Slett bruker og skjemaer"
 
 #. Button to cancel operation
 #: templates/admin/delete-user.html:77 templates/admin/new-invite.html:53
@@ -459,11 +450,11 @@ msgstr "Borra el usuario y sus formularios"
 #: templates/user/consent.html:61 templates/user/delete-account.html:58
 #: templates/user/new-user.html:93 templates/user/recover-password.html:25
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr "Avbryt"
 
 #: templates/admin/inspect-user.html:16
 msgid "User details"
-msgstr "Detalles del usuario"
+msgstr "Brukerdetaljer"
 
 #. Hostname of user, admin or form. The hostname is same as instance URL, for
 #. example "erabili.liberaforms.org"
@@ -471,93 +462,93 @@ msgstr "Detalles del usuario"
 #: templates/admin/list-users.html:45 templates/form/inspect-form.html:369
 #: templates/site/list-admins.html:24
 msgid "Hostname"
-msgstr "Hostname"
+msgstr "Vertsnavn"
 
 #. Language selected by user
 #: templates/admin/inspect-user.html:38
 msgid "Language"
-msgstr "Idioma"
+msgstr "Språk"
 
 #. Whether the email of user was validated
 #: templates/admin/inspect-user.html:47
+#, fuzzy
 msgid "Validated email"
-msgstr "Correo-e validado"
+msgstr "E-postadresse bekreftet"
 
 #. Whether user is able to upload media and solicit attachments
 #: templates/admin/inspect-user.html:58
 #, fuzzy
 msgid "Uploads enabled"
-msgstr "Subir imagen"
+msgstr "Last opp en fil"
 
 #. Whether user is blocked by admin
 #: templates/admin/inspect-user.html:103
 msgid "Blocked by admin"
-msgstr "Bloqueado por el Admin"
+msgstr "Blokkert av administrator"
 
 #: templates/admin/inspect-user.html:130
 msgid "Delete user and authored forms"
-msgstr "Borrar el usuario y sus formularios"
+msgstr ""
 
 #: templates/admin/inspect-user.html:145 templates/admin/list-forms.html:18
 #: templates/admin/list-users.html:17 templates/form/my-forms.html:33
 msgid "Statistics"
-msgstr "Estadísticas"
+msgstr "Statistikk"
 
 #. Whether for is public
 #: templates/admin/inspect-user.html:163 templates/admin/list-forms.html:29
 #: templates/form/inspect-form.html:109 templates/form/my-forms.html:52
 msgid "Public"
-msgstr "Público"
+msgstr "Offentlig"
 
 #: templates/admin/inspect-user.html:290 templates/form/inspect-form.html:42
 #: templates/site/stats.html:53 templates/site/stats.html:129
 #: templates/user/statistics.html:40
-#, fuzzy
 msgid "Total answers"
-msgstr "Total de usuarios"
+msgstr ""
 
 #: templates/admin/inspect-user.html:297 templates/site/stats.html:61
 #: templates/site/stats.html:137 templates/user/statistics.html:48
 msgid "New forms"
-msgstr "Formularios nuevos"
+msgstr "Nye skjemaer"
 
 #: templates/admin/inspect-user.html:305 templates/site/stats.html:68
 #: templates/site/stats.html:144 templates/user/statistics.html:55
 msgid "Total forms"
-msgstr "Total de formularios"
+msgstr ""
 
 #. Title on /admin/forms page
 #: templates/admin/list-forms.html:15
 msgid "All forms"
-msgstr "Todos los formularios"
+msgstr "Alle skjemaer"
 
 #. Shows when was the last answer received on form
 #: templates/admin/list-forms.html:31 templates/form/inspect-form.html:54
 #: templates/form/my-forms.html:50
 msgid "Last answer"
-msgstr ""
+msgstr "Siste svar"
 
 #. Title on /admin/invites page
 #: templates/admin/list-invites.html:14 templates/admin/list-invites.html:69
 #: templates/admin/list-users.html:27
 msgid "Invitations"
-msgstr "Invitaciones"
+msgstr "Invitasjoner"
 
 #. Button to invite new user
 #: templates/admin/list-invites.html:19 templates/admin/list-users.html:22
 msgid "Invite a new user"
-msgstr "Invitar a un usuario nuevo"
+msgstr "Inviter en ny bruker"
 
 #: templates/admin/list-invites.html:54 templates/answers/list-answers.html:343
 #: templates/form/delete-form.html:40 templates/site/delete-site.html:36
 #: templates/user/fediverse-config.html:72
 #: templates/user/user-settings.html:263
 msgid "Delete"
-msgstr "Borrar"
+msgstr "Slett"
 
 #: templates/admin/list-invites.html:61
 msgid "Invitation message"
-msgstr "Mensaje de la invitación"
+msgstr "Invitasjonsmelding"
 
 #. Button to download answers received on form in CSV document format
 #: templates/admin/list-users.html:33 templates/answers/chart-answers.html:29
@@ -565,103 +556,97 @@ msgstr "Mensaje de la invitación"
 #: templates/answers/list-answers.html:49
 #: templates/answers/list-answers.html:55 templates/site/list-admins.html:15
 msgid "Download CSV"
-msgstr "Bajar el CSV"
+msgstr "Last ned CSV"
 
 #. Title on /admin/invites/new page
 #: templates/admin/new-invite.html:13
 msgid "Send a new user invitation"
-msgstr "Invita un usuario nuevo"
+msgstr "Send en ny brukerinvitasjon"
 
 #: templates/admin/new-invite.html:28
 msgid "The link to the invitation will be appended to this message"
-msgstr "El enlace de la invitación se anexará a este mensaje"
+msgstr ""
 
 #. Button to send new user invitation message via email
 #: templates/admin/new-invite.html:47
 msgid "Send email"
-msgstr "Enviar correo"
+msgstr "Send e-post"
 
 #: templates/answers/chart-answers.html:21
 #: templates/answers/chart-answers.html:46 templates/form/inspect-form.html:29
-#, fuzzy
 msgid "View answers"
-msgstr "Usuario nuevos"
+msgstr "Vis svar"
 
 #: templates/answers/chart-answers.html:38
 #: templates/answers/list-answers.html:32
 msgid "Form details"
-msgstr "Detalles del formulario"
+msgstr "Skjemadetaljer"
 
 #: templates/answers/chart-answers.html:82
 #: templates/answers/list-answers.html:121 templates/user/user-settings.html:97
-#, fuzzy
 msgid "Notify me on each new answer"
-msgstr "Notifíqueme cuando haya una nueva respuesta"
+msgstr ""
 
 #: templates/answers/chart-answers.html:95
 msgid "Multiple choice"
-msgstr ""
+msgstr "Flervalg"
 
 #: templates/answers/delete-all-answers.html:15
 #: templates/answers/delete-all-answers.html:42
-#, fuzzy
 msgid "Delete answers"
-msgstr "Borrar el usuario"
+msgstr "Slett svar"
 
 #: templates/answers/delete-all-answers.html:18
 #: templates/form/inspect-form.html:523 views/form.py:165
 msgid "Form"
-msgstr "Formulario"
+msgstr "Skjema"
 
 #: templates/answers/delete-all-answers.html:21
 msgid "You are going to delete"
-msgstr "Vas a borrar"
+msgstr ""
 
 #: templates/answers/delete-all-answers.html:22
 #: templates/form/delete-form.html:27 templates/form/expiration.html:153
 #: templates/site/delete-site.html:22
-#, fuzzy
 msgid "answers"
-msgstr "usuarios"
+msgstr "svar"
 
 #: templates/answers/delete-all-answers.html:25
-#, fuzzy
 msgid "Write the total number of answers below"
-msgstr "Escribe el total de registros aquí abajo"
+msgstr ""
 
 #: templates/answers/list-answers.html:42 templates/form/inspect-form.html:37
 msgid "Graphs"
-msgstr "Gráficos"
+msgstr ""
 
 #: templates/answers/list-answers.html:64
 msgid "Disable edition"
-msgstr "Deshabilitar edición"
+msgstr ""
 
 #: templates/answers/list-answers.html:70
 msgid "Enable edition"
-msgstr "Habilitar la edicion"
+msgstr ""
 
 #: templates/answers/list-answers.html:79
 msgid "Hide deleted columns"
-msgstr "Esconder columnas eliminadas"
+msgstr ""
 
 #: templates/answers/list-answers.html:85
 msgid "Show deleted columns"
-msgstr "Mostrar columnas eliminadas"
+msgstr "Vis slettede kolonner"
 
 #: templates/answers/list-answers.html:92
 msgid "Delete all"
-msgstr "Bórralo todo"
+msgstr "Slett alle"
 
 #: templates/answers/list-answers.html:166
 #: templates/answers/list-answers.html:168
 msgid "Mark"
-msgstr "Anotar"
+msgstr ""
 
 #: templates/answers/list-answers.html:253
-#, fuzzy
 msgid "Delete answer"
-msgstr "Borrar el usuario"
+msgstr "Slett svar"
 
 #: templates/answers/list-answers.html:297
 #: templates/common/change-language.html:40 templates/form/edit-form.html:120
@@ -674,203 +659,198 @@ msgstr "Borrar el usuario"
 #: templates/user/change-timezone.html:38 templates/user/consent.html:60
 #: templates/user/fediverse-config.html:66
 msgid "Save"
-msgstr "Guardar"
+msgstr "Lagre"
 
 #: templates/common/change-language.html:12
 msgid "Change language"
-msgstr "Cambia el idioma"
+msgstr "Endre språk"
 
 #: templates/form/_image-modal.html:41 templates/media/list-media.html:66
 msgid "A photo of a horse galloping on the beach."
-msgstr ""
+msgstr "Et bilde av en hest galopperende på en strand"
 
 #: templates/form/delete-form.html:22 templates/form/inspect-form.html:474
 msgid "Delete form"
-msgstr "Borrar el formulario"
+msgstr "Slett skjema"
 
 #: templates/form/delete-form.html:25
 msgid "You are going to delete this form and"
-msgstr "Vas a borrar este formulario y"
+msgstr ""
 
 #: templates/form/delete-form.html:30
 msgid "Write the name of the form below"
-msgstr "Escriba el nombre del formulario aquí abajo"
+msgstr ""
 
 #: templates/form/edit-form.html:31
 msgid "Build your form here"
-msgstr "Crea tu formulario aquí"
+msgstr "Bygg ditt skjema her"
 
 #: templates/form/edit-form.html:41
 msgid "Introduction text"
-msgstr "Texto introductorio"
+msgstr "Introduksjonstekst"
 
 #: templates/form/edit-form.html:44
 msgid "This is a markdown editor, an easy way to write HTML."
-msgstr "Este es un editor markdown, una manera fácil de escribir HTML."
+msgstr ""
 
 #: templates/form/edit-form.html:47
 msgid "Learn more"
-msgstr "Aprende más"
+msgstr "Lær mer"
 
 #: templates/form/edit-form.html:57
 msgid "The form"
-msgstr "El formulario"
+msgstr ""
 
 #: templates/form/edit-form.html:84
 msgid "Your form will have this address"
-msgstr "El formulario tendrá esta dirección"
+msgstr ""
 
 #: templates/form/edit-form.html:107
 msgid "This URL is not available. Try another!"
-msgstr "El URL no está disponible. Intenta de nuevo!"
+msgstr ""
 
 #: templates/form/edit-form.html:115 templates/form/edit-form.html:280
 #: templates/form/preview-form.html:17
 msgid "Preview"
-msgstr "Previsualizar"
+msgstr "Forhåndsvis"
 
 #: templates/form/edit-form.html:265
 msgid "OK, use this URL"
-msgstr "De acuerdo, usa este URL"
+msgstr "OK, bruk denne nettadressen"
 
 #: templates/form/edit-form.html:316
 msgid "Cannot modify because an answer with this value exists in the database"
-msgstr ""
+msgstr "Kan ikke endre fordi et svar med denne verdien finnes i databasen"
 
 #: templates/form/expiration.html:44
 msgid "Notify me when this form expires"
-msgstr "Notifíqueme cuando se caduque este formulario"
+msgstr ""
 
 #: templates/form/expiration.html:50 templates/form/inspect-form.html:158
 msgid "Expired"
-msgstr "Caducado"
+msgstr "Utløpt"
 
 #: templates/form/expiration.html:57
 msgid "Expiration conditions"
-msgstr "Condiciones de caducidad"
+msgstr "Utløpsvilkår"
 
 #: templates/form/expiration.html:61
 msgid "Date / Time"
-msgstr "Fecha / Hora"
+msgstr "Dato/tid"
 
 #: templates/form/expiration.html:83 templates/site/smtp-config.html:56
 msgid "Save changes"
-msgstr "Guardar los cambios"
+msgstr "Lagre endringer"
 
 #: templates/form/expiration.html:95
 msgid "Fields"
-msgstr "Campos"
+msgstr "Felter"
 
 #: templates/form/expiration.html:119
 msgid "Save max."
-msgstr "Guardar el max."
+msgstr ""
 
 #: templates/form/expiration.html:132
-#, fuzzy
 msgid "Maximum answers"
-msgstr "Repuestas máximas"
+msgstr ""
 
 #: templates/form/expiration.html:139
 msgid "The form will expire after"
-msgstr "Este formulario caduca después de"
+msgstr ""
 
 #: templates/form/expiration.html:165 templates/form/inspect-form.html:410
 msgid "When the form has expired"
-msgstr "Cuando el formulario se caduque"
+msgstr ""
 
 #: templates/form/expiration.html:168 templates/form/inspect-form.html:381
 #: templates/form/inspect-form.html:415 templates/main/index.html:43
 msgid "Edit text"
-msgstr "Editar el texto"
+msgstr "Rediger tekst"
 
 #: templates/form/expiration.html:173 templates/form/inspect-form.html:421
 msgid "Say something to the user if the form has expired"
-msgstr "Di algo al usuario si el formulario se ha caducado"
+msgstr "Si noe til brukeren hvis skjemaet har utløpt"
 
 #. node_name stands for name of a Fediverse node: 'Publish on barcelona.social'
 #: templates/form/fedi-publish.html:22
 #, python-format
 msgid "Publish on %(node_name)s"
-msgstr ""
+msgstr "Publiser på %(node_name)s"
 
 #: templates/form/fedi-publish.html:38
-#, fuzzy
 msgid "Total characters:"
-msgstr "Total de usuarios"
+msgstr ""
 
 #: templates/form/fedi-publish.html:48
 #, fuzzy
 msgid "Publish"
-msgstr "Público"
+msgstr "Publiser"
 
 #: templates/form/inspect-form.html:23
 msgid "Details"
-msgstr "Detalles"
+msgstr "Detaljer"
 
 #: templates/form/inspect-form.html:69
 msgid "Public URL"
-msgstr "URL público"
+msgstr "Offentlig nettadresse"
 
 #: templates/form/inspect-form.html:72 templates/form/inspect-form.html:265
 #: templates/form/inspect-form.html:287 templates/form/inspect-form.html:351
 #: templates/user/consent.html:30
 msgid "Disabled"
-msgstr "Deshabilitado"
+msgstr "Avskrudd"
 
 #: templates/form/inspect-form.html:92
 msgid "Fediverse"
-msgstr ""
+msgstr "Fediverset"
 
 #: templates/form/inspect-form.html:100
-#, fuzzy
 msgid "Published"
-msgstr "Público"
+msgstr "Publisert"
 
 #: templates/form/inspect-form.html:134
 msgid "Expiration"
-msgstr "Caducidad"
+msgstr "Utløp"
 
 #: templates/form/inspect-form.html:141
-#, fuzzy
 msgid "This form has expired"
-msgstr "Ese formulario se ha caducado"
+msgstr ""
 
 #: templates/form/inspect-form.html:147
-#, fuzzy
 msgid "This form will expire"
-msgstr "Este formulario caduca después de"
+msgstr ""
 
 #: templates/form/inspect-form.html:177 templates/form/inspect-form.html:190
 #, fuzzy
 msgid "Form shared with"
-msgstr "Compartido"
+msgstr "Delt med"
 
 #: templates/form/inspect-form.html:186
-#, fuzzy
 msgid "Add editors"
-msgstr "Se añadió el editor %s"
+msgstr ""
 
 #: templates/form/inspect-form.html:196
 #, fuzzy
 msgid "Shared answers"
-msgstr "Usuario nuevos"
+msgstr "Vis svar"
 
 #: templates/form/inspect-form.html:205
+#, fuzzy
 msgid "Answers shared with"
-msgstr ""
+msgstr "Delt med"
 
 #: templates/form/inspect-form.html:214
 #, fuzzy
 msgid "Share"
-msgstr "Compartido"
+msgstr "Ikke delt"
 
 #: templates/form/inspect-form.html:223 templates/form/share-form.html:127
 msgid "Restricted access"
-msgstr "Acceso restringido"
+msgstr ""
 
 #: templates/form/inspect-form.html:250
 msgid "Confirmation"
-msgstr "Confirmación"
+msgstr "Bekreftelse"
 
 #: templates/form/inspect-form.html:293 templates/site/email-branding.html:54
 msgid "Personalize"
@@ -879,11 +859,11 @@ msgstr ""
 #: templates/form/inspect-form.html:308 templates/site/consent.html:30
 #: templates/user/consent.html:22
 msgid "Data protection"
-msgstr "Protección de datos"
+msgstr "Databeskyttelse"
 
 #: templates/form/inspect-form.html:323
 msgid "Use the template"
-msgstr ""
+msgstr "Bruk malen"
 
 #: templates/form/inspect-form.html:330 templates/form/inspect-form.html:763
 #: templates/form/inspect-form.html:802 templates/site/consent.html:64
@@ -891,153 +871,148 @@ msgstr ""
 #: templates/user/consent.html:67 templates/user/new-user.html:66
 #: utils/consent_texts.py:61
 msgid "I agree"
-msgstr "Estoy de acuerdo"
+msgstr "Jeg samtykker"
 
 #: templates/form/inspect-form.html:376
 msgid "After replying to the form"
-msgstr "Después de contestar el formulario"
+msgstr "Etter å ha besvart skjemaet"
 
 #: templates/form/inspect-form.html:387
 msgid "Say something to the user after the form has been submitted"
-msgstr "Di algo al usuario una vez que haya enviado los datos"
+msgstr "Si noe til brukeren etter at skjemaet er innsendt"
 
 #: templates/form/inspect-form.html:445
 msgid "Other options"
-msgstr "Otras opciones"
+msgstr ""
 
 #: templates/form/inspect-form.html:456
 msgid "View log"
-msgstr "Ver el registro"
+msgstr "Vis loggføring"
 
 #: templates/form/inspect-form.html:461
 msgid "Duplicate form"
-msgstr "Duplicar el formulario"
+msgstr ""
 
 #: templates/form/inspect-form.html:467
 msgid "Embed form"
-msgstr "Anidar formulario"
+msgstr ""
 
 #: templates/form/inspect-form.html:480
-#, fuzzy
 msgid "Delete form and answers"
-msgstr "Borrar el formulario y los registros"
+msgstr "Slett skjema og svar"
 
 #: templates/form/inspect-form.html:487
 msgid "Admin options"
-msgstr "Opciones de Admin"
+msgstr "Administratorinnstillinger"
 
 #: templates/form/inspect-form.html:492
 msgid "Duplicate"
-msgstr "Duplicar"
+msgstr ""
 
 #: templates/form/inspect-form.html:498
 msgid "Disable"
-msgstr "Deshabilitar"
+msgstr "Skru av"
 
 #: templates/form/inspect-form.html:504
 msgid "Enable"
-msgstr "Habilitar"
+msgstr ""
 
 #: templates/form/inspect-form.html:529
 msgid "Edit form"
-msgstr "Editar el formulario"
+msgstr "Rediger skjema"
 
 #: templates/form/inspect-form.html:543 templates/form/preview-form.html:26
 #: templates/form/view-form.html:30
 msgid "Required fields"
-msgstr "Campos obligatorios"
+msgstr "Påkrevde felter"
 
 #: templates/form/inspect-form.html:559 templates/form/view-form.html:57
 msgid "Send me confirmation by mail"
-msgstr "Envíame confirmación por correo"
+msgstr "Send meg bekreftelse per e-post"
 
 #: templates/form/inspect-form.html:586 templates/form/preview-form.html:35
 #: templates/form/view-form.html:87 templates/site/smtp-config.html:84
 msgid "Send"
-msgstr "Enviar"
+msgstr "Send"
 
 #: templates/form/list-log.html:22
 msgid "Log"
-msgstr "Registro"
+msgstr "Logg"
 
 #: templates/form/list-log.html:26
 msgid "Time"
-msgstr "Hora"
+msgstr "Tid"
 
 #: templates/form/list-log.html:27 utils/wtf.py:115
 msgid "User"
-msgstr "Usuario"
+msgstr "Bruker"
 
 #: templates/form/list-log.html:28
 msgid "Message"
-msgstr "Mensaje"
+msgstr "Melding"
 
 #: templates/form/list-templates.html:11
 msgid "Form templates"
-msgstr "Plantillas de formularios"
+msgstr ""
 
 #: templates/form/list-templates.html:15
-#, fuzzy
 msgid "We have put together some forms that you can use to get started."
-msgstr "Hemos adjuntado unos formularios para ayudarte."
+msgstr ""
 
 #: templates/form/list-templates.html:16
 msgid "Choose the template that best suits your needs and edit it to fit."
-msgstr "Elija la plantilla que mejor se adapte a tus necesidades."
+msgstr ""
 
 #: templates/form/list-templates.html:31
 msgid "Show more"
-msgstr ""
+msgstr "Vis mer"
 
 #: templates/form/my-forms.html:21
-#, fuzzy
 msgid "Templates"
-msgstr "Plantillas de formularios"
+msgstr ""
 
 #: templates/form/my-forms.html:27
 msgid "New form"
-msgstr "Nuevo formulario"
+msgstr "Nytt skjema"
 
 #: templates/form/my-forms.html:53 templates/site/consent.html:38
 msgid "Shared"
-msgstr "Compartido"
+msgstr ""
 
 #: templates/form/preview-form.html:15
-#, fuzzy
 msgid "Template"
-msgstr "Plantillas de formularios"
+msgstr ""
 
 #: templates/form/preview-form.html:45
-#, fuzzy
 msgid "Create a form with this template"
-msgstr "Usa esta plantilla"
+msgstr "Opprett et skjema med denne malen"
 
 #: templates/form/preview-form.html:50 templates/site/consent.html:105
 #: templates/site/edit-host-url.html:63 templates/user/new-user.html:91
 msgid "Go back"
-msgstr "Volver"
+msgstr "Gå tilbake"
 
 #: templates/form/preview-form.html:64 templates/form/preview-form.html:75
 msgid "Edit again"
-msgstr "Editar de nuevo"
+msgstr "Rediger igjen"
 
 #: templates/form/share-form.html:30
 msgid "Users listed here have the <b>same permissions</b> as you"
-msgstr "Usuarios listados aquí tienen los <b>mismos permisos</b> que tu"
+msgstr ""
 
 #: templates/form/share-form.html:46 templates/form/share-form.html:93
 #: templates/media/list-media.html:127 templates/media/list-media.html:178
 msgid "Remove"
-msgstr "Borrar"
+msgstr "Fjern"
 
 #: templates/form/share-form.html:65
 msgid "Add new editor"
-msgstr "Añadir un editor nuevo"
+msgstr ""
 
 #: templates/form/share-form.html:80
 #, fuzzy
 msgid "Share the answers"
-msgstr "Borrar el usuario"
+msgstr "Slett svar"
 
 #: templates/form/share-form.html:83
 msgid "Users listed here can view this form's answers"
@@ -1046,19 +1021,19 @@ msgstr ""
 #: templates/form/share-form.html:111
 #, fuzzy
 msgid "Add user"
-msgstr "Total de usuarios"
+msgstr "Ny bruker"
 
 #: templates/form/share-form.html:129
 msgid "Only visible to people with a user account (login required)"
-msgstr "Solo visible a personas con una cuenta de usuario (login)"
+msgstr ""
 
 #: templates/form/share-form.html:134
 msgid "Restricted"
-msgstr "Restringido"
+msgstr "Begrenset"
 
 #: templates/form/share-form.html:138
 msgid "Public form"
-msgstr "Formulario público"
+msgstr ""
 
 #: templates/form/view-form.html:171 templates/form/view-form.html:172
 #: templates/form/view-form.html:173 templates/form/view-form.html:174
@@ -1072,20 +1047,19 @@ msgstr ""
 
 #: templates/main/page-not-found.html:9
 msgid "Opps! 404"
-msgstr "Vaya! 404"
+msgstr ""
 
 #: templates/main/server-error.html:7
 msgid "Opps! 500 server error"
-msgstr "Vaya! Error de servidor 500"
+msgstr ""
 
 #: templates/media/list-media.html:27
 msgid "My media"
 msgstr ""
 
 #: templates/media/list-media.html:35 templates/media/list-media.html:56
-#, fuzzy
 msgid "Upload a file"
-msgstr "Subir imagen"
+msgstr "Last opp en fil"
 
 #: templates/media/list-media.html:41
 msgid "These files can be included in your forms."
@@ -1097,22 +1071,19 @@ msgstr ""
 
 #: templates/media/list-media.html:94 templates/site/change-icon.html:38
 msgid "Upload"
-msgstr "Subir"
+msgstr ""
 
 #: templates/site/change-icon.html:16
-#, fuzzy
 msgid "Change site icon"
-msgstr "Cambiar el favicon del sitio web"
+msgstr "Endre sidens ikon"
 
 #: templates/site/change-icon.html:18
-#, fuzzy
 msgid "Upload an image"
-msgstr "Subir imagen"
+msgstr "Last opp et bilde"
 
 #: templates/site/change-icon.html:24
-#, fuzzy
 msgid "A square image"
-msgstr "Una pequeña y cuadrada imagen PNG"
+msgstr "Et kvadratisk bilde"
 
 #: templates/site/change-icon.html:25 templates/site/email-branding.html:64
 msgid "Keep the kilobytes to a minimum"
@@ -1120,59 +1091,56 @@ msgstr ""
 
 #: templates/site/change-icon.html:42
 msgid "Use default"
-msgstr "Utilizar predeterminado"
+msgstr "Bruk forvalg"
 
 #: templates/site/change-sitename.html:10
 msgid "Change site name"
-msgstr "Cambia el nombre del sitio web"
+msgstr "Endre sidens navn"
 
 #: templates/site/change-sitename.html:12
 msgid "New site name"
-msgstr "Nombre nuevo del sitio web"
+msgstr "Nytt sidenavn"
 
 #: templates/site/change-sitename.html:28 templates/user/new-user.html:89
 msgid "Submit"
-msgstr "Enviar"
+msgstr "Send inn"
 
 #: templates/site/consent.html:14
-#, fuzzy
 msgid "Consent texts"
-msgstr "Textos de consentimiento"
+msgstr "Samtykketekster"
 
 #: templates/site/consent.html:17
 msgid "Preview New user form"
 msgstr ""
 
 #: templates/site/consent.html:28
-#, fuzzy
 msgid "Site terms and conditions"
-msgstr "Términos y Condiciones"
+msgstr "Sidevilkår og betingelser"
 
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
 msgid "%(consent_name)s"
-msgstr ""
+msgstr "%(consent_name)s"
 
 #: templates/site/consent.html:39
 msgid "No"
-msgstr ""
+msgstr "Nei"
 
 #: templates/site/consent.html:44
 msgid "Add to New user form"
-msgstr "Añadir al formulario 'Nuevo usuario'"
+msgstr ""
 
 #: templates/site/consent.html:52
 msgid "New users must agree to these terms and conditions"
-msgstr "Nuevos usuarios deben estar de acuerdo con estos términos y condiciones"
+msgstr ""
 
 #: templates/site/consent.html:88 templates/user/consent.html:72
 msgid "Required"
-msgstr "Requerido"
+msgstr "Påkrevd"
 
 #: templates/site/consent.html:96
-#, fuzzy
 msgid "Form consent texts"
-msgstr "Texto de consentimiento por omisión"
+msgstr ""
 
 #: templates/site/consent.html:99
 msgid "Shared texts can be used by other users in their forms as templates"
@@ -1180,43 +1148,43 @@ msgstr ""
 
 #: templates/site/delete-site.html:11
 msgid "Delete site"
-msgstr "Borrar el sitio"
+msgstr "Slett side"
 
 #: templates/site/delete-site.html:13
 msgid "You are going to delete this Site"
-msgstr "Vas a borrar este sitio"
+msgstr ""
 
 #: templates/site/delete-site.html:16
 msgid "Including"
-msgstr "Incluyendo"
+msgstr ""
 
 #: templates/site/delete-site.html:18
 msgid "users"
-msgstr "usuarios"
+msgstr "brukere"
 
 #: templates/site/delete-site.html:20
 msgid "forms"
-msgstr "formularios"
+msgstr ""
 
 #: templates/site/delete-site.html:25
 msgid "Write the name of the site below"
-msgstr "Escriba el nombre del sitio aquí abajo"
+msgstr ""
 
 #: templates/site/edit-host-url.html:12
 msgid "Public link creation"
-msgstr "Creación de enlaces públicos"
+msgstr ""
 
 #: templates/site/edit-host-url.html:21
 msgid "Scheme"
-msgstr "Esquema"
+msgstr ""
 
 #: templates/site/edit-host-url.html:44 utils/wtf.py:109
 msgid "Port"
-msgstr "Puerto"
+msgstr "Port"
 
 #: templates/site/edit-mimetypes.html:11
 msgid "Form attachments"
-msgstr ""
+msgstr "Skjemavedlegg"
 
 #: templates/site/edit-mimetypes.html:14
 msgid "These file types can be uploaded with the forms"
@@ -1231,87 +1199,81 @@ msgid "LiberaForms will occasionally send emails."
 msgstr ""
 
 #: templates/site/email-branding.html:24
-#, fuzzy
 msgid "Example email:"
-msgstr "Correo-e validado"
+msgstr ""
 
 #: templates/site/email-branding.html:46
 msgid "Send test"
-msgstr ""
+msgstr "Forsendelsestest"
 
 #: templates/site/email-branding.html:97
-#, fuzzy
 msgid "Use default image"
-msgstr "Utilizar predeterminado"
+msgstr "Bruk forvalgt bilde"
 
 #: templates/site/list-admins.html:12
-#, fuzzy
 msgid "Admins"
-msgstr "Admin"
+msgstr "Administratorer"
 
 #: templates/site/smtp-config.html:10
 msgid "Email server configuration"
-msgstr "Configuración del servidor de correo"
+msgstr ""
 
 #: templates/site/smtp-config.html:67
 msgid "Test configuration"
-msgstr "Prueba la configuración"
+msgstr ""
 
 #: templates/site/stats.html:14
 msgid "Site statistics"
-msgstr ""
+msgstr "Sidestatistikk"
 
 #: templates/site/stats.html:77 templates/site/stats.html:153
 msgid "New users"
-msgstr "Usuario nuevos"
+msgstr "Nye brukere"
 
 #: templates/site/stats.html:85 templates/site/stats.html:161
 msgid "Total users"
-msgstr "Total de usuarios"
+msgstr ""
 
 #: templates/user/change-email.html:9
 msgid "Change email address"
-msgstr "Cambiar dirección de correo-e"
+msgstr "Endre e-postadresse"
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
-msgstr ""
+msgstr "Endre din tidssone"
 
 #: templates/user/change-timezone.html:26
 msgid "Search for country or city name"
-msgstr ""
+msgstr "Søk etter lands- eller bynavn"
 
 #: templates/user/change-timezone.html:27 templates/user/user-settings.html:76
 #: utils/wtf.py:139
 msgid "Time zone"
-msgstr ""
+msgstr "Tidssone"
 
 #: templates/user/consent.html:14
 msgid "Default consent text"
-msgstr "Texto de consentimiento por omisión"
+msgstr "Forvalgt samtykketekst"
 
 #: templates/user/consent.html:80
 msgid "Users may include the following texts in their forms"
-msgstr "Usuarios podrán incluir estos textos en sus formularios"
+msgstr ""
 
 #: templates/user/delete-account.html:10 templates/user/delete-account.html:54
-#, fuzzy
 msgid "Delete account"
-msgstr "Crear una cuenta"
+msgstr "Slett konto"
 
 #: templates/user/delete-account.html:13
 msgid "You will delete your account and the following data"
-msgstr ""
+msgstr "Du vil slette kontoen din og følgende data"
 
 #: templates/user/delete-account.html:17
-#, fuzzy
 msgid "The forms you have created"
-msgstr "Notifíqueme cuando se cree un nuevo formulario"
+msgstr ""
 
 #: templates/user/delete-account.html:21
-#, fuzzy
 msgid "The replies to those forms"
-msgstr "Después de contestar el formulario"
+msgstr ""
 
 #: templates/user/delete-account.html:49
 msgid "This is irreversible!"
@@ -1324,19 +1286,19 @@ msgstr ""
 
 #: templates/user/fediverse-config.html:17
 msgid "Publish your forms on the descentralized social media network"
-msgstr ""
+msgstr "Publiser dine skjemaer på det desentraliserte sosiale-media-nettverket"
 
 #: templates/user/fediverse-config.html:37
 msgid "Generate"
-msgstr ""
+msgstr "Generer"
 
 #: templates/user/login.html:25
 msgid "Forgot your password?"
-msgstr "¿Has olvidado tu contraseña?"
+msgstr "Glemt passordet ditt?"
 
 #: templates/user/new-user.html:18
 msgid "Letters and numbers. No accents."
-msgstr "Letras y números. Nada de acentos."
+msgstr ""
 
 #: templates/user/new-user.html:33 templates/user/reset-password.html:18
 msgid "Use a password with spaces and/or special characters."
@@ -1351,70 +1313,68 @@ msgid "eg: Peter cooks delicious food"
 msgstr ""
 
 #: templates/user/new-user.html:41 templates/user/reset-password.html:26
-#, fuzzy
 msgid "Another eg: The cat living with me has fleas"
-msgstr "Otro ejemplo: Mi perro tiene pulgas"
+msgstr ""
 
 #: templates/user/new-user.html:106
 msgid "We sent you an email!"
-msgstr "Te hemos enviado un correo!"
+msgstr ""
 
 #: templates/user/recover-password.html:11
 msgid "Recover password"
-msgstr "Recuperar la contraseña"
+msgstr "Gjenopprett passord"
 
 #: templates/user/recover-password.html:24
 msgid "Recover"
-msgstr "Recuperar"
+msgstr "Gjenopprett"
 
 #: templates/user/reset-password.html:12
 msgid "Change password"
-msgstr "Cambiar la contraseña"
+msgstr "Endre passord"
 
 #: templates/user/reset-password.html:32
 msgid "Reset password"
-msgstr "Restablecer la contraseña"
+msgstr "Tilbakestill passord"
 
 #: templates/user/statistics.html:12
 msgid "My statistics"
-msgstr "Mis estadísticas"
+msgstr "Min statistikk"
 
 #: templates/user/user-settings.html:12
 #, python-format
 msgid "Hello %(user)s!"
-msgstr ""
+msgstr "Hei %(user)s."
 
 #: templates/user/user-settings.html:18
 #, fuzzy
 msgid "We have sent you a link to validate your email address"
-msgstr "Usa este enlace para recuperar tu contraseña"
+msgstr "Bruk denne lenken for å bekrefte e-postadressen din"
 
 #: templates/user/user-settings.html:24
 #, fuzzy
 msgid "Send again"
-msgstr "Editar de nuevo"
+msgstr "Rediger igjen"
 
 #: templates/user/user-settings.html:34 utils/wtf.py:86
 msgid "Email address"
-msgstr "Dirección de correo"
+msgstr "E-postadresse"
 
 #: templates/user/user-settings.html:47 utils/wtf.py:28 utils/wtf.py:64
 #: utils/wtf.py:97 utils/wtf.py:116
 msgid "Password"
-msgstr "Contraseña"
+msgstr ""
 
 #: templates/user/user-settings.html:65
 msgid "Preferred language"
-msgstr "Idioma preferido"
+msgstr "Foretrukket språk"
 
 #: templates/user/user-settings.html:92
-#, fuzzy
 msgid "Email notifications"
-msgstr "Se quitó el editor %s"
+msgstr "E-postmerknader"
 
 #: templates/user/user-settings.html:127 templates/user/user-settings.html:177
 msgid "Consentment texts"
-msgstr "Textos de consentimiento"
+msgstr "Samtykketekster"
 
 #: templates/user/user-settings.html:141
 msgid "Media"
@@ -1422,127 +1382,121 @@ msgstr ""
 
 #: templates/user/user-settings.html:147
 msgid "Add and delete uploaded files"
-msgstr ""
+msgstr "Legg til og slett opplastede filer"
 
 #: templates/user/user-settings.html:192
 msgid "My admin settings"
-msgstr "Mis preferencias de admin"
+msgstr "Mine administratorinnstillinger"
 
 #: templates/user/user-settings.html:197
 msgid "Notify me when new user has registered"
-msgstr "Notifíqueme cuando se registre un usuario nuevo"
+msgstr ""
 
 #: templates/user/user-settings.html:225
 msgid "Notify me when new form has been created"
-msgstr "Notifíqueme cuando se cree un nuevo formulario"
+msgstr ""
 
 #: templates/user/user-settings.html:257
-#, fuzzy
 msgid "Delete my account"
-msgstr "Crear una cuenta"
+msgstr "Slett kontoen min"
 
 #: utils/consent_texts.py:115
 msgid "Please accept our terms and conditions."
-msgstr "Por favor, acepta nuestros términos y condiciones."
+msgstr ""
 
 #: utils/consent_texts.py:127
 msgid ""
 "We take your data protection seriously. Please contact us for any "
 "inquiries."
 msgstr ""
-"Tomamos en serio la protección de tus datos. Por favor, contáctanos para "
-"cualquier consulta."
 
 #: utils/wraps.py:115
 msgid "That's a nasty key!"
-msgstr "La clave es mala!"
+msgstr ""
 
 #: utils/wraps.py:126
 msgid "That's a nasty token!"
-msgstr "La clave es mala!"
+msgstr ""
 
 #: utils/wtf.py:29 utils/wtf.py:98
 msgid "Password again"
-msgstr "Contraseña de nuevo"
+msgstr ""
 
 #: utils/wtf.py:35
 msgid "Username is not valid"
-msgstr "El nombre de usuario no es válido"
+msgstr "Ugyldig brukernavn"
 
 #: utils/wtf.py:38 utils/wtf.py:41
 msgid "Please use a different username"
-msgstr "Usa otro nombre se usuario por favor"
+msgstr "Bruk et annet brukernavn"
 
 #: utils/wtf.py:45 utils/wtf.py:94 utils/wtf.py:129
 msgid "Please use a different email address"
-msgstr "Usa otra dirección de correo-e por favor"
+msgstr ""
 
 #: utils/wtf.py:49 utils/wtf.py:104
 msgid "Your password is weak"
-msgstr "La contraseña es débil"
+msgstr ""
 
 #: utils/wtf.py:54
 msgid "Please accept our terms and conditions"
-msgstr "Por favor, acepta nuestros términos y condiciones"
+msgstr ""
 
 #: utils/wtf.py:59
 msgid "Please accept our data protection policy"
 msgstr ""
 
 #: utils/wtf.py:72
-#, fuzzy
 msgid "Enter your username"
-msgstr "Nombre de usuario"
+msgstr "Skriv inn brukernavnet"
 
 #: utils/wtf.py:73
-#, fuzzy
 msgid "Enter your password"
-msgstr "Recuperar la contraseña"
+msgstr "Skriv inn passordet ditt"
 
 #: utils/wtf.py:77
 msgid "That is not your username"
 msgstr ""
 
 #: utils/wtf.py:82
-#, fuzzy
 msgid "That is not your password"
-msgstr "¿Has olvidado tu contraseña?"
+msgstr "Feil passord"
 
 #: utils/wtf.py:90
 msgid "New email address"
-msgstr "Nueva dirección de correo-e"
+msgstr "Ny e-postadresse"
 
 #: utils/wtf.py:110
 msgid "Encryption"
-msgstr "Encriptación"
+msgstr "Kryptering"
 
 #: utils/wtf.py:117
 msgid "Sender address"
-msgstr "Dirección de remitente"
+msgstr "Avsenderadresse"
 
 #: utils/wtf.py:123
 msgid "New user's email"
-msgstr "Correo-e del nuevo usuario"
+msgstr ""
 
 #: utils/wtf.py:124
 msgid "Include message"
-msgstr "Incluir un mensaje"
+msgstr "Inkluder melding"
 
 #: utils/wtf.py:125
 msgid "Make the new user an Admin"
-msgstr "Haz que el nuevo usuario sea un Admin"
+msgstr ""
 
 #: utils/wtf.py:133
 msgid "HTML color code"
-msgstr "Código de color HTML"
+msgstr "HTML-fargemodus"
 
 #: utils/wtf.py:136
 msgid "Not a valid HTML color code"
-msgstr "No es un código de color válido"
+msgstr "Ikke en gyldig HTML-fargekode"
 
 #: utils/wtf.py:142
 msgid "Not a valid time zone"
-msgstr ""
+msgstr "Ikke en gyldig tidssone"
 
 #: utils/wtf.py:145
 msgid "Extensions"
@@ -1554,19 +1508,16 @@ msgid "Unknown file extension: %s"
 msgstr ""
 
 #: utils/wtf.py:155
-#, fuzzy
 msgid "Descriptive text"
-msgstr "Editar el texto"
+msgstr "Beskrivende tekst"
 
 #: utils/wtf.py:156
-#, fuzzy
 msgid "Select a file"
-msgstr "Bórralo todo"
+msgstr "Velg en fil"
 
 #: utils/wtf.py:175
-#, fuzzy
 msgid "Footer text"
-msgstr "Editar el texto"
+msgstr "Bunntekst"
 
 #: utils/wtf.py:176
 msgid "Header image"
@@ -1574,111 +1525,105 @@ msgstr ""
 
 #: utils/wtf.py:191
 msgid "Fediverse node"
-msgstr ""
+msgstr "Fediversnode"
 
 #: utils/wtf.py:194
 msgid "Access token"
-msgstr ""
+msgstr "Tilgangssymbol"
 
 #: utils/wtf.py:203
 msgid "Short description"
-msgstr ""
+msgstr "Kort beskrivelse"
 
 #: utils/dispatcher/dispatcher.py:46
 msgid "A button"
-msgstr "Un botón"
+msgstr "En knapp"
 
 #: utils/dispatcher/dispatcher.py:70
 msgid "Congratulations!"
-msgstr "¡Felicidades!"
+msgstr "Gratulerer"
 
 #: utils/dispatcher/dispatcher.py:72
-#, fuzzy
 msgid "MAIL test"
-msgstr "Dirección de correo"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:82
 msgid "Join LiberaForms"
-msgstr ""
+msgstr "Ta del i LiberaForms"
 
 #: utils/dispatcher/dispatcher.py:85
-#, fuzzy
 msgid "Invitation to LiberaForms"
-msgstr "Invitación a %s"
+msgstr "Invitasjon til LiberaForms"
 
 #: utils/dispatcher/dispatcher.py:93
-#, fuzzy
 msgid "Please use this link to create a new password"
-msgstr "Usa este enlace para recuperar tu contraseña"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:94
 msgid "If you did not request this email you can ignore it"
 msgstr ""
 
 #: utils/dispatcher/dispatcher.py:98
-#, fuzzy
 msgid "Recover your password"
-msgstr "Recuperar la contraseña"
+msgstr "Gjenopprett passordet ditt"
 
 #: utils/dispatcher/dispatcher.py:102
 msgid "LiberaForms. Recover password"
-msgstr "LiberaForms. Recupera tu contraseña"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:110
 #, fuzzy
 msgid "Use this link to validate your email"
-msgstr "Usa este enlace para recuperar tu contraseña"
+msgstr "Bruk denne lenken for å bekrefte e-postadressen din"
 
 #: utils/dispatcher/dispatcher.py:114
 #, fuzzy
 msgid "Validate email"
-msgstr "Correo-e validado"
+msgstr "Bekreft e-postadresse"
 
 #: utils/dispatcher/dispatcher.py:117
-#, fuzzy
 msgid "LiberaForms. Email validation"
-msgstr "LiberaForms. Notificación de nuevo usuario"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:128
 #, python-format
 msgid "New user '%s' created at %s"
-msgstr "Nuevo usuario '%s' creado en %s"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:131
 msgid "LiberaForms. New user notification"
-msgstr "LiberaForms. Notificación de nuevo usuario"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:145
-#, python-format
+#, fuzzy, python-format
 msgid "New form '%s' created at %s"
-msgstr "Nuevo formulario '%s' creado en %s"
+msgstr "Nytt skjema «%s» opprettet i %s"
 
 #: utils/dispatcher/dispatcher.py:147
 msgid "LiberaForms. New form notification"
-msgstr "LiberaForms. Notificación de nuevo formulario"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:158
-#, fuzzy, python-format
+#, python-format
 msgid "New form answer in %s at %s\n"
-msgstr "Nueva respuesta para %s en %s\n"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:162
-#, fuzzy
 msgid "LiberaForms. New form answer"
-msgstr "LiberaForms. Nueva respuesta"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:178
 msgid "Confirmation message"
-msgstr "Mensaje de confirmación"
+msgstr "Bekreftelsesmelding"
 
 #: utils/dispatcher/dispatcher.py:184
 #, python-format
 msgid "The form '%s' has expired at %s"
-msgstr "El formulario %s ha caducado en %s"
+msgstr ""
 
 #: utils/dispatcher/dispatcher.py:185
 msgid "LiberaForms. A form has expired"
-msgstr "LiberaForms. Se ha caducado un formulario"
+msgstr "LiberaForms. Et skjema har utløpt"
 
 #: utils/dispatcher/dispatcher.py:199
 msgid "LiberaForms. Email brand preview"
@@ -1686,24 +1631,24 @@ msgstr ""
 
 #: views/admin.py:52 views/admin.py:98
 msgid "User not found"
-msgstr "No se encuentra el usuario"
+msgstr ""
 
 #: views/admin.py:103
 msgid "Cannot delete root user"
-msgstr "No se puede borrar un usuario root"
+msgstr "Kan ikke slette rot-bruker"
 
 #: views/admin.py:106
 msgid "Cannot delete yourself"
-msgstr "No puedes borrarte a ti mismo"
+msgstr "Kan ikke slette deg selv"
 
 #: views/admin.py:111
 #, python-format
 msgid "Deleted user '%s'"
-msgstr "Se ha borrado el usuario '%s'"
+msgstr "Slettet brukeren «%s»"
 
 #: views/admin.py:114
 msgid "Username does not match"
-msgstr "El nombre de usuario no coincide"
+msgstr "Brukernavn stemmer ikke overens"
 
 #: views/admin.py:142 views/admin.py:217 views/answers.py:31
 #: views/answers.py:44 views/answers.py:54 views/answers.py:130
@@ -1711,132 +1656,124 @@ msgstr "El nombre de usuario no coincide"
 #: views/form.py:390 views/form.py:402 views/form.py:456 views/form.py:508
 #: views/form.py:579 views/form.py:594 views/form.py:681
 msgid "Can't find that form"
-msgstr "No se encuentra ese formulario"
+msgstr "Finner ikke det skjemaet"
 
 #: views/admin.py:171
-#, fuzzy, python-format
+#, python-format
 msgid "We have sent an invitation to %s"
-msgstr "Hemos enviado una invitación a %s"
+msgstr ""
 
 #. i18n: Invitation to dave@example.com deleted OK
 #: views/admin.py:189
-#, fuzzy, python-format
+#, python-format
 msgid "Invitation to %s deleted OK"
-msgstr "Invitación a %s"
+msgstr ""
 
 #: views/admin.py:191
 msgid "Opps! We can't find that invitation"
-msgstr "Vaya! No se encuentra esa invitación"
+msgstr ""
 
 #: views/admin.py:223
 msgid "Current author incorrect"
-msgstr "Autor actual no es correcto"
+msgstr "Feilaktig nåværende skaper"
 
 #: views/admin.py:231
 #, python-format
 msgid "Changed author from %s to %s"
-msgstr "Se ha cambiado el auto de %s a %s"
+msgstr "Endret skaper fra %s til %s"
 
 #: views/admin.py:235
 msgid "Changed author OK"
-msgstr "Se ha cambiado el autor correctamente"
+msgstr "Skaper endret OK"
 
 #: views/admin.py:239
 #, python-format
 msgid "Cannot use %s. The user is not enabled"
-msgstr "El usuarios '%s' está deshabilitado"
+msgstr ""
 
 #: views/admin.py:243
 #, python-format
 msgid "Can't find username %s"
-msgstr "No se puede encontrar el nombre de usuario %s"
+msgstr "Finner ikke brukernavnet «%s»"
 
 #: views/answers.py:78
-#, fuzzy
 msgid "Deleted an answer"
-msgstr "Se recuperó una respuesta"
+msgstr "Slettet ett svar"
 
 #: views/answers.py:121
-#, fuzzy
 msgid "Modified an answer"
-msgstr "Se modificó una respuesta"
+msgstr "Endret et svar"
 
 #: views/answers.py:136
 msgid "We expected a number"
-msgstr "Esperábamos un número"
+msgstr ""
 
 #: views/answers.py:140
-#, fuzzy
 msgid "Deleted all answers"
-msgstr "Se recuperó una respuesta"
+msgstr "Slettet alle svar"
 
 #: views/answers.py:144
-#, fuzzy, python-format
+#, python-format
 msgid "Deleted %s answers"
-msgstr "Se ha borrado %s registros"
+msgstr "Slettet %s svar"
 
 #: views/answers.py:148
-#, fuzzy
 msgid "Number of answers does not match"
-msgstr "No coinciden el número de registros"
+msgstr ""
 
 #: views/form.py:68
-#, fuzzy
 msgid "Something went wrong. ID does not match session['form_id']"
-msgstr "Algo salió mal. El id no coincide con la sesión['form_id']"
+msgstr ""
 
 #: views/form.py:73
 msgid "You can't edit that form"
-msgstr "No puedes editar ese formulario"
+msgstr ""
 
 #: views/form.py:81
-#, fuzzy
 msgid "Something went wrong. Slug not unique!"
-msgstr "Algo ha salido mal. No slug!"
+msgstr ""
 
 #: views/form.py:84
 msgid "Something went wrong. No slug!"
-msgstr "Algo ha salido mal. No slug!"
+msgstr ""
 
 #: views/form.py:185
 msgid "Updated form OK"
-msgstr "Se ha actualizado el formulario correctamente"
+msgstr ""
 
 #: views/form.py:186
 msgid "Form edited"
-msgstr "Se editó el formulario"
+msgstr "Skjema redigert"
 
 #: views/form.py:191
 msgid "Slug is missing."
-msgstr "Falta un slug."
+msgstr ""
 
 #: views/form.py:195
-#, fuzzy, python-format
+#, python-format
 msgid "Slug is not available. %s"
-msgstr "El slug no es único. %s"
+msgstr ""
 
 #: views/form.py:231
-#, fuzzy
 msgid "Failed to save form"
-msgstr "Borrar el formulario"
+msgstr ""
 
 #: views/form.py:234
 msgid "Form created"
-msgstr "Se creó el formulario"
+msgstr "Skjema opprettet"
 
 #: views/form.py:235
 msgid "Saved form OK"
-msgstr "Se ha guardado el formulario correctamente"
+msgstr "Lagret skjema OK"
 
 #: views/form.py:256
-#, fuzzy
 msgid "Edited GDPR text"
-msgstr "Editar el texto"
+msgstr ""
 
 #: views/form.py:258 views/form.py:269 views/form.py:285 views/form.py:302
 #: views/site.py:102
 msgid "An error occured"
-msgstr "Se produjo un error"
+msgstr "En feil inntraff"
 
 #: views/form.py:281
 msgid "Edited Thankyou text"
@@ -1844,20 +1781,20 @@ msgstr ""
 
 #: views/form.py:298
 msgid "Edited expiry text"
-msgstr ""
+msgstr "Rediger utløpstekst"
 
 #: views/form.py:318
-#, fuzzy, python-format
+#, python-format
 msgid "Deleted '%s' and %s answers"
-msgstr "Se ha borrado %s y %s respuestas"
+msgstr "Slettet «%s» og %s svar"
 
 #: views/form.py:324
 msgid "Form name does not match"
-msgstr "El nombre del formulario no coincide"
+msgstr "Skjemanavn samsvarer ikke"
 
 #: views/form.py:337
 msgid "Permission needed to view form"
-msgstr "Falta permisos para ver el formulario"
+msgstr ""
 
 #: views/form.py:357
 msgid "Fediverse connect is not configured"
@@ -1870,23 +1807,23 @@ msgstr ""
 
 #: views/form.py:408 views/form.py:462
 msgid "Can't find a user with that email"
-msgstr "No se encuentra un usuario con ese correo-e"
+msgstr "Finner ingen bruker med den e-postadressen"
 
 #. i18n: %s stands for the user name here
 #: views/form.py:412 views/form.py:465
-#, fuzzy, python-format
+#, python-format
 msgid "This form is already shared with %s"
-msgstr "%s ya es un editor"
+msgstr ""
 
 #: views/form.py:420 views/form.py:473
 #, fuzzy
 msgid "Added user OK"
-msgstr "Añadir al formulario 'Nuevo usuario'"
+msgstr "Ny bruker"
 
 #: views/form.py:421
 #, python-format
 msgid "Added editor %s"
-msgstr "Se añadió el editor %s"
+msgstr ""
 
 #: views/form.py:424 views/form.py:478
 msgid "Could not add the user"
@@ -1895,7 +1832,7 @@ msgstr ""
 #: views/form.py:433 views/form.py:487
 #, fuzzy
 msgid "Cannot find that form"
-msgstr "No se encuentra ese formulario"
+msgstr "Finner ikke det skjemaet"
 
 #: views/form.py:436
 #, python-format
@@ -1905,134 +1842,133 @@ msgstr ""
 #: views/form.py:444
 #, python-format
 msgid "Removed editor %s"
-msgstr "Se quitó el editor %s"
+msgstr ""
 
 #: views/form.py:447 views/form.py:499
 #, fuzzy
 msgid "Cannot find user %"
-msgstr "No se puede encontrar el nombre de usuario %s"
+msgstr "Finner ikke brukernavnet «%s»"
 
 #. i18n: %s stands for the user name here
 #: views/form.py:475
-#, fuzzy, python-format
+#, python-format
 msgid "Added read only user %s"
-msgstr "Se añadió el editor %s"
+msgstr ""
 
 #. i18n: %s stands for the user name here
 #: views/form.py:496
 #, fuzzy, python-format
 msgid "Removed user %s"
-msgstr "Se quitó el editor %s"
+msgstr "Slettet brukeren «%s»"
 
 #: views/form.py:523
 msgid "Date-time is not valid"
-msgstr "La fecha-hora no es válida"
+msgstr ""
 
 #: views/form.py:528
 #, python-format
 msgid "Expiry date set to: %s"
-msgstr "Fecha de caducidad fijada en: %s"
+msgstr ""
 
 #: views/form.py:532
 msgid "Expiry date cancelled"
-msgstr "Fecha de caducidad cancelada"
+msgstr ""
 
 #: views/form.py:534
 msgid "Missing date or time"
-msgstr "Faltan fecha o hora"
+msgstr "Manglende dato eller tid"
 
 #: views/form.py:551
-#, fuzzy, python-format
+#, python-format
 msgid "Field '%s' expiry set to: %s"
-msgstr ""
+msgstr "Utløp for feltet «%s» er satt til: %s"
 
 #. i18n: Expire when total answers set to: 3
 #: views/form.py:569
-#, fuzzy, python-format
+#, python-format
 msgid "Expire when total answers set to: %s"
-msgstr "Respuestas compartidas establecidas como: %s"
+msgstr ""
 
 #: views/form.py:585
 msgid "You can edit the duplicate now"
-msgstr "Ya puedes editar el formulario duplicado"
+msgstr ""
 
 #: views/form.py:609
 #, python-format
 msgid "Public set to: %s"
-msgstr "Público establecido como: %s"
+msgstr ""
 
 #: views/form.py:620
 #, python-format
 msgid "Restricted access set to: %s"
-msgstr "Acceso restringido establecido como: %s"
+msgstr ""
 
 #: views/form.py:631
 #, python-format
 msgid "Data protection consent set to: %s"
-msgstr "Consentimiento de protección de datos establecido como: %s"
+msgstr "Databeskyttelsessamtykke satt til: %s"
 
 #: views/form.py:642
 #, python-format
 msgid "Send Confirmation set to: %s"
-msgstr "Envío de confirmación por correo establecido como: %s"
+msgstr ""
 
 #: views/form.py:688
 msgid "That form has expired"
-msgstr "Ese formulario se ha caducado"
+msgstr ""
 
 #: views/form.py:690
 msgid "That form is not public"
-msgstr "Ese formulario no es público"
+msgstr "Skjemaet er ikke offentlig"
 
 #: views/form.py:808
+#, fuzzy
 msgid "Copied template OK. You can edit your new form"
-msgstr ""
+msgstr "Mal kopiert OK. Du kan nå redigere ditt nye skjema"
 
 #: views/site.py:35
 msgid "Text saved OK"
-msgstr "Se ha guardado el texto correctamente"
+msgstr ""
 
 #: views/site.py:47
 msgid "Couldn't find that token"
-msgstr "No se ha encontrado ese clave"
+msgstr "Fant ikke det symbolet"
 
 #: views/site.py:50 views/user.py:292
 msgid "Your petition has expired"
-msgstr "Tu petición ha caducado"
+msgstr ""
 
 #: views/site.py:55
 msgid "Your account has been blocked"
-msgstr "Tu cuenta ha sido bloqueado"
+msgstr ""
 
 #: views/site.py:80
 msgid "We may have sent you an email"
-msgstr "Puede que te hayamos enviado un correo electrónico"
+msgstr ""
 
 #: views/site.py:130
 msgid "Site name changed OK"
-msgstr "Se cambió el nombre de sitio correctamente"
+msgstr ""
 
 #: views/site.py:143 views/user.py:149
 msgid "Language updated OK"
-msgstr "Se ha actualizado el idioma correctamente"
+msgstr "Språk oppdatert OK"
 
 #: views/site.py:154
 msgid "Required file is missing"
-msgstr "Falta el archivo requerido"
+msgstr "Påkrevd fil mangler"
 
 #: views/site.py:160
-#, fuzzy
 msgid "Logo changed OK. Refresh with  &lt;F5&gt;"
-msgstr "Favicon cambiado correctamente. Recarga con  &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:165
 msgid "An image file is required"
-msgstr ""
+msgstr "En bildefil kreves"
 
 #: views/site.py:174
-#, fuzzy
 msgid "Logo reset OK. Refresh with  &lt;F5&gt;"
-msgstr "Favicon restaurado correctamente. Recarga con  &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:195
 msgid "Enabled file extensions updated OK"
@@ -2040,83 +1976,76 @@ msgstr ""
 
 #: views/site.py:221
 msgid "Color changed OK"
-msgstr "Color cambiado correctamente"
+msgstr "Farge endret OK"
 
 #: views/site.py:236
-#, fuzzy
 msgid "Updated OK. Refresh with &lt;F5&gt;"
-msgstr "Favicon cambiado correctamente. Recarga con  &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:248
-#, fuzzy
 msgid "Reset image OK. Refresh with &lt;F5&gt;"
-msgstr "Favicon restaurado correctamente. Recarga con  &lt;F5&gt;"
+msgstr ""
 
 #: views/site.py:267
-#, fuzzy
 msgid "Sent email OK"
-msgstr "Enviar correo"
+msgstr "E-post sendt OK"
 
 #: views/site.py:271
-#, fuzzy
 msgid "Email address is not valid"
-msgstr "Tu dirección de correo-e es válida"
+msgstr "E-postadressen er ikke gyldig"
 
 #: views/site.py:301
 msgid "Confguration saved OK"
-msgstr "Se guardó la configuración correctamente"
+msgstr "Oppsett lagret OK"
 
 #: views/site.py:315
 msgid "SMTP config works!"
-msgstr "¡Funciona la configuración SMTP!"
+msgstr "SMTP-oppsett virker."
 
 #: views/user.py:44
 msgid "Invitation not found"
-msgstr "No se encuentra la invitación"
+msgstr ""
 
 #: views/user.py:47
 msgid "This invitation has expired"
-msgstr "Esta invitación se ha caducado"
+msgstr ""
 
 #: views/user.py:82
 msgid "Opps! An error ocurred when creating the user"
-msgstr "Vaya! En error al crear el usuario"
+msgstr ""
 
 #: views/user.py:91
 msgid "Welcome!"
-msgstr "¡Bienvenida!"
+msgstr ""
 
 #: views/user.py:130 views/user.py:165
-#, fuzzy, python-format
+#, python-format
 msgid "We have sent an email to %s"
-msgstr "Hemos enviado un correo-e a %s"
+msgstr ""
 
 #: views/user.py:181
 msgid "Password changed OK"
-msgstr "Se ha actualizado la contraseña correctamente"
+msgstr ""
 
 #: views/user.py:194
-#, fuzzy
 msgid "Time zone changed OK"
-msgstr "Se cambió el nombre de sitio correctamente"
+msgstr "Tidssone endret OK"
 
 #: views/user.py:222
 msgid "Could not encrypt your access token"
-msgstr ""
+msgstr "Kunne ikke kryptere tilgangssymbolet ditt"
 
 #: views/user.py:224
 msgid "Connected to the Fediverse"
-msgstr ""
+msgstr "Tilkoblet til Fediverset"
 
 #: views/user.py:243
-#, fuzzy
 msgid "Fediverse configuration deleted OK"
-msgstr "Prueba la configuración"
+msgstr "Fediversoppsett slettet OK"
 
 #: views/user.py:256
-#, fuzzy
 msgid "Cannot delete. You are the only Admin on this site"
-msgstr "Se se puede eliminar el sitio actual"
+msgstr "Kan ikke slette. Du er den eneste administratoren på denne siden"
 
 #: views/user.py:264
 msgid "Thank you for using LiberaForms"
@@ -2124,398 +2053,64 @@ msgstr ""
 
 #: views/user.py:289
 msgid "We couldn't find that petition"
-msgstr "No hemos encontrado esa petición"
+msgstr ""
 
 #: views/user.py:304
 msgid "Your email address is valid"
-msgstr "Tu dirección de correo-e es válida"
+msgstr "E-postadressen din er gyldig"
 
 #: views/user.py:338
 msgid "Bad credentials"
-msgstr "Las credenciales no son correctos"
-
-#~ msgid "Can't find that form. 404"
-#~ msgstr "No se encuentra ese formulario"
-
-#~ msgid "2. Say something to the user after the form has been submitted"
-#~ msgstr "2. Di algo al usuario una vez que haya enviado los datos"
-
-#~ msgid "3. Your form will have this address"
-#~ msgstr "3. El formulario tendrá esta dirección"
-
-#~ msgid "Choose a template"
-#~ msgstr "Elegir una plantilla"
-
-#~ msgid "Schema update"
-#~ msgstr "Actualización del equema"
-
-#~ msgid "Start"
-#~ msgstr "Inicio"
-
-#~ msgid "Edition enabled"
-#~ msgstr "Edición habilitada"
-
-#~ msgid "Update"
-#~ msgstr "Actualizar"
-
-#~ msgid "Schema is already up to date. Nothing to do."
-#~ msgstr "El esquema ya está actualizada. Nada que hacer."
-
-#~ msgid "Updated schema OK!"
-#~ msgstr "Se ha actualizado el esquema correctamente!"
-
-#~ msgid "Do you want to receive confirmation by email?"
-#~ msgstr "¿Quieres recibir confirmación por correo-e?"
-
-#~ msgid "Send confirmation by mail"
-#~ msgstr "Enviar confirmación por correo"
-
-#~ msgid "Source code"
-#~ msgstr "Código fuente"
-
-#~ msgid "Disable form"
-#~ msgstr "Deshabilitar el formulario"
-
-#~ msgid "Enable form"
-#~ msgstr "Habilitar el formulario"
-
-#~ msgid "This form has expired"
-#~ msgstr "Este formulario se ha caducado"
-
-#~ msgid "People will see this text instead of the form."
-#~ msgstr "Personas verán este texto en lugar del formulario."
-
-#~ msgid "Will expire"
-#~ msgstr "Caducará"
-
-#~ msgid "Publish your own form"
-#~ msgstr "Publica tu propio formulario"
-
-#~ msgid "New user's terms"
-#~ msgstr "Términos para nuevos usuarios"
-
-#~ msgid "Default data protection law consent text"
-#~ msgstr "Ley de protección de datos. Texto de consentimiento por omisión."
-
-#~ msgid "Save text"
-#~ msgstr "Guardar el texto"
-
-#~ msgid "to"
-#~ msgstr "a"
-
-#~ msgid "Note: Maximum is now %(max)s"
-#~ msgstr "Nota: El máximo es ahora %(max)s"
-
-#~ msgid "LiberaForms. Invitation to %s"
-#~ msgstr "LiberaForms. Invitación a %s"
-
-#~ msgid "You have been invited to %s."
-#~ msgstr "Has sido invitado a %s."
-
-#~ msgid "Multiple choice"
-#~ msgstr "Selección múltiple"
-
-#~ msgid "New condition"
-#~ msgstr "Nueva condición"
-
-#~ msgid "Require consent"
-#~ msgstr "Consentimiento"
-
-#~ msgid "Data protection consent"
-#~ msgstr "Protección de datos"
-
-#~ msgid "Data protection law"
-#~ msgstr "Ley de protección de datos"
-
-#~ msgid "Marked"
-#~ msgstr "Anotado"
-
-#~ msgid "Sorry, this form has expired."
-#~ msgstr "Lo sentimos, este formulario se ha caducado."
-
-#~ msgid "Thank you!!"
-#~ msgstr "¡¡Gracias!!"
-
-#~ msgid "Form title"
-#~ msgstr "Título del formulario"
-
-#~ msgid "Context"
-#~ msgstr "Contexto"
-
-#~ msgid ""
-#~ msgstr ""
-
-#~ msgid "User's forms"
-#~ msgstr "Formularios del usuario"
-
-#~ msgid "Conditionals"
-#~ msgstr "Condicionales"
-
-#~ msgid "Schema"
-#~ msgstr "Esquema"
-
-#~ msgid "Curreny schema version"
-#~ msgstr "Versión del esquema actual"
-
-#~ msgid "Required version"
-#~ msgstr "Versión requerida"
-
-#~ msgid "Your super secret key"
-#~ msgstr "Tu clave súper secreta"
-
-#~ msgid "Start update"
-#~ msgstr "Inicia la actualización"
-
-#~ msgid "forms per user"
-#~ msgstr "formularios por usuario"
-
-#~ msgid "Administrator"
-#~ msgstr "Administrador"
-
-#~ msgid "Invitations"
-#~ msgstr "Invitaciones"
-
-#~ msgid "Invite a new user"
-#~ msgstr "Invitar a un usuario nuevo"
-
-#~ msgid "Invitation message"
-#~ msgstr "Mensaje de la invitación"
-
-#~ msgid "Site settings"
-#~ msgstr "Configuración del sitio web"
-
-#~ msgid "Site name"
-#~ msgstr "Nombre de sitio"
-
-#~ msgid "Default language"
-#~ msgstr "Idioma por omisión"
-
-#~ msgid "Consent"
-#~ msgstr "Consentimiento"
-
-#~ msgid "Favicon"
-#~ msgstr "Favicon"
-
-#~ msgid "Configure"
-#~ msgstr "Configurar"
-
-#~ msgid "Root user"
-#~ msgstr "Usuario root"
-
-#~ msgid "Total responses"
-#~ msgstr "Total de respuestas"
-
-#~ msgid "Settings"
-#~ msgstr "Configuración"
-
-#~ msgid "Toggle root mode"
-#~ msgstr "Commutar modo root"
-
-#~ msgid "Entries"
-#~ msgstr "Respuestas"
-
-#~ msgid "Is Admin"
-#~ msgstr "Es Admin"
-
-#~ msgid "Last entry"
-#~ msgstr "Última respuesta"
-
-#~ msgid "Delete entries"
-#~ msgstr "Borrar las respuestas"
-
-#~ msgid "entries"
-#~ msgstr "respuestas"
-
-#~ msgid "Delete entry"
-#~ msgstr "Borrar la respuesta"
-
-#~ msgid "View entries"
-#~ msgstr "Ver las respuestas"
-
-#~ msgid "Total entries"
-#~ msgstr "Suma de respuestas"
-
-#~ msgid "Installation"
-#~ msgstr "Instalación"
-
-#~ msgid "Sitename"
-#~ msgstr "Nombre de sitio web"
-
-#~ msgid "Root user options"
-#~ msgstr "Opciones del usuario root"
-
-#~ msgid "Invite to one of these sites"
-#~ msgstr "Invita a uno de estos sitios"
-
-#~ msgid "Hello"
-#~ msgstr "Hola"
-
-#~ msgid "SMTP test"
-#~ msgstr "Prueba el SMTP"
-
-#~ msgid ""
-#~ "Hello %s\n"
-#~ "\n"
-#~ "Please confirm your email\n"
-#~ "\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Hola %s\n"
-#~ "\n"
-#~ "Por favor, confirma tu dirección de correo\n"
-#~ "\n"
-#~ "%s"
-
-#~ msgid "hostname"
-#~ msgstr "hostname"
-
-#~ msgid "Deleted an entry"
-#~ msgstr "Se eliminó una respuesta"
-
-#~ msgid "Bad file name. PNG only"
-#~ msgstr "Mal nombre de archivo. Solo PNG"
-
-#~ msgid "Site not found"
-#~ msgstr "No se ha encontrado el sitio"
-
-#~ msgid "Deleted %s"
-#~ msgstr "Se ha borrado %s"
-
-#~ msgid "Site name does not match"
-#~ msgstr "El nombre del sitio no coincide"
-
-#~ msgid "Root disabled"
-#~ msgstr "Root deshabilitado"
-
-#~ msgid "Root enabled"
-#~ msgstr "Root habilitado"
-
-#~ msgid "Cannot modify because a response with this value exists in the database"
-#~ msgstr ""
-
-#~ msgid "Profile"
-#~ msgstr "Perfil"
-
-#~ msgid "Menu color"
-#~ msgstr "Color de menú"
-
-#~ msgid "Versions"
-#~ msgstr ""
-
-#~ msgid "Your email has not been validated"
-#~ msgstr "No se ha validado tu correo-e"
-
-#~ msgid "Validate my email"
-#~ msgstr "Validar mi correo-e"
-
-#~ msgid "Invitation to %s"
-#~ msgstr "Invitación a %s"
-
-#~ msgid "Please use this link to recover your password"
-#~ msgstr "Usa este enlace para recuperar tu contraseña"
-
-#~ msgid "LiberaForms. Confirm email"
-#~ msgstr "LiberaForms. Confirma tu correo-e"
-
-#~ msgid "New form entry in %s at %s\n"
-#~ msgstr "Nueva respuesta para %s en %s\n"
-
-#~ msgid "LiberaForms. New form entry"
-#~ msgstr "LiberaForms. Nueva respuesta"
-
-#~ msgid "Ethical form software."
-#~ msgstr ""
-
-#~ msgid "Please validated your email to continue"
-#~ msgstr ""
-
-#~ msgid "Site styling"
-#~ msgstr "Preferencias del sitio web"
-
-#~ msgid "Primary colour"
-#~ msgstr ""
-
-#~ msgid "Email styling"
-#~ msgstr ""
-
-#~ msgid "Default texts"
-#~ msgstr "Textos por omisión"
-
-#~ msgid "Keep the kilobytes to a minimum."
-#~ msgstr ""
-
-#~ msgid "Use a passphrase, with spaces"
-#~ msgstr "Usa una frase, con espacios"
-
-#~ msgid "eg: No holidays this year"
-#~ msgstr "ej.: No hay vacaciones este año"
-
-#~ msgid "By default"
-#~ msgstr "Por omisión"
-
-#~ msgid "New answer notification default"
-#~ msgstr "Avísame cuando hayan nuevas respuestas"
-
-#~ msgid "Your password"
-#~ msgstr "¿Has olvidado tu contraseña?"
-
-#~ msgid "responses"
-#~ msgstr "respuestas"
-
-#~ msgid "Icon and Favicon"
-#~ msgstr ""
-
-#~ msgid "Published at %smsg"
-#~ msgstr ""
-
-#~ msgid "Super admin options"
-#~ msgstr "Opciones de Admin"
+msgstr "Feilaktige identitetsdetaljer"
 
 #~ msgid "Attachments enabled"
-#~ msgstr ""
-
-#~ msgid "Shared with"
-#~ msgstr ""
+#~ msgstr "Vedlegg påskrudd"
 
 #~ msgid "Share notifications"
 #~ msgstr ""
 
 #~ msgid "Send emails to other people"
-#~ msgstr ""
+#~ msgstr "Send e-poster til andre folk"
 
 #~ msgid "Send 'new answer' and expiry notifications to these other addresses"
 #~ msgstr ""
 
 #~ msgid "Add address"
-#~ msgstr "Dirección de correo"
+#~ msgstr "Legg til adresse"
 
 #~ msgid "Share results"
-#~ msgstr "Compartir los resultados"
+#~ msgstr "Delingsresultater"
 
 #~ msgid "Readonly access for <b>anyone</b> with a copy of these links"
 #~ msgstr ""
-#~ "Acceso de solo lectura para "
-#~ "<b>cualquiera</b> con una copia de estos"
-#~ " enlaces"
 
 #~ msgid "Please validate your email to continue"
-#~ msgstr ""
+#~ msgstr "Bekreft e-postadressen din for å fortsette"
 
 #~ msgid "Validate"
-#~ msgstr "Correo-e validado"
+#~ msgstr "Bekreft"
 
 #~ msgid "LiberaForms. Change email"
-#~ msgstr "LiberaForms. Confirma tu correo-e"
+#~ msgstr "LiberaForms. Endre e-post"
+
+#~ msgid "Something went wrong. id does not match session['form_id']"
+#~ msgstr ""
+
+#~ msgid "%s is already an editor"
+#~ msgstr ""
 
 #~ msgid "New editor added ok"
-#~ msgstr "Se ha añadido el editor correctamente"
+#~ msgstr ""
 
 #~ msgid "Added shared notification: %s"
 #~ msgstr ""
 
 #~ msgid "Removed shared notification: %s"
-#~ msgstr "Se quitó el editor %s"
+#~ msgstr ""
 
 #~ msgid "Shared answers set to: %s"
-#~ msgstr "Respuestas compartidas establecidas como: %s"
+#~ msgstr ""
+
+#~ msgid "Added user ok"
+#~ msgstr ""
 

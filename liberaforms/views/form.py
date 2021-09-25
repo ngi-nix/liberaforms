@@ -65,7 +65,7 @@ def edit_form(form_id=None):
     queriedForm=None
     if form_id:
         if session['form_id'] != str(form_id):
-            flash_text = _("Something went wrong. id does not match session['form_id']")
+            flash_text = _("Something went wrong. ID does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
         queriedForm = g.current_user.get_form(form_id, is_editor=True)
@@ -402,6 +402,7 @@ def add_editor(form_id):
             flash(_("Can't find a user with that email"), 'warning')
             return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
         if FormUser.find(form_id=queriedForm.id, user_id=new_editor.id):
+			# i18n: %s stands for the user name here
             flash(_("This form is already shared with %s" % new_editor.email), 'warning')
             return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
         try:
@@ -410,7 +411,7 @@ def add_editor(form_id):
                                notifications=new_editor.new_form_notifications(),
                                is_editor=True)
             form_user.save()
-            flash(_("Added user ok"), 'success')
+            flash(_("Added user OK"), 'success')
             queriedForm.add_log(_("Added editor %s" % new_editor.email))
         except Exception as error:
             current_app.logger.error(error)
@@ -463,7 +464,8 @@ def add_reader(form_id):
                                notifications=new_reader.new_form_notifications(),
                                is_editor=False)
             form_user.save()
-            flash(_("Added user ok"), 'success')
+            flash(_("Added user OK"), 'success')
+			# i18n: %s stands for the user name here
             queriedForm.add_log(_("Added read only user %s" % new_reader.email))
         except Exception as error:
             current_app.logger.error(error)
@@ -484,6 +486,7 @@ def remove_reader(form_id, user_id):
     if form_user:
         reader = User.find(id=user_id)
         form_user.delete()
+		# i18n: %s stands for the user name here
         queriedForm.add_log(_("Removed user %s" % reader.email))
         return json.dumps(str(reader.id))
     else:
