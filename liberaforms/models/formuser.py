@@ -25,7 +25,7 @@ class FormUser(db.Model, CRUD):
     notifications = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     field_index = db.Column(JSONB, nullable=True)
     order_by = db.Column(db.String, nullable=True)
-    asc = db.Column(db.Boolean, default=True)
+    ascending = db.Column(db.Boolean, default=True)
     user = db.relationship("User", viewonly=True)
     form = db.relationship("Form", viewonly=True)
 
