@@ -10,7 +10,6 @@ from flask import session, current_app
 from flask_babel import gettext as _
 from liberaforms.utils import sanitizers
 from liberaforms.models.form import Form
-from liberaforms.utils import utils
 
 
 def clear_session_form_data():
@@ -40,6 +39,18 @@ formbuilder has some bugs.
 Repair if needed.
 """
 def repair_form_structure(structure):
+    def get_unique_option_value(values, label):
+        value = label.replace(" ", "-")
+        value = sanitizers.sanitize_string(value)
+        value = sanitizers.remove_newlines(value)
+        if len(value) > 43:
+            value = f"{value[:40]}..." # make value length 43 chars
+        unique_values=[option["value"] for option in values if option["value"]]
+        cnt = 1
+        while value in unique_values:
+            value = f"{value}.{cnt}"
+            cnt = cnt + 1
+        return value
     for element in structure:
         if "type" in element:
             if element['type'] == 'paragraph':
@@ -57,13 +68,23 @@ def repair_form_structure(structure):
                 if element["multiple"] == False:
                     del element["multiple"]
             # formBuilder does not enforce values for checkbox groups, radio groups and selects.
-            # we add a random value when missing
+            # we add a value (derived form the Label) when missing
             if  element["type"] == "checkbox-group" or \
                 element["type"] == "radio-group" or \
                 element["type"] == "select":
-                for input_option in element["values"]:
-                    if not input_option["value"]:
-                        input_option["value"] = utils.gen_random_string()
+                options = []
+                for option in element["values"]:
+                    option["label"] = option["label"].strip()
+                    option["value"] = option["value"].strip()
+                    if not option["label"] and not option["value"]:
+                        continue
+                    if not option["label"]:
+                        option["label"] = option["value"]
+                    if not option["value"]:
+                        option["value"] = get_unique_option_value(element["values"],
+                                                                  option["label"])
+                    options.append(option)
+                element["values"] = options
     return structure
 
 def is_slug_available(slug):
