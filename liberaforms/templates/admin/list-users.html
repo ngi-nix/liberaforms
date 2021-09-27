@@ -46,10 +46,9 @@
         <li class="nav-item pb-2">
           <a class="btn btn-primary btn-sm"
              role="button"
-             href="/admin/users/csv">
-            {# i18n: Button to download CSV document format #}
-            {%trans%}Download CSV{%endtrans%}
-            <i class="fa fa-download" aria-hidden="true"></i>
+             href="/admin/invites">
+            {%trans%}Invitations{%endtrans%}
+            <span class="badge badge-light">{{ total_invites }}</span>
           </a>
         </li>
         {% endif %}
