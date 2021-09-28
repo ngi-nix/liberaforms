@@ -13,7 +13,8 @@
       <div class="title_1 delimited">
           {%trans%}User details{%endtrans%}
       </div>
-      <table class="table table-sm table-striped">
+      <table class="table table-sm table-striped w-100 d-block d-table">
+        <tbody">
         <tr>
            <td>{%trans%}Username{%endtrans%}</td>
            <td>{{ user.username }}</td>
@@ -119,6 +120,7 @@
             </div>
           </td>
         </tr>
+        <tbody>
       </table>
       {% if not user.id == g.current_user.id %}
         {% if forms.count() %}
@@ -145,6 +147,13 @@
 
       <canvas id="usage_chart" height="125"></canvas>
 
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="title_1" style="margin:0.25em 0 0 0">
+          {%trans%}Forms{%endtrans%}
+      </div>
     </div>
   </div>
   <div class="row">

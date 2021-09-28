@@ -192,11 +192,11 @@ def admin_forms_toggle_ascending():
 
 default_admin_users_field_index = [
                 {'name': 'username__html', 'label': _('User name')},
-                {'name': 'created', 'label': _('Created')},
-                {'name': 'enabled', 'label': _('Enabled')},
-                {'name': 'email', 'label': _('Email')},
                 {'name': 'total_forms', 'label': _('Forms')},
-                {'name': 'is_admin', 'label': _('Admin')}
+                {'name': 'email', 'label': _('Email')},
+                {'name': 'enabled', 'label': _('Enabled')},
+                {'name': 'is_admin', 'label': _('Admin')},
+                {'name': 'created', 'label': _('Created')}
             ]
 
 def get_admin_users_field_index(user):
