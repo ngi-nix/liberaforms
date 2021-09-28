@@ -142,7 +142,7 @@ def toggle_form_public_admin_prefs(id):
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
     queriedForm.toggle_admin_form_public()
-    return redirect(make_url_for('form_bp.inspect_form', id=id))
+    return redirect(make_url_for('form_bp.inspect_form', form_id=id))
 
 
 """ Invitations """
@@ -209,10 +209,10 @@ def toggle_newForm_notification():
 """ ROOT_USERS functions
 """
 
-@admin_bp.route('/admin/forms/change-author/<int:id>', methods=['GET', 'POST'])
+@admin_bp.route('/admin/forms/change-author/<int:form_id>', methods=['GET', 'POST'])
 @rootuser_required
-def change_author(id):
-    queriedForm = Form.find(id=id)
+def change_author(form_id):
+    queriedForm = Form.find(id=form_id)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('user_bp.my_forms'))
@@ -234,7 +234,7 @@ def change_author(id):
                         queriedForm.add_log(log_text)
                         flash(_("Changed author OK"), 'success')
                         return redirect(make_url_for('form_bp.inspect_form',
-                                                     id=queriedForm.id))
+                                                     form_id=queriedForm.id))
                 else:
                     flash(_("Cannot use %s. The user is not enabled" % (
                                     request.form['new_author_username']),

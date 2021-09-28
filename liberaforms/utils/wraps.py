@@ -6,7 +6,7 @@ This file is part of LiberaForms.
 """
 
 from functools import wraps
-from flask import current_app, request, g
+from flask import current_app, request, g, jsonify
 from flask import redirect, url_for, render_template, flash
 from flask_babel import gettext as _
 from liberaforms.utils import sanitizers

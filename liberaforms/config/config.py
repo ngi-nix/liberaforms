@@ -63,6 +63,7 @@ class Config(object):
         "ca": ("Català", "ca-ES"),
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
+        "nb": ("Norwegian Bokmål", "nb-NO")
     }
     ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     TMP_DIR = os.environ['TMP_DIR']
@@ -95,6 +96,7 @@ class Config(object):
         MEDIA_DIR = os.path.join(MEDIA_DIR, "hosts", os.environ['FQDN'])
         BRAND_DIR = os.path.join(MEDIA_DIR, 'brand')
         SESSION_KEY_PREFIX = os.environ['FQDN']
+    ENABLE_PROMETHEUS_METRICS = True if os.environ['ENABLE_PROMETHEUS_METRICS'] == 'True' else False
 
     @staticmethod
     def init_app(app):

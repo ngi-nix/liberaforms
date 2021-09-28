@@ -7,17 +7,17 @@ This file is part of LiberaForms.
 
 #import pytest
 from flask import g
+from pprint import pprint
 
 def login(client, user_creds):
     response = client.post('/user/login', data=dict(
         username=user_creds['username'],
         password=user_creds['password']
     ), follow_redirects=True)
-    assert g.current_user.username == user_creds['username']
     return response
 
 def logout(client):
-    initial_current_user = g.current_user
+    username = g.current_user.username if g.current_user else None
     response = client.post('/user/logout', follow_redirects=True)
     assert g.current_user == None
     return response
