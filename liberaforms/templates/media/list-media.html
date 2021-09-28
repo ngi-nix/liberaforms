@@ -114,7 +114,7 @@
             {{ image.created.strftime('%Y-%m-%d') }}
           </td>
           <td>
-            {{ image.file_size }}
+            {{ human_readable_bytes(image.file_size) }}
           </td>
           <td>
             <a href="{{ image.get_url()}}"
@@ -165,23 +165,24 @@ $(function () {
         },
         success: function(data, textStatus, jqXHR)
         {
-          if (data !== false && data.errors === undefined) {
-            var new_row = $('<tr id="media_'+data.id+'">');
-            html = '<img src="'+data.thumbnail_url+'" />';
+          if (data !== false && data.media !== undefined) {
+            var media = data.media
+            var new_row = $('<tr id="media_'+media.id+'">');
+            html = '<img src="'+media.thumbnail_url+'" />';
             $('<td>').html(html).appendTo(new_row);
-            $('<td>').html(data.created).appendTo(new_row);
-            $('<td>').html(data.file_size).appendTo(new_row);
-            html = '<a href="'+data.image_url+'" alt="'+data.alt_text+'">'+data.file_name+'</a>';
+            $('<td>').html(media.created).appendTo(new_row);
+            $('<td>').html(media.file_size).appendTo(new_row);
+            html = '<a href="'+media.image_url+'" alt="'+media.alt_text+'">'+media.file_name+'</a>';
             $('<td>').html(html).appendTo(new_row);
             html = '<input class="btn btn-xs btn-danger" type="button" ';
             html = html + 'type="button" value="{%trans%}Remove{%endtrans%}" ';
-            html = html + 'onClick="js:removeMedia('+data.id+');" />';
+            html = html + 'onClick="js:removeMedia('+media.id+');" />';
             $('<td>').html(html).appendTo(new_row);
             new_row.prependTo("#media_list");
             $('#show_upload_form_button').show();
             $("#upload_spinner").hide();
             $('#upload_form').hide();
-          }else{
+          }else if (data.errors !== undefined){
             alert("Error message: media_upload-1")
           }
         }

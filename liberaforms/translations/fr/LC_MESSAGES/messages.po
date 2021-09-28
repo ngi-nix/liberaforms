@@ -1,0 +1,2103 @@
+# French translations for PROJECT.
+# Copyright (C) 2021 LiberaForms, CC-BY-SA
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: info@liberaforms.org\n"
+"POT-Creation-Date: 2021-09-19 12:24+0200\n"
+"PO-Revision-Date: 2021-09-09 23:33+0000\n"
+"Last-Translator: J. Lavoie <j.lavoie@net-c.ca>\n"
+"Language: fr\n"
+"Language-Team: French <https://hosted.weblate.org/projects/liberaforms"
+"/server-liberaforms/fr/>\n"
+"Plural-Forms: nplurals=2; plural=n > 1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#. i18n: Column title on table, to sort whether the form entries are marked or
+#. not
+#: models/form.py:145
+msgid "Marked"
+msgstr ""
+
+#. i18n: Used for sort items by creation order, almost always as column title
+#: models/form.py:147 models/site.py:364 templates/admin/admin-panel.html:242
+#: templates/admin/inspect-user.html:31 templates/admin/inspect-user.html:159
+#: templates/admin/list-forms.html:27 templates/admin/list-invites.html:26
+#: templates/admin/list-users.html:43 templates/form/inspect-form.html:364
+#: templates/form/my-forms.html:51 templates/site/list-admins.html:26
+msgid "Created"
+msgstr ""
+
+#: models/form.py:151 utils/form_helper.py:53
+msgid "Label"
+msgstr ""
+
+#. i18n: Acronym for 'Data Privacy Law'
+#: models/form.py:193 templates/admin/admin-panel.html:169
+#: templates/form/inspect-form.html:275 utils/consent_texts.py:126
+msgid "DPL"
+msgstr ""
+
+#: models/form.py:341
+msgid "Sorry, this form has expired."
+msgstr ""
+
+#. i18n: Thanks text displayed when completing form as user
+#: models/form.py:370
+msgid "Thank you!!"
+msgstr ""
+
+#. i18n: Example title in template for new form
+#: models/form.py:730
+msgid "Form title"
+msgstr ""
+
+#. i18n: Example subtitle in template for new form
+#: models/form.py:732
+msgid "Context"
+msgstr ""
+
+#. i18n: Example content in template for new form. '\n' is used for linebreak.
+#: models/form.py:734
+msgid ""
+" * Describe your form.\n"
+" * Add relevant content, links, images, etc."
+msgstr ""
+
+#. i18n: Template message for email invitation. '\n' is used for linebreak.
+#: models/invite.py:65
+msgid ""
+"Hello,\n"
+"\n"
+"You have been invited to LiberaForms.\n"
+"\n"
+"Regards."
+msgstr ""
+
+#: models/site.py:161 templates/site/email-branding.html:82
+msgid "Ethical form software"
+msgstr ""
+
+#: models/site.py:363 templates/admin/inspect-user.html:20
+#: templates/admin/list-users.html:42 templates/site/list-admins.html:25
+#: utils/wtf.py:26 utils/wtf.py:63
+msgid "Username"
+msgstr ""
+
+#. i18n: Used as column title
+#: models/site.py:366 templates/admin/list-users.html:47
+#: templates/form/inspect-form.html:259 templates/form/inspect-form.html:282
+#: templates/site/list-admins.html:27 templates/user/consent.html:29
+msgid "Enabled"
+msgstr ""
+
+#. i18n: Email address, used as column title
+#: models/site.py:368 templates/admin/inspect-user.html:42
+#: templates/admin/list-invites.html:27 templates/admin/list-users.html:48
+#: templates/site/list-admins.html:28 utils/wtf.py:27
+msgid "Email"
+msgstr "Courriel"
+
+#. i18n: Used as column title
+#: models/site.py:370 templates/admin/delete-user.html:27
+#: templates/admin/inspect-user.html:151 templates/admin/list-users.html:49
+#: templates/base.html:64 templates/site/list-admins.html:29
+msgid "Forms"
+msgstr ""
+
+#. i18n: Whether user is admin
+#: models/site.py:372 templates/admin/inspect-user.html:83
+#: templates/admin/list-invites.html:31 templates/admin/list-users.html:50
+msgid "Admin"
+msgstr ""
+
+#. i18n: Boolean option: True or False
+#: models/site.py:382 models/site.py:383 templates/admin/admin-panel.html:118
+#: templates/admin/admin-panel.html:153 templates/admin/inspect-user.html:49
+#: templates/admin/inspect-user.html:68 templates/admin/inspect-user.html:90
+#: templates/admin/inspect-user.html:112 templates/admin/inspect-user.html:174
+#: templates/answers/chart-answers.html:72
+#: templates/answers/list-answers.html:110
+#: templates/answers/list-answers.html:172 templates/form/expiration.html:34
+#: templates/form/inspect-form.html:116 templates/form/inspect-form.html:126
+#: templates/form/inspect-form.html:160 templates/form/inspect-form.html:230
+#: templates/form/inspect-form.html:241 templates/form/inspect-form.html:297
+#: templates/user/user-settings.html:110 templates/user/user-settings.html:209
+#: templates/user/user-settings.html:236
+msgid "True"
+msgstr ""
+
+#: models/site.py:382 models/site.py:383 templates/admin/admin-panel.html:123
+#: templates/admin/admin-panel.html:159 templates/admin/inspect-user.html:51
+#: templates/admin/inspect-user.html:76 templates/admin/inspect-user.html:96
+#: templates/admin/inspect-user.html:119 templates/admin/inspect-user.html:176
+#: templates/answers/chart-answers.html:79
+#: templates/answers/list-answers.html:118
+#: templates/answers/list-answers.html:174 templates/form/expiration.html:41
+#: templates/form/inspect-form.html:121 templates/form/inspect-form.html:128
+#: templates/form/inspect-form.html:153 templates/form/inspect-form.html:162
+#: templates/form/inspect-form.html:236 templates/form/inspect-form.html:243
+#: templates/form/inspect-form.html:299 templates/user/user-settings.html:120
+#: templates/user/user-settings.html:219 templates/user/user-settings.html:246
+msgid "False"
+msgstr ""
+
+#. Used as website menu title, only for admin, linking to page about instance
+#. users
+#: templates/admin/delete-user.html:34 templates/admin/inspect-user.html:161
+#: templates/admin/list-users.html:14 templates/base.html:70
+msgid "Users"
+msgstr ""
+
+#. Used as website menu title, only for admin, linking to page about instance
+#. configuration
+#: templates/base.html:76
+msgid "Config"
+msgstr ""
+
+#. Used as website menu title, linking to page about user's forms
+#: templates/base.html:95 templates/form/my-forms.html:15
+msgid "My forms"
+msgstr ""
+
+#. Used as website menu title, linking to page about user's settings
+#: templates/base.html:102
+msgid "Settings"
+msgstr ""
+
+#. Used as website menu title, to log out
+#: templates/base.html:108
+msgid "Logout"
+msgstr ""
+
+#. Used as website menu title before logging in, when open registration is
+#. enabled, linking to page to create new user
+#: templates/base.html:124
+msgid "Create an account"
+msgstr ""
+
+#. Used as website menu title before logging in, linking to page to log in
+#: templates/base.html:131 templates/user/login.html:11
+#: templates/user/login.html:24
+msgid "Login"
+msgstr ""
+
+#: templates/base.html:173
+msgid "User guide"
+msgstr ""
+
+#. Main title displayed on site configuration page (/admin)
+#: templates/admin/admin-panel.html:13
+msgid "Site configuration"
+msgstr ""
+
+#. Subtitle displayed on instance configuration page (/admin)
+#: templates/admin/admin-panel.html:18
+msgid "Look and feel"
+msgstr ""
+
+#. Name for the website/instance
+#: templates/admin/admin-panel.html:24
+msgid "Site name"
+msgstr ""
+
+#. Button to change some option
+#: templates/admin/admin-panel.html:33 templates/admin/admin-panel.html:46
+#: templates/admin/admin-panel.html:61 templates/admin/admin-panel.html:72
+#: templates/admin/admin-panel.html:84 templates/admin/admin-panel.html:104
+#: templates/site/edit-host-url.html:57 templates/user/user-settings.html:42
+#: templates/user/user-settings.html:60 templates/user/user-settings.html:71
+#: templates/user/user-settings.html:84
+msgid "Change"
+msgstr "Changer"
+
+#. Option in admin settings about changing instance welcoming text
+#: templates/admin/admin-panel.html:40
+msgid "Front page text"
+msgstr ""
+
+#. Icon for the website
+#: templates/admin/admin-panel.html:53
+msgid "Logo"
+msgstr ""
+
+#. Website's primary color
+#: templates/admin/admin-panel.html:67 templates/site/set-primary-color.html:9
+msgid "Primary color"
+msgstr ""
+
+#. Define the 'look' of emails
+#: templates/admin/admin-panel.html:79 templates/site/email-branding.html:16
+msgid "Email branding"
+msgstr ""
+
+#. Title in Admin panel refering to configurations concerning new users
+#: templates/admin/admin-panel.html:93 templates/user/new-user.html:12
+msgid "New user"
+msgstr ""
+
+#. Default language for instance, setting on Instance configuration
+#: templates/admin/admin-panel.html:98
+msgid "Default language"
+msgstr ""
+
+#. Whether to enable new users attaching documents into forms
+#: templates/admin/admin-panel.html:111
+msgid "Enable form attachments"
+msgstr ""
+
+#: templates/admin/admin-panel.html:130
+msgid "Default timezone"
+msgstr ""
+
+#. Subtitle displayed on instance configuration page (/admin)
+#: templates/admin/admin-panel.html:140
+msgid "Site settings"
+msgstr ""
+
+#. Whether to enable open registration, or remain invitation only
+#: templates/admin/admin-panel.html:145
+msgid "Invitation only"
+msgstr ""
+
+#. Noun, meaning agreement with terms/conditions of use
+#: templates/admin/admin-panel.html:166
+msgid "Consent"
+msgstr ""
+
+#: templates/admin/admin-panel.html:168 templates/user/new-user.html:51
+msgid "Terms and conditions"
+msgstr ""
+
+#. 'etc' here stands for "and so on" at the end of a list
+#: templates/admin/admin-panel.html:171
+msgid "etc"
+msgstr ""
+
+#. Button to edit some option
+#: templates/admin/admin-panel.html:178 templates/admin/admin-panel.html:193
+#: templates/admin/admin-panel.html:217 templates/site/consent.html:35
+#: templates/user/consent.html:33 templates/user/user-settings.html:132
+#: templates/user/user-settings.html:152 templates/user/user-settings.html:182
+msgid "Edit"
+msgstr ""
+
+#. Which type of attachments are allowed
+#: templates/admin/admin-panel.html:186
+msgid "Attachment types"
+msgstr ""
+
+#. Subtitle displayed on instance configuration page (/admin)
+#: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:510
+msgid "Super Admin options"
+msgstr ""
+
+#. Settings about the generated public URL
+#: templates/admin/admin-panel.html:210
+msgid "Public links"
+msgstr ""
+
+#. Settings about email server used by website to send email messages
+#: templates/admin/admin-panel.html:223 utils/wtf.py:108
+msgid "Email server"
+msgstr "Serveur de messagerie"
+
+#. Button to configure some option
+#: templates/admin/admin-panel.html:228 templates/user/user-settings.html:170
+msgid "Configure"
+msgstr ""
+
+#. Title in Admin panel displaying info about installation
+#: templates/admin/admin-panel.html:238
+msgid "Installation"
+msgstr ""
+
+#: templates/admin/admin-panel.html:246
+msgid "Version"
+msgstr ""
+
+#. Button for going back to form
+#: templates/admin/change-author.html:16 templates/form/delete-form.html:16
+#: templates/form/edit-form.html:27 templates/form/expiration.html:21
+#: templates/form/fedi-publish.html:15 templates/form/list-log.html:17
+#: templates/form/share-form.html:14
+msgid "Return to form"
+msgstr ""
+
+#. Changing author of the form
+#: templates/admin/change-author.html:22 templates/admin/change-author.html:67
+#: templates/form/inspect-form.html:515
+msgid "Change author"
+msgstr "Changer l'auteur"
+
+#. Table row showing form site, instance
+#: templates/admin/change-author.html:29
+msgid "Form site"
+msgstr ""
+
+#: templates/admin/change-author.html:34
+msgid "Current author"
+msgstr ""
+
+#: templates/admin/change-author.html:39
+msgid "You are going to change the author of this form."
+msgstr ""
+
+#: templates/admin/change-author.html:41
+#: templates/answers/list-answers.html:342
+msgid "Are you sure?"
+msgstr ""
+
+#. Username of current author of form
+#: templates/admin/change-author.html:54
+msgid "Current author's username"
+msgstr ""
+
+#. Username of new author for form
+#: templates/admin/change-author.html:61
+msgid "New author's username"
+msgstr ""
+
+#. Users who can edit a specific form, but is not the original author
+#: templates/admin/change-author.html:75 templates/form/inspect-form.html:168
+#: templates/form/share-form.html:27
+msgid "Editors"
+msgstr ""
+
+#. Author of the form
+#: templates/admin/change-author.html:85 templates/admin/inspect-user.html:160
+#: templates/admin/list-forms.html:28 templates/form/inspect-form.html:348
+#: templates/form/share-form.html:42
+msgid "Author"
+msgstr ""
+
+#. Editor of the form
+#: templates/admin/change-author.html:88
+msgid "Editor"
+msgstr ""
+
+#. Title and button to delete user
+#: templates/admin/delete-user.html:15 templates/admin/delete-user.html:73
+#: templates/admin/inspect-user.html:136
+msgid "Delete user"
+msgstr ""
+
+#: templates/admin/delete-user.html:18
+msgid "You are going to delete a user"
+msgstr ""
+
+#. consecution of the sentence "You are going to delete a user", if that user
+#. has any form
+#: templates/admin/delete-user.html:21
+msgid "and their forms"
+msgstr ""
+
+#. Table column title, indicating name of a user or a form
+#: templates/admin/delete-user.html:33 templates/admin/inspect-user.html:158
+#: templates/admin/list-forms.html:26 templates/form/inspect-form.html:50
+#: templates/form/my-forms.html:48
+msgid "Name"
+msgstr ""
+
+#. Table column title, indicating answers recived for a form
+#: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:164
+#: templates/admin/inspect-user.html:282 templates/admin/list-forms.html:32
+#: templates/answers/chart-answers.html:118 templates/form/my-forms.html:49
+#: templates/site/stats.html:46 templates/site/stats.html:122
+#: templates/user/statistics.html:31
+msgid "Answers"
+msgstr ""
+
+#: templates/admin/delete-user.html:49
+msgid "Write the name of the user below"
+msgstr ""
+
+#: templates/admin/delete-user.html:69
+msgid "Delete user and forms"
+msgstr ""
+
+#. Button to cancel operation
+#: templates/admin/delete-user.html:77 templates/admin/new-invite.html:53
+#: templates/admin/new-invite.html:59
+#: templates/answers/delete-all-answers.html:45
+#: templates/answers/list-answers.html:298
+#: templates/answers/list-answers.html:344
+#: templates/common/change-language.html:42
+#: templates/common/change-language.html:44 templates/form/edit-form.html:125
+#: templates/form/edit-form.html:131 templates/form/expiration.html:186
+#: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:317
+#: templates/form/inspect-form.html:401 templates/form/inspect-form.html:435
+#: templates/form/preview-form.html:69 templates/form/preview-form.html:80
+#: templates/main/index.html:31 templates/site/change-icon.html:47
+#: templates/site/change-sitename.html:32 templates/site/consent.html:76
+#: templates/site/delete-site.html:37 templates/site/edit-mimetypes.html:34
+#: templates/site/email-branding.html:102
+#: templates/site/set-primary-color.html:62 templates/site/smtp-config.html:59
+#: templates/user/change-email.html:24 templates/user/change-timezone.html:42
+#: templates/user/consent.html:61 templates/user/delete-account.html:58
+#: templates/user/new-user.html:93 templates/user/recover-password.html:25
+msgid "Cancel"
+msgstr ""
+
+#: templates/admin/inspect-user.html:16
+msgid "User details"
+msgstr ""
+
+#. Hostname of user, admin or form. The hostname is same as instance URL, for
+#. example "erabili.liberaforms.org"
+#: templates/admin/inspect-user.html:26 templates/admin/list-forms.html:34
+#: templates/admin/list-users.html:45 templates/form/inspect-form.html:369
+#: templates/site/list-admins.html:24
+msgid "Hostname"
+msgstr ""
+
+#. Language selected by user
+#: templates/admin/inspect-user.html:38
+msgid "Language"
+msgstr ""
+
+#. Whether the email of user was validated
+#: templates/admin/inspect-user.html:47
+msgid "Validated email"
+msgstr "Courriel validé"
+
+#. Whether user is able to upload media and solicit attachments
+#: templates/admin/inspect-user.html:58
+#, fuzzy
+msgid "Uploads enabled"
+msgstr "Téléverser un fichier"
+
+#. Whether user is blocked by admin
+#: templates/admin/inspect-user.html:103
+msgid "Blocked by admin"
+msgstr ""
+
+#: templates/admin/inspect-user.html:130
+msgid "Delete user and authored forms"
+msgstr ""
+
+#: templates/admin/inspect-user.html:145 templates/admin/list-forms.html:18
+#: templates/admin/list-users.html:17 templates/form/my-forms.html:33
+msgid "Statistics"
+msgstr ""
+
+#. Whether for is public
+#: templates/admin/inspect-user.html:163 templates/admin/list-forms.html:29
+#: templates/form/inspect-form.html:109 templates/form/my-forms.html:52
+msgid "Public"
+msgstr ""
+
+#: templates/admin/inspect-user.html:290 templates/form/inspect-form.html:42
+#: templates/site/stats.html:53 templates/site/stats.html:129
+#: templates/user/statistics.html:40
+msgid "Total answers"
+msgstr ""
+
+#: templates/admin/inspect-user.html:297 templates/site/stats.html:61
+#: templates/site/stats.html:137 templates/user/statistics.html:48
+msgid "New forms"
+msgstr ""
+
+#: templates/admin/inspect-user.html:305 templates/site/stats.html:68
+#: templates/site/stats.html:144 templates/user/statistics.html:55
+msgid "Total forms"
+msgstr ""
+
+#. Title on /admin/forms page
+#: templates/admin/list-forms.html:15
+msgid "All forms"
+msgstr ""
+
+#. Shows when was the last answer received on form
+#: templates/admin/list-forms.html:31 templates/form/inspect-form.html:54
+#: templates/form/my-forms.html:50
+msgid "Last answer"
+msgstr ""
+
+#. Title on /admin/invites page
+#: templates/admin/list-invites.html:14 templates/admin/list-invites.html:69
+#: templates/admin/list-users.html:27
+msgid "Invitations"
+msgstr ""
+
+#. Button to invite new user
+#: templates/admin/list-invites.html:19 templates/admin/list-users.html:22
+msgid "Invite a new user"
+msgstr ""
+
+#: templates/admin/list-invites.html:54 templates/answers/list-answers.html:343
+#: templates/form/delete-form.html:40 templates/site/delete-site.html:36
+#: templates/user/fediverse-config.html:72
+#: templates/user/user-settings.html:263
+msgid "Delete"
+msgstr ""
+
+#: templates/admin/list-invites.html:61
+msgid "Invitation message"
+msgstr ""
+
+#. Button to download answers received on form in CSV document format
+#: templates/admin/list-users.html:33 templates/answers/chart-answers.html:29
+#: templates/answers/chart-answers.html:52
+#: templates/answers/list-answers.html:49
+#: templates/answers/list-answers.html:55 templates/site/list-admins.html:15
+msgid "Download CSV"
+msgstr ""
+
+#. Title on /admin/invites/new page
+#: templates/admin/new-invite.html:13
+msgid "Send a new user invitation"
+msgstr ""
+
+#: templates/admin/new-invite.html:28
+msgid "The link to the invitation will be appended to this message"
+msgstr ""
+
+#. Button to send new user invitation message via email
+#: templates/admin/new-invite.html:47
+msgid "Send email"
+msgstr "Envoyer un courriel"
+
+#: templates/answers/chart-answers.html:21
+#: templates/answers/chart-answers.html:46 templates/form/inspect-form.html:29
+msgid "View answers"
+msgstr ""
+
+#: templates/answers/chart-answers.html:38
+#: templates/answers/list-answers.html:32
+msgid "Form details"
+msgstr ""
+
+#: templates/answers/chart-answers.html:82
+#: templates/answers/list-answers.html:121 templates/user/user-settings.html:97
+msgid "Notify me on each new answer"
+msgstr ""
+
+#: templates/answers/chart-answers.html:95
+msgid "Multiple choice"
+msgstr ""
+
+#: templates/answers/delete-all-answers.html:15
+#: templates/answers/delete-all-answers.html:42
+msgid "Delete answers"
+msgstr ""
+
+#: templates/answers/delete-all-answers.html:18
+#: templates/form/inspect-form.html:523 views/form.py:165
+msgid "Form"
+msgstr ""
+
+#: templates/answers/delete-all-answers.html:21
+msgid "You are going to delete"
+msgstr ""
+
+#: templates/answers/delete-all-answers.html:22
+#: templates/form/delete-form.html:27 templates/form/expiration.html:153
+#: templates/site/delete-site.html:22
+msgid "answers"
+msgstr ""
+
+#: templates/answers/delete-all-answers.html:25
+msgid "Write the total number of answers below"
+msgstr ""
+
+#: templates/answers/list-answers.html:42 templates/form/inspect-form.html:37
+msgid "Graphs"
+msgstr ""
+
+#: templates/answers/list-answers.html:64
+msgid "Disable edition"
+msgstr ""
+
+#: templates/answers/list-answers.html:70
+msgid "Enable edition"
+msgstr ""
+
+#: templates/answers/list-answers.html:79
+msgid "Hide deleted columns"
+msgstr ""
+
+#: templates/answers/list-answers.html:85
+msgid "Show deleted columns"
+msgstr ""
+
+#: templates/answers/list-answers.html:92
+msgid "Delete all"
+msgstr ""
+
+#: templates/answers/list-answers.html:166
+#: templates/answers/list-answers.html:168
+msgid "Mark"
+msgstr ""
+
+#: templates/answers/list-answers.html:253
+msgid "Delete answer"
+msgstr ""
+
+#: templates/answers/list-answers.html:297
+#: templates/common/change-language.html:40 templates/form/edit-form.html:120
+#: templates/form/expiration.html:182 templates/form/inspect-form.html:313
+#: templates/form/inspect-form.html:397 templates/form/inspect-form.html:431
+#: templates/form/preview-form.html:59 templates/main/index.html:27
+#: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
+#: templates/site/email-branding.html:92
+#: templates/site/set-primary-color.html:61 templates/user/change-email.html:23
+#: templates/user/change-timezone.html:38 templates/user/consent.html:60
+#: templates/user/fediverse-config.html:66
+msgid "Save"
+msgstr ""
+
+#: templates/common/change-language.html:12
+msgid "Change language"
+msgstr ""
+
+#: templates/form/_image-modal.html:41 templates/media/list-media.html:66
+msgid "A photo of a horse galloping on the beach."
+msgstr ""
+
+#: templates/form/delete-form.html:22 templates/form/inspect-form.html:474
+msgid "Delete form"
+msgstr ""
+
+#: templates/form/delete-form.html:25
+msgid "You are going to delete this form and"
+msgstr ""
+
+#: templates/form/delete-form.html:30
+msgid "Write the name of the form below"
+msgstr ""
+
+#: templates/form/edit-form.html:31
+msgid "Build your form here"
+msgstr ""
+
+#: templates/form/edit-form.html:41
+msgid "Introduction text"
+msgstr ""
+
+#: templates/form/edit-form.html:44
+msgid "This is a markdown editor, an easy way to write HTML."
+msgstr ""
+
+#: templates/form/edit-form.html:47
+msgid "Learn more"
+msgstr ""
+
+#: templates/form/edit-form.html:57
+msgid "The form"
+msgstr ""
+
+#: templates/form/edit-form.html:84
+msgid "Your form will have this address"
+msgstr ""
+
+#: templates/form/edit-form.html:107
+msgid "This URL is not available. Try another!"
+msgstr ""
+
+#: templates/form/edit-form.html:115 templates/form/edit-form.html:280
+#: templates/form/preview-form.html:17
+msgid "Preview"
+msgstr ""
+
+#: templates/form/edit-form.html:265
+msgid "OK, use this URL"
+msgstr ""
+
+#: templates/form/edit-form.html:316
+msgid "Cannot modify because an answer with this value exists in the database"
+msgstr ""
+
+#: templates/form/expiration.html:44
+msgid "Notify me when this form expires"
+msgstr ""
+
+#: templates/form/expiration.html:50 templates/form/inspect-form.html:158
+msgid "Expired"
+msgstr ""
+
+#: templates/form/expiration.html:57
+msgid "Expiration conditions"
+msgstr ""
+
+#: templates/form/expiration.html:61
+msgid "Date / Time"
+msgstr ""
+
+#: templates/form/expiration.html:83 templates/site/smtp-config.html:56
+msgid "Save changes"
+msgstr ""
+
+#: templates/form/expiration.html:95
+msgid "Fields"
+msgstr ""
+
+#: templates/form/expiration.html:119
+msgid "Save max."
+msgstr ""
+
+#: templates/form/expiration.html:132
+msgid "Maximum answers"
+msgstr ""
+
+#: templates/form/expiration.html:139
+msgid "The form will expire after"
+msgstr ""
+
+#: templates/form/expiration.html:165 templates/form/inspect-form.html:410
+msgid "When the form has expired"
+msgstr ""
+
+#: templates/form/expiration.html:168 templates/form/inspect-form.html:381
+#: templates/form/inspect-form.html:415 templates/main/index.html:43
+msgid "Edit text"
+msgstr ""
+
+#: templates/form/expiration.html:173 templates/form/inspect-form.html:421
+msgid "Say something to the user if the form has expired"
+msgstr ""
+
+#. node_name stands for name of a Fediverse node: 'Publish on barcelona.social'
+#: templates/form/fedi-publish.html:22
+#, python-format
+msgid "Publish on %(node_name)s"
+msgstr ""
+
+#: templates/form/fedi-publish.html:38
+msgid "Total characters:"
+msgstr ""
+
+#: templates/form/fedi-publish.html:48
+msgid "Publish"
+msgstr ""
+
+#: templates/form/inspect-form.html:23
+msgid "Details"
+msgstr ""
+
+#: templates/form/inspect-form.html:69
+msgid "Public URL"
+msgstr ""
+
+#: templates/form/inspect-form.html:72 templates/form/inspect-form.html:265
+#: templates/form/inspect-form.html:287 templates/form/inspect-form.html:351
+#: templates/user/consent.html:30
+msgid "Disabled"
+msgstr ""
+
+#: templates/form/inspect-form.html:92
+msgid "Fediverse"
+msgstr ""
+
+#: templates/form/inspect-form.html:100
+msgid "Published"
+msgstr ""
+
+#: templates/form/inspect-form.html:134
+msgid "Expiration"
+msgstr ""
+
+#: templates/form/inspect-form.html:141
+msgid "This form has expired"
+msgstr ""
+
+#: templates/form/inspect-form.html:147
+msgid "This form will expire"
+msgstr ""
+
+#: templates/form/inspect-form.html:177 templates/form/inspect-form.html:190
+msgid "Form shared with"
+msgstr ""
+
+#: templates/form/inspect-form.html:186
+msgid "Add editors"
+msgstr ""
+
+#: templates/form/inspect-form.html:196
+msgid "Shared answers"
+msgstr ""
+
+#: templates/form/inspect-form.html:205
+msgid "Answers shared with"
+msgstr ""
+
+#: templates/form/inspect-form.html:214
+msgid "Share"
+msgstr ""
+
+#: templates/form/inspect-form.html:223 templates/form/share-form.html:127
+msgid "Restricted access"
+msgstr ""
+
+#: templates/form/inspect-form.html:250
+msgid "Confirmation"
+msgstr ""
+
+#: templates/form/inspect-form.html:293 templates/site/email-branding.html:54
+msgid "Personalize"
+msgstr ""
+
+#: templates/form/inspect-form.html:308 templates/site/consent.html:30
+#: templates/user/consent.html:22
+msgid "Data protection"
+msgstr ""
+
+#: templates/form/inspect-form.html:323
+msgid "Use the template"
+msgstr ""
+
+#: templates/form/inspect-form.html:330 templates/form/inspect-form.html:763
+#: templates/form/inspect-form.html:802 templates/site/consent.html:64
+#: templates/site/consent.html:83 templates/user/consent.html:48
+#: templates/user/consent.html:67 templates/user/new-user.html:66
+#: utils/consent_texts.py:61
+msgid "I agree"
+msgstr ""
+
+#: templates/form/inspect-form.html:376
+msgid "After replying to the form"
+msgstr ""
+
+#: templates/form/inspect-form.html:387
+msgid "Say something to the user after the form has been submitted"
+msgstr ""
+
+#: templates/form/inspect-form.html:445
+msgid "Other options"
+msgstr ""
+
+#: templates/form/inspect-form.html:456
+msgid "View log"
+msgstr ""
+
+#: templates/form/inspect-form.html:461
+msgid "Duplicate form"
+msgstr ""
+
+#: templates/form/inspect-form.html:467
+msgid "Embed form"
+msgstr ""
+
+#: templates/form/inspect-form.html:480
+msgid "Delete form and answers"
+msgstr ""
+
+#: templates/form/inspect-form.html:487
+msgid "Admin options"
+msgstr ""
+
+#: templates/form/inspect-form.html:492
+msgid "Duplicate"
+msgstr ""
+
+#: templates/form/inspect-form.html:498
+msgid "Disable"
+msgstr ""
+
+#: templates/form/inspect-form.html:504
+msgid "Enable"
+msgstr ""
+
+#: templates/form/inspect-form.html:529
+msgid "Edit form"
+msgstr ""
+
+#: templates/form/inspect-form.html:543 templates/form/preview-form.html:26
+#: templates/form/view-form.html:30
+msgid "Required fields"
+msgstr ""
+
+#: templates/form/inspect-form.html:559 templates/form/view-form.html:57
+msgid "Send me confirmation by mail"
+msgstr "M'envoyer une confirmation par courriel"
+
+#: templates/form/inspect-form.html:586 templates/form/preview-form.html:35
+#: templates/form/view-form.html:87 templates/site/smtp-config.html:84
+msgid "Send"
+msgstr ""
+
+#: templates/form/list-log.html:22
+msgid "Log"
+msgstr ""
+
+#: templates/form/list-log.html:26
+msgid "Time"
+msgstr ""
+
+#: templates/form/list-log.html:27 utils/wtf.py:115
+msgid "User"
+msgstr ""
+
+#: templates/form/list-log.html:28
+msgid "Message"
+msgstr ""
+
+#: templates/form/list-templates.html:11
+msgid "Form templates"
+msgstr ""
+
+#: templates/form/list-templates.html:15
+msgid "We have put together some forms that you can use to get started."
+msgstr ""
+
+#: templates/form/list-templates.html:16
+msgid "Choose the template that best suits your needs and edit it to fit."
+msgstr ""
+
+#: templates/form/list-templates.html:31
+msgid "Show more"
+msgstr ""
+
+#: templates/form/my-forms.html:21
+msgid "Templates"
+msgstr ""
+
+#: templates/form/my-forms.html:27
+msgid "New form"
+msgstr ""
+
+#: templates/form/my-forms.html:53 templates/site/consent.html:38
+msgid "Shared"
+msgstr ""
+
+#: templates/form/preview-form.html:15
+msgid "Template"
+msgstr ""
+
+#: templates/form/preview-form.html:45
+msgid "Create a form with this template"
+msgstr ""
+
+#: templates/form/preview-form.html:50 templates/site/consent.html:105
+#: templates/site/edit-host-url.html:63 templates/user/new-user.html:91
+msgid "Go back"
+msgstr ""
+
+#: templates/form/preview-form.html:64 templates/form/preview-form.html:75
+msgid "Edit again"
+msgstr ""
+
+#: templates/form/share-form.html:30
+msgid "Users listed here have the <b>same permissions</b> as you"
+msgstr ""
+
+#: templates/form/share-form.html:46 templates/form/share-form.html:93
+#: templates/media/list-media.html:127 templates/media/list-media.html:178
+msgid "Remove"
+msgstr ""
+
+#: templates/form/share-form.html:65
+msgid "Add new editor"
+msgstr ""
+
+#: templates/form/share-form.html:80
+msgid "Share the answers"
+msgstr ""
+
+#: templates/form/share-form.html:83
+msgid "Users listed here can view this form's answers"
+msgstr ""
+
+#: templates/form/share-form.html:111
+msgid "Add user"
+msgstr ""
+
+#: templates/form/share-form.html:129
+msgid "Only visible to people with a user account (login required)"
+msgstr ""
+
+#: templates/form/share-form.html:134
+msgid "Restricted"
+msgstr ""
+
+#: templates/form/share-form.html:138
+msgid "Public form"
+msgstr ""
+
+#: templates/form/view-form.html:171 templates/form/view-form.html:172
+#: templates/form/view-form.html:173 templates/form/view-form.html:174
+msgid "The file should be no larger than"
+msgstr ""
+
+#: templates/form/view-form.html:192 templates/form/view-form.html:193
+#: templates/form/view-form.html:194 templates/form/view-form.html:195
+msgid "Valid file types"
+msgstr ""
+
+#: templates/main/page-not-found.html:9
+msgid "Opps! 404"
+msgstr ""
+
+#: templates/main/server-error.html:7
+msgid "Opps! 500 server error"
+msgstr ""
+
+#: templates/media/list-media.html:27
+msgid "My media"
+msgstr ""
+
+#: templates/media/list-media.html:35 templates/media/list-media.html:56
+msgid "Upload a file"
+msgstr "Téléverser un fichier"
+
+#: templates/media/list-media.html:41
+msgid "These files can be included in your forms."
+msgstr ""
+
+#: templates/media/list-media.html:44
+msgid "You can help save disk space on the server by deleting unused files."
+msgstr ""
+
+#: templates/media/list-media.html:94 templates/site/change-icon.html:38
+msgid "Upload"
+msgstr "Téléverser"
+
+#: templates/site/change-icon.html:16
+msgid "Change site icon"
+msgstr ""
+
+#: templates/site/change-icon.html:18
+msgid "Upload an image"
+msgstr "Téléverser une image"
+
+#: templates/site/change-icon.html:24
+msgid "A square image"
+msgstr ""
+
+#: templates/site/change-icon.html:25 templates/site/email-branding.html:64
+msgid "Keep the kilobytes to a minimum"
+msgstr ""
+
+#: templates/site/change-icon.html:42
+msgid "Use default"
+msgstr ""
+
+#: templates/site/change-sitename.html:10
+msgid "Change site name"
+msgstr ""
+
+#: templates/site/change-sitename.html:12
+msgid "New site name"
+msgstr ""
+
+#: templates/site/change-sitename.html:28 templates/user/new-user.html:89
+msgid "Submit"
+msgstr ""
+
+#: templates/site/consent.html:14
+msgid "Consent texts"
+msgstr ""
+
+#: templates/site/consent.html:17
+msgid "Preview New user form"
+msgstr ""
+
+#: templates/site/consent.html:28
+msgid "Site terms and conditions"
+msgstr ""
+
+#: templates/site/consent.html:32 templates/user/consent.html:24
+#, python-format
+msgid "%(consent_name)s"
+msgstr ""
+
+#: templates/site/consent.html:39
+msgid "No"
+msgstr ""
+
+#: templates/site/consent.html:44
+msgid "Add to New user form"
+msgstr ""
+
+#: templates/site/consent.html:52
+msgid "New users must agree to these terms and conditions"
+msgstr ""
+
+#: templates/site/consent.html:88 templates/user/consent.html:72
+msgid "Required"
+msgstr ""
+
+#: templates/site/consent.html:96
+msgid "Form consent texts"
+msgstr ""
+
+#: templates/site/consent.html:99
+msgid "Shared texts can be used by other users in their forms as templates"
+msgstr ""
+
+#: templates/site/delete-site.html:11
+msgid "Delete site"
+msgstr ""
+
+#: templates/site/delete-site.html:13
+msgid "You are going to delete this Site"
+msgstr ""
+
+#: templates/site/delete-site.html:16
+msgid "Including"
+msgstr ""
+
+#: templates/site/delete-site.html:18
+msgid "users"
+msgstr ""
+
+#: templates/site/delete-site.html:20
+msgid "forms"
+msgstr ""
+
+#: templates/site/delete-site.html:25
+msgid "Write the name of the site below"
+msgstr ""
+
+#: templates/site/edit-host-url.html:12
+msgid "Public link creation"
+msgstr ""
+
+#: templates/site/edit-host-url.html:21
+msgid "Scheme"
+msgstr ""
+
+#: templates/site/edit-host-url.html:44 utils/wtf.py:109
+msgid "Port"
+msgstr ""
+
+#: templates/site/edit-mimetypes.html:11
+msgid "Form attachments"
+msgstr ""
+
+#: templates/site/edit-mimetypes.html:14
+msgid "These file types can be uploaded with the forms"
+msgstr ""
+
+#: templates/site/edit-mimetypes.html:42
+msgid "Enabled mimetypes"
+msgstr ""
+
+#: templates/site/email-branding.html:20
+msgid "LiberaForms will occasionally send emails."
+msgstr "LiberaForms enverra occasionnellement des courriels."
+
+#: templates/site/email-branding.html:24
+msgid "Example email:"
+msgstr "Courriel d'exemple :"
+
+#: templates/site/email-branding.html:46
+msgid "Send test"
+msgstr ""
+
+#: templates/site/email-branding.html:97
+msgid "Use default image"
+msgstr ""
+
+#: templates/site/list-admins.html:12
+msgid "Admins"
+msgstr ""
+
+#: templates/site/smtp-config.html:10
+msgid "Email server configuration"
+msgstr "Configuration du serveur de messagerie"
+
+#: templates/site/smtp-config.html:67
+msgid "Test configuration"
+msgstr ""
+
+#: templates/site/stats.html:14
+msgid "Site statistics"
+msgstr ""
+
+#: templates/site/stats.html:77 templates/site/stats.html:153
+msgid "New users"
+msgstr ""
+
+#: templates/site/stats.html:85 templates/site/stats.html:161
+msgid "Total users"
+msgstr ""
+
+#: templates/user/change-email.html:9
+msgid "Change email address"
+msgstr "Changer l'adresse courriel"
+
+#: templates/user/change-timezone.html:12
+msgid "Change your time zone"
+msgstr ""
+
+#: templates/user/change-timezone.html:26
+msgid "Search for country or city name"
+msgstr ""
+
+#: templates/user/change-timezone.html:27 templates/user/user-settings.html:76
+#: utils/wtf.py:139
+msgid "Time zone"
+msgstr ""
+
+#: templates/user/consent.html:14
+msgid "Default consent text"
+msgstr ""
+
+#: templates/user/consent.html:80
+msgid "Users may include the following texts in their forms"
+msgstr ""
+
+#: templates/user/delete-account.html:10 templates/user/delete-account.html:54
+msgid "Delete account"
+msgstr ""
+
+#: templates/user/delete-account.html:13
+msgid "You will delete your account and the following data"
+msgstr ""
+
+#: templates/user/delete-account.html:17
+msgid "The forms you have created"
+msgstr ""
+
+#: templates/user/delete-account.html:21
+msgid "The replies to those forms"
+msgstr ""
+
+#: templates/user/delete-account.html:49
+msgid "This is irreversible!"
+msgstr ""
+
+#: templates/user/fediverse-config.html:14
+#: templates/user/user-settings.html:160
+msgid "Fediverse connect"
+msgstr ""
+
+#: templates/user/fediverse-config.html:17
+msgid "Publish your forms on the descentralized social media network"
+msgstr ""
+
+#: templates/user/fediverse-config.html:37
+msgid "Generate"
+msgstr ""
+
+#: templates/user/login.html:25
+msgid "Forgot your password?"
+msgstr ""
+
+#: templates/user/new-user.html:18
+msgid "Letters and numbers. No accents."
+msgstr ""
+
+#: templates/user/new-user.html:33 templates/user/reset-password.html:18
+msgid "Use a password with spaces and/or special characters."
+msgstr "Utilisez un mot de passe avec des espaces ou des caractères spéciaux"
+
+#: templates/user/new-user.html:33 templates/user/reset-password.html:18
+msgid "We suggest you use a sentence you will remember."
+msgstr ""
+
+#: templates/user/new-user.html:34 templates/user/reset-password.html:19
+msgid "eg: Peter cooks delicious food"
+msgstr ""
+
+#: templates/user/new-user.html:41 templates/user/reset-password.html:26
+msgid "Another eg: The cat living with me has fleas"
+msgstr ""
+
+#: templates/user/new-user.html:106
+msgid "We sent you an email!"
+msgstr "Nous vous avons envoyé un courriel !"
+
+#: templates/user/recover-password.html:11
+msgid "Recover password"
+msgstr ""
+
+#: templates/user/recover-password.html:24
+msgid "Recover"
+msgstr ""
+
+#: templates/user/reset-password.html:12
+msgid "Change password"
+msgstr ""
+
+#: templates/user/reset-password.html:32
+msgid "Reset password"
+msgstr ""
+
+#: templates/user/statistics.html:12
+msgid "My statistics"
+msgstr ""
+
+#: templates/user/user-settings.html:12
+#, python-format
+msgid "Hello %(user)s!"
+msgstr ""
+
+#: templates/user/user-settings.html:18
+#, fuzzy
+msgid "We have sent you a link to validate your email address"
+msgstr "Utilisez ce lien pour valider votre adresse courriel"
+
+#: templates/user/user-settings.html:24
+#, fuzzy
+msgid "Send again"
+msgstr "Envoyer un courriel"
+
+#: templates/user/user-settings.html:34 utils/wtf.py:86
+msgid "Email address"
+msgstr "Adresse courriel"
+
+#: templates/user/user-settings.html:47 utils/wtf.py:28 utils/wtf.py:64
+#: utils/wtf.py:97 utils/wtf.py:116
+msgid "Password"
+msgstr ""
+
+#: templates/user/user-settings.html:65
+msgid "Preferred language"
+msgstr ""
+
+#: templates/user/user-settings.html:92
+msgid "Email notifications"
+msgstr "Notifications par courriel"
+
+#: templates/user/user-settings.html:127 templates/user/user-settings.html:177
+msgid "Consentment texts"
+msgstr ""
+
+#: templates/user/user-settings.html:141
+msgid "Media"
+msgstr ""
+
+#: templates/user/user-settings.html:147
+msgid "Add and delete uploaded files"
+msgstr "Ajouter et supprimer les fichiers téléversés"
+
+#: templates/user/user-settings.html:192
+msgid "My admin settings"
+msgstr ""
+
+#: templates/user/user-settings.html:197
+msgid "Notify me when new user has registered"
+msgstr ""
+
+#: templates/user/user-settings.html:225
+msgid "Notify me when new form has been created"
+msgstr ""
+
+#: templates/user/user-settings.html:257
+msgid "Delete my account"
+msgstr ""
+
+#: utils/consent_texts.py:115
+msgid "Please accept our terms and conditions."
+msgstr ""
+
+#: utils/consent_texts.py:127
+msgid ""
+"We take your data protection seriously. Please contact us for any "
+"inquiries."
+msgstr ""
+
+#: utils/wraps.py:115
+msgid "That's a nasty key!"
+msgstr ""
+
+#: utils/wraps.py:126
+msgid "That's a nasty token!"
+msgstr ""
+
+#: utils/wtf.py:29 utils/wtf.py:98
+msgid "Password again"
+msgstr ""
+
+#: utils/wtf.py:35
+msgid "Username is not valid"
+msgstr ""
+
+#: utils/wtf.py:38 utils/wtf.py:41
+msgid "Please use a different username"
+msgstr ""
+
+#: utils/wtf.py:45 utils/wtf.py:94 utils/wtf.py:129
+msgid "Please use a different email address"
+msgstr "Veuillez utiliser une autre adresse courriel"
+
+#: utils/wtf.py:49 utils/wtf.py:104
+msgid "Your password is weak"
+msgstr ""
+
+#: utils/wtf.py:54
+msgid "Please accept our terms and conditions"
+msgstr ""
+
+#: utils/wtf.py:59
+msgid "Please accept our data protection policy"
+msgstr ""
+
+#: utils/wtf.py:72
+msgid "Enter your username"
+msgstr ""
+
+#: utils/wtf.py:73
+msgid "Enter your password"
+msgstr ""
+
+#: utils/wtf.py:77
+msgid "That is not your username"
+msgstr "Ce n'est pas votre nom d'utilisateur"
+
+#: utils/wtf.py:82
+msgid "That is not your password"
+msgstr "Ce n'est pas votre mot de passe"
+
+#: utils/wtf.py:90
+msgid "New email address"
+msgstr "Nouvelle adresse courriel"
+
+#: utils/wtf.py:110
+msgid "Encryption"
+msgstr ""
+
+#: utils/wtf.py:117
+msgid "Sender address"
+msgstr ""
+
+#: utils/wtf.py:123
+msgid "New user's email"
+msgstr "Courriel du nouvel utilisateur"
+
+#: utils/wtf.py:124
+msgid "Include message"
+msgstr ""
+
+#: utils/wtf.py:125
+msgid "Make the new user an Admin"
+msgstr ""
+
+#: utils/wtf.py:133
+msgid "HTML color code"
+msgstr ""
+
+#: utils/wtf.py:136
+msgid "Not a valid HTML color code"
+msgstr ""
+
+#: utils/wtf.py:142
+msgid "Not a valid time zone"
+msgstr ""
+
+#: utils/wtf.py:145
+msgid "Extensions"
+msgstr ""
+
+#: utils/wtf.py:152
+#, python-format
+msgid "Unknown file extension: %s"
+msgstr ""
+
+#: utils/wtf.py:155
+msgid "Descriptive text"
+msgstr ""
+
+#: utils/wtf.py:156
+msgid "Select a file"
+msgstr ""
+
+#: utils/wtf.py:175
+msgid "Footer text"
+msgstr ""
+
+#: utils/wtf.py:176
+msgid "Header image"
+msgstr ""
+
+#: utils/wtf.py:191
+msgid "Fediverse node"
+msgstr ""
+
+#: utils/wtf.py:194
+msgid "Access token"
+msgstr "Jeton d'accès"
+
+#: utils/wtf.py:203
+msgid "Short description"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:46
+msgid "A button"
+msgstr "Un bouton"
+
+#: utils/dispatcher/dispatcher.py:70
+msgid "Congratulations!"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:72
+msgid "MAIL test"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:82
+msgid "Join LiberaForms"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:85
+msgid "Invitation to LiberaForms"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:93
+msgid "Please use this link to create a new password"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:94
+msgid "If you did not request this email you can ignore it"
+msgstr "Si vous n'avez pas demandé ce courriel, vous pouvez l'ignorer."
+
+#: utils/dispatcher/dispatcher.py:98
+msgid "Recover your password"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:102
+msgid "LiberaForms. Recover password"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:110
+msgid "Use this link to validate your email"
+msgstr "Utilisez ce lien pour valider votre adresse courriel"
+
+#: utils/dispatcher/dispatcher.py:114
+msgid "Validate email"
+msgstr "Courriel validé"
+
+#: utils/dispatcher/dispatcher.py:117
+msgid "LiberaForms. Email validation"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:128
+#, python-format
+msgid "New user '%s' created at %s"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:131
+msgid "LiberaForms. New user notification"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:145
+#, python-format
+msgid "New form '%s' created at %s"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:147
+msgid "LiberaForms. New form notification"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:158
+#, python-format
+msgid "New form answer in %s at %s\n"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:162
+msgid "LiberaForms. New form answer"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:178
+msgid "Confirmation message"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:184
+#, python-format
+msgid "The form '%s' has expired at %s"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:185
+msgid "LiberaForms. A form has expired"
+msgstr ""
+
+#: utils/dispatcher/dispatcher.py:199
+msgid "LiberaForms. Email brand preview"
+msgstr ""
+
+#: views/admin.py:52 views/admin.py:98
+msgid "User not found"
+msgstr ""
+
+#: views/admin.py:103
+msgid "Cannot delete root user"
+msgstr ""
+
+#: views/admin.py:106
+msgid "Cannot delete yourself"
+msgstr ""
+
+#: views/admin.py:111
+#, python-format
+msgid "Deleted user '%s'"
+msgstr ""
+
+#: views/admin.py:114
+msgid "Username does not match"
+msgstr ""
+
+#: views/admin.py:142 views/admin.py:217 views/answers.py:31
+#: views/answers.py:44 views/answers.py:54 views/answers.py:130
+#: views/form.py:145 views/form.py:312 views/form.py:333 views/form.py:354
+#: views/form.py:390 views/form.py:402 views/form.py:456 views/form.py:508
+#: views/form.py:579 views/form.py:594 views/form.py:681
+msgid "Can't find that form"
+msgstr "Impossible de trouver ce formulaire"
+
+#: views/admin.py:171
+#, python-format
+msgid "We have sent an invitation to %s"
+msgstr ""
+
+#. i18n: Invitation to dave@example.com deleted OK
+#: views/admin.py:189
+#, python-format
+msgid "Invitation to %s deleted OK"
+msgstr ""
+
+#: views/admin.py:191
+msgid "Opps! We can't find that invitation"
+msgstr ""
+
+#: views/admin.py:223
+msgid "Current author incorrect"
+msgstr ""
+
+#: views/admin.py:231
+#, python-format
+msgid "Changed author from %s to %s"
+msgstr ""
+
+#: views/admin.py:235
+msgid "Changed author OK"
+msgstr ""
+
+#: views/admin.py:239
+#, python-format
+msgid "Cannot use %s. The user is not enabled"
+msgstr ""
+
+#: views/admin.py:243
+#, python-format
+msgid "Can't find username %s"
+msgstr "Impossible de trouver le nom d'utilisateur %s"
+
+#: views/answers.py:78
+msgid "Deleted an answer"
+msgstr ""
+
+#: views/answers.py:121
+msgid "Modified an answer"
+msgstr ""
+
+#: views/answers.py:136
+msgid "We expected a number"
+msgstr ""
+
+#: views/answers.py:140
+msgid "Deleted all answers"
+msgstr ""
+
+#: views/answers.py:144
+#, python-format
+msgid "Deleted %s answers"
+msgstr ""
+
+#: views/answers.py:148
+msgid "Number of answers does not match"
+msgstr ""
+
+#: views/form.py:68
+msgid "Something went wrong. ID does not match session['form_id']"
+msgstr ""
+
+#: views/form.py:73
+msgid "You can't edit that form"
+msgstr ""
+
+#: views/form.py:81
+msgid "Something went wrong. Slug not unique!"
+msgstr ""
+
+#: views/form.py:84
+msgid "Something went wrong. No slug!"
+msgstr ""
+
+#: views/form.py:185
+msgid "Updated form OK"
+msgstr ""
+
+#: views/form.py:186
+msgid "Form edited"
+msgstr ""
+
+#: views/form.py:191
+msgid "Slug is missing."
+msgstr ""
+
+#: views/form.py:195
+#, python-format
+msgid "Slug is not available. %s"
+msgstr ""
+
+#: views/form.py:231
+msgid "Failed to save form"
+msgstr ""
+
+#: views/form.py:234
+msgid "Form created"
+msgstr ""
+
+#: views/form.py:235
+msgid "Saved form OK"
+msgstr ""
+
+#: views/form.py:256
+msgid "Edited GDPR text"
+msgstr ""
+
+#: views/form.py:258 views/form.py:269 views/form.py:285 views/form.py:302
+#: views/site.py:102
+msgid "An error occured"
+msgstr ""
+
+#: views/form.py:281
+msgid "Edited Thankyou text"
+msgstr ""
+
+#: views/form.py:298
+msgid "Edited expiry text"
+msgstr ""
+
+#: views/form.py:318
+#, python-format
+msgid "Deleted '%s' and %s answers"
+msgstr ""
+
+#: views/form.py:324
+msgid "Form name does not match"
+msgstr ""
+
+#: views/form.py:337
+msgid "Permission needed to view form"
+msgstr ""
+
+#: views/form.py:357
+msgid "Fediverse connect is not configured"
+msgstr ""
+
+#: views/form.py:368
+#, python-format
+msgid "Published at %s"
+msgstr ""
+
+#: views/form.py:408 views/form.py:462
+msgid "Can't find a user with that email"
+msgstr "Impossible d'ajouter un utilisateur avec ce courriel"
+
+#. i18n: %s stands for the user name here
+#: views/form.py:412 views/form.py:465
+#, python-format
+msgid "This form is already shared with %s"
+msgstr ""
+
+#: views/form.py:420 views/form.py:473
+msgid "Added user OK"
+msgstr ""
+
+#: views/form.py:421
+#, python-format
+msgid "Added editor %s"
+msgstr ""
+
+#: views/form.py:424 views/form.py:478
+msgid "Could not add the user"
+msgstr ""
+
+#: views/form.py:433 views/form.py:487
+#, fuzzy
+msgid "Cannot find that form"
+msgstr "Impossible de trouver ce formulaire"
+
+#: views/form.py:436
+#, python-format
+msgid "%s is the form author"
+msgstr ""
+
+#: views/form.py:444
+#, python-format
+msgid "Removed editor %s"
+msgstr ""
+
+#: views/form.py:447 views/form.py:499
+#, fuzzy
+msgid "Cannot find user %"
+msgstr "Impossible de trouver le nom d'utilisateur %s"
+
+#. i18n: %s stands for the user name here
+#: views/form.py:475
+#, python-format
+msgid "Added read only user %s"
+msgstr ""
+
+#. i18n: %s stands for the user name here
+#: views/form.py:496
+#, python-format
+msgid "Removed user %s"
+msgstr ""
+
+#: views/form.py:523
+msgid "Date-time is not valid"
+msgstr ""
+
+#: views/form.py:528
+#, python-format
+msgid "Expiry date set to: %s"
+msgstr ""
+
+#: views/form.py:532
+msgid "Expiry date cancelled"
+msgstr ""
+
+#: views/form.py:534
+msgid "Missing date or time"
+msgstr ""
+
+#: views/form.py:551
+#, python-format
+msgid "Field '%s' expiry set to: %s"
+msgstr ""
+
+#. i18n: Expire when total answers set to: 3
+#: views/form.py:569
+#, python-format
+msgid "Expire when total answers set to: %s"
+msgstr ""
+
+#: views/form.py:585
+msgid "You can edit the duplicate now"
+msgstr "Vous pouvez modifier le duplicata maintenant"
+
+#: views/form.py:609
+#, python-format
+msgid "Public set to: %s"
+msgstr ""
+
+#: views/form.py:620
+#, python-format
+msgid "Restricted access set to: %s"
+msgstr ""
+
+#: views/form.py:631
+#, python-format
+msgid "Data protection consent set to: %s"
+msgstr ""
+
+#: views/form.py:642
+#, python-format
+msgid "Send Confirmation set to: %s"
+msgstr ""
+
+#: views/form.py:688
+msgid "That form has expired"
+msgstr "Ce formulaire a expiré"
+
+#: views/form.py:690
+msgid "That form is not public"
+msgstr "Ce formulaire n'est pas public"
+
+#: views/form.py:808
+msgid "Copied template OK. You can edit your new form"
+msgstr ""
+
+#: views/site.py:35
+msgid "Text saved OK"
+msgstr ""
+
+#: views/site.py:47
+msgid "Couldn't find that token"
+msgstr ""
+
+#: views/site.py:50 views/user.py:292
+msgid "Your petition has expired"
+msgstr ""
+
+#: views/site.py:55
+msgid "Your account has been blocked"
+msgstr ""
+
+#: views/site.py:80
+msgid "We may have sent you an email"
+msgstr "Nous vous avons peut-être envoyé un courriel"
+
+#: views/site.py:130
+msgid "Site name changed OK"
+msgstr ""
+
+#: views/site.py:143 views/user.py:149
+msgid "Language updated OK"
+msgstr ""
+
+#: views/site.py:154
+msgid "Required file is missing"
+msgstr ""
+
+#: views/site.py:160
+msgid "Logo changed OK. Refresh with  &lt;F5&gt;"
+msgstr ""
+
+#: views/site.py:165
+msgid "An image file is required"
+msgstr ""
+
+#: views/site.py:174
+msgid "Logo reset OK. Refresh with  &lt;F5&gt;"
+msgstr ""
+
+#: views/site.py:195
+msgid "Enabled file extensions updated OK"
+msgstr ""
+
+#: views/site.py:221
+msgid "Color changed OK"
+msgstr ""
+
+#: views/site.py:236
+msgid "Updated OK. Refresh with &lt;F5&gt;"
+msgstr ""
+
+#: views/site.py:248
+msgid "Reset image OK. Refresh with &lt;F5&gt;"
+msgstr ""
+
+#: views/site.py:267
+msgid "Sent email OK"
+msgstr "Courriel bien envoyé"
+
+#: views/site.py:271
+msgid "Email address is not valid"
+msgstr "L'adresse courriel n'est paa valide"
+
+#: views/site.py:301
+msgid "Confguration saved OK"
+msgstr ""
+
+#: views/site.py:315
+msgid "SMTP config works!"
+msgstr ""
+
+#: views/user.py:44
+msgid "Invitation not found"
+msgstr ""
+
+#: views/user.py:47
+msgid "This invitation has expired"
+msgstr ""
+
+#: views/user.py:82
+msgid "Opps! An error ocurred when creating the user"
+msgstr ""
+
+#: views/user.py:91
+msgid "Welcome!"
+msgstr ""
+
+#: views/user.py:130 views/user.py:165
+#, python-format
+msgid "We have sent an email to %s"
+msgstr "Nous avons envoyé un courriel à %s"
+
+#: views/user.py:181
+msgid "Password changed OK"
+msgstr ""
+
+#: views/user.py:194
+msgid "Time zone changed OK"
+msgstr ""
+
+#: views/user.py:222
+msgid "Could not encrypt your access token"
+msgstr ""
+
+#: views/user.py:224
+msgid "Connected to the Fediverse"
+msgstr ""
+
+#: views/user.py:243
+msgid "Fediverse configuration deleted OK"
+msgstr ""
+
+#: views/user.py:256
+msgid "Cannot delete. You are the only Admin on this site"
+msgstr ""
+
+#: views/user.py:264
+msgid "Thank you for using LiberaForms"
+msgstr ""
+
+#: views/user.py:289
+msgid "We couldn't find that petition"
+msgstr ""
+
+#: views/user.py:304
+msgid "Your email address is valid"
+msgstr "Votre adresse électronique est valide"
+
+#: views/user.py:338
+msgid "Bad credentials"
+msgstr ""
+
+#~ msgid "Attachments enabled"
+#~ msgstr ""
+
+#~ msgid "Shared with"
+#~ msgstr ""
+
+#~ msgid "Not shared"
+#~ msgstr ""
+
+#~ msgid "Share notifications"
+#~ msgstr ""
+
+#~ msgid "Send emails to other people"
+#~ msgstr "Envoyer des courriels aux autres personnes"
+
+#~ msgid "Send 'new answer' and expiry notifications to these other addresses"
+#~ msgstr ""
+
+#~ msgid "Add address"
+#~ msgstr "Ajouter une adresse"
+
+#~ msgid "Share results"
+#~ msgstr ""
+
+#~ msgid "Readonly access for <b>anyone</b> with a copy of these links"
+#~ msgstr ""
+
+#~ msgid "Please validate your email to continue"
+#~ msgstr "Veuillez confirmer votre adresse courriel pour continuer"
+
+#~ msgid "Validate"
+#~ msgstr ""
+
+#~ msgid "LiberaForms. Change email"
+#~ msgstr "LiberaForms. Changer de courriel"
+
+#~ msgid "Something went wrong. id does not match session['form_id']"
+#~ msgstr ""
+
+#~ msgid "%s is already an editor"
+#~ msgstr ""
+
+#~ msgid "New editor added ok"
+#~ msgstr ""
+
+#~ msgid "Added shared notification: %s"
+#~ msgstr ""
+
+#~ msgid "Removed shared notification: %s"
+#~ msgstr ""
+
+#~ msgid "Shared answers set to: %s"
+#~ msgstr ""
+
+#~ msgid "Added user ok"
+#~ msgstr ""
+

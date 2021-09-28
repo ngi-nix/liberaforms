@@ -7,47 +7,52 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2019-07-22 23:59+0200\n"
+"POT-Creation-Date: 2021-08-04 12:30+0200\n"
 "PO-Revision-Date: 2020-09-15 17:09+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
 "Language-Team: es <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 2.4.1\n"
+"Generated-By: Babel 2.9.1\n"
 
-#: form_templates/form_templates.py:26 form_templates/form_templates.py:29
+#: form_templates/form_templates.py:13
 msgid "One day congress"
 msgstr "Congreso de un día"
 
-#: form_templates/form_templates.py:34
+#: form_templates/form_templates.py:15
+msgid ""
+"# hello\n"
+"one two three"
+msgstr ""
+
+#: form_templates/form_templates.py:19
 msgid "Room 1. Municipal Strategies"
 msgstr "Aula 1. Estrategias municipales"
 
-#: form_templates/form_templates.py:35
+#: form_templates/form_templates.py:20
 msgid "Room 2. Decentralized tech. Freedom of speech"
 msgstr "Aula 2. Tecnología descentralizada. Libertad de expresión"
 
-#: form_templates/form_templates.py:46
+#: form_templates/form_templates.py:31
 msgid "Vegan"
 msgstr "Vegana"
 
-#: form_templates/form_templates.py:47
+#: form_templates/form_templates.py:32
 msgid "Vegaterian"
 msgstr "Vegateriana"
 
-#: form_templates/form_templates.py:48
+#: form_templates/form_templates.py:33
 msgid "I'm eating else where"
 msgstr "Comeré en algún otro lugar"
 
-#: form_templates/form_templates.py:55 form_templates/form_templates.py:58
+#: form_templates/form_templates.py:40
 msgid "Summer courses"
 msgstr "Cursos de verano"
 
-#: form_templates/form_templates.py:56
+#: form_templates/form_templates.py:41
 msgid ""
 "Students can enroll in a variety of activities spread out across three "
 "days."
@@ -55,26 +60,31 @@ msgstr ""
 "Los estudiantes pueden inscribirse en una variedad de actividades "
 "repartidas a lo largo de tres días."
 
-#: form_templates/form_templates.py:65
+#: form_templates/form_templates.py:42 form_templates/form_templates.py:73
+msgid "# hello"
+msgstr ""
+
+#: form_templates/form_templates.py:49
 msgid "Tuesday 25th"
 msgstr "Martes 25"
 
-#: form_templates/form_templates.py:87 form_templates/form_templates.py:90
+#: form_templates/form_templates.py:71
 msgid "Save our shelter"
 msgstr "Salvamos el refugio"
 
-#: form_templates/form_templates.py:88
+#: form_templates/form_templates.py:72
 msgid "Petition citizen support for your local initiative."
 msgstr "Pide apoyo popular para tu iniciativa local."
 
-#: form_templates/form_templates.py:92
+#: form_templates/form_templates.py:75
 msgid "ID number"
 msgstr "DNI"
 
-#: form_templates/form_templates.py:93
+#: form_templates/form_templates.py:76
 msgid "Email"
 msgstr "Correo-e"
 
-#: form_templates/form_templates.py:94
+#: form_templates/form_templates.py:77
 msgid "Comments"
 msgstr "Comentarios"
+

@@ -1,199 +1,176 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
-<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/data-display/data-display.css">
 <script src="/static/chartjs/2.9.3/Chart.bundle.min.js"></script>
 
 {% set stats = user.get_statistics() %}
 {% set forms = user.get_forms() %}
 
 <div class="container">
-<div class="row">
-    <div class="col-md-4">
-        <div class="title_1 delimited">
-            {%trans%}User details{%endtrans%}
-        </div>
-        <table class="table table-sm table-striped">
+  <div class="row">
+    <div class="col-md-4 mb-4">
+      <div class="title_1 delimited">
+          {%trans%}User details{%endtrans%}
+      </div>
+      <table class="table table-sm table-striped w-100 d-block d-table">
+        <tbody">
+        <tr>
+           <td>{%trans%}Username{%endtrans%}</td>
+           <td>{{ user.username }}</td>
+        </tr>
+        {% if g.is_root_user_enabled %}
             <tr>
-               <td>{%trans%}Username{%endtrans%}</td>
-               <td>{{ user.username }}</td>
+               {# i18n: Hostname of user, admin or form. The hostname is same as instance URL, for example "erabili.liberaforms.org" #}
+               <td>{%trans%}Hostname{%endtrans%}</td>
+               <td>{{ user.hostname }}</td>
             </tr>
-            {% if g.is_root_user_enabled %}
-                <tr>
-                   {# i18n: Hostname of user, admin or form. The hostname is same as instance URL, for example "erabili.liberaforms.org" #}
-                   <td>{%trans%}Hostname{%endtrans%}</td>
-                   <td>{{ user.hostname }}</td>
-                </tr>
-            {% endif %}
-            <tr>
-               <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ user.created }}</td>
-            </tr>
-            <tr>
-              {# i18n: Language selected by user #}
-               <td>{%trans%}Language{%endtrans%}</td>
-               <td>{{ config['LANGUAGES'][user.language][0] }}</td>
-            </tr>
-            <tr>
-               <td>{%trans%}Email{%endtrans%}</td>
-               <td>{{ user.email }}</td>
-            </tr>
-            <tr>
-              {# i18n: Whether the email of user was validated #}
-               <td>{%trans%}Validated email{%endtrans%}</td>
-               <td> {% if user.validatedEmail %}
-                    <span>{%trans%}True{%endtrans%}</span>
-                    {% else %}
-                    <span class="highlightedText">{%trans%}False{%endtrans%}</span>
-                    {% endif %}
-                </td>
-            </tr>
-            {% if config['ENABLE_UPLOADS'] %}
-            <tr>
-              {# i18n: Whether user is able to upload attached documents to form #}
-              <td>{%trans%}Attachments enabled{%endtrans%}</td>
-              <td>
-                <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
-                  <button id="uploads_enabled_true"
-                          class="btn btn-xs
-                                 btn-default
-                                 {% if user.get_uploads_enabled() %}btn-success{% endif %}
-                  ">
-                      {%trans%}True{%endtrans%}
-                  </button>
-                  <button id="uploads_enabled_false"
-                          class="btn btn-xs
-                                 btn-default
-                                 {% if not user.get_uploads_enabled() %}btn-primary{% endif %}
-                  ">
-                    {%trans%}False{%endtrans%}
-                  </button>
-                </div>
-              </td>
-            </tr>
-            {% endif %}
-            <tr>
-              <td>{%trans%}Admin{%endtrans%}</td>
-              <td>
-                <div id="toggle_admin" class="btn-group btn-toggle">
-                  <button id="admin_true"
-                          class="btn btn-xs
-                                 btn-default
-                                 {% if user.is_admin() %}btn-success{% endif %}">
-                      {%trans%}True{%endtrans%}
-                  </button>
-                  <button id="admin_false"
-                          class="btn btn-xs
-                                 btn-default
-                                 {% if not user.is_admin() %}btn-primary{% endif %}">
-                    {%trans%}False{%endtrans%}
-                  </button>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              {# i18n: Whether user is blocked by admin #}
-               <td>{%trans%}Blocked by admin{%endtrans%}</td>
-               <td>
-                   <div id="toggle_blocked"
-                        class="btn-group btn-toggle">
-                      <button id="blocked_true"
-                              class="btn
-                                     btn-xs
-                                     btn-default
-                                     {% if user.blocked %}btn-success{% endif %}">
-                            {%trans%}True{%endtrans%}
-                      </button>
-                      <button id="blocked_false"
-                              class="btn
-                                     btn-xs
-                                     btn-default
-                                     {% if not user.blocked %}btn-primary{% endif %}">
-                            {%trans%}False{%endtrans%}
-                      </button>
-                   </div>
-                </td>
-            </tr>
-        </table>
-        {% if not user.id == g.current_user.id %}
-            {% if forms.count() %}
-            <input class="btn-warning
-                          btn btn-sm"
-                   type="button"
-                   value="{%trans%}Delete user and authored forms{%endtrans%}"
-                   onClick="location.href='/admin/users/delete/{{user.id}}'">
-            {% else %}
-            <input class="btn-warning
-                          btn btn-sm"
-                   type="button"
-                   value="{%trans%}Delete user{%endtrans%}"
-                   onClick="location.href='/admin/users/delete/{{user.id}}'">
-            {% endif %}
         {% endif %}
+        <tr>
+           <td>{%trans%}Created{%endtrans%}</td>
+           <td>
+             {{ user.get_created_date() }}
+           </td>
+        </tr>
+        <tr>
+          {# i18n: Language selected by user #}
+           <td>{%trans%}Language{%endtrans%}</td>
+           <td>{{ config['LANGUAGES'][user.language][0] }}</td>
+        </tr>
+        <tr>
+           <td>{%trans%}Email{%endtrans%}</td>
+           <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+          {# i18n: Whether the email of user was validated #}
+           <td>{%trans%}Validated email{%endtrans%}</td>
+           <td> {% if user.validatedEmail %}
+                <span>{%trans%}True{%endtrans%}</span>
+                {% else %}
+                <span class="highlightedText">{%trans%}False{%endtrans%}</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% if config['ENABLE_UPLOADS'] %}
+        <tr>
+          {# i18n: Whether user is able to upload media and solicit attachments #}
+          <td>{%trans%}Uploads enabled{%endtrans%}</td>
+          <td>
+            <div id="toggle_uploads_enabled"
+                 class="btn-group btn-toggle">
+              <button id="uploads_enabled_true"
+                      class="btn btn-xs
+                             btn-default
+                             {% if user.get_uploads_enabled() %}
+                             btn-success
+                             {% endif %}">
+                  {%trans%}True{%endtrans%}
+              </button>
+              <button id="uploads_enabled_false"
+                      class="btn btn-xs
+                             btn-default
+                             {% if not user.get_uploads_enabled() %}
+                             btn-primary
+                             {% endif %}">
+                {%trans%}False{%endtrans%}
+              </button>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+        <tr>
+          <td>{%trans%}Admin{%endtrans%}</td>
+          <td>
+            <div id="toggle_admin" class="btn-group btn-toggle">
+              <button id="admin_true"
+                      class="btn btn-xs
+                             btn-default
+                             {% if user.is_admin() %}btn-success{% endif %}">
+                  {%trans%}True{%endtrans%}
+              </button>
+              <button id="admin_false"
+                      class="btn btn-xs
+                             btn-default
+                             {% if not user.is_admin() %}btn-primary{% endif %}">
+                {%trans%}False{%endtrans%}
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Whether user is blocked by admin #}
+          <td>{%trans%}Blocked by admin{%endtrans%}</td>
+          <td>
+            <div id="toggle_blocked"
+                 class="btn-group btn-toggle">
+              <button id="blocked_true"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if user.blocked %}btn-success{% endif %}">
+                      {%trans%}True{%endtrans%}
+              </button>
+              <button id="blocked_false"
+                        class="btn
+                               btn-xs
+                               btn-default
+                               {% if not user.blocked %}btn-primary{% endif %}">
+                      {%trans%}False{%endtrans%}
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tbody>
+      </table>
+      {% if not user.id == g.current_user.id %}
+        {% if forms.count() %}
+        <input class="btn-warning
+                      btn btn-sm"
+               type="button"
+               value="{%trans%}Delete user and authored forms{%endtrans%}"
+               onClick="location.href='/admin/users/delete/{{user.id}}'">
+        {% else %}
+        <input class="btn-warning
+                      btn btn-sm"
+               type="button"
+               value="{%trans%}Delete user{%endtrans%}"
+               onClick="location.href='/admin/users/delete/{{user.id}}'">
+        {% endif %}
+      {% endif %}
 
     </div>
     <div class="col-md-8">
 
-    <div class="title_1 delimited">
-        {%trans%}Statistics{%endtrans%}
-    </div>
-    <canvas id="usage_chart" height="125"></canvas>
+      <div class="title_1 delimited">
+          {%trans%}Statistics{%endtrans%}
+      </div>
 
-    <div class="title_1 delimited" style="margin-top:2em">
-        {%trans%}Forms{%endtrans%}
-    </div>
-
-    <table id="forms" style="display:none" class="table table-sm table-striped">
-        <thead>
-            <tr>
-                <th>{%trans%}Name{%endtrans%}</th>
-                <th>{%trans%}Created{%endtrans%}</th>
-                <th>{%trans%}Author{%endtrans%}</th>
-                <th>{%trans%}Editors{%endtrans%}</th>
-                {# i18n: Whether for is public #}
-                <th>{%trans%}Public{%endtrans%}</th>
-                <th>{%trans%}Answers{%endtrans%}</th>
-            </tr>
-        </thead>
-
-        {% for form in forms %}
-        <tr>
-           <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-           <td>{{form.created}}</td>
-           <td>
-                {% if form.is_author(user) %}
-                    {%trans%}True{%endtrans%}
-                {% else %}
-                    {%trans%}False{%endtrans%}
-                {% endif %}
-            </td>
-           <td>{{form.editors|length}}</td>
-           <td>{{form.is_public()}}</td>
-           <td>{{form.get_answers().count()}}</td>
-        </tr>
-        {% endfor %}
-    </table>
+      <canvas id="usage_chart" height="125"></canvas>
 
     </div>
-</div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="title_1" style="margin:0.25em 0 0 0">
+          {%trans%}Forms{%endtrans%}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div data-vue-component="data-display"
+           data-endpoint="/data-display/admin/user/{{user.id}}/forms"
+           data-language="{{ g.current_user.language }}"
+           data-csrf_token="{{ csrf_token() }}">
+      </div>
+    </div>
+  </div>
 </div>
 
+<script src="/static/data-display/data-display.js"></script>
 
 <script>
 var csrftoken = "{{ csrf_token() }}";
-$(document).ready(function() {
-    $('#forms').DataTable({
-        "language": {
-            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
-        },
-        "initComplete": function(settings, json) {
-            $("#forms").show();
-        },
-        "order": [[1, 'desc']]
-    });
-});
 document.getElementById('toggle_blocked').addEventListener('click', function(evt){
     $.ajax({
         url : "/admin/users/toggle-blocked/{{ user.id }}",
@@ -281,12 +258,28 @@ var time_chart = new Chart(ctx, {
 
             },
             {
-                label: ["{{ _('Forms')}}"],
-                data: {{ stats['forms']|tojson }},
+                label: ["{{ _('Total answers')}}"],
+                data: {{ stats['total_answers']|tojson }},
                 fill: true,
                 borderWidth: 0,
+                backgroundColor: "rgba(0, 190, 0, 0.7)",
+            },
+            {
+                label: ["{{ _('New forms')}}"],
+                data: {{ stats['forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
                 backgroundColor: "rgba(233, 132, 0, 0.7)",
-            }
+            },
+            {
+                label: ["{{ _('Total forms')}}"],
+                data: {{ stats['total_forms']|tojson }},
+                fill: true,
+                hidden: true,
+                borderWidth: 0,
+                backgroundColor: "rgba(255, 228, 0, 0.7)",
+            },
         ],
     },
     options: {

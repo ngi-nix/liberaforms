@@ -19,7 +19,7 @@ from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
 from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
-from liberaforms.utils.email.dispatcher import Dispatcher
+from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import validators
 from liberaforms.utils import wtf
 
@@ -51,18 +51,19 @@ def new_user(token=None):
     wtform=wtf.NewUser()
     if wtform.validate_on_submit():
         validatedEmail=False
+        is_first_admin = False if g.site.get_admins() else True
         adminSettings=User.default_admin_settings()
         if invite:
             if invite.email == wtform.email.data:
                 validatedEmail=True
             if invite.admin == True:
                 adminSettings['isAdmin']=True
-                # the first admin of a new Site needs to config.
-                # SMTP before we can send emails, but when validatedEmail=False,
-                # a validation email fails to be sent because SMTP is not congifured.
-                if not g.site.get_admins():
+                # the first admin of a new Site needs to config SMTP before
+                # we can send emails, but when validatedEmail=False we cannot
+                # send a validation email because SMTP is not congifured.
+                if is_first_admin:
                     validatedEmail=True
-        if wtform.email.data in os.environ['ROOT_USERS']:
+        if wtform.email.data in current_app.config['ROOT_USERS']:
             adminSettings["isAdmin"]=True
             validatedEmail=True
         new_user = User(
@@ -76,21 +77,22 @@ def new_user(token=None):
         )
         try:
             new_user.save()
-        except:
+        except Exception as error:
+            current_app.logger.error(error)
             flash(_("Opps! An error ocurred when creating the user"), 'error')
             return render_template('new-user.html')
         if invite:
             invite.delete()
-        Dispatcher().send_new_user_notification(new_user)
+        if not is_first_admin:
+            Dispatcher().send_new_user_notification(new_user)
         session["user_id"]=str(new_user.id)
         g.current_user = new_user
         babel_refresh()
         flash(_("Welcome!"), 'success')
-        if validatedEmail == True:
-            return redirect(make_url_for('form_bp.my_forms'))
-        else:
-            return redirect(make_url_for('user_bp.user_settings',
-                                         username=new_user.username))
+        if validatedEmail == False:
+            return send_email_validation()
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=g.current_user.username))
     if "user_id" in session:
         session.pop("user_id")
     if not wtform.email.data and invite:
@@ -125,7 +127,7 @@ def send_email_validation():
     status = Dispatcher().send_email_address_confirmation(g.current_user,
                                                           g.current_user.email)
     if status['email_sent'] == True:
-        flash(_("We've sent an email to %s") % g.current_user.email, 'info')
+        flash(_("We have sent an email to %s") % g.current_user.email, 'info')
     else:
         flash(status['msg'], 'warning')
         current_app.logger.warning(status['msg'])
@@ -160,7 +162,7 @@ def change_email():
         status = Dispatcher().send_email_address_confirmation(g.current_user,
                                                               wtform.email.data)
         if status['email_sent'] == True:
-            flash(_("We've sent an email to %s") % wtform.email.data, 'info')
+            flash(_("We have sent an email to %s") % wtform.email.data, 'info')
         else:
             # TODO: Tell the user that the email has not been sent
             pass
@@ -180,6 +182,67 @@ def reset_password():
         return redirect(make_url_for('user_bp.user_settings',
                                      username=g.current_user.username))
     return render_template('reset-password.html', wtform=wtform)
+
+
+@user_bp.route('/user/change-timezone', methods=['GET', 'POST'])
+@login_required
+def change_timezone():
+    wtform=wtf.ChangeTimeZone()
+    if wtform.validate_on_submit():
+        g.current_user.timezone = wtform.timezone.data
+        g.current_user.save()
+        flash(_("Time zone changed OK"), 'success')
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=g.current_user.username))
+    timezones = {}
+    tz_path = os.path.join(current_app.config['ROOT_DIR'], 'assets/timezones.txt')
+    with open(tz_path, 'r') as available_timezones:
+        lines = available_timezones.readlines()
+        for line in lines:
+            line=line.strip()
+            timezones[line] = line
+    return render_template('change-timezone.html',
+                            timezones=timezones,
+                            wtform=wtform)
+
+
+@user_bp.route('/user/<string:username>/fediverse', methods=['GET', 'POST'])
+@enabled_user_required
+def fediverse_config(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.fediverse_config',
+                                     username=g.current_user.username))
+    wtform=wtf.FediverseAuth()
+    if wtform.validate_on_submit():
+        data = {"node_url": wtform.node_url.data,
+                "access_token": wtform.access_token.data}
+        g.current_user.set_fedi_auth(data)
+        if not g.current_user.fedi_auth:
+            current_app.logger.warning('Could not encrypt access token')
+            flash(_("Could not encrypt your access token"), 'warning')
+        else:
+            flash(_("Connected to the Fediverse"), 'success')
+        g.current_user.save()
+        return redirect(make_url_for('user_bp.user_settings',
+                                     username=g.current_user.username))
+    if request.method == 'GET' and g.current_user.fedi_auth:
+        fedi_auth = g.current_user.get_fedi_auth()
+        if fedi_auth: # successfully decrypted
+            wtform.node_url.data = fedi_auth['node_url']
+            wtform.access_token.data = fedi_auth['access_token']
+    return render_template('fediverse-config.html', wtform=wtform)
+
+@user_bp.route('/user/<string:username>/fediverse/delete-auth', methods=['POST'])
+@enabled_user_required
+def fediverse_delete(username):
+    if username != g.current_user.username:
+        return redirect(make_url_for('user_bp.fediverse_delete',
+                                     username=g.current_user.username))
+    g.current_user.fedi_auth = {}
+    g.current_user.save()
+    flash(_("Fediverse configuration deleted OK"), 'success')
+    return redirect(make_url_for('user_bp.user_settings',
+                                 username=g.current_user.username))
 
 
 @user_bp.route('/user/delete-account/<string:user_id>', methods=['GET', 'POST'])
@@ -271,6 +334,7 @@ def login():
             else:
                 return redirect(make_url_for('form_bp.my_forms'))
         else:
+            current_app.logger.info('Failed login')
             flash(_("Bad credentials"), 'warning')
     return render_template('login.html', wtform=wtform)
 

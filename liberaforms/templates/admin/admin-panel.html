@@ -4,235 +4,252 @@
 <!-- admin-panel_page -->
 
 <div class="container">
-<div class="row">
-  <div class="col-md-3"></div>
-  <div class="col-md-6">
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
 
-    <div class="title_1 delimited">
-      {# i18n: Main title displayed on site configuration page (/admin) #}
-      {%trans%}Site configuration{%endtrans%}
-    </div>
+      <div class="title_1 delimited">
+        {# i18n: Main title displayed on site configuration page (/admin) #}
+        {%trans%}Site configuration{%endtrans%}
+      </div>
 
-    <div id="site_settings" class="title_2">
-      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
-      {%trans%}Site styling{%endtrans%}
-    </div>
+      <div id="site_settings" class="title_2">
+        {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+        {%trans%}Look and feel{%endtrans%}
+      </div>
 
-    <table class="table table-sm">
-      <tr>
-        {# i18n: Name for the website/instance #}
-        <td>{%trans%}Site name{%endtrans%}</td>
-        <td>
-        {{ site.siteName }}
-        </td>
-        <td class="text-right">
-          <a class="btn-primary btn btn-xs"
-             role="button"
-             href="/site/change-sitename">
-             {# i18n: Button to change some option #}
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          {# i18n: Option in admin settings about changing instance welcoming text #}
-          {%trans%}Front page text{%endtrans%}
-        </td>
-        <td class="text-right">
-          <a class="btn-primary btn btn-xs"
-             role="button"
-             href="/?edit=true">
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      <tr>
-        {# i18n: Icon for the website #}
-        <td>
-          {%trans%}Icon and Favicon{%endtrans%}
-        </td>
-        <td>
-          <img src="/favicon.ico" width=24 height=24 />
-        </td>
-        <td class="text-right">
-          <input class="btn-primary btn btn-xs"
-                 type="button"
-                 value="{%trans%}Change{%endtrans%}"
-                 onClick="location.href='/site/change-icon'">
-        </td>
-      </tr>
-      <tr>
-        {# i18n: Website's primary colour #}
-        <td>{%trans%}Primary colour{%endtrans%}</td>
-        <td>{{g.site.primary_color}}</td>
-        <td class="text-right">
-          <a class="btn btn-primary btn-xs"
-             role="button" href="/site/primary-colour">
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      <tr>
-        {# i18n: Define the 'look' of emails #}
-        <td colspan="2">
-          {%trans%}Email styling{%endtrans%}
-        </td>
-        <td class="text-right">
-          <a class="btn btn-primary btn-xs"
-             role="button" href="/site/email-branding">
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-    </table>
+      <table class="table table-sm">
+        <tr>
+          {# i18n: Name for the website/instance #}
+          <td>{%trans%}Site name{%endtrans%}</td>
+          <td>
+          {{ site.siteName }}
+          </td>
+          <td class="text-right">
+            <a class="btn-primary btn btn-xs"
+               role="button"
+               href="/site/change-sitename">
+               {# i18n: Button to change some option #}
+                {%trans%}Change{%endtrans%}
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            {# i18n: Option in admin settings about changing instance welcoming text #}
+            {%trans%}Front page text{%endtrans%}
+          </td>
+          <td class="text-right">
+            <a class="btn-primary btn btn-xs"
+               role="button"
+               href="/?edit=true">
+                {%trans%}Change{%endtrans%}
+            </a>
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Icon for the website #}
+          <td>
+            {%trans%}Logo{%endtrans%}
+          </td>
+          <td>
+            <img src="/favicon.ico" width=24 height=24 />
+          </td>
+          <td class="text-right">
+            <input class="btn-primary btn btn-xs"
+                   type="button"
+                   value="{%trans%}Change{%endtrans%}"
+                   onClick="location.href='/site/change-icon'">
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Website's primary color #}
+          <td>{%trans%}Primary color{%endtrans%}</td>
+          <td>{{g.site.primary_color}}</td>
+          <td class="text-right">
+            <a class="btn btn-primary btn-xs"
+               role="button" href="/site/primary-color">
+                {%trans%}Change{%endtrans%}
+            </a>
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Define the 'look' of emails #}
+          <td colspan="2">
+            {%trans%}Email branding{%endtrans%}
+          </td>
+          <td class="text-right">
+            <a class="btn btn-primary btn-xs"
+               role="button" href="/site/email-branding">
+                {%trans%}Change{%endtrans%}
+            </a>
+          </td>
+        </tr>
+      </table>
 
-    <p>&nbsp;</p>
-    <div id="site_settings" class="title_2">
-      {# i18n: Subtitle displayed on instance configuration page (/admin) #}
-      {%trans%}Site settings{%endtrans%}
-    </div>
-    <table class="table table-sm">
-      <tr>
-        {# i18n: Whether to enable open registration, or remain invitation only #}
-        <td>{%trans%}Invitation only{%endtrans%}</td>
-        <td></td>
-        <td class="text-right">
-          <div id="toggle_invitation_only" class="btn-group btn-toggle">
-          <button id="invitation_only_true"
-                  class="btn btn-xs btn-default
-                        {% if site.invitationOnly %}btn-success{% endif %}
-                  ">
-                  {%trans%}True{%endtrans%}
-          </button>
-          <button id="invitation_only_false"
-                  class="btn btn-xs btn-default
-                        {% if not site.invitationOnly %}btn-primary{% endif %}
-                  ">
-                  {%trans%}False{%endtrans%}
-          </button>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        {# i18n: Noun, meaning agreement with terms/conditions of use #}
-        <td>{%trans%}Consent{%endtrans%}</td>
-        <td>
-          {%trans%}Terms and conditions{%endtrans%},
-          {%trans%}DPL{%endtrans%},
-          {# i18n: 'etc' here stands for "and so on" at the end of a list #}
-          {%trans%}etc{%endtrans%}
-        </td>
-        <td class="text-right">
-          <a class="btn btn-primary btn-xs"
-             role="button"
-             href="/site/consent-texts">
-            {# i18n: Button to edit some option #}
-            {%trans%}Edit{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      {% if config['ENABLE_UPLOADS'] %}
-      <tr>
-        <td>
-          {# i18n: Which type of attachments are allowed #}
-          {%trans%}Attachment types{%endtrans%}
-        </td>
-        <td>
-          {{ ', '.join(g.site.mimetypes.extensions) }}
-        </td>
-        <td class="text-right">
-          <input  class="btn-primary btn btn-xs"
-                  type="button" value="{%trans%}Edit{%endtrans%}"
-                  onClick="location.href='/site/edit-mimetypes'">
-        </td>
-      </tr>
-      {% endif %}
+      <p>&nbsp;</p>
+      <div id="site_settings" class="title_2">
+        {# i18n: Title in Admin panel refering to configurations concerning new users #}
+        {%trans%}New user{%endtrans%}
+      </div>
+      <table class="table table-sm">
+        <tr>
+          {# i18n: Default language for instance, setting on Instance configuration #}
+          <td>{%trans%}Default language{%endtrans%}</td>
+          <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
+          <td class="text-right">
+            <a class="btn btn-primary btn-xs"
+               role="button"
+               href="/site/change-default-language">
+                {%trans%}Change{%endtrans%}
+            </a>
+          </td>
+        </tr>
+        {% if config['ENABLE_UPLOADS'] %}
+        <tr>
+          {# i18n: Whether to enable new users attaching documents into forms #}
+          <td>{%trans%}Enable form attachments{%endtrans%}</td>
+          <td></td>
+          <td class="text-right">
+            <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
+            <button id="uploads_enabled_true"
+                    class="btn btn-xs btn-default
+                          {% if site.newuser_enableuploads %}btn-success{% endif %}">
+                {%trans%}True{%endtrans%}
+            </button>
+            <button id="uploads_enabled_false"
+                    class="btn btn-xs btn-default
+                          {% if not site.newuser_enableuploads %}btn-primary{% endif %}">
+                {%trans%}False{%endtrans%}
+            </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            {%trans%}Default timezone{%endtrans%}
+          </td>
+          <td class="text-right">{{config['DEFAULT_TIMEZONE']}}</td>
+        </tr>
+        {% endif %}
+      </table>
+
+      <p>&nbsp;</p>
+      <div id="site_settings" class="title_2">
+        {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+        {%trans%}Site settings{%endtrans%}
+      </div>
+      <table class="table table-sm">
+        <tr>
+          {# i18n: Whether to enable open registration, or remain invitation only #}
+          <td>{%trans%}Invitation only{%endtrans%}</td>
+          <td></td>
+          <td class="text-right">
+            <div id="toggle_invitation_only" class="btn-group btn-toggle">
+            <button id="invitation_only_true"
+                    class="btn btn-xs btn-default
+                          {% if site.invitationOnly %}btn-success{% endif %}
+                    ">
+                    {%trans%}True{%endtrans%}
+            </button>
+            <button id="invitation_only_false"
+                    class="btn btn-xs btn-default
+                          {% if not site.invitationOnly %}btn-primary{% endif %}
+                    ">
+                    {%trans%}False{%endtrans%}
+            </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Noun, meaning agreement with terms/conditions of use #}
+          <td>{%trans%}Consent{%endtrans%}</td>
+          <td>
+            {%trans%}Terms and conditions{%endtrans%},
+            {%trans%}DPL{%endtrans%},
+            {# i18n: 'etc' here stands for "and so on" at the end of a list #}
+            {%trans%}etc{%endtrans%}
+          </td>
+          <td class="text-right">
+            <a class="btn btn-primary btn-xs"
+               role="button"
+               href="/site/consent-texts">
+              {# i18n: Button to edit some option #}
+              {%trans%}Edit{%endtrans%}
+            </a>
+          </td>
+        </tr>
+        {% if config['ENABLE_UPLOADS'] %}
+        <tr>
+          <td>
+            {# i18n: Which type of attachments are allowed #}
+            {%trans%}Attachment types{%endtrans%}
+          </td>
+          <td>
+            {{ ', '.join(g.site.mimetypes.extensions) }}
+          </td>
+          <td class="text-right">
+            <input  class="btn-primary btn btn-xs"
+                    type="button" value="{%trans%}Edit{%endtrans%}"
+                    onClick="location.href='/site/edit-mimetypes'">
+          </td>
+        </tr>
+        {% endif %}
+      </table>
+
       {% if g.current_user.is_root_user() %}
-      <tr>
-        <td colspan="2">
-          {%trans%}Public links{%endtrans%}
-        </td>
-        <td class="text-right">
-          <input  class="btn-primary btn btn-xs"
-                  type="button" value="{%trans%}Edit{%endtrans%}"
-                  onClick="location.href='/site/edit'">
-        </td>
-      </tr>
+      <p>&nbsp;</p>
+      <div class="title_2">
+        {# i18n: Subtitle displayed on instance configuration page (/admin) #}
+        {%trans%}Super Admin options{%endtrans%}
+      </div>
+      <table class="table table-sm">
+        <tr>
+          <td>
+            {# i18n: Settings about the generated public URL #}
+            {%trans%}Public links{%endtrans%}
+          </td>
+          <td>
+            <span >{{site.scheme}}</span>://{{site.hostname}}<span {%if not site.port%}style="display:none"{%endif%}>:{{site.port}}</span>/xxxx
+          </td>
+          <td class="text-right">
+            <input  class="btn-primary btn btn-xs"
+                    type="button" value="{%trans%}Edit{%endtrans%}"
+                    onClick="location.href='/site/edit-host-url'">
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Settings about email server used by website to send email messages #}
+          <td>{%trans%}Email server{%endtrans%}</td>
+          <td>{{g.site.smtpConfig["host"]}}</td>
+          <td class="text-right">
+            {# i18n: Button to configure some option #}
+            <input class="btn-primary btn btn-xs"
+                    type="button" value="{%trans%}Configure{%endtrans%}"
+                    onClick="location.href='/site/email/config'" />
+          </td>
+        </tr>
+      </table>
       {% endif %}
-      <tr>
-        {# i18n: Settings about email server used by website to send email messages #}
-        <td>{%trans%}Email server{%endtrans%}</td>
-        <td>{{g.site.smtpConfig["host"]}}</td>
-        <td class="text-right">
-          {# i18n: Button to configure some option #}
-          <input class="btn-primary btn btn-xs"
-                  type="button" value="{%trans%}Configure{%endtrans%}"
-                  onClick="location.href='/site/email/config'" />
-        </td>
-      </tr>
-    </table>
 
-    <p>&nbsp;</p>
-    <div id="site_settings" class="title_2">
-      {# i18n: Title in Admin panel refering to configurations concerning new users #}
-      {%trans%}New user{%endtrans%}
+      <p>&nbsp;</p>
+      <div class="title_2">
+        {# i18n: Title in Admin panel displaying info about installation #}
+        {%trans%}Installation{%endtrans%}
+      </div>
+      <table class="table table-sm">
+        <tr>
+          <td>{%trans%}Created{%endtrans%}</td>
+          <td>{{site.created.astimezone(g.timezone).strftime("%Y-%m-%d")}}</td>
+        </tr>
+        <tr>
+          <td>{%trans%}Version{%endtrans%}</td>
+          <td>{{app_version}}</td>
+        </tr>
+      </table>
+
     </div>
-    <table class="table table-sm">
-      <tr>
-        {# i18n: Default language for instance, setting on Instance configuration #}
-        <td>{%trans%}Default language{%endtrans%}</td>
-        <td>{{ config['LANGUAGES'][g.site.defaultLanguage][0] }}</td>
-        <td class="text-right">
-          <a class="btn btn-primary btn-xs"
-             role="button"
-             href="/site/change-default-language">
-              {%trans%}Change{%endtrans%}
-          </a>
-        </td>
-      </tr>
-      {% if config['ENABLE_UPLOADS'] %}
-      <tr>
-        {# i18n: Whether to enable new users attaching documents into forms #}
-        <td>{%trans%}Enable form attachments{%endtrans%}</td>
-        <td></td>
-        <td class="text-right">
-          <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
-          <button id="uploads_enabled_true"
-                  class="btn btn-xs btn-default
-                        {% if site.newuser_enableuploads %}btn-success{% endif %}">
-              {%trans%}True{%endtrans%}
-          </button>
-          <button id="uploads_enabled_false"
-                  class="btn btn-xs btn-default
-                        {% if not site.newuser_enableuploads %}btn-primary{% endif %}">
-              {%trans%}False{%endtrans%}
-          </button>
-          </div>
-        </td>
-      </tr>
-      {% endif %}
-    </table>
-
-    <p>&nbsp;</p>
-    <div class="title_2">
-      {# i18n: Title in Admin panel displaying info about installation #}
-      {%trans%}Installation{%endtrans%}
-    </div>
-
-    <table class="table table-sm">
-      <tr>
-        <td>{%trans%}Created{%endtrans%}</td>
-        <td>{{site.created}}</td>
-      </tr>
-      <tr>
-        <td>{%trans%}Version{%endtrans%}</td>
-        <td>{{app_version}}</td>
-      </tr>
-    </table>
-
   </div>
-</div>
 </div>
 
 <script>

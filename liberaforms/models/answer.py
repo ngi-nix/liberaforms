@@ -5,22 +5,26 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, datetime
-from sqlalchemy.dialects.postgresql import JSONB
+import os
+from datetime import datetime, timezone
+from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm.attributes import flag_modified
-from sqlalchemy import event
+from sqlalchemy import event, func
 from flask import current_app
 from liberaforms import db
 from liberaforms.utils.storage.storage import Storage
 from liberaforms.utils.database import CRUD
 from liberaforms.utils import utils
 
+import sqlalchemy
+from sqlalchemy.sql.expression import cast
+
 from pprint import pprint as pp
 
 class Answer(db.Model, CRUD):
     __tablename__ = "answers"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     form_id = db.Column(db.Integer, db.ForeignKey('forms.id'), nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     marked = db.Column(db.Boolean, default=False)
@@ -31,7 +35,7 @@ class Answer(db.Model, CRUD):
                                     cascade = "all, delete, delete-orphan")
 
     def __init__(self, form_id, author_id, data):
-        self.created = datetime.datetime.now().isoformat()
+        self.created = datetime.now(timezone.utc)
         self.form_id = form_id
         self.author_id = author_id
         self.marked = False
@@ -43,6 +47,10 @@ class Answer(db.Model, CRUD):
     @classmethod
     def find(cls, **kwargs):
         return cls.find_all(**kwargs).first()
+
+    @classmethod
+    def count(cls):
+        return cls.query.count()
 
     @classmethod
     def find_all(cls, **kwargs):
@@ -62,7 +70,7 @@ class Answer(db.Model, CRUD):
 class AnswerAttachment(db.Model, CRUD, Storage):
     __tablename__ = "attachments"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(db.DateTime, nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     answer_id = db.Column(db.Integer, db.ForeignKey('answers.id',
                                                     ondelete="CASCADE"),
                                                     nullable=True)
@@ -70,13 +78,13 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     file_name = db.Column(db.String, nullable=False)
     storage_name = db.Column(db.String, nullable=False)
     local_filesystem = db.Column(db.Boolean, default=True) #Remote storage = False
-    file_size = db.Column(db.String, nullable=False)
+    file_size = db.Column(db.Integer, nullable=False)
     encrypted = db.Column(db.Boolean, default=False)
     form = db.relationship("Form", viewonly=True)
 
     def __init__(self, answer):
         Storage.__init__(self)
-        self.created = datetime.datetime.now().isoformat()
+        self.created = datetime.now(timezone.utc)
         self.answer_id = answer.id
         self.form_id = answer.form.id
 
@@ -90,6 +98,13 @@ class AnswerAttachment(db.Model, CRUD, Storage):
     @classmethod
     def find_all(cls, **kwargs):
         return cls.query.filter_by(**kwargs)
+
+    @classmethod
+    def calc_total_size(cls):
+        q = cls.query.with_entities(
+                func.sum(cls.file_size.cast(sqlalchemy.Integer))
+            ).scalar()
+        return q if q is not None else 0
 
     @property
     def directory(self):

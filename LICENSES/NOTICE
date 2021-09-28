@@ -1,0 +1,75 @@
+========================================
+More license information.
+========================================
+
+Some files bundled with GNGforms do not contain a license
+Their corresponding license is as follows.
+
+Flask: BSD 3-Clause license
+Python Babel and flask_babel: BSD license
+Python Markdown: BSD License
+Python passlib: BSD License
+Python password_strength: BSD License
+Python validate_email: LGPL License
+Python Unidecode: GPLv2+ license
+Python Beautiful Soup 4: MIT license
+Python pytest: MIT License
+Python feedgen: BSD License, GNU Lesser General Public License v3 or later (LGPLv3+) (FreeBSD and LGPLv3+)
+
+Bootstrap4: MIT license
+Jquery and Jquery-UI: MIT license
+FormBuilder: MIT license
+DataTables: MIT license
+Simplemde: MIT license
+Font Awesome 4.7.0 Font: SIL OFL 1.1, CSS: MIT License
+Chartjs MIT license
+
+
+MarkupSafe
+Werkzeug
+six
+Jinja2
+itsdangerous
+greenlet
+click
+SQLAlchemy
+pytz
+python-editor
+python-dateutil
+pycparser
+Mako
+Flask
+WTForms
+urllib3
+soupsieve
+marshmallow
+lxml
+idna
+Flask-SQLAlchemy
+docopt
+dnspython
+cffi
+certifi
+cachelib
+Babel
+alembic
+Unidecode
+unicodecsv
+sqlalchemy-json
+python-dotenv
+psycopg2
+Pillow
+password-strength
+passlib
+mjml
+minio
+marshmallow-sqlalchemy
+gunicorn
+Flask-WTF
+flask-session
+Flask-Migrate
+flask-marshmallow
+Flask-Babel
+email-validator
+cryptography
+beautifulsoup4

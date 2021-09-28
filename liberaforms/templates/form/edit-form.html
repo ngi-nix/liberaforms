@@ -8,12 +8,22 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
-{% if config['ENABLE_UPLOADS'] == True %}
-  <script src="/static/parsley/parsley.min.js"></script>
-  <script src="/static/parsley/i18n/{{ g.current_user.language }}.js"></script>
-  <link rel="stylesheet" type="text/css" href="/static/css/parsley.css">
-  {% include '_image-modal.html' %}
-{% endif %}
+{% include '_image-modal.html' %}
+
+<style>
+#fb-editor .sortable-options-wrap .option-value {
+  display: none;
+  /*
+  width: 40%;
+  pointer-events:none;
+  color:#AAA;
+  background:#F5F5F5;
+  */
+}
+#fb-editor .sortable-options-wrap .option-label {
+  width: 85%;
+}
+</style>
 
 <div class="container">
   <div class="row">
@@ -186,6 +196,40 @@ jQuery(function($) {
         showActionButtons: false,
         disableFields: disabledFields,
         disabledAttrs: disabledAttrs,
+        editOnAdd: true,
+        disableHTMLLabels: true,
+        replaceFields: [
+          {
+            type: "checkbox-group",
+            label: "{%trans%}Multiple choice{%endtrans%}",
+            values: [{ label: "{%trans%}Option{%endtrans%}", value: " " }],
+          },
+          {
+            type: "radio-group",
+            label: "{%trans%}Single choice{%endtrans%}",
+            values: [
+                      { label: "{%trans%}Option{%endtrans%} 1", value: " " },
+                      { label: "{%trans%}Option{%endtrans%} 2", value: " " }
+                    ],
+          },
+          {
+            type: "select",
+            label: "{%trans%}Dropdown options{%endtrans%}",
+            values: [
+                      { label: "{%trans%}Option{%endtrans%} 1", value: " " },
+                      { label: "{%trans%}Option{%endtrans%} 2", value: " " }
+                    ],
+          },
+        ],
+        /*
+        onAddField: function(fieldId) {
+          // fieldId is wrong. we need to increment the last digit by one
+          fieldId = fieldId.replace(/\d+$/, function(s) {
+                        return +s+1;
+                    });
+          console.log(fieldId)
+        },
+        */
         typeUserEvents: {
           file: {
             onadd: function (fld) {
@@ -309,17 +353,22 @@ function sleep(ms) {
 function render_fbEditor(fbEditor, options) {
   var builder = $(fbEditor).formBuilder(options);
   sleep(1000).then(() => { // give formbuilder time to render
+  {% if not session['form_id'] %}
+    //$('input[class="option-value"]').value("")
+  {% endif %}
   {% for field in multichoiceOptionsWithSavedData %}
     {% for value in multichoiceOptionsWithSavedData[field] %}
-    field = $('input[name="{{field}}-option"][class="option-value"][value="{{value}}"]')
-    field.prop("disabled", true)
-    field.prop("title", "{%trans%}Cannot modify because an answer with this value exists in the database{%endtrans%}")
+    option_value = $('input[name="{{field}}-option"][class="option-value"][value="{{value}}"]')
+    container = option_value.closest('li')
+    option_value.prop("disabled", true)
+    option_label = container.find(".option-label")
+    option_label.prop("disabled", true)
+    container.prop("title", "{%trans%}Cannot modify because an answer with this value exists in the database{%endtrans%}")
     {% endfor %}
   {% endfor %}
   });
   return builder
 }
-
 
 // enable the user to uncheck radio buttons
 /*
@@ -334,9 +383,6 @@ $("#fb-editor").on("click", "input[type=radio]", function (event) {
     }
 });
 */
-
-
-
 </script>
 
 {% endblock %}

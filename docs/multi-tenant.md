@@ -27,12 +27,6 @@ FQDN=my.tenant.com
 
 # Uploads directory
 
-Run this command to create the required directory tree.
-
-```
-flask storage create
-```
-
 You should include the `./uploads` directory in your backups!
 
 ## Nginx

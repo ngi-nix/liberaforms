@@ -8,12 +8,13 @@ This file is part of LiberaForms.
 import os
 import pytest
 from flask import g
-from .utils import login
+from liberaforms.models.formuser import FormUser
+from .utils import login, logout
 
 class TestFormExpiration():
     def test_toggle_expiration_notification(self, client, users, forms):
-        login(client, users['editor'])
         form_id=forms['test_form'].id
+        login(client, users['editor'])
         response = client.get(
                         f"/forms/expiration/{form_id}",
                         follow_redirects=False,
@@ -21,9 +22,9 @@ class TestFormExpiration():
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- form_expiration_page -->" in html
-        initial_preference = forms['test_form'] \
-                             .editors[str(g.current_user.id)] \
-                             ['notification']['expiredForm']
+        form_user=FormUser.find(form_id=form_id,
+                                user_id=g.current_user.id)
+        initial_preference = form_user.notifications['expiredForm']
         response = client.post(
                         f"/form/toggle-expiration-notification/{form_id}",
                         follow_redirects=False,
@@ -31,14 +32,13 @@ class TestFormExpiration():
         assert response.status_code == 200
         assert response.is_json == True
         assert response.json['notification'] != initial_preference
-        assert initial_preference != forms['test_form'] \
-                                    .editors[str(g.current_user.id)] \
-                                    ['notification']['expiredForm']
+        assert initial_preference != form_user.notifications['expiredForm']
 
-    def test_set_expiration_date(self, client, anon_client, forms):
+    def test_set_expiration_date(self, users, client, anon_client, forms):
         form_id=forms['test_form'].id
         initial_log_count = forms['test_form'].log.count()
         invalid_date="2021-00-00"
+        login(client, users['editor'])
         response = client.post(
                         f"/forms/set-expiration-date/{form_id}",
                         data = {
@@ -100,13 +100,14 @@ class TestFormExpiration():
         assert forms['test_form'].can_expire() == False
         assert forms['test_form'].log.count() == initial_log_count +1
 
-    def test_set_max_answers_expiration(self, client, forms):
+    def test_set_max_answers_expiration(self, users, client, forms):
         """ Tests valid max answers exipry condition value
             Tests invalid max answers exipry condition value
         """
         form_id=forms['test_form'].id
         initial_log_count = forms['test_form'].log.count()
         valid_max_answers = 12
+        login(client, users['editor'])
         response = client.post(
                         f"/forms/set-expiry-total-answers/{form_id}",
                         data = {
@@ -152,13 +153,14 @@ class TestFormExpiration():
 
     # ./tests/assets/valid_form_structure.json contains a number field
     # with id number-1620224716308
-    def test_set_max_number_field_expiration(self, client, forms):
+    def test_set_max_number_field_expiration(self, users, client, forms):
         """ Tests for max_number_field input in html
             Tests valid max answers exipry condition value
             Tests invalid max answers exipry condition value
         """
         form_id = forms['test_form'].id
         number_field_id = "number-1620224716308"
+        login(client, users['editor'])
         response = client.get(
                         f"/forms/expiration/{form_id}",
                         follow_redirects=False,
@@ -205,7 +207,7 @@ class TestFormExpiration():
         assert forms['test_form'].expiryConditions['fields'] == {}
         assert forms['test_form'].log.count() == initial_log_count + 1
 
-    def test_set_expirations(self, client, forms, max_answers, number_field_max):
+    def test_set_expirations(self, users, client, forms, max_answers, number_field_max):
         """ Set up expiration conditions for submit tests to be made later
             No assertions are made in this function. (previously tested)
             This is the last function in this module.
@@ -213,6 +215,7 @@ class TestFormExpiration():
         form_id = forms['test_form'].id
         number_field_id = "number-1620224716308"
         valid_max_answers = max_answers
+        login(client, users['editor'])
         response = client.post(
                         f"/forms/set-expiry-total-answers/{form_id}",
                         data = {
