@@ -188,7 +188,7 @@
 
 {% if g.is_admin %}
       <p>&nbsp;</p>
-      <div id="admin_settings" class="title_2" style="margin-top:2em">
+      <div id="admin_settings" class="title_2">
           {%trans%}My admin settings{%endtrans%}
       </div>
 
@@ -252,16 +252,18 @@
   {% endif %}
 {% endif %}
       <p>&nbsp;</p>
-      <div class="row" style="margin-top: 2em">
-        <div class="col title_2">
-          {%trans%}Delete my account{%endtrans%}
-        </div>
-        <div class="col-auto">
-          <a  class="btn btn-sm btn-warning"
-              role="button"
-              href="/user/delete-account/{{ g.current_user.id }}">
-              {%trans%}Delete{%endtrans%}
-          </a>
+      <div class="row">
+        <div class="col">
+          <div class="title_2">
+            {%trans%}Delete my account{%endtrans%}
+          </div>
+          <div>
+            <a  class="btn btn-sm btn-warning"
+                role="button"
+                href="/user/delete-account/{{ g.current_user.id }}">
+                {%trans%}Delete{%endtrans%}
+            </a>
+          </div>
         </div>
       </div>
     </div>
