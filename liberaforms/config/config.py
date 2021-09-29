@@ -66,6 +66,7 @@ class Config(object):
         "nb": ("Norwegian Bokmål", "nb-NO")
     }
     ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
+    ALERT_MAILS = ast.literal_eval(os.environ['ALERT_MAILS']) if "ALERT_MAILS" in os.environ else None
     TMP_DIR = os.environ['TMP_DIR']
     ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
     DEFAULT_LANGUAGE = os.environ['DEFAULT_LANGUAGE']
