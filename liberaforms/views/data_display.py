@@ -554,9 +554,13 @@ def my_forms(user_id):
             'html': f"<a href='/forms/view/{id}'>{slug}</a>"
         }
         total_answers = form['total_answers']
-        stats_icon = f"<i class='fa fa-bar-chart' aria-label=\"{_('Statistics')}\"></i>"
+        stats_icon = f"<i class='fa fa-bar-chart' \
+                        style='margin-left: 0.25em; font-size: 1.1rem' \
+                        aria-label=\"{_('Statistics')}\"></i>"
         stats_url = f"<a href='/forms/answers/stats/{id}'>{stats_icon}</a>"
-        count_url = f"<a href='/forms/answers/{id}' alt_text=\"{_('Answers')}\">{total_answers}</a>"
+        count_url = f"<a class='badge badge-primary' \
+                    style='margin-left: 1em; font-size: 0.9rem' \
+                    href='/forms/answers/{id}' aria-label=\"{_('Answers')}\">{total_answers}</a>"
         data['answers__html'] = {
             'value': total_answers,
             'html': f"{stats_url} {count_url}"
