@@ -49,3 +49,7 @@ FLASK_CONFIG=production
 # ENABLE_PROMETHEUS_METRICS
 # this activates Prometheus' /metrics route and metrics generation
 ENABLE_PROMETHEUS_METRICS=False
+
+# DEBUGGING
+# Optional. Recieve Internal Server 500 errors. Good for debugging.
+#ALERT_MAILS = ["your_email_address", "another_email_address"]

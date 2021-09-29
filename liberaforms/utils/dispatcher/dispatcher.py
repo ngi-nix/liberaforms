@@ -210,12 +210,17 @@ class Dispatcher(EmailServer):
     """
 
     def send_error(self, error):
+        if not current_app.config["ALERT_MAILS"]:
+            return
         message = MIMEText(error, _subtype='plain', _charset='UTF-8')
         message['Subject'] = Header("Error at %s" % self.site.hostname).encode()
-        message['To'] = ', '.join(current_app.config['ROOT_USERS'])
+        message['To'] = ', '.join(current_app.config["ALERT_MAILS"])
         thr = Thread(
             target=self.send_mail_async,
-            args=[current_app._get_current_object(), message, current_app.config['ROOT_USERS']]
+            args=[current_app._get_current_object(),
+                  message,
+                  current_app.config["ALERT_MAILS"]
+            ]
         )
         thr.start()
 
