@@ -506,8 +506,8 @@ default_my_forms_field_index = [
                 {'name': 'form_name__html', 'label': _('Name')},
                 {'name': 'answers__html', 'label': _('Answers')},
                 {'name': 'last_answer_date', 'label': _('Last answer')},
-                {'name': 'is_public', 'label': _('Public')},
-                {'name': 'is_shared', 'label': _('Shared')},
+                {'name': 'is_public__html', 'label': _('Public')},
+                {'name': 'is_shared__html', 'label': _('Shared')},
                 {'name': 'created', 'label': _('Created')}
             ]
 
@@ -547,11 +547,24 @@ def my_forms(user_id):
     for form in FormSchemaForMyFormsDataDisplay(many=True).dump(forms):
         item = {}
         data = {}
-        id = form['id']
-        slug = form['slug']
+        item['id'] = form['id']
+        item['created'] = form['created']
+        data['last_answer_date'] = form['last_answer_date']
         data['form_name__html'] = {
-            'value': slug,
-            'html': f"<a href='/forms/view/{id}'>{slug}</a>"
+            'value': form['slug'],
+            'html': f"<a href='/forms/view/{form['id']}'>{form['slug']}</a>"
+        }
+        is_public_text = _("True") if form['is_public'] else _("False")
+        badge_color = "badge-success" if form['is_public'] else "badge-secondary"
+        data['is_public__html'] = {
+            'value': is_public_text,
+            'html': f'<span class="badge {badge_color}">{is_public_text}</span>'
+        }
+        is_shared_text = _("True") if form['is_shared'] else _("False")
+        badge_color = "badge-success" if form['is_shared'] else "badge-secondary"
+        data['is_shared__html'] = {
+            'value': is_shared_text,
+            'html': f'<span class="badge {badge_color}">{is_shared_text}</span>'
         }
         total_answers = form['total_answers']
         stats_icon = f"<i class='fa fa-bar-chart' \
@@ -565,20 +578,8 @@ def my_forms(user_id):
             'value': total_answers,
             'html': f"{stats_url} {count_url}"
         }
-        for field_name in form.keys():
-            if field_name == 'slug' or field_name == 'total_answers':
-                continue
-            if field_name == 'id':
-                item[field_name] = form[field_name]
-                continue;
-            if field_name == 'created':
-                item[field_name] = form[field_name]
-                continue;
-            data[field_name] = form[field_name]
         item['data'] = data
-        #pprint(data)
         items.append(item)
-        #pprint(items)
     return jsonify(
         items=items,
         meta={'name': 'my-forms',
