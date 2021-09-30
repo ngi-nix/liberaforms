@@ -784,11 +784,9 @@ class Form(db.Model, CRUD):
             for answer in answers:
                 for field_name in answer.keys():
                     if field_name.startswith('file-'):
-                        # extract attachment url
-                        url = re.search(r'https?:[\'"]?([^\'" >]+)',
-                                        answer[field_name])
+                        url = Answer.get_file_field_url(answer[field_name])
                         if url:
-                            answer[field_name] = url.group(0)
+                            answer[field_name] = url
                     elif field_name.startswith("checkbox-group") or \
                          field_name.startswith("radio-group") or \
                          field_name.startswith("select"):

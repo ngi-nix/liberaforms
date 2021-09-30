@@ -735,31 +735,50 @@ def view_form(slug):
                 if form_user.user.enabled and form_user.notifications["expiredForm"]:
                     emails.append(form_user.user.email)
             if emails:
-                Dispatcher().send_expired_form_notification(emails, queriedForm)
+                try:
+                    Dispatcher().send_expired_form_notification(emails, queriedForm)
+                except Exception as error:
+                    current_app.logger.error(error)
 
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
             email=queriedForm.get_confirmation_email_address(answer)
             if email and validators.is_valid_email(email):
-                Dispatcher().send_answer_confirmation(email, queriedForm)
-
+                try:
+                    Dispatcher().send_answer_confirmation(email, queriedForm)
+                except Exception as error:
+                    current_app.logger.error(error)
         emails=[]
         for form_user in FormUser.find_all(form_id=queriedForm.id):
             if form_user.user.enabled and form_user.notifications["newAnswer"]:
                 emails.append(form_user.user.email)
         if emails:
-            data=[]
-            for field in queriedForm.get_field_index_for_data_display():
-                if field['name'] in answer.data:
-                    if field['name']=="marked":
-                        continue
-                    data.append( (field['label'], answer.data[field['name']]) )
-            Dispatcher().send_new_answer_notification(  emails,
-                                                        data,
-                                                        queriedForm.slug)
+            try:
+                data=[]
+                for field in queriedForm.get_field_index_for_data_display():
+                    if field['name'] in answer.data:
+                        if field['name']=="marked":
+                            continue
+                        if field['name'].startswith('file-'):
+                            url = Answer.get_file_field_url(answer.data[field['name']])
+                            if url:
+                                data.append((field['label'], url))
+                                continue
+                        data.append((
+                            field['label'],
+                            queriedForm.get_answer_label(field['name'],
+                                                        answer.data[field['name']])
+                        ))
+                Dispatcher().send_new_answer_notification(emails,
+                                                          data,
+                                                          queriedForm.slug)
+            except Exception as error:
+                current_app.logger.error(error)
+
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)
+    
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('view-form.html',
                             form=queriedForm,

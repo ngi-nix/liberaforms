@@ -176,8 +176,12 @@ class Dispatcher(EmailServer):
         message.attach(html_body)
         message['Subject'] = Header(_("Confirmation message")).encode()
         message['To'] = anon_email
-        state = self.send_mail(message, [anon_email])
-        return state
+        #state = self.send_mail(message, [anon_email])
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(), message, [anon_email]]
+        )
+        thr.start()
 
     def send_expired_form_notification(self, formuser_emails, form):
         body = _("The form '%s' has expired at %s" % (form.slug, self.site.siteName))
