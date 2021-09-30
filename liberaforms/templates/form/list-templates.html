@@ -6,37 +6,35 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-
       <div class="title_1 delimited">
         {%trans%}Form templates{%endtrans%}
       </div>
-
       <p>
-      {%trans%}We have put together some forms that you can use to get started.{%endtrans%}
       {%trans%}Choose the template that best suits your needs and edit it to fit.{%endtrans%}
       </p>
     </div>
   </div>
+
   <div class="row">
-      {% for template in templates %}
-      <div class="col-4">
-        <hr />
-        <h2>
-          {{ template['name'] }}
-        </h2>
-        <p>
-          {{ template['description'] }}
-          <a style="white-space: nowrap;"
-              href="/forms/template/{{ template['id'] }}">
-            {%trans%}Show more{%endtrans%}
-          </a>
-        </p>
-      </div>
-      {% set decimal = ((loop.index/3)|string).split('.')[1] %}
-      {% if decimal == "0" %}
-      <div class="w-100"></div>
-      {% endif %}
-      {% endfor %}
+    {% for template in templates %}
+    <div class="col-md-4">
+      <hr />
+      <h2>
+        {{ template['name'] }}
+      </h2>
+      <p>
+        {{ template['description'] }}
+        <a style="white-space: nowrap;"
+            href="/forms/template/{{ template['id'] }}">
+          {%trans%}Show more{%endtrans%}
+        </a>
+      </p>
+    </div>
+    {% set decimal = ((loop.index/3)|string).split('.')[1] %}
+    {% if decimal == "0" %}
+    <div class="w-100"></div>
+    {% endif %}
+    {% endfor %}
   </div>
 </div>
 

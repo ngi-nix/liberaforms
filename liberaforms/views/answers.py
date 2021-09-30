@@ -38,7 +38,7 @@ def list_answers(form_id):
 
 @answers_bp.route('/forms/answers/stats/<int:form_id>', methods=['GET'])
 @enabled_user_required
-def answer_stats(form_id):
+def answers_stats(form_id):
     queriedForm = g.current_user.get_form(form_id)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
@@ -48,7 +48,7 @@ def answer_stats(form_id):
 
 @answers_bp.route('/forms/csv/<int:form_id>', methods=['GET'])
 @enabled_user_required
-def csv_form(form_id):
+def answers_csv(form_id):
     queriedForm = g.current_user.get_form(form_id)
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
@@ -61,7 +61,7 @@ def csv_form(form_id):
         return response
     return send_file(csv_file, mimetype="text/csv", as_attachment=True)
 
-
+"""
 @answers_bp.route('/forms/delete-answer/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def delete_answer(form_id):
@@ -77,8 +77,9 @@ def delete_answer(form_id):
     queriedForm.save()
     queriedForm.add_log(_("Deleted an answer"))
     return JsonResponse(json.dumps({'deleted': True}))
+"""
 
-
+"""
 @answers_bp.route('/forms/toggle-marked-answer/<int:form_id>', methods=['POST'])
 @enabled_user_required
 def toggle_marked_answer(form_id):
@@ -95,32 +96,7 @@ def toggle_marked_answer(form_id):
     answer.marked = False if answer.marked == True else True
     answer.save()
     return JsonResponse(json.dumps({'marked': answer.marked}))
-
-
-@answers_bp.route('/forms/change-answer-field-value/<int:form_id>', methods=['POST'])
-@enabled_user_required
-def change_answer(form_id):
-    queriedForm = g.current_user.get_form(form_id, is_editor=True)
-    if not (queriedForm and 'id' in request.json):
-        return JsonResponse(json.dumps({'saved': False}))
-    try:
-        answer_id = int(request.json['id'])
-        answer = Answer.find(id=answer_id, form_id=queriedForm.id)
-    except:
-        answer = None
-    if not answer:
-        return JsonResponse(json.dumps({'saved': False}))
-    answer.data = {}
-    for field in request.json['data']:
-        if field['name'] == 'marked' or field['name'] == 'created':
-            continue
-        answer.data[field['name']] = field['value']
-    answer.save()
-    queriedForm.expired = queriedForm.has_expired()
-    queriedForm.save()
-    queriedForm.add_log(_("Modified an answer"))
-    return JsonResponse(json.dumps({'saved': True}))
-
+"""
 
 @answers_bp.route('/forms/delete-all-answers/<int:form_id>', methods=['GET', 'POST'])
 @enabled_user_required

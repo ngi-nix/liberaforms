@@ -89,8 +89,10 @@ def new_user(token=None):
         g.current_user = new_user
         babel_refresh()
         flash(_("Welcome!"), 'success')
+        if validatedEmail == False:
+            return send_email_validation()
         return redirect(make_url_for('user_bp.user_settings',
-                                     username=new_user.username))
+                                     username=g.current_user.username))
     if "user_id" in session:
         session.pop("user_id")
     if not wtform.email.data and invite:

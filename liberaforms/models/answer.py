@@ -5,7 +5,7 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, re
 from datetime import datetime, timezone
 from sqlalchemy.dialects.postgresql import JSONB, TIMESTAMP
 from sqlalchemy.orm.attributes import flag_modified
@@ -66,6 +66,11 @@ class Answer(db.Model, CRUD):
         flag_modified(self, "data")
         self.save()
 
+    @staticmethod
+    def get_file_field_url(value):
+        # extract url from html <a>
+        url = re.search(r'https?:[\'"]?([^\'" >]+)', value)
+        return url.group(0) if url else None
 
 class AnswerAttachment(db.Model, CRUD, Storage):
     __tablename__ = "attachments"

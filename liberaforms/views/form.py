@@ -65,7 +65,7 @@ def edit_form(form_id=None):
     queriedForm=None
     if form_id:
         if session['form_id'] != str(form_id):
-            flash_text = _("Something went wrong. id does not match session['form_id']")
+            flash_text = _("Something went wrong. ID does not match session['form_id']")
             flash(flash_text, 'error')
             return redirect(make_url_for('form_bp.my_forms'))
         queriedForm = g.current_user.get_form(form_id, is_editor=True)
@@ -137,16 +137,6 @@ def preview_form():
                             max_attachment_size_for_humans=max_attach_size,
                         )
 
-@form_bp.route('/forms/edit/conditions/<int:id>', methods=['GET'])
-@enabled_user_required
-def conditions_form(id):
-    queriedForm = g.current_user.get_form(form_id, is_editor=True)
-    if not queriedForm:
-        flash(_("Can't find that form"), 'warning')
-        return redirect(make_url_for('form_bp.my_forms'))
-    #pprint(queriedForm.structure)
-    return render_template('conditions.html', form=queriedForm)
-
 
 @form_bp.route('/forms/save', methods=['POST'])
 @form_bp.route('/forms/save/<int:id>', methods=['POST'])
@@ -176,6 +166,10 @@ def save_form(id=None):
     if queriedForm:
         queriedForm.structure=formStructure
         queriedForm.update_field_index(session['formFieldIndex'])
+        # reset formuser's field_index order preference
+        FormUser.find_all(form_id=queriedForm.id).update({
+                                                FormUser.field_index: None,
+                                                FormUser.order_by: None})
         queriedForm.update_expiryConditions()
         queriedForm.introductionText=introductionText
         queriedForm.set_short_description()
@@ -408,6 +402,7 @@ def add_editor(form_id):
             flash(_("Can't find a user with that email"), 'warning')
             return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
         if FormUser.find(form_id=queriedForm.id, user_id=new_editor.id):
+			# i18n: %s stands for the user name here
             flash(_("This form is already shared with %s" % new_editor.email), 'warning')
             return redirect(make_url_for('form_bp.share_form', form_id=queriedForm.id))
         try:
@@ -416,7 +411,7 @@ def add_editor(form_id):
                                notifications=new_editor.new_form_notifications(),
                                is_editor=True)
             form_user.save()
-            flash(_("Added user ok"), 'success')
+            flash(_("Added user OK"), 'success')
             queriedForm.add_log(_("Added editor %s" % new_editor.email))
         except Exception as error:
             current_app.logger.error(error)
@@ -469,7 +464,8 @@ def add_reader(form_id):
                                notifications=new_reader.new_form_notifications(),
                                is_editor=False)
             form_user.save()
-            flash(_("Added user ok"), 'success')
+            flash(_("Added user OK"), 'success')
+			# i18n: %s stands for the user name here
             queriedForm.add_log(_("Added read only user %s" % new_reader.email))
         except Exception as error:
             current_app.logger.error(error)
@@ -490,6 +486,7 @@ def remove_reader(form_id, user_id):
     if form_user:
         reader = User.find(id=user_id)
         form_user.delete()
+		# i18n: %s stands for the user name here
         queriedForm.add_log(_("Removed user %s" % reader.email))
         return json.dumps(str(reader.id))
     else:
@@ -697,7 +694,7 @@ def view_form(slug):
 
     if request.method == 'POST':
         formData=request.form.to_dict(flat=False)
-        answer_data = {'marked': False}
+        answer_data = {}
         for key in formData:
             if key=='csrf_token':
                 continue
@@ -738,31 +735,50 @@ def view_form(slug):
                 if form_user.user.enabled and form_user.notifications["expiredForm"]:
                     emails.append(form_user.user.email)
             if emails:
-                Dispatcher().send_expired_form_notification(emails, queriedForm)
+                try:
+                    Dispatcher().send_expired_form_notification(emails, queriedForm)
+                except Exception as error:
+                    current_app.logger.error(error)
 
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
             email=queriedForm.get_confirmation_email_address(answer)
             if email and validators.is_valid_email(email):
-                Dispatcher().send_answer_confirmation(email, queriedForm)
-
+                try:
+                    Dispatcher().send_answer_confirmation(email, queriedForm)
+                except Exception as error:
+                    current_app.logger.error(error)
         emails=[]
         for form_user in FormUser.find_all(form_id=queriedForm.id):
             if form_user.user.enabled and form_user.notifications["newAnswer"]:
                 emails.append(form_user.user.email)
         if emails:
-            data=[]
-            for field in queriedForm.get_field_index_for_data_display():
-                if field['name'] in answer.data:
-                    if field['name']=="marked":
-                        continue
-                    data.append( (field['label'], answer.data[field['name']]) )
-            Dispatcher().send_new_answer_notification(  emails,
-                                                        data,
-                                                        queriedForm.slug)
+            try:
+                data=[]
+                for field in queriedForm.get_field_index_for_data_display():
+                    if field['name'] in answer.data:
+                        if field['name']=="marked":
+                            continue
+                        if field['name'].startswith('file-'):
+                            url = Answer.get_file_field_url(answer.data[field['name']])
+                            if url:
+                                data.append((field['label'], url))
+                                continue
+                        data.append((
+                            field['label'],
+                            queriedForm.get_answer_label(field['name'],
+                                                        answer.data[field['name']])
+                        ))
+                Dispatcher().send_new_answer_notification(emails,
+                                                          data,
+                                                          queriedForm.slug)
+            except Exception as error:
+                current_app.logger.error(error)
+
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)
+    
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('view-form.html',
                             form=queriedForm,

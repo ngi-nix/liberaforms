@@ -130,6 +130,34 @@
                {% endif %}
                </td>
             </tr>
+            {% set form_user = form.get_form_user(g.current_user.id) %}
+            {% if form_user != None %}
+            <tr>
+              <td>
+                {%trans%}New answer{%endtrans%}
+              </td>
+              <td>
+                <div id="toggle_notification"
+                     class="btn-group btn-toggle">
+                  <button id="notification_true"
+                          class="btn btn-xs btn-default
+                                {% if form_user['notifications']['newAnswer'] %}
+                                btn-success
+                                {% endif %}">
+                      {%trans%}True{%endtrans%}
+                  </button>
+                  <button id="notification_false"
+                          class="btn btn-xs btn-default
+                                {% if not form_user['notifications']['newAnswer'] %}
+                                btn-primary
+                                {% endif %}">
+                      {%trans%}False{%endtrans%}
+                  </button>
+                </div>
+                {%trans%}Notify me{%endtrans%}
+              </td>
+            </tr>
+            {% endif %}
             <tr>
                <td>{%trans%}Expiration{%endtrans%}</td>
                <td>
@@ -275,7 +303,7 @@
                 <td id="DPL-anchor">{%trans%}DPL{%endtrans%}</td>
                 <td>
                 {% if current_user_is_editor %}
-                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
+                    <div id="toggle_dataConsent" class="btn-group btn-toggle mb-1 mb-lg-0">
                     <button id="dataConsent_true"
                             class="btn btn-xs btn-default
                                   {% if dataConsent['enabled'] %}btn-success{% endif %}">
@@ -289,7 +317,7 @@
                     </div>
                     &nbsp;
                     <button id="show-DPL-text-button"
-                            class="btn btn-primary btn-xs">
+                            class="btn btn-primary btn-xs mb-1 mb-md-0">
                         {%trans%}Personalize{%endtrans%}
                     </button>
                 {% else %}
@@ -450,17 +478,17 @@
         </code>
         </div>
         <p>
-        <a class="btn btn-primary btn-sm"
+        <a class="btn btn-primary btn-sm mb-1 mb-lg-0"
            role="button"
            href="/forms/log/list/{{form.id}}">
            {%trans%}View log{%endtrans%}
         </a>
-        <a class="btn-primary btn btn-sm"
+        <a class="btn-primary btn btn-sm mb-1 mb-lg-0"
            role="button"
            href="/forms/duplicate/{{form.id}}">
            {%trans%}Duplicate form{%endtrans%}
         </a>
-        <a class="btn-primary btn btn-sm"
+        <a class="btn-primary btn btn-sm mb-1 mb-lg-0"
            role="button"
            href="#!"
            onClick="js:$('#embed_snippet').show();">
@@ -714,6 +742,30 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
     });
 });
 {% endif %}
+// notify me on new answer
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-notification/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}")
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
 // DPL editor
 var consent_cache = {}
 $(document).ready(function() {

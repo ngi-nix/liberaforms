@@ -80,7 +80,7 @@ class EmailServer():
         finally:
             self.connection = None
 
-    def send_mail(self, msg):
+    def send_mail(self, msg, emails):
         if 'SKIP_EMAILS' in os.environ and os.environ['SKIP_EMAILS'] == 'True':
             # TESTING environment sets 'SKIP_EMAILS'
             return {
@@ -96,7 +96,7 @@ class EmailServer():
             msg = self.prep_message(msg)
             try:
                 self.connection.sendmail(msg['From'],
-                                         msg['To'],
+                                         emails,
                                          msg.as_string())
                 self.close_connection()
                 return {
@@ -113,9 +113,9 @@ class EmailServer():
             "msg": f"Cannot connect to {self.host}"
         }
 
-    def send_mail_async(self, app, msg):
+    def send_mail_async(self, app, msg, emails):
         with app.app_context():
-            return self.send_mail(msg)
+            return self.send_mail(msg, emails)
 
     def prep_message(self, msg):
         msg['From'] = self.default_sender
