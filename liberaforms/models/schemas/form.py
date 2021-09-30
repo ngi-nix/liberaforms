@@ -50,7 +50,7 @@ class FormSchemaForMyFormsDataDisplay(ma.SQLAlchemySchema):
         return obj.is_public()
 
     def get_is_shared(self, obj):
-        return True if obj.users.count() > 0 else False
+        return True if obj.users.count() > 1 else False
 
 
 class FormSchemaForAdminFormsDataDisplay(ma.SQLAlchemySchema):
