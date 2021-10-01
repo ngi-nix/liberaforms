@@ -247,6 +247,22 @@ supervisorctl start liberaforms
 
 # Utilities
 
+## Site config
+
+By default new sites create public links like so
+
+```
+http://my.domain.com/xxxx
+```
+
+You can set the scheme and port
+
+```
+flask config set public-links -scheme=http -port=4000
+```
+
+
+
 ## Users
 
 You can create a user when needed.

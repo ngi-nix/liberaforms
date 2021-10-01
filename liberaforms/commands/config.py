@@ -9,12 +9,44 @@ import os, sys
 import click
 from pathlib import Path
 from flask import current_app
+from flask.cli import with_appcontext
 from flask.cli import AppGroup
 from jinja2 import Environment, FileSystemLoader
+from liberaforms.models.site import Site
 
-config_hint_cli = AppGroup('config')
+config_cli = AppGroup('config')
 
-@config_hint_cli.command()
+
+@config_cli.command()
+@click.argument("configuration")
+@click.option('-scheme', 'scheme', help="[ http | https ]")
+@click.option('-port', 'port', help="port number")
+@with_appcontext
+def set(configuration, scheme=None, port=None):
+    if configuration == 'public-links':
+        if not scheme:
+            click.echo(f"Schema required\n")
+            return
+        site = Site.find()
+        try:
+            port = int(port) if port else None
+        except:
+            click.echo(f"Port must be a number\n")
+            return
+        site.port = port
+        if scheme == 'http' or scheme == 'https':
+            site.scheme = scheme
+        else:
+            click.echo(f"Scheme must be http or https\n")
+            return
+        site.save()
+        if site.port:
+            click.echo(f"{site.scheme}://{site.hostname}:{site.port}/xxxx")
+        else:
+            click.echo(f"{site.scheme}://{site.hostname}/xxxx")
+        click.echo(f"Saved ok")
+
+@config_cli.command()
 @click.argument("configuration")
 def hint(configuration):
     installation_path = os.path.join(current_app.root_path, '../')
