@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-10-02 19:41+0200\n"
+"POT-Creation-Date: 2021-10-02 20:20+0200\n"
 "PO-Revision-Date: 2021-09-09 23:33+0000\n"
 "Last-Translator: Allan Nordhøy <epost@anotheragency.no>\n"
 "Language: nb_NO\n"
@@ -406,7 +406,7 @@ msgstr "og skjemaene til vedkommende"
 msgid "Name"
 msgstr "Navn"
 
-#. Table column title, indicating answers recived for a form
+#. Table column title, indicating answers received for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:253
 #: templates/answers/chart-answers.html:93 templates/site/stats.html:46
 #: templates/site/stats.html:122 templates/user/statistics.html:31
@@ -428,7 +428,7 @@ msgstr "Slett bruker og skjemaer"
 #: templates/answers/delete-all-answers.html:45
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:135
-#: templates/form/edit-form.html:141 templates/form/expiration.html:185
+#: templates/form/edit-form.html:141 templates/form/expiration.html:186
 #: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:342
 #: templates/form/inspect-form.html:426 templates/form/inspect-form.html:460
 #: templates/form/preview-form.html:69 templates/form/preview-form.html:80
@@ -575,8 +575,9 @@ msgstr "Skjema"
 msgid "You are going to delete"
 msgstr ""
 
+#. Always used with a number. For example, 'You are going to delete 3 answers'
 #: templates/answers/delete-all-answers.html:22
-#: templates/form/delete-form.html:27 templates/form/expiration.html:152
+#: templates/form/delete-form.html:27 templates/form/expiration.html:153
 #: templates/site/delete-site.html:22
 msgid "answers"
 msgstr "svar"
@@ -590,7 +591,7 @@ msgid "Change language"
 msgstr "Endre språk"
 
 #: templates/common/change-language.html:40 templates/form/edit-form.html:130
-#: templates/form/expiration.html:181 templates/form/inspect-form.html:338
+#: templates/form/expiration.html:182 templates/form/inspect-form.html:338
 #: templates/form/inspect-form.html:422 templates/form/inspect-form.html:456
 #: templates/form/preview-form.html:59 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
@@ -669,33 +670,42 @@ msgstr ""
 msgid "This URL is not available. Try another!"
 msgstr ""
 
-#: templates/form/edit-form.html:125 templates/form/edit-form.html:324
+#: templates/form/edit-form.html:125 templates/form/edit-form.html:325
 #: templates/form/preview-form.html:17
 msgid "Preview"
 msgstr "Forhåndsvis"
 
-#: templates/form/edit-form.html:205 templates/form/edit-form.html:211
-#: templates/form/edit-form.html:212 templates/form/edit-form.html:219
-#: templates/form/edit-form.html:220
+#. Placeholder for option name in Multiple choice fields
+#: templates/form/edit-form.html:206
 #, fuzzy
 msgid "Option"
 msgstr "Administratorinnstillinger"
 
-#: templates/form/edit-form.html:209
+#: templates/form/edit-form.html:210
 #, fuzzy
 msgid "Single choice"
 msgstr "Flervalg"
 
-#: templates/form/edit-form.html:217
+#: templates/form/edit-form.html:212 templates/form/edit-form.html:220
+#, fuzzy
+msgid "Option 1"
+msgstr "Administratorinnstillinger"
+
+#: templates/form/edit-form.html:213 templates/form/edit-form.html:221
+#, fuzzy
+msgid "Option 2"
+msgstr "Administratorinnstillinger"
+
+#: templates/form/edit-form.html:218
 #, fuzzy
 msgid "Dropdown options"
 msgstr "Administratorinnstillinger"
 
-#: templates/form/edit-form.html:309
+#: templates/form/edit-form.html:310
 msgid "OK, use this URL"
 msgstr "OK, bruk denne nettadressen"
 
-#: templates/form/edit-form.html:366
+#: templates/form/edit-form.html:367
 msgid "Cannot modify because an answer with this value exists in the database"
 msgstr "Kan ikke endre fordi et svar med denne verdien finnes i databasen"
 
@@ -746,16 +756,16 @@ msgstr ""
 msgid "The form will expire after"
 msgstr ""
 
-#: templates/form/expiration.html:164 templates/form/inspect-form.html:435
+#: templates/form/expiration.html:165 templates/form/inspect-form.html:435
 msgid "When the form has expired"
 msgstr ""
 
-#: templates/form/expiration.html:167 templates/form/inspect-form.html:406
+#: templates/form/expiration.html:168 templates/form/inspect-form.html:406
 #: templates/form/inspect-form.html:440 templates/main/index.html:43
 msgid "Edit text"
 msgstr "Rediger tekst"
 
-#: templates/form/expiration.html:172 templates/form/inspect-form.html:446
+#: templates/form/expiration.html:173 templates/form/inspect-form.html:446
 msgid "Say something to the user if the form has expired"
 msgstr "Si noe til brukeren hvis skjemaet har utløpt"
 
