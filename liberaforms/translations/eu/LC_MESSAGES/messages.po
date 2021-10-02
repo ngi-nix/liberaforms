@@ -9,15 +9,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-10-02 19:10+0200\n"
-"PO-Revision-Date: 2021-09-19 10:44+0000\n"
+"PO-Revision-Date: 2021-10-02 17:16+0000\n"
 "Last-Translator: LiberaForms <info@liberaforms.org>\n"
+"Language-Team: Basque <https://hosted.weblate.org/projects/liberaforms/"
+"server-liberaforms/eu/>\n"
 "Language: eu\n"
-"Language-Team: Basque <https://hosted.weblate.org/projects/liberaforms"
-"/server-liberaforms/eu/>\n"
-"Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
@@ -820,9 +821,9 @@ msgid "This form will expire"
 msgstr "Galdetegi hau iraungi egingo da"
 
 #: templates/form/inspect-form.html:207 templates/form/inspect-form.html:217
-#, fuzzy, python-format
+#, python-format
 msgid "Form shared with %(number)s"
-msgstr "Galdetegi hau dagoeneko partekatuta dago %s erabiltzailearekin"
+msgstr "Galdetegia %(number)s erabiltzailerekin partekatuta"
 
 #: templates/form/inspect-form.html:213
 msgid "Add editors"
@@ -835,7 +836,7 @@ msgstr "Partekatutako erantzunak"
 #: templates/form/inspect-form.html:233
 #, python-format
 msgid "Answers shared with %(number)s"
-msgstr ""
+msgstr "Erantzunak %(number)s erabiltzailerekin partekatuta"
 
 #: templates/form/inspect-form.html:239
 msgid "Share"
@@ -2335,4 +2336,3 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "Answers shared with"
 #~ msgstr ""
-
