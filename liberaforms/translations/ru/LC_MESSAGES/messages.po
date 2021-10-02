@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-10-02 19:10+0200\n"
+"POT-Creation-Date: 2021-10-02 19:41+0200\n"
 "PO-Revision-Date: 2021-09-08 20:50+0000\n"
 "Last-Translator: Artem <Localizer_in_Russian@protonmail.com>\n"
 "Language: ru\n"
@@ -422,7 +422,7 @@ msgstr ""
 #: templates/answers/delete-all-answers.html:45
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:135
-#: templates/form/edit-form.html:141 templates/form/expiration.html:186
+#: templates/form/edit-form.html:141 templates/form/expiration.html:185
 #: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:342
 #: templates/form/inspect-form.html:426 templates/form/inspect-form.html:460
 #: templates/form/preview-form.html:69 templates/form/preview-form.html:80
@@ -568,7 +568,7 @@ msgid "You are going to delete"
 msgstr ""
 
 #: templates/answers/delete-all-answers.html:22
-#: templates/form/delete-form.html:27 templates/form/expiration.html:153
+#: templates/form/delete-form.html:27 templates/form/expiration.html:152
 #: templates/site/delete-site.html:22
 msgid "answers"
 msgstr ""
@@ -582,7 +582,7 @@ msgid "Change language"
 msgstr ""
 
 #: templates/common/change-language.html:40 templates/form/edit-form.html:130
-#: templates/form/expiration.html:182 templates/form/inspect-form.html:338
+#: templates/form/expiration.html:181 templates/form/inspect-form.html:338
 #: templates/form/inspect-form.html:422 templates/form/inspect-form.html:456
 #: templates/form/preview-form.html:59 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
@@ -712,28 +712,38 @@ msgstr ""
 msgid "Number fields"
 msgstr ""
 
-#: templates/form/expiration.html:119
+#. Applies to 'Number' fields. Form will expire when the sum of values between
+#. all answers to this field in this form reaches the specified value. For
+#. example, if you set expiration condition to value=5 on this number field, if
+#. you receive 2 answers that ask on this field for 2 and 3, the form will
+#. expire.
+#: templates/form/expiration.html:114
+#, python-format
+msgid "The sum of all the answers to '%(field_label)s'"
+msgstr ""
+
+#: templates/form/expiration.html:118
 msgid "Save max."
 msgstr ""
 
-#: templates/form/expiration.html:132
+#: templates/form/expiration.html:131
 msgid "Maximum answers"
 msgstr ""
 
-#: templates/form/expiration.html:139
+#: templates/form/expiration.html:138
 msgid "The form will expire after"
 msgstr ""
 
-#: templates/form/expiration.html:165 templates/form/inspect-form.html:435
+#: templates/form/expiration.html:164 templates/form/inspect-form.html:435
 msgid "When the form has expired"
 msgstr ""
 
-#: templates/form/expiration.html:168 templates/form/inspect-form.html:406
+#: templates/form/expiration.html:167 templates/form/inspect-form.html:406
 #: templates/form/inspect-form.html:440 templates/main/index.html:43
 msgid "Edit text"
 msgstr ""
 
-#: templates/form/expiration.html:173 templates/form/inspect-form.html:446
+#: templates/form/expiration.html:172 templates/form/inspect-form.html:446
 msgid "Say something to the user if the form has expired"
 msgstr ""
 

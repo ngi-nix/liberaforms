@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-10-02 19:10+0200\n"
+"POT-Creation-Date: 2021-10-02 19:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -397,7 +397,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#. Table column title, indicating answers recived for a form
+#. Table column title, indicating answers received for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:253
 #: templates/answers/chart-answers.html:93 templates/site/stats.html:46
 #: templates/site/stats.html:122 templates/user/statistics.html:31
@@ -564,6 +564,7 @@ msgstr ""
 msgid "You are going to delete"
 msgstr ""
 
+#. Always used with a number. For example, 'You are going to delete 3 answers'
 #: templates/answers/delete-all-answers.html:22
 #: templates/form/delete-form.html:27 templates/form/expiration.html:153
 #: templates/site/delete-site.html:22
@@ -709,15 +710,25 @@ msgstr ""
 msgid "Number fields"
 msgstr ""
 
-#: templates/form/expiration.html:119
+#. Applies to 'Number' fields. Form will expire when the sum of values between
+#. all answers to this field in this form reaches the specified value. For
+#. example, if you set expiration condition to value=5 on this number field, if
+#. you receive 2 answers that ask on this field for 2 and 3, the form will
+#. expire.
+#: templates/form/expiration.html:114
+#, python-format
+msgid "The sum of all the answers to '%(field_label)s'"
+msgstr ""
+
+#: templates/form/expiration.html:118
 msgid "Save max."
 msgstr ""
 
-#: templates/form/expiration.html:132
+#: templates/form/expiration.html:131
 msgid "Maximum answers"
 msgstr ""
 
-#: templates/form/expiration.html:139
+#: templates/form/expiration.html:138
 msgid "The form will expire after"
 msgstr ""
 
