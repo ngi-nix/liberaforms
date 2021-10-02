@@ -168,10 +168,15 @@ $(function () {
     },
     requirementType: 'integer',
     messages: {
-      en: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
-      es: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
-      eu: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
-      ca: '{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}',
+      en: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      es: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      eu: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      ca: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      fr: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      ru: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      eo: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      ca: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
+      nb: '{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}',
     }
   })
   .addValidator('filemimetypes', {

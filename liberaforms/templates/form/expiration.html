@@ -92,12 +92,12 @@
         <div class="col-md-3"></div>
         <div class="col-md-6">
         <div class="title_2" style="margin-top:1em">
-            {%trans%}Fields{%endtrans%}
+            {%trans%}Number fields{%endtrans%}
         </div>
 
         {% for field_name, values in form.get_available_number_type_fields().items() %}
             {% set field_label = form.get_field_label(field_name) %}
-            {# i18n: Applies to 'Number' fields. Form will expire when the sum of all values of this field reaches a value #}
+            {# i18n: Applies to 'Number' fields. Form will expire when the sum of values between all answers to this field in this form reaches the specified value. For example, if you set expiration condition to value=5 on this number field, if you receive 2 answers that ask on this field for 2 and 3, the form will expire. #}
             {% set placeholder=_("The sum of all the answers to '%s'" % field_label) %}
 
             <div class="input-group input-group-sm mb-3 flex-nowrap"

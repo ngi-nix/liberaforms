@@ -24,7 +24,7 @@ function postFormRender(){
       hint.html('{%trans%}Valid file types{%endtrans%}'+': '+allowed_extensions)
       $(hints).append(hint).append('<br />')
       var hint = $('<span>');
-      hint.html('{%trans%}The file should be no larger than{%endtrans%} {{max_attachment_size_for_humans}}')
+      hint.html('{%trans size=max_attachment_size_for_humans%}The file should be no larger than {{size}}{%endtrans%}')
       $(hints).append(hint)
       $(this).after(hints)
     });
@@ -43,7 +43,7 @@ $(document).on("wheel", "input[type=number]", function (e) {
         if ($("#{{field}}").prop("max") && $("#{{field}}").prop("max") > {{available}}){
           if ({{available}} > 0){
               var hint=$("<div class='hint'>")
-              hint.text("{%trans max=available%}Note: Maximum is now {{max}}s{%endtrans%}");
+              hint.text("{%trans max=available%}Note: Maximum is now {{max}}{%endtrans%}");
               hint.insertBefore("#{{field}}");
               $("#{{field}}").prop("max", {{available}});
           }
