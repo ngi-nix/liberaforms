@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-10-02 17:49+0200\n"
+"POT-Creation-Date: 2021-10-02 18:05+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -594,13 +594,17 @@ msgstr ""
 msgid "A photo of a horse galloping on the beach."
 msgstr ""
 
-#: templates/form/_post-render-scripts.js:24 templates/form/view-form.html:192
-#: templates/form/view-form.html:193 templates/form/view-form.html:194
-#: templates/form/view-form.html:195
+#: templates/form/_post-render-scripts.js:24 templates/form/view-form.html:197
+#: templates/form/view-form.html:198 templates/form/view-form.html:199
+#: templates/form/view-form.html:200
 msgid "Valid file types"
 msgstr ""
 
-#: templates/form/_post-render-scripts.js:27
+#: templates/form/_post-render-scripts.js:27 templates/form/view-form.html:171
+#: templates/form/view-form.html:172 templates/form/view-form.html:173
+#: templates/form/view-form.html:174 templates/form/view-form.html:175
+#: templates/form/view-form.html:176 templates/form/view-form.html:177
+#: templates/form/view-form.html:178 templates/form/view-form.html:179
 #, python-format
 msgid "The file should be no larger than %(size)s"
 msgstr ""
@@ -999,11 +1003,6 @@ msgstr ""
 
 #: templates/form/share-form.html:138
 msgid "Public form"
-msgstr ""
-
-#: templates/form/view-form.html:171 templates/form/view-form.html:172
-#: templates/form/view-form.html:173 templates/form/view-form.html:174
-msgid "The file should be no larger than"
 msgstr ""
 
 #: templates/main/page-not-found.html:9
