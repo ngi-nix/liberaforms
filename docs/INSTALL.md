@@ -7,6 +7,12 @@ Requires
 
 If you want to use Docker, please follow the instructions in `docs/docker.md`
 
+
+Install development libraries to compile pip packages
+```
+apt-get install python3-dev
+```
+
 ## Clone LiberaForms
 
 You can install LiberaForms in the directory of your choice.
@@ -27,6 +33,7 @@ python3 -m venv ./venv
 ### Install python packages
 ```
 source ./venv/bin/activate
+pip install --upgrade pip
 pip install -r ./requirements.txt
 ```
 
@@ -42,62 +49,101 @@ You can create a SECRET_KEY like this
 openssl rand -base64 32
 ```
 
-LiberaForms is still not ready. However, we will use it to finish the installation.
-
-Open a new terminal and run
-
+Add the database config.
 ```
-cd liberaforms
-source venv/bin/activate
-flask run
+DB_HOST=localhost
+DB_NAME=liberaforms
+DB_USER=liberaforms
+DB_PASSWORD=a_secret_db_password
 ```
 
-Leave it running in the terminal.
+### Database
 
-We will now use the `flask` command to finish the installation.
+Create a user and database with the `.env` values
 
-> Note: Every time you change values in `.env` you need to restart LiberaForms
-
-## Database
-
-### Create the empty database
-
-This will use the DB values in your `.env` file
 ```
-flask database create
+sudo su
+su postgres -c "liberaforms/commands/postgres.sh create-db"
+exit
 ```
 
-### Create tables
+#### Create tables
 
 Upgrade the database to the latest version
 
 ```
-flask database alembic upgrade
+flask db upgrade
 ```
 
-Note that `flask database alembic` is a wrapper for the `flask db` command.
-
-See more options here https://flask-migrate.readthedocs.io/en/latest/#api-reference
+See more db options here https://flask-migrate.readthedocs.io/en/latest/#api-reference
 
 
 ### Drop database
 
-If you need to delete the database
+If you need to delete the database (warning: the database user is also deleted)
 
 ```
-flask database drop
+sudo su
+su postgres -c "liberaforms/commands/postgres.sh drop-db"
+exit
+```
+
+## Site config
+
+Create your site
+```
+flask site set -hostname=my.domain.com -scheme=https -port=8080
+```
+
+Note that `port` can be empty
+```
+flask site set -hostname=my.domain.com -scheme=https -port=
+```
+
+## SMTP config
+
+Optionally you can configure SMTP now. This configuration can also be set later via the web UI.
+
+```
+-host: Your SMTP server's name (required)
+-port: SMTP port (required)
+-user: SMTP username
+-password: SMTP password
+-encryption: [ SSL | STARTTLS ]
+-noreply: Emails will be sent using this address (required)
+```
+
+```
+flask smtp set -host=localhost -port=25 -noreply=no-reply@domain.com
+```
+
+Note: If your password contains the special character `!` you will need to wrap your password in single quotes
+
+```
+-password='my!password'
+```
+
+View SMTP config
+```
+flask smtp get
+```
+
+Test SMTP config
+
+```
+flask smtp test -recipent=me@my.domain.com
 ```
 
 ## Encryption
 
 LiberaForms encrypts passwords by default.
 
-These other values are also encrypted:
+However, these other values are also encrypted:
 
 * Form attachments when they are submitted
 * Fediverse authentification
 
-You need to create a key for those to work.
+You need to create a key for these features to be enabled.
 
 ### Create the key
 
@@ -139,7 +185,7 @@ chown www-data ./liberaforms/flask_session
 
 Gunicorn serves LiberaForms.
 
-This command will suggest a configuration file path and it's content.
+This command suggests a configuration file path and it's content.
 
 ```
 flask config hint gunicorn
@@ -157,18 +203,23 @@ sudo apt-get install supervisor
 
 ### Configure Supervisor
 
-This command will suggest a configuration file path and it's content.
+This command suggests a configuration file path and it's content.
+
 ```
 flask config hint supervisor
 ```
+
 Copy the content. Create the `liberaforms.conf` file and paste.
 
 Restart supervisor and check if LiberaForms is running.
+
 ```
 sudo systemctl restart supervisor
 sudo supervisorctl status liberaforms
 ```
+
 Other supervisor commands
+
 ```
 sudo supervisorctl start liberaforms
 sudo supervisorctl stop liberaforms
@@ -178,15 +229,27 @@ sudo supervisorctl stop liberaforms
 
 ## Database
 
-Run this and check if a copy is dumped correctly.
+Create a directory for the backup and set permissions
+
 ```
-/usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
+mkdir /var/backups/liberaforms
+chown postgres /var/backups/liberaforms/
 ```
 
-Add a line to your crontab to run it every night.
+Run this and check if a copy is dumped correctly.
 ```
-30 3 * * * /usr/bin/pg_dump -U <db_user> <db_name> > backup.sql
+su postgres -c "/usr/bin/pg_dump <db_name> > /var/backups/liberaforms/backup.sql"
 ```
+
+Add a line to postgres user's crontab
+```
+crontab -u postgres -e
+```
+to run it every night..
+```
+30 3 * * * /usr/bin/pg_dump -U <db_name> > /var/backups/liberaforms/backup.sql"
+```
+
 Note: This overwrites the last copy. You might want to change that.
 
 Don't forget to check that the cronjob is dumping the database correctly.
@@ -209,8 +272,13 @@ sudo supervisorctl stop liberaforms
 FLASK_ENV=development flask run
 ```
 
-# Configure nginx proxy
-See `docs/nginx.example`
+# Web server
+
+You need to configure a web server to serve LiberaForms.
+
+Configure nginx proxy. See `docs/nginx.example`
+
+(TODO: include an apache2 config)
 
 
 # Installation finished!
@@ -225,7 +293,12 @@ supervisorctl start liberaforms
 
 ## Bootstrap the first admin user
 
-## Setup SMTP
+`ROOT_USERS` defined in the `.env` can be used to create Admin users.
+
+1. From the Login page, choose 'Forgot your password?' link
+2. Enter a ROOT_USER email
+3. Fill out the new user form
+4. Go to the configuration page and get the SMTP config working first
 
 
 # Utilities
@@ -234,10 +307,10 @@ supervisorctl start liberaforms
 
 You can create a user when needed.
 
-Note that users created via the command line will have validated_email set to True
+Note that the emails of users created via the command line do not require validation.
 
 ```
-flask user create -admin <username> <email> <password>
+flask user create <username> <email> <password> -admin
 ```
 
 Disable and enable users.

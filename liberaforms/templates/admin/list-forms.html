@@ -1,72 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
 
-
-<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
-<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/data-display/data-display.css">
 
 <div class="container">
-<div class="row">
-    <div class="col-md-12">
 
-    <div class="title_1 delimited">
-      {# i18n: Title on /admin/forms page #}
-        {%trans%}All forms{%endtrans%}
-        <div style="float:right">
-            <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
-                {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
-            </a>
-        </div>
+  <nav class="navbar navbar-expand-sm"
+       style="padding:0;">
+
+    <span class="navbar-brand navbar-text"
+          style="font-size: 1.5rem">
+    {# i18n: Title on /admin/forms page #}
+      {%trans%}All forms{%endtrans%}
+    </span>
+    <button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#otherFormOptions"
+            aria-controls="otherFormOptions"
+            aria-expanded="false"
+            aria-label="Toggle other options">
+      <i class="fa fa-align-justify" style="color: gray;" aria-hidden="true"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="otherFormOptions">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/site/stats">
+            {%trans%}Statistics{%endtrans%}
+            <i class="fa fa-bar-chart" aria-hidden="true"></i>
+          </a>
+        </li>
+      </ul>
     </div>
+  </nav>
 
-    <table id="forms" style="display:none" class="table table-striped table-sm">
-        <thead>
-        <tr>
-            <th>{%trans%}Name{%endtrans%}</th>
-            <th>{%trans%}Created{%endtrans%}</th>
-            <th>{%trans%}Author{%endtrans%}</th>
-            <th>{%trans%}Public{%endtrans%}</th>
-            {# i18n: Shows when was the last answer received on form #}
-            <th>{%trans%}Last answer{%endtrans%}</th>
-            <th>{%trans%}Answers{%endtrans%}</th>
-            {% if g.is_root_user_enabled %}
-                <th>{%trans%}Hostname{%endtrans%}</th>
-            {% endif %}
-        </tr>
-    </thead>
-    {% for form in forms %}
-        {% set author = form.get_author() %}
-        <tr>
-            <td><a href="/forms/view/{{form.id}}">{{form.slug}}</a></td>
-            <td>{{form.get_created_date()}}</td>
-            <td><a href="/admin/users/{{author.id}}">{{author.username}}</a></td>
-            <td>{{form.is_public()}}</td>
-            <td>{{form.get_last_answer_date()}}</td>
-            <td>{{form.get_answers().count()}}</td>
-            {% if g.is_root_user_enabled %}
-                <td>{{form.hostname}}</td>
-            {% endif %}
-        </tr>
-    {% endfor %}
-    </table>
 
+  <div class="row">
+    <div class="col">
+      <div data-vue-component="data-display"
+           data-endpoint="/data-display/admin/forms"
+           data-language="{{ g.current_user.language }}"
+           data-csrf_token="{{ csrf_token() }}">
+      </div>
     </div>
-</div>
+  </div>
 </div>
 
-<script>
-$(document).ready(function() {
-    $('#forms').DataTable({
-        "language": {
-            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
-        },
-        "initComplete": function(settings, json) {
-            $("#forms").show();
-        },
-        "order": [[4, 'desc']]
-    });
-} );
-</script>
+<script src="/static/data-display/data-display.js"></script>
 
 {% endblock %}

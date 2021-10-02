@@ -8,8 +8,7 @@ TMP_DIR = '/tmp'
 DB_HOST=localhost
 DB_NAME=liberaforms
 DB_USER=liberaforms
-# Use a strong password
-DB_PASSWORD=""
+DB_PASSWORD=a_secret_db_password
 
 # Maximum valid age for password resets, invitations, ..
 # 86400 seconds = 24h
@@ -46,3 +45,11 @@ FLASK_ENV=production
 # this sets the config to use (see config.py)
 # can be 'production' or 'development'
 FLASK_CONFIG=production
+
+# ENABLE_PROMETHEUS_METRICS
+# this activates Prometheus' /metrics route and metrics generation
+ENABLE_PROMETHEUS_METRICS=False
+
+# DEBUGGING
+# Optional. Recieve Internal Server 500 errors. Good for debugging.
+#ALERT_MAILS = ["your_email_address", "another_email_address"]

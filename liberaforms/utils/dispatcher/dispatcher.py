@@ -71,7 +71,7 @@ class Dispatcher(EmailServer):
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
         message['Subject'] = Header(_("MAIL test")).encode()
         message['To'] = recipient_email
-        status = self.send_mail(message)
+        status = self.send_mail(message, [recipient_email])
         return status
 
     def send_invitation(self, invite):
@@ -85,7 +85,7 @@ class Dispatcher(EmailServer):
         header = Header(_("Invitation to LiberaForms"))
         message['Subject'] = header.encode()
         message['To'] = invite.email
-        status = self.send_mail(message)
+        status = self.send_mail(message, [invite.email])
         return status
 
     def send_account_recovery(self, user):
@@ -99,10 +99,9 @@ class Dispatcher(EmailServer):
                                             button_link=link,
                                             footer=footer)
         message = self.create_multipart_message(text_body, html_body)
-        header = Header(_("LiberaForms. Recover password"))
-        message['Subject'] = header.encode()
+        message['Subject'] = Header(_("LiberaForms. Recover password")).encode()
         message['To'] = user.email
-        status = self.send_mail(message)
+        status = self.send_mail(message, [user.email])
         return status
 
     def send_email_address_confirmation(self, user, email_to_validate):
@@ -114,10 +113,9 @@ class Dispatcher(EmailServer):
                                             button_text=_("Validate email"),
                                             button_link=link)
         message = self.create_multipart_message(text_body, html_body)
-        header = Header(_("LiberaForms. Change email"))
-        message['Subject'] = header.encode()
+        message['Subject'] = Header(_("LiberaForms. Email validation")).encode()
         message['To'] = email_to_validate
-        status = self.send_mail(message)
+        status = self.send_mail(message, [email_to_validate])
         return status
 
     def send_new_user_notification(self, user):
@@ -125,81 +123,83 @@ class Dispatcher(EmailServer):
                                 notifyNewUser=True,
                                 validatedEmail=True,
                                 blocked=False)
+        admin_emails = [admin.email for admin in admins]
+        if not admin_emails:
+            return
         body = _("New user '%s' created at %s" % (  user.username,
                                                     self.site.siteName))
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
         message['Subject'] = Header(_("LiberaForms. New user notification")).encode()
-        for admin in admins:
-            message['To'] = admin.email
-            thr = Thread(
-                    target=self.send_mail_async,
-                    args=[current_app._get_current_object(), message]
-            )
-            thr.start()
+        message['To'] = ', '.join(admin_emails)
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(), message, admin_emails]
+        )
+        thr.start()
 
     def send_new_form_notification(self, form):
         admins = User.find_all( isAdmin=True,
                                 notifyNewForm=True,
                                 validatedEmail=True,
                                 blocked=False)
+        admin_emails = [admin.email for admin in admins]
+        if not admin_emails:
+            return
         body = _("New form '%s' created at %s" % (form.slug, self.site.siteName))
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
         message['Subject'] = Header(_("LiberaForms. New form notification")).encode()
-        for admin in admins:
-            message['To'] = admin.email
-            thr = Thread(
-                    target=self.send_mail_async,
-                    args=[current_app._get_current_object(), message]
-            )
-            thr.start()
+        message['To'] = ', '.join(admin_emails)
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(), message, admin_emails]
+        )
+        thr.start()
 
-
-    def send_new_answer_notification(self, emails, answer, slug):
+    def send_new_answer_notification(self, formuser_emails, answer, slug):
         body = _("New form answer in %s at %s\n" % (slug, self.site.siteName))
         for data in answer:
             body = "%s\n%s: %s" % (body, data[0], data[1])
         body = "%s\n" % body
-        subject = Header(_("LiberaForms. New form answer")).encode()
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
-        message['Subject'] = subject
-        for email in emails:
-            message['To'] = email
-            thr = Thread(
-                    target=self.send_mail_async,
-                    args=[current_app._get_current_object(), message]
-            )
-            thr.start()
+        message['Subject'] = Header(_("LiberaForms. New form answer")).encode()
+        message['To'] = ', '.join(formuser_emails)
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(), message, formuser_emails]
+        )
+        thr.start()
 
-    def send_answer_confirmation(self, msg_to, form):
+    def send_answer_confirmation(self, anon_email, form):
         message = MIMEMultipart('alternative')
         # TODO: Also send a plain text email
         html_body=MIMEText(form.after_submit_text_html, _subtype='html', _charset='UTF-8')
         message.attach(html_body)
         message['Subject'] = Header(_("Confirmation message")).encode()
-        message['To'] = msg_to
-        state = self.send_mail(message)
-        return state
+        message['To'] = anon_email
+        #state = self.send_mail(message, [anon_email])
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(), message, [anon_email]]
+        )
+        thr.start()
 
-    def send_expired_form_notification(self, emails, form):
+    def send_expired_form_notification(self, formuser_emails, form):
         body = _("The form '%s' has expired at %s" % (form.slug, self.site.siteName))
-        subject = Header(_("LiberaForms. A form has expired")).encode()
         message = MIMEText(body, _subtype='plain', _charset='UTF-8')
-        message['Subject'] = subject
-        for email in emails:
-            message['To'] = email
-            thr = Thread(
-                    target=self.send_mail_async,
-                    args=[current_app._get_current_object(), message]
-            )
-            thr.start()
+        message['Subject'] = Header(_("LiberaForms. A form has expired")).encode()
+        message['To'] = ', '.join(formuser_emails)
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(), message, formuser_emails]
+        )
+        thr.start()
 
-    def send_branding_preview(self, email):
+    def send_branding_preview(self, admin_email):
         body = branding_body_preview()
         message = self.create_multipart_message(body['text'], body['html'])
-        header = Header(_("LiberaForms. Email brand preview"))
-        message['Subject'] = header.encode()
-        message['To'] = email
-        status = self.send_mail(message)
+        message['Subject'] = Header(_("LiberaForms. Email brand preview")).encode()
+        message['To'] = admin_email
+        status = self.send_mail(message, [admin_email])
         return status
 
     """
@@ -212,6 +212,21 @@ class Dispatcher(EmailServer):
         status = EmailServer().send_mail(message)
         return status
     """
+
+    def send_error(self, error):
+        if not current_app.config["ALERT_MAILS"]:
+            return
+        message = MIMEText(error, _subtype='plain', _charset='UTF-8')
+        message['Subject'] = Header("Error at %s" % self.site.hostname).encode()
+        message['To'] = ', '.join(current_app.config["ALERT_MAILS"])
+        thr = Thread(
+            target=self.send_mail_async,
+            args=[current_app._get_current_object(),
+                  message,
+                  current_app.config["ALERT_MAILS"]
+            ]
+        )
+        thr.start()
 
     def publish_form(self, text, img_src, fediverse=True):
         published, msg = FediPublisher().publish(text, img_src)

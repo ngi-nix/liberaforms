@@ -8,14 +8,14 @@ This file is part of LiberaForms.
 import os
 import pytest
 from liberaforms.models.user import User
-from .utils import login
+from liberaforms.models.formuser import FormUser
+from .utils import login, logout
 
 class TestFormAdminSettings():
-    def test_disable_form(self, client, admin_client, anon_client, users, forms):
+    def test_disable_form(self, client, anon_client, users, forms):
         """ Tests disable form
             Test permissions
         """
-        login(admin_client, users['admin'])
         form_id = forms['test_form'].id
         url = f"/admin/forms/toggle-public/{form_id}"
         response = anon_client.get(
@@ -25,6 +25,7 @@ class TestFormAdminSettings():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        login(client, users['editor'])
         response = client.get(
                             url,
                             follow_redirects=True
@@ -32,7 +33,9 @@ class TestFormAdminSettings():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
-        response = admin_client.get(
+        logout(client)
+        login(client, users['admin'])
+        response = client.get(
                             url,
                             follow_redirects=True
                         )
@@ -51,7 +54,7 @@ class TestFormAdminSettings():
         forms['test_form'].adminPreferences['public'] = True
         forms['test_form'].save()
 
-    def test_change_author(self, client, admin_client, anon_client, forms, users):
+    def test_change_author(self, client, anon_client, forms, users):
         """ Tests nonexistent username and valid username
             Tests permission
         """
@@ -63,22 +66,26 @@ class TestFormAdminSettings():
                         )
         assert response.status_code == 200
         assert '<!-- site_index_page -->' in response.data.decode()
+        login(client, users['editor'])
         response = client.get(
                             url,
                             follow_redirects=True
                         )
         assert response.status_code == 200
         assert '<!-- site_index_page -->' in response.data.decode()
-        response = admin_client.get(
+        logout(client)
+        login(client, users['admin'])
+        response = client.get(
                             url,
                             follow_redirects=True
                         )
         assert response.status_code == 200
         assert '<!-- change_author_page -->' in response.data.decode()
         initial_author = forms['test_form'].author
-        assert str(initial_author.id) in forms['test_form'].editors.keys()
+        assert FormUser.find(form_id=forms['test_form'].id,
+                             user_id=forms['test_form'].author_id) != None
         nonexistent_username = "nonexistent"
-        response = admin_client.post(
+        response = client.post(
                             url,
                             data = {
                                 "old_author_username": initial_author.username,
@@ -96,7 +103,7 @@ class TestFormAdminSettings():
 
         # we use the dummy_1 user to be the new author
         dummy_1 = User.find(username=users['dummy_1']['username'])
-        response = admin_client.post(
+        response = client.post(
                             url,
                             data = {
                                 "old_author_username": initial_author.username,
@@ -109,13 +116,14 @@ class TestFormAdminSettings():
         assert '<div class="success flash_message">' in html
         assert '<!-- inspect_form_page -->' in html
         assert forms['test_form'].author.id == dummy_1.id
-        assert str(initial_author.id) not in forms['test_form'].editors.keys()
-        assert str(dummy_1.id) in forms['test_form'].editors.keys()
+        assert FormUser.find(form_id=forms['test_form'].id,
+                             user_id=dummy_1.id) != None
         # reset author to initial value to continue testing
-        response = admin_client.post(
+        response = client.post(
                             url,
                             data = {
                                 "old_author_username": dummy_1.username,
                                 "new_author_username": initial_author.username,
                             }
                         )
+        # Note: dummy_1 is now an editor

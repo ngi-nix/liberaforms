@@ -8,7 +8,8 @@ This file is part of LiberaForms.
 import os
 import pytest
 from liberaforms.models.form import Form
-from liberaforms.models.answer import Answer
+from liberaforms.models.formuser import FormUser
+from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.models.log import FormLog
 from .utils import login
 
@@ -49,5 +50,7 @@ class TestDeleteForm():
         html = response.data.decode()
         assert '<!-- my_forms_page -->' in html
         assert Form.find(id=form_id) == None
-        assert Answer.find(form_id=form_id) == None
-        assert FormLog.find(form_id=form_id) == None
+        assert Answer.find_all(form_id=form_id).count() == 0
+        assert FormUser.find_all(form_id=form_id).count() == 0
+        assert AnswerAttachment.find_all(form_id=form_id).count() == 0
+        assert FormLog.find_all(form_id=form_id).count() == 0

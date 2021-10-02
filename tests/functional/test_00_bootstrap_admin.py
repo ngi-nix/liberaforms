@@ -37,20 +37,20 @@ class TestBootstrapAdmin():
                         )
         assert response.status_code == 200
         html = response.data.decode()
-        assert "<!-- my_forms_page -->" in html
+        assert "<!-- user_settings_page -->" in html
         assert '<a class="nav-link" href="/user/logout">' in html
         user = User.find(username=users['admin']['username'])
         assert user.admin['isAdmin'] == True
 
-    def test_login(cls, users, admin_client):
-        response = admin_client.get(
+    def test_login(cls, users, client):
+        response = client.get(
                         "/user/login",
                         follow_redirects=False,
                     )
         assert response.status_code == 200
         html = response.data.decode()
         assert '<form action="/user/login" method="POST"' in html
-        response = admin_client.post(
+        response = client.post(
                         "/user/login",
                         data = {
                             "username": users['admin']['username'],
@@ -63,8 +63,8 @@ class TestBootstrapAdmin():
         assert "<!-- my_forms_page -->" in html
         assert '<a class="nav-link" href="/user/logout">' in html
 
-    def test_logout(self, admin_client):
-        response = admin_client.post(
+    def test_logout(self, client):
+        response = client.post(
                         "/user/logout",
                         follow_redirects=True,
                     )

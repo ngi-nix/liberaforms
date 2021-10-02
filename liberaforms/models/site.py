@@ -46,16 +46,16 @@ class Site(db.Model, CRUD):
     newuser_enableuploads = db.Column(db.Boolean, nullable=False, default=False)
     mimetypes = db.Column(JSONB, nullable=False)
     email_footer = db.Column(db.String, nullable=True)
-    blurb = db.Column(JSONB, nullable=False)
+    blurb = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
 
-    def __init__(self, hostname, port, scheme):
+    def __init__(self, hostname, scheme, port):
         self.created = datetime.now(timezone.utc)
         self.hostname = hostname
         self.port = port
         self.scheme = scheme
         self.siteName = "LiberaForms!"
         self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
-        self.primary_color = "#D63D3B"
+        self.primary_color = "#b71c1c"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
                                             name="terms"),
@@ -97,8 +97,8 @@ class Site(db.Model, CRUD):
         if url_parse:
             new_site = Site(
                 hostname = url_parse.hostname,
+                scheme = url_parse.scheme,
                 port = url_parse.port,
-                scheme = url_parse.scheme
             )
             new_site.save()
             return new_site
@@ -170,9 +170,7 @@ class Site(db.Model, CRUD):
         self.save()
 
     def set_short_description(self):
-        text = html_parser.extract_text(self.blurb['html']).strip('\n')
-        text = sanitizers.truncate_text(text, truncate_at=155)
-        flag_modified(self, "blurb")
+        text = html_parser.get_opengraph_text(self.blurb['html'])
         self.blurb['short_text'] = text
 
     def get_short_description(self):

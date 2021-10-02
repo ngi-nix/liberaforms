@@ -5,9 +5,11 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+import traceback
 from flask_wtf.csrf import CSRFError
 from flask import Blueprint, render_template, request
 from flask import current_app, flash
+from liberaforms.utils.dispatcher import Dispatcher
 
 errors_bp = Blueprint('errors_bp',
                       __name__,
@@ -20,6 +22,7 @@ def page_not_found(error):
 
 @errors_bp.app_errorhandler(500)
 def server_error(error):
+    Dispatcher().send_error(traceback.format_exc())
     current_app.logger.error(f'Server Error: {error}')
     return render_template('server-error.html', error=error), 500
 

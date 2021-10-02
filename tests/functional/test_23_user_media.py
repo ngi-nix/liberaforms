@@ -15,7 +15,7 @@ from liberaforms.models.user import User
 from liberaforms.models.media import Media
 from liberaforms.commands.user import create as create_user
 from .utils import login, logout
-
+from pprint import pprint
 
 class TestUserMedia():
 
@@ -23,7 +23,7 @@ class TestUserMedia():
         """ Tests list media page
             Tests permission
         """
-        login(client, users['editor'])
+        login(client, users['dummy_1'])
         url = f"/user/{users['editor']['username']}/media"
         response = anon_client.get(
                         url,
@@ -32,6 +32,7 @@ class TestUserMedia():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- site_index_page -->' in html
+        logout(client)
         login(client, users['editor'])
         response = client.get(
                         url,
@@ -64,7 +65,8 @@ class TestUserMedia():
             filename=valid_media_name,
             content_type=mimetype,
         )
-        initial_media_count = g.current_user.media.count()
+        editor = User.find(username=users['editor']['username'])
+        initial_media_count = editor.media.count()
         response = client.post(
                         url,
                         data = {
@@ -76,7 +78,7 @@ class TestUserMedia():
         assert response.status_code == 200
         assert response.is_json == True
         assert response.json['media']['file_name'] == valid_media_name
-        assert g.current_user.media.count() == initial_media_count + 1
+        assert editor.media.count() == initial_media_count + 1
         media = Media.find(id=1)
         media_path = os.path.join(current_app.config['MEDIA_DIR'], str(g.current_user.id))
         file_path = os.path.join(media_path, media.storage_name)
@@ -84,7 +86,7 @@ class TestUserMedia():
         assert media.does_media_exits() == True
         assert media.does_media_exits(thumbnail=True) == True
 
-    def test_invaild_media_upload(self, client):
+    def test_invaild_media_upload(self, client, users):
         url = "/media/save"
         invalid_media_name = "invalid_media.json"
         invalid_media_path = f"./assets/{invalid_media_name}"
@@ -96,7 +98,9 @@ class TestUserMedia():
             filename=invalid_media_name,
             content_type=mimetype,
         )
-        initial_media_count = g.current_user.media.count()
+        login(client, users['editor'])
+        editor = User.find(username=users['editor']['username'])
+        initial_media_count = editor.media.count()
         response = client.post(
                         url,
                         data = {
@@ -107,7 +111,7 @@ class TestUserMedia():
                     )
         assert response.status_code == 200
         assert response.is_json == True
-        assert g.current_user.media.count() == initial_media_count
+        assert editor.media.count() == initial_media_count
 
     @pytest.mark.skip(reason="TODO")
     def test_view_media(self, client, anon_client, users):
@@ -123,25 +127,30 @@ class TestUserMedia():
         """ Tests delete media
             Tests Permissions
         """
+        initial_total_media = Media.query.count()
         user = User.find(username=users['editor']['username'])
         media = Media.find_all(user_id=user.id).first()
-        url = f"media/delete/{media.id}"
+        url = f"/media/delete/{media.id}"
         response = anon_client.post(
                         url,
                         follow_redirects=True,
                     )
-        assert response.status_code == 200
+        assert response.status_code == 401
         html = response.data.decode()
-        assert '<!-- site_index_page -->' in html
+        # create a new user and attempt to delete media
+        """
         runner = app.test_cli_runner()
         with app.app_context():
             result = runner.invoke(create_user, [users['dummy_1']['username'],
                                                  users['dummy_1']['email'],
                                                  users['dummy_1']['password']
                                                  ])
+
+        """
+        #logout(client)
+        assert User.find(username=users['dummy_1']['username']) != None
         logout(client)
         response = login(client, users['dummy_1'])
-        assert g.current_user.username == users['dummy_1']['username']
         dummy_1 = User.find(username=users['dummy_1']['username'])
         response = client.post(
                         url,
@@ -150,8 +159,10 @@ class TestUserMedia():
         assert response.status_code == 200
         assert response.is_json == True
         assert response.json == False
-        assert '<!-- site_index_page -->' in html
-        dummy_1.delete()
+        assert initial_total_media == Media.query.count()
+        #dummy_1.delete()
+        # attempt media delete with editor user
+        logout(client)
         login(client, users['editor'])
         response = client.post(
                         url,
@@ -159,3 +170,4 @@ class TestUserMedia():
                     )
         assert response.status_code == 200
         assert response.is_json == True
+        assert initial_total_media -1 == Media.query.count()
