@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-10-02 20:20+0200\n"
-"PO-Revision-Date: 2021-10-02 18:38+0000\n"
+"PO-Revision-Date: 2021-10-03 10:29+0000\n"
 "Last-Translator: LiberaForms <info@liberaforms.org>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/liberaforms/"
 "server-liberaforms/eu/>\n"
@@ -864,7 +864,7 @@ msgstr "Sarbide mugatua"
 
 #: templates/form/inspect-form.html:275
 msgid "Confirmation"
-msgstr "Egiaztapena"
+msgstr "Berrespena"
 
 #: templates/form/inspect-form.html:318 templates/site/email-branding.html:54
 msgid "Personalize"
@@ -1626,7 +1626,7 @@ msgstr "LiberaForms. Galdetegiko erantzun berria"
 
 #: utils/dispatcher/dispatcher.py:177
 msgid "Confirmation message"
-msgstr "Egiaztapen mezua"
+msgstr "Berrespen mezua"
 
 #: utils/dispatcher/dispatcher.py:187
 #, python-format
