@@ -198,14 +198,13 @@
                    {% set editors=form.get_editors() %}
                    {% if current_user_is_editor %}
                         {% if editors.count() > 1 %}
+                        {% set number='<span class="badge badge-light">%s</span>' |
+                           format(editors.count() -1) %}
                         <a class="btn btn-primary btn-xs"
                            role="button"
                            href="/forms/share/{{form.id}}"
                            style="padding:5px 4px 3px 4px">
-                           {%trans%}Form shared with{%endtrans%}
-                           <span class="badge badge-light">
-                             {{ editors.count() -1 }}
-                           </span>
+                           {%trans number=number|safe%}Form shared with {{number}}{%endtrans%}
                         </a>
                         {% else %}
                         <a class="btn btn-primary btn-xs"
@@ -215,8 +214,7 @@
                         </a>
                         {% endif %}
                    {% else %}
-                        {%trans%}Form shared with{%endtrans%}:
-                        {{ editors.count() -1 }}
+                        {%trans number=editors.count()-1%}Form shared with {{number}}{%endtrans%}
                    {% endif %}
                </td>
             </tr>
@@ -226,14 +224,13 @@
                    {% set readers=form.get_readers() %}
                    {% if current_user_is_editor %}
                         {% if readers.count() > 0 %}
+                        {% set number='<span class="badge badge-light">%s</span>' |
+                           format(readers.count()) %}
                         <a class="btn btn-primary btn-xs"
                            role="button"
                            href="/forms/share/{{form.id}}"
                            style="padding:5px 4px 3px 4px">
-                           {%trans%}Answers shared with{%endtrans%}
-                           <span class="badge badge-light">
-                             {{ readers.count() }}
-                           </span>
+                           {%trans number=number|safe%}Answers shared with {{number}}{%endtrans%}
                         </a>
                         {% else %}
                         <a class="btn btn-primary btn-xs"
