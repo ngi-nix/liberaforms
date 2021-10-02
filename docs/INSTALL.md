@@ -272,8 +272,13 @@ sudo supervisorctl stop liberaforms
 FLASK_ENV=development flask run
 ```
 
-# Configure nginx proxy
-See `docs/nginx.example`
+# Web server
+
+You need to configure a web server to serve LiberaForms.
+
+Configure nginx proxy. See `docs/nginx.example`
+
+(TODO: include an apache2 config)
 
 
 # Installation finished!
@@ -288,13 +293,21 @@ supervisorctl start liberaforms
 
 ## Bootstrap the first admin user
 
+`ROOT_USERS` defined in the `.env` can be used to create Admin users.
+
+1. From the Login page, choose 'Forgot your password?' link
+2. Enter a ROOT_USER email
+3. Fill out the new user form
+4. Go to the configuration page and get the SMTP config working first
+
+
 # Utilities
 
 ## Users
 
 You can create a user when needed.
 
-Note that users created via the command line will have `validated_email` set to `True`
+Note that the emails of users created via the command line do not require validation.
 
 ```
 flask user create <username> <email> <password> -admin
