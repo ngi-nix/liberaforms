@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-10-02 19:41+0200\n"
+"POT-Creation-Date: 2021-10-02 19:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -397,7 +397,7 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#. Table column title, indicating answers recived for a form
+#. Table column title, indicating answers received for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:253
 #: templates/answers/chart-answers.html:93 templates/site/stats.html:46
 #: templates/site/stats.html:122 templates/user/statistics.html:31
@@ -419,7 +419,7 @@ msgstr ""
 #: templates/answers/delete-all-answers.html:45
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:135
-#: templates/form/edit-form.html:141 templates/form/expiration.html:185
+#: templates/form/edit-form.html:141 templates/form/expiration.html:186
 #: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:342
 #: templates/form/inspect-form.html:426 templates/form/inspect-form.html:460
 #: templates/form/preview-form.html:69 templates/form/preview-form.html:80
@@ -564,8 +564,9 @@ msgstr ""
 msgid "You are going to delete"
 msgstr ""
 
+#. Always used with a number. For example, 'You are going to delete 3 answers'
 #: templates/answers/delete-all-answers.html:22
-#: templates/form/delete-form.html:27 templates/form/expiration.html:152
+#: templates/form/delete-form.html:27 templates/form/expiration.html:153
 #: templates/site/delete-site.html:22
 msgid "answers"
 msgstr ""
@@ -579,7 +580,7 @@ msgid "Change language"
 msgstr ""
 
 #: templates/common/change-language.html:40 templates/form/edit-form.html:130
-#: templates/form/expiration.html:181 templates/form/inspect-form.html:338
+#: templates/form/expiration.html:182 templates/form/inspect-form.html:338
 #: templates/form/inspect-form.html:422 templates/form/inspect-form.html:456
 #: templates/form/preview-form.html:59 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
@@ -731,16 +732,16 @@ msgstr ""
 msgid "The form will expire after"
 msgstr ""
 
-#: templates/form/expiration.html:164 templates/form/inspect-form.html:435
+#: templates/form/expiration.html:165 templates/form/inspect-form.html:435
 msgid "When the form has expired"
 msgstr ""
 
-#: templates/form/expiration.html:167 templates/form/inspect-form.html:406
+#: templates/form/expiration.html:168 templates/form/inspect-form.html:406
 #: templates/form/inspect-form.html:440 templates/main/index.html:43
 msgid "Edit text"
 msgstr ""
 
-#: templates/form/expiration.html:172 templates/form/inspect-form.html:446
+#: templates/form/expiration.html:173 templates/form/inspect-form.html:446
 msgid "Say something to the user if the form has expired"
 msgstr ""
 
@@ -2038,3 +2039,4 @@ msgstr ""
 #: views/user.py:338
 msgid "Bad credentials"
 msgstr ""
+
