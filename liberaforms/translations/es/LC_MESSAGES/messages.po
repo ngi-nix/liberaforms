@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-02 19:10+0200\n"
+"POT-Creation-Date: 2021-10-02 20:20+0200\n"
 "PO-Revision-Date: 2021-09-08 13:08+0000\n"
 "Last-Translator: LiberaForms <info@liberaforms.org>\n"
 "Language: es\n"
@@ -414,7 +414,7 @@ msgstr "i sus formularios"
 msgid "Name"
 msgstr "Nombre"
 
-#. Table column title, indicating answers recived for a form
+#. Table column title, indicating answers received for a form
 #: templates/admin/delete-user.html:36 templates/admin/inspect-user.html:253
 #: templates/answers/chart-answers.html:93 templates/site/stats.html:46
 #: templates/site/stats.html:122 templates/user/statistics.html:31
@@ -586,6 +586,7 @@ msgstr "Formulario"
 msgid "You are going to delete"
 msgstr "Vas a borrar"
 
+#. Always used with a number. For example, 'You are going to delete 3 answers'
 #: templates/answers/delete-all-answers.html:22
 #: templates/form/delete-form.html:27 templates/form/expiration.html:153
 #: templates/site/delete-site.html:22
@@ -682,32 +683,41 @@ msgstr "El formulario tendrá esta dirección"
 msgid "This URL is not available. Try another!"
 msgstr "El URL no está disponible. Intenta de nuevo!"
 
-#: templates/form/edit-form.html:125 templates/form/edit-form.html:324
+#: templates/form/edit-form.html:125 templates/form/edit-form.html:325
 #: templates/form/preview-form.html:17
 msgid "Preview"
 msgstr "Previsualizar"
 
-#: templates/form/edit-form.html:205 templates/form/edit-form.html:211
-#: templates/form/edit-form.html:212 templates/form/edit-form.html:219
-#: templates/form/edit-form.html:220
+#. Placeholder for option name in Multiple choice fields
+#: templates/form/edit-form.html:206
 #, fuzzy
 msgid "Option"
 msgstr "Otras opciones"
 
-#: templates/form/edit-form.html:209
+#: templates/form/edit-form.html:210
 msgid "Single choice"
 msgstr ""
 
-#: templates/form/edit-form.html:217
+#: templates/form/edit-form.html:212 templates/form/edit-form.html:220
+#, fuzzy
+msgid "Option 1"
+msgstr "Otras opciones"
+
+#: templates/form/edit-form.html:213 templates/form/edit-form.html:221
+#, fuzzy
+msgid "Option 2"
+msgstr "Otras opciones"
+
+#: templates/form/edit-form.html:218
 #, fuzzy
 msgid "Dropdown options"
 msgstr "Opciones de Admin"
 
-#: templates/form/edit-form.html:309
+#: templates/form/edit-form.html:310
 msgid "OK, use this URL"
 msgstr "De acuerdo, usa este URL"
 
-#: templates/form/edit-form.html:366
+#: templates/form/edit-form.html:367
 msgid "Cannot modify because an answer with this value exists in the database"
 msgstr ""
 
@@ -736,16 +746,26 @@ msgstr "Guardar los cambios"
 msgid "Number fields"
 msgstr "Campos obligatorios"
 
-#: templates/form/expiration.html:119
+#. Applies to 'Number' fields. Form will expire when the sum of values between
+#. all answers to this field in this form reaches the specified value. For
+#. example, if you set expiration condition to value=5 on this number field, if
+#. you receive 2 answers that ask on this field for 2 and 3, the form will
+#. expire.
+#: templates/form/expiration.html:114
+#, python-format
+msgid "The sum of all the answers to '%(field_label)s'"
+msgstr ""
+
+#: templates/form/expiration.html:118
 msgid "Save max."
 msgstr "Guardar el max."
 
-#: templates/form/expiration.html:132
+#: templates/form/expiration.html:131
 #, fuzzy
 msgid "Maximum answers"
 msgstr "Repuestas máximas"
 
-#: templates/form/expiration.html:139
+#: templates/form/expiration.html:138
 msgid "The form will expire after"
 msgstr "Este formulario caduca después de"
 
