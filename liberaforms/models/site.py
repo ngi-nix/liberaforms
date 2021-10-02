@@ -48,14 +48,14 @@ class Site(db.Model, CRUD):
     email_footer = db.Column(db.String, nullable=True)
     blurb = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
 
-    def __init__(self, hostname, port, scheme):
+    def __init__(self, hostname, scheme, port):
         self.created = datetime.now(timezone.utc)
         self.hostname = hostname
         self.port = port
         self.scheme = scheme
         self.siteName = "LiberaForms!"
         self.defaultLanguage = os.environ['DEFAULT_LANGUAGE']
-        self.primary_color = "#D63D3B"
+        self.primary_color = "#b71c1c"
         self.consentTexts = [   ConsentText.get_empty_consent(
                                             id=utils.gen_random_string(),
                                             name="terms"),
@@ -97,8 +97,8 @@ class Site(db.Model, CRUD):
         if url_parse:
             new_site = Site(
                 hostname = url_parse.hostname,
+                scheme = url_parse.scheme,
                 port = url_parse.port,
-                scheme = url_parse.scheme
             )
             new_site.save()
             return new_site

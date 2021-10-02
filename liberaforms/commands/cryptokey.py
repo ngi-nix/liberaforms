@@ -17,6 +17,4 @@ cryptokey_cli = AppGroup('cryptokey')
 @cryptokey_cli.command()
 def create():
     key = Fernet.generate_key()
-    click.echo("\n")
     click.echo(key)
-    click.echo("\n")

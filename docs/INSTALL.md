@@ -80,7 +80,7 @@ See more db options here https://flask-migrate.readthedocs.io/en/latest/#api-ref
 
 ### Drop database
 
-If you need to delete the database (and user)
+If you need to delete the database (warning: the database user is also deleted)
 
 ```
 sudo su
@@ -88,16 +88,62 @@ su postgres -c "liberaforms/commands/postgres.sh drop-db"
 exit
 ```
 
+## Site config
+
+Create your site
+```
+flask site set -hostname=my.domain.com -scheme=https -port=8080
+```
+
+Note that `port` can be empty
+```
+flask site set -hostname=my.domain.com -scheme=https -port=
+```
+
+## SMTP config
+
+Optionally you can configure SMTP now. This configuration can also be set later via the web UI.
+
+```
+-host: Your SMTP server's name (required)
+-port: SMTP port (required)
+-user: SMTP username
+-password: SMTP password
+-encryption: [ SSL | STARTTLS ]
+-noreply: Emails will be sent using this address (required)
+```
+
+```
+flask smtp set -host=localhost -port=25 -noreply=no-reply@domain.com
+```
+
+Note: If your password contains the special character `!` you will need to wrap your password in single quotes
+
+```
+-password='my!password'
+```
+
+View SMTP config
+```
+flask smtp get
+```
+
+Test SMTP config
+
+```
+flask smtp test -recipent=me@my.domain.com
+```
+
 ## Encryption
 
 LiberaForms encrypts passwords by default.
 
-These other values are also encrypted:
+However, these other values are also encrypted:
 
 * Form attachments when they are submitted
 * Fediverse authentification
 
-You need to create a key for those to work.
+You need to create a key for these features to be enabled.
 
 ### Create the key
 
@@ -242,19 +288,16 @@ supervisorctl start liberaforms
 
 ## Bootstrap the first admin user
 
-## Setup SMTP
-
-
 # Utilities
 
 ## Users
 
 You can create a user when needed.
 
-Note that users created via the command line will have validated_email set to True
+Note that users created via the command line will have `validated_email` set to `True`
 
 ```
-flask user create -admin <username> <email> <password>
+flask user create <username> <email> <password> -admin
 ```
 
 Disable and enable users.
