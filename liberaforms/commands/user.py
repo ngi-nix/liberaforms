@@ -42,9 +42,9 @@ def create(username, email, password, is_admin):
                 )
     user.save()
     if is_admin:
-        print(f'Admin created: {user.id}')
+        print(f'Admin created OK. id: {user.id}')
     else:
-        print(f'User created: {user.id}')
+        print(f'User created OK. id: {user.id}')
     return True
 
 @user_cli.command()

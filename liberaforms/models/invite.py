@@ -18,15 +18,14 @@ from pprint import pprint
 class Invite(db.Model, CRUD):
     __tablename__ = "invites"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     email = db.Column(db.String, nullable=False)
     message = db.Column(db.String, nullable=True)
     token = db.Column(JSONB, nullable=False)
     admin = db.Column(db.Boolean, default=False)
 
     def __init__(self, **kwargs):
+        self.created = datetime.now(timezone.utc)
         self.email = kwargs["email"]
         self.message = kwargs["message"]
         self.token = kwargs["token"]

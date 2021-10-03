@@ -36,8 +36,24 @@
                 name="btn">
             {%trans%}Generate{%endtrans%}
         </button>
-
-        {{ wtform.access_token(class_="form-control") }}
+        {{ wtform.access_token() }}
+        <div class="input-group flex-nowrap">
+          <input class="form-control"
+                 id="access_token_diplay"
+                 required type="text"
+                 aria-label="{{trans}}Access token{{endtrans}}"
+                 autocomplete="off"
+                 value="">
+          <div class="input-group-append">
+            <button id="toggle-token-display-button"
+                    class="btn"
+                    type="button"
+                    title="{{trans}}Show / Hide{{endtrans}}"
+                    style="display: none; background-color: #ccc">
+              <i class="fa fa-eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
         {% for error in wtform.access_token.errors %}
           <span class="formError">{{ error }}</span><br />
         {% endfor %}
@@ -51,7 +67,8 @@
                  form="save_token_form" />
           <button class="btn btn-danger"
                   type="button"
-                  id="delete_config">
+                  id="delete_config"
+                  onclick="js:$('form#delete_config').submit()">
              {%trans%}Delete{%endtrans%}
           </button>
         </div>
@@ -70,12 +87,19 @@
         <span id="client_id"></span>
         <span id="client_secret"></span>
     	</div>
-
     </div>
   </div>
 </div>
 
+<form id="delete_config"
+      action="/user/{{g.current_user.username}}/fediverse/delete-auth"
+      method="post"
+      style="display:none">
+  {{ wtform.csrf_token }}
+</form>
+
 <script>
+  var hidden_token = "● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ● ●"
 
   function elem(el) {
   	return document.getElementById(el);
@@ -83,11 +107,36 @@
 
   $(document).ready(function() {
     elem('pleroma_url').value = elem("node_url").value
+    var access_token_value = elem("access_token").value
+    //elem('access_token_diplay').value = access_token_value
+    //console.log(access_token_value)
+    if (access_token_value) {
+      $("#access_token_diplay").val(hidden_token)
+      $("#access_token_diplay").prop("disabled", true)
+      $("#toggle-token-display-button").show()
+    }
+    elem("toggle-token-display-button").addEventListener("click", function(event) {
+      var button_icon = $("#toggle-token-display-button").find("i")
+      if (button_icon.hasClass("fa-eye")) {
+        $("#access_token_diplay").val(elem('access_token').value)
+        $("#access_token_diplay").prop("disabled", false)
+        button_icon.removeClass("fa-eye").addClass("fa-eye-slash")
+      } else {
+        hide_token()
+      }
+    });
+    if ( access_token_value === "" ) {
+      //elem("save_config").disabled = true;
+      elem("delete_config").disabled = true;
+    }
   });
 
-  if ( elem("access_token").value === "" ) {
-    //elem("save_config").disabled = true;
-    elem("delete_config").disabled = true;
+  function hide_token() {
+    $("#toggle-token-display-button").show()
+    var button_icon = $("#toggle-token-display-button").find("i")
+    $("#access_token_diplay").val(hidden_token)
+    $("#access_token_diplay").prop("disabled", true)
+    button_icon.removeClass("fa-eye-slash").addClass("fa-eye")
   }
 
   elem("node_url").addEventListener("input", function(event) {
@@ -150,6 +199,7 @@
   		code: code};
   		post(url2, args2, function(data) {
   			elem('access_token').value = data.access_token;
+        hide_token()
         //elem('pleroma_url').value = pleroma_url;
         //elem('node_url').value = pleroma_url;
   		});
@@ -159,7 +209,6 @@
   	localStorage.setItem("PLEROMA_CLIENT_SECRET", "");
   }
 
-  //elem("sbmt").addEventListener("submit", function(event) {
   elem("generate_btn").addEventListener("click", function(event) {
     elem('pleroma_url').value = elem("node_url").value
     if ( elem("pleroma_url").value === "" ) {

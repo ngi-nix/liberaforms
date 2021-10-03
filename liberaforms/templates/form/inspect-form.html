@@ -15,372 +15,396 @@
 {% set current_user_is_editor = form.is_editor(g.current_user) %}
 
 <div class="container">
-<div class="row">
-    <div class="col-md-6">
-
+  <div class="row">
+    <div id="details_col" class="col-md-6">
         <div class="title_1 delimited">
-            {%trans%}Details{%endtrans%}
-            <div style="float:right">
+          {%trans%}Details{%endtrans%}
+          <div style="float:right">
             {% if current_user_is_editor %}
-                <a class="btn btn-primary btn-sm"
-                   role="button"
-                   href="/forms/answers/{{form.id}}">
-                   {%trans%}View answers{%endtrans%}
-                   <span class="badge badge-light">
-                     {{total_answers}}
-                   </span>
-                </a>
-                <a class="btn btn-primary btn-sm"
-                   role="button"
-                   href="/forms/answers/stats/{{form.id}}">
-                   {%trans%}Graphs{%endtrans%}
-                   <i class="fa fa-bar-chart" aria-hidden="true"></i>
-                </a>
+            <a class="btn btn-primary btn-sm"
+               role="button"
+               href="/forms/answers/{{form.id}}">
+               {%trans%}View answers{%endtrans%}
+               <span class="badge badge-light">
+                 {{total_answers}}
+               </span>
+            </a>
+            <a class="btn btn-primary btn-sm"
+               role="button"
+               href="/forms/answers/stats/{{form.id}}">
+               {%trans%}Graphs{%endtrans%}
+               <i class="fa fa-bar-chart" aria-hidden="true"></i>
+            </a>
             {% else %}
-                <button class="btn btn-primary btn-sm" disabled>
-                    {%trans%}Total answers{%endtrans%}
-                    <span class="badge badge-light">{{total_answers}}</span>
-                </button>
+            <button class="btn btn-primary btn-sm" disabled>
+                {%trans%}Total answers{%endtrans%}
+                <span class="badge badge-light">{{total_answers}}</span>
+            </button>
             {% endif %}
-            </div>
+          </div>
         </div>
         <table class="table table-sm sparse-table">
-            <tr>
-                <td>{%trans%}Name{%endtrans%}</td>
-                <td>{{ form.slug }}</td>
-            </tr>
-            <tr>
-               <td>{%trans%}Last answer{%endtrans%}</td>
-               <td>
-                   {% if total_answers %}
-                        {% if current_user_is_editor %}
-                        <a href="/forms/answers/{{form.id}}">
-                          {{ form.get_last_answer_date() }}
-                        </a>
-                        {% else %}
-                        {{ form.get_last_answer_date() }}
-                        {% endif %}
-                   {% endif %}
-               </td>
-            </tr>
-            <tr>
-               <td>
-                    {%trans%}Public URL{%endtrans%}
-                    {% if not form.adminPreferences['public'] %}
-                      <span class="highlightedText text-lowercase">
-                        ({%trans%}Disabled{%endtrans%})
-                      </span>
-                    {% endif %}
-               </td>
-               <td>
-                   {% if form.is_public() %}
-                   <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
-                   <span id="formURL" style="display:none">{{ form.url }}</span>
-                   {% else %}
-                   <a id="formLink" href="{{ form.url }}"
-                      style="display:none">
-                      {{ form.url }}
-                   </a>
-                   <span id="formURL">{{ form.url }}</span>
-                   {% endif %}
-                </td>
-            </tr>
-            {% if current_user_is_editor and g.current_user.fedi_auth %}
-            <tr>
-                <td>
-                  {%trans%}Fediverse{%endtrans%}
-                </td>
-                <td>
-                  <button id="fediverse-publish"
-                          class="btn btn-primary btn-xs"
-                          onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
-                          {% if not form.is_public() %}disabled{% endif %}>
-                    {%trans%}Publish{%endtrans%}
-                  </button>
-                </td>
-            </tr>
+          <tr>
+            <td>{%trans%}Name{%endtrans%}</td>
+            <td>{{ form.slug }}</td>
+          </tr>
+          <tr>
+            <td>{%trans%}Last answer{%endtrans%}</td>
+            <td>
+            {% if total_answers %}
+              {% if current_user_is_editor %}
+              <a href="/forms/answers/{{form.id}}">
+                {{ form.get_last_answer_date() }}
+              </a>
+              {% else %}
+              {{ form.get_last_answer_date() }}
+              {% endif %}
             {% endif %}
-            <tr>
-               <td>{%trans%}Public{%endtrans%}</td>
-               <td>
-               {% if current_user_is_editor %}
-                   <div id="toggle_enabled" class="btn-group btn-toggle">
-                    <button id="enabled_true"
-                            class="btn btn-xs btn-default
-                                  {% if form.is_public() %}btn-success{% endif %}">
-                        {%trans%}True{%endtrans%}
-                    </button>
-                    <button id="enabled_false"
-                            class="btn btn-xs btn-default
-                                  {% if not form.is_public() %}btn-primary{% endif %}">
-                        {%trans%}False{%endtrans%}
-                    </button>
-                   </div>
-               {% else %}
-                    {% if form.is_public() %}
-                      {%trans%}True{%endtrans%}
-                    {% else %}
-                      {%trans%}False{%endtrans%}
-                    {% endif %}
-               {% endif %}
-               </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Expiration{%endtrans%}</td>
-               <td>
-                   {% if current_user_is_editor %}
-                        {% if form.expired %}
-                          <a class="btn btn-warning btn-xs"
-                             role="button"
-                             href="/forms/expiration/{{form.id}}">
-                             {%trans%}This form has expired{%endtrans%}
-                          </a>
-                        {% elif form.can_expire() %}
-                          <a class="btn btn-success btn-xs"
-                             role="button"
-                             href="/forms/expiration/{{form.id}}">
-                             {%trans%}This form will expire{%endtrans%}
-                          </a>
-                        {% else %}
-                          <a class="btn btn-primary btn-xs"
-                             role="button"
-                             href="/forms/expiration/{{form.id}}">
-                             {%trans%}False{%endtrans%}
-                          </a>
-                        {% endif %}
-                   {% else %}
-                        {% if form.expired %}
-                            {%trans%}Expired{%endtrans%}
-                        {% elif form.can_expire() %}
-                            {%trans%}True{%endtrans%}
-                        {% else %}
-                            {%trans%}False{%endtrans%}
-                        {% endif %}
-                   {% endif %}
-               </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Editors{%endtrans%}</td>
-               <td>
-                   {% if current_user_is_editor %}
-                        {% if form.is_shared() %}
-                        <a class="btn btn-success btn-xs"
-                           role="button"
-                           href="/forms/share/{{form.id}}"
-                           style="padding:5px 4px 3px 4px">
-                           {%trans%}Shared with{%endtrans%}
-                           <span class="badge badge-light">
-                             {{ form.editors|length -1 }}
-                           </span>
-                        </a>
-                        {% else %}
-                        <a class="btn btn-primary btn-xs"
-                           role="button"
-                           href="/forms/share/{{form.id}}">
-                           {%trans%}Not shared{%endtrans%}
-                        </a>
-                        {% endif %}
-                   {% else %}
-                        {% if form.is_shared() %}
-                          {%trans%}True{%endtrans%}
-                        {% else %}
-                          {%trans%}False{%endtrans%}
-                        {% endif %}
-                   {% endif %}
-               </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Share notifications{%endtrans%}</td>
-               <td>
-                   {% if current_user_is_editor %}
-                        {% if form.shared_notifications %}
-                        <a class="btn btn-success btn-xs"
-                           role="button"
-                           href="/forms/share/{{form.id}}#notifications"
-                           style="padding:5px 4px 3px 4px">
-                           {%trans%}Send emails to other people{%endtrans%}
-                           <span class="badge badge-light">
-                             {{ form.shared_notifications | length }}
-                           </span>
-                        </a>
-                        {% else %}
-                        <a class="btn btn-primary btn-xs" role="button"
-                           href="/forms/share/{{form.id}}#notifications">
-                           {%trans%}Send emails to other people{%endtrans%}
-                        </a>
-                        {% endif %}
-                   {% else %}
-                     {% if form.shared_notifications %}
-                       {%trans%}True{%endtrans%}
-                     {% else %}
-                       {%trans%}False{%endtrans%}
-                     {% endif %}
-                   {% endif %}
-               </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Restricted access{%endtrans%}</td>
-               <td>
-                   {% if current_user_is_editor %}
-                        {% if form.restrictedAccess %}
-                        <a class="btn btn-success btn-xs"
-                           role="button"
-                           href="/forms/share/{{form.id}}#restricted_access">
-                           {%trans%}True{%endtrans%}
-                        </a>
-                        {% else %}
-                        <a class="btn btn-primary btn-xs"
-                           role="button"
-                           href="/forms/share/{{form.id}}#restricted_access">
-                           {%trans%}False{%endtrans%}
-                        </a>
-                        {% endif %}
-                   {% else %}
-                        {% if form.restrictedAccess %}
-                          {%trans%}True{%endtrans%}
-                        {% else %}
-                          {%trans%}False{%endtrans%}
-                        {% endif %}
-                   {% endif %}
-               </td>
-            </tr>
-            {% if form.has_email_field() %}
-            <tr>
-                <td>{%trans%}Confirmation{%endtrans%}</td>
-                <td>
-                {% if current_user_is_editor %}
-                  <div id="toggle_sendConfirmation"
-                        class="btn-group btn-toggle">
-                    <button id="sendConfirmation_true"
-                            class="btn btn-xs
-                                   btn-default
-                                   {% if form.sendConfirmation %}btn-success{% endif %}">
-                        {%trans%}Enabled{%endtrans%}
-                    </button>
-                    <button id="sendConfirmation_false"
-                            class="btn btn-xs
-                                   btn-default
-                                   {% if not form.sendConfirmation %}btn-primary{% endif %}">
-                        {%trans%}Disabled{%endtrans%}
-                    </button>
-                  </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {%trans%}Public URL{%endtrans%}
+              {% if not form.adminPreferences['public'] %}
+              <span class="highlightedText text-lowercase">
+                ({%trans%}Disabled{%endtrans%})
+              </span>
+              {% endif %}
+            </td>
+            <td>
+              {% if form.is_public() %}
+              <a id="formLink" href="{{ form.url }}">{{ form.url }}</a>
+              <span id="formURL" style="display:none">{{ form.url }}</span>
+              {% else %}
+              <a id="formLink" href="{{ form.url }}"
+                style="display:none">
+                {{ form.url }}
+              </a>
+              <span id="formURL">{{ form.url }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% if current_user_is_editor and g.current_user.fedi_auth %}
+          <tr>
+            <td>
+              {%trans%}Fediverse{%endtrans%}
+            </td>
+            <td>
+              <button id="fediverse-publish"
+                      class="btn btn-primary btn-xs"
+                      style="padding:5px 4px 3px 4px"
+                      onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
+                      {% if not form.is_public() %}disabled{% endif %}>
+                {%trans%}Published{%endtrans%}
+                <span class="badge badge-light">
+                  {{ form.published_cnt }}
+                </span>
+              </button>
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+             <td>{%trans%}Public{%endtrans%}</td>
+             <td>
+              {% if current_user_is_editor %}
+                <div id="toggle_enabled" class="btn-group btn-toggle">
+                <button id="enabled_true"
+                        class="btn btn-xs btn-default
+                              {% if form.is_public() %}btn-success{% endif %}">
+                    {%trans%}True{%endtrans%}
+                </button>
+                <button id="enabled_false"
+                        class="btn btn-xs btn-default
+                              {% if not form.is_public() %}btn-primary{% endif %}">
+                    {%trans%}False{%endtrans%}
+                </button>
+                </div>
+              {% else %}
+                {% if form.is_public() %}
+                  {%trans%}True{%endtrans%}
                 {% else %}
-                    {{ form.sendConfirmation }}
+                  {%trans%}False{%endtrans%}
                 {% endif %}
-                </td>
-            </tr>
-            {% endif %}
-            <tr>
-                <td id="DPL-anchor">{%trans%}DPL{%endtrans%}</td>
-                <td>
-                {% if current_user_is_editor %}
-                    <div id="toggle_dataConsent" class="btn-group btn-toggle">
-                    <button id="dataConsent_true"
-                            class="btn btn-xs btn-default
-                                  {% if dataConsent['enabled'] %}btn-success{% endif %}">
-                        {%trans%}Enabled{%endtrans%}
-                    </button>
-                    <button id="dataConsent_false"
-                            class="btn btn-xs btn-default
-                                  {% if not dataConsent['enabled'] %}btn-primary{% endif %}">
-                        {%trans%}Disabled{%endtrans%}
-                    </button>
-                    </div>
-                    &nbsp;
-                    <button id="show-DPL-text-button"
-                            class="btn btn-primary btn-xs">
-                        {%trans%}Personalize{%endtrans%}
-                    </button>
-                {% else %}
-                    {% if dataConsent['enabled'] %}
-                      {%trans%}True{%endtrans%}
-                    {% else %}
-                      {%trans%}False{%endtrans%}
-                    {% endif %}
-                {% endif %}
-
-               </td>
-            </tr>
+             {% endif %}
+             </td>
+          </tr>
+          {% set form_user = form.get_form_user(g.current_user.id) %}
+          {% if form_user != None %}
+          <tr>
+            <td>
+              {%trans%}New answer{%endtrans%}
+            </td>
+            <td>
+              <div id="toggle_notification"
+                   class="btn-group btn-toggle">
+                <button id="notification_true"
+                        class="btn btn-xs btn-default
+                              {% if form_user['notifications']['newAnswer'] %}
+                              btn-success
+                              {% endif %}">
+                    {%trans%}True{%endtrans%}
+                </button>
+                <button id="notification_false"
+                        class="btn btn-xs btn-default
+                              {% if not form_user['notifications']['newAnswer'] %}
+                              btn-primary
+                              {% endif %}">
+                    {%trans%}False{%endtrans%}
+                </button>
+              </div>
+              {%trans%}Notify me{%endtrans%}
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+            <td>{%trans%}Expiration{%endtrans%}</td>
+            <td>
             {% if current_user_is_editor %}
-            <tr id="DPL-text-block" style="display:none">
-                <td colspan="3">
-                <div class="title_2">{%trans%}Data protection{%endtrans%}</div>
-                <div id="DPL-text-editor">
-                    <input id="save-DPL-button"
-                           class="btn-success btn btn-sm"
-                           type="button"
-                           value="{%trans%}Save{%endtrans%}" />
-                    <input id="cancel-DPL-button"
-                           class="btn-primary btn btn-sm"
-                           type="button"
-                           value="{%trans%}Cancel{%endtrans%}" />
-                    {% set siteConsent = form.site.get_consent_for_display(dataConsent['id']) %}
-                    {% set disabled = "disabled" if siteConsent.markdown == dataConsent.markdown else "" %}
-                    <input id="default-DPL-button"
-                           class="btn-primary btn btn-sm"
-                           type="button"
-                           value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
+              {% if form.expired %}
+              <a class="btn btn-warning btn-xs"
+                 role="button"
+                 href="/forms/expiration/{{form.id}}">
+                 {%trans%}This form has expired{%endtrans%}
+              </a>
+              {% elif form.can_expire() %}
+              <a class="btn btn-success btn-xs"
+                 role="button"
+                 href="/forms/expiration/{{form.id}}">
+                 {%trans%}This form will expire{%endtrans%}
+              </a>
+              {% else %}
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/forms/expiration/{{form.id}}">
+                 {%trans%}False{%endtrans%}
+              </a>
+              {% endif %}
+            {% else %}
+              {% if form.expired %}
+                {%trans%}Expired{%endtrans%}
+              {% elif form.can_expire() %}
+                {%trans%}True{%endtrans%}
+              {% else %}
+                {%trans%}False{%endtrans%}
+              {% endif %}
+            {% endif %}
+            </td>
+          </tr>
+          <tr>
+             <td>{%trans%}Editors{%endtrans%}</td>
+             <td>
+              {% set editors=form.get_editors() %}
+              {% if current_user_is_editor %}
+                {% if editors.count() > 1 %}
+                {% set number='<span class="badge badge-light">%s</span>' |
+                   format(editors.count() -1) %}
+                <a class="btn btn-primary btn-xs"
+                   role="button"
+                   href="/forms/share/{{form.id}}"
+                   style="padding:5px 4px 3px 4px">
+                   {%trans number=number|safe%}Form shared with {{number}}{%endtrans%}
+                </a>
+                {% else %}
+                <a class="btn btn-primary btn-xs"
+                   role="button"
+                   href="/forms/share/{{form.id}}">
+                   {%trans%}Add editors{%endtrans%}
+                </a>
+                {% endif %}
+              {% else %}
+                  {%trans number=editors.count()-1%}Form shared with {{number}}{%endtrans%}
+              {% endif %}
+             </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Shared answers{%endtrans%}</td>
+            <td>
+            {% set readers=form.get_readers() %}
+            {% if current_user_is_editor %}
+              {% if readers.count() > 0 %}
+              {% set number='<span class="badge badge-light">%s</span>' |
+                 format(readers.count()) %}
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/forms/share/{{form.id}}"
+                 style="padding:5px 4px 3px 4px">
+                 {%trans number=number|safe%}Answers shared with {{number}}{%endtrans%}
+              </a>
+              {% else %}
+              <a class="btn btn-primary btn-xs"
+                 role="button"
+                 href="/forms/share/{{form.id}}">
+                 {%trans%}Share{%endtrans%}
+              </a>
+              {% endif %}
+            {% else %}
+              {{ readers.count() }}
+            {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Restricted access{%endtrans%}</td>
+            <td>
+            {% if current_user_is_editor %}
+             {% if form.restrictedAccess %}
+             <a class="btn btn-success btn-xs"
+                role="button"
+                href="/forms/share/{{form.id}}#restricted_access">
+                {%trans%}True{%endtrans%}
+              </a>
+              {% else %}
+              <a class="btn btn-primary btn-xs"
+                role="button"
+                href="/forms/share/{{form.id}}#restricted_access">
+                {%trans%}False{%endtrans%}
+              </a>
+              {% endif %}
+            {% else %}
+              {% if form.restrictedAccess %}
+                {%trans%}True{%endtrans%}
+              {% else %}
+                {%trans%}False{%endtrans%}
+              {% endif %}
+            {% endif %}
+            </td>
+          </tr>
+        {% if form.has_email_field() %}
+          <tr>
+                {# i18n: Option in Form inspecting view to enable a checkbox at the end of the form, that confirm user via email that their answers have been sent #}
+            <td>{%trans%}Confirmation{%endtrans%}</td>
+            <td>
+            {% if current_user_is_editor %}
+              <div id="toggle_sendConfirmation"
+                    class="btn-group btn-toggle">
+                <button id="sendConfirmation_true"
+                        class="btn btn-xs
+                               btn-default
+                               {% if form.sendConfirmation %}btn-success{% endif %}">
+                    {%trans%}Enabled{%endtrans%}
+                </button>
+                <button id="sendConfirmation_false"
+                        class="btn btn-xs
+                               btn-default
+                               {% if not form.sendConfirmation %}btn-primary{% endif %}">
+                    {%trans%}Disabled{%endtrans%}
+                </button>
+              </div>
+            {% else %}
+                {{ form.sendConfirmation }}
+            {% endif %}
+            </td>
+          </tr>
+        {% endif %}
+          <tr>
+            <td id="DPL-anchor">{%trans%}DPL{%endtrans%}</td>
+            <td>
+            {% if current_user_is_editor %}
+              <div id="toggle_dataConsent" class="btn-group btn-toggle mb-1 mb-lg-0">
+              <button id="dataConsent_true"
+                      class="btn btn-xs btn-default
+                            {% if dataConsent['enabled'] %}btn-success{% endif %}">
+                  {%trans%}Enabled{%endtrans%}
+              </button>
+              <button id="dataConsent_false"
+                      class="btn btn-xs btn-default
+                            {% if not dataConsent['enabled'] %}btn-primary{% endif %}">
+                  {%trans%}Disabled{%endtrans%}
+              </button>
+              </div>
+              &nbsp;
+              <button id="show-DPL-text-button"
+                      class="btn btn-primary btn-xs mb-1 mb-md-0">
+                  {%trans%}Personalize{%endtrans%}
+              </button>
+            {% else %}
+              {% if dataConsent['enabled'] %}
+                {%trans%}True{%endtrans%}
+              {% else %}
+                {%trans%}False{%endtrans%}
+              {% endif %}
+            {% endif %}
+            </td>
+          </tr>
+        {% if current_user_is_editor %}
+          <tr id="DPL-text-block" style="display:none">
+            <td colspan="3">
+              <div class="title_2">{%trans%}Data protection{%endtrans%}</div>
+              <div id="DPL-text-editor">
+                <input id="save-DPL-button"
+                       class="btn-success btn btn-sm"
+                       type="button"
+                       value="{%trans%}Save{%endtrans%}" />
+                <input id="cancel-DPL-button"
+                       class="btn-primary btn btn-sm"
+                       type="button"
+                       value="{%trans%}Cancel{%endtrans%}" />
+                {% set siteConsent = form.site.get_consent_for_display(dataConsent['id']) %}
+                {% set disabled = "disabled" if siteConsent.markdown == dataConsent.markdown else "" %}
+                <input id="default-DPL-button"
+                       class="btn-primary btn btn-sm"
+                       type="button"
+                       value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
 
-                    <div style="margin-top:1em">
-                    <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
-                        <div id="{{consent_id}}-consent-editor" class="form-row">
-                            <div class="form-group col">
+                <div style="margin-top:1em">
+                <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
+                    <div id="{{consent_id}}-consent-editor" class="form-row">
+                        <div class="form-group col">
 
-                            {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}
-                            <input id="dataConsent-label-input"
-                                   class="form-control form-control-sm"
-                                   type="text"
-                                   placeholder="{{placeholder}}"
-                                   value="{{form.data_consent['label']}}">
-                            </div>
+                        {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}
+                        <input id="dataConsent-label-input"
+                               class="form-control form-control-sm"
+                               type="text"
+                               placeholder="{{placeholder}}"
+                               value="{{form.data_consent['label']}}">
                         </div>
                     </div>
                 </div>
-                <div id="DPL-html" class="DPL-html consentText" style="display:none">
-                    {{ dataConsent['html']|safe }}
-                </div>
-                </td>
-            </tr>
+              </div>
+              <div class="dataConsentText" style="display:none">
+                  {{ dataConsent['html']|safe }}
+              </div>
+            </td>
+          </tr>
+        {% endif %}
+          <tr>
+            <td>
+              {%trans%}Author{%endtrans%}
+              {% if not author.enabled %}
+                  <span class="highlightedText text-lowercase">
+                    ({%trans%}Disabled{%endtrans%})
+                  </span>
+              {% endif %}
+            </td>
+            <td>
+            {% if g.is_admin %}
+                <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
+            {% else %}
+                {{ author.username }}
             {% endif %}
-            <tr>
-               <td>
-                    {%trans%}Author{%endtrans%}
-                    {% if not author.enabled %}
-                        <span class="highlightedText text-lowercase">
-                          ({%trans%}Disabled{%endtrans%})
-                        </span>
-                    {% endif %}
-               </td>
-               <td>
-               {% if g.is_admin %}
-                    <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
-               {% else %}
-                    {{ author.username }}
-                {% endif %}
-                </td>
-            </tr>
-            <tr>
-               <td>{%trans%}Created{%endtrans%}</td>
-               <td>{{ form.get_created_date() }}</td>
-            </tr>
-            {% if g.is_root_user_enabled %}
-            <tr>
-                <td>{%trans%}Hostname{%endtrans%}</td>
-                <td>{{ form.hostname }}</td>
-            </tr>
-            {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>{%trans%}Created{%endtrans%}</td>
+            <td>{{ form.get_created_date() }}</td>
+          </tr>
+          {% if g.is_root_user_enabled %}
+          <tr>
+            <td>{%trans%}Hostname{%endtrans%}</td>
+            <td>{{ form.hostname }}</td>
+          </tr>
+          {% endif %}
         </table>
 
         <div class="title_1 delimited" style="margin-top:2.5em">
-            {%trans%}After replying to the form{%endtrans%}
-            {% if current_user_is_editor %}
-              <div style="float:right">
-                <button id="show-after-submit-editor-button"
-                        class="btn btn-primary btn-xs">
-                    {%trans%}Edit text{%endtrans%}
-                </button>
-              </div>
-            {% endif %}
+          {%trans%}After replying to the form{%endtrans%}
+          {% if current_user_is_editor %}
+          <div style="float:right">
+            <button id="show-after-submit-editor-button"
+                    class="btn btn-primary btn-xs">
+                {%trans%}Edit text{%endtrans%}
+            </button>
+          </div>
+          {% endif %}
         </div>
         <div class="title_text_subtext">
         {%trans%}Say something to the user after the form has been submitted{%endtrans%}
@@ -388,100 +412,101 @@
         <div id="after-submit-html" class="afterSubmitText marked-up">
             {{ form.after_submit_text_html | safe }}
         </div>
-        {% if current_user_is_editor %}
-        <div id="after-submit-editor" style="display:none">
-            <input id="save-after-submit-mde"
-                   class="btn-success btn btn-sm"
-                   type="button"
-                   value="{%trans%}Save{%endtrans%}" />
-            <input id="cancel-after-submit-mde"
-                   class="btn-primary btn btn-sm"
-                   type="button"
-                   value="{%trans%}Cancel{%endtrans%}" />
-            <p></p>
-            <textarea id="after-submit-mde">
-              {{ form.after_submit_text_markdown }}
-            </textarea>
-        </div>
-        {% endif %}
 
-        {% if form.can_expire() %}
+      {% if current_user_is_editor %}
+        <div id="after-submit-editor" style="display:none">
+          <input id="save-after-submit-mde"
+                 class="btn-success btn btn-sm"
+                 type="button"
+                 value="{%trans%}Save{%endtrans%}" />
+          <input id="cancel-after-submit-mde"
+                 class="btn-primary btn btn-sm"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}" />
+          <p></p>
+          <!-- keep textarea on one line -->
+          <textarea id="after-submit-mde">{{ form.after_submit_text_markdown }}</textarea>
+        </div>
+      {% endif %}
+
+      {% if form.can_expire() %}
         <div class="title_1 delimited" style="margin-top:2.5em">
-            {%trans%}When the form has expired{%endtrans%}
-            {% if current_user_is_editor %}
-                <div style="float:right">
-                <button id="show-expired-editor-button"
-                        class="btn btn-primary btn-xs">
-                    {%trans%}Edit text{%endtrans%}
-                </button>
-                </div>
-            {% endif %}
+          {%trans%}When the form has expired{%endtrans%}
+          {% if current_user_is_editor %}
+          <div style="float:right">
+          <button id="show-expired-editor-button"
+                  class="btn btn-primary btn-xs">
+              {%trans%}Edit text{%endtrans%}
+          </button>
+          </div>
+          {% endif %}
         </div>
         <div class="title_text_subtext">
         {%trans%}Say something to the user if the form has expired{%endtrans%}
         </div>
         <div id="expired-html" class="expiredText marked-up">
-            {{ form.expired_text_html | safe }}
+          {{ form.expired_text_html | safe }}
         </div>
         {% if current_user_is_editor %}
         <div id="expired-editor" style="display:none">
-            <input id="save-expired-mde"
-                   class="btn-success btn btn-sm"
-                   type="button"
-                   value="{%trans%}Save{%endtrans%}" />
-            <input id="cancel-expired-mde"
-                   class="btn-primary btn btn-sm"
-                   type="button"
-                   value="{%trans%}Cancel{%endtrans%}" />
-            <p></p>
-            <textarea id="expired-mde">
-              {{ form.expired_text_markdown }}
-            </textarea>
+          <input id="save-expired-mde"
+                 class="btn-success btn btn-sm"
+                 type="button"
+                 value="{%trans%}Save{%endtrans%}" />
+          <input id="cancel-expired-mde"
+                 class="btn-primary btn btn-sm"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}" />
+          <p></p>
+          <!-- keep textarea on one line -->
+          <textarea id="expired-mde">{{ form.expired_text_markdown }}</textarea>
         </div>
         {% endif %}
-        {% endif %}
+      {% endif %}
 
-        {% if current_user_is_editor %}
+      {% if current_user_is_editor %}
         <div class="title_1 delimited" style="margin-top:2.5em">
-            {%trans%}Other options{%endtrans%}
+          {%trans%}Other options{%endtrans%}
         </div>
         <div id="embed_snippet">
-        <code>{{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}</code>
+          <code>
+            {{'<iframe width="500" height="600" frameborder="0" src="'}}{{form.embed_url}}{{'"></iframe>'}}
+          </code>
         </div>
         <p>
-        <a class="btn btn-primary btn-sm"
+        <a class="btn btn-primary btn-sm mb-1 mb-lg-0"
            role="button"
            href="/forms/log/list/{{form.id}}">
            {%trans%}View log{%endtrans%}
         </a>
-        <a class="btn-primary btn btn-sm"
+        <a class="btn-primary btn btn-sm mb-1 mb-lg-0"
            role="button"
            href="/forms/duplicate/{{form.id}}">
            {%trans%}Duplicate form{%endtrans%}
         </a>
-        <a class="btn-primary btn btn-sm"
+        <a class="btn-primary btn btn-sm mb-1 mb-lg-0"
            role="button"
            href="#!"
            onClick="js:$('#embed_snippet').show();">
            {%trans%}Embed form{%endtrans%}
         </a>
         </p>
-            {% if total_answers == 0 %}
-            <a class="btn-warning btn btn-sm"
-               role="button"
-               href="/forms/delete/{{form.id}}">
-               {%trans%}Delete form{%endtrans%}
-            </a>
-            {% else %}
-            <a class="btn-warning btn btn-sm"
-               role="button"
-               href="/forms/delete/{{form.id}}">
-               {%trans%}Delete form and answers{%endtrans%}
-            </a>
-            {% endif %}
+        {% if total_answers == 0 %}
+        <a class="btn-warning btn btn-sm"
+           role="button"
+           href="/forms/delete/{{form.id}}">
+           {%trans%}Delete form{%endtrans%}
+        </a>
+        {% else %}
+        <a class="btn-warning btn btn-sm"
+           role="button"
+           href="/forms/delete/{{form.id}}">
+           {%trans%}Delete form and answers{%endtrans%}
+        </a>
         {% endif %}
+      {% endif %}
 
-        {% if g.is_admin %}
+      {% if g.is_admin %}
         <div class="title_1 delimited" style="margin-top:2.5em">
             {%trans%}Admin options{%endtrans%}
         </div>
@@ -490,31 +515,38 @@
            href="/forms/duplicate/{{form.id}}">
            {%trans%}Duplicate{%endtrans%}
         </a>
+        {% if form.adminPreferences['public'] %}
+        <a class="btn btn-danger"
+           role="button"
+           href="/admin/forms/toggle-public/{{form.id}}">
+           {%trans%}Disable{%endtrans%}
+        </a>
+        {% else %}
+        <a class="btn btn-primary"
+           role="button"
+           href="/admin/forms/toggle-public/{{form.id}}">
+           {%trans%}Enable{%endtrans%}
+        </a>
+        {% endif %}
+      {% endif %}
+
+      {% if g.current_user.is_root_user() %}
+        <div class="title_1 delimited" style="margin-top:2.5em">
+            {%trans%}Super Admin options{%endtrans%}
+        </div>
         <a class="btn btn-primary"
            role="button"
            href="/admin/forms/change-author/{{form.id}}">
            {%trans%}Change author{%endtrans%}
         </a>
-            {% if form.adminPreferences['public'] %}
-            <a class="btn btn-danger"
-               role="button"
-               href="/admin/forms/toggle-public/{{form.id}}">
-               {%trans%}Disable{%endtrans%}
-            </a>
-            {% else %}
-            <a class="btn btn-primary"
-               role="button"
-               href="/admin/forms/toggle-public/{{form.id}}">
-               {%trans%}Enable{%endtrans%}
-            </a>
-            {% endif %}
-        {% endif %}
-        <p>&nbsp;</p>
+      {% endif %}
+
+      <p>&nbsp;</p>
     </div>
 
     <div class="col-md-6">
-        <div class="title_1 delimited">
-        {%trans%}Form{%endtrans%}
+      <div class="title_1 delimited">
+      {%trans%}Form{%endtrans%}
         {% if current_user_is_editor %}
         <div style="float:right">
           <a class="btn-primary btn btn-sm"
@@ -525,63 +557,63 @@
           </a>
         </div>
         {% endif %}
-        </div>
+      </div>
 
-        <div id="liberaform" class="liberaform">
-            <div class="formIntroduction marked-up">
-            {{ form.introductionText['html'] | safe }}
-            </div>
-            <div id='required_message'
-                 class='required'
-                 style="display:none">
-                 ● {%trans%}Required fields{%endtrans%}
-            </div>
-            <div id="fb-render"></div>
-            {% if form.has_email_field() %}
-            <div id="sendConfirmation"
-                 class="form-group form-check confirmation-group"
-                 {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
-              <input id="confirmation_checkbox"
-                     class="form-check-input send-confirmation"
-                     type="checkbox"
-                     name="send-confirmation"
-                     value="ok"
-                     disabled />
-              <label for="confirmation_checkbox"
-                     class="form-check-label
-                     send-confirmation">
-                  {%trans%}Send me confirmation by mail{%endtrans%}
-                  <span id='confirmation_email'></span>
-              </label>
-            </div>
-            {% endif %}
-            <div id="dataConsent"
-                 class="consentText form-group"
-                 {% if dataConsent['enabled']==False %}style="display:none;"{% endif %}>
-              <div class="DPL-html">{{ dataConsent['html']|safe }}</div>
-              <div class="form-check">
-                <input id="dummy-consent-checkbox"
-                       type="checkbox"
-                       name="DPL"
-                       class="form-check-input consent"
-                       required />
-                <label id="DPL-label"
-                       for="dummy-consent-checkbox"
-                       class="form-check-label consent required">
-                    {{ dataConsent['label'] }}
-                    <span class="required-dot">●</span>
-                </label>
-              </div>
-            </div>
-            <button class="btn btn-lg btn-success"
-                   type="submit"
-                   value=""
-                   disabled >
-                {%trans%}Send{%endtrans%}
-            </button>
+      <div id="liberaform" class="liberaform">
+        <div class="formIntroduction marked-up">
+        {{ form.introductionText['html'] | safe }}
         </div>
+        <div id='required_message'
+             class='required'
+             style="display:none">
+             ● {%trans%}Required fields{%endtrans%}
+        </div>
+        <div id="fb-render"></div>
+        {% if form.has_email_field() %}
+        <div id="sendConfirmation"
+             class="form-group form-check confirmation-group"
+             {% if not form.sendConfirmation %}style="display:none;"{% endif %}>
+          <input id="confirmation_checkbox"
+                 class="form-check-input send-confirmation"
+                 type="checkbox"
+                 name="send-confirmation"
+                 value="ok"
+                 disabled />
+          <label for="confirmation_checkbox"
+                 class="form-check-label
+                 send-confirmation">
+              {%trans%}Send me confirmation by mail{%endtrans%}
+              <span id='confirmation_email'></span>
+          </label>
+        </div>
+        {% endif %}
+        <div id="data_consent_preview"
+             class="consentText form-group"
+             {% if dataConsent['enabled']==False %}style="display:none;"{% endif %}>
+          <div class="dataConsentText">{{ dataConsent['html']|safe }}</div>
+          <div class="form-check">
+            <input id="dummy-consent-checkbox"
+                   type="checkbox"
+                   name="DPL"
+                   class="form-check-input consent"
+                   required />
+            <label id="DPL-label"
+                   for="dummy-consent-checkbox"
+                   class="form-check-label consent required">
+                {{ dataConsent['label'] }}
+                <span class="required-dot">●</span>
+            </label>
+          </div>
+        </div>
+        <button class="btn btn-lg btn-success"
+               type="submit"
+               value=""
+               disabled >
+            {%trans%}Send{%endtrans%}
+        </button>
+      </div>
     </div>
-</div>
+  </div>
 </div>
 
 
@@ -666,14 +698,14 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
             if (data.enabled == true) {
                 $('#dataConsent_true').addClass('btn-success');
                 $('#dataConsent_false').removeClass('btn-primary');
-                $('#dataConsent').show();
+                $('#data_consent_preview').show();
             }
             else if (data.enabled == false) {
                 $('#dataConsent_true').removeClass('btn-success');
                 $('#dataConsent_false').addClass('btn-primary');
-                $('#dataConsent').hide();
+                $('#data_consent_preview').hide();
             }
-            if ($('#gngform').find("span.formbuilder-required, #dataConsent").filter(":visible").length) {
+            if ($('#liberaform').find("span.formbuilder-required, #data_consent_preview").filter(":visible").length) {
                 $("#required_message").show()
             }else{
                 $("#required_message").hide()
@@ -708,6 +740,30 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
     });
 });
 {% endif %}
+// notify me on new answer
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-notification/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}")
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-success');
+                $('#notification_false').removeClass('btn-primary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-success');
+                $('#notification_false').addClass('btn-primary');
+            }
+        }
+    });
+});
 // DPL editor
 var consent_cache = {}
 $(document).ready(function() {
@@ -719,7 +775,7 @@ $(document).ready(function() {
                              });
     $("#show-DPL-text-button").click(function(){
         $("#show-DPL-text-button").prop('disabled', true);
-        $("#DPL-html").hide()
+        $("#details_col").find(".dataConsentText").hide()
         $("#DPL-text-block").show()
         $("#DPL-text-editor").show(0, function() {
                     dpl_MDE.codemirror.refresh();
@@ -748,9 +804,9 @@ $(document).ready(function() {
                 //console.log(data)
                 $("#show-DPL-text-button").prop('disabled', false);
                 $("#DPL-text-editor").hide()
-                $(".DPL-html").html(data.html)
-                $("#DPL-html").show(0)
-                fadeOutHighlight($("#DPL-html"))
+                $(".dataConsentText").html(data.html)
+                $(".dataConsentText").show(0)
+                fadeOutHighlight($(".dataConsentText"))
                 $("#DPL-mde").val(data.markdown)
                 dpl_MDE.value($("#DPL-mde").val())
                 if (! data.label ){

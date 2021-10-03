@@ -17,12 +17,14 @@ from sqlalchemy.dialects.postgresql import JSONB, ARRAY, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict, MutableList
 from sqlalchemy.orm.attributes import flag_modified
 from liberaforms.utils.database import CRUD
+from liberaforms.models.formuser import FormUser
 from liberaforms.models.log import FormLog
 from liberaforms.models.answer import Answer, AnswerAttachment
 from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import sanitizers
 from liberaforms.utils import validators
+from liberaforms.utils import html_parser
 from liberaforms.utils import utils
 
 from pprint import pprint
@@ -36,46 +38,41 @@ class Form(db.Model, CRUD):
     __tablename__ = "forms"
     _site=None
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     slug = db.Column(db.String, unique=True, nullable=False)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     structure = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
     fieldIndex = db.Column(MutableList.as_mutable(ARRAY(JSONB)), nullable=False)
-    editors = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     enabled = db.Column(db.Boolean, default=False)
     expired = db.Column(db.Boolean, default=False)
     sendConfirmation = db.Column(db.Boolean, default=False)
     expiryConditions = db.Column(JSONB, nullable=False)
-    sharedAnswers = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
-    shared_notifications = db.Column(MutableList.as_mutable(ARRAY(db.String)), nullable=False)
     restrictedAccess = db.Column(db.Boolean, default=False)
     adminPreferences = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
-    introductionText = db.Column(JSONB, nullable=False)
+    introductionText = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     afterSubmitText = db.Column(JSONB, nullable=False)
     expiredText = db.Column(JSONB, nullable=False)
+    thumbnail = db.Column(db.String, nullable=True)
+    published_cnt = db.Column(db.Integer, default=0, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
     answers = db.relationship("Answer", lazy='dynamic',
                                         cascade="all, delete, delete-orphan")
     log = db.relationship("FormLog", lazy='dynamic',
                                      cascade="all, delete, delete-orphan")
+    users = db.relationship("FormUser", lazy='dynamic',
+                                        cascade="all, delete, delete-orphan")
+
 
     def __init__(self, author, **kwargs):
+        self.created = datetime.now(timezone.utc)
         self.author_id = author.id
-        self.editors = {self.author_id: self.new_editor_preferences(author)}
         self.expiryConditions = {"totalAnswers": 0,
                                  "expireDate": False,
                                  "fields": {}}
         self.slug = kwargs["slug"]
         self.structure = kwargs["structure"]
         self.fieldIndex = kwargs["fieldIndex"]
-        self.sharedAnswers = {  "enabled": False,
-                                "key": utils.gen_random_string(),
-                                "password": False,
-                                "expireDate": False}
-        self.shared_notifications = []
         self.introductionText = kwargs["introductionText"]
         self.consentTexts = kwargs["consentTexts"]
         self.afterSubmitText = kwargs["afterSubmitText"]
@@ -99,38 +96,44 @@ class Form(db.Model, CRUD):
         return cls.find_all(**kwargs).first()
 
     @classmethod
+    def count(cls):
+        return cls.query.count()
+
+    @classmethod
     def find_all(cls, **kwargs):
-        filters = []
-        if 'editor_id' in kwargs:
-            filters.append(cls.editors.has_key(str(kwargs['editor_id'])))
-            kwargs.pop('editor_id')
-        if 'key' in kwargs:
-            filters.append(cls.sharedAnswers.contains({'key': kwargs['key']}))
-            kwargs.pop('key')
-        for key, value in kwargs.items():
-            filters.append(getattr(cls, key) == value)
-        return cls.query.filter(*filters)
+        return cls.query.filter_by(**kwargs)
+        #filters = []
+        #filters.append(cls.editors.has_key(str(kwargs['editor_id'])))
+        #filters.append(cls.sharedAnswers.contains({'key': kwargs['key']}))
+        #return cls.query.filter(*filters)
 
     def get_author(self):
         return self.author
+
+    def get_form_user(self, user_id):
+        return FormUser.find(form_id=self.id, user_id=user_id)
 
     def get_created_date(self):
         return utils.utc_to_g_timezone(self.created).strftime("%Y-%m-%d")
 
     def change_author(self, new_author):
-        if new_author.enabled:
-            if new_author.id == self.author_id:
-                return False
-            try:
-                del self.editors[str(self.author_id)]
-            except:
-                return False
-            self.author_id=new_author.id
-            if not self.is_editor(new_author):
-                self.add_editor(new_author)
-            self.save()
-            return True
-        return False
+        if new_author.id == self.author_id:
+            return False
+        if not new_author.enabled:
+            return False
+        form_user = FormUser.find(form_id=self.id, user_id=new_author.id)
+        if form_user:
+            form_user.is_editor=True
+            form_user.save()
+        else:
+            form_user=FormUser(form_id=self.id,
+                               user_id=new_author.id,
+                               notifications=new_author.new_form_notifications(),
+                               is_editor=True)
+            form_user.save()
+        self.author_id=new_author.id
+        self.save()
+        return True
 
     @staticmethod
     def create_field_index(structure):
@@ -186,10 +189,18 @@ class Form(db.Model, CRUD):
             # append dynamic DPL field
             # i18n: Acronym for 'Data Privacy Law'
             result.append({"name": "DPL", "label": _("DPL")})
+        if result[1]['name'] == 'created':  # pos 1 should always be 'created'
+            result.insert(len(result), result.pop(1))
         return result
 
-    def has_removed_fields(self):
-        return any('removed' in field for field in self.fieldIndex)
+    def get_deleted_fields(self):
+        return [field for field in self.fieldIndex if 'removed' in field]
+
+    def get_field_structure(self, field_name):
+        for element in structure:
+            if element['name'] == field_name:
+                return element
+        return None
 
     @staticmethod
     def is_email_field(field):
@@ -230,8 +241,8 @@ class Form(db.Model, CRUD):
     def get_confirmation_email_address(self, answer):
         for element in self.structure:
             if Form.is_email_field(element):
-                if element["name"] in answer and answer[element["name"]]:
-                    return answer[element["name"]].strip()
+                if element["name"] in answer.data and answer.data[element["name"]]:
+                    return answer.data[element["name"]].strip()
         return False
 
     def get_answers(self, oldest_first=False, **kwargs):
@@ -254,12 +265,12 @@ class Form(db.Model, CRUD):
 
     def get_total_answers(self):
         return self.answers.count()
-        #return Answer.find_all(form_id=self.id).count()
 
     def get_last_answer_date(self):
         last_answer = Answer.find(form_id=self.id)
         if last_answer:
-            return last_answer.created.strftime('%Y-%m-%d %H:%M:%S')
+            frmt = "%Y-%m-%d %H:%M:%S"
+            return utils.utc_to_g_timezone(last_answer.created).strftime(frmt)
         return ""
 
     def is_enabled(self):
@@ -267,32 +278,42 @@ class Form(db.Model, CRUD):
             return False
         return self.enabled
 
-    @classmethod
-    def new_editor_preferences(cls, editor):
-        return {'notification': {   'newAnswer': editor.preferences[
-                                                "newAnswerNotification"
-                                                 ],
-                                    'expiredForm': True }}
+    def get_user_field_index_preference(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser and formuser.field_index != None:
+            return formuser.field_index
+        else:
+            return self.get_field_index_for_data_display()
 
-    def add_editor(self, editor):
-        if not editor.enabled:
-            return False
-        editor_id=str(editor.id)
-        if not editor_id in self.editors:
-            self.editors[editor_id]=Form.new_editor_preferences(editor)
-            self.save()
-            return True
+    def save_user_field_index_preference(self, user, field_index):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser:
+            formuser.field_index = field_index
+            formuser.save()
+            return formuser.field_index
         return False
 
-    def remove_editor(self, editor):
-        editor_id=str(editor.id)
-        if editor_id == self.author_id:
-            return None
-        if editor_id in self.editors:
-            del self.editors[editor_id]
-            self.save()
-            return editor_id
-        return None
+    def toggle_user_answers_ascending_order(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        formuser.ascending = False if formuser.ascending else True
+        formuser.save()
+        return formuser.ascending
+
+    def get_answers_order_by(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        return formuser.order_by if formuser.order_by else 'created'
+
+    def save_user_order_answers_by(self, user, field_name):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        if formuser:
+            formuser.order_by = field_name
+            formuser.save()
+            return formuser.order_by
+        return 'created'
+
+    def get_answers_order_ascending(self, user):
+        formuser = FormUser.find(form_id=self.id, user_id=user.id)
+        return formuser.ascending
 
     @property
     def url(self):
@@ -301,6 +322,33 @@ class Form(db.Model, CRUD):
     @property
     def embed_url(self):
         return f"{self.site.host_url}embed/{self.slug}"
+
+    def get_opengraph(self):
+        default_img_src = self.site.get_logo_uri()
+        image_src = self.thumbnail if self.thumbnail else default_img_src
+        opengraph = {
+            "title": self.slug,
+            "url": self.url,
+            "image": image_src,
+            "description": self.get_short_description(),
+        }
+        return opengraph
+
+    def set_thumbnail(self):
+        html = self.introductionText['html']
+        images_src = html_parser.extract_images_src(html)
+        self.thumbnail = images_src[0] if images_src else None
+
+    def set_short_description(self):
+        text = html_parser.get_opengraph_text(self.introductionText['html'])
+        self.introductionText['short_text'] = text
+
+    def get_short_description(self):
+        if 'short_text' in self.introductionText:
+            return self.introductionText['short_text']
+        self.set_short_description()
+        self.save()
+        return self.introductionText['short_text']
 
     @property
     def data_consent(self):
@@ -409,11 +457,30 @@ class Form(db.Model, CRUD):
                     result.append(element)
         return result
 
-    def get_field_label(self, fieldName):
+    def get_field_label(self, field_name):
         for element in self.structure:
-            if 'name' in element and element['name']==fieldName:
+            if 'name' in element and element['name']==field_name:
                 return element['label']
         return None
+
+    def get_answer_label(self, field_name, answer_value):
+        label = ""
+        for element in self.structure:
+            if 'name' in element and element['name']==field_name:
+                if element["type"] == "checkbox-group" or \
+                   element["type"] == "radio-group" or \
+                   element["type"] == "select":
+                    option_labels = []
+                    for value in answer_value.split(', '):
+                        value_label = next((l for l in element['values'] if l['value'] == value), None)
+                        if value_label:
+                            option_labels.append(value_label['label'])
+                    label = ', '.join(option_labels)
+                    break
+                else:
+                    label = answer_value
+                    break
+        return label
 
     def save_expiry_date(self, expireDate):
         self.expiryConditions['expireDate']=expireDate
@@ -484,12 +551,14 @@ class Form(db.Model, CRUD):
         self.delete_all_answers()
         super().delete()
 
+    def get_attachment_dir(self):
+        return os.path.join(current_app.config['UPLOADS_DIR'],
+                            current_app.config['ATTACHMENT_DIR'],
+                            str(self.id))
+
     def delete_all_answers(self):
         self.answers.delete()
-        attachment_dir = os.path.join(current_app.config['ATTACHMENT_DIR'],
-                                      str(self.id))
-        attachment_dir = os.path.join(current_app.config['UPLOADS_DIR'],
-                                      attachment_dir)
+        attachment_dir = self.get_attachment_dir()
         if os.path.isdir(attachment_dir):
             shutil.rmtree(attachment_dir, ignore_errors=True)
         else:
@@ -501,19 +570,23 @@ class Form(db.Model, CRUD):
         return True if self.author_id == user.id else False
 
     def is_editor(self, user):
-        return True if str(user.id) in self.editors else False
+        return True if FormUser.find(user_id=user.id,
+                                     form_id=self.id,
+                                     is_editor=True) else False
 
-    def get_editors(self):
+    def get_editors(self, **kwargs):
+        kwargs = {**{'is_editor': True}, **kwargs}
+        return self.get_users(**kwargs)
+
+    def get_readers(self, **kwargs):
+        kwargs = {**{'is_editor': False}, **kwargs}
+        return self.get_users(**kwargs)
+
+    def get_users(self, **kwargs):
         from liberaforms.models.user import User
-        editors=[]
-        for editor_id in self.editors:
-            user=User.find(id=editor_id)
-            if user:
-                editors.append(user)
-            else:
-                # remove editor_id from self.editors
-                pass
-        return editors
+        kwargs = {**{'form_id': self.id}, **kwargs}
+        return User.query.join(FormUser, User.id == FormUser.user_id) \
+                         .filter_by(**kwargs)
 
     def can_expire(self):
         if self.expiryConditions["totalAnswers"]:
@@ -555,18 +628,12 @@ class Form(db.Model, CRUD):
         else:
             return True
 
-    def is_shared(self):
-        if self.are_answers_shared():
-            return True
-        if len(self.editors) > 1:
-            return True
-        return False
-
     def are_answers_shared(self):
-        return self.sharedAnswers['enabled']
+        return True if FormUser.find_all(form_id=self.id,
+                                         is_editor=False).count() > 0 else False
 
     def get_shared_answers_url(self, part="results"):
-        return f"{self.url}/{part}/{self.sharedAnswers['key']}"
+        return f"{self.url}/{part}/{self.id}"
 
     """
     Used when editing a form.
@@ -684,30 +751,6 @@ class Form(db.Model, CRUD):
         self.save()
         return self.restrictedAccess
 
-    def toggle_notification(self, editor_id):
-        editor_id = str(editor_id)
-        if editor_id in self.editors:
-            if self.editors[editor_id]['notification']['newAnswer']:
-                self.editors[editor_id]['notification']['newAnswer']=False
-            else:
-                self.editors[editor_id]['notification']['newAnswer']=True
-            flag_modified(self, 'editors')
-            self.save()
-            return self.editors[editor_id]['notification']['newAnswer']
-        return False
-
-    def toggle_expiration_notification(self, editor_id):
-        editor_id = str(editor_id)
-        if editor_id in self.editors:
-            if self.editors[editor_id]['notification']['expiredForm']:
-                self.editors[editor_id]['notification']['expiredForm']=False
-            else:
-                self.editors[editor_id]['notification']['expiredForm']=True
-            flag_modified(self, 'editors')
-            self.save()
-            return self.editors[editor_id]['notification']['expiredForm']
-        return False
-
     def toggle_send_confirmation(self):
         self.sendConfirmation = False if self.sendConfirmation else True
         self.save()
@@ -720,6 +763,12 @@ class Form(db.Model, CRUD):
         log.save()
 
     def write_csv(self, with_deleted_columns=False):
+        label_cache = {}
+        def get_label(field_name, answer_value):
+            if answer_value in label_cache:
+                return label_cache[answer_value]
+            label_cache[answer_value] = self.get_answer_label(field_name, answer_value)
+            return label_cache[answer_value]
         fieldnames=[]
         fieldheaders={}
         for field in self.get_field_index_for_data_display(with_deleted_columns):
@@ -735,11 +784,13 @@ class Form(db.Model, CRUD):
             for answer in answers:
                 for field_name in answer.keys():
                     if field_name.startswith('file-'):
-                        # extract attachment url
-                        url = re.search(r'https?:[\'"]?([^\'" >]+)',
-                                        answer[field_name])
+                        url = Answer.get_file_field_url(answer[field_name])
                         if url:
-                            answer[field_name] = url.group(0)
+                            answer[field_name] = url
+                    elif field_name.startswith("checkbox-group") or \
+                         field_name.startswith("radio-group") or \
+                         field_name.startswith("select"):
+                        answer[field_name] = get_label(field_name, answer[field_name])
                 writer.writerow(answer)
         return csv_name
 

@@ -4,9 +4,6 @@
 source ./venv/bin/activate
 pip install pytest
 pip install pytest-dotenv
-#pip install pytest-order
-#pip install pytest-dependency
-#pip install pytest-pythonpath
 ```
 
 Create `test.ini` and edit
@@ -14,6 +11,15 @@ Create `test.ini` and edit
 cd ./tests
 cp test.ini.example test.ini
 ```
+
+You need to create a database using the `DB_` test values you define in test.ini
+
+```
+CREATE USER <user_name> WITH PASSWORD '<user_password>';
+CREATE DATABASE <db_name> ENCODING 'UTF8' TEMPLATE template0;
+GRANT ALL PRIVILEGES ON DATABASE <db_name> TO <user_name>;
+```
+
 
 Run all tests, unit tests, functional tests
 

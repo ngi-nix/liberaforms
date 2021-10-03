@@ -1,86 +1,81 @@
 {% extends "base.html" %}
 {% block content %}
 
-<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
-<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
+<!-- list_users_page -->
+
+<link rel="stylesheet" href="/static/data-display/data-display.css">
 
 <div class="container">
-<div class="row">
-    <div class="col-md-12">
 
-    <div class="title_1 delimited">{%trans%}Users{%endtrans%}
-        <div style="float:right">
-            <a class="btn btn-primary btn-sm" role="button" href="/site/stats">
-                {%trans%}Statistics{%endtrans%}<i class="fa fa-bar-chart" aria-hidden="true"></i>
-            </a>
-            {% set total_invites = invites.count() %}
-            {% if total_invites == 0 %}
-                <a class="btn btn-primary btn-sm" role="button" href="/admin/invites/new">
-                    {%trans%}Invite a new user{%endtrans%}
-                    <span class="badge badge-light">{{ total_invites }}</span>
-                </a>
-            {% else %}
-                <a class="btn btn-primary btn-sm" role="button" href="/admin/invites">
-                    {%trans%}Invitations{%endtrans%}
-                    <span class="badge badge-light">{{ total_invites }}</span>
-                </a>
-            {% endif %}
-            {# i18n: Button to download answers received on form in CSV document format #}
-            <a class="btn btn-primary btn-sm" role="button" href="/admin/users/csv">
-                {%trans%}Download CSV{%endtrans%}
-                <i class="fa fa-download" aria-hidden="true"></i>
-            </a>
-        </div>
-    </div>
+  <nav class="navbar navbar-expand-sm"
+       style="padding:0;">
 
-    <table id="users" style="display:none" class="table table-sm table-striped">
-    <thead>
-        <tr>
-            <th>{%trans%}Username{%endtrans%}</th>
-            <th>{%trans%}Created{%endtrans%}</th>
-            {% if g.is_root_user_enabled %}
-                <th>{%trans%}Hostname{%endtrans%}</th>
-            {% endif %}
-            <th>{%trans%}Enabled{%endtrans%}</th>
-            <th>{%trans%}Email{%endtrans%}</th>
-            <th>{%trans%}Forms{%endtrans%}</th>
-            <th>{%trans%}Admin{%endtrans%}</th>
-        </tr>
-    </thead>
-    {% for user in users %}
-    <tr>
-        <td><a href="/admin/users/{{user.id}}">{{user.username}}</a></td>
-        <td>
-          {{user.get_created_date()}}
-        </td>
-        {% if g.is_root_user_enabled %}
-            <td>{{user.hostname}}</td>
+    <span class="navbar-brand navbar-text"
+          style="font-size: 1.5rem">
+      {%trans%}Users{%endtrans%}
+    </span>
+    <button class="navbar-toggler" type="button"
+            data-toggle="collapse" data-target="#otherFormOptions"
+            aria-controls="otherFormOptions"
+            aria-expanded="false"
+            aria-label="Toggle other options">
+      <i class="fa fa-align-justify" style="color: gray;" aria-hidden="true"></i>
+    </button>
+
+    <div class="collapse navbar-collapse" id="otherFormOptions">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/site/stats">
+            {%trans%}Statistics{%endtrans%}
+            <i class="fa fa-bar-chart" aria-hidden="true"></i>
+          </a>
+        </li>
+        {% set total_invites = invites.count() %}
+        {% if total_invites == 0 %}
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/admin/invites/new">
+            {%trans%}Invite a new user{%endtrans%}
+            <span class="badge badge-light">{{ total_invites }}</span>
+          </a>
+        </li>
+        {% else %}
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/admin/invites">
+            {%trans%}Invitations{%endtrans%}
+            <span class="badge badge-light">{{ total_invites }}</span>
+          </a>
+        </li>
         {% endif %}
-        <td>{{user.enabled}}</td>
-        <td>{{user.email}}</td>
-        <td>{{user.get_forms().count()}}</td>
-        <td>{{user.is_admin()}}</td>
-    </tr>
-    {% endfor %}
-    </table>
-
+        <li class="nav-item pb-2">
+          <a class="btn btn-primary btn-sm"
+             role="button"
+             href="/admin/users/csv">
+            {# i18n: Button to download document format #}
+            {%trans%}Download CSV{%endtrans%}
+            <i class="fa fa-download" aria-hidden="true"></i>
+          </a>
+        </li>
+      </ul>
     </div>
-</div>
+  </nav>
+
+  <div class="row">
+    <div class="col">
+      <div data-vue-component="data-display"
+           data-endpoint="/data-display/admin/users"
+           data-language="{{ g.current_user.language }}"
+           data-csrf_token="{{ csrf_token() }}">
+      </div>
+    </div>
+  </div>
 </div>
 
-<script>
-$(document).ready(function() {
-    $('#users').DataTable({
-        "language": {
-            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
-        },
-        "initComplete": function(settings, json) {
-            $("#users").show();
-        },
-        "order": [[1, 'desc']],
-    });
-} );
-</script>
+<script src="/static/data-display/data-display.js"></script>
 
 {% endblock %}

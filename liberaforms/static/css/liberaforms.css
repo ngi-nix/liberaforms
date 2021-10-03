@@ -301,16 +301,18 @@ ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
 }
 
 /* ###### Theming ###### */
+.menu-color-options {
+  display: flex;
+  flex-wrap: wrap;
+}
 .menu-color-options span {
-  display: inline-block;
-  width: 52px;
-  height: 52px;
+  width: 55px;
+  height: 55px;
   cursor: pointer;
   color: white;
   font-size: 34px;
   text-align: center;
   vertical-align: middle;
-  margin-bottom: 4px;
 }
 
 input[type="file"] {
@@ -322,7 +324,8 @@ div.required {
     color: #c10000;
     padding: 0 0 1em 0;
 }
-div.consentText > #dataConsentText {
+.dataConsentText {
+/* div.consentText > #dataConsentText { */
   font-size: 0.85rem;
   color: #666;
 }

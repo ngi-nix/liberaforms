@@ -7,15 +7,27 @@
   {% endif %}
   {% if 'site' in g and g.site %}
   <title>{{ g.site.siteName }}</title>
+    <meta property="og:type" content="website" />
+    {% if not opengraph -%}
+    <meta property="og:title" content="{{ g.site.siteName }}" />
+    <meta property="og:url" content="{{ g.site.host_url }}" />
+    <meta property="og:image" content="{{ g.site.get_logo_uri() }}" />
+    <meta property="og:description" content="{{ g.site.get_short_description() }}" />
+    {% else -%}
+    <meta property="og:site_name" content="{{ g.site.siteName }}" />
+    <meta property="og:title" content="{{ opengraph['title'] }}" />
+    <meta property="og:url" content="{{ opengraph['url'] }}" />
+    <meta property="og:description" content="{{ opengraph['description'] }}" />
+    <meta property="og:image" content="{{ opengraph['image'] }}" />
+    {% endif -%}
   {% endif %}
   <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="/static/jquery/jquery.min.js"></script>
   <script src="/static/jquery/jquery-ui.min.js"></script>
   <script src="/static/bootstrap/popper.1.14.3.min.js"></script>
-  <script src="/static/bootstrap/4.1/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="/static/bootstrap/4.1/bootstrap.min.css">
-
+  <script src="/static/bootstrap/4.1.3/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/static/bootstrap/4.1.3/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
   <link rel="stylesheet" href="/static/css/liberaforms.css">
   <link rel="stylesheet" href="/static/css/custom.css">
@@ -144,8 +156,26 @@
 
 <p>&nbsp;</p>
 <div id="footer" class="container-fluid">
-  AGPLv3
-  <a href="https://liberaforms.org">LiberaForms</a>
+  <div style="float:left">
+    <a href="/feed/rss"
+       style="color: #bbb"
+       alt_text="RSS feed">
+      <i class="fa fa-rss" aria-hidden="true"></i>
+    </a>
+  </div>
+  <div style="float:right">
+    {% if ('current_user' in g and g.current_user) %}
+      {% set user_lang = g.current_user['preferences']['language'] %}
+      {% set docs_lang = g.site.get_liberaforms_docs_language(user_lang) %}
+      <a href="https://docs.liberaforms.org/{{docs_lang}}"
+         target="_blank">
+        {%trans%}User guide{%endtrans%}
+      </a>
+      |
+    {% endif %}
+    AGPLv3 |
+    <a href="https://liberaforms.org">LiberaForms</a>
+  </div>
 </div>
 
 

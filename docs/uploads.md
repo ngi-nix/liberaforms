@@ -1,5 +1,7 @@
 # File uploads
 
+You must create and enryption key first. See docs/INSTALL.md
+
 ## ENABLE_UPLOADS
 
 When set to `True`, two types of file uploads are enabled.
@@ -31,28 +33,6 @@ The maximum size in bytes of the files that can be uploaded by form editors.
 The maximum size in bytes of the files that can be attached to forms.
 
 
-## Encryption
-
-LiberaForms encrypts form attachments when they are submitted.
-
-### Create the key
-
-```
-flask cryptokey create
-
-olYyUwGT--example-key--c9AkH_HoMEWg9Q=
-
-```
-
-> Important! Save this key somewhere safe and don't lose it.
-
-Copy the generated key and save it in a file with a name you will recognize. Something like `my.domain.com.key`.
-
-Now add the key you have generated to your `.env` file
-
-```
-CRYPTO_KEY=olYyUwGT--example-key--c9AkH_HoMEWg9Q=
-```
 
 
 ## ENABLE_REMOTE_STORAGE
@@ -74,7 +54,7 @@ MINIO_ACCESS_KEY=
 MINIO_SECRET_KEY=
 ```
 
-Now you can create the remote buckets. LiberaForms uses two buckets:
+Create the remote buckets. LiberaForms uses two buckets:
 
 * `my.domain.com.media`: Media files go here. Anonymous Internet users can download these files.
 * `my.domain.com.attachments`: Documents attached to forms are stored here.

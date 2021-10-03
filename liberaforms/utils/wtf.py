@@ -9,7 +9,7 @@ import os, re
 import mimetypes, pytz
 from flask_wtf import FlaskForm
 from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
-                     PasswordField, BooleanField, RadioField, FileField)
+                     PasswordField, BooleanField, RadioField, FileField, HiddenField)
 from wtforms.fields.html5 import URLField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask import current_app, g
@@ -69,8 +69,8 @@ class Login(FlaskForm):
 
 
 class DeleteAccount(FlaskForm):
-    delete_username = StringField(_("Your username"), validators=[DataRequired()])
-    delete_password = PasswordField(_("Your password"), validators=[DataRequired()])
+    delete_username = StringField(_("Enter your username"), validators=[DataRequired()])
+    delete_password = PasswordField(_("Enter your password"), validators=[DataRequired()])
 
     def validate_delete_username(self, delete_username):
         if delete_username.data != g.current_user.username:
@@ -90,7 +90,7 @@ class ChangeEmail(FlaskForm):
     email = StringField(_("New email address"), validators=[DataRequired(), Email()])
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in current_app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 class ResetPassword(FlaskForm):
@@ -125,7 +125,7 @@ class NewInvite(FlaskForm):
     admin = BooleanField(_("Make the new user an Admin"))
 
     def validate_email(self, email):
-        if User.find(email=email.data) or email.data in os.environ['ROOT_USERS']:
+        if User.find(email=email.data) or email.data in current_app.config['ROOT_USERS']:
             raise ValidationError(_("Please use a different email address"))
 
 
@@ -191,10 +191,13 @@ class FediverseAuth(FlaskForm):
     node_url = StringField(_("Fediverse node"),
                           default="",
                           validators=[DataRequired()])
-    access_token = StringField(_("Access token"),
+    access_token = HiddenField(_("Access token"),
                                default="",
                                validators=[DataRequired()])
 
 class FormPublish(FlaskForm):
     image_source = StringField()
     text = TextAreaField(validators=[DataRequired()])
+
+class FormShortDescription(FlaskForm):
+    short_desc = TextAreaField(_("Short description"), validators=[DataRequired()])

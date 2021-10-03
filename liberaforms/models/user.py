@@ -5,20 +5,23 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os
+import os, shutil
 from datetime import datetime, timezone, timedelta
 from dateutil.relativedelta import relativedelta
 import pathlib
 from liberaforms import db
+from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, TIMESTAMP
 from sqlalchemy.ext.mutable import MutableDict
 from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
+from liberaforms.models.formuser import FormUser
 from liberaforms.models.answer import Answer
 from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
+from liberaforms.utils import crypto
 from liberaforms.utils import utils
 
 from pprint import pprint
@@ -26,9 +29,7 @@ from pprint import pprint
 class User(db.Model, CRUD):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True, index=True)
-    created = db.Column(TIMESTAMP,
-                        default=datetime.now(timezone.utc),
-                        nullable=False)
+    created = db.Column(TIMESTAMP, nullable=False)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password_hash = db.Column(db.String, nullable=False)
@@ -47,6 +48,7 @@ class User(db.Model, CRUD):
                             cascade = "all, delete, delete-orphan")
 
     def __init__(self, **kwargs):
+        self.created = datetime.now(timezone.utc)
         self.username = kwargs["username"]
         self.email = kwargs["email"]
         self.password_hash = validators.hash_password(kwargs["password"])
@@ -69,6 +71,10 @@ class User(db.Model, CRUD):
     @classmethod
     def find(cls, **kwargs):
         return cls.find_all(**kwargs).first()
+
+    @classmethod
+    def count(cls):
+        return cls.query.count()
 
     @classmethod
     def find_all(cls, **kwargs):
@@ -110,17 +116,34 @@ class User(db.Model, CRUD):
             return self.timezone
         return current_app.config['DEFAULT_TIMEZONE']
 
+    def get_form(self, form_id, **kwargs):
+        kwargs = {**{'form_id':form_id}, **kwargs}
+        return self.get_forms(**kwargs).first()
+
     def get_forms(self, **kwargs):
-        kwargs['editor_id']=self.id
-        return Form.find_all(**kwargs)
+        kwargs = {**{'user_id': self.id}, **kwargs}
+        return Form.query.join(FormUser, Form.id == FormUser.form_id) \
+                         .filter_by(**kwargs)
 
     def authored_forms_total(self, **kwargs):
         kwargs["author_id"] = self.id
         return Form.find_all(**kwargs).count()
 
+    def can_inspect_form(self, form):
+        if self.is_admin():
+            return True
+        return True if FormUser.find(user_id=self.id,
+                                     form_id=form.id,
+                                     is_editor=True) \
+                    else False
+
     @property
     def language(self):
         return self.preferences["language"]
+
+    def new_form_notifications(self):
+        return {'newAnswer': self.preferences["newAnswerNotification"],
+                'expiredForm': True}
 
     @property
     def new_answer_notification_default(self):
@@ -130,21 +153,23 @@ class User(db.Model, CRUD):
         return True if self.admin['isAdmin']==True else False
 
     def is_root_user(self):
-        return True if self.email in os.environ['ROOT_USERS'] else False
+        return True if self.email in current_app.config['ROOT_USERS'] else False
 
     def verify_password(self, password):
         return validators.verify_password(password, self.password_hash)
 
+    def get_media_dir(self):
+        return os.path.join(current_app.config['UPLOADS_DIR'],
+                            current_app.config['MEDIA_DIR'],
+                            str(self.id))
+
     def delete_user(self):
-        # remove this user from other form.editors{}
-        forms = Form.find_all(editor_id=self.id)
-        for form in forms:
-            if form.author_id != self.id:
-                del form.editors[str(self.id)]
-                form.save()
+        # remove this user from FormUser
+        for formuser in FormUser.find_all(user_id=self.id):
+            if formuser.form.author_id != self.id:
+                formuser.delete()
         # delete uploaded media files
-        media_dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
-        shutil.rmtree(media_dir, ignore_errors=True)
+        shutil.rmtree(self.get_media_dir(), ignore_errors=True)
         if current_app.config['ENABLE_REMOTE_STORAGE'] == True:
             prefix = "media/{}".format(self.id)
             RemoteStorage().remove_directory(prefix)
@@ -182,12 +207,11 @@ class User(db.Model, CRUD):
         return self.uploads_enabled
 
     def get_media_directory_size(self, for_humans=False):
-        dir = os.path.join(current_app.config['MEDIA_DIR'], str(self.id))
-        if not os.path.isdir(dir):
+        media_dir = self.get_media_dir()
+        if not os.path.isdir(media_dir):
             bytes = 0
         else:
-            dir = pathlib.Path(dir)
-            bytes = sum(f.stat().st_size for f in dir.glob('**/*') if f.is_file())
+            bytes = sum(f.stat().st_size for f in media_dir.glob('**/*') if f.is_file())
         return bytes if not for_humans else utils.human_readable_bytes(bytes)
 
     def toggle_uploads_enabled(self):
@@ -216,8 +240,20 @@ class User(db.Model, CRUD):
         return {
             "isAdmin": False,
             "notifyNewUser": False,
-            "notifyNewForm": False
+            "notifyNewForm": False,
+            "forms": {},
+            "users": {},
+            "userforms": {}
         }
+
+    def get_fedi_auth(self):
+        if not self.fedi_auth:
+            return {"node_url": "", "access_token": ""}
+        else:
+            return crypto.decrypt_dict(self.fedi_auth)
+
+    def set_fedi_auth(self, auth_dict):
+        self.fedi_auth = crypto.encrypt_dict(auth_dict)
 
     """
     send this admin an email when a new user registers at the site
@@ -244,9 +280,7 @@ class User(db.Model, CRUD):
         return Answer.find_all(**kwargs)
 
     def get_statistics(self, year="2020"):
-        #today = datetime.date.today().strftime("%Y-%m")
         today = datetime.now(timezone.utc).strftime("%Y-%m")
-        #one_year_ago = datetime.date.today() - datetime.timedelta(days=354)
         one_year_ago = datetime.now(timezone.utc) - timedelta(days=354)
         year, month = one_year_ago.strftime("%Y-%m").split("-")
         month = int(month)
@@ -271,21 +305,22 @@ class User(db.Model, CRUD):
             date_str = year_month.replace('-', ', ')
             start_date = datetime.strptime(date_str, '%Y, %m')
             stop_date = start_date + relativedelta(months=1)
-            answers_filter = answer_filter + [Answer.created >= start_date]
-            answers_filter = answer_filter + [Answer.created < stop_date]
-            forms_filter = form_filter + [Form.created >= start_date]
-            forms_filter = form_filter + [Form.created < stop_date]
-            monthy_answers = Answer.query.filter(*answers_filter).count()
-            monthy_forms = Form.query.filter(*forms_filter).count()
-            total_answers= total_answers + monthy_answers
+            monthy_users = User.query.filter(
+                                    User.id == self.id,
+                                    User.created >= start_date,
+                                    User.created < stop_date).count()
+            monthy_forms = Form.query.filter(
+                                    Form.author_id == self.id,
+                                    Form.created >= start_date,
+                                    Form.created < stop_date).count()
+            monthy_answers = Answer.query.filter(
+                                    Answer.author_id == self.id,
+                                    Answer.created >= start_date,
+                                    Answer.created < stop_date).count()
+            total_answers = total_answers + monthy_answers
             total_forms= total_forms + monthy_forms
             result['answers'].append(monthy_answers)
             result['forms'].append(monthy_forms)
             result['total_answers'].append(total_answers)
             result['total_forms'].append(total_forms)
         return result
-
-    def can_inspect_form(self, form):
-        if str(self.id) in form.editors or self.is_admin():
-            return True
-        return False

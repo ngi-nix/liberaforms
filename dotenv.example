@@ -8,12 +8,13 @@ TMP_DIR = '/tmp'
 DB_HOST=localhost
 DB_NAME=liberaforms
 DB_USER=liberaforms
-# Use a strong password
-DB_PASSWORD=""
+DB_PASSWORD=a_secret_db_password
 
 # Maximum valid age for password resets, invitations, ..
 # 86400 seconds = 24h
 TOKEN_EXPIRATION = 604800
+
+CRYPTO_KEY=
 
 # Session management (see docs/INSTALL)
 SESSION_TYPE = "filesystem"
@@ -28,7 +29,6 @@ ENABLE_REMOTE_STORAGE=False
 MAX_MEDIA_SIZE=512000
 # 1024 * 1024 * 1.5 = 1572864 = 1.5 MiB
 MAX_ATTACHMENT_SIZE=1572864
-CRYPTO_KEY=
 
 # Directory where logs will be saved
 LOG_DIR=logs
@@ -45,3 +45,11 @@ FLASK_ENV=production
 # this sets the config to use (see config.py)
 # can be 'production' or 'development'
 FLASK_CONFIG=production
+
+# ENABLE_PROMETHEUS_METRICS
+# this activates Prometheus' /metrics route and metrics generation
+ENABLE_PROMETHEUS_METRICS=False
+
+# DEBUGGING
+# Optional. Recieve Internal Server 500 errors. Good for debugging.
+#ALERT_MAILS = ["your_email_address", "another_email_address"]
