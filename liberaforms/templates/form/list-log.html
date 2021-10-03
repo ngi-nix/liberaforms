@@ -3,58 +3,44 @@
 
 <!-- log_list_page -->
 
-<script src="/static/dataTables/1.10.20/jquery.dataTables.min.js"></script>
-<script src="/static/dataTables/1.10.20/dataTables.bootstrap4.min.js"></script>
-<link rel="stylesheet" type="text/css" href="/static/dataTables/1.10.20/dataTables.bootstrap4.min.css">
-
 <div class="container">
-<div class="row">
+  <div class="row">
     <div class="col-md-2"></div>
     <div class="col-md-8">
 
-        <div class="returnToForm">
-            <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">
-              {%trans%}Return to form{%endtrans%}
-            </a>
-            {{ form.slug }}
-        </div>
+      <div class="returnToForm">
+        <a class="btn btn-primary btn-sm" role="button" href="/forms/view/{{form.id}}">
+          {%trans%}Return to form{%endtrans%}
+        </a>
+        {{ form.slug }}
+      </div>
 
-        <div class="title_1">{%trans%}Log{%endtrans%}</div>
-        <table id="log" style="display:none" class="table table-sm table-hover">
+      <div class="title_1">
+        {%trans%}Log{%endtrans%}
+      </div>
+      <table class="table table-sm table-hover">
         <thead>
-            <tr>
-                <th>{%trans%}Time{%endtrans%}</th>
-                <th>{%trans%}User{%endtrans%}</th>
-                <th>{%trans%}Message{%endtrans%}</th>
-            </tr>
+          <tr>
+            <th>{%trans%}Time{%endtrans%}</th>
+            <th>{%trans%}User{%endtrans%}</th>
+            <th>{%trans%}Message{%endtrans%}</th>
+          </tr>
         </thead>
+        <tbody>
         {% for log in form.log %}
-        <tr>
+          <tr>
             <td>
               {{log.created.astimezone(g.timezone).strftime('%Y-%m-%d %H:%M:%S')}}
             </td>
             <td>{{log.user.username}}</td>
             <td>{{log.message}}</td>
-        </tr>
+          </tr>
         {% endfor %}
-        </table>
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 </div>
 
-<script>
-$(document).ready(function() {
-    $('#log').DataTable({
-        "language": {
-            "url": "/static/dataTables-languages/{{g.current_user.language}}.js"
-        },
-        "initComplete": function(settings, json) {
-            $("#log").show();
-        },
-        "order": [[ 0, 'desc' ]],
-        "pageLength": 50
-    });
-} );
-</script>
 
 {% endblock %}
