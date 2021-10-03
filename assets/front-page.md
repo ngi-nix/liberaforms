@@ -1,4 +1,4 @@
-# LiberaForms, ethical form software
+# LiberaForms, free form software
 
 [LiberaForms](https://liberaforms.org/en) is a libre software tool developed as **community, free, and ethical infrastructure**  that makes it easy to create and manage forms that respect the digital rights of the people who use it.
 
