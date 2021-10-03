@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
-"POT-Creation-Date: 2021-10-02 20:20+0200\n"
+"POT-Creation-Date: 2021-10-03 10:41+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 #. i18n: Used for sort items by creation order, almost always as column title
 #: models/form.py:145 models/site.py:364 templates/admin/admin-panel.html:242
 #: templates/admin/inspect-user.html:30 templates/admin/list-invites.html:26
-#: templates/form/inspect-form.html:389 templates/site/list-admins.html:26
+#: templates/form/inspect-form.html:387 templates/site/list-admins.html:26
 #: views/data_display.py:33 views/data_display.py:199 views/data_display.py:356
 #: views/data_display.py:511
 msgid "Created"
@@ -38,7 +38,7 @@ msgstr ""
 
 #. i18n: Acronym for 'Data Privacy Law'
 #: models/form.py:191 templates/admin/admin-panel.html:169
-#: templates/form/inspect-form.html:300 utils/consent_texts.py:126
+#: templates/form/inspect-form.html:299 utils/consent_texts.py:126
 msgid "DPL"
 msgstr ""
 
@@ -88,8 +88,8 @@ msgid "Username"
 msgstr ""
 
 #. i18n: Used as column title
-#: models/site.py:366 templates/form/inspect-form.html:284
-#: templates/form/inspect-form.html:307 templates/site/list-admins.html:27
+#: models/site.py:366 templates/form/inspect-form.html:283
+#: templates/form/inspect-form.html:306 templates/site/list-admins.html:27
 #: templates/user/consent.html:29 views/data_display.py:197
 msgid "Enabled"
 msgstr ""
@@ -119,10 +119,10 @@ msgstr ""
 #: templates/admin/admin-panel.html:153 templates/admin/inspect-user.html:48
 #: templates/admin/inspect-user.html:67 templates/admin/inspect-user.html:89
 #: templates/admin/inspect-user.html:111 templates/form/expiration.html:34
-#: templates/form/inspect-form.html:116 templates/form/inspect-form.html:126
-#: templates/form/inspect-form.html:147 templates/form/inspect-form.html:188
-#: templates/form/inspect-form.html:255 templates/form/inspect-form.html:266
-#: templates/form/inspect-form.html:322 templates/user/user-settings.html:110
+#: templates/form/inspect-form.html:114 templates/form/inspect-form.html:124
+#: templates/form/inspect-form.html:145 templates/form/inspect-form.html:186
+#: templates/form/inspect-form.html:253 templates/form/inspect-form.html:264
+#: templates/form/inspect-form.html:321 templates/user/user-settings.html:110
 #: templates/user/user-settings.html:209 templates/user/user-settings.html:236
 #: views/data_display.py:557 views/data_display.py:563
 msgid "True"
@@ -132,10 +132,10 @@ msgstr ""
 #: templates/admin/admin-panel.html:159 templates/admin/inspect-user.html:50
 #: templates/admin/inspect-user.html:75 templates/admin/inspect-user.html:95
 #: templates/admin/inspect-user.html:118 templates/form/expiration.html:41
-#: templates/form/inspect-form.html:121 templates/form/inspect-form.html:128
-#: templates/form/inspect-form.html:154 templates/form/inspect-form.html:181
-#: templates/form/inspect-form.html:190 templates/form/inspect-form.html:261
-#: templates/form/inspect-form.html:268 templates/form/inspect-form.html:324
+#: templates/form/inspect-form.html:119 templates/form/inspect-form.html:126
+#: templates/form/inspect-form.html:152 templates/form/inspect-form.html:179
+#: templates/form/inspect-form.html:188 templates/form/inspect-form.html:259
+#: templates/form/inspect-form.html:266 templates/form/inspect-form.html:323
 #: templates/user/user-settings.html:120 templates/user/user-settings.html:219
 #: templates/user/user-settings.html:246 views/data_display.py:557
 #: views/data_display.py:563
@@ -358,13 +358,13 @@ msgid "New author's username"
 msgstr ""
 
 #. Users who can edit a specific form, but is not the original author
-#: templates/admin/change-author.html:75 templates/form/inspect-form.html:196
+#: templates/admin/change-author.html:75 templates/form/inspect-form.html:194
 #: templates/form/share-form.html:27
 msgid "Editors"
 msgstr ""
 
 #. Author of the form
-#: templates/admin/change-author.html:85 templates/form/inspect-form.html:373
+#: templates/admin/change-author.html:85 templates/form/inspect-form.html:371
 #: templates/form/share-form.html:42 views/data_display.py:36
 #: views/data_display.py:353
 msgid "Author"
@@ -392,7 +392,7 @@ msgid "and their forms"
 msgstr ""
 
 #. Table column title, indicating name of a user or a form
-#: templates/admin/delete-user.html:33 templates/form/inspect-form.html:50
+#: templates/admin/delete-user.html:33 templates/form/inspect-form.html:48
 #: views/data_display.py:32 views/data_display.py:349 views/data_display.py:506
 msgid "Name"
 msgstr ""
@@ -420,8 +420,8 @@ msgstr ""
 #: templates/common/change-language.html:42
 #: templates/common/change-language.html:44 templates/form/edit-form.html:135
 #: templates/form/edit-form.html:141 templates/form/expiration.html:186
-#: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:342
-#: templates/form/inspect-form.html:426 templates/form/inspect-form.html:460
+#: templates/form/fedi-publish.html:53 templates/form/inspect-form.html:340
+#: templates/form/inspect-form.html:425 templates/form/inspect-form.html:459
 #: templates/form/preview-form.html:69 templates/form/preview-form.html:80
 #: templates/main/index.html:31 templates/site/change-icon.html:47
 #: templates/site/change-sitename.html:32 templates/site/consent.html:76
@@ -440,7 +440,7 @@ msgstr ""
 
 #. Hostname of user, admin or form. The hostname is same as instance URL, for
 #. example "erabili.liberaforms.org"
-#: templates/admin/inspect-user.html:25 templates/form/inspect-form.html:394
+#: templates/admin/inspect-user.html:25 templates/form/inspect-form.html:392
 #: templates/site/list-admins.html:24
 msgid "Hostname"
 msgstr ""
@@ -474,7 +474,7 @@ msgstr ""
 msgid "Statistics"
 msgstr ""
 
-#: templates/admin/inspect-user.html:261 templates/form/inspect-form.html:42
+#: templates/admin/inspect-user.html:261 templates/form/inspect-form.html:40
 #: templates/site/stats.html:53 templates/site/stats.html:129
 #: templates/user/statistics.html:40
 msgid "Total answers"
@@ -537,7 +537,7 @@ msgid "Send email"
 msgstr ""
 
 #: templates/answers/chart-answers.html:21
-#: templates/answers/chart-answers.html:46 templates/form/inspect-form.html:29
+#: templates/answers/chart-answers.html:46 templates/form/inspect-form.html:27
 msgid "View answers"
 msgstr ""
 
@@ -556,7 +556,7 @@ msgid "Delete answers"
 msgstr ""
 
 #: templates/answers/delete-all-answers.html:18
-#: templates/form/inspect-form.html:548 views/form.py:155
+#: templates/form/inspect-form.html:549 views/form.py:155
 msgid "Form"
 msgstr ""
 
@@ -580,8 +580,8 @@ msgid "Change language"
 msgstr ""
 
 #: templates/common/change-language.html:40 templates/form/edit-form.html:130
-#: templates/form/expiration.html:182 templates/form/inspect-form.html:338
-#: templates/form/inspect-form.html:422 templates/form/inspect-form.html:456
+#: templates/form/expiration.html:182 templates/form/inspect-form.html:336
+#: templates/form/inspect-form.html:421 templates/form/inspect-form.html:455
 #: templates/form/preview-form.html:59 templates/main/index.html:27
 #: templates/site/consent.html:75 templates/site/edit-mimetypes.html:29
 #: templates/site/email-branding.html:92
@@ -619,7 +619,7 @@ msgstr ""
 msgid "to"
 msgstr ""
 
-#: templates/form/delete-form.html:22 templates/form/inspect-form.html:499
+#: templates/form/delete-form.html:22 templates/form/inspect-form.html:498
 msgid "Delete form"
 msgstr ""
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "Notify me when this form expires"
 msgstr ""
 
-#: templates/form/expiration.html:50 templates/form/inspect-form.html:186
+#: templates/form/expiration.html:50 templates/form/inspect-form.html:184
 msgid "Expired"
 msgstr ""
 
@@ -739,16 +739,16 @@ msgstr ""
 msgid "The form will expire after"
 msgstr ""
 
-#: templates/form/expiration.html:165 templates/form/inspect-form.html:435
+#: templates/form/expiration.html:165 templates/form/inspect-form.html:434
 msgid "When the form has expired"
 msgstr ""
 
-#: templates/form/expiration.html:168 templates/form/inspect-form.html:406
-#: templates/form/inspect-form.html:440 templates/main/index.html:43
+#: templates/form/expiration.html:168 templates/form/inspect-form.html:404
+#: templates/form/inspect-form.html:439 templates/main/index.html:43
 msgid "Edit text"
 msgstr ""
 
-#: templates/form/expiration.html:173 templates/form/inspect-form.html:446
+#: templates/form/expiration.html:173 templates/form/inspect-form.html:445
 msgid "Say something to the user if the form has expired"
 msgstr ""
 
@@ -766,171 +766,173 @@ msgstr ""
 msgid "Publish"
 msgstr ""
 
-#: templates/form/inspect-form.html:23
+#: templates/form/inspect-form.html:21
 msgid "Details"
 msgstr ""
 
-#: templates/form/inspect-form.html:37
+#: templates/form/inspect-form.html:35
 msgid "Graphs"
 msgstr ""
 
-#: templates/form/inspect-form.html:54 views/data_display.py:35
+#: templates/form/inspect-form.html:52 views/data_display.py:35
 #: views/data_display.py:351 views/data_display.py:508
 msgid "Last answer"
 msgstr ""
 
-#: templates/form/inspect-form.html:69
+#: templates/form/inspect-form.html:67
 msgid "Public URL"
 msgstr ""
 
-#: templates/form/inspect-form.html:72 templates/form/inspect-form.html:290
-#: templates/form/inspect-form.html:312 templates/form/inspect-form.html:376
+#: templates/form/inspect-form.html:70 templates/form/inspect-form.html:289
+#: templates/form/inspect-form.html:311 templates/form/inspect-form.html:374
 #: templates/user/consent.html:30
 msgid "Disabled"
 msgstr ""
 
-#: templates/form/inspect-form.html:92
+#: templates/form/inspect-form.html:90
 msgid "Fediverse"
 msgstr ""
 
-#: templates/form/inspect-form.html:100
+#: templates/form/inspect-form.html:98
 msgid "Published"
 msgstr ""
 
-#: templates/form/inspect-form.html:109 views/data_display.py:38
+#: templates/form/inspect-form.html:107 views/data_display.py:38
 #: views/data_display.py:355 views/data_display.py:509
 msgid "Public"
 msgstr ""
 
-#: templates/form/inspect-form.html:137
+#: templates/form/inspect-form.html:135
 msgid "New answer"
 msgstr ""
 
-#: templates/form/inspect-form.html:157
+#: templates/form/inspect-form.html:155
 msgid "Notify me"
 msgstr ""
 
-#: templates/form/inspect-form.html:162
+#: templates/form/inspect-form.html:160
 msgid "Expiration"
 msgstr ""
 
-#: templates/form/inspect-form.html:169
+#: templates/form/inspect-form.html:167
 msgid "This form has expired"
 msgstr ""
 
-#: templates/form/inspect-form.html:175
+#: templates/form/inspect-form.html:173
 msgid "This form will expire"
 msgstr ""
 
-#: templates/form/inspect-form.html:207 templates/form/inspect-form.html:217
+#: templates/form/inspect-form.html:205 templates/form/inspect-form.html:215
 #, python-format
 msgid "Form shared with %(number)s"
 msgstr ""
 
-#: templates/form/inspect-form.html:213
+#: templates/form/inspect-form.html:211
 msgid "Add editors"
 msgstr ""
 
-#: templates/form/inspect-form.html:222
+#: templates/form/inspect-form.html:220
 msgid "Shared answers"
 msgstr ""
 
-#: templates/form/inspect-form.html:233
+#: templates/form/inspect-form.html:231
 #, python-format
 msgid "Answers shared with %(number)s"
 msgstr ""
 
-#: templates/form/inspect-form.html:239
+#: templates/form/inspect-form.html:237
 msgid "Share"
 msgstr ""
 
-#: templates/form/inspect-form.html:248 templates/form/share-form.html:127
+#: templates/form/inspect-form.html:246 templates/form/share-form.html:127
 msgid "Restricted access"
 msgstr ""
 
-#: templates/form/inspect-form.html:275
+#. Option in Form inspecting view to enable a checkbox at the end of the form,
+#. that confirm user via email that their answers have been sent
+#: templates/form/inspect-form.html:274
 msgid "Confirmation"
 msgstr ""
 
-#: templates/form/inspect-form.html:318 templates/site/email-branding.html:54
+#: templates/form/inspect-form.html:317 templates/site/email-branding.html:54
 msgid "Personalize"
 msgstr ""
 
-#: templates/form/inspect-form.html:333 templates/site/consent.html:30
+#: templates/form/inspect-form.html:331 templates/site/consent.html:30
 #: templates/user/consent.html:22
 msgid "Data protection"
 msgstr ""
 
-#: templates/form/inspect-form.html:348
+#: templates/form/inspect-form.html:346
 msgid "Use the template"
 msgstr ""
 
-#: templates/form/inspect-form.html:355 templates/form/inspect-form.html:812
-#: templates/form/inspect-form.html:851 templates/site/consent.html:64
+#: templates/form/inspect-form.html:353 templates/form/inspect-form.html:813
+#: templates/form/inspect-form.html:852 templates/site/consent.html:64
 #: templates/site/consent.html:83 templates/user/consent.html:48
 #: templates/user/consent.html:67 templates/user/new-user.html:66
 #: utils/consent_texts.py:61
 msgid "I agree"
 msgstr ""
 
-#: templates/form/inspect-form.html:401
+#: templates/form/inspect-form.html:399
 msgid "After replying to the form"
 msgstr ""
 
-#: templates/form/inspect-form.html:412
+#: templates/form/inspect-form.html:410
 msgid "Say something to the user after the form has been submitted"
 msgstr ""
 
-#: templates/form/inspect-form.html:470
+#: templates/form/inspect-form.html:469
 msgid "Other options"
 msgstr ""
 
-#: templates/form/inspect-form.html:481
+#: templates/form/inspect-form.html:480
 msgid "View log"
 msgstr ""
 
-#: templates/form/inspect-form.html:486
+#: templates/form/inspect-form.html:485
 msgid "Duplicate form"
 msgstr ""
 
-#: templates/form/inspect-form.html:492
+#: templates/form/inspect-form.html:491
 msgid "Embed form"
 msgstr ""
 
-#: templates/form/inspect-form.html:505
+#: templates/form/inspect-form.html:504
 msgid "Delete form and answers"
 msgstr ""
 
-#: templates/form/inspect-form.html:512
+#: templates/form/inspect-form.html:511
 msgid "Admin options"
 msgstr ""
 
-#: templates/form/inspect-form.html:517
+#: templates/form/inspect-form.html:516
 msgid "Duplicate"
 msgstr ""
 
-#: templates/form/inspect-form.html:523
+#: templates/form/inspect-form.html:522
 msgid "Disable"
 msgstr ""
 
-#: templates/form/inspect-form.html:529
+#: templates/form/inspect-form.html:528
 msgid "Enable"
 msgstr ""
 
-#: templates/form/inspect-form.html:554
+#: templates/form/inspect-form.html:555
 msgid "Edit form"
 msgstr ""
 
-#: templates/form/inspect-form.html:568 templates/form/preview-form.html:26
+#: templates/form/inspect-form.html:569 templates/form/preview-form.html:26
 #: templates/form/view-form.html:30
 msgid "Required fields"
 msgstr ""
 
-#: templates/form/inspect-form.html:584 templates/form/view-form.html:57
+#: templates/form/inspect-form.html:585 templates/form/view-form.html:57
 msgid "Send me confirmation by mail"
 msgstr ""
 
-#: templates/form/inspect-form.html:611 templates/form/preview-form.html:35
+#: templates/form/inspect-form.html:612 templates/form/preview-form.html:35
 #: templates/form/view-form.html:87 templates/site/smtp-config.html:84
 msgid "Send"
 msgstr ""

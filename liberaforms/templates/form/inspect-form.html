@@ -270,6 +270,7 @@
           </tr>
         {% if form.has_email_field() %}
           <tr>
+                {# i18n: Option in Form inspecting view to enable a checkbox at the end of the form, that confirm user via email that their answers have been sent #}
             <td>{%trans%}Confirmation{%endtrans%}</td>
             <td>
             {% if current_user_is_editor %}
