@@ -389,7 +389,7 @@ templates = [
         'id': 5,
         'name': _("Project Application"),
         'description': _("Apply for a grant. Tell us about your proposal."),
-        'introduction_md': _("# Project Application Form\r\nHave a project? Fill out this form to tell us about your proposal. \r\n\r\nThis form is for project applications only. If you have any other question, please use our [contact form](https://dev.liberaforms.org/template-contact)."),
+        'introduction_md': _("# Project Application Form\r\nHave a project? Fill out this form to tell us about your proposal. \r\n\r\nThis form is for project applications only. If you have any other question, please use our [contact form](https://example.com/contact-form)."),
         'structure': [
             {
                 "label":_("Contact information"),
