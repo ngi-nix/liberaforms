@@ -15,10 +15,12 @@
 {% set dataConsent = form.get_data_consent_for_display() %}
 {% set can_attach_files = form.has_file_field() %}
 
+{% if not g.embedded %}
 <div class="container">
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
+{% endif %}
       <div id="liberaform"
            class="liberaform"
            style="display:none">
@@ -92,9 +94,11 @@
           </button>
         </form>
       </div>
+{% if not g.embedded %}
     </div>
   </div>
 </div>
+{% endif %}
 
 <script>
 jQuery(function($) {

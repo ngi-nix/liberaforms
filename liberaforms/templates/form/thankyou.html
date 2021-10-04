@@ -8,13 +8,18 @@
 
 <!-- thank_you_page -->
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6 afterSubmitText marked-up">
-            {{ form.after_submit_text_html | safe }}
-        </div>
-    </div>
-</div>
+{% if g.embedded %}
+  {{ form.after_submit_text_html | safe }}
+{% else %}
+  <div class="container">
+      <div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6 afterSubmitText marked-up">
+              {{ form.after_submit_text_html | safe }}
+          </div>
+      </div>
+  </div>
+{% endif %}
+
 
 {% endblock %}
