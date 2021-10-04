@@ -11,8 +11,8 @@ templates = [
     {
         'id': 1,
         'name': _('One day congress'),
-        'description': _("Let attendees choose one of two talks running in parallel. They will also select their lunch menu."),
-        'introduction_md': _('# hello\none two three'),
+        'description': _("Let attendees choose one of two talks running in parallel and their lunch menu."),
+        'introduction_md': _("# Congress II\r\nLast year's congress was such a success we doing it again.\r\n\r\nRegister now for this year's sessions!"),
         'structure': [
             {
                 "label": _("10h - 12h"),
@@ -37,7 +37,7 @@ templates = [
                         "value": ""
                     },
                     {
-                        "label":_("Room 2. Build an anonymous web"),
+                        "label":_("Room 2. Build an anonymous website"),
                         "value": ""
                     }
                 ],
@@ -67,7 +67,7 @@ templates = [
         'id': 2,
         'name': _("Summer courses"),
         'description': _("Students can enroll in a variety of activities spread out across three days."),
-        'introduction_md': _('# Summer courses'),
+        'introduction_md': _("# Summer courses\r\n\r\nWe've prepared three days of courses and workshops.\r\n\r\nPlease reserve your place now. First in, first served."),
         'structure': [
             {
                 "label": _("Tuesday 25th"),
@@ -445,7 +445,7 @@ templates = [
             {
                 "label":_("Subjects"),
                 "description":_("Tell us if you are interested in a particular subject."),
-                "value":_("e.g. GDPR compliance and linguistic justice."),
+                "placeholder":_("e.g. GDPR compliance and linguistic justice."),
                 "className":"form-control","name":"textarea-1631273992020",
                 "required":False,"rows":5,"subtype":"textarea","type":"textarea"
             },
