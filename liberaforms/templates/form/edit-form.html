@@ -8,6 +8,7 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
+{% include '_link-modal.html' %}
 {% include '_image-modal.html' %}
 
 <style>
@@ -159,8 +160,16 @@ jQuery(function($) {
       "unordered-list",
       "ordered-list",
       "|", // Separator
-      "link",
   		{
+  			name: "custom",
+  			action: function customImage(editor){
+          $('#insert_link_form')[0].reset();
+  				$('#insert_link_modal').modal('show');
+  			},
+  			className: "fa fa-link",
+  			title: "Link",
+  		},
+      {
   			name: "custom",
   			action: function customImage(editor){
           $('#insert_image_form')[0].reset();
@@ -345,6 +354,21 @@ jQuery(function($) {
       var image = '\n\n!['+alt_text+']('+image_url+')\n\n';
       pos = introduction_mde.codemirror.getCursor();
       introduction_mde.codemirror.replaceRange(image, pos);
+      return false;
+    });
+    $(document).on("insert_link", function(event) {
+      $('#insert_link_modal').modal('hide');
+      var link_url = $('#link_url').val();
+      if (link_url === '') {
+        link_url = 'https://'
+      }
+      var link_text = $('#link_text').val();
+      if (link_text === '') {
+        link_text = link_url
+      }
+      var link = '\n['+link_text+']('+link_url+')\n';
+      pos = introduction_mde.codemirror.getCursor();
+      introduction_mde.codemirror.replaceRange(link, pos);
       return false;
     });
 });

@@ -40,14 +40,12 @@ form_bp = Blueprint('form_bp', __name__,
 @form_bp.route('/forms', methods=['GET'])
 @enabled_user_required
 def my_forms():
-    return render_template( 'my-forms.html', user=g.current_user)
+    if FormUser.find(user_id=g.current_user.id):
+        return render_template('my-forms.html', user=g.current_user)
+    else:
+        return render_template('list-templates.html',
+                                templates = form_templates.templates)
 
-"""
-@form_bp.route('/forms/templates', methods=['GET'])
-@login_required
-def list_form_templates():
-    return render_template('form_templates.html', templates=formTemplates)
-"""
 
 @form_bp.route('/forms/new', methods=['GET'])
 @form_bp.route('/forms/new/<string:templateID>', methods=['GET'])
@@ -778,7 +776,7 @@ def view_form(slug):
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)
-    
+
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('view-form.html',
                             form=queriedForm,

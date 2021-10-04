@@ -36,6 +36,25 @@
     {% endif %}
     {% endfor %}
   </div>
+  <div class="row" style="margin-top: 2em">
+    <div class="col-md-12">
+      <hr />
+      <p>
+      {%trans%}Create a new form without using a template{%endtrans%}
+      </p>
+      <a class="btn btn-success"
+         role="button"
+         href="/forms/new">
+        {%trans%}New form{%endtrans%}
+        <i class="fa fa-star" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
 </div>
 
+<style>
+p {
+  font-size:1.2em;
+}
+</style>
 {% endblock %}
