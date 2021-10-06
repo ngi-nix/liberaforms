@@ -11,11 +11,11 @@ msgstr ""
 "PO-Revision-Date: 2020-09-15 17:17+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: eu\n"
-"Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #: form_templates/form_templates.py:13
@@ -27,6 +27,8 @@ msgid ""
 "Let attendees choose one of two talks running in parallel and their lunch"
 " menu."
 msgstr ""
+"Utzi bertaratutakoei aldi berean emango diren bi hitzaldietako bat eta "
+"bazkarirako menua aukeratzen."
 
 #: form_templates/form_templates.py:15
 msgid ""
@@ -35,10 +37,15 @@ msgid ""
 "\r\n"
 "Register now for this year's sessions!"
 msgstr ""
+"# II. kongresua\n"
+"Iazko kongresuak hainbesteko arrakasta izan zuen, aurten beste bat antolatu "
+"dugula.\n"
+"\n"
+"Eman izena aurtengo saiorako!"
 
 #: form_templates/form_templates.py:18
 msgid "10h - 12h"
-msgstr ""
+msgstr "10:00 - 12:00"
 
 #: form_templates/form_templates.py:22
 msgid "Room 1. Municipal Strategies"
@@ -50,19 +57,19 @@ msgstr "2. gela. Teknologia deszentralizatua. Adierazpen-askatasuna"
 
 #: form_templates/form_templates.py:32
 msgid "12h - 14h"
-msgstr ""
+msgstr "12:00 - 14:00"
 
 #: form_templates/form_templates.py:36
 msgid "Room 1. AI descrimination"
-msgstr ""
+msgstr "1 Gela. Adimen Artifizialak eragindako bazterketa"
 
 #: form_templates/form_templates.py:40
 msgid "Room 2. Build an anonymous website"
-msgstr ""
+msgstr "2 Gela. Eraiki webgune anonimo bat"
 
 #: form_templates/form_templates.py:47
 msgid "14h - 15h Lunch"
-msgstr ""
+msgstr "14:00 -15:00 Bazkaria"
 
 #: form_templates/form_templates.py:51
 msgid "Vegan"
@@ -94,6 +101,11 @@ msgid ""
 "\r\n"
 "Please reserve your place now. First in, first served."
 msgstr ""
+"# Udako ikastaroak\n"
+"\n"
+"Hiru egun beteko ditugu ikastaro eta tailerrez.\n"
+"\n"
+"Erreserbatu zure tokia. Presa hartu!"
 
 #: form_templates/form_templates.py:73
 msgid "Tuesday 25th"
@@ -104,39 +116,40 @@ msgid ""
 "10h - 13h. Neutral networks. A practical presentation of our WIFI "
 "installation"
 msgstr ""
+"10:00 - 13:00. Sare neutroak. Gure WiFi instalazioaren aurkezpen praktikoa"
 
 #: form_templates/form_templates.py:81
 msgid "18h - 20h. GIT for beginners Session 1"
-msgstr ""
+msgstr "18:00 - 20:00. GIT hasiberrientzat, 1. saioa"
 
 #: form_templates/form_templates.py:91
 msgid "10h - 13h. Presentation/demo. TPV to manage the cafe"
-msgstr ""
+msgstr "10:00 - 13:00. Aurkezpena. TPV kafetegi bat kudeatzeko"
 
 #: form_templates/form_templates.py:95
 msgid "16h - 19h. Social currencies. Local economy"
-msgstr ""
+msgstr "16:00 - 19:00. Moneta sozialak. Bertako ekonomia"
 
 #: form_templates/form_templates.py:101
-#, fuzzy
 msgid "Thursday 27th"
-msgstr "25 asteartea"
+msgstr "27 asteartea"
 
 #: form_templates/form_templates.py:105
 msgid "10h - 13h. Computer Lab management with Free software"
 msgstr ""
+"10:00 - 13:00. Ordenagailu-laborategiaren kudeaketa, software librearekin"
 
 #: form_templates/form_templates.py:109
 msgid "18h - 20h. GIT for beginners Session 2"
-msgstr ""
+msgstr "18:00 - 20:00. GIT hasiberrientzat, 2. saioa"
 
 #: form_templates/form_templates.py:116
 msgid "Your name"
-msgstr ""
+msgstr "Zure izena"
 
 #: form_templates/form_templates.py:121
 msgid "Your email"
-msgstr ""
+msgstr "Zure eposta"
 
 #: form_templates/form_templates.py:129
 msgid "Save our shelter"
@@ -167,11 +180,11 @@ msgstr "Iruzkinak"
 
 #: form_templates/form_templates.py:151
 msgid "Hotel booking"
-msgstr ""
+msgstr "Hotelerako erreserba"
 
 #: form_templates/form_templates.py:152
 msgid "Book a room and come stay with us!"
-msgstr ""
+msgstr "Erreserbatu logela bat eta etorri gurekin!"
 
 #: form_templates/form_templates.py:153
 msgid ""
@@ -187,153 +200,164 @@ msgid ""
 "[Website](https://elriuethotel.com)\r\n"
 "[Map](https://www.openstreetmap.org/way/218557184)\r\n"
 msgstr ""
+"# Hotelerako erreserba\n"
+"Etorri gurekin! Bete galdetegi hau gure hoteleko logela bat erreserbatzeko.\n"
+"\n"
+"El Riuet Hotel\n"
+"Carrer d'Orient, 33\n"
+"Vidreres, 17411, Girona.\n"
+"Katalunia, Espainia\n"
+"\n"
+"Telefono zenbakia: (+34) 93 553 43 25\n"
+"[Webgunea](https://elriuethotel.com)\n"
+"[Mapa](https://www.openstreetmap.org/way/218557184)\n"
 
 #: form_templates/form_templates.py:156 form_templates/form_templates.py:473
 #: form_templates/form_templates.py:573
 msgid "Contact information"
-msgstr ""
+msgstr "Kontaktu-pertsonaren informazioa"
 
 #: form_templates/form_templates.py:160
 msgid "Name"
-msgstr ""
+msgstr "Izena"
 
 #: form_templates/form_templates.py:161 form_templates/form_templates.py:478
 #: form_templates/form_templates.py:578 form_templates/form_templates.py:681
 #: form_templates/form_templates.py:708
 msgid "e.g. Mary"
-msgstr ""
+msgstr "adb. Miren"
 
 #: form_templates/form_templates.py:166
 msgid "Surname"
-msgstr ""
+msgstr "Abizena"
 
 #: form_templates/form_templates.py:167
 msgid "e.g. Poppins"
-msgstr ""
+msgstr "adb. Urtxulutegi"
 
 #: form_templates/form_templates.py:173 form_templates/form_templates.py:484
 msgid "e.g. mary@example.com"
-msgstr ""
+msgstr "adb. miren@adibidea.eus"
 
 #: form_templates/form_templates.py:178 form_templates/form_templates.py:489
 msgid "Telephone number"
-msgstr ""
+msgstr "Telefono zenbakia"
 
 #: form_templates/form_templates.py:179 form_templates/form_templates.py:490
 msgid "e.g. +34 678 655 333"
-msgstr ""
+msgstr "adb. +34 678 655 333"
 
 #: form_templates/form_templates.py:184 form_templates/form_templates.py:495
 msgid "Booking information"
-msgstr ""
+msgstr "Erreserbaren gaineko informazioa"
 
 #: form_templates/form_templates.py:188
 msgid "Type of room"
-msgstr ""
+msgstr "Logela mota"
 
 #: form_templates/form_templates.py:193
 msgid "Single bed"
-msgstr ""
+msgstr "Batentzako ohea"
 
 #: form_templates/form_templates.py:197
 msgid "Double bed"
-msgstr ""
+msgstr "Birentzako ohea"
 
 #: form_templates/form_templates.py:201
 msgid "Double bed + single bed"
-msgstr ""
+msgstr "Birentzako ohea + Batentzako ohea"
 
 #: form_templates/form_templates.py:205
 msgid "Shared room (bunk beds with 3 other people)"
-msgstr ""
+msgstr "Logela partekatua (4 pertsonentzako ohatzeak)"
 
 #: form_templates/form_templates.py:210
 msgid "Date of arrival"
-msgstr ""
+msgstr "Iritsiera data"
 
 #: form_templates/form_templates.py:211
 msgid "(check in from 12pm)"
-msgstr ""
+msgstr "(sarrera-erregistroa 12:00etatik aurrera)"
 
 #: form_templates/form_templates.py:216
 msgid "Date for departure"
-msgstr ""
+msgstr "Irteera data"
 
 #: form_templates/form_templates.py:217
 msgid "(check out 12pm maximum)"
-msgstr ""
+msgstr "(irteera-erregistroa 12:00ak arte)"
 
 #: form_templates/form_templates.py:222
 msgid "Will you eat at the hotel?"
-msgstr ""
+msgstr "Hotelean egingo dituzu otorduak?"
 
 #: form_templates/form_templates.py:227
 msgid "Full board (breakfast, lunch and dinner)"
-msgstr ""
+msgstr "Otordu guztiak (gosaria, bazkaria eta afaria)"
 
 #: form_templates/form_templates.py:231
 msgid "Just breakfast"
-msgstr ""
+msgstr "Gosaria soilik"
 
 #: form_templates/form_templates.py:235
 msgid "Just lunch"
-msgstr ""
+msgstr "Bazkaria soilik"
 
 #: form_templates/form_templates.py:239
 msgid "Just dinner"
-msgstr ""
+msgstr "Afaria soilik"
 
 #: form_templates/form_templates.py:243
 msgid "Breakfast and lunch"
-msgstr ""
+msgstr "Gosaria eta bazkaria"
 
 #: form_templates/form_templates.py:247
 msgid "Breakfast and dinner"
-msgstr ""
+msgstr "Gosaria eta afaria"
 
 #: form_templates/form_templates.py:251
 msgid "Lunch and dinner"
-msgstr ""
+msgstr "Bazkaria eta afaria"
 
 #: form_templates/form_templates.py:255
 msgid "I'm eating out, thanks for asking"
-msgstr ""
+msgstr "Kanpoan egingo ditut, eskerrik asko"
 
 #: form_templates/form_templates.py:260 form_templates/form_templates.py:554
 msgid "Other information"
-msgstr ""
+msgstr "Beste informazioa"
 
 #: form_templates/form_templates.py:264 form_templates/form_templates.py:535
 msgid "Do you want us to send you a reminder?"
-msgstr ""
+msgstr "Nahi duzu abisurik bidaltzea?"
 
 #: form_templates/form_templates.py:269
 msgid "Yes, by email 5 days before"
-msgstr ""
+msgstr "Bai, epostaz 5 egun aurretik"
 
 #: form_templates/form_templates.py:273
 msgid "Yes, by phone 5 days before"
-msgstr ""
+msgstr "Bai, telefonoz 5 egun aurretik"
 
 #: form_templates/form_templates.py:277
 msgid "No thanks. I will remember."
-msgstr ""
+msgstr "Ez, mila esker. Oroituko naiz."
 
 #: form_templates/form_templates.py:283 form_templates/form_templates.py:558
 msgid "Have a comment?"
-msgstr ""
+msgstr "Ezer gehitu nahi?"
 
 #: form_templates/form_templates.py:284
 msgid "e.g. I've already stayed at your hotel and it's very nice!"
-msgstr ""
+msgstr "adb. Jadanik egona naiz zuen hotelean eta bikaina da!"
 
 #: form_templates/form_templates.py:292
 msgid "Activity feedback"
-msgstr ""
+msgstr "Jarduerarekiko iritzia"
 
 #: form_templates/form_templates.py:293
 msgid "Ask participants for their feedback about your activity."
-msgstr ""
+msgstr "Galdetu partaideei zure jarduerarekiko beren iritziaz."
 
 #: form_templates/form_templates.py:294
 msgid ""
@@ -341,144 +365,149 @@ msgid ""
 "Thank you for participating in this activity. Please share with us your "
 "impression so we can improve future activities."
 msgstr ""
+"# Jarduerarekiko iritzia\n"
+"Eskerrik asko jarduera honetan parte hartzeagatik. Partekatu zure iritzia "
+"etorkizuneko jarduerak hobetu ahal izateko."
 
 #: form_templates/form_templates.py:297
 msgid "Content"
-msgstr ""
+msgstr "Edukia"
 
 #: form_templates/form_templates.py:301
 msgid "Rate the quality of content"
-msgstr ""
+msgstr "Baloratu edukiaren kalitatea"
 
 #: form_templates/form_templates.py:302
 msgid "Poor to excellent"
-msgstr ""
+msgstr "Txarretik onera"
 
 #: form_templates/form_templates.py:307 form_templates/form_templates.py:414
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #: form_templates/form_templates.py:311 form_templates/form_templates.py:418
 msgid "2"
-msgstr ""
+msgstr "2"
 
 #: form_templates/form_templates.py:315 form_templates/form_templates.py:422
 msgid "3"
-msgstr ""
+msgstr "3"
 
 #: form_templates/form_templates.py:319 form_templates/form_templates.py:426
 msgid "4"
-msgstr ""
+msgstr "4"
 
 #: form_templates/form_templates.py:323 form_templates/form_templates.py:430
 msgid "5"
-msgstr ""
+msgstr "5"
 
 #: form_templates/form_templates.py:329
 msgid "Comment about the content"
-msgstr ""
+msgstr "Edukiari buruzko iruzkina"
 
 #: form_templates/form_templates.py:330 form_templates/form_templates.py:399
 #: form_templates/form_templates.py:437
 msgid "What did you like? What can we improve?"
-msgstr ""
+msgstr "Zer gustatu zaizu? Zer hobetu dezakegu?"
 
 #: form_templates/form_templates.py:331
 msgid ""
 "e.g. First session was very interesting although I did expect more "
 "information about it."
 msgstr ""
+"adb. Lehen saioa biziki interesgarria izan zen, baina saioa berari buruzko "
+"informazio gehiago espero nuen."
 
 #. i18n: Referring the time spended for each session
 #: form_templates/form_templates.py:337
 msgid "Tempos"
-msgstr ""
+msgstr "Denborak"
 
 #: form_templates/form_templates.py:341
 msgid "You felt that first session was..."
-msgstr ""
+msgstr "Lehen saioa honelakoa sentitu zenuen:"
 
 #: form_templates/form_templates.py:346 form_templates/form_templates.py:365
 #: form_templates/form_templates.py:384
 msgid "Too short"
-msgstr ""
+msgstr "Motzegia"
 
 #: form_templates/form_templates.py:350 form_templates/form_templates.py:369
 #: form_templates/form_templates.py:388
 msgid "About right"
-msgstr ""
+msgstr "Egokia"
 
 #: form_templates/form_templates.py:354 form_templates/form_templates.py:373
 #: form_templates/form_templates.py:392
 msgid "Too long"
-msgstr ""
+msgstr "Luzeegia"
 
 #: form_templates/form_templates.py:360
 msgid "You felt that second session was..."
-msgstr ""
+msgstr "Bigarren saioa honelakoa sentitu zenuen:"
 
 #: form_templates/form_templates.py:379
 msgid "You felt breaks were..."
-msgstr ""
+msgstr "Etenaldiak honelakoak sentitu zenituen:"
 
 #: form_templates/form_templates.py:398
 msgid "Comment about tempos"
-msgstr ""
+msgstr "Denborei buruzko iruzkina"
 
 #: form_templates/form_templates.py:400
 msgid "e.g. There was no green tea in the coffeebreak."
-msgstr ""
+msgstr "adb. Ez zegoen te berderik etenaldian hartzeko."
 
 #: form_templates/form_templates.py:405
 msgid "Instructor"
-msgstr ""
+msgstr "Irakaslea"
 
 #: form_templates/form_templates.py:409
 msgid "Rate the explainations of the instructor"
-msgstr ""
+msgstr "Baloratu irakaslearen azalpenak"
 
 #: form_templates/form_templates.py:436
 msgid "Comment about instructor"
-msgstr ""
+msgstr "Irakasleari buruzko iruzkina"
 
 #: form_templates/form_templates.py:438
 msgid ""
 "e.g. I did enjoy both sessions. The instructor was very passionate about "
 "the subject."
-msgstr ""
+msgstr "adb. Bi saioetan gustura egon nintzen. Irakasleak oso gustuko ikasgaia."
 
 #: form_templates/form_templates.py:443
 msgid "Future activities"
-msgstr ""
+msgstr "Etorkizuneko jarduerak"
 
 #. i18n: Same as "Topics", to use for future events
 #: form_templates/form_templates.py:448
 msgid "Subjects"
-msgstr ""
+msgstr "Ikasgaiak"
 
 #: form_templates/form_templates.py:449
 msgid "Tell us if you are interested in a particular subject."
-msgstr ""
+msgstr "Adierazi ikasgai zehatz batean interesa duzun."
 
 #: form_templates/form_templates.py:450
 msgid "e.g. GDPR compliance and linguistic justice."
-msgstr ""
+msgstr "adb. Datuen babesaren legea betetzea eta hizkuntza-justizia."
 
 #: form_templates/form_templates.py:459
 msgid "Other things you want to express."
-msgstr ""
+msgstr "Besterik esan nahi baduzu…"
 
 #: form_templates/form_templates.py:460
 msgid "e.g. It was nice in general. Thanks."
-msgstr ""
+msgstr "adb. Ongi pasa dut, mila esker."
 
 #: form_templates/form_templates.py:468
 msgid "Restaurant booking"
-msgstr ""
+msgstr "Jatetxerako erreserba"
 
 #: form_templates/form_templates.py:469
 msgid "Do you want to taste our delicious food? Save a date in your agenda!"
-msgstr ""
+msgstr "Gure janari goxoa dastatu nahi? Gorde data zure agendan!"
 
 #: form_templates/form_templates.py:470
 msgid ""
@@ -494,27 +523,37 @@ msgid ""
 "\r\n"
 "Phone number: (+34) 93 423 44 44"
 msgstr ""
+"# Jatetxerako erreserba\n"
+"Gure janari goxoa dastatu nahi? Bete galdetegi hau eta gorde data zure "
+"agendan!\n"
+"\n"
+"[Jatetxe Goxorako mapa](https://www.openstreetmap.org/way/314016327)\n"
+"Carrer de les Avellanes, 15\n"
+"El Secà de Sant Pere, 25005, Lleida.\n"
+"Katalunia, Espainia\n"
+"\n"
+"Telefono zenbakia: (+34) 93 423 44 44"
 
 #: form_templates/form_templates.py:477 form_templates/form_templates.py:577
 #: form_templates/form_templates.py:680 form_templates/form_templates.py:706
 msgid "Name or nick"
-msgstr ""
+msgstr "Izena edo ezizena"
 
 #: form_templates/form_templates.py:499
 msgid "How many people are you?"
-msgstr ""
+msgstr "Zenbat izango zarete?"
 
 #: form_templates/form_templates.py:500
 msgid "Maximum 10 people per reservation."
-msgstr ""
+msgstr "Gehienez 10 pertsona erreserbako."
 
 #: form_templates/form_templates.py:505
 msgid "Choose the day you want to come"
-msgstr ""
+msgstr "Hautatu etorri nahi duzuen eguna"
 
 #: form_templates/form_templates.py:506
 msgid "(from Tuesday to Sunday)"
-msgstr ""
+msgstr "(asteartetik igandera)"
 
 #. i18n: eat here refers to have dinner
 #: form_templates/form_templates.py:511
@@ -527,41 +566,41 @@ msgstr ""
 
 #: form_templates/form_templates.py:517
 msgid "20h30"
-msgstr ""
+msgstr "20:30"
 
 #: form_templates/form_templates.py:521
 msgid "21h"
-msgstr ""
+msgstr "21:00"
 
 #: form_templates/form_templates.py:525
 msgid "21h30"
-msgstr ""
+msgstr "21:30"
 
 #: form_templates/form_templates.py:529
 msgid "22h"
-msgstr ""
+msgstr "22:00"
 
 #: form_templates/form_templates.py:540
 msgid "Yes, by email 3 days before"
-msgstr ""
+msgstr "Bai, epostaz 3 egun aurretik"
 
 #: form_templates/form_templates.py:544
 msgid "Yes, by phone 3 days before"
-msgstr ""
+msgstr "Bai, telefonoz 3 egun aurretik"
 
 #: form_templates/form_templates.py:548
 msgid "No, thanks. I will remember."
-msgstr ""
+msgstr "Ez, mila esker. Oroituko naiz."
 
 #: form_templates/form_templates.py:559
 msgid "e.g. I've already been in your restaurant and it's very nice!"
-msgstr ""
+msgstr "adb. Jadanik egon naiz zuen jatetxean eta oso atsegina da!"
 
 #. i18n: Here application stands for "submission", as it is a proposal to
 #. develop a project
 #: form_templates/form_templates.py:568
 msgid "Project Application"
-msgstr ""
+msgstr "Proiektua proposatzea"
 
 #: form_templates/form_templates.py:569 form_templates/form_templates.py:676
 msgid "Apply for a grant. Tell us about your proposal."
