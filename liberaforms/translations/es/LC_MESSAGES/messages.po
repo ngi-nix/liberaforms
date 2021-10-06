@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2021-10-02 20:20+0200\n"
-"PO-Revision-Date: 2021-10-06 15:43+0000\n"
+"PO-Revision-Date: 2021-10-07 15:39+0000\n"
 "Last-Translator: carlosm2 <carlosm2@riseup.net>\n"
 "Language-Team: Spanish <https://hosted.weblate.org/projects/liberaforms/"
 "server-liberaforms/es/>\n"
@@ -2043,7 +2043,7 @@ msgstr "Favicon cambiado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:165
 msgid "An image file is required"
-msgstr ""
+msgstr "Se requiere un archivo de imagen"
 
 #: views/site.py:174
 #, fuzzy
@@ -2052,7 +2052,7 @@ msgstr "Favicon restaurado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:195
 msgid "Enabled file extensions updated OK"
-msgstr ""
+msgstr "Extensiones de archivo habilitadas actualizadas OK"
 
 #: views/site.py:221
 msgid "Color changed OK"
@@ -2122,7 +2122,7 @@ msgstr ""
 
 #: views/user.py:224
 msgid "Connected to the Fediverse"
-msgstr ""
+msgstr "Conectado al Fediverso"
 
 #: views/user.py:243
 #, fuzzy
