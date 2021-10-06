@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-06 18:23+0200\n"
+"POT-Creation-Date: 2021-10-06 20:14+0200\n"
 "PO-Revision-Date: 2020-09-15 17:09+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
@@ -158,12 +158,12 @@ msgid "ID number"
 msgstr "DNI"
 
 #: form_templates/form_templates.py:138 form_templates/form_templates.py:172
-#: form_templates/form_templates.py:481 form_templates/form_templates.py:579
-#: form_templates/form_templates.py:682 form_templates/form_templates.py:709
+#: form_templates/form_templates.py:483 form_templates/form_templates.py:583
+#: form_templates/form_templates.py:686 form_templates/form_templates.py:713
 msgid "Email"
 msgstr "Correo-e"
 
-#: form_templates/form_templates.py:143 form_templates/form_templates.py:453
+#: form_templates/form_templates.py:143 form_templates/form_templates.py:455
 msgid "Comments"
 msgstr "Comentarios"
 
@@ -190,8 +190,8 @@ msgid ""
 "[Map](https://www.openstreetmap.org/way/218557184)\r\n"
 msgstr ""
 
-#: form_templates/form_templates.py:156 form_templates/form_templates.py:471
-#: form_templates/form_templates.py:569
+#: form_templates/form_templates.py:156 form_templates/form_templates.py:473
+#: form_templates/form_templates.py:573
 msgid "Contact information"
 msgstr ""
 
@@ -199,9 +199,9 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: form_templates/form_templates.py:161 form_templates/form_templates.py:476
-#: form_templates/form_templates.py:574 form_templates/form_templates.py:677
-#: form_templates/form_templates.py:704
+#: form_templates/form_templates.py:161 form_templates/form_templates.py:478
+#: form_templates/form_templates.py:578 form_templates/form_templates.py:681
+#: form_templates/form_templates.py:708
 msgid "e.g. Mary"
 msgstr ""
 
@@ -213,19 +213,19 @@ msgstr ""
 msgid "e.g. Poppins"
 msgstr ""
 
-#: form_templates/form_templates.py:173
+#: form_templates/form_templates.py:173 form_templates/form_templates.py:484
 msgid "e.g. mary@example.com"
 msgstr ""
 
-#: form_templates/form_templates.py:178 form_templates/form_templates.py:487
+#: form_templates/form_templates.py:178 form_templates/form_templates.py:489
 msgid "Telephone number"
 msgstr ""
 
-#: form_templates/form_templates.py:179 form_templates/form_templates.py:488
+#: form_templates/form_templates.py:179 form_templates/form_templates.py:490
 msgid "e.g. +34 678 655 333"
 msgstr ""
 
-#: form_templates/form_templates.py:184 form_templates/form_templates.py:493
+#: form_templates/form_templates.py:184 form_templates/form_templates.py:495
 msgid "Booking information"
 msgstr ""
 
@@ -301,11 +301,11 @@ msgstr ""
 msgid "I'm eating out, thanks for asking"
 msgstr ""
 
-#: form_templates/form_templates.py:260 form_templates/form_templates.py:551
+#: form_templates/form_templates.py:260 form_templates/form_templates.py:554
 msgid "Other information"
 msgstr ""
 
-#: form_templates/form_templates.py:264 form_templates/form_templates.py:532
+#: form_templates/form_templates.py:264 form_templates/form_templates.py:535
 msgid "Do you want us to send you a reminder?"
 msgstr ""
 
@@ -321,7 +321,7 @@ msgstr ""
 msgid "No thanks. I will remember."
 msgstr ""
 
-#: form_templates/form_templates.py:283 form_templates/form_templates.py:555
+#: form_templates/form_templates.py:283 form_templates/form_templates.py:558
 msgid "Have a comment?"
 msgstr ""
 
@@ -356,23 +356,23 @@ msgstr ""
 msgid "Poor to excellent"
 msgstr ""
 
-#: form_templates/form_templates.py:307 form_templates/form_templates.py:413
+#: form_templates/form_templates.py:307 form_templates/form_templates.py:414
 msgid "1"
 msgstr ""
 
-#: form_templates/form_templates.py:311 form_templates/form_templates.py:417
+#: form_templates/form_templates.py:311 form_templates/form_templates.py:418
 msgid "2"
 msgstr ""
 
-#: form_templates/form_templates.py:315 form_templates/form_templates.py:421
+#: form_templates/form_templates.py:315 form_templates/form_templates.py:422
 msgid "3"
 msgstr ""
 
-#: form_templates/form_templates.py:319 form_templates/form_templates.py:425
+#: form_templates/form_templates.py:319 form_templates/form_templates.py:426
 msgid "4"
 msgstr ""
 
-#: form_templates/form_templates.py:323 form_templates/form_templates.py:429
+#: form_templates/form_templates.py:323 form_templates/form_templates.py:430
 msgid "5"
 msgstr ""
 
@@ -380,8 +380,8 @@ msgstr ""
 msgid "Comment about the content"
 msgstr ""
 
-#: form_templates/form_templates.py:330 form_templates/form_templates.py:398
-#: form_templates/form_templates.py:436
+#: form_templates/form_templates.py:330 form_templates/form_templates.py:399
+#: form_templates/form_templates.py:437
 msgid "What did you like? What can we improve?"
 msgstr ""
 
@@ -391,100 +391,102 @@ msgid ""
 "information about it."
 msgstr ""
 
-#: form_templates/form_templates.py:336
+#. i18n: Referring the time spended for each session
+#: form_templates/form_templates.py:337
 msgid "Tempos"
 msgstr ""
 
-#: form_templates/form_templates.py:340
+#: form_templates/form_templates.py:341
 msgid "You felt that first session was..."
 msgstr ""
 
-#: form_templates/form_templates.py:345 form_templates/form_templates.py:364
-#: form_templates/form_templates.py:383
+#: form_templates/form_templates.py:346 form_templates/form_templates.py:365
+#: form_templates/form_templates.py:384
 msgid "Too short"
 msgstr ""
 
-#: form_templates/form_templates.py:349 form_templates/form_templates.py:368
-#: form_templates/form_templates.py:387
+#: form_templates/form_templates.py:350 form_templates/form_templates.py:369
+#: form_templates/form_templates.py:388
 msgid "About right"
 msgstr ""
 
-#: form_templates/form_templates.py:353 form_templates/form_templates.py:372
-#: form_templates/form_templates.py:391
+#: form_templates/form_templates.py:354 form_templates/form_templates.py:373
+#: form_templates/form_templates.py:392
 msgid "Too long"
 msgstr ""
 
-#: form_templates/form_templates.py:359
+#: form_templates/form_templates.py:360
 msgid "You felt that second session was..."
 msgstr ""
 
-#: form_templates/form_templates.py:378
+#: form_templates/form_templates.py:379
 msgid "You felt breaks were..."
 msgstr ""
 
-#: form_templates/form_templates.py:397
+#: form_templates/form_templates.py:398
 msgid "Comment about tempos"
 msgstr ""
 
-#: form_templates/form_templates.py:399
+#: form_templates/form_templates.py:400
 msgid "e.g. There was no green tea in the coffeebreak."
 msgstr ""
 
-#: form_templates/form_templates.py:404
+#: form_templates/form_templates.py:405
 msgid "Instructor"
 msgstr ""
 
-#: form_templates/form_templates.py:408
+#: form_templates/form_templates.py:409
 msgid "Rate the explainations of the instructor"
 msgstr ""
 
-#: form_templates/form_templates.py:435
+#: form_templates/form_templates.py:436
 msgid "Comment about instructor"
 msgstr ""
 
-#: form_templates/form_templates.py:437
+#: form_templates/form_templates.py:438
 msgid ""
 "e.g. I did enjoy both sessions. The instructor was very passionate about "
 "the subject."
 msgstr ""
 
-#: form_templates/form_templates.py:442
+#: form_templates/form_templates.py:443
 msgid "Future activities"
 msgstr ""
 
-#: form_templates/form_templates.py:446
+#. i18n: Same as "Topics", to use for future events
+#: form_templates/form_templates.py:448
 msgid "Subjects"
 msgstr ""
 
-#: form_templates/form_templates.py:447
+#: form_templates/form_templates.py:449
 msgid "Tell us if you are interested in a particular subject."
 msgstr ""
 
-#: form_templates/form_templates.py:448
+#: form_templates/form_templates.py:450
 msgid "e.g. GDPR compliance and linguistic justice."
 msgstr ""
 
-#: form_templates/form_templates.py:457
+#: form_templates/form_templates.py:459
 msgid "Other things you want to express."
 msgstr ""
 
-#: form_templates/form_templates.py:458
+#: form_templates/form_templates.py:460
 msgid "e.g. It was nice in general. Thanks."
 msgstr ""
 
-#: form_templates/form_templates.py:466
+#: form_templates/form_templates.py:468
 msgid "Restaurant booking"
 msgstr ""
 
-#: form_templates/form_templates.py:467
+#: form_templates/form_templates.py:469
 msgid "Do you want to taste our delicious food? Save a date in your agenda!"
 msgstr ""
 
-#: form_templates/form_templates.py:468
+#: form_templates/form_templates.py:470
 msgid ""
 "# Restaurant booking\r\n"
 "Do you want to taste our delicious food? Fill out this form and save the "
-"date in your agenda!  \r\n"
+"date in your agenda!\r\n"
 "\r\n"
 "[Delicious Restaurant Map](https://www.openstreetmap.org/way/314016327)"
 "\r\n"
@@ -495,81 +497,79 @@ msgid ""
 "Phone number: (+34) 93 423 44 44"
 msgstr ""
 
-#: form_templates/form_templates.py:475 form_templates/form_templates.py:573
-#: form_templates/form_templates.py:676 form_templates/form_templates.py:702
+#: form_templates/form_templates.py:477 form_templates/form_templates.py:577
+#: form_templates/form_templates.py:680 form_templates/form_templates.py:706
 msgid "Name or nick"
 msgstr ""
 
-#: form_templates/form_templates.py:482 form_templates/form_templates.py:580
-#: form_templates/form_templates.py:683 form_templates/form_templates.py:711
-msgid "e.g. mary@exemple.com"
-msgstr ""
-
-#: form_templates/form_templates.py:497
+#: form_templates/form_templates.py:499
 msgid "How many people are you?"
 msgstr ""
 
-#: form_templates/form_templates.py:498
+#: form_templates/form_templates.py:500
 msgid "Maximum 10 people per reservation."
 msgstr ""
 
-#: form_templates/form_templates.py:503
+#: form_templates/form_templates.py:505
 msgid "Choose the day you want to come"
 msgstr ""
 
-#: form_templates/form_templates.py:504
+#: form_templates/form_templates.py:506
 msgid "(from Tuesday to Sunday)"
 msgstr ""
 
-#: form_templates/form_templates.py:508
-msgid "When do you want to eat"
+#. i18n: eat here refers to have dinner
+#: form_templates/form_templates.py:511
+msgid "When do you want to eat?"
 msgstr ""
 
-#: form_templates/form_templates.py:509
-msgid "remember we only open from 20h30 to 23h30)"
+#: form_templates/form_templates.py:512
+msgid "(remember we only open from 20h30 to 23h30)"
 msgstr ""
 
-#: form_templates/form_templates.py:514
+#: form_templates/form_templates.py:517
 msgid "20h30"
 msgstr ""
 
-#: form_templates/form_templates.py:518
+#: form_templates/form_templates.py:521
 msgid "21h"
 msgstr ""
 
-#: form_templates/form_templates.py:522
+#: form_templates/form_templates.py:525
 msgid "21h30"
 msgstr ""
 
-#: form_templates/form_templates.py:526
+#: form_templates/form_templates.py:529
 msgid "22h"
 msgstr ""
 
-#: form_templates/form_templates.py:537
+#: form_templates/form_templates.py:540
 msgid "Yes, by email 3 days before"
 msgstr ""
 
-#: form_templates/form_templates.py:541
+#: form_templates/form_templates.py:544
 msgid "Yes, by phone 3 days before"
 msgstr ""
 
-#: form_templates/form_templates.py:545
+#: form_templates/form_templates.py:548
 msgid "No, thanks. I will remember."
 msgstr ""
 
-#: form_templates/form_templates.py:556
+#: form_templates/form_templates.py:559
 msgid "e.g. I've already been in your restaurant and it's very nice!"
 msgstr ""
 
-#: form_templates/form_templates.py:564
+#. i18n: Here application stands for "submission", as it is a proposal to
+#. develop a project
+#: form_templates/form_templates.py:568
 msgid "Project Application"
 msgstr ""
 
-#: form_templates/form_templates.py:565 form_templates/form_templates.py:672
+#: form_templates/form_templates.py:569 form_templates/form_templates.py:676
 msgid "Apply for a grant. Tell us about your proposal."
 msgstr ""
 
-#: form_templates/form_templates.py:566
+#: form_templates/form_templates.py:570
 msgid ""
 "# Project Application Form\r\n"
 "Have a project? Fill out this form to tell us about your proposal. \r\n"
@@ -579,166 +579,171 @@ msgid ""
 "form)."
 msgstr ""
 
-#: form_templates/form_templates.py:585
+#: form_templates/form_templates.py:584 form_templates/form_templates.py:687
+#: form_templates/form_templates.py:715
+msgid "e.g. mary@exemple.com"
+msgstr ""
+
+#: form_templates/form_templates.py:589
 msgid "Organization"
 msgstr ""
 
-#: form_templates/form_templates.py:586
+#: form_templates/form_templates.py:590
 msgid "(if any)"
 msgstr ""
 
-#: form_templates/form_templates.py:587
+#: form_templates/form_templates.py:591
 msgid "e.g. Association, cooperative, collective"
 msgstr ""
 
-#: form_templates/form_templates.py:592
+#: form_templates/form_templates.py:596
 msgid "Country"
 msgstr ""
 
-#: form_templates/form_templates.py:593
+#: form_templates/form_templates.py:597
 msgid "e.g. Spain"
 msgstr ""
 
-#: form_templates/form_templates.py:598
+#: form_templates/form_templates.py:602
 msgid "Project information"
 msgstr ""
 
-#: form_templates/form_templates.py:602
+#: form_templates/form_templates.py:606
 msgid "Project name"
 msgstr ""
 
-#: form_templates/form_templates.py:603
+#: form_templates/form_templates.py:607
 msgid "e.g. FediBook"
 msgstr ""
 
-#: form_templates/form_templates.py:608
+#: form_templates/form_templates.py:612
 msgid "Website"
 msgstr ""
 
-#: form_templates/form_templates.py:609
+#: form_templates/form_templates.py:613
 msgid "e.g. https://fedi.cat"
 msgstr ""
 
-#: form_templates/form_templates.py:614
+#: form_templates/form_templates.py:618
 msgid "Project description"
 msgstr ""
 
-#: form_templates/form_templates.py:615
+#: form_templates/form_templates.py:619
 msgid "Explain here your project. Focus on what and how."
 msgstr ""
 
-#: form_templates/form_templates.py:616
+#: form_templates/form_templates.py:620
 msgid "e.g. We want to write a book about the Fediverse."
 msgstr ""
 
-#: form_templates/form_templates.py:621
+#: form_templates/form_templates.py:625
 msgid "Requested amount"
 msgstr ""
 
-#: form_templates/form_templates.py:622
+#: form_templates/form_templates.py:626
 msgid "up to €5,000"
 msgstr ""
 
-#: form_templates/form_templates.py:627
+#: form_templates/form_templates.py:631
 msgid "Cost justification"
 msgstr ""
 
-#: form_templates/form_templates.py:628
+#: form_templates/form_templates.py:632
 msgid "Explain what the requested budget will be used for."
 msgstr ""
 
-#: form_templates/form_templates.py:629
+#: form_templates/form_templates.py:633
 msgid "e.g. Buy hardware, hire someone, etc."
 msgstr ""
 
-#: form_templates/form_templates.py:634
+#: form_templates/form_templates.py:638
 msgid "Attachments"
 msgstr ""
 
-#: form_templates/form_templates.py:638
+#: form_templates/form_templates.py:642
 msgid "Add additional information about the project."
 msgstr ""
 
-#: form_templates/form_templates.py:643
+#: form_templates/form_templates.py:647
 msgid "Add a second file if you wish."
 msgstr ""
 
-#: form_templates/form_templates.py:648
+#: form_templates/form_templates.py:652
 msgid "Privacy"
 msgstr ""
 
-#: form_templates/form_templates.py:652
+#: form_templates/form_templates.py:656
 msgid "Your data."
 msgstr ""
 
-#: form_templates/form_templates.py:653
+#: form_templates/form_templates.py:657
 msgid "What should we do if your project is not immediately selected?"
 msgstr ""
 
-#: form_templates/form_templates.py:658
+#: form_templates/form_templates.py:662
 msgid ""
 "I allow you to keep the information I submit for future funding "
 "opportunities"
 msgstr ""
 
-#: form_templates/form_templates.py:662
+#: form_templates/form_templates.py:666
 msgid "I want you to erase all information if the project is not selected"
 msgstr ""
 
-#: form_templates/form_templates.py:671
+#: form_templates/form_templates.py:675
 msgid "Contact Form"
 msgstr ""
 
-#: form_templates/form_templates.py:673
+#: form_templates/form_templates.py:677
 msgid ""
 "# Contact Form\r\n"
 "Have a question? Fill out this contact form and we'll get in touch as "
 "soon as possible."
 msgstr ""
 
-#: form_templates/form_templates.py:688
+#: form_templates/form_templates.py:692
 msgid "Message"
 msgstr ""
 
-#: form_templates/form_templates.py:689
+#: form_templates/form_templates.py:693
 msgid "e.g. Just to say hello!"
 msgstr ""
 
-#: form_templates/form_templates.py:697
+#: form_templates/form_templates.py:701
 msgid "Lottery"
 msgstr ""
 
-#: form_templates/form_templates.py:698
+#: form_templates/form_templates.py:702
 msgid "Put your name down to win a prize"
 msgstr ""
 
-#: form_templates/form_templates.py:699
+#: form_templates/form_templates.py:703
 msgid ""
 "# Lottery\r\n"
 "Win 5 tickets to the cinema! Answer this form before September 20th."
 msgstr ""
 
-#: form_templates/form_templates.py:703
+#: form_templates/form_templates.py:707
 msgid "How should we call you?"
 msgstr ""
 
-#: form_templates/form_templates.py:710
+#: form_templates/form_templates.py:714
 msgid "If you win, we'll send you an email!"
 msgstr ""
 
-#: form_templates/form_templates.py:716
+#: form_templates/form_templates.py:720
 msgid "How did you find out about this lottery?"
 msgstr ""
 
-#: form_templates/form_templates.py:721
+#: form_templates/form_templates.py:725
 msgid "A friend told me"
 msgstr ""
 
-#: form_templates/form_templates.py:725
+#: form_templates/form_templates.py:729
 msgid "Browsing the Internets"
 msgstr ""
 
-#: form_templates/form_templates.py:729
+#: form_templates/form_templates.py:733
 msgid "I receive your newletters"
 msgstr ""
 
@@ -770,5 +775,27 @@ msgstr ""
 #~ " only. If you have any other "
 #~ "question, please use our [contact "
 #~ "form](https://dev.liberaforms.org/template-contact)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "# Restaurant booking\r\n"
+#~ "Do you want to taste our delicious"
+#~ " food? Fill out this form and "
+#~ "save the date in your agenda!  \r\n"
+#~ ""
+#~ "\r\n"
+#~ "[Delicious Restaurant "
+#~ "Map](https://www.openstreetmap.org/way/314016327)\r\n"
+#~ "Carrer de les Avellanes, 15\r\n"
+#~ "El Secà de Sant Pere, 25005, Lleida.\r\n"
+#~ "Catalunya, Espanya\r\n"
+#~ "\r\n"
+#~ "Phone number: (+34) 93 423 44 44"
+#~ msgstr ""
+
+#~ msgid "When do you want to eat"
+#~ msgstr ""
+
+#~ msgid "remember we only open from 20h30 to 23h30)"
 #~ msgstr ""
 
