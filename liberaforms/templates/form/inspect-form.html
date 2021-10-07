@@ -300,16 +300,16 @@
             <td>
             {% if current_user_is_editor %}
               <div id="toggle_dataConsent" class="btn-group btn-toggle mb-1 mb-lg-0">
-              <button id="dataConsent_true"
-                      class="btn btn-xs btn-default
-                            {% if dataConsent['enabled'] %}btn-success{% endif %}">
-                  {%trans%}Enabled{%endtrans%}
-              </button>
-              <button id="dataConsent_false"
-                      class="btn btn-xs btn-default
-                            {% if not dataConsent['enabled'] %}btn-primary{% endif %}">
-                  {%trans%}Disabled{%endtrans%}
-              </button>
+                <button id="dataConsent_true"
+                        class="btn btn-xs btn-default
+                              {% if dataConsent['enabled'] %}btn-success{% endif %}">
+                    {%trans%}Enabled{%endtrans%}
+                </button>
+                <button id="dataConsent_false"
+                        class="btn btn-xs btn-default
+                              {% if not dataConsent['enabled'] %}btn-primary{% endif %}">
+                    {%trans%}Disabled{%endtrans%}
+                </button>
               </div>
               &nbsp;
               <button id="show-DPL-text-button"
@@ -328,7 +328,9 @@
         {% if current_user_is_editor %}
           <tr id="DPL-text-block" style="display:none">
             <td colspan="3">
-              <div class="title_2">{%trans%}Data protection{%endtrans%}</div>
+              <div class="title_2">
+                {%trans%}Data protection{%endtrans%}
+              </div>
               <div id="DPL-text-editor">
                 <input id="save-DPL-button"
                        class="btn-success btn btn-sm"
@@ -346,22 +348,22 @@
                        value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
 
                 <div style="margin-top:1em">
-                <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
-                    <div id="{{consent_id}}-consent-editor" class="form-row">
-                        <div class="form-group col">
+                  <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
+                  <div id="{{consent_id}}-consent-editor" class="form-row">
+                    <div class="form-group col">
 
-                        {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}
-                        <input id="dataConsent-label-input"
-                               class="form-control form-control-sm"
-                               type="text"
-                               placeholder="{{placeholder}}"
-                               value="{{form.data_consent['label']}}">
-                        </div>
+                    {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}
+                    <input id="dataConsent-label-input"
+                           class="form-control form-control-sm"
+                           type="text"
+                           placeholder="{{placeholder}}"
+                           value="{{form.data_consent['label']}}">
                     </div>
+                  </div>
                 </div>
               </div>
               <div class="dataConsentText" style="display:none">
-                  {{ dataConsent['html']|safe }}
+                {{ dataConsent['html']|safe }}
               </div>
             </td>
           </tr>
@@ -370,16 +372,16 @@
             <td>
               {%trans%}Author{%endtrans%}
               {% if not author.enabled %}
-                  <span class="highlightedText text-lowercase">
-                    ({%trans%}Disabled{%endtrans%})
-                  </span>
+              <span class="highlightedText text-lowercase">
+                ({%trans%}Disabled{%endtrans%})
+              </span>
               {% endif %}
             </td>
             <td>
             {% if g.is_admin %}
-                <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
+            <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
             {% else %}
-                {{ author.username }}
+            {{ author.username }}
             {% endif %}
             </td>
           </tr>
@@ -579,11 +581,10 @@
                  name="send-confirmation"
                  value="ok"
                  disabled />
-          <label for="confirmation_checkbox"
-                 class="form-check-label
-                 send-confirmation">
-              {%trans%}Send me confirmation by mail{%endtrans%}
-              <span id='confirmation_email'></span>
+          <label id="confirmation_email"
+                 for="confirmation_checkbox"
+                 class="form-check-label send-confirmation">
+            {%trans%}Send me confirmation by mail{%endtrans%}
           </label>
         </div>
         {% endif %}

@@ -53,11 +53,10 @@
                    value="ok"
                    disabled
             />
-            <label for="confirmation_checkbox"
-                   class="form-check-label
-                          send-confirmation">
+            <label id='confirmation_email'
+                   for="confirmation_checkbox"
+                   class="form-check-label send-confirmation">
               {%trans%}Send me confirmation by mail{%endtrans%}
-              <span id='confirmation_email'></span>
             </label>
           </div>
           {% endif %}

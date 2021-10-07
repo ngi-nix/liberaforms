@@ -59,10 +59,12 @@ $(document).on("wheel", "input[type=number]", function (e) {
   function watchEmail(){
     $("input[type='email']").first().on('input', function() {
       if ($(this).val()) {
-        $("#confirmation_email").html("{%trans%}to{%endtrans%} "+ $(this).val())
+        var msg = "{%trans%}Send me confirmation by mail to {email}{%endtrans%}"
+        msg = msg.replace('{email}', $(this).val());
       }else{
-        $("#confirmation_email").html("");
+        var msg = "{%trans%}Send me confirmation by mail{%endtrans%}"
       }
+      $("#confirmation_email").html(msg);
       if (isEmailValid($(this).val())) {
         $("#confirmation_checkbox").prop("disabled", false );
         $("label.send-confirmation").css("cursor", "pointer");

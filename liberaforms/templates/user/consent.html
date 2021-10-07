@@ -6,83 +6,116 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 
 <div class="container">
-<div class="row">
+  <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
 
-        <div class="title_1 delimited">
-            {%trans%}Default consent text{%endtrans%}
-        </div>
+      <div class="title_1 delimited">
+        {%trans%}Default consent text{%endtrans%}
+      </div>
 
-
-{% for consent in g.site.consentTexts %}
-        {% set consent = site.get_consent_for_display(consent.id) %}
-        <div class="title_3 delimited" style="margin-top:2em">
-            {% if consent.name=="DPL" %}
-            {%trans%}Data protection{%endtrans%}
-            {% else %}
-            {%trans consent_name=consent.name%}{{consent_name}}{%endtrans%}
-            {% endif %}
-            <div style="float:right">
-
-            <div id="toggle_enabled_{{consent.id}}" class="btn-group btn-toggle">
-                <button id="enabled_true_{{consent.id}}" class="btn btn-xs btn-default {% if consent.enabled %}btn-success{% endif %}">{%trans%}Enabled{%endtrans%}</button>
-                <button id="enabled_false_{{consent.id}}" class="btn btn-xs btn-default {% if not consent.enabled %}btn-primary{% endif %}">{%trans%}Disabled{%endtrans%}</button>
-            </div>
-
-            <input id="{{consent.id}}-edit-button" class="btn-primary btn btn-xs" type="button" value="{%trans%}Edit{%endtrans%}" />
-            </div>
-        </div>
-
-        <div style="margin:1em 0 1em 0">
-            <div id="{{consent.id}}-display-block" class="{%if loop.index != 1%}consentText{%endif%} form-group">
-                <div id="{{consent.id}}-html">
-                    {{consent['html']|safe}}
-                </div>
-                <div class="form-group form-check">
-                    <input id="{{consent.id}}-dummy-input" type="checkbox" class="form-check-input {%if consent.id != 1%}consent{%endif%}">
-                    <label id="{{consent.id}}-label" for="{{consent.id}}-dummy-input" class="form-check-label consent {%if consent.required%}required{%endif%}">
-                    {% if consent.label %}
-                        {{consent.label}}
-                    {% else %}
-                        {%trans%}I agree{%endtrans%}
-                    {% endif %}
-                    {% if consent.required %}
-                        <span class="required-dot">●</span>
-                    {% endif %}
-                    </label>
-                </div>
-            </div>
-        </div>
-        <div id="{{consent.id}}-edit-block" style="display:none;">
-            <div id="{{consent.id}}-text-editor">
-                <div style="margin-bottom: 0.5em">
-                <input id="{{consent.id}}-save-button" class="btn-success btn btn-sm" type="button" value="{%trans%}Save{%endtrans%}" />
-                <input id="{{consent.id}}-cancel-button" class="btn-primary btn btn-sm" type="button" value="{%trans%}Cancel{%endtrans%}" />
-                </div>
-                <textarea id="{{consent.id}}-mde">{{ consent.markdown }}</textarea>
-
-                <div id="{{consent.id}}-consent-editor" class="form-row">
-                    <div class="form-group col">
-                    <input id="{{consent.id}}-label-input" class="form-control form-control-sm" type="text" placeholder="{%trans%}I agree{%endtrans%}" value="{{consent.label}}">
-                    </div>
-                    <div class="form-check ml-auto" {% if loop.index < 3 %}style="display:none"{% endif %}>
-                        <div class="form-check mb-2">
-                    <input id="{{consent.id}}-consent-required" class="form-check-input" type="checkbox" {%if consent.required%}checked{%endif%}>
-                    <label class="form-check-label form-control-sm" for="{{consent.id}}-consent-required">{%trans%}Required{%endtrans%}</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% if loop.index == 1 %}
-        <div class="title_2 delimited" style="margin:3em 0 3em 0">
-            {%trans%}Users may include the following texts in their forms{%endtrans%}
-        </div>
+    {% for consent in g.site.consentTexts %}
+      {% set consent = site.get_consent_for_display(consent.id) %}
+      <div class="title_3 delimited" style="margin-top:2em">
+        {% if consent.name=="DPL" %}
+        {%trans%}Data protection{%endtrans%}
+        {% else %}
+        {{consent_name}}
         {% endif %}
-{% endfor %}
+        <div style="float:right">
+
+        <div id="toggle_enabled_{{consent.id}}"
+             class="btn-group btn-toggle">
+          <button id="enabled_true_{{consent.id}}"
+                  class="btn btn-xs btn-default
+                        {% if consent.enabled %}btn-success{% endif %}">
+            {%trans%}Enabled{%endtrans%}
+          </button>
+          <button id="enabled_false_{{consent.id}}"
+                  class="btn btn-xs btn-default
+                        {% if not consent.enabled %}btn-primary{% endif %}">
+            {%trans%}Disabled{%endtrans%}
+          </button>
+        </div>
+        <input id="{{consent.id}}-edit-button"
+               class="btn-primary btn btn-xs"
+               type="button"
+               value="{%trans%}Edit{%endtrans%}" />
+        </div>
+      </div>
+
+      <div style="margin:1em 0 1em 0">
+        <div id="{{consent.id}}-display-block"
+             class="{%if loop.index != 1%}consentText{%endif%} form-group">
+          <div id="{{consent.id}}-html">
+              {{consent['html']|safe}}
+          </div>
+          <div class="form-group form-check">
+            <input id="{{consent.id}}-dummy-input"
+                   type="checkbox"
+                   class="form-check-input {%if consent.id != 1%}consent{%endif%}">
+            <label id="{{consent.id}}-label"
+                   for="{{consent.id}}-dummy-input"
+                   class="form-check-label consent
+                   {%if consent.required%}required{%endif%}">
+            {% if consent.label %}
+                {{consent.label}}
+            {% else %}
+                {%trans%}I agree{%endtrans%}
+            {% endif %}
+            {% if consent.required %}
+              <span class="required-dot">●</span>
+            {% endif %}
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="{{consent.id}}-edit-block" style="display:none;">
+        <div id="{{consent.id}}-text-editor">
+          <div style="margin-bottom: 0.5em">
+          <input id="{{consent.id}}-save-button"
+                 class="btn-success btn btn-sm"
+                 type="button"
+                 value="{%trans%}Save{%endtrans%}" />
+          <input id="{{consent.id}}-cancel-button"
+                 class="btn-primary btn btn-sm"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}" />
+          </div>
+          <textarea id="{{consent.id}}-mde">{{ consent.markdown }}</textarea>
+
+          <div id="{{consent.id}}-consent-editor" class="form-row">
+            <div class="form-group col">
+              <input id="{{consent.id}}-label-input"
+                     class="form-control form-control-sm"
+                     type="text"
+                     placeholder="{%trans%}I agree{%endtrans%}"
+                     value="{{consent.label}}">
+            </div>
+            <div class="form-check ml-auto"
+                        {% if loop.index < 3 %}style="display:none"{% endif %}>
+              <div class="form-check mb-2">
+                <input id="{{consent.id}}-consent-required"
+                       class="form-check-input"
+                       type="checkbox"
+                       {%if consent.required%}checked{%endif%}>
+                <label class="form-check-label form-control-sm"
+                       for="{{consent.id}}-consent-required">
+                    {%trans%}Required{%endtrans%}
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if loop.index == 1 %}
+      <div class="title_2 delimited" style="margin:3em 0 3em 0">
+        {%trans%}Users may include the following texts in their forms{%endtrans%}
+      </div>
+      {% endif %}
+    {% endfor %}
     </div>
-</div>
+  </div>
 </div>
 
 <script>
