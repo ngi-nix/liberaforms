@@ -101,8 +101,7 @@ We use `pybabel` python module to manage this.
 
 <!-- > For Form Templates:
 
-`pybabel extract -F babel/form_templates.cfg -o form_templates/translations/form_templates.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='i
-nfo@liberaforms.org'` -->
+`pybabel extract -F babel/form_templates.cfg -o form_templates/translations/form_templates.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='info@liberaforms.org'` -->
 
 ## Creating
 > Creates new .po file from .pot.  

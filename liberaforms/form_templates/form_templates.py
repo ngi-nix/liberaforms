@@ -333,6 +333,7 @@ templates = [
                 "required":False,"rows":5,"subtype":"textarea","type":"textarea"
             },
             {
+                # i18n: Referring the time spended for each session
                 "label":_("Tempos"),
                 "subtype":"h2","type":"header"
             },
@@ -443,6 +444,7 @@ templates = [
                 "subtype":"h2","type":"header"
             },
             {
+                # i18n: Same as "Topics", to use for future events
                 "label":_("Subjects"),
                 "description":_("Tell us if you are interested in a particular subject."),
                 "placeholder":_("e.g. GDPR compliance and linguistic justice."),
@@ -465,7 +467,7 @@ templates = [
         'id': 6,
         'name': _("Restaurant booking"),
         'description': _("Do you want to taste our delicious food? Save a date in your agenda!"),
-        'introduction_md': _("# Restaurant booking\r\nDo you want to taste our delicious food? Fill out this form and save the date in your agenda!  \r\n\r\n[Delicious Restaurant Map](https://www.openstreetmap.org/way/314016327)\r\nCarrer de les Avellanes, 15\r\nEl Sec\u00e0 de Sant Pere, 25005, Lleida.\r\nCatalunya, Espanya\r\n\r\nPhone number: (+34) 93 423 44 44"),
+        'introduction_md': _("# Restaurant booking\r\nDo you want to taste our delicious food? Fill out this form and save the date in your agenda!\r\n\r\n[Delicious Restaurant Map](https://www.openstreetmap.org/way/314016327)\r\nCarrer de les Avellanes, 15\r\nEl Sec\u00e0 de Sant Pere, 25005, Lleida.\r\nCatalunya, Espanya\r\n\r\nPhone number: (+34) 93 423 44 44"),
         'structure': [
             {
                 "label":_("Contact information"),
@@ -479,7 +481,7 @@ templates = [
             },
             {
                 "label":_("Email"),
-                "placeholder":_("e.g. mary@exemple.com"),
+                "placeholder":_("e.g. mary@example.com"),
                 "className":"form-control","name":"text-1630655000269","required":True,
                 "subtype":"email","type":"text"
             },
@@ -505,8 +507,9 @@ templates = [
                 "className":"form-control", "name":"date-1630937446951", "required":True, "type":"date"
             },
             {
-                "label":_("When do you want to eat"),
-                "description":_("remember we only open from 20h30 to 23h30)"),
+                # i18n: eat here refers to have dinner
+                "label":_("When do you want to eat?"),
+                "description":_("(remember we only open from 20h30 to 23h30)"),
                 "inline":False,"name":"radio-group-1630937627244",
                 "other":False,"required":True,"type":"radio-group",
                 "values":[
@@ -561,6 +564,7 @@ templates = [
     },
     {
         'id': 7,
+        # i18n: Here application stands for "submission", as it is a proposal to develop a project
         'name': _("Project Application"),
         'description': _("Apply for a grant. Tell us about your proposal."),
         'introduction_md': _("# Project Application Form\r\nHave a project? Fill out this form to tell us about your proposal. \r\n\r\nThis form is for project applications only. If you have any other question, please use our [contact form](https://example.com/contact-form)."),
