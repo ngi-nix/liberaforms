@@ -53,6 +53,7 @@ class Config(object):
     RESERVED_USERNAMES = ["system", "admin", "root"]
     FORMBUILDER_DISABLED_FIELDS = ["autocomplete", "hidden", "button"]
     FORMBUILDER_DISABLED_ATTRS = ["className", "toggle", "access", "multiple"]
+    FORMBUILDER_DISABLED_SUBTYPES = {'text': ['password', 'color', 'tel']}
     FORMBUILDER_CONTROL_ORDER = ["text", "textarea", "select", "radio-group",
                                  "checkbox-group", "date", "number", "file",
                                  "header", "paragraph"]

@@ -196,6 +196,8 @@ jQuery(function($) {
 
     const fbEditor = document.getElementById("fb-editor");
     var disabledAttrs = {{ config['FORMBUILDER_DISABLED_ATTRS'] | tojson }};
+    var disabledSubtypes = {{ config['FORMBUILDER_DISABLED_SUBTYPES'] | tojson }};
+
     disabledAttrs.push("name");
     var disabledFields = {{ config['FORMBUILDER_DISABLED_FIELDS'] | tojson }}
     if ({{ g.current_user.get_uploads_enabled() | tojson }} !== true) {
@@ -205,6 +207,7 @@ jQuery(function($) {
         showActionButtons: false,
         disableFields: disabledFields,
         disabledAttrs: disabledAttrs,
+        disabledSubtypes: disabledSubtypes,
         editOnAdd: true,
         disableHTMLLabels: true,
         replaceFields: [
