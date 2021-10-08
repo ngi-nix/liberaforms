@@ -128,7 +128,7 @@ templates = [
         'id': 3,
         'name': _("Save our shelter"),
         'description': _("Petition citizens support for your local initiative."),
-        'introduction_md': _('# hello'),
+        'introduction_md': _('# We need your help\r\nPlease sign our petition.'),
         'structure': [
             {
                 "label": _("ID number"),
