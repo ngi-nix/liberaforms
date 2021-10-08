@@ -762,10 +762,12 @@ def view_form(slug):
                             if url:
                                 data.append((field['label'], url))
                                 continue
+                        label = queriedForm.get_answer_label(field['name'],
+                                                             answer.data[field['name']])
+                        answer_value = label if label else answer.data[field['name']]
                         data.append((
                             field['label'],
-                            queriedForm.get_answer_label(field['name'],
-                                                        answer.data[field['name']])
+                            answer_value
                         ))
                 Dispatcher().send_new_answer_notification(emails,
                                                           data,

@@ -471,15 +471,18 @@ class Form(db.Model, CRUD):
                    element["type"] == "radio-group" or \
                    element["type"] == "select":
                     option_labels = []
+                    values_without_labels = []
                     for value in answer_value.split(', '):
                         value_label = next((l for l in element['values'] if l['value'] == value), None)
                         if value_label:
                             option_labels.append(value_label['label'])
+                        else:
+                            values_without_labels.append(value)
+                    option_labels.extend(values_without_labels)
                     label = ', '.join(option_labels)
                     break
-                else:
-                    label = answer_value
-                    break
+        if not label:
+            label = answer_value
         return label
 
     def save_expiry_date(self, expireDate):
@@ -767,7 +770,8 @@ class Form(db.Model, CRUD):
         def get_label(field_name, answer_value):
             if answer_value in label_cache:
                 return label_cache[answer_value]
-            label_cache[answer_value] = self.get_answer_label(field_name, answer_value)
+            answer_label = self.get_answer_label(field_name, answer_value)
+            label_cache[answer_value] = answer_label
             return label_cache[answer_value]
         fieldnames=[]
         fieldheaders={}
