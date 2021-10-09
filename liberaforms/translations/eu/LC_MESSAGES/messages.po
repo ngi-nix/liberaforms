@@ -258,7 +258,7 @@ msgstr "Gaitu galdetegiko eranskinak"
 
 #: templates/admin/admin-panel.html:130
 msgid "Default timezone"
-msgstr "Erabili irudi lehenetsia"
+msgstr "Ordu-zona lehenetsia"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:140
@@ -2354,4 +2354,3 @@ msgstr "Kredentzial okerrak"
 
 #~ msgid "to"
 #~ msgstr ""
-
