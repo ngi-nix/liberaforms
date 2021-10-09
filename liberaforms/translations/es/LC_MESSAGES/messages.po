@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2021-10-02 20:20+0200\n"
-"PO-Revision-Date: 2021-09-08 13:08+0000\n"
-"Last-Translator: LiberaForms <info@liberaforms.org>\n"
+"PO-Revision-Date: 2021-10-07 15:39+0000\n"
+"Last-Translator: carlosm2 <carlosm2@riseup.net>\n"
+"Language-Team: Spanish <https://hosted.weblate.org/projects/liberaforms/"
+"server-liberaforms/es/>\n"
 "Language: es\n"
-"Language-Team: Spanish <https://hosted.weblate.org/projects/liberaforms"
-"/server-liberaforms/es/>\n"
-"Plural-Forms: nplurals=2; plural=n != 1\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.9-dev\n"
 "Generated-By: Babel 2.9.1\n"
 
 #. i18n: Column title on table, to sort whether the form entries are marked or
@@ -89,7 +90,7 @@ msgstr ""
 
 #: models/site.py:161 templates/site/email-branding.html:82
 msgid "Ethical form software"
-msgstr ""
+msgstr "Sofware ético de formularios"
 
 #: models/site.py:363 templates/admin/inspect-user.html:19
 #: templates/site/list-admins.html:25 utils/wtf.py:26 utils/wtf.py:63
@@ -171,9 +172,8 @@ msgstr "Mis formularios"
 
 #. Used as website menu title, linking to page about user's settings
 #: templates/base.html:102
-#, fuzzy
 msgid "Settings"
-msgstr "Preferencias del sitio web"
+msgstr "Ajustes"
 
 #. Used as website menu title, to log out
 #: templates/base.html:108
@@ -299,7 +299,7 @@ msgstr "Editar"
 #. Which type of attachments are allowed
 #: templates/admin/admin-panel.html:186
 msgid "Attachment types"
-msgstr ""
+msgstr "Tipos de adjuntos"
 
 #. Subtitle displayed on instance configuration page (/admin)
 #: templates/admin/admin-panel.html:204 templates/form/inspect-form.html:535
@@ -617,7 +617,7 @@ msgstr "Guardar"
 
 #: templates/form/_image-modal.html:46 templates/media/list-media.html:66
 msgid "A photo of a horse galloping on the beach."
-msgstr ""
+msgstr "Una foto de un caballo galopando en la playa."
 
 #: templates/form/_post-render-scripts.js:24 templates/form/view-form.html:197
 #: templates/form/view-form.html:198 templates/form/view-form.html:199
@@ -720,6 +720,8 @@ msgstr "De acuerdo, usa este URL"
 #: templates/form/edit-form.html:367
 msgid "Cannot modify because an answer with this value exists in the database"
 msgstr ""
+"No se puede modificar porque ya existe una respuesta con este valor en la "
+"base de datos"
 
 #: templates/form/expiration.html:44
 msgid "Notify me when this form expires"
@@ -1151,7 +1153,7 @@ msgstr "Términos y Condiciones"
 #: templates/site/consent.html:32 templates/user/consent.html:24
 #, python-format
 msgid "%(consent_name)s"
-msgstr ""
+msgstr "%(consent_name)s"
 
 #: templates/site/consent.html:38 views/data_display.py:510
 msgid "Shared"
@@ -1228,7 +1230,7 @@ msgstr ""
 
 #: templates/site/edit-mimetypes.html:42
 msgid "Enabled mimetypes"
-msgstr ""
+msgstr "Mimetypes habilitados"
 
 #: templates/site/email-branding.html:20
 msgid "LiberaForms will occasionally send emails."
@@ -1279,7 +1281,7 @@ msgstr "Cambiar dirección de correo-e"
 
 #: templates/user/change-timezone.html:12
 msgid "Change your time zone"
-msgstr ""
+msgstr "Cambia tu zona horaria"
 
 #: templates/user/change-timezone.html:26
 msgid "Search for country or city name"
@@ -1431,7 +1433,7 @@ msgstr ""
 
 #: templates/user/user-settings.html:147
 msgid "Add and delete uploaded files"
-msgstr ""
+msgstr "Agregar y eliminar archivos cargados"
 
 #: templates/user/user-settings.html:192
 msgid "My admin settings"
@@ -2000,7 +2002,7 @@ msgstr "Ese formulario no es público"
 
 #: views/form.py:821
 msgid "Copied template OK. You can edit your new form"
-msgstr ""
+msgstr "Plantilla copiada OK. Puedes editar tu nuevo formulario"
 
 #: views/site.py:35
 msgid "Text saved OK"
@@ -2041,7 +2043,7 @@ msgstr "Favicon cambiado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:165
 msgid "An image file is required"
-msgstr ""
+msgstr "Se requiere un archivo de imagen"
 
 #: views/site.py:174
 #, fuzzy
@@ -2050,7 +2052,7 @@ msgstr "Favicon restaurado correctamente. Recarga con  &lt;F5&gt;"
 
 #: views/site.py:195
 msgid "Enabled file extensions updated OK"
-msgstr ""
+msgstr "Extensiones de archivo habilitadas actualizadas OK"
 
 #: views/site.py:221
 msgid "Color changed OK"
@@ -2120,7 +2122,7 @@ msgstr ""
 
 #: views/user.py:224
 msgid "Connected to the Fediverse"
-msgstr ""
+msgstr "Conectado al Fediverso"
 
 #: views/user.py:243
 #, fuzzy
@@ -2565,4 +2567,3 @@ msgstr "Las credenciales no son correctos"
 
 #~ msgid "Answers shared with"
 #~ msgstr ""
-

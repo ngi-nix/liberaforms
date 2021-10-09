@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: info@liberaforms.org\n"
 "POT-Creation-Date: 2021-10-02 20:20+0200\n"
-"PO-Revision-Date: 2021-09-19 10:44+0000\n"
+"PO-Revision-Date: 2021-10-03 10:29+0000\n"
 "Last-Translator: LiberaForms <info@liberaforms.org>\n"
 "Language-Team: Basque <https://hosted.weblate.org/projects/liberaforms/"
 "server-liberaforms/eu/>\n"
@@ -624,7 +624,7 @@ msgstr "Fitxategiak %(size)s baino txikiagoa izan behar du"
 #: templates/form/_post-render-scripts.js:46
 #, python-format
 msgid "Note: Maximum is now %(max)s"
-msgstr ""
+msgstr "Oharra: gehiengoa %(max)s da orain"
 
 #: templates/form/_post-render-scripts.js:62
 msgid "to"
@@ -675,31 +675,29 @@ msgstr "URL hau ez dago erabilgarri. Probatu beste bat!"
 msgid "Preview"
 msgstr "Aurreikusi"
 
+#
 #. Placeholder for option name in Multiple choice fields
 #: templates/form/edit-form.html:206
-#
 msgid "Option"
 msgstr "Aukera"
 
 #: templates/form/edit-form.html:210
-#, fuzzy
 msgid "Single choice"
-msgstr "Hainbat aukera"
+msgstr "Aukera bakarra"
 
-#: templates/form/edit-form.html:212 templates/form/edit-form.html:220
 #
+#: templates/form/edit-form.html:212 templates/form/edit-form.html:220
 msgid "Option 1"
 msgstr "1. aukera"
 
-#: templates/form/edit-form.html:213 templates/form/edit-form.html:221
 #
+#: templates/form/edit-form.html:213 templates/form/edit-form.html:221
 msgid "Option 2"
 msgstr "2. aukera"
 
 #: templates/form/edit-form.html:218
-#, fuzzy
 msgid "Dropdown options"
-msgstr "Administratzaile-aukerak"
+msgstr "Goitibeherako aukerak"
 
 #: templates/form/edit-form.html:310
 msgid "OK, use this URL"
@@ -730,9 +728,8 @@ msgid "Save changes"
 msgstr "Gorde aldaketak"
 
 #: templates/form/expiration.html:95
-#, fuzzy
 msgid "Number fields"
-msgstr "Nahitaezko eremuak"
+msgstr "Zenbaki-eremuak"
 
 #. Applies to 'Number' fields. Form will expire when the sum of values between
 #. all answers to this field in this form reaches the specified value. For
@@ -742,7 +739,7 @@ msgstr "Nahitaezko eremuak"
 #: templates/form/expiration.html:114
 #, python-format
 msgid "The sum of all the answers to '%(field_label)s'"
-msgstr ""
+msgstr "'%(field_label)s' eremuan jasotako erantzun guztien batura"
 
 #: templates/form/expiration.html:118
 msgid "Save max."
@@ -820,13 +817,12 @@ msgid "Public"
 msgstr "Publikoa"
 
 #: templates/form/inspect-form.html:137
-#, fuzzy
 msgid "New answer"
-msgstr "Ikusi erantzunak"
+msgstr "Erantzun berria"
 
 #: templates/form/inspect-form.html:157
 msgid "Notify me"
-msgstr ""
+msgstr "Jakinarazi"
 
 #: templates/form/inspect-form.html:162
 msgid "Expiration"
@@ -868,7 +864,7 @@ msgstr "Sarbide mugatua"
 
 #: templates/form/inspect-form.html:275
 msgid "Confirmation"
-msgstr "Egiaztapena"
+msgstr "Berrespena"
 
 #: templates/form/inspect-form.html:318 templates/site/email-branding.html:54
 msgid "Personalize"
@@ -1211,9 +1207,8 @@ msgid "LiberaForms will occasionally send emails."
 msgstr "LiberaFormsek noizean behin epostak bidaliko ditu."
 
 #: templates/site/email-branding.html:24
-#, fuzzy
 msgid "Example email"
-msgstr "Adibiderako eposta:"
+msgstr "Adibiderako eposta"
 
 #: templates/site/email-branding.html:46
 msgid "Send test"
@@ -1631,7 +1626,7 @@ msgstr "LiberaForms. Galdetegiko erantzun berria"
 
 #: utils/dispatcher/dispatcher.py:177
 msgid "Confirmation message"
-msgstr "Egiaztapen mezua"
+msgstr "Berrespen mezua"
 
 #: utils/dispatcher/dispatcher.py:187
 #, python-format
@@ -1731,7 +1726,6 @@ msgid "Number of answers does not match"
 msgstr "Erantzun kopurua ez dator bat"
 
 #: views/data_display.py:194
-#, fuzzy
 msgid "User name"
 msgstr "Erabiltzaile-izena"
 
