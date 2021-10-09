@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-06 20:14+0200\n"
+"POT-Creation-Date: 2021-10-09 10:58+0200\n"
 "PO-Revision-Date: 2020-09-15 17:09+0200\n"
 "Last-Translator: Porrumentzio <porrumentzio@riseup.net>\n"
 "Language: es\n"
@@ -146,11 +146,13 @@ msgstr "Salvamos el refugio"
 
 #: form_templates/form_templates.py:130
 #, fuzzy
-msgid "Petition citizens support for your local initiative."
+msgid "Ask citizens to support for your local initiative."
 msgstr "Pide apoyo popular para tu iniciativa local."
 
 #: form_templates/form_templates.py:131
-msgid "# hello"
+msgid ""
+"# We need your help\r\n"
+"Please sign our petition."
 msgstr ""
 
 #: form_templates/form_templates.py:134
@@ -797,5 +799,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "remember we only open from 20h30 to 23h30)"
+#~ msgstr ""
+
+#~ msgid "# hello"
 #~ msgstr ""
 
