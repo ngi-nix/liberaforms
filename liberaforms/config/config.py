@@ -19,13 +19,15 @@ def get_SQLALCHEMY_DATABASE_URI():
 class Config(object):
     DEBUG = False
     TESTING = False
+    SESSION_COOKIE_HTTPONLY=True
+    SESSION_COOKIE_SAMESITE='Lax'
     WTF_CSRF_ENABLED = True
     # WTF_CSRF_TIME_LIMIT. Time to fill out a form.
     # Must be less than PERMANENT_SESSION_LIFETIME
-    WTF_CSRF_TIME_LIMIT = 21600
+    WTF_CSRF_TIME_LIMIT = 43200 # 12 hours
     #WTF_CSRF_TIME_LIMIT = 1
-    # User sessions last 8h (refreshed on every request)
-    PERMANENT_SESSION_LIFETIME = 28800
+    # User sessions valid for. (refreshed on every request)
+    PERMANENT_SESSION_LIFETIME = 46800 # 13h
     RESERVED_SLUGS = [
         "static",
         "login", "logout",
@@ -107,20 +109,24 @@ class Config(object):
 
 class ProductionConfig(Config):
     DEBUG = False
+    SESSION_COOKIE_SECURE=True
 
 
 class StagingConfig(Config):
     DEVELOPMENT = True
+    SESSION_COOKIE_SECURE=True
 
 
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
+    SESSION_COOKIE_SECURE=False
 
 
 class TestingConfig(Config):
     TESTING = True
     WTF_CSRF_ENABLED = False
     UPLOADS_DIR = os.path.join(Config.ROOT_DIR, 'tests', 'uploads')
+    SESSION_COOKIE_SECURE=False
 
 
 config = {
