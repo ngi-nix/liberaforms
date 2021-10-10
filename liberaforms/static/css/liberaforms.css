@@ -27,7 +27,9 @@ body {
 .nav-link:hover {
   opacity: 1;
 }
-
+.nav-item > a.btn {
+  margin-left: 0.5em;
+}
 #main-content {
   margin-top: 1.5em;
 }
@@ -363,14 +365,4 @@ button.newUserConsentTextToggle {
 }
 button.newUserConsentTextToggle > i {
   padding: 0;
-}
-
-/* ########## Modals ########## */
-.jc-question {
-  font-size: 1.4em !important;
-  font-weight: inherit !important;
-}
-.jc-small {
-  font-size: 11px !important;
-  padding: 0 !important;
 }
