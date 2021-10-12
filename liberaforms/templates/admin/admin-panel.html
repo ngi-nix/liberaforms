@@ -113,13 +113,21 @@
           <td class="text-right">
             <div id="toggle_uploads_enabled" class="btn-group btn-toggle">
             <button id="uploads_enabled_true"
-                    class="btn btn-xs btn-default
-                          {% if site.newuser_enableuploads %}btn-success{% endif %}">
+                    class="btn btn-xs
+                          {% if site.newuser_enableuploads %}
+                          btn-primary
+                          {% else %}
+                          btn-outline-secondary
+                          {% endif %}">
                 {%trans%}True{%endtrans%}
             </button>
             <button id="uploads_enabled_false"
-                    class="btn btn-xs btn-default
-                          {% if not site.newuser_enableuploads %}btn-primary{% endif %}">
+                    class="btn btn-xs
+                          {% if not site.newuser_enableuploads %}
+                          btn-primary
+                          {% else %}
+                          btn-outline-secondary
+                          {% endif %}">
                 {%trans%}False{%endtrans%}
             </button>
             </div>
@@ -147,14 +155,22 @@
           <td class="text-right">
             <div id="toggle_invitation_only" class="btn-group btn-toggle">
             <button id="invitation_only_true"
-                    class="btn btn-xs btn-default
-                          {% if site.invitationOnly %}btn-success{% endif %}
+                    class="btn btn-xs
+                          {% if site.invitationOnly %}
+                          btn-primary
+                          {% else %}
+                          btn-outline-secondary
+                          {% endif %}
                     ">
                     {%trans%}True{%endtrans%}
             </button>
             <button id="invitation_only_false"
-                    class="btn btn-xs btn-default
-                          {% if not site.invitationOnly %}btn-primary{% endif %}
+                    class="btn btn-xs
+                          {% if not site.invitationOnly %}
+                          btn-primary
+                          {% else %}
+                          btn-outline-secondary
+                          {% endif %}
                     ">
                     {%trans%}False{%endtrans%}
             </button>
@@ -268,12 +284,16 @@ document.getElementById('toggle_invitation_only')
         success: function(data, textStatus, jqXHR)
         {
             if (data.invite == true) {
-                $('#invitation_only_true').addClass('btn-success');
-                $('#invitation_only_false').removeClass('btn-primary');
+                $('#invitation_only_true').addClass('btn-primary')
+                                          .removeClass('btn-outline-secondary');
+                $('#invitation_only_false').removeClass('btn-primary')
+                                           .addClass('btn-outline-secondary');
             }
             else if (data.invite == false) {
-                $('#invitation_only_true').removeClass('btn-success');
-                $('#invitation_only_false').addClass('btn-primary');
+                $('#invitation_only_true').removeClass('btn-primary')
+                                          .addClass('btn-outline-secondary');
+                $('#invitation_only_false').addClass('btn-primary')
+                                           .removeClass('btn-outline-secondary');
             }
         }
     });
@@ -293,12 +313,16 @@ document.getElementById('toggle_uploads_enabled')
         success: function(data, textStatus, jqXHR)
         {
             if (data.uploads == true) {
-                $('#uploads_enabled_true').addClass('btn-success');
-                $('#uploads_enabled_false').removeClass('btn-primary');
+                $('#uploads_enabled_true').addClass('btn-primary')
+                                          .removeClass('btn-outline-secondary');
+                $('#uploads_enabled_false').removeClass('btn-primary')
+                                           .addClass('btn-outline-secondary');
             }
             else if (data.uploads == false) {
-                $('#uploads_enabled_true').removeClass('btn-success');
-                $('#uploads_enabled_false').addClass('btn-primary');
+                $('#uploads_enabled_true').removeClass('btn-primary')
+                                          .addClass('btn-outline-secondary');
+                $('#uploads_enabled_false').addClass('btn-primary')
+                                           .removeClass('btn-outline-secondary');
             }
         }
     });
