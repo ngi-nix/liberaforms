@@ -13,7 +13,7 @@
       <div class="title_1 delimited">
           {%trans%}User details{%endtrans%}
       </div>
-      <table class="table table-sm table-striped w-100 d-block d-table">
+      <table class="table table-sm w-100 d-block d-table">
         <tbody">
         <tr>
            <td>{%trans%}Username{%endtrans%}</td>
@@ -60,17 +60,19 @@
                  class="btn-group btn-toggle">
               <button id="uploads_enabled_true"
                       class="btn btn-xs
-                             btn-default
                              {% if user.get_uploads_enabled() %}
-                             btn-success
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}">
                   {%trans%}True{%endtrans%}
               </button>
               <button id="uploads_enabled_false"
                       class="btn btn-xs
-                             btn-default
                              {% if not user.get_uploads_enabled() %}
                              btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}">
                 {%trans%}False{%endtrans%}
               </button>
@@ -84,14 +86,20 @@
             <div id="toggle_admin" class="btn-group btn-toggle">
               <button id="admin_true"
                       class="btn btn-xs
-                             btn-default
-                             {% if user.is_admin() %}btn-success{% endif %}">
+                             {% if user.is_admin() %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
                   {%trans%}True{%endtrans%}
               </button>
               <button id="admin_false"
                       class="btn btn-xs
-                             btn-default
-                             {% if not user.is_admin() %}btn-primary{% endif %}">
+                             {% if not user.is_admin() %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
                 {%trans%}False{%endtrans%}
               </button>
             </div>
@@ -106,15 +114,21 @@
               <button id="blocked_true"
                         class="btn
                                btn-xs
-                               btn-default
-                               {% if user.blocked %}btn-success{% endif %}">
+                               {% if user.blocked %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
                       {%trans%}True{%endtrans%}
               </button>
               <button id="blocked_false"
                         class="btn
                                btn-xs
-                               btn-default
-                               {% if not user.blocked %}btn-primary{% endif %}">
+                               {% if not user.blocked %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
                       {%trans%}False{%endtrans%}
               </button>
             </div>
@@ -158,6 +172,7 @@
   </div>
   <div class="row">
     <div class="col">
+      <hr />
       <div data-vue-component="data-display"
            data-endpoint="/data-display/admin/user/{{user.id}}/forms"
            data-language="{{ g.current_user.language }}"
@@ -184,12 +199,16 @@ document.getElementById('toggle_blocked').addEventListener('click', function(evt
         success: function(data, textStatus, jqXHR)
         {
             if (data.blocked == true) {
-                $('#blocked_true').addClass('btn-success');
-                $('#blocked_false').removeClass('active btn-primary');
+                $('#blocked_true').addClass('btn-primary')
+                                  .removeClass('btn-outline-secondary');
+                $('#blocked_false').removeClass('btn-primary')
+                                   .addClass('btn-outline-secondary');
             }
             else if (data.blocked == false) {
-                $('#blocked_true').removeClass('btn-success');
-                $('#blocked_false').addClass('btn-primary');
+                $('#blocked_true').removeClass('btn-primary')
+                                  .addClass('btn-outline-secondary');
+                $('#blocked_false').addClass('btn-primary')
+                                   .removeClass('btn-outline-secondary');
             }
         }
     });
@@ -208,12 +227,16 @@ document.getElementById('toggle_uploads_enabled').addEventListener('click', func
         success: function(data, textStatus, jqXHR)
         {
             if (data.uploads_enabled == true) {
-                $('#uploads_enabled_true').addClass('btn-success');
-                $('#uploads_enabled_false').removeClass('btn-primary');
+                $('#uploads_enabled_true').addClass('btn-primary')
+                                          .removeClass('btn-outline-secondary');
+                $('#uploads_enabled_false').removeClass('btn-primary')
+                                           .addClass('btn-outline-secondary');
             }
             else if (data.uploads_enabled == false) {
-                $('#uploads_enabled_true').removeClass('btn-success');
-                $('#uploads_enabled_false').addClass('btn-primary');
+                $('#uploads_enabled_true').removeClass('btn-primary')
+                                          .addClass('btn-outline-secondary');
+                $('#uploads_enabled_false').addClass('btn-primary')
+                                           .removeClass('btn-outline-secondary');
             }
         }
     });
@@ -232,12 +255,16 @@ document.getElementById('toggle_admin').addEventListener('click', function(evt){
         success: function(data, textStatus, jqXHR)
         {
             if (data.admin == true) {
-                $('#admin_true').addClass('btn-success');
-                $('#admin_false').removeClass('btn-primary');
+                $('#admin_true').addClass('btn-primary')
+                                .removeClass('btn-outline-secondary');
+                $('#admin_false').removeClass('btn-primary')
+                                 .addClass('btn-outline-secondary');
             }
             else if (data.admin == false) {
-                $('#admin_true').removeClass('btn-success');
-                $('#admin_false').addClass('btn-primary');
+                $('#admin_true').removeClass('btn-primary')
+                                .addClass('btn-outline-secondary');
+                $('#admin_false').addClass('btn-primary')
+                                 .removeClass('btn-outline-secondary');
             }
         }
     });

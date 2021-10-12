@@ -100,21 +100,21 @@
             <div id="toggle_new_answer_notification"
                  class="btn-group btn-toggle">
               <button id="new_answer_notification_true"
-                      class="btn
-                             btn-xs
-                             btn-default
+                      class="btn btn-xs
                              {% if user.new_answer_notification_default %}
-                             btn-success
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}
                       ">
                   {%trans%}True{%endtrans%}
               </button>
               <button id="new_answer_notification_false"
-                      class="btn
-                             btn-xs
-                             btn-default
+                      class="btn btn-xs
                              {% if not user.new_answer_notification_default %}
                              btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}
                       ">
                   {%trans%}False{%endtrans%}
@@ -199,21 +199,21 @@
             <div id="toggle_notify_newuser"
                  class="btn-group btn-toggle">
               <button id="notify_newuser_true"
-                      class="btn
-                             btn-xs
-                             btn-default
+                      class="btn btn-xs
                              {% if user.admin['notifyNewUser'] %}
-                             btn-success
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}
                              ">
                   {%trans%}True{%endtrans%}
               </button>
               <button id="notify_newuser_false"
-                      class="btn
-                             btn-xs
-                             btn-default
+                      class="btn btn-xs
                              {% if not user.admin['notifyNewUser'] %}
                              btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}
                              ">
                   {%trans%}False{%endtrans%}
@@ -226,21 +226,21 @@
           <td class="text-right">
             <div id="toggle_notify_newform" class="btn-group btn-toggle">
               <button id="notify_newform_true"
-                      class="btn
-                             btn-xs
-                             btn-default
+                      class="btn btn-xs
                              {% if user.admin['notifyNewForm'] %}
-                             btn-success
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}
                       ">
                   {%trans%}True{%endtrans%}
               </button>
               <button id="notify_newform_false"
-                      class="btn
-                             btn-xs
-                             btn-default
+                      class="btn btn-xs
                              {% if not user.admin['notifyNewForm'] %}
                              btn-primary
+                             {% else %}
+                             btn-outline-secondary
                              {% endif %}
                       ">
                   {%trans%}False{%endtrans%}
@@ -286,12 +286,16 @@ document.getElementById('toggle_new_answer_notification').addEventListener('clic
         success: function(data, textStatus, jqXHR)
         {
             if (data.default == true) {
-                $('#new_answer_notification_true').addClass('btn-success');
-                $('#new_answer_notification_false').removeClass('btn-primary');
+                $('#new_answer_notification_true').addClass('btn-primary')
+                                                  .removeClass('btn-outline-secondary');
+                $('#new_answer_notification_false').removeClass('btn-primary')
+                                                   .addClass('btn-outline-secondary');
             }
             else if (data.default == false) {
-                $('#new_answer_notification_true').removeClass('btn-success');
-                $('#new_answer_notification_false').addClass('btn-primary');
+                $('#new_answer_notification_true').removeClass('btn-primary')
+                                                  .addClass('btn-outline-secondary');
+                $('#new_answer_notification_false').addClass('btn-primary')
+                                                   .removeClass('btn-outline-secondary');
             }
         }
     });
@@ -310,12 +314,16 @@ document.getElementById('toggle_notify_newuser').addEventListener('click', funct
         success: function(data, textStatus, jqXHR)
         {
             if (data.notify == true) {
-                $('#notify_newuser_true').addClass('btn-success');
-                $('#notify_newuser_false').removeClass('btn-primary');
+                $('#notify_newuser_true').addClass('btn-primary')
+                                         .removeClass('btn-outline-secondary');
+                $('#notify_newuser_false').removeClass('btn-primary')
+                                          .addClass('btn-outline-secondary');
             }
             else if (data.notify == false) {
-                $('#notify_newuser_true').removeClass('btn-success');
-                $('#notify_newuser_false').addClass('btn-primary');
+                $('#notify_newuser_true').removeClass('btn-primary')
+                                         .addClass('btn-outline-secondary');
+                $('#notify_newuser_false').addClass('btn-primary')
+                                          .removeClass('btn-outline-secondary');
             }
         }
     });
@@ -333,12 +341,16 @@ document.getElementById('toggle_notify_newform').addEventListener('click', funct
         success: function(data, textStatus, jqXHR)
         {
             if (data.notify == true) {
-                $('#notify_newform_true').addClass('btn-success');
-                $('#notify_newform_false').removeClass('btn-primary');
+                $('#notify_newform_true').addClass('btn-primary')
+                                         .removeClass('btn-outline-secondary');
+                $('#notify_newform_false').removeClass('btn-primary')
+                                          .addClass('btn-outline-secondary');
             }
             else if (data.notify == false) {
-                $('#notify_newform_true').removeClass('btn-success');
-                $('#notify_newform_false').addClass('btn-primary');
+                $('#notify_newform_true').removeClass('btn-primary')
+                                         .addClass('btn-outline-secondary');
+                $('#notify_newform_false').addClass('btn-primary')
+                                          .removeClass('btn-outline-secondary');
             }
         }
     });

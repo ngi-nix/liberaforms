@@ -130,15 +130,10 @@ label {
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
 }
+/*
 .answers-table {
   font-size: 14px;
 }
-/*
-.answers-table td:nth-child(-n+3), .answers-table th:nth-child(-n+3) {
-  max-width: 45px;
-  white-space: nowrap;
-}
-*/
 .td-controls td:first-child {
     text-align: center;
 }
@@ -148,6 +143,7 @@ input[type="date"], input[type="number"], input[type="time"] {
 .cell-editor > input[type="text"] {
   width: 70%;
 }
+*/
 .link {
   color:#337ab7;
   cursor:pointer;
@@ -236,56 +232,7 @@ input[type="date"], input[type="number"], input[type="time"] {
     color: #d9534f;
     font-size: 1rem;
 }
-
-/* ######### Answers table ######### */
-
-.delete-row-icon {
-    font-size: 1.15em !important;
-    color: grey;
-    visibility: visible;
-}
-.delete-row-icon.enabled {
-    color: #d9534f;
-    cursor: pointer;
-}
-.undo-delete-row {
-    font-weight: bold !important;
-    color: #5cb85c;
-    cursor: pointer;
-}
-.deleted-row {
-    background-color: #FAAFBE;
-    text-decoration: line-through;
-    cursor: auto;
-}
-.answerCellHighlighter td:not(.deleted-row):not(:nth-child(-n+3)):not(.cellEditionMode):hover {
-    background-color: #ffffcc;
-    cursor: pointer;
-}
-.cellEditionMode {
-    cursor: auto;
-}
-.saveCellEdition {
-    font-size: 1.25em !important;
-    color: #5cb85c;
-    cursor: pointer;
-    padding-left: 0.27em;
-}
-.cancelCellEdition {
-    font-size: 1.25em !important;
-    color: #007bff;
-    cursor: pointer;
-    padding-left: 0.27em;
-}
-
-/* ######### dataTables ######### */
-.dataTables_scrollBody {
-    background: none !important;
-}
-ul.dtr-details .dtr-data {   /* (+) (-) let the overflowed fields wrap */
-    white-space: normal !important;
-}
-
+/* ######## LiberaForm form ######## */
 
 .liberaform {
   font-size: 1.1rem;
@@ -365,4 +312,13 @@ button.newUserConsentTextToggle {
 }
 button.newUserConsentTextToggle > i {
   padding: 0;
+}
+
+
+.btn-outline-secondary {
+  border-color: #c0c0c0 !important;
+}
+.btn-outline-secondary:hover {
+  color: #303030 !important;
+  background-color: #e0e0e0 !important;
 }

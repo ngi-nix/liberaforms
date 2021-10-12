@@ -27,16 +27,20 @@
       <div class="col">
         <div id="toggle_notification" class="btn-group btn-toggle">
           <button id="notification_true"
-                  class="btn btn-sm btn-default
+                  class="btn btn-sm
                   {% if form_user['notifications']['expiredForm'] %}
-                  btn-success
+                  btn-primary
+                  {% else %}
+                  btn-outline-secondary
                   {% endif %}">
             {%trans%}True{%endtrans%}
           </button>
           <button id="notification_false"
-                  class="btn btn-sm btn-default
+                  class="btn btn-sm
                   {% if not form_user['notifications']['expiredForm'] %}
                   btn-primary
+                  {% else %}
+                  btn-outline-secondary
                   {% endif %}">
             {%trans%}False{%endtrans%}
           </button>
@@ -243,12 +247,16 @@ document.getElementById('toggle_notification').addEventListener('click', functio
         success: function(data, textStatus, jqXHR)
         {
             if (data.notification == true) {
-                $('#notification_true').addClass('btn-success');
-                $('#notification_false').removeClass('btn-primary');
+                $('#notification_true').addClass('btn-primary')
+                                       .removeClass('btn-outline-secondary');
+                $('#notification_false').removeClass('btn-primary')
+                                        .addClass('btn-outline-secondary');
             }
             else if (data.notification == false) {
-                $('#notification_true').removeClass('btn-success');
-                $('#notification_false').addClass('btn-primary');
+                $('#notification_true').removeClass('btn-primary')
+                                       .addClass('btn-outline-secondary');
+                $('#notification_false').addClass('btn-primary')
+                                        .removeClass('btn-outline-secondary');
             }
         }
     });

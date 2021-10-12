@@ -130,11 +130,21 @@
       <div>
         <span id="toggle_restrictedAccess" class="btn-group btn-toggle">
           <button id="restrictedAccess_true"
-                  class="btn btn-sm btn-default {% if form.restrictedAccess %}btn-success{% endif %}">
+                  class="btn btn-sm
+                         {% if form.restrictedAccess %}
+                         btn-primary
+                         {% else %}
+                         btn-outline-secondary
+                         {% endif %}">
             {%trans%}Restricted{%endtrans%}
           </button>
           <button id="restrictedAccess_false"
-                  class="btn btn-sm btn-default {% if not form.restrictedAccess %}btn-primary{% endif %}">
+                  class="btn btn-sm
+                         {% if not form.restrictedAccess %}
+                         btn-primary
+                         {% else %}
+                         btn-outline-secondary
+                         {% endif %}">
             {%trans%}Public form{%endtrans%}
           </button>
         </span>
@@ -194,12 +204,16 @@ document.getElementById('toggle_restrictedAccess').addEventListener('click', fun
         success: function(data, textStatus, jqXHR)
         {
             if (data.restricted == true) {
-                $('#restrictedAccess_true').addClass('btn-success');
-                $('#restrictedAccess_false').removeClass('btn-primary');
+                $('#restrictedAccess_true').addClass('btn-primary')
+                                  .removeClass('btn-outline-secondary');
+                $('#restrictedAccess_false').removeClass('btn-primary')
+                                   .addClass('btn-outline-secondary');
             }
             else if (data.restricted == false) {
-                $('#restrictedAccess_true').removeClass('btn-success');
-                $('#restrictedAccess_false').addClass('btn-primary');
+                $('#restrictedAccess_true').removeClass('btn-primary')
+                                  .addClass('btn-outline-secondary');
+                $('#restrictedAccess_false').addClass('btn-primary')
+                                   .removeClass('btn-outline-secondary');
             }
         }
     });
