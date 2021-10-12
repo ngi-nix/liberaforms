@@ -109,13 +109,21 @@
               {% if current_user_is_editor %}
                 <div id="toggle_enabled" class="btn-group btn-toggle">
                 <button id="enabled_true"
-                        class="btn btn-xs btn-default
-                              {% if form.is_public() %}btn-success{% endif %}">
+                        class="btn btn-xs
+                               {% if form.is_public() %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
                     {%trans%}True{%endtrans%}
                 </button>
                 <button id="enabled_false"
-                        class="btn btn-xs btn-default
-                              {% if not form.is_public() %}btn-primary{% endif %}">
+                        class="btn btn-xs
+                               {% if not form.is_public() %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
                     {%trans%}False{%endtrans%}
                 </button>
                 </div>
@@ -138,16 +146,20 @@
               <div id="toggle_notification"
                    class="btn-group btn-toggle">
                 <button id="notification_true"
-                        class="btn btn-xs btn-default
+                        class="btn btn-xs
                               {% if form_user['notifications']['newAnswer'] %}
-                              btn-success
+                              btn-primary
+                              {% else %}
+                              btn-outline-secondary
                               {% endif %}">
                     {%trans%}True{%endtrans%}
                 </button>
                 <button id="notification_false"
-                        class="btn btn-xs btn-default
+                        class="btn btn-xs
                               {% if not form_user['notifications']['newAnswer'] %}
                               btn-primary
+                              {% else %}
+                              btn-outline-secondary
                               {% endif %}">
                     {%trans%}False{%endtrans%}
                 </button>
@@ -278,14 +290,20 @@
                     class="btn-group btn-toggle">
                 <button id="sendConfirmation_true"
                         class="btn btn-xs
-                               btn-default
-                               {% if form.sendConfirmation %}btn-success{% endif %}">
+                               {% if form.sendConfirmation %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
                     {%trans%}Enabled{%endtrans%}
                 </button>
                 <button id="sendConfirmation_false"
                         class="btn btn-xs
-                               btn-default
-                               {% if not form.sendConfirmation %}btn-primary{% endif %}">
+                               {% if not form.sendConfirmation %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
                     {%trans%}Disabled{%endtrans%}
                 </button>
               </div>
@@ -301,13 +319,21 @@
             {% if current_user_is_editor %}
               <div id="toggle_dataConsent" class="btn-group btn-toggle mb-1 mb-lg-0">
                 <button id="dataConsent_true"
-                        class="btn btn-xs btn-default
-                              {% if dataConsent['enabled'] %}btn-success{% endif %}">
+                        class="btn btn-xs
+                              {% if dataConsent['enabled'] %}
+                              btn-primary
+                              {% else %}
+                              btn-outline-secondary
+                              {% endif %}">
                     {%trans%}Enabled{%endtrans%}
                 </button>
                 <button id="dataConsent_false"
-                        class="btn btn-xs btn-default
-                              {% if not dataConsent['enabled'] %}btn-primary{% endif %}">
+                        class="btn btn-xs
+                              {% if not dataConsent['enabled'] %}
+                              btn-primary
+                              {% else %}
+                              btn-outline-secondary
+                              {% endif %}">
                     {%trans%}Disabled{%endtrans%}
                 </button>
               </div>
@@ -667,15 +693,19 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {
-                $('#enabled_true').addClass('btn-success');
-                $('#enabled_false').removeClass('btn-primary');
+                $('#enabled_true').addClass('btn-primary')
+                                  .removeClass('btn-outline-secondary');
+                $('#enabled_false').removeClass('btn-primary')
+                                   .addClass('btn-outline-secondary');
                 $('#formURL').hide();
                 $('#formLink').show();
                 $('#fediverse-publish').prop('disabled', false);
             }
             else if (data.enabled == false) {
-                $('#enabled_true').removeClass('btn-success');
-                $('#enabled_false').addClass('btn-primary');
+                $('#enabled_true').removeClass('btn-primary')
+                                  .addClass('btn-outline-secondary');
+                $('#enabled_false').addClass('btn-primary')
+                                   .removeClass('btn-outline-secondary');
                 $('#formURL').show();
                 $('#formLink').hide();
                 $('#fediverse-publish').prop('disabled', true);
@@ -697,13 +727,17 @@ document.getElementById('toggle_dataConsent').addEventListener('click', function
         success: function(data, textStatus, jqXHR)
         {
             if (data.enabled == true) {
-                $('#dataConsent_true').addClass('btn-success');
-                $('#dataConsent_false').removeClass('btn-primary');
+                $('#dataConsent_true').addClass('btn-primary')
+                                      .removeClass('btn-outline-secondary');
+                $('#dataConsent_false').removeClass('btn-primary')
+                                       .addClass('btn-outline-secondary');
                 $('#data_consent_preview').show();
             }
             else if (data.enabled == false) {
-                $('#dataConsent_true').removeClass('btn-success');
-                $('#dataConsent_false').addClass('btn-primary');
+                $('#dataConsent_true').removeClass('btn-primary')
+                                      .addClass('btn-outline-secondary');
+                $('#dataConsent_false').addClass('btn-primary')
+                                       .removeClass('btn-outline-secondary');
                 $('#data_consent_preview').hide();
             }
             if ($('#liberaform').find("span.formbuilder-required, #data_consent_preview").filter(":visible").length) {
@@ -728,13 +762,17 @@ document.getElementById('toggle_sendConfirmation').addEventListener('click', fun
         success: function(data, textStatus, jqXHR)
         {
             if (data.confirmation == true) {
-                $('#sendConfirmation_true').addClass('btn-success');
-                $('#sendConfirmation_false').removeClass('btn-primary');
+                $('#sendConfirmation_true').addClass('btn-primary')
+                                           .removeClass('btn-outline-secondary');
+                $('#sendConfirmation_false').removeClass('btn-primary')
+                                            .addClass('btn-outline-secondary');
                 $('#sendConfirmation').show();
             }
             else if (data.confirmation == false) {
-                $('#sendConfirmation_true').removeClass('btn-success');
-                $('#sendConfirmation_false').addClass('btn-primary');
+                $('#sendConfirmation_true').removeClass('btn-primary')
+                                           .addClass('btn-outline-secondary');
+                $('#sendConfirmation_false').addClass('btn-primary')
+                                            .removeClass('btn-outline-secondary');
                 $('#sendConfirmation').hide();
             }
         }
@@ -755,12 +793,16 @@ document.getElementById('toggle_notification').addEventListener('click', functio
         success: function(data, textStatus, jqXHR)
         {
             if (data.notification == true) {
-                $('#notification_true').addClass('btn-success');
-                $('#notification_false').removeClass('btn-primary');
+                $('#notification_true').addClass('btn-primary')
+                                       .removeClass('btn-outline-secondary');
+                $('#notification_false').removeClass('btn-primary')
+                                        .addClass('btn-outline-secondary');
             }
             else if (data.notification == false) {
-                $('#notification_true').removeClass('btn-success');
-                $('#notification_false').addClass('btn-primary');
+                $('#notification_true').removeClass('btn-primary')
+                                       .addClass('btn-outline-secondary');
+                $('#notification_false').addClass('btn-primary')
+                                        .removeClass('btn-outline-secondary');
             }
         }
     });
