@@ -1,3 +1,17 @@
+# Contact
+If you want to get involved in LiberaForms, read the Social Contract and the Code of Conduct first.
+
+- [Social Contract](https://docs.liberaforms.org/en/socia-kontrakto.html)
+- [Code of Conduct](https://docs.liberaforms.org/en/etiketo.html)
+
+If you have any doubts or suggestion about contributing, write an email to [info@liberaforms.org](mailto:info@liberaforms.org) or get in touch with us through the Fediverse at [@liberaforms@barcelona.social](https://barcelona.social/liberaforms)
+
+# Translations
+Read [docs/TRANSLTING.md](https://gitlab.com/liberaforms/liberaforms/-/blob/develop/docs/TRANSLATING.md) for information.  
+These are the minimum translation percentages needed so we accept those into our project:
++ `server`, `data-display`, `formbuilder`: **90%**
++ `Form Templates`: **100%**
+
 # Git
 ## Issues
 
