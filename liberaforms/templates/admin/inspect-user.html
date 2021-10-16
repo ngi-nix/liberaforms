@@ -80,31 +80,6 @@
         </tr>
         {% endif %}
         <tr>
-          <td>{%trans%}Admin{%endtrans%}</td>
-          <td>
-            <div id="toggle_admin" class="btn-group btn-toggle">
-              <button id="admin_true"
-                      class="btn btn-xs
-                             {% if user.is_admin() %}
-                             btn-primary
-                             {% else %}
-                             btn-outline-secondary
-                             {% endif %}">
-                  {%trans%}True{%endtrans%}
-              </button>
-              <button id="admin_false"
-                      class="btn btn-xs
-                             {% if not user.is_admin() %}
-                             btn-primary
-                             {% else %}
-                             btn-outline-secondary
-                             {% endif %}">
-                {%trans%}False{%endtrans%}
-              </button>
-            </div>
-          </td>
-        </tr>
-        <tr>
           {# i18n: Whether user is blocked by admin #}
           <td>{%trans%}Blocked by admin{%endtrans%}</td>
           <td>
@@ -129,6 +104,31 @@
                                btn-outline-secondary
                                {% endif %}">
                       {%trans%}False{%endtrans%}
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>{%trans%}Admin{%endtrans%}</td>
+          <td>
+            <div id="toggle_admin" class="btn-group btn-toggle">
+              <button id="admin_true"
+                      class="btn btn-xs
+                             {% if user.is_admin() %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
+                  {%trans%}True{%endtrans%}
+              </button>
+              <button id="admin_false"
+                      class="btn btn-xs
+                             {% if not user.is_admin() %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
+                {%trans%}False{%endtrans%}
               </button>
             </div>
           </td>

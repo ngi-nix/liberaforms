@@ -66,7 +66,7 @@ class Config(object):
         "ca": ("Català", "ca-ES"),
         "es": ("Castellano", "es-ES"),
         "eu": ("Euskara ", "eu-ES"),
-        "nb": ("Norwegian Bokmål", "nb-NO")
+        #"nb": ("Norwegian Bokmål", "nb-NO")
     }
     ROOT_USERS = ast.literal_eval(os.environ['ROOT_USERS'])
     ALERT_MAILS = ast.literal_eval(os.environ['ALERT_MAILS']) if "ALERT_MAILS" in os.environ else None

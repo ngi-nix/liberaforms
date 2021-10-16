@@ -84,6 +84,42 @@
               {% endif %}
             </td>
           </tr>
+          <tr>
+             <td>{%trans%}Public{%endtrans%}</td>
+             <td>
+              {% if current_user_is_editor and not form.expired %}
+                <div id="toggle_enabled" class="btn-group btn-toggle">
+                <button id="enabled_true"
+                        class="btn btn-xs
+                               {% if form.is_public() %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
+                  {%trans%}True{%endtrans%}
+                </button>
+                <button id="enabled_false"
+                        class="btn btn-xs
+                               {% if not form.is_public() %}
+                               btn-primary
+                               {% else %}
+                               btn-outline-secondary
+                               {% endif %}">
+                  {%trans%}False{%endtrans%}
+                </button>
+                </div>
+              {% else %}
+              <button class="btn btn-xs btn-primary"
+                      disabled>
+                {% if form.is_public() %}
+                  {%trans%}True{%endtrans%}
+                {% else %}
+                  {%trans%}False{%endtrans%}
+                {% endif %}
+              </button>
+             {% endif %}
+             </td>
+          </tr>
           {% if current_user_is_editor and g.current_user.fedi_auth %}
           <tr>
             <td>
@@ -103,39 +139,6 @@
             </td>
           </tr>
           {% endif %}
-          <tr>
-             <td>{%trans%}Public{%endtrans%}</td>
-             <td>
-              {% if current_user_is_editor %}
-                <div id="toggle_enabled" class="btn-group btn-toggle">
-                <button id="enabled_true"
-                        class="btn btn-xs
-                               {% if form.is_public() %}
-                               btn-primary
-                               {% else %}
-                               btn-outline-secondary
-                               {% endif %}">
-                    {%trans%}True{%endtrans%}
-                </button>
-                <button id="enabled_false"
-                        class="btn btn-xs
-                               {% if not form.is_public() %}
-                               btn-primary
-                               {% else %}
-                               btn-outline-secondary
-                               {% endif %}">
-                    {%trans%}False{%endtrans%}
-                </button>
-                </div>
-              {% else %}
-                {% if form.is_public() %}
-                  {%trans%}True{%endtrans%}
-                {% else %}
-                  {%trans%}False{%endtrans%}
-                {% endif %}
-             {% endif %}
-             </td>
-          </tr>
           {% set form_user = form.get_form_user(g.current_user.id) %}
           {% if form_user != None %}
           <tr>
@@ -152,7 +155,7 @@
                               {% else %}
                               btn-outline-secondary
                               {% endif %}">
-                    {%trans%}True{%endtrans%}
+                  {%trans%}True{%endtrans%}
                 </button>
                 <button id="notification_false"
                         class="btn btn-xs
@@ -161,7 +164,7 @@
                               {% else %}
                               btn-outline-secondary
                               {% endif %}">
-                    {%trans%}False{%endtrans%}
+                  {%trans%}False{%endtrans%}
                 </button>
               </div>
               {%trans%}Notify me{%endtrans%}
@@ -192,13 +195,21 @@
               </a>
               {% endif %}
             {% else %}
-              {% if form.expired %}
-                {%trans%}Expired{%endtrans%}
-              {% elif form.can_expire() %}
-                {%trans%}True{%endtrans%}
-              {% else %}
-                {%trans%}False{%endtrans%}
-              {% endif %}
+              <button class="btn btn-xs
+                            {% if form.expired %}
+                            btn-warning
+                            {% else %}
+                            btn-primary
+                            {% endif %}"
+                      disabled>
+                {% if form.expired %}
+                  {%trans%}This form has expired{%endtrans%}
+                {% elif form.can_expire() %}
+                  {%trans%}This form will expire{%endtrans%}
+                {% else %}
+                  {%trans%}False{%endtrans%}
+                {% endif %}
+              </button>
             {% endif %}
             </td>
           </tr>
@@ -206,10 +217,10 @@
              <td>{%trans%}Editors{%endtrans%}</td>
              <td>
               {% set editors=form.get_editors() %}
+              {% set number='<span class="badge badge-light">%s</span>' |
+                 format(editors.count() -1) %}
               {% if current_user_is_editor %}
                 {% if editors.count() > 1 %}
-                {% set number='<span class="badge badge-light">%s</span>' |
-                   format(editors.count() -1) %}
                 <a class="btn btn-primary btn-xs"
                    role="button"
                    href="/forms/share/{{form.id}}"
@@ -224,7 +235,11 @@
                 </a>
                 {% endif %}
               {% else %}
-                  {%trans number=editors.count()-1%}Form shared with {{number}}{%endtrans%}
+              <button class="btn btn-primary btn-xs"
+                      disabled
+                      style="padding:5px 4px 3px 4px">
+                 {%trans number=number|safe%}Form shared with {{number}}{%endtrans%}
+              </button>
               {% endif %}
              </td>
           </tr>
@@ -232,10 +247,10 @@
             <td>{%trans%}Shared answers{%endtrans%}</td>
             <td>
             {% set readers=form.get_readers() %}
+            {% set number='<span class="badge badge-light">%s</span>' |
+               format(readers.count()) %}
             {% if current_user_is_editor %}
               {% if readers.count() > 0 %}
-              {% set number='<span class="badge badge-light">%s</span>' |
-                 format(readers.count()) %}
               <a class="btn btn-primary btn-xs"
                  role="button"
                  href="/forms/share/{{form.id}}"
@@ -250,7 +265,11 @@
               </a>
               {% endif %}
             {% else %}
-              {{ readers.count() }}
+              <button class="btn btn-primary btn-xs"
+                      disabled
+                      style="padding:5px 4px 3px 4px">
+                {%trans number=number|safe%}Answers shared with {{number}}{%endtrans%}
+              </button>
             {% endif %}
             </td>
           </tr>
@@ -272,11 +291,14 @@
               </a>
               {% endif %}
             {% else %}
-              {% if form.restrictedAccess %}
-                {%trans%}True{%endtrans%}
-              {% else %}
-                {%trans%}False{%endtrans%}
-              {% endif %}
+            <button class="btn btn-xs btn-primary"
+                    disabled>
+                {% if form.restrictedAccess %}
+                 {%trans%}True{%endtrans%}
+                {% else %}
+                 {%trans%}False{%endtrans%}
+                {% endif %}
+            </button>
             {% endif %}
             </td>
           </tr>
@@ -308,7 +330,14 @@
                 </button>
               </div>
             {% else %}
-                {{ form.sendConfirmation }}
+              <button class="btn btn-xs btn-primary"
+                      disabled>
+                  {% if form.sendConfirmation %}
+                   {%trans%}Enabled{%endtrans%}
+                  {% else %}
+                   {%trans%}Disabled{%endtrans%}
+                  {% endif %}
+              </button>
             {% endif %}
             </td>
           </tr>
@@ -343,11 +372,14 @@
                   {%trans%}Personalize{%endtrans%}
               </button>
             {% else %}
-              {% if dataConsent['enabled'] %}
-                {%trans%}True{%endtrans%}
-              {% else %}
-                {%trans%}False{%endtrans%}
-              {% endif %}
+              <button class="btn btn-xs btn-primary"
+                      disabled>
+                {% if dataConsent['enabled'] %}
+                  {%trans%}Enabled{%endtrans%}
+                {% else %}
+                  {%trans%}Disabled{%endtrans%}
+                {% endif %}
+              </button>
             {% endif %}
             </td>
           </tr>
