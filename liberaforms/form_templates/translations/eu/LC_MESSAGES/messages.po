@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-10-09 10:58+0200\n"
+"POT-Creation-Date: 2021-10-17 17:05+0200\n"
 "PO-Revision-Date: 2021-10-08 16:06+0000\n"
 "Last-Translator: LiberaForms <info@liberaforms.org>\n"
 "Language: eu\n"
@@ -156,7 +156,7 @@ msgstr "Salbatu gure aterpea"
 
 #: form_templates/form_templates.py:130
 #, fuzzy
-msgid "Ask citizens to support for your local initiative."
+msgid "Ask citizens to support your local initiative."
 msgstr "Herritarren laguntza eskatzea tokiko ekimenerako."
 
 #: form_templates/form_templates.py:131
@@ -238,6 +238,7 @@ msgid "e.g. Poppins"
 msgstr "adb. Urtxulutegi"
 
 #: form_templates/form_templates.py:173 form_templates/form_templates.py:484
+#: form_templates/form_templates.py:584 form_templates/form_templates.py:687
 msgid "e.g. mary@example.com"
 msgstr "adb. miren@adibidea.eus"
 
@@ -618,11 +619,6 @@ msgid ""
 "form)."
 msgstr ""
 
-#: form_templates/form_templates.py:584 form_templates/form_templates.py:687
-#: form_templates/form_templates.py:715
-msgid "e.g. mary@exemple.com"
-msgstr ""
-
 #: form_templates/form_templates.py:589
 msgid "Organization"
 msgstr ""
@@ -768,6 +764,10 @@ msgstr ""
 
 #: form_templates/form_templates.py:714
 msgid "If you win, we'll send you an email!"
+msgstr ""
+
+#: form_templates/form_templates.py:715
+msgid "e.g. mary@exemple.com"
 msgstr ""
 
 #: form_templates/form_templates.py:720
