@@ -130,20 +130,6 @@ label {
 input[type="date"], input[type="number"], input[type="time"] {
   width: auto !important;
 }
-/*
-.answers-table {
-  font-size: 14px;
-}
-.td-controls td:first-child {
-    text-align: center;
-}
-.cell-editor  {
-  white-space:nowrap;
-}
-.cell-editor > input[type="text"] {
-  width: 70%;
-}
-*/
 .link {
   color:#337ab7;
   cursor:pointer;
