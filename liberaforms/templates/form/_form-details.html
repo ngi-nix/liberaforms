@@ -1,0 +1,690 @@
+
+{% set dataConsent = form.get_data_consent_for_display() %}
+{% set total_answers = form.get_total_answers() %}
+{% set author = form.get_author() %}
+{% set current_user_is_editor = form.is_editor(g.current_user) %}
+
+<div class="title_1 delimited">
+  {%trans%}Details{%endtrans%}
+  <div style="float:right">
+    {% if current_user_is_editor %}
+    <a class="btn btn-primary btn-sm"
+       role="button"
+       href="/forms/answers/{{form.id}}">
+       {%trans%}View answers{%endtrans%}
+       <span class="badge badge-light">
+         {{total_answers}}
+       </span>
+    </a>
+    <a class="btn btn-primary btn-sm"
+       role="button"
+       href="/forms/answers/stats/{{form.id}}">
+       {%trans%}Graphs{%endtrans%}
+       <i class="fa fa-bar-chart" aria-hidden="true"></i>
+    </a>
+    {% else %}
+    <button class="btn btn-primary btn-sm" disabled>
+        {%trans%}Total answers{%endtrans%}
+        <span class="badge badge-light">{{total_answers}}</span>
+    </button>
+    {% endif %}
+  </div>
+</div>
+
+<table class="table table-sm sparse-table">
+  <tr>
+    <td>{%trans%}Name{%endtrans%}</td>
+    <td>{{ form.slug }}</td>
+  </tr>
+  <tr>
+    <td>{%trans%}Last answer{%endtrans%}</td>
+    <td>
+    {% if total_answers %}
+      {% if current_user_is_editor %}
+      <a href="/forms/answers/{{form.id}}">
+        {{ form.get_last_answer_date() }}
+      </a>
+      {% else %}
+      {{ form.get_last_answer_date() }}
+      {% endif %}
+    {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td>
+      {%trans%}Public URL{%endtrans%}
+      {% if not form.adminPreferences['public'] %}
+      <span class="highlightedText text-lowercase">
+        ({%trans%}Disabled{%endtrans%})
+      </span>
+      {% endif %}
+    </td>
+    <td>
+      {% if form.is_public() %}
+      <a id="formLink"
+         href="{{ form.url }}">
+        {{ form.url }}
+      </a>
+      <span id="formURL"
+            style="display:none">
+        {{ form.url }}
+      </span>
+      {% else %}
+      <a id="formLink"
+         href="{{ form.url }}"
+         style="display:none">
+        {{ form.url }}
+      </a>
+      <span id="formURL">{{ form.url }}</span>
+      {% endif %}
+    </td>
+  </tr>
+  <tr>
+     <td>{%trans%}Public{%endtrans%}</td>
+     <td>
+      {% if current_user_is_editor and not form.expired %}
+        <div id="toggle_enabled" class="btn-group btn-toggle">
+        <button id="enabled_true"
+                class="btn btn-xs
+                       {% if form.is_public() %}
+                       btn-primary
+                       {% else %}
+                       btn-outline-secondary
+                       {% endif %}"
+                {% if not form.adminPreferences['public'] %}
+                disabled
+                {% endif %}>
+          {%trans%}True{%endtrans%}
+        </button>
+        <button id="enabled_false"
+                class="btn btn-xs
+                       {% if not form.is_public() %}
+                       btn-primary
+                       {% else %}
+                       btn-outline-secondary
+                       {% endif %}"
+                {% if not form.adminPreferences['public'] %}
+                disabled
+                {% endif %}>
+          {%trans%}False{%endtrans%}
+        </button>
+        </div>
+      {% else %}
+      <button class="btn btn-xs btn-primary"
+              disabled>
+        {% if form.is_public() %}
+          {%trans%}True{%endtrans%}
+        {% else %}
+          {%trans%}False{%endtrans%}
+        {% endif %}
+      </button>
+     {% endif %}
+     </td>
+  </tr>
+  {% if current_user_is_editor and g.current_user.fedi_auth %}
+  <tr>
+    <td>
+      {%trans%}Fediverse{%endtrans%}
+    </td>
+    <td>
+      <button id="fediverse-publish"
+              class="btn btn-primary btn-xs"
+              style="padding:5px 4px 3px 4px"
+              onclick="window.location.href='/form/{{form.id}}/fediverse-publish'"
+              {% if not form.is_public() %}
+              disabled
+              {% endif %}>
+        {%trans%}Published{%endtrans%}
+        <span class="badge badge-light">
+          {{ form.published_cnt }}
+        </span>
+      </button>
+    </td>
+  </tr>
+  {% endif %}
+  {% set form_user = form.get_form_user(g.current_user.id) %}
+  {% if form_user != None %}
+  <tr>
+    <td>
+      {%trans%}New answer{%endtrans%}
+    </td>
+    <td>
+      <div id="toggle_notification"
+           class="btn-group btn-toggle">
+        <button id="notification_true"
+                class="btn btn-xs
+                      {% if form_user['notifications']['newAnswer'] %}
+                      btn-primary
+                      {% else %}
+                      btn-outline-secondary
+                      {% endif %}">
+          {%trans%}True{%endtrans%}
+        </button>
+        <button id="notification_false"
+                class="btn btn-xs
+                      {% if not form_user['notifications']['newAnswer'] %}
+                      btn-primary
+                      {% else %}
+                      btn-outline-secondary
+                      {% endif %}">
+          {%trans%}False{%endtrans%}
+        </button>
+      </div>
+      {%trans%}Notify me{%endtrans%}
+    </td>
+  </tr>
+  {% endif %}
+  <tr>
+    <td>{%trans%}Expiration{%endtrans%}</td>
+    <td>
+    {% if current_user_is_editor %}
+      {% if form.expired %}
+      <a class="btn btn-warning btn-xs"
+         role="button"
+         href="/forms/expiration/{{form.id}}">
+         {%trans%}This form has expired{%endtrans%}
+      </a>
+      {% elif form.can_expire() %}
+      <a class="btn btn-success btn-xs"
+         role="button"
+         href="/forms/expiration/{{form.id}}">
+         {%trans%}This form will expire{%endtrans%}
+      </a>
+      {% else %}
+      <a class="btn btn-primary btn-xs"
+         role="button"
+         href="/forms/expiration/{{form.id}}">
+         {%trans%}False{%endtrans%}
+      </a>
+      {% endif %}
+    {% else %}
+      <button class="btn btn-xs
+                    {% if form.expired %}
+                    btn-warning
+                    {% else %}
+                    btn-primary
+                    {% endif %}"
+              disabled>
+        {% if form.expired %}
+          {%trans%}This form has expired{%endtrans%}
+        {% elif form.can_expire() %}
+          {%trans%}This form will expire{%endtrans%}
+        {% else %}
+          {%trans%}False{%endtrans%}
+        {% endif %}
+      </button>
+    {% endif %}
+    </td>
+  </tr>
+  <tr>
+     <td>{%trans%}Editors{%endtrans%}</td>
+     <td>
+      {% set editors=form.get_editors() %}
+      {% set number='<span class="badge badge-light">%s</span>' |
+         format(editors.count() -1) %}
+      {% if current_user_is_editor %}
+        {% if editors.count() > 1 %}
+        <a class="btn btn-primary btn-xs"
+           role="button"
+           href="/forms/share/{{form.id}}"
+           style="padding:5px 4px 3px 4px">
+           {%trans number=number|safe%}Form shared with {{number}}{%endtrans%}
+        </a>
+        {% else %}
+        <a class="btn btn-primary btn-xs"
+           role="button"
+           href="/forms/share/{{form.id}}">
+           {%trans%}Add editors{%endtrans%}
+        </a>
+        {% endif %}
+      {% else %}
+      <button class="btn btn-primary btn-xs"
+              disabled
+              style="padding:5px 4px 3px 4px">
+         {%trans number=number|safe%}Form shared with {{number}}{%endtrans%}
+      </button>
+      {% endif %}
+     </td>
+  </tr>
+  <tr>
+    <td>{%trans%}Shared answers{%endtrans%}</td>
+    <td>
+    {% set readers=form.get_readers() %}
+    {% set number='<span class="badge badge-light">%s</span>' |
+       format(readers.count()) %}
+    {% if current_user_is_editor %}
+      {% if readers.count() > 0 %}
+      <a class="btn btn-primary btn-xs"
+         role="button"
+         href="/forms/share/{{form.id}}"
+         style="padding:5px 4px 3px 4px">
+         {%trans number=number|safe%}Answers shared with {{number}}{%endtrans%}
+      </a>
+      {% else %}
+      <a class="btn btn-primary btn-xs"
+         role="button"
+         href="/forms/share/{{form.id}}">
+         {%trans%}Share{%endtrans%}
+      </a>
+      {% endif %}
+    {% else %}
+      <button class="btn btn-primary btn-xs"
+              disabled
+              style="padding:5px 4px 3px 4px">
+        {%trans number=number|safe%}Answers shared with {{number}}{%endtrans%}
+      </button>
+    {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td>{%trans%}Restricted access{%endtrans%}</td>
+    <td>
+    {% if current_user_is_editor %}
+     {% if form.restrictedAccess %}
+     <a class="btn btn-primary btn-xs"
+        role="button"
+        href="/forms/share/{{form.id}}#restricted_access">
+        {%trans%}True{%endtrans%}
+      </a>
+      {% else %}
+      <a class="btn btn-primary btn-xs"
+        role="button"
+        href="/forms/share/{{form.id}}#restricted_access">
+        {%trans%}False{%endtrans%}
+      </a>
+      {% endif %}
+    {% else %}
+    <button class="btn btn-xs btn-primary"
+            disabled>
+        {% if form.restrictedAccess %}
+         {%trans%}True{%endtrans%}
+        {% else %}
+         {%trans%}False{%endtrans%}
+        {% endif %}
+    </button>
+    {% endif %}
+    </td>
+  </tr>
+{% if form.has_email_field() %}
+  <tr>
+        {# i18n: Option in Form inspecting view to enable a checkbox at the end of the form, that confirm user via email that their answers have been sent #}
+    <td>{%trans%}Confirmation{%endtrans%}</td>
+    <td>
+    {% if current_user_is_editor %}
+      <div id="toggle_sendConfirmation"
+            class="btn-group btn-toggle">
+        <button id="sendConfirmation_true"
+                class="btn btn-xs
+                       {% if form.sendConfirmation %}
+                       btn-primary
+                       {% else %}
+                       btn-outline-secondary
+                       {% endif %}">
+            {%trans%}Enabled{%endtrans%}
+        </button>
+        <button id="sendConfirmation_false"
+                class="btn btn-xs
+                       {% if not form.sendConfirmation %}
+                       btn-primary
+                       {% else %}
+                       btn-outline-secondary
+                       {% endif %}">
+            {%trans%}Disabled{%endtrans%}
+        </button>
+      </div>
+    {% else %}
+      <button class="btn btn-xs btn-primary"
+              disabled>
+          {% if form.sendConfirmation %}
+           {%trans%}Enabled{%endtrans%}
+          {% else %}
+           {%trans%}Disabled{%endtrans%}
+          {% endif %}
+      </button>
+    {% endif %}
+    </td>
+  </tr>
+{% endif %}
+  <tr>
+    <td id="DPL-anchor">{%trans%}DPL{%endtrans%}</td>
+    <td>
+    {% if current_user_is_editor %}
+      <div id="toggle_dataConsent" class="btn-group btn-toggle mb-1 mb-lg-0">
+        <button id="dataConsent_true"
+                class="btn btn-xs
+                      {% if dataConsent['enabled'] %}
+                      btn-primary
+                      {% else %}
+                      btn-outline-secondary
+                      {% endif %}">
+            {%trans%}Enabled{%endtrans%}
+        </button>
+        <button id="dataConsent_false"
+                class="btn btn-xs
+                      {% if not dataConsent['enabled'] %}
+                      btn-primary
+                      {% else %}
+                      btn-outline-secondary
+                      {% endif %}">
+            {%trans%}Disabled{%endtrans%}
+        </button>
+      </div>
+      &nbsp;
+      <button id="show-DPL-text-button"
+              class="btn btn-primary btn-xs mb-1 mb-md-0">
+          {%trans%}Personalize{%endtrans%}
+      </button>
+    {% else %}
+      <button class="btn btn-xs btn-primary"
+              disabled>
+        {% if dataConsent['enabled'] %}
+          {%trans%}Enabled{%endtrans%}
+        {% else %}
+          {%trans%}Disabled{%endtrans%}
+        {% endif %}
+      </button>
+    {% endif %}
+    </td>
+  </tr>
+{% if current_user_is_editor %}
+  <tr id="DPL-text-block" style="display:none">
+    <td colspan="3">
+      <div class="title_2">
+        {%trans%}Data protection{%endtrans%}
+      </div>
+      <div id="DPL-text-editor">
+        <input id="save-DPL-button"
+               class="btn-success btn btn-sm"
+               type="button"
+               value="{%trans%}Save{%endtrans%}" />
+        <input id="cancel-DPL-button"
+               class="btn-primary btn btn-sm"
+               type="button"
+               value="{%trans%}Cancel{%endtrans%}" />
+        {% set siteConsent = form.site.get_consent_for_display(dataConsent['id']) %}
+        {% set disabled = "disabled" if siteConsent.markdown == dataConsent.markdown else "" %}
+        <input id="default-DPL-button"
+               class="btn-primary btn btn-sm"
+               type="button"
+               value="{%trans%}Use the template{%endtrans%}" {{disabled}}/>
+
+        <div style="margin-top:1em">
+          <textarea id="DPL-mde">{{ dataConsent['markdown'] }}</textarea>
+          <div id="{{consent_id}}-consent-editor" class="form-row">
+            <div class="form-group col">
+
+            {% set placeholder = siteConsent['label'] if siteConsent['label'] else _('I agree') %}
+            <input id="dataConsent-label-input"
+                   class="form-control form-control-sm"
+                   type="text"
+                   placeholder="{{placeholder}}"
+                   value="{{form.data_consent['label']}}">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="dataConsentText" style="display:none">
+        {{ dataConsent['html']|safe }}
+      </div>
+    </td>
+  </tr>
+{% endif %}
+  <tr>
+    <td>
+      {%trans%}Author{%endtrans%}
+      {% if not author.enabled %}
+      <span class="highlightedText text-lowercase">
+        ({%trans%}Disabled{%endtrans%})
+      </span>
+      {% endif %}
+    </td>
+    <td>
+    {% if g.is_admin %}
+    <a href="/admin/users/{{ author.id }}">{{ author.username }}</a>
+    {% else %}
+    {{ author.username }}
+    {% endif %}
+    </td>
+  </tr>
+  <tr>
+    <td>{%trans%}Created{%endtrans%}</td>
+    <td>{{ form.get_created_date() }}</td>
+  </tr>
+  {% if g.is_root_user_enabled %}
+  <tr>
+    <td>{%trans%}Hostname{%endtrans%}</td>
+    <td>{{ form.hostname }}</td>
+  </tr>
+  {% endif %}
+</table>
+
+
+{% if current_user_is_editor %}
+<script>
+document.getElementById('toggle_enabled').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-enabled/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.enabled == true) {
+                $('#enabled_true').addClass('btn-primary')
+                                  .removeClass('btn-outline-secondary');
+                $('#enabled_false').removeClass('btn-primary')
+                                   .addClass('btn-outline-secondary');
+                $('#formURL').hide();
+                $('#formLink').show();
+                $('#fediverse-publish').prop('disabled', false);
+            }
+            else if (data.enabled == false) {
+                $('#enabled_true').removeClass('btn-primary')
+                                  .addClass('btn-outline-secondary');
+                $('#enabled_false').addClass('btn-primary')
+                                   .removeClass('btn-outline-secondary');
+                $('#formURL').show();
+                $('#formLink').hide();
+                $('#fediverse-publish').prop('disabled', true);
+            }
+        }
+    });
+});
+document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
+    $("#saved-DPL-notification").hide()
+    $.ajax({
+        url : "/form/toggle-data-consent/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.enabled == true) {
+                $('#dataConsent_true').addClass('btn-primary')
+                                      .removeClass('btn-outline-secondary');
+                $('#dataConsent_false').removeClass('btn-primary')
+                                       .addClass('btn-outline-secondary');
+                $('#data_consent_preview').show();
+            }
+            else if (data.enabled == false) {
+                $('#dataConsent_true').removeClass('btn-primary')
+                                      .addClass('btn-outline-secondary');
+                $('#dataConsent_false').addClass('btn-primary')
+                                       .removeClass('btn-outline-secondary');
+                $('#data_consent_preview').hide();
+            }
+            if ($('#liberaform').find("span.formbuilder-required, #data_consent_preview").filter(":visible").length) {
+                $("#required_message").show()
+            }else{
+                $("#required_message").hide()
+            }
+        }
+    });
+});
+{% if form.has_email_field() %}
+document.getElementById('toggle_sendConfirmation').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-send-confirmation/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken)
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.confirmation == true) {
+                $('#sendConfirmation_true').addClass('btn-primary')
+                                           .removeClass('btn-outline-secondary');
+                $('#sendConfirmation_false').removeClass('btn-primary')
+                                            .addClass('btn-outline-secondary');
+                $('#sendConfirmation').show();
+            }
+            else if (data.confirmation == false) {
+                $('#sendConfirmation_true').removeClass('btn-primary')
+                                           .addClass('btn-outline-secondary');
+                $('#sendConfirmation_false').addClass('btn-primary')
+                                            .removeClass('btn-outline-secondary');
+                $('#sendConfirmation').hide();
+            }
+        }
+    });
+});
+{% endif %}
+// notify me on new answer
+document.getElementById('toggle_notification').addEventListener('click', function(evt){
+    $.ajax({
+        url : "/form/toggle-notification/{{ form.id }}",
+        type: "POST",
+        dataType: "json",
+        beforeSend: function(xhr, settings) {
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token() }}")
+            }
+        },
+        success: function(data, textStatus, jqXHR)
+        {
+            if (data.notification == true) {
+                $('#notification_true').addClass('btn-primary')
+                                       .removeClass('btn-outline-secondary');
+                $('#notification_false').removeClass('btn-primary')
+                                        .addClass('btn-outline-secondary');
+            }
+            else if (data.notification == false) {
+                $('#notification_true').removeClass('btn-primary')
+                                       .addClass('btn-outline-secondary');
+                $('#notification_false').addClass('btn-primary')
+                                        .removeClass('btn-outline-secondary');
+            }
+        }
+    });
+});
+// DPL editor
+var consent_cache = {}
+$(document).ready(function() {
+    var dpl_MDE = new SimpleMDE({
+                                autosave: {enabled: false},
+                                spellChecker: false,
+                                autoDownloadFontAwesome: false,
+                                element: document.getElementById("DPL-mde")
+                             });
+    $("#show-DPL-text-button").click(function(){
+        $("#show-DPL-text-button").prop('disabled', true);
+        $("#details_col").find(".dataConsentText").hide()
+        $("#DPL-text-block").show()
+        $("#DPL-text-editor").show(0, function() {
+                    dpl_MDE.codemirror.refresh();
+                    $([document.documentElement, document.body]).animate({
+                        scrollTop: $("#DPL-anchor").offset().top
+                    }, 200);
+                });
+    });
+    $("#save-DPL-button").click(function(){
+        var markdown = dpl_MDE.value()
+        var label = $("#dataConsent-label-input").val()
+        var required = {{ dataConsent['required']|tojson }}
+        var data = {"markdown": markdown, "label": label, 'required': required}
+        $.ajax({
+            url : "/forms/save-consent/{{form.id}}/{{dataConsent.id}}",
+            type: "POST",
+            dataType: "json",
+            data: data,
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                //console.log(data)
+                $("#show-DPL-text-button").prop('disabled', false);
+                $("#DPL-text-editor").hide()
+                $(".dataConsentText").html(data.html)
+                $(".dataConsentText").show(0)
+                fadeOutHighlight($(".dataConsentText"))
+                $("#DPL-mde").val(data.markdown)
+                dpl_MDE.value($("#DPL-mde").val())
+                if (! data.label ){
+                    data.label="{{_('I agree')}}"
+                }
+                $("#DPL-label").html(data.label).append('<span class="required-dot">●</span>')
+                $("#DPL-label").show()
+            }
+        });
+    });
+    $("#cancel-DPL-button").click(function(){
+        $("#DPL-text-block").hide()
+        if (consent_cache['markdown'] !== undefined) {
+            $("#DPL-mde").val(consent_cache['markdown'])
+            dpl_MDE.value($("#DPL-mde").val())
+        } else {
+            dpl_MDE.value($("#DPL-mde").val())
+        }
+        if (consent_cache['label'] !== undefined) {
+           $("#dataConsent-label-input").val(consent_cache['label'])
+        } else {
+            $("#dataConsent-label-input").val("")
+        }
+        $("#show-DPL-text-button").prop('disabled', false);
+    });
+    $("#default-DPL-button").click(function(){
+        consent_cache['markdown'] = dpl_MDE.value()
+        consent_cache['label'] = $("#dataConsent-label-input").val()
+        $.ajax({
+            url : "/forms/default-consent/{{form.id}}/{{dataConsent.id}}",
+            type: "GET",
+            dataType: "json",
+            data: {},
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            },
+            success: function(data, textStatus, jqXHR)
+            {
+                $("#DPL-mde").val(data.markdown)
+                dpl_MDE.value($("#DPL-mde").val())
+                if (data.label == "{{ _('I agree') }}") {
+                    $("#dataConsent-label-input").val("")
+                } else {
+                    $("#dataConsent-label-input").val(data.label)
+                }
+                $("#default-DPL-button").prop('disabled', true)
+            }
+        });
+    });
+    dpl_MDE.codemirror.on("change", function(){
+        $("#default-DPL-button").prop('disabled', false)
+    });
+});
+</script>
+{% endif %}
