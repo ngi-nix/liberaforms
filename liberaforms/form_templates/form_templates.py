@@ -581,7 +581,7 @@ templates = [
             },
             {
                 "label":_("Email"),
-                "placeholder":_("e.g. mary@exemple.com"),
+                "placeholder":_("e.g. mary@example.com"),
                 "className":"form-control","name":"text-1630655000269","required":True,
                 "subtype":"email","type":"text"
             },
@@ -684,7 +684,7 @@ templates = [
             },
             {
                 "label":_("Email"),
-                "placeholder":_("e.g. mary@exemple.com"),
+                "placeholder":_("e.g. mary@example.com"),
                 "className":"form-control","name":"text-1630655000269","required":True,
                 "subtype":"email","type":"text"
             },
