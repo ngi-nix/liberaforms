@@ -21,7 +21,7 @@ class TestUserPreferences():
         """
 
         response = login(client, users['dummy_1'])
-        assert "<!-- my_forms_page -->" in response.data.decode()
+        assert "<!-- list_templates_page -->" in response.data.decode()
 
     def test_change_language(self, users, client, anon_client):
         """ Tests unavailable language and available language

@@ -21,7 +21,6 @@ class TestAnswers():
         assert response.status_code == 200
         html = response.data.decode()
         assert '<!-- list_answers_page -->' in html
-        assert '<table  id="answersTable"' in html
 
     def test_show_answers_stats(self, users, client, forms):
         login(client, users['editor'])
@@ -35,15 +34,8 @@ class TestAnswers():
         assert '<canvas id="time_chart" height="100"></canvas>' in html
 
     def test_answers_enable_edition(self, users, client, forms):
-        login(client, users['editor'])
-        response = client.get(
-                        f"/forms/answers/{forms['test_form'].id}?edit_mode=true",
-                        follow_redirects=False,
-                    )
-        assert response.status_code == 200
-        html = response.data.decode()
-        assert '<table  id="answersTable"' in html
-        assert '<i class="fa fa-trash delete-row-icon enabled"' in html
+        # data-display function
+        pass
 
     def test_download_csv(self, users, client, forms):
         login(client, users['editor'])
@@ -58,12 +50,10 @@ class TestAnswers():
         initial_log_count = forms['test_form'].log.count()
         initial_answers_count = forms['test_form'].answers.count()
         answer_to_delete = forms['test_form'].answers[-1]
+        answer_id = vars(answer_to_delete)['id']
         login(client, users['editor'])
-        response = client.post(
-                        f"/forms/delete-answer/{forms['test_form'].id}",
-                        json = {
-                            "id": vars(answer_to_delete)['id']
-                        },
+        response = client.delete(
+                        f"/data-display/answer/{answer_id}/delete",
                         follow_redirects=False,
                     )
         assert response.status_code == 200
@@ -74,13 +64,11 @@ class TestAnswers():
 
     def test_toggle_marked_answer(self, users, client, forms):
         answer = forms['test_form'].answers[-1]
+        answer_id = vars(answer)['id']
         initial_marked = vars(answer)['marked']
         login(client, users['editor'])
         response = client.post(
-                        f"/forms/toggle-marked-answer/{forms['test_form'].id}",
-                        json = {
-                            "id": vars(answer)['id']
-                        },
+                        f"/data-display/answer/{answer_id}/mark",
                         follow_redirects=False,
                     )
         assert response.status_code == 200

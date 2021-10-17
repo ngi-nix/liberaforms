@@ -60,7 +60,7 @@ class TestBootstrapAdmin():
                     )
         assert response.status_code == 200
         html = response.data.decode()
-        assert "<!-- my_forms_page -->" in html
+        assert "<!-- list_templates_page -->" in html
         assert '<a class="nav-link" href="/user/logout">' in html
 
     def test_logout(self, client):

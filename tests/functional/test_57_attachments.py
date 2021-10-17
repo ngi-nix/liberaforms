@@ -94,14 +94,12 @@ class TestAnswerAttachment():
         initial_log_count = forms['test_form_2'].log.count()
         initial_answers_count = forms['test_form_2'].answers.count()
         answer = forms['test_form_2'].answers[-1]
+        answer_id = vars(answer)['id']
         attachment = AnswerAttachment.find(form_id=forms['test_form_2'].id,
-                                           answer_id=vars(answer)['id'])
+                                           answer_id=answer_id)
         login(client, users['editor'])
-        response = client.post(
-                        f"/forms/delete-answer/{forms['test_form_2'].id}",
-                        json = {
-                            "id": vars(answer)['id']
-                        },
+        response = client.delete(
+                        f"/data-display/answer/{answer_id}/delete",
                         follow_redirects=False,
                     )
         assert response.status_code == 200
