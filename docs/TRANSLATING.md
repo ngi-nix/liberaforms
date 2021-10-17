@@ -89,9 +89,9 @@ We use `pybabel` python module to manage this.
 `pybabel compile -d ./translations`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#compile)
 
-<!-- > For Form Templates:
+> For Form Templates:
 
-`pybabel compile -d form_templates/translations` -->
+`pybabel compile -d form_templates/translations`
 
 ## Extracting
 > Updates .pot file from code, extracting comments starting with 'i18n:' and adding relevant metadata
@@ -99,9 +99,9 @@ We use `pybabel` python module to manage this.
 `pybabel extract -F babel/messages.cfg -o translations/messages.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='info@liberaforms.org'`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#extract)
 
-<!-- > For Form Templates:
+> For Form Templates:
 
-`pybabel extract -F babel/form_templates.cfg -o form_templates/translations/form_templates.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='info@liberaforms.org'` -->
+`pybabel extract -F babel/form_templates.cfg -o form_templates/translations/form_templates.pot ./ --add-comment='i18n:' --copyright-holder='LiberaForms, CC-BY-SA' --msgid-bugs-address='info@liberaforms.org'`
 
 ## Creating
 > Creates new .po file from .pot.  
@@ -110,9 +110,9 @@ _You must specify the target language adding its [ISO-639-1](https://en.wikipedi
 `pybabel init -i ./translations/messages.pot -d ./translations -l eo`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#init)
 
-<!-- > For Form Templates:
+> For Form Templates:
 
-`pybabel init -i form_templates/translations/form_templates.pot -d form_templates/translations -l eo` -->
+`pybabel init -i form_templates/translations/form_templates.pot -d form_templates/translations -l eo`
 
 ## Updating
 > Updates .po files according to .pot.  
@@ -120,9 +120,9 @@ _You must specify the target language adding its [ISO-639-1](https://en.wikipedi
 `pybabel update -i ./translations/messages.pot -d ./translations`  
 [Read more](http://babel.pocoo.org/en/latest/cmdline.html#update)
 
-<!-- > For Form Templates:
+> For Form Templates:
 
-`pybabel update -i form_templates/translations/form_templates.pot -d form_templates/translations` -->
+`pybabel update -i form_templates/translations/form_templates.pot -d form_templates/translations`
 
 
 # Internationalizating (i18n)
