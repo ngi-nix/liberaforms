@@ -38,7 +38,7 @@ def populate_session_with_form(form):
 formbuilder has some bugs.
 Repair if needed.
 """
-def repair_form_structure(structure):
+def repair_form_structure(structure, form=None):
     def get_unique_option_value(values, label):
         value = label.replace(" ", "-")
         value = sanitizers.sanitize_string(value)
@@ -78,11 +78,19 @@ def repair_form_structure(structure):
                     option["value"] = option["value"].strip()
                     if not option["label"] and not option["value"]:
                         continue
-                    if not option["label"]:
+                    if not option["label"] and option["value"]:
                         option["label"] = option["value"]
-                    if not option["value"]:
-                        option["value"] = get_unique_option_value(element["values"],
-                                                                  option["label"])
+                        options.append(option)
+                        continue
+                    if not form or form.is_public() == False:
+                        if form:
+                            saved_values=form.get_multichoice_options_with_saved_data()
+                            if element["name"] in saved_values.keys():
+                                if option["value"] in saved_values[element['name']]:
+                                    options.append(option)
+                                    continue
+                        option["value"]=get_unique_option_value(element["values"],
+                                                                option["label"])
                     options.append(option)
                 element["values"] = options
     return structure

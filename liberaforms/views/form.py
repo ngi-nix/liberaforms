@@ -70,6 +70,9 @@ def edit_form(form_id=None):
         if not queriedForm:
             flash(_("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
+        elif queriedForm.enabled:
+            flash(_("Cannot edit this form because it is Public"), 'warning')
+            return redirect(make_url_for('form_bp.inspect_form', form_id=queriedForm.id))
     if request.method == 'POST':
         if queriedForm:
             session['slug'] = queriedForm.slug
@@ -86,7 +89,8 @@ def edit_form(form_id=None):
         #    flash(gettext("Something went wrong. slug is not unique."), 'error')
         #    return redirect(make_url_for('form_bp.edit_form'))
         structure = form_helper.repair_form_structure(
-                                        json.loads(request.form['structure'])
+                                        json.loads(request.form['structure']),
+                                        form=queriedForm
                                 )
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.create_field_index(structure)
@@ -140,9 +144,14 @@ def preview_form():
 @form_bp.route('/forms/save/<int:id>', methods=['POST'])
 @enabled_user_required
 def save_form(id=None):
+    if id:
+        queriedForm = g.current_user.get_form(form_id=id, is_editor=True)
+    else:
+        queriedForm = None
     if 'structure' in request.form:
         loaded_form_structure = json.loads(request.form['structure'])
-        structure = form_helper.repair_form_structure(loaded_form_structure)
+        structure = form_helper.repair_form_structure(loaded_form_structure,
+                                                      form=queriedForm)
         session['formStructure'] = json.dumps(structure)
         session['formFieldIndex'] = Form.create_field_index(structure)
     if 'introductionTextMD' in request.form:
@@ -157,10 +166,6 @@ def save_form(id=None):
     html = sanitizers.markdown2HTML(session['introductionTextMD'])
     introductionText={  'markdown': md_text,
                         'html': html}
-    if id:
-        queriedForm = g.current_user.get_form(form_id=id, is_editor=True)
-    else:
-        queriedForm = None
     if queriedForm:
         queriedForm.structure=formStructure
         queriedForm.update_field_index(session['formFieldIndex'])
