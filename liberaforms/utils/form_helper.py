@@ -42,6 +42,7 @@ def repair_form_structure(structure, form=None):
     def get_unique_option_value(values, label):
         value = label.replace(" ", "-")
         value = sanitizers.sanitize_string(value)
+        value = sanitizers.strip_html_tags(value)
         value = sanitizers.remove_newlines(value)
         if len(value) > 43:
             value = f"{value[:40]}..." # make value length 43 chars
@@ -74,7 +75,6 @@ def repair_form_structure(structure, form=None):
                 element["type"] == "select":
                 options = []
                 for option in element["values"]:
-                    option["label"] = option["label"].strip()
                     option["value"] = option["value"].strip()
                     if not option["label"] and not option["value"]:
                         continue

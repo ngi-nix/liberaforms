@@ -202,6 +202,10 @@ input[type="date"], input[type="number"], input[type="time"] {
     background-color: #dc3545;
     padding: 0.25em 0.5em 0.25em 0.5em;
 }
+.flash_message .badge {
+  font-size: 0.8em;
+  font-weight: normal;
+}
 
 
 #html_email_preview {
@@ -307,4 +311,10 @@ button.newUserConsentTextToggle > i {
 .btn-outline-secondary:hover {
   color: #303030 !important;
   background-color: #e0e0e0 !important;
+}
+
+/* ####### Modals ########## */
+
+#edition_mode_modal p {
+  font-size: 1.2em;
 }

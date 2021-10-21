@@ -36,20 +36,31 @@
     <td>{%trans%}Name{%endtrans%}</td>
     <td>{{ form.slug }}</td>
   </tr>
+  {% if form.edit_mode %}
   <tr>
-    <td>{%trans%}Last answer{%endtrans%}</td>
+    <td id="editing_row">
+      <span class="badge badge-warning"
+            style="font-size: 1em; font-weight: normal">
+        {%trans%}Edit mode{%endtrans%}
+      </span>
+    </td>
     <td>
-    {% if total_answers %}
-      {% if current_user_is_editor %}
-      <a href="/forms/answers/{{form.id}}">
-        {{ form.get_last_answer_date() }}
-      </a>
-      {% else %}
-      {{ form.get_last_answer_date() }}
-      {% endif %}
-    {% endif %}
+      <div class="btn-group">
+        <button class="btn btn-xs btn-primary">
+          {%trans%}Active{%endtrans%}
+        </button>
+        <a class="btn btn-xs btn-outline-secondary"
+           role="button"
+           href="/form/{{form.id}}/kill-edition-mode">
+          {%trans%}Cancel{%endtrans%}
+        </a>
+      </div>
+      <span style="font-size: 0.9em">
+        ({{form.edit_mode['editor_email']}})
+      </span>
     </td>
   </tr>
+  {% endif %}
   <tr>
     <td>
       {%trans%}Public URL{%endtrans%}
@@ -120,6 +131,20 @@
       </button>
      {% endif %}
      </td>
+  </tr>
+  <tr>
+    <td>{%trans%}Last answer{%endtrans%}</td>
+    <td>
+    {% if total_answers %}
+      {% if current_user_is_editor %}
+      <a href="/forms/answers/{{form.id}}">
+        {{ form.get_last_answer_date() }}
+      </a>
+      {% else %}
+      {{ form.get_last_answer_date() }}
+      {% endif %}
+    {% endif %}
+    </td>
   </tr>
   {% if current_user_is_editor and g.current_user.fedi_auth %}
   <tr>

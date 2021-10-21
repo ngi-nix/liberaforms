@@ -18,6 +18,8 @@
   <div class="row">
     <div id="details_col" class="col-md-6">
 
+      {{ form.edit_mode }}
+
       {% with form=form %}
       {% include '_form-details.html' %}
       {% endwith %}
