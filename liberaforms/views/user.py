@@ -275,6 +275,18 @@ def toggle_new_answer_notification_default():
     return JsonResponse(json.dumps({'default': default}))
 
 
+@user_bp.route('/user/hide-edit-mode-alert', methods=['POST'])
+@enabled_user_required
+def set_edit_mode_alert():
+    print(g.current_user.preferences['show_edit_alert'])
+    preference = g.current_user.preferences['show_edit_alert']
+    g.current_user.preferences['show_edit_alert'] = False if preference else True
+    g.current_user.save()
+    print(g.current_user.preferences['show_edit_alert'])
+    return JsonResponse(json.dumps({'default': g.current_user.preferences['show_edit_alert']}))
+
+
+
 """
 This may be used to validate a New user's email,
 or an existing user's Change email request

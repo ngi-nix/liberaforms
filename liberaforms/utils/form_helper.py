@@ -22,8 +22,9 @@ def clear_session_form_data():
     session['consentTexts'] = []
     session['afterSubmitText']= {}
     session['expiredText'] = {}
+    session['editModeAlert'] = False
 
-def populate_session_with_form(form):
+def populate_session_with_form(form, user):
     clear_session_form_data()
     session['slug'] = form.slug
     session['form_id'] = str(form.id)
@@ -33,6 +34,8 @@ def populate_session_with_form(form):
     session['consentTexts'] = form.consentTexts
     session['afterSubmitText'] = form.afterSubmitText
     session['expiredText'] = form.expiredText
+    session['editModeAlert'] = user.preferences['show_edit_alert']
+
 
 """
 formbuilder has some bugs.

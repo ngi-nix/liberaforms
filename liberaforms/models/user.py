@@ -132,10 +132,9 @@ class User(db.Model, CRUD):
     def can_inspect_form(self, form):
         if self.is_admin():
             return True
-        return True if FormUser.find(user_id=self.id,
-                                     form_id=form.id,
-                                     is_editor=True) \
-                    else False
+        if FormUser.find(user_id=self.id, form_id=form.id, is_editor=True):
+            return True
+        return False
 
     @property
     def language(self):
@@ -233,7 +232,8 @@ class User(db.Model, CRUD):
         else:
             default_language = os.environ['DEFAULT_LANGUAGE']
         return { "language": default_language,
-                 "newAnswerNotification": True}
+                 "newAnswerNotification": True,
+                 "show_edit_alert": True}
 
     @staticmethod
     def default_admin_settings():

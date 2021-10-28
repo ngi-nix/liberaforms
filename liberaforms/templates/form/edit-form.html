@@ -8,7 +8,9 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
-{% include '_edition-mode-modal.html' %}
+{% if edit_mode_alert %}
+{% include '_edit-mode-alert-modal.html' %}
+{% endif %}
 {% include '_link-modal.html' %}
 {% include '_image-modal.html' %}
 
@@ -152,7 +154,7 @@
 <script>
 var csrftoken = "{{ csrf_token() }}";
 jQuery(function($) {
-  {% if edition_notification %}
+  {% if edit_mode_alert %}
   $('#edit_mode_modal').modal('show')
   {% endif %}
   var toolbar = [
