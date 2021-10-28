@@ -65,7 +65,7 @@
           # Adding cffi to the requirements list was necessary for the cryptography package to build properly.
           # The cryptography build also gave a similar warning about the "packaging" package so I added it as well.
           liberaforms-env = machnixFor.${system}.mkPython {
-            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9";
+            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9" + "\npytest-dotenv>=0.5.2";
           };
 
           liberaforms = stdenv.mkDerivation {
