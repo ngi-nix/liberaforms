@@ -314,6 +314,9 @@ in
         local   liberaforms      liberaforms                      trust
         host    liberaforms      liberaforms     127.0.0.1/32     trust
         host    liberaforms      liberaforms     ::1/128          trust
+        local   test_db          db_user                          trust
+        host    test_db          db_user         127.0.0.1/32     trust
+        host    test_db          db_user         ::1/128          trust
       '';
     };
 
@@ -410,7 +413,7 @@ in
     };
 
     environment.systemPackages = mkIf cfg.enableTests
-      [ pkgs.python38Packages.pytest pkgs.python38Packages.pytest-env pkgs.liberaforms-env pkgs.python38Packages.flask_migrate pkgs.python38Packages.pip pkgs.git ];
+      [ pkgs.python38Packages.pytest pkgs.liberaforms-env pkgs.python38Packages.flask_migrate pkgs.python38Packages.pip pkgs.git ];
 
 
     nix = {
