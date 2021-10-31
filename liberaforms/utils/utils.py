@@ -128,3 +128,14 @@ def human_readable_bytes(bytes):
     if bytes < 1024*1024*1024:
         return f"{float(round(bytes/(1024*1024), 2))} MB"
     return f"{float(round(bytes/(1024*1024*1024), 2))} GB"
+
+def get_fuzzy_time(start_time):
+    #print(start_time)
+    # 2021-10-28 13:58:31.939728+00:00
+    now = datetime.datetime.now(datetime.timezone.utc)
+    start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S.%f%z")
+    print(now- start_time )
+    #print(start_time - datetime.timedelta(minutes=15), now, datetime.timedelta(minutes=15))
+
+    difference = now - start_time
+    print(difference.days)

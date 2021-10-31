@@ -28,7 +28,7 @@ from liberaforms.utils import validators
 from liberaforms.utils import html_parser
 from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import (make_url_for, JsonResponse,
+from liberaforms.utils.utils import (make_url_for, JsonResponse, get_fuzzy_time,
                                      logout_user, human_readable_bytes)
 import liberaforms.utils.wtf as wtf
 
@@ -360,6 +360,7 @@ def inspect_form(form_id):
                 # cancel edit_mode was not explicitly requested so we flash a msg
                 flash(_("Edit mode cancelled Ok"), 'success')
         else:
+            fuzzy_time = get_fuzzy_time(queriedForm.edit_mode['start_time'])
             fuzzy_time = 'about a minute ago'
             flash(_(f"{queriedForm.edit_mode['editor_email']} \
                       {_('started editing this form')} {fuzzy_time}"), 'info')
