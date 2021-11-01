@@ -350,7 +350,7 @@ def inspect_form(form_id):
     if not (g.is_admin or form_user):
         flash(_("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    if not form_user.is_editor: #g.current_user.can_inspect_form(queriedForm):
+    if not g.current_user.can_inspect_form(queriedForm):
         return redirect(make_url_for('answers_bp.list_answers', form_id=form_id))
     if queriedForm.edit_mode:
         if queriedForm.edit_mode['editor_id'] == g.current_user.id:
