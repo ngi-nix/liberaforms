@@ -728,7 +728,7 @@ def view_form(slug):
     if not queriedForm.expired and queriedForm.has_expired():
         form_logic.expire_form(queriedForm)
     if not queriedForm.is_public():
-        if g.current_user:
+        if g.current_user: # and is form_user could be a condition
             if queriedForm.expired:
                 flash(_("That form has expired"), 'warning')
             elif queriedForm.edit_mode:
@@ -819,6 +819,9 @@ def view_form(slug):
             except Exception as error:
                 current_app.logger.error(error)
 
+        if queriedForm.has_expired():
+            queriedForm.expired=True
+            queriedForm.save()
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)

@@ -101,7 +101,7 @@ class TestPublicForm():
             answer = forms['test_form'].answers[-1]
             assert vars(answer)['data']['text-1620232883208'] == name
         assert vars(answer)['marked'] == False
-        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].expired == False
         name = "Vicky"
         # the form should exipire
         response = anon_client.post(
@@ -115,7 +115,7 @@ class TestPublicForm():
         assert response.status_code == 200
         html = response.data.decode()
         assert "<!-- thank_you_page -->" in html
-        assert forms['test_form'].has_expired() == True
+        assert forms['test_form'].expired == True
         os.environ['SKIP_EMAILS'] = original_skip_emails
 
     def test_number_field(self, client, users, anon_client, forms):
@@ -146,7 +146,7 @@ class TestPublicForm():
                         follow_redirects=False,
                     )
         assert response.status_code == 200
-        assert forms['test_form'].has_expired() == False
+        assert forms['test_form'].expired == False
 
     def test_max_answers(self, anon_client, forms, max_answers):
         original_skip_emails = os.environ['SKIP_EMAILS']
@@ -155,7 +155,7 @@ class TestPublicForm():
         assert forms['test_form'].answers.count() < max_answers
         name = "Julia"
         while forms['test_form'].answers.count() < max_answers:
-            assert forms['test_form'].has_expired() == False
+            assert forms['test_form'].expired == False
             response = anon_client.post(
                             form_url,
                             data = {
@@ -167,7 +167,7 @@ class TestPublicForm():
             html = response.data.decode()
             assert "<!-- thank_you_page -->" in html
         assert forms['test_form'].answers.count() == max_answers
-        assert forms['test_form'].has_expired() == True
+        assert forms['test_form'].expired == True
         response = anon_client.post(
                         form_url,
                         data = {
