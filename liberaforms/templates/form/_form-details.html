@@ -491,7 +491,7 @@
 
 {% if current_user_is_editor %}
 <script>
-{% if not form.edit_mode %}
+{% if form.can_be_published() %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-enabled/{{ form.id }}",
