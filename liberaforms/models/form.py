@@ -273,11 +273,6 @@ class Form(db.Model, CRUD):
             return utils.utc_to_g_timezone(last_answer.created).strftime(frmt)
         return ""
 
-    def is_enabled(self):
-        if not (self.get_author().enabled and self.adminPreferences['public']):
-            return False
-        return self.enabled
-
     def get_user_field_index_preference(self, user):
         formuser = FormUser.find(form_id=self.id, user_id=user.id)
         if formuser and formuser.field_index != None:
@@ -625,11 +620,19 @@ class Form(db.Model, CRUD):
                 continue
         return total
 
-    def is_public(self):
-        if not self.is_enabled() or self.expired:
+    def is_enabled(self):
+        if not (self.get_author().enabled and self.adminPreferences['public']):
             return False
-        else:
+        return self.enabled
+
+    def can_be_published(self):
+        if self.get_author().enabled and self.adminPreferences['public'] \
+           and not (self.expired or self.edit_mode):
             return True
+        return False
+
+    def is_public(self):
+        return True if self.enabled and self.can_be_published() else False
 
     def are_answers_shared(self):
         return True if FormUser.find_all(form_id=self.id,

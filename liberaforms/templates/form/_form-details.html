@@ -53,11 +53,6 @@
   <tr>
     <td>
       {%trans%}Public URL{%endtrans%}
-      {% if not form.adminPreferences['public'] %}
-      <span class="highlightedText text-lowercase">
-        ({%trans%}Disabled{%endtrans%})
-      </span>
-      {% endif %}
     </td>
     <td>
       {% if form.is_public() %}
@@ -82,33 +77,30 @@
   <tr>
      <td>{%trans%}Public{%endtrans%}</td>
      <td>
-      {% if current_user_is_editor and not form.expired %}
-        <div id="toggle_enabled" class="btn-group btn-toggle">
-        <button id="enabled_true"
-                class="btn btn-xs
-                       {% if form.is_public() %}
-                       btn-primary
-                       {% else %}
-                       btn-outline-secondary
-                       {% endif %}"
-                {% if not form.adminPreferences['public'] %}
-                disabled
-                {% endif %}>
-          {%trans%}True{%endtrans%}
-        </button>
-        <button id="enabled_false"
-                class="btn btn-xs
-                       {% if not form.is_public() %}
-                       btn-primary
-                       {% else %}
-                       btn-outline-secondary
-                       {% endif %}"
-                {% if not form.adminPreferences['public'] %}
-                disabled
-                {% endif %}>
-          {%trans%}False{%endtrans%}
-        </button>
-        </div>
+      {% if current_user_is_editor and form.can_be_published() %}
+      <div id="toggle_enabled" class="btn-group btn-toggle">
+      <button id="enabled_true"
+              class="btn btn-xs
+                     {% if form.is_public() %}
+                     btn-primary
+                     {% else %}
+                     btn-outline-secondary
+                     {% endif %}">
+        {%trans%}True{%endtrans%}
+      </button>
+      <button id="enabled_false"
+              class="btn btn-xs
+                     {% if not form.is_public() %}
+                     btn-primary
+                     {% else %}
+                     btn-outline-secondary
+                     {% endif %}"
+              {% if not form.adminPreferences['public'] %}
+              disabled
+              {% endif %}>
+        {%trans%}False{%endtrans%}
+      </button>
+      </div>
       {% else %}
       <button class="btn btn-xs btn-primary"
               disabled>
@@ -118,7 +110,22 @@
           {%trans%}False{%endtrans%}
         {% endif %}
       </button>
-     {% endif %}
+      {% endif %}
+      {% if form.expired %}
+      <span class="badge badge-warning">
+        {%trans%}Expired{%endtrans%}
+      </span>
+      {% endif %}
+      {% if form.edit_mode %}
+      <span class="badge badge-warning">
+        {%trans%}Edit mode{%endtrans%}
+      </span>
+      {% endif %}
+      {% if not form.adminPreferences['public'] %}
+      <span class="badge badge-danger">
+        {%trans%}Disabled{%endtrans%}
+      </span>
+      {% endif %}
      </td>
   </tr>
   {% if current_user_is_editor and g.current_user.fedi_auth %}
@@ -179,10 +186,10 @@
     <td>
     {% if current_user_is_editor %}
       {% if form.expired %}
-      <a class="btn btn-warning btn-xs"
+      <a class="btn btn-primary btn-xs"
          role="button"
          href="/forms/expiration/{{form.id}}">
-         {%trans%}This form has expired{%endtrans%}
+        {%trans%}Edit{%endtrans%}
       </a>
       {% elif form.can_expire() %}
       <a class="btn btn-success btn-xs"
