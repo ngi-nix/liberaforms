@@ -7,10 +7,11 @@
 
   inputs.nixpkgs = {
     type = "github";
-    owner = "NixOS";
+    owner = "cleeyv";
     repo = "nixpkgs";
-    ref = "nixos-unstable";
+    ref = "pytest-dotenv";
   };
+  #inputs.nixpkgs.url = "git+file:///home/cleeyv/dev/nixpkgs";
 
   inputs.machnix = {
     type = "github";
@@ -65,7 +66,7 @@
           # Adding cffi to the requirements list was necessary for the cryptography package to build properly.
           # The cryptography build also gave a similar warning about the "packaging" package so I added it as well.
           liberaforms-env = machnixFor.${system}.mkPython {
-            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9" + "\npytest-dotenv>=0.5.2";
+            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9";
           };
 
           liberaforms = stdenv.mkDerivation {
@@ -148,6 +149,9 @@
               '';
 
               doCheck = true;
+
+              checkInputs = [ pytest pytest-dotenv python-dotenv ];
+
               checkPhase = ''
                 # Run pytest on the installed version. A running postgres
                 # database server is needed.
