@@ -412,15 +412,15 @@ in
       };
     };
 
-    environment.systemPackages = mkIf cfg.enableTests
-      [ pkgs.python38Packages.pytest pkgs.liberaforms-env pkgs.python38Packages.flask_migrate pkgs.python38Packages.pip pkgs.git ];
+    environment.systemPackages = with pkgs; mkIf cfg.enableTests
+      [ python38Packages.pytest python38Packages.pytest-dotenv python38Packages.python-dotenv liberaforms-env python38Packages.flask_migrate python38Packages.pip git ];
 
 
     nix = {
       package = pkgs.nixUnstable;
       extraOptions = ''
-                    experimental-features = nix-command flakes
-                  '';
+        experimental-features = nix-command flakes
+      '';
     };
   };
 }
