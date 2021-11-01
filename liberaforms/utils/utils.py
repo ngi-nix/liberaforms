@@ -129,13 +129,20 @@ def human_readable_bytes(bytes):
         return f"{float(round(bytes/(1024*1024), 2))} MB"
     return f"{float(round(bytes/(1024*1024*1024), 2))} GB"
 
-def get_fuzzy_time(start_time):
+def get_fuzzy_duration(start_time):
     #print(start_time)
     # 2021-10-28 13:58:31.939728+00:00
     now = datetime.datetime.now(datetime.timezone.utc)
     start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S.%f%z")
-    print(now- start_time )
-    #print(start_time - datetime.timedelta(minutes=15), now, datetime.timedelta(minutes=15))
-
-    difference = now - start_time
-    print(difference.days)
+    duration = now - start_time
+    days, seconds = duration.days, duration.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    if days > 0:
+        return _("{number} days".format(number = days))
+    if hours > 0:
+        return _("{number} hours".format(number = hours))
+    if minutes > 0:
+        return _("{number} minutes".format(number = minutes))
+    return _("{number} seconds".format(number = seconds))

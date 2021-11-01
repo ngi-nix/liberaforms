@@ -91,6 +91,20 @@
     </td>
   </tr>
   <tr>
+    <td>{%trans%}Last answer{%endtrans%}</td>
+    <td>
+    {% if total_answers %}
+      {% if current_user_is_editor %}
+      <a href="/forms/answers/{{form.id}}">
+        {{ form.get_last_answer_date() }}
+      </a>
+      {% else %}
+      {{ form.get_last_answer_date() }}
+      {% endif %}
+    {% endif %}
+    </td>
+  </tr>
+  <tr>
      <td>{%trans%}Public{%endtrans%}</td>
      <td>
       {% if current_user_is_editor and not form.expired %}
@@ -131,20 +145,6 @@
       </button>
      {% endif %}
      </td>
-  </tr>
-  <tr>
-    <td>{%trans%}Last answer{%endtrans%}</td>
-    <td>
-    {% if total_answers %}
-      {% if current_user_is_editor %}
-      <a href="/forms/answers/{{form.id}}">
-        {{ form.get_last_answer_date() }}
-      </a>
-      {% else %}
-      {{ form.get_last_answer_date() }}
-      {% endif %}
-    {% endif %}
-    </td>
   </tr>
   {% if current_user_is_editor and g.current_user.fedi_auth %}
   <tr>

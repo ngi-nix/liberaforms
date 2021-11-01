@@ -28,8 +28,8 @@ from liberaforms.utils import validators
 from liberaforms.utils import html_parser
 from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import (make_url_for, JsonResponse, get_fuzzy_time,
-                                     logout_user, human_readable_bytes)
+from liberaforms.utils.utils import (make_url_for, JsonResponse, logout_user,
+                                     get_fuzzy_duration, human_readable_bytes)
 import liberaforms.utils.wtf as wtf
 
 #from pprint import pprint
@@ -360,10 +360,11 @@ def inspect_form(form_id):
                 # cancel edit_mode was not explicitly requested so we flash a msg
                 flash(_("Edit mode cancelled Ok"), 'success')
         else:
-            fuzzy_time = get_fuzzy_time(queriedForm.edit_mode['start_time'])
-            fuzzy_time = 'about a minute ago'
-            flash(_(f"{queriedForm.edit_mode['editor_email']} \
-                      {_('started editing this form')} {fuzzy_time}"), 'info')
+            duration = get_fuzzy_duration(queriedForm.edit_mode['start_time'])
+            msg = _("{email} started editing this form about {time} ago".
+                    format(email=queriedForm.edit_mode['editor_email'],
+                           time=duration))
+            flash(msg, 'info')
     form_helper.populate_session_with_form(queriedForm, g.current_user) # prepare for possible edit
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('inspect-form.html',
