@@ -215,6 +215,7 @@ class Dispatcher(EmailServer):
 
     def send_error(self, error):
         if not current_app.config["ALERT_MAILS"]:
+            current_app.logger.info('Cannot dispatch error. No ALERT_MAILS')
             return
         message = MIMEText(error, _subtype='plain', _charset='UTF-8')
         message['Subject'] = Header("Error at %s" % self.site.hostname).encode()
