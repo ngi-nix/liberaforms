@@ -29,6 +29,9 @@
       remove-newline = string: builtins.replaceStrings [ "\n" ] [ "" ] string;
       version = remove-newline (builtins.readFile (liberaforms-src + "/VERSION.txt"));
 
+      # Common shell code.
+      libSh = ./nix/lib.sh;
+
       # System types to support.
       supportedSystems = [ "x86_64-linux" ];
 
@@ -74,7 +77,7 @@
             name = "liberaforms-${version}";
             src = liberaforms-src;
             dontConfigure = true; # do not use ./configure
-            propagatedBuildInputs = [ liberaforms-env python38Packages.flask_migrate ];
+            propagatedBuildInputs = [ liberaforms-env python38Packages.flask_migrate postgresql ];
 
             installPhase = ''
               cp -r . $out
@@ -143,20 +146,24 @@
             stdenv.mkDerivation {
               name = "${liberaforms.name}-test";
 
+              src = liberaforms-src;
+
               buildInputs = [ liberaforms ];
 
               buildPhase = ''
+                source ${libSh}
+                initPostgres $(pwd)
               '';
 
               doCheck = true;
 
-              checkInputs = [ pytest pytest-dotenv python-dotenv ];
+              checkInputs = with pkgs.python38Packages; [ pytest pytest-dotenv python-dotenv liberaforms ];
 
               checkPhase = ''
                 # Run pytest on the installed version. A running postgres
                 # database server is needed.
                 # TODO: figure out location pytest run can at build/check time, with custom test.ini
-                (cd .../tests && pytest)
+                (cd tests && cp test.ini.example test.ini && pytest)
               '';
 
               installPhase =
