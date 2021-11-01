@@ -820,8 +820,7 @@ def view_form(slug):
                 current_app.logger.error(error)
 
         if queriedForm.has_expired():
-            queriedForm.expired=True
-            queriedForm.save()
+            form_logic.expire_form(queriedForm)
         return render_template('thankyou.html',
                                 form=queriedForm,
                                 navbar=False)
