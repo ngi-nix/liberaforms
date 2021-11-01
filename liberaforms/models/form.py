@@ -54,6 +54,7 @@ class Form(db.Model, CRUD):
     expiredText = db.Column(JSONB, nullable=False)
     thumbnail = db.Column(db.String, nullable=True)
     published_cnt = db.Column(db.Integer, default=0, nullable=False)
+    edit_mode = db.Column(JSONB, default={}, nullable=False)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     author = db.relationship("User", back_populates="authored_forms")
     answers = db.relationship("Answer", lazy='dynamic',
@@ -733,7 +734,7 @@ class Form(db.Model, CRUD):
                 'time_chart':time_data}
 
     def toggle_enabled(self):
-        if self.expired or self.adminPreferences['public']==False:
+        if self.expired or self.edit_mode or self.adminPreferences['public']==False:
             return False
         else:
             self.enabled = False if self.enabled else True

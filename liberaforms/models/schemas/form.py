@@ -39,6 +39,7 @@ class FormSchemaForMyFormsDataDisplay(ma.SQLAlchemySchema):
     last_answer_date = ma.Method('get_last_answer_date')
     is_public = ma.Method('get_is_public')
     is_shared = ma.Method('get_is_shared')
+    edit_mode = ma.auto_field()
 
     def get_total_answers(self, obj):
         return obj.answers.count()

@@ -1,0 +1,79 @@
+<!-- edit_mode_modal -->
+
+<div class="modal fade"
+     id="edit_mode_modal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="edit_mode_modalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="edit_mode_modalLabel">
+          <span class="badge badge-warning"
+                style="font-size: 1em; font-weight: normal;">
+            {{trans}}Edit mode{{endtrans}}
+          </span>
+        </h5>
+        <button type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="{{trans}}Cancel{{endtrans}}">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          {{trans}}This form will not be publically available until you have finished editing{{endtrans}}
+        </p>
+        <p>
+          {{trans}}Users will see this friendly message{{endtrans}}
+        </p>
+        <div style="font-size: 1.25em; font-style: italic;: italic">
+          <p>
+            {%trans%}We're sorry, this form is temporarily unavailable.{%endtrans%}
+            <br />
+            {%trans%}Please try again soon.{%endtrans%}
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer justify-content-between">
+        <div>
+          <label for="set_alert"
+                 style="font-size: 1em; ">
+            {{trans}}Dont show me this message again{{endtrans}}
+          </label>
+          <input id="set_alert"
+                 type="checkbox"
+                 onclick="set_alert(this)" />
+        </div>
+        <button type="button"
+                class="btn btn-primary"
+                data-dismiss="modal">
+            {{trans}}I understand{{endtrans}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function set_alert(el) {
+  $.ajax({
+      url : "/user/hide-edit-mode-alert",
+      type: "POST",
+      dataType: "json",
+      beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken)
+          }
+      },
+      success: function(data, textStatus, jqXHR)
+      {
+          //console.log(data.default)
+      }
+  });
+
+}
+</script>

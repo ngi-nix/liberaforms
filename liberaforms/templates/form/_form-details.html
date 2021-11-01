@@ -128,6 +128,29 @@
       {% endif %}
      </td>
   </tr>
+  {% if form.edit_mode %}
+  <tr>
+    <td id="editing_row">
+      {%trans%}Edit mode{%endtrans%}
+    </td>
+    <td>
+      <div class="btn-group">
+        <button class="btn btn-xs btn-primary">
+          {%trans%}Active{%endtrans%}
+        </button>
+        <a class="btn btn-xs btn-outline-secondary"
+           role="button"
+           href="/form/{{form.id}}/kill-edition-mode">
+          {%trans%}Cancel{%endtrans%}
+        </a>
+      </div>
+      <span class="badge badge-pill badge-secondary"
+            style="font-size: 0.75em">
+        {{form.edit_mode['editor_email']}}
+      </span>
+    </td>
+  </tr>
+  {% endif %}
   {% if current_user_is_editor and g.current_user.fedi_auth %}
   <tr>
     <td>
@@ -192,7 +215,7 @@
         {%trans%}Edit{%endtrans%}
       </a>
       {% elif form.can_expire() %}
-      <a class="btn btn-success btn-xs"
+      <a class="btn btn-primary btn-xs"
          role="button"
          href="/forms/expiration/{{form.id}}">
          {%trans%}This form will expire{%endtrans%}
@@ -468,6 +491,7 @@
 
 {% if current_user_is_editor %}
 <script>
+{% if not form.edit_mode %}
 document.getElementById('toggle_enabled').addEventListener('click', function(evt){
     $.ajax({
         url : "/form/toggle-enabled/{{ form.id }}",
@@ -501,6 +525,7 @@ document.getElementById('toggle_enabled').addEventListener('click', function(evt
         }
     });
 });
+{% endif %}
 document.getElementById('toggle_dataConsent').addEventListener('click', function(evt){
     $("#saved-DPL-notification").hide()
     $.ajax({

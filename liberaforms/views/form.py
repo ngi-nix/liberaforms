@@ -5,7 +5,8 @@ This file is part of LiberaForms.
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
-import os, json, datetime
+import os, json
+from datetime import datetime, timezone
 from threading import Thread
 from urllib.parse import urlparse
 from flask import current_app, Blueprint
@@ -28,8 +29,8 @@ from liberaforms.utils import validators
 from liberaforms.utils import html_parser
 from liberaforms.utils.dispatcher.dispatcher import Dispatcher
 from liberaforms.utils.consent_texts import ConsentText
-from liberaforms.utils.utils import (make_url_for, JsonResponse,
-                                     logout_user, human_readable_bytes)
+from liberaforms.utils.utils import (make_url_for, JsonResponse, logout_user,
+                                     get_fuzzy_duration, human_readable_bytes)
 import liberaforms.utils.wtf as wtf
 
 #from pprint import pprint
@@ -71,9 +72,15 @@ def edit_form(form_id=None):
         if not queriedForm:
             flash(_("You can't edit that form"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
-        elif queriedForm.enabled:
-            flash(_("Cannot edit this form because it is Public"), 'warning')
+        if queriedForm.edit_mode and \
+           queriedForm.edit_mode['editor_id'] != g.current_user.id:
             return redirect(make_url_for('form_bp.inspect_form', form_id=queriedForm.id))
+        queriedForm.edit_mode = {
+            'editor_id': g.current_user.id,
+            'editor_email': g.current_user.email,
+            'start_time': str(datetime.now(timezone.utc))
+        }
+        queriedForm.save()
     if request.method == 'POST':
         if queriedForm:
             session['slug'] = queriedForm.slug
@@ -100,15 +107,20 @@ def edit_form(form_id=None):
                                         )
         return redirect(make_url_for('form_bp.preview_form'))
     optionsWithData = {}
+    edit_mode_alert = False
     if queriedForm:
         optionsWithData = queriedForm.get_multichoice_options_with_saved_data()
+        if queriedForm.enabled and session['editModeAlert']:
+            edit_mode_alert = queriedForm.edit_mode
+            session['editModeAlert'] = False
     disabled_fields = current_app.config['FORMBUILDER_DISABLED_FIELDS']
     max_media_size=human_readable_bytes(current_app.config['MAX_MEDIA_SIZE'])
     return render_template('edit-form.html',
                             host_url=g.site.host_url,
                             multichoiceOptionsWithSavedData=optionsWithData,
                             upload_media_form=wtf.UploadMedia(),
-                            max_media_size_for_humans=max_media_size,)
+                            max_media_size_for_humans=max_media_size,
+                            edit_mode_alert=edit_mode_alert)
 
 
 @form_bp.route('/forms/check-slug-availability', methods=['POST'])
@@ -165,23 +177,27 @@ def save_form(id=None):
                         'type': 'header'}]
     md_text = sanitizers.escape_markdown(session['introductionTextMD'])
     html = sanitizers.markdown2HTML(session['introductionTextMD'])
-    introductionText={  'markdown': md_text,
-                        'html': html}
+    introductionText={'markdown': md_text, 'html': html}
     if queriedForm:
-        queriedForm.structure=formStructure
-        queriedForm.update_field_index(session['formFieldIndex'])
-        # reset formuser's field_index order preference
-        FormUser.find_all(form_id=queriedForm.id).update({
-                                                FormUser.field_index: None,
-                                                FormUser.order_by: None})
-        queriedForm.update_expiryConditions()
-        queriedForm.introductionText=introductionText
-        queriedForm.set_short_description()
-        queriedForm.set_thumbnail()
-        queriedForm.save()
+        if not queriedForm.edit_mode or \
+           queriedForm.edit_mode['editor_id'] == g.current_user.id:
+            queriedForm.structure=formStructure
+            queriedForm.update_field_index(session['formFieldIndex'])
+            queriedForm.update_expiryConditions()
+            queriedForm.edit_mode = {}
+            queriedForm.introductionText=introductionText
+            queriedForm.set_short_description()
+            queriedForm.set_thumbnail()
+            queriedForm.save()
+            # reset formusers' field_index order preference
+            FormUser.find_all(form_id=queriedForm.id).update({
+                                                    FormUser.field_index: None,
+                                                    FormUser.order_by: None})
+            flash(_("Updated form OK"), 'success')
+            queriedForm.add_log(_("Form edited"))
+        else:
+            flash(_("Cannot save your changes"), 'warning')
         form_helper.clear_session_form_data()
-        flash(_("Updated form OK"), 'success')
-        queriedForm.add_log(_("Form edited"))
         return redirect(make_url_for('form_bp.inspect_form', form_id=queriedForm.id))
     else:
         # this is a new form
@@ -334,12 +350,26 @@ def inspect_form(form_id):
     if not (g.is_admin or form_user):
         flash(_("Permission needed to view form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    if not g.current_user.can_inspect_form(queriedForm):
+    if not form_user.is_editor: #g.current_user.can_inspect_form(queriedForm):
         return redirect(make_url_for('answers_bp.list_answers', form_id=form_id))
+    if queriedForm.edit_mode:
+        if queriedForm.edit_mode['editor_id'] == g.current_user.id:
+            # edit_mode is cancelled when current editor inspects the form
+            queriedForm.edit_mode = {}
+            queriedForm.save()
+            if not request.args.get('cancel-edit-mode', type=str):
+                # cancel edit_mode was not explicitly requested so we flash a msg
+                flash(_("Edit mode cancelled Ok"), 'success')
+        else:
+            duration = get_fuzzy_duration(queriedForm.edit_mode['start_time'])
+            msg = _("{email} started editing this form about {time} ago".
+                    format(email=queriedForm.edit_mode['editor_email'],
+                           time=duration))
+            flash(msg, 'info')
     if not queriedForm.expired and queriedForm.has_expired():
         form_logic.expire_form(queriedForm)
         flash(_("This form has expired"), 'info')
-    form_helper.populate_session_with_form(queriedForm) # prepare for possible form edit
+    form_helper.populate_session_with_form(queriedForm, g.current_user) # prepare for possible edit
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('inspect-form.html',
                             form=queriedForm,
@@ -578,7 +608,7 @@ def duplicate_form(id):
     if not queriedForm:
         flash(_("Can't find that form"), 'warning')
         return redirect(make_url_for('form_bp.my_forms'))
-    form_helper.populate_session_with_form(queriedForm)
+    form_helper.populate_session_with_form(queriedForm, g.current_user)
     session['slug']=""
     session['form_id']=None
     session['duplication_in_progress'] = True
@@ -608,6 +638,19 @@ def toggle_form_enabled(form_id):
     enabled=queriedForm.toggle_enabled()
     queriedForm.add_log(_("Public set to: %s" % enabled))
     return JsonResponse(json.dumps({'enabled': enabled}))
+
+
+@form_bp.route('/form/<int:form_id>/kill-edition-mode', methods=['GET'])
+@enabled_user_required
+def kill_edit_mode(form_id):
+    queriedForm = g.current_user.get_form(form_id, is_editor=True)
+    if not queriedForm:
+        flash(_("You can't edit that form"), 'warning')
+        return redirect(make_url_for('form_bp.my_forms'))
+    queriedForm.edit_mode = {}
+    queriedForm.save()
+    flash(_("Edit mode deactivated"), 'success')
+    return redirect(make_url_for('form_bp.inspect_form', form_id=queriedForm.id))
 
 
 @form_bp.route('/form/toggle-restricted-access/<int:form_id>', methods=['POST'])
@@ -688,6 +731,8 @@ def view_form(slug):
         if g.current_user:
             if queriedForm.expired:
                 flash(_("That form has expired"), 'warning')
+            elif queriedForm.edit_mode:
+                flash(_("That form is being edited"), 'warning')
             else:
                 flash(_("That form is not public"), 'warning')
             return redirect(make_url_for('form_bp.my_forms'))
@@ -695,8 +740,10 @@ def view_form(slug):
             return render_template('form-has-expired.html',
                                     form=queriedForm,
                                     navbar=False, no_bot=True), 200
-        else:
-            return render_template('page-not-found.html'), 404
+        if queriedForm.edit_mode:
+            return render_template('try-again-soon.html',
+                                    navbar=False, no_bot=True), 200
+        return render_template('page-not-found.html'), 404
     if queriedForm.restrictedAccess and not g.current_user:
         return render_template('page-not-found.html'), 404
 

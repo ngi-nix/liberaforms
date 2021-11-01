@@ -172,7 +172,7 @@
     <div class="col-md-6">
       <div class="title_1 delimited">
       {%trans%}Form{%endtrans%}
-        {% if current_user_is_editor %}
+        {% if current_user_is_editor and not form.edit_mode %}
         <div style="float:right">
           <a class="btn-primary btn btn-sm"
              role="button"
