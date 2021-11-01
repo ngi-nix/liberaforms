@@ -556,9 +556,15 @@ def my_forms(user_id):
         }
         is_public_text = _("True") if form['is_public'] else _("False")
         badge_color = "badge-success" if form['is_public'] else "badge-secondary"
+        is_public_html = f'<span class="badge {badge_color}">{is_public_text}</span>'
+        if form['edit_mode']:
+            edition_text = _("Edit mode")
+            edition_html = f'<span class="badge badge-warning">{edition_text}</span>'
+            is_public_html = f"{is_public_html} {edition_html}"
+            is_public_text = f"{is_public_text} {edition_text}"
         data['is_public__html'] = {
             'value': is_public_text,
-            'html': f'<span class="badge {badge_color}">{is_public_text}</span>'
+            'html': is_public_html
         }
         is_shared_text = _("True") if form['is_shared'] else _("False")
         badge_color = "badge-success" if form['is_shared'] else "badge-secondary"

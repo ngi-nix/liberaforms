@@ -128,3 +128,19 @@ def human_readable_bytes(bytes):
     if bytes < 1024*1024*1024:
         return f"{float(round(bytes/(1024*1024), 2))} MB"
     return f"{float(round(bytes/(1024*1024*1024), 2))} GB"
+
+def get_fuzzy_duration(start_time):
+    now = datetime.datetime.now(datetime.timezone.utc)
+    start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S.%f%z")
+    duration = now - start_time
+    days, seconds = duration.days, duration.seconds
+    hours = days * 24 + seconds // 3600
+    minutes = (seconds % 3600) // 60
+    seconds = seconds % 60
+    if days > 0:
+        return _("{number} days".format(number = days))
+    if hours > 0:
+        return _("{number} hours".format(number = hours))
+    if minutes > 0:
+        return _("{number} minutes".format(number = minutes))
+    return _("{number} seconds".format(number = seconds))

@@ -8,6 +8,9 @@
 <link rel="stylesheet" type="text/css" href="/static/simplemde/simplemde.min.css">
 <link rel="stylesheet" type="text/css" href="/static/css/formbuilder-mods.css">
 
+{% if edit_mode_alert %}
+{% include '_edit-mode-alert-modal.html' %}
+{% endif %}
 {% include '_link-modal.html' %}
 {% include '_image-modal.html' %}
 
@@ -34,7 +37,7 @@
       {% if session['form_id'] %}
         <a class="btn btn-primary btn-sm"
            role="button"
-           href="/forms/view/{{session['form_id']}}">
+           href="/forms/view/{{session['form_id']}}?cancel-edit-mode=true">
            {%trans%}Return to form{%endtrans%}
         </a>
         {{ session['slug'] }}
@@ -132,7 +135,7 @@
           </button>
           <a class="btn btn-primary"
              role="button"
-             href="/forms/view/{{session['form_id']}}">
+             href="/forms/view/{{session['form_id']}}?cancel-edit-mode=true">
             {%trans%}Cancel{%endtrans%}
           </a>
         {% else %}
@@ -151,6 +154,9 @@
 <script>
 var csrftoken = "{{ csrf_token() }}";
 jQuery(function($) {
+  {% if edit_mode_alert %}
+  $('#edit_mode_modal').modal('show')
+  {% endif %}
   var toolbar = [
       "bold",
       "italic",
