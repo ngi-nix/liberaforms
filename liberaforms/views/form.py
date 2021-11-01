@@ -14,6 +14,7 @@ from flask import session, flash, send_file, after_this_request
 from flask_babel import gettext as _
 
 from liberaforms import csrf
+from liberaforms.domain import form_logic
 from liberaforms.models.form import Form
 from liberaforms.models.user import User
 from liberaforms.models.formuser import FormUser
@@ -335,7 +336,9 @@ def inspect_form(form_id):
         return redirect(make_url_for('form_bp.my_forms'))
     if not g.current_user.can_inspect_form(queriedForm):
         return redirect(make_url_for('answers_bp.list_answers', form_id=form_id))
-
+    if not queriedForm.expired and queriedForm.has_expired():
+        form_logic.expire_form(queriedForm)
+        flash(_("This form has expired"), 'info')
     form_helper.populate_session_with_form(queriedForm) # prepare for possible form edit
     max_attach_size=human_readable_bytes(current_app.config['MAX_ATTACHMENT_SIZE'])
     return render_template('inspect-form.html',
@@ -679,6 +682,8 @@ def view_form(slug):
             return redirect(make_url_for('form_bp.my_forms'))
         else:
             return render_template('page-not-found.html'), 404
+    if not queriedForm.expired and queriedForm.has_expired():
+        form_logic.expire_form(queriedForm)
     if not queriedForm.is_public():
         if g.current_user:
             if queriedForm.expired:
@@ -729,19 +734,6 @@ def view_form(slug):
                         err = "Failed to save attachment: form:{}, answer:{}" \
                               .format(queriedForm.slug, answer.id)
                         current_app.logger.error(err)
-
-        if not queriedForm.expired and queriedForm.has_expired():
-            queriedForm.expired=True
-            queriedForm.save()
-            emails=[]
-            for form_user in FormUser.find_all(form_id=queriedForm.id, is_editor=True):
-                if form_user.user.enabled and form_user.notifications["expiredForm"]:
-                    emails.append(form_user.user.email)
-            if emails:
-                try:
-                    Dispatcher().send_expired_form_notification(emails, queriedForm)
-                except Exception as error:
-                    current_app.logger.error(error)
 
         if queriedForm.might_send_confirmation_email() and \
             'send-confirmation' in formData:
