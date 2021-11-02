@@ -90,6 +90,32 @@ def toggle_uploads_enabled(id):
     uploads_enabled=user.toggle_uploads_enabled()
     return JsonResponse(json.dumps({'uploads_enabled':uploads_enabled}))
 
+
+@admin_bp.route('/admin/user/<int:id>/set-upload-limit', methods=['GET', 'POST'])
+@admin_required
+def set_user_upload_limit(id):
+    user=User.find(id=id)
+    if not user:
+        flash(_("User not found"), 'warning')
+        return redirect(make_url_for('admin_bp.list_users'))
+    wtform = wtf.UserUploadLimit()
+    if wtform.validate_on_submit():
+        result = f"{wtform.size.data.strip()} {wtform.unit.data.strip()}"
+        bytes = utils.string_to_bytes(result)
+        print(result, bytes)
+        user.uploads_limit=bytes
+        user.save()
+        flash(_("Limit updated OK"), 'success')
+        return redirect(make_url_for('admin_bp.inspect_user', id=user.id))
+    if request.method == 'GET':
+        bytes = utils.human_readable_bytes(user.uploads_limit)
+        wtform.size.data = float(bytes[:-3])
+        wtform.unit.data = bytes[-2:]
+    default = [current_app.config['DEFAULT_UPLOADS_LIMIT'][:-3],
+               current_app.config['DEFAULT_UPLOADS_LIMIT'][-2:]]
+    return render_template('user-upload-limit.html',
+                            user=user, default=default, wtform=wtform)
+
 @admin_bp.route('/admin/users/delete/<int:id>', methods=['GET', 'POST'])
 @admin_required
 def delete_user(id):

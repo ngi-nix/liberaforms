@@ -78,6 +78,25 @@
             </div>
           </td>
         </tr>
+        <tr>
+          {# i18n: Maximum permited total of uploads #}
+          <td>{%trans%}Uploads limit{%endtrans%}</td>
+          <td>
+            <a class="btn btn-xs btn-primary"
+               role="button"
+               href="/admin/user/{{user.id}}/set-upload-limit">
+              {%trans%}Edit{%endtrans%}
+            </a>
+            {{ user.human_readable_uploads_limit() }}
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Size of total uploades files #}
+          <td>{%trans%}Current uploads{%endtrans%}</td>
+          <td>
+            {{ user.human_readable_uploads_usage() }}
+          </td>
+        </tr>
         {% endif %}
         <tr>
           {# i18n: Whether user is blocked by admin #}
@@ -86,24 +105,24 @@
             <div id="toggle_blocked"
                  class="btn-group btn-toggle">
               <button id="blocked_true"
-                        class="btn
-                               btn-xs
-                               {% if user.blocked %}
-                               btn-primary
-                               {% else %}
-                               btn-outline-secondary
-                               {% endif %}">
-                      {%trans%}True{%endtrans%}
+                      class="btn
+                             btn-xs
+                             {% if user.blocked %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
+                  {%trans%}True{%endtrans%}
               </button>
               <button id="blocked_false"
-                        class="btn
-                               btn-xs
-                               {% if not user.blocked %}
-                               btn-primary
-                               {% else %}
-                               btn-outline-secondary
-                               {% endif %}">
-                      {%trans%}False{%endtrans%}
+                      class="btn
+                             btn-xs
+                             {% if not user.blocked %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
+                  {%trans%}False{%endtrans%}
               </button>
             </div>
           </td>
@@ -158,7 +177,7 @@
           {%trans%}Statistics{%endtrans%}
       </div>
 
-      <canvas id="usage_chart" height="125"></canvas>
+      <canvas id="usage_chart" height="105"></canvas>
 
     </div>
   </div>

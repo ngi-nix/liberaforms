@@ -156,20 +156,31 @@ class UploadMedia(FlaskForm):
     media_file = FileField(_("Select a file")) # not required at form/_image-modal
     def validate_media_file(form, field):
         if not field.data:
-            raise ValidationError("A file was not uploaded")
+            raise ValidationError(_("A file was not uploaded"))
         if not "image/" in field.data.content_type:
-            raise ValidationError("Not a vaild image file")
+            raise ValidationError(_("Not a vaild image file"))
         field.data.seek(0, os.SEEK_END)
         file_size = field.data.tell()
         field.data.seek(0, 0)
         max_size = current_app.config['MAX_MEDIA_SIZE']
         if file_size > max_size:
             max_size = human_readable_bytes(max_size)
-            err_msg = "File too big. Maximum size is %s" % max_size
+            err_msg = _("File too big. Maximum size is %s" % max_size)
             raise ValidationError(err_msg)
     def validate_alt_text(form, field):
         if not field.data.strip():
-            raise ValidationError("A descriptive text is required")
+            raise ValidationError(_("A descriptive text is required"))
+
+class UserUploadLimit(FlaskForm):
+    size = StringField(validators=[DataRequired()])
+    unit = StringField(validators=[DataRequired()])
+    def validate_size(form, field):
+        try:
+            size = float(field.data)
+        except:
+            raise ValidationError(_("Must be a number"))
+        if size <= 0:
+            raise ValidationError(_("Must be greater the zero"))
 
 class EmailBranding(FlaskForm):
     footer_text = StringField(_("Footer text"))
@@ -177,14 +188,14 @@ class EmailBranding(FlaskForm):
     def validate_header_image(form, field):
         if field.data:
             if not "image/" in field.data.content_type:
-                raise ValidationError("Not a vaild image file")
+                raise ValidationError(_("Not a vaild image file"))
             field.data.seek(0, os.SEEK_END)
             file_size = field.data.tell()
             field.data.seek(0, 0)
             max_size = 102400 # 100 Kb
             if file_size > max_size:
                 max_size = human_readable_bytes(max_size)
-                err_msg = "File too big. Maximum size is %s" % max_size
+                err_msg = _("File too big. Maximum size is %s" % max_size)
                 raise ValidationError(err_msg)
 
 class FediverseAuth(FlaskForm):

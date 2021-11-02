@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- user_upload_limit_page -->
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-3"></div>
+
+    <div class="col-md-5">
+      <div class="title_1 delimited">
+        {%trans%}Set upload limit{%endtrans%}
+      </div>
+      <p>
+
+      </p>
+
+      <div class="input-group">
+        <input type="text"
+               id="displayed_size"
+               value="{{ wtform.size.data }}"
+               class="form-control"
+               aria-label="Text input with segmented dropdown button">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary dropdown-toggle"
+                  id="displayed_unit"
+                  type="button"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false">
+              {{ wtform.unit.data }}
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="set_unit('KB')">KB</a>
+            <a class="dropdown-item" href="#" onclick="set_unit('MB')">MB</a>
+            <a class="dropdown-item" href="#" onclick="set_unit('GB')">GB</a>
+          </div>
+        </div>
+      </div>
+      {% for error in wtform.size.errors %}
+          <span class="formError">{{ error }}</span><br />
+      {% endfor %}
+
+      <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        {{ wtform.size(style="display:none") }}
+        {{ wtform.unit(style="display:none") }}
+
+        <div class="form-actions">
+          <input class="btn btn-success"
+                 type="button"
+                 value="{%trans%}Save{%endtrans%}"
+                 onclick="submit_me()">
+          <input class="btn btn-primary"
+                 type="button"
+                 value="{%trans%}Cancel{%endtrans%}"
+                 onClick="location.href='/admin/users/{{user.id}}'">
+          <input class="btn btn-outline-secondary"
+                type="button"
+                value="{%trans%}Use default value{%endtrans%}"
+                onClick="set_default()">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+function set_default() {
+  $("#displayed_size").val("{{ default[0] }}")
+  $("#displayed_unit").html("{{ default[1] }}")
+}
+function set_unit(unit) {
+  $("#displayed_unit").html(unit)
+}
+function submit_me() {
+  $("#size").val($("#displayed_size").val())
+  $("#unit").val($("#displayed_unit").html())
+  $("form").submit()
+}
+</script>
+
+{% endblock %}

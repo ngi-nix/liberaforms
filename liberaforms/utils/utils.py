@@ -129,6 +129,23 @@ def human_readable_bytes(bytes):
         return f"{float(round(bytes/(1024*1024), 2))} MB"
     return f"{float(round(bytes/(1024*1024*1024), 2))} GB"
 
+def string_to_bytes(string):
+    # string format eg. "123 GB"
+    if not (string and len(string) > 3):
+        return 0
+    try:
+        size = float(string[:-3])
+    except:
+        return 0
+    unit = string[-2:]
+    if unit == 'KB':
+        return size * 1024
+    if unit == 'MB':
+        return size * 1024*1024
+    if unit == 'GB':
+        return size * 1024*1024*1024
+    return 0
+
 def get_fuzzy_duration(start_time):
     now = datetime.datetime.now(datetime.timezone.utc)
     start_time = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S.%f%z")

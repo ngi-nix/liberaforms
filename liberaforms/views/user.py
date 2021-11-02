@@ -74,6 +74,7 @@ def new_user(token=None):
             admin = adminSettings,
             validatedEmail = validatedEmail,
             uploads_enabled = g.site.newuser_enableuploads,
+            uploads_limit = current_app.config['DEFAULT_UPLOADS_LIMIT']
         )
         try:
             new_user.save()

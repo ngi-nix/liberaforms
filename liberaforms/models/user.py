@@ -38,6 +38,7 @@ class User(db.Model, CRUD):
     admin = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     validatedEmail = db.Column(db.Boolean, default=False)
     uploads_enabled = db.Column(db.Boolean, default=False, nullable=False)
+    uploads_limit = db.Column(db.Integer, nullable=False)
     token = db.Column(JSONB, nullable=True)
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
@@ -57,6 +58,7 @@ class User(db.Model, CRUD):
         self.admin = kwargs["admin"]
         self.validatedEmail = kwargs["validatedEmail"]
         self.uploads_enabled = kwargs["uploads_enabled"]
+        self.uploads_limit = utils.string_to_bytes(kwargs["uploads_limit"])
         self.token = {}
         self.consentTexts = []
 
@@ -143,6 +145,12 @@ class User(db.Model, CRUD):
     def new_form_notifications(self):
         return {'newAnswer': self.preferences["newAnswerNotification"],
                 'expiredForm': True}
+
+    def human_readable_uploads_limit(self):
+        return utils.human_readable_bytes(self.uploads_limit)
+
+    def human_readable_uploads_usage(self):
+        return utils.human_readable_bytes(self.uploads_limit)
 
     @property
     def new_answer_notification_default(self):
