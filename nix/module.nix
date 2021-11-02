@@ -23,8 +23,6 @@ in
 
     enableDatabaseBackup = mkEnableOption "Cron job for pg_dump";
 
-    enableTests = mkEnableOption "Requirements to run pytests";
-
     domain = mkOption {
       type = types.str;
       description = ''
@@ -147,7 +145,6 @@ in
         "d /var/log/liberaforms 755 liberaforms"
         "d /var/backups/liberaforms 755 postgres"
         "d /etc/liberaforms 700 liberaforms"
-        "d /var/lib/liberaforms-tests 755 liberaforms"
       ];
 
     systemd.services.liberaforms = {
@@ -314,9 +311,6 @@ in
         local   liberaforms      liberaforms                      trust
         host    liberaforms      liberaforms     127.0.0.1/32     trust
         host    liberaforms      liberaforms     ::1/128          trust
-        local   test_db          db_user                          trust
-        host    test_db          db_user         127.0.0.1/32     trust
-        host    test_db          db_user         ::1/128          trust
       '';
     };
 
@@ -369,58 +363,6 @@ in
     security.acme = mkIf cfg.enableHTTPS {
       acceptTerms = true;
       email = "${cfg.rootEmail}";
-    };
-
-    systemd.services.liberaforms-tests = mkIf cfg.enableTests {
-      description = "LiberaForms tests";
-      wantedBy = [ "multi-user.target" ];
-      after = [ "network.target" "postgresql.service" ];
-      requires = [ "postgresql.service" ];
-      restartIfChanged = true;
-      path = with pkgs; [ postgresql_11 ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        PrivateTmp = true;
-        ExecStart = pkgs.writeScript "liberaforms-tests-init" ''
-          #!/bin/sh
-
-          ################################
-          ## Setting up a dir for tests ##
-          ################################
-          chmod -R 755 /var/lib/liberaforms-tests/*
-          rm -R /var/lib/liberaforms-tests/*
-          cp -rL ${liberaforms}/* /var/lib/liberaforms-tests
-          chmod -R 755 /var/lib/liberaforms-tests/*
-          cp /var/lib/liberaforms-tests/tests/test.ini.example /var/lib/liberaforms-tests/tests/test.ini
-
-          ###################################################
-          ## Creating db/user/tables in postgres for tests ##
-          ###################################################
-          if ! psql -U postgres -c '\du' | cut -d \| -f 1 | grep -qw db_user ; then
-            psql -U postgres -c "CREATE USER db_user WITH PASSWORD 'db_password'"
-          fi
-          if ! psql -U postgres -lt | cut -d \| -f 1 | grep -qw test_db ; then
-            psql -U postgres -c "CREATE DATABASE test_db ENCODING 'UTF8' TEMPLATE template0"
-          fi
-          psql -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE test_db TO db_user"
-        '';
-        User = "${user}";
-        Group = "${group}";
-        WorkingDirectory = "${cfg.workDir}-tests";
-        TimeoutStopSec = "5";
-      };
-    };
-
-    environment.systemPackages = with pkgs; mkIf cfg.enableTests
-      [ python38Packages.pytest python38Packages.pytest-dotenv python38Packages.python-dotenv liberaforms-env python38Packages.flask_migrate python38Packages.pip git ];
-
-
-    nix = {
-      package = pkgs.nixUnstable;
-      extraOptions = ''
-        experimental-features = nix-command flakes
-      '';
     };
   };
 }

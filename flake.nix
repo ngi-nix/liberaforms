@@ -11,7 +11,6 @@
     repo = "nixpkgs";
     ref = "pytest-dotenv";
   };
-  #inputs.nixpkgs.url = "git+file:///home/cleeyv/dev/nixpkgs";
 
   inputs.machnix = {
     type = "github";
@@ -83,7 +82,6 @@
               cp -r . $out
             '';
           };
-
         };
 
       # Provide a nix-shell env to work with liberaforms.
@@ -125,7 +123,6 @@
                   #enableHTTPS = true;
                   #domain = "forms.example.org";
                   enableDatabaseBackup = true;
-                  enableTests = true;
                   rootEmail = "cleeyv@riseup.net";
                 };
 
@@ -157,12 +154,10 @@
 
               doCheck = true;
 
-              checkInputs = with pkgs.python38Packages; [ pytest pytest-dotenv python-dotenv liberaforms ];
+              checkInputs = with pkgs.python38Packages; [ pytest pytest-dotenv];
 
               checkPhase = ''
-                # Run pytest on the installed version. A running postgres
-                # database server is needed.
-                # TODO: figure out location pytest run can at build/check time, with custom test.ini
+                # Run pytest on the installed version. A running postgres database server is needed.
                 (cd tests && cp test.ini.example test.ini && pytest)
               '';
 
