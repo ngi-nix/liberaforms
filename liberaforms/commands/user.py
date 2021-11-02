@@ -21,9 +21,9 @@ user_cli = AppGroup('user')
 @click.argument("password")
 @with_appcontext
 def create(username, email, password, is_admin):
-    if not validators.is_valid_email(email):
-        click.echo("Not a valid email")
-        return False
+    #if not validators.is_valid_email(email):
+    #    click.echo("Not a valid email")
+    #    return False
     if User.find(username=username):
         click.echo("User already exists")
         return False

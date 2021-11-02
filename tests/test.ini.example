@@ -34,7 +34,7 @@ DEFAULT_TIMEZONE="Europe/Madrid"
 
 EDITOR_1_USERNAME="editor1"
 EDITOR_1_PASSWORD="libraforms forms"
-EDITOR_1_EMAIL= # YOUR_EMAIL_ADDRESS
+EDITOR_1_EMAIL="editor@example.com"
 
 # Valid SMTP configuration. Tests will send emails with this config.
 TEST_SMTP_HOST=smtp.localhost

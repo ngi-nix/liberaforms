@@ -30,7 +30,7 @@
       version = remove-newline (builtins.readFile (liberaforms-src + "/VERSION.txt"));
 
       # Common shell code.
-      libSh = ./nix/lib.sh;
+      initPostgres = ./nix/initPostgres.sh;
 
       # System types to support.
       supportedSystems = [ "x86_64-linux" ];
@@ -56,8 +56,8 @@
           # might not be sufficient for newer releases of liberaforms. Edit here to pin to specific commit.
           # The corresponding sha256 hash can be obtained with:
           # $ nix-prefetch-url --unpack https://github.com/DavHau/pypi-deps-db/tarball/<pypiDataRev>
-          #pypiDataRev = "c86b4490a7d838bd54a2d82730455e96c6e4eb14";
-          #pypiDataSha256 = "0al490gi0qda1nkb9289z2msgpc633rv5hn3w5qihkl1rh88dmjd";
+          pypiDataRev = "020c5fbad4b0a6a9317646ed377631123730031c";
+          pypiDataSha256 = "14a0b5gn3rhd10yhg7a5m3mx9ans1v105iy0xdxik8v4zyjw3hmd";
         });
 
     in
@@ -69,7 +69,7 @@
           # Adding cffi to the requirements list was necessary for the cryptography package to build properly.
           # The cryptography build also gave a similar warning about the "packaging" package so I added it as well.
           liberaforms-env = machnixFor.${system}.mkPython {
-            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9";
+            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9" + "\nsetuptools-rust>=0.11.2";
           };
 
           liberaforms = stdenv.mkDerivation {
@@ -151,7 +151,7 @@
               buildInputs = [ liberaforms ];
 
               buildPhase = ''
-                source ${libSh}
+                source ${initPostgres}
                 initPostgres $(pwd)
               '';
 
