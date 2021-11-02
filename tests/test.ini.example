@@ -34,15 +34,15 @@ DEFAULT_TIMEZONE="Europe/Madrid"
 
 EDITOR_1_USERNAME="editor1"
 EDITOR_1_PASSWORD="libraforms forms"
-EDITOR_1_EMAIL= # YOUR_EMAIL_ADDRESS
+EDITOR_1_EMAIL="editor@example.com"
 
 # Valid SMTP configuration. Tests will send emails with this config.
-TEST_SMTP_HOST=
-TEST_SMTP_PORT=
-TEST_SMTP_ENCRYPTION= #['', 'SSL', 'STARTTLS']
+TEST_SMTP_HOST=smtp.localhost
+TEST_SMTP_PORT=25
+TEST_SMTP_ENCRYPTION=
 TEST_SMTP_USERNAME=
 TEST_SMTP_USER_PASSWORD=
-TEST_SMTP_NO_REPLY=noreply@example.com
+TEST_SMTP_NO_REPLY=no-reply@localhost
 
 # Don't send emails emails during the tests
 SKIP_EMAILS=True
