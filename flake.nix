@@ -1,7 +1,4 @@
 {
-
-  # This file is adapted from https://github.com/ngi-nix/vulnerablecode/blob/main/etc/nix/flake.nix
-
   description =
     "Liberaforms — An open source form server";
 
@@ -28,7 +25,7 @@
       remove-newline = string: builtins.replaceStrings [ "\n" ] [ "" ] string;
       version = remove-newline (builtins.readFile (liberaforms-src + "/VERSION.txt"));
 
-      # Common shell code.
+      # Postgres setup script for tests.
       initPostgres = ./nix/initPostgres.sh;
 
       # System types to support.
@@ -66,9 +63,9 @@
         with final.pkgs; {
 
           # Adding cffi to the requirements list was necessary for the cryptography package to build properly.
-          # The cryptography build also gave a similar warning about the "packaging" package so I added it as well.
+          # The cryptography build also logged a message about the "packaging" package so it was added as well.
           liberaforms-env = machnixFor.${system}.mkPython {
-            requirements = builtins.readFile (liberaforms-src + "/requirements.txt") + "\ncffi>=1.14.5" + "\npackaging>=20.9" + "\nsetuptools-rust>=0.11.2";
+            requirements = builtins.readFile (liberaforms-src + "/requirements.txt")+ "\ncffi>=1.14.5" + "\npackaging>=20.9";
           };
 
           liberaforms = stdenv.mkDerivation {
@@ -123,7 +120,7 @@
                   #enableHTTPS = true;
                   #domain = "forms.example.org";
                   enableDatabaseBackup = true;
-                  rootEmail = "cleeyv@riseup.net";
+                  rootEmail = "ADMIN@EXAMPLE.ORG";
                 };
 
                 # Let 'nixos-version --json' know about the Git revision of this flake.
