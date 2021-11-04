@@ -328,7 +328,7 @@ in
         ''
           127.0.0.1 liberaforms
         '';
-      firewall.allowedTCPPorts = mkIf cfg.enableNginx [ 80 ];
+      firewall.allowedTCPPorts = mkIf cfg.enableNginx [ 80 443 ];
     };
 
     services.nginx = mkIf cfg.enableNginx {
