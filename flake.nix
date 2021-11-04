@@ -4,9 +4,9 @@
 
   inputs.nixpkgs = {
     type = "github";
-    owner = "cleeyv";
+    owner = "nixos";
     repo = "nixpkgs";
-    ref = "pytest-dotenv";
+    ref = "master";
   };
 
   inputs.machnix = {
@@ -96,6 +96,13 @@
       defaultPackage =
         forAllSystems (system: self.packages.${system}.liberaforms);
 
+      # Expose the module for use as an input in another flake
+      nixosModules.liberaforms = {
+        imports = [ ./nix/module.nix ];
+        nixpkgs.overlays = [ self.overlay ];
+      };
+
+      # System configuration for a nixos-container local dev deployment
       nixosConfigurations.liberaforms = nixpkgs.lib.nixosSystem
         {
           system = "x86_64-linux";
@@ -104,29 +111,26 @@
               ({ pkgs, lib, ... }: {
 
                 imports = [ ./nix/module.nix ];
+                nixpkgs.overlays = [ self.overlay ];
 
                 boot.isContainer = true;
                 networking.useDHCP = false;
-
                 networking.hostName = "liberaforms";
 
                 # A timezone must be specified for use in the LiberaForms config file
-                time.timeZone = "America/Montreal";
+                time.timeZone = "Etc/UTC";
 
                 services.liberaforms = {
                   enable = true;
+                  flaskEnv = "development";
+                  flaskConfig = "development";
                   enablePostgres = true;
                   enableNginx = true;
                   #enableHTTPS = true;
-                  #domain = "forms.example.org";
+                  domain = "liberaforms.local";
                   enableDatabaseBackup = true;
-                  rootEmail = "ADMIN@EXAMPLE.ORG";
+                  rootEmail = "admin@example.org";
                 };
-
-                # Let 'nixos-version --json' know about the Git revision of this flake.
-                system.configurationRevision = nixpkgs.lib.mkIf (self ? rev) self.rev;
-
-                nixpkgs.overlays = [ self.overlay ];
 
               })
             ];
