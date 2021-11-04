@@ -119,6 +119,26 @@ in
       default = "filesystem";
     };
 
+    flaskEnv = mkOption {
+      type = types.str;
+      description = ''
+        Sets the Flask running mode.
+        Can be 'production' or 'development'.
+      '';
+      example = "development";
+      default = "production";
+    };
+
+    flaskConfig = mkOption {
+      type = types.str;
+      description = ''
+        Sets the config to use (see config.py).
+        Can be 'production' or 'development'.
+      '';
+      example = "development";
+      default = "production";
+    };
+
     workDir = mkOption {
       type = types.str;
       description = ''
@@ -208,12 +228,12 @@ in
           # FLASK_ENV
           # this sets the Flask running mode
           # can be 'production' or 'development'
-          FLASK_ENV=production
+          FLASK_ENV="${cfg.flaskEnv}"
 
           # FLASK_CONFIG
           # this sets the config to use (see config.py)
           # can be 'production' or 'development'
-          FLASK_CONFIG=production
+          FLASK_CONFIG="${cfg.flaskConfig}"
 
           # To modify these options, use services.liberaforms.extraConfig
           # See docs/upload.md for more info
