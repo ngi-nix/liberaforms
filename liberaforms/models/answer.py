@@ -105,11 +105,14 @@ class AnswerAttachment(db.Model, CRUD, Storage):
         return cls.query.filter_by(**kwargs)
 
     @classmethod
-    def calc_total_size(cls):
-        q = cls.query.with_entities(
-                func.sum(cls.file_size.cast(sqlalchemy.Integer))
-            ).scalar()
-        return q if q is not None else 0
+    def calc_total_size(cls, author_id=None):
+        query = cls.query
+        if author_id:
+            query = query.join(Answer).filter(Answer.author_id == author_id)
+        total = query.with_entities(
+                    func.sum(cls.file_size.cast(sqlalchemy.Integer))
+                ).scalar()
+        return total if total else 0
 
     @property
     def directory(self):

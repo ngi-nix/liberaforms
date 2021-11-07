@@ -24,12 +24,15 @@
   <div class="col-md-6">
 
     <div class="title_1 delimited">
-      {%trans%}My media{%endtrans%}
+      {%trans%}Media{%endtrans%}
       <div style="float:right">
           <button id="show_upload_form_button"
                   class="btn btn-primary btn-sm"
                   {% if total_uploaded_media == 0 %}
                   style="display:none"
+                  {% endif %}
+                  {% if not user.can_upload() %}
+                  disabled
                   {% endif %}
                   onclick="js:show_form()">
               {%trans%}Upload a file{%endtrans%}
@@ -137,6 +140,7 @@
 </div>
 
 <script>
+var max_bytes = "{{ human_readable_bytes(config['MAX_MEDIA_SIZE']) }}"
 $(function () {
   $('#upload_form').parsley().on('field:validated', function() {
     var ok = $('.parsley-error').length === 0;

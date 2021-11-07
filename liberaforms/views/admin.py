@@ -51,7 +51,9 @@ def inspect_user(id):
     if not user:
         flash(_("User not found"), 'warning')
         return redirect(make_url_for('admin_bp.list_users'))
-    return render_template('inspect-user.html', user=user)
+    return render_template('inspect-user.html',
+                            user=user,
+                            human_readable_bytes=utils.human_readable_bytes)
 
 
 @admin_bp.route('/admin/users/toggle-blocked/<int:id>', methods=['POST'])
@@ -102,10 +104,9 @@ def set_user_upload_limit(id):
     if wtform.validate_on_submit():
         result = f"{wtform.size.data.strip()} {wtform.unit.data.strip()}"
         bytes = utils.string_to_bytes(result)
-        print(result, bytes)
         user.uploads_limit=bytes
         user.save()
-        flash(_("Limit updated OK"), 'success')
+        flash(_("Uploads limit updated OK"), 'success')
         return redirect(make_url_for('admin_bp.inspect_user', id=user.id))
     if request.method == 'GET':
         bytes = utils.human_readable_bytes(user.uploads_limit)

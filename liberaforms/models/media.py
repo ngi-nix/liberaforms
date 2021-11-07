@@ -53,11 +53,14 @@ class Media(db.Model, CRUD, Storage):
         return cls.query.filter_by(**kwargs)
 
     @classmethod
-    def calc_total_size(cls):
-        q = cls.query.with_entities(
+    def calc_total_size(cls, **kwargs):
+        filters = []
+        for key, value in kwargs.items():
+            filters.append(getattr(cls, key) == value)
+        total = cls.query.filter(*filters).with_entities(
                 func.sum(cls.file_size.cast(sqlalchemy.Integer))
             ).scalar()
-        return q if q is not None else 0
+        return total if total else 0
 
     @property
     def directory(self):

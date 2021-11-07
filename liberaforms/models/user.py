@@ -17,7 +17,8 @@ from flask import current_app
 from liberaforms.utils.database import CRUD
 from liberaforms.models.form import Form
 from liberaforms.models.formuser import FormUser
-from liberaforms.models.answer import Answer
+from liberaforms.models.answer import Answer, AnswerAttachment
+from liberaforms.models.media import Media
 from liberaforms.utils.storage.remote import RemoteStorage
 from liberaforms.utils.consent_texts import ConsentText
 from liberaforms.utils import validators
@@ -146,12 +147,6 @@ class User(db.Model, CRUD):
         return {'newAnswer': self.preferences["newAnswerNotification"],
                 'expiredForm': True}
 
-    def human_readable_uploads_limit(self):
-        return utils.human_readable_bytes(self.uploads_limit)
-
-    def human_readable_uploads_usage(self):
-        return utils.human_readable_bytes(self.uploads_limit)
-
     @property
     def new_answer_notification_default(self):
         return self.preferences["newAnswerNotification"]
@@ -169,6 +164,32 @@ class User(db.Model, CRUD):
         return os.path.join(current_app.config['UPLOADS_DIR'],
                             current_app.config['MEDIA_DIR'],
                             str(self.id))
+
+    def media_usage(self):
+        return Media.calc_total_size(user_id=self.id)
+
+    def attachments_usage(self):
+        return AnswerAttachment.calc_total_size(author_id=self.id)
+
+    def total_uploads_usage(self):
+        return self.media_usage() + self.attachments_usage()
+
+    def can_enable_uploads(self):
+        if not (current_app.config['ENABLE_UPLOADS'] and current_app.config['CRYPTO_KEY']):
+            return False
+        return True if self.total_uploads_usage() < self.uploads_limit else False
+
+    def can_upload(self):
+        if not self.can_enable_uploads():
+            return False
+        return self.uploads_enabled
+
+    def toggle_uploads_enabled(self):
+        if not self.can_enable_uploads():
+            return False
+        self.uploads_enabled = False if self.uploads_enabled else True
+        self.save()
+        return self.uploads_enabled
 
     def delete_user(self):
         # remove this user from FormUser
@@ -207,24 +228,6 @@ class User(db.Model, CRUD):
             self.preferences["newAnswerNotification"]=True
         self.save()
         return self.preferences["newAnswerNotification"]
-
-    def get_uploads_enabled(self):
-        if not current_app.config['ENABLE_UPLOADS']:
-            return False
-        return self.uploads_enabled
-
-    def get_media_directory_size(self, for_humans=False):
-        media_dir = self.get_media_dir()
-        if not os.path.isdir(media_dir):
-            bytes = 0
-        else:
-            bytes = sum(f.stat().st_size for f in media_dir.glob('**/*') if f.is_file())
-        return bytes if not for_humans else utils.human_readable_bytes(bytes)
-
-    def toggle_uploads_enabled(self):
-        self.uploads_enabled = False if self.uploads_enabled else True
-        self.save()
-        return self.uploads_enabled
 
     def toggle_admin(self):
         if self.is_root_user():

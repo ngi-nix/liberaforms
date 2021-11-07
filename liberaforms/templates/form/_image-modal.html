@@ -60,7 +60,7 @@
                   id="image_url"
                   placeholder="https://" />
           </div>
-          {% if g.current_user.get_uploads_enabled() %}
+          {% if g.current_user.can_upload() %}
             <div class="form-group">
                 <label for="media_file">
                   {{trans}}Or upload a new image{{endtrans}}

@@ -13,7 +13,7 @@ from wtforms import (StringField, TextAreaField, IntegerField, SelectField,
 from wtforms.fields.html5 import URLField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask import current_app, g
-from flask_babel import lazy_gettext as _
+from flask_babel import gettext as _
 
 from liberaforms.models.user import User
 from liberaforms.utils.sanitizers import sanitize_username
@@ -156,7 +156,7 @@ class UploadMedia(FlaskForm):
     media_file = FileField(_("Select a file")) # not required at form/_image-modal
     def validate_media_file(form, field):
         if not field.data:
-            raise ValidationError(_("A file was not uploaded"))
+            raise ValidationError(_("File required"))
         if not "image/" in field.data.content_type:
             raise ValidationError(_("Not a vaild image file"))
         field.data.seek(0, os.SEEK_END)

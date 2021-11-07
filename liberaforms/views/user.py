@@ -18,7 +18,8 @@ from liberaforms.models.invite import Invite
 from liberaforms.models.user import User
 from liberaforms.models.form import Form
 from liberaforms.utils.wraps import *
-from liberaforms.utils.utils import make_url_for, JsonResponse, logout_user
+from liberaforms.utils.utils import (make_url_for, JsonResponse, logout_user,
+                                     human_readable_bytes)
 from liberaforms.utils.dispatcher import Dispatcher
 from liberaforms.utils import validators
 from liberaforms.utils import wtf
@@ -109,7 +110,9 @@ def user_settings(username):
                                 'user_bp.user_settings',
                                  username=g.current_user.username)
                         )
-    return render_template('user-settings.html', user=g.current_user)
+    return render_template('user-settings.html',
+                            human_readable_bytes=human_readable_bytes,
+                            user=g.current_user)
 
 
 @user_bp.route('/user/<string:username>/statistics', methods=['GET'])
@@ -279,11 +282,9 @@ def toggle_new_answer_notification_default():
 @user_bp.route('/user/hide-edit-mode-alert', methods=['POST'])
 @enabled_user_required
 def set_edit_mode_alert():
-    print(g.current_user.preferences['show_edit_alert'])
     preference = g.current_user.preferences['show_edit_alert']
     g.current_user.preferences['show_edit_alert'] = False if preference else True
     g.current_user.save()
-    print(g.current_user.preferences['show_edit_alert'])
     return JsonResponse(json.dumps({'default': g.current_user.preferences['show_edit_alert']}))
 
 

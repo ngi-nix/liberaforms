@@ -131,8 +131,8 @@ def human_readable_bytes(bytes):
 
 def string_to_bytes(string):
     # string format eg. "123 GB"
-    if not (string and len(string) > 3):
-        return 0
+    #if not (string and len(string) > 3):
+    #    return 0
     try:
         size = float(string[:-3])
     except:
