@@ -46,7 +46,8 @@ def save_media():
         return jsonify(
             media=MediaSchema().dump(media),
             usage_percent=percent,
-            total_usage=total_usage
+            total_usage=total_usage,
+            show_alert=True if g.current_user.alerts else False
         ), 200
     return JsonResponse(json.dumps(False))
 
@@ -82,7 +83,8 @@ def remove_media(media_id):
             return jsonify(
                 media_id=media.id,
                 usage_percent=percent,
-                total_usage=total_usage
+                total_usage=total_usage,
+                show_alert=True if g.current_user.alerts else False
             ), 200
     return JsonResponse(json.dumps(False))
 
