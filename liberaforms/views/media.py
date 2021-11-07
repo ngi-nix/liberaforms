@@ -39,6 +39,8 @@ def save_media():
                              request.files['media_file'],
                              request.form['alt_text'])
     if saved:
+        if g.current_user.set_disk_alert():
+            g.current_user.save()
         total_usage=g.current_user.total_uploads_usage()
         percent="{:.2f} %".format((total_usage * 100) / g.current_user.uploads_limit)
         return jsonify(
@@ -73,6 +75,8 @@ def remove_media(media_id):
     if media:
         removed = media.delete_media()
         if removed:
+            if g.current_user.set_disk_alert():
+                g.current_user.save()
             total_usage=g.current_user.total_uploads_usage()
             percent="{:.2f} %".format((total_usage * 100) / g.current_user.uploads_limit)
             return jsonify(

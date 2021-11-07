@@ -776,6 +776,8 @@ def view_form(slug):
                             url = attachment.get_url()
                             link = f'<a href="{url}">{file.filename}</a>'
                             answer.update_field(file_field_name, link)
+                            if queriedForm.author.set_disk_alert():
+                                queriedForm.author.save()
                     except Exception as error:
                         current_app.logger.error(error)
                         err = "Failed to save attachment: form:{}, answer:{}" \

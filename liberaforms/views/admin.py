@@ -105,6 +105,7 @@ def set_user_upload_limit(id):
         result = f"{wtform.size.data.strip()} {wtform.unit.data.strip()}"
         bytes = utils.string_to_bytes(result)
         user.uploads_limit=bytes
+        user.set_disk_alert()
         user.save()
         flash(_("Uploads limit updated OK"), 'success')
         return redirect(make_url_for('admin_bp.inspect_user', id=user.id))

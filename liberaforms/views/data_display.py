@@ -17,7 +17,7 @@ from liberaforms.models.schemas.form import FormSchemaForMyFormsDataDisplay, \
                                             FormSchemaForAdminFormsDataDisplay
 from liberaforms.models.schemas.user import UserSchemaForAdminDataDisplay
 from liberaforms.models.schemas.answer import AnswerSchema
-from liberaforms.utils.utils import make_url_for
+from liberaforms.utils.utils import make_url_for, human_readable_bytes
 from liberaforms.utils.wraps import *
 
 from pprint import pprint
@@ -581,9 +581,14 @@ def my_forms(user_id):
                     style='margin-left: 1em; font-size: 0.9rem' \
                     href='/forms/answers/{form['id']}' \
                     aria-label=\"{_('Answers')}\">{total_answers}</a>"
+        disk_usage = ""
+        if form['attachments_usage'] != None:
+            bytes = human_readable_bytes(form['attachments_usage'])
+            disk_usage = f"<span class='badge badge-info' \
+                         style='margin-left: 0.8em; cursor: initial'>{bytes}</span>"
         data['answers__html'] = {
             'value': total_answers,
-            'html': f"{stats_url} {count_url}"
+            'html': f"{stats_url} {count_url} {disk_usage}"
         }
         item['data'] = data
         items.append(item)
@@ -874,5 +879,7 @@ def delete_answer(answer_id):
     answer.delete()
     form.expired = form.has_expired()
     form.save()
+    if form.author.set_disk_alert():
+        form.author.save()
     form.add_log(_("Deleted an answer"))
     return jsonify(deleted=True), 200

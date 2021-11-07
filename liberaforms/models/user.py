@@ -44,6 +44,7 @@ class User(db.Model, CRUD):
     consentTexts = db.Column(ARRAY(JSONB), nullable=True)
     authored_forms = db.relationship("Form", cascade = "all, delete, delete-orphan")
     timezone = db.Column(db.String, nullable=True)
+    alerts = db.Column(MutableDict.as_mutable(JSONB), nullable=False)
     fedi_auth = db.Column(MutableDict.as_mutable(JSONB), nullable=True)
     media = db.relationship("Media",
                             lazy='dynamic',
@@ -60,6 +61,7 @@ class User(db.Model, CRUD):
         self.validatedEmail = kwargs["validatedEmail"]
         self.uploads_enabled = kwargs["uploads_enabled"]
         self.uploads_limit = utils.string_to_bytes(kwargs["uploads_limit"])
+        self.alerts = {}
         self.token = {}
         self.consentTexts = []
 
@@ -190,6 +192,16 @@ class User(db.Model, CRUD):
         self.uploads_enabled = False if self.uploads_enabled else True
         self.save()
         return self.uploads_enabled
+
+    def set_disk_alert(self):
+        alert = True if self.total_uploads_usage() > self.uploads_limit else False
+        if alert and not 'disk_usage' in self.alerts:
+            self.alerts['disk_usage'] = True
+            return True
+        if not alert and 'disk_usage' in self.alerts:
+            del self.alerts['disk_usage']
+            return True
+        return False
 
     def delete_user(self):
         # remove this user from FormUser
