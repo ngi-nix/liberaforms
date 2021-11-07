@@ -139,8 +139,8 @@
 </div>
 </div>
 
+{% set max_size = human_readable_bytes(config['MAX_MEDIA_SIZE']) %}
 <script>
-var max_bytes = "{{ human_readable_bytes(config['MAX_MEDIA_SIZE']) }}"
 $(function () {
   $('#upload_form').parsley().on('field:validated', function() {
     var ok = $('.parsley-error').length === 0;
@@ -203,7 +203,7 @@ $(function () {
     requirementType: 'integer',
     messages: {
       {{g.current_user.language}}:
-      "{%trans size=human_readable_bytes(config['MAX_MEDIA_SIZE'])%}This file should not be larger than {{size}}{%endtrans%}"
+      "{%trans%}This file should not be larger than {{max_size}}{%endtrans%}"
     }
   })
   .addValidator('filemimetypes', {
@@ -221,10 +221,7 @@ $(function () {
     },
     requirementType: 'string',
     messages: {
-      en: 'File type not allowed',
-      es: 'File type not allowed',
-      eu: 'File type not allowed',
-      ca: 'File type not allowed',
+      {{g.current_user.language}}: "{%trans%}File type not allowed{%endtrans%}" 
     }
   });
 });
