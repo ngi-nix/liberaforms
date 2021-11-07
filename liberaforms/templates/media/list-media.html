@@ -202,9 +202,8 @@ $(function () {
    },
     requirementType: 'integer',
     messages: {
-      en: 'This file should not be larger than {{max_media_size_for_humans}}',
-      ca: 'El fitxer no ha de ser més gran que {{max_media_size_for_humans}}',
-      fr: 'Ce fichier est plus grand que {{max_media_size_for_humans}}'
+      {{g.current_user.language}}:
+      "{%trans size=human_readable_bytes(config['MAX_MEDIA_SIZE'])%}This file should not be larger than {{size}}{%endtrans%}"
     }
   })
   .addValidator('filemimetypes', {
