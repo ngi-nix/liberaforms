@@ -8,6 +8,7 @@
 <!-- list_media_page -->
 
 {% set total_uploaded_media  = g.current_user.media.count() %}
+{% set total_usage = g.current_user.total_uploads_usage() %}
 
 <style>
   .table > tbody > tr > td {
@@ -44,7 +45,23 @@
       {%trans%}These files can be included in your forms.{%endtrans%}
     </div>
     <p>
-    {%trans%}You can help save disk space on the server by deleting unused files.{%endtrans%}
+      {%trans%}Disk usage{%endtrans%}
+      <span id="disk-usage-badge"
+            class="badge
+                  {% if total_usage < user.uploads_limit %}
+                  btn-secondary
+                  {% else %}
+                  btn-danger
+                  {% endif %}"
+            style="font-size: 0.9em">
+        {% if total_usage > 0 %}
+        {{'%0.2f' % (( total_usage * 100) / user.uploads_limit )|float}} %
+        {% else %}
+        0 %
+        {% endif %}
+      </span>
+      <br />
+      {%trans%}You can help save disk space on the server by deleting unused files.{%endtrans%}
     </p>
 
     <form id="upload_form"
@@ -186,6 +203,7 @@ $(function () {
             $('#show_upload_form_button').show();
             $("#upload_spinner").hide();
             $('#upload_form').hide();
+            updateElements(data.total_usage, data.usage_percent)
           }else if (data.errors !== undefined){
             alert("Error message: media_upload-1")
           }
@@ -221,14 +239,14 @@ $(function () {
     },
     requirementType: 'string',
     messages: {
-      {{g.current_user.language}}: "{%trans%}File type not allowed{%endtrans%}" 
+      {{g.current_user.language}}: "{%trans%}File type not allowed{%endtrans%}"
     }
   });
 });
 function show_form() {
   $('#upload_form')[0].reset()
   $('#upload_form').show();
-}
+};
 function removeMedia(media_id){
     $.ajax({
         url : "/media/delete/"+media_id,
@@ -241,14 +259,27 @@ function removeMedia(media_id){
         },
         success: function(data, textStatus, jqXHR)
         {
-            if (data == media_id) {
-                $('#media_'+media_id).hide();
-            } else {
-              alert("Error message: media_remove-1 ")
-            }
+          if (data.media_id == media_id) {
+              $('#media_'+media_id).hide();
+              updateElements(data.total_usage, data.usage_percent)
+          } else {
+            alert("Error message: media_remove-1 ")
+          }
         }
     });
-}
+};
+function updateElements(total_usage, usage_percent) {
+  $('#disk-usage-badge').html(usage_percent)
+  if (total_usage > {{user.uploads_limit}}) {
+    $('#disk-usage-badge').removeClass('btn-secondary')
+                          .addClass('btn-danger')
+    $('#show_upload_form_button').prop('disabled', true)
+  } else {
+    $('#disk-usage-badge').addClass('btn-secondary')
+                          .removeClass('btn-danger')
+    $('#show_upload_form_button').prop('disabled', false)
+  }
+};
 </script>
 
 {% endblock %}
