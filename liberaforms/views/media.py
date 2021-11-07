@@ -39,8 +39,14 @@ def save_media():
                              request.files['media_file'],
                              request.form['alt_text'])
     if saved:
+        if g.current_user.set_disk_alert():
+            g.current_user.save()
+        total_usage=g.current_user.total_uploads_usage()
+        percent="{:.2f} %".format((total_usage * 100) / g.current_user.uploads_limit)
         return jsonify(
-            media=MediaSchema().dump(media)
+            media=MediaSchema().dump(media),
+            usage_percent=percent,
+            total_usage=total_usage
         ), 200
     return JsonResponse(json.dumps(False))
 
@@ -52,15 +58,14 @@ def list_media(username):
                                 'media_bp.list_media',
                                  username=g.current_user.username)
                         )
-    if not g.current_user.get_uploads_enabled():
+    if not g.current_user.uploads_enabled:
         return redirect(make_url_for(
                                 'user_bp.user_settings',
                                  username=g.current_user.username)
                         )
-    max_media_size=human_readable_bytes(current_app.config['MAX_MEDIA_SIZE'])
     return render_template('list-media.html',
-                            max_media_size_for_humans=max_media_size,
                             human_readable_bytes=human_readable_bytes,
+                            user=g.current_user,
                             wtform=wtf.UploadMedia())
 
 @media_bp.route('/media/delete/<int:media_id>', methods=['POST'])
@@ -70,7 +75,15 @@ def remove_media(media_id):
     if media:
         removed = media.delete_media()
         if removed:
-            return JsonResponse(json.dumps(media.id))
+            if g.current_user.set_disk_alert():
+                g.current_user.save()
+            total_usage=g.current_user.total_uploads_usage()
+            percent="{:.2f} %".format((total_usage * 100) / g.current_user.uploads_limit)
+            return jsonify(
+                media_id=media.id,
+                usage_percent=percent,
+                total_usage=total_usage
+            ), 200
     return JsonResponse(json.dumps(False))
 
 @media_bp.route('/media/get-values/<int:media_id>', methods=['GET'])

@@ -51,6 +51,7 @@
             </td>
         </tr>
         {% if config['ENABLE_UPLOADS'] %}
+        {% set can_enable_uploads = user.can_enable_uploads() %}
         <tr>
           {# i18n: Whether user is able to upload media and solicit attachments #}
           <td>{%trans%}Uploads enabled{%endtrans%}</td>
@@ -59,23 +60,41 @@
                  class="btn-group btn-toggle">
               <button id="uploads_enabled_true"
                       class="btn btn-xs
-                             {% if user.get_uploads_enabled() %}
+                             {% if user.can_upload() %}
                              btn-primary
                              {% else %}
                              btn-outline-secondary
-                             {% endif %}">
+                             {% endif %}"
+                      {% if not can_enable_uploads %}
+                      disabled
+                      {% endif %}>
                   {%trans%}True{%endtrans%}
               </button>
               <button id="uploads_enabled_false"
                       class="btn btn-xs
-                             {% if not user.get_uploads_enabled() %}
+                             {% if not user.can_upload() %}
                              btn-primary
                              {% else %}
                              btn-outline-secondary
-                             {% endif %}">
+                             {% endif %}"
+                      {% if not can_enable_uploads %}
+                      disabled
+                      {% endif %}>
                 {%trans%}False{%endtrans%}
               </button>
             </div>
+          </td>
+        </tr>
+        <tr>
+          {# i18n: Maximum permited total of uploads #}
+          <td>{%trans%}Uploads limit{%endtrans%}</td>
+          <td>
+            <a class="btn btn-xs btn-primary"
+               role="button"
+               href="/admin/user/{{user.id}}/set-upload-limit">
+              {%trans%}Edit{%endtrans%}
+            </a>
+            {{ human_readable_bytes(user.uploads_limit) }}
           </td>
         </tr>
         {% endif %}
@@ -86,24 +105,24 @@
             <div id="toggle_blocked"
                  class="btn-group btn-toggle">
               <button id="blocked_true"
-                        class="btn
-                               btn-xs
-                               {% if user.blocked %}
-                               btn-primary
-                               {% else %}
-                               btn-outline-secondary
-                               {% endif %}">
-                      {%trans%}True{%endtrans%}
+                      class="btn
+                             btn-xs
+                             {% if user.blocked %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
+                  {%trans%}True{%endtrans%}
               </button>
               <button id="blocked_false"
-                        class="btn
-                               btn-xs
-                               {% if not user.blocked %}
-                               btn-primary
-                               {% else %}
-                               btn-outline-secondary
-                               {% endif %}">
-                      {%trans%}False{%endtrans%}
+                      class="btn
+                             btn-xs
+                             {% if not user.blocked %}
+                             btn-primary
+                             {% else %}
+                             btn-outline-secondary
+                             {% endif %}">
+                  {%trans%}False{%endtrans%}
               </button>
             </div>
           </td>
@@ -135,22 +154,17 @@
         </tr>
         <tbody>
       </table>
-      {% if not user.id == g.current_user.id %}
-        {% if forms.count() %}
-        <input class="btn-warning
-                      btn btn-sm"
-               type="button"
-               value="{%trans%}Delete user and authored forms{%endtrans%}"
-               onClick="location.href='/admin/users/delete/{{user.id}}'">
-        {% else %}
-        <input class="btn-warning
-                      btn btn-sm"
-               type="button"
-               value="{%trans%}Delete user{%endtrans%}"
-               onClick="location.href='/admin/users/delete/{{user.id}}'">
-        {% endif %}
-      {% endif %}
-
+      <input class="btn-warning btn btn-sm"
+             type="button"
+             {% if user.id == g.current_user.id %}
+             disabled
+             {% endif %}
+             {% if forms.count() %}
+             value="{%trans%}Delete user and authored forms{%endtrans%}"
+             {% else %}
+             value="{%trans%}Delete user{%endtrans%}"
+             {% endif %}
+             onClick="location.href='/admin/users/delete/{{user.id}}'">
     </div>
     <div class="col-md-8">
 
@@ -158,8 +172,42 @@
           {%trans%}Statistics{%endtrans%}
       </div>
 
-      <canvas id="usage_chart" height="125"></canvas>
+      <canvas id="form_usage_chart" height="115"></canvas>
 
+      {% if config['ENABLE_UPLOADS'] %}
+
+      {% set media_usage = user.media_usage() %}
+      {% set attachments_usage = user.attachments_usage() %}
+      {% set total_uploads_usage = media_usage + attachments_usage %}
+      <div class="title_3 mt-2">
+          {%trans%}Disk usage{%endtrans%}
+          {% if total_uploads_usage > 0 %}
+          {{'%0.2f' % (( total_uploads_usage * 100) / user.uploads_limit )|float}} %
+          {% else %}
+          0%
+          {% endif %}
+      </div>
+      <div id="user_uploads_usage"
+           class="">
+        <span class="badge mb-2
+                    {% if total_uploads_usage > user.uploads_limit %}
+                    btn-danger
+                    {% else %}
+                    btn-success
+                    {% endif %}"
+              style="font-size: 1em;">
+          {{ _('Total') }}: {{ human_readable_bytes(total_uploads_usage) }}
+        </span>
+        <span class="badge btn-secondary mb-2"
+              style="font-size: 1em;">
+          {{ _('Media') }}: {{ human_readable_bytes(media_usage) }}
+        </span>
+        <span class="badge btn-secondary mb-2"
+              style="font-size: 1em;">
+        {{ _('Attachments') }}: {{ human_readable_bytes(attachments_usage) }}
+        </span>
+      </div>
+      {% endif %}
     </div>
   </div>
   <div class="row">
@@ -268,8 +316,8 @@ document.getElementById('toggle_admin').addEventListener('click', function(evt){
         }
     });
 });
-var ctx = document.getElementById('usage_chart');
-var time_chart = new Chart(ctx, {
+var form_usage_chart = document.getElementById('form_usage_chart');
+var time_chart = new Chart(form_usage_chart, {
     type: 'bar',
     data: {
         labels:  {{ stats['labels']|tojson }},
@@ -278,38 +326,37 @@ var time_chart = new Chart(ctx, {
             {
                 label: ["{{ _('Answers')}}"],
                 data: {{ stats['answers']|tojson }},
-                fill: true,
-                borderWidth: 0,
                 backgroundColor: "rgba(182, 0, 181, 0.7)",
 
             },
             {
                 label: ["{{ _('Total answers')}}"],
                 data: {{ stats['total_answers']|tojson }},
-                fill: true,
-                borderWidth: 0,
                 backgroundColor: "rgba(0, 190, 0, 0.7)",
             },
             {
                 label: ["{{ _('New forms')}}"],
                 data: {{ stats['forms']|tojson }},
-                fill: true,
                 hidden: true,
-                borderWidth: 0,
                 backgroundColor: "rgba(233, 132, 0, 0.7)",
             },
             {
                 label: ["{{ _('Total forms')}}"],
                 data: {{ stats['total_forms']|tojson }},
-                fill: true,
                 hidden: true,
-                borderWidth: 0,
                 backgroundColor: "rgba(255, 228, 0, 0.7)",
             },
         ],
     },
     options: {
         animation: false,
+        responsive: true,
+        elements: {
+          bar: {
+            borderWidth: 0,
+            fill: true,
+          }
+        },
         scales: { yAxes: [{
                     ticks: { beginAtZero: true, precision: 0 }
                 }]

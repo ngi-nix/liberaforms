@@ -100,6 +100,9 @@
           <a class="nav-link" href="/user/{{ g.current_user.username }}">
             {# i18n: Used as website menu title, linking to page about user's settings #}
             {%trans%}Settings{%endtrans%}
+            {% if g.current_user.alerts %}
+            <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+            {% endif %}
           </a>
         </li>
         <li class="nav-item">

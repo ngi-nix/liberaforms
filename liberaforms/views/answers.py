@@ -117,6 +117,8 @@ def delete_answers(form_id):
             if not queriedForm.has_expired() and queriedForm.expired:
                 queriedForm.expired=False
                 queriedForm.save()
+            if queriedForm.author.set_disk_alert():
+                queriedForm.author.save()
             flash(_("Deleted %s answers" % totalAnswers), 'success')
             return redirect(make_url_for('answers_bp.list_answers',
                                          form_id=queriedForm.id))

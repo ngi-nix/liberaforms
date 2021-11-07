@@ -135,16 +135,56 @@
         </tr>
       </table>
 
-      {% if g.current_user.get_uploads_enabled() or config['CRYPTO_KEY'] %}
+      {% if user.uploads_enabled and config['CRYPTO_KEY'] %}
       <p>&nbsp;</p>
       <div class="title_2 delimited">
-          {%trans%}Media{%endtrans%}
+          {%trans%}File uploads{%endtrans%}
       </div>
       <table class="table table-sm sparse-table">
-        {% if g.current_user.get_uploads_enabled() %}
+        {% set media_usage = user.media_usage() %}
+        {% set attachments_usage = user.attachments_usage() %}
+        {% set total_usage = media_usage + attachments_usage %}
         <tr>
           <td colspan="2">
-            {%trans%}Add and delete uploaded files{%endtrans%}
+            {%trans%}Disk usage{%endtrans%}
+            <span class="badge
+                        {% if total_usage < user.uploads_limit %}
+                        btn-secondary
+                        {% else %}
+                        btn-danger
+                        {% endif %}"
+                  style="font-size: 0.9em">
+              {% if total_usage > 0 %}
+              {{'%0.2f' % (( total_usage * 100) / user.uploads_limit )|float}} %
+              {% else %}
+              0 %
+              {% endif %}
+            </span>
+          <td class="text-right">
+            {% set assigned_bytes = human_readable_bytes(user.uploads_limit) %}
+            {% set total_used_bytes = human_readable_bytes(total_usage) %}
+            {%trans%}{{total_used_bytes}} of {{assigned_bytes}}{%endtrans%}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            {%trans%}Form attachments{%endtrans%}
+          </td>
+          <td class="text-right">
+            {{ human_readable_bytes(attachments_usage) }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            {%trans%}Form media{%endtrans%}
+          </td>
+          <td class="text-right">
+            {{ human_readable_bytes(media_usage) }}
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            {%trans%}Add and delete form media{%endtrans%}
           </td>
           <td class="text-right">
             <a href="/user/{{g.current_user.username}}/media"
@@ -153,8 +193,15 @@
             </a>
           </td>
         </tr>
-        {% endif %}
-        {% if config['CRYPTO_KEY'] %}
+      </table>
+      {% endif %}
+
+      {% if config['CRYPTO_KEY'] %}
+      <p>&nbsp;</p>
+      <div class="title_2 delimited">
+          {%trans%}Social{%endtrans%}
+      </div>
+      <table class="table table-sm sparse-table">
         <tr>
           <td>
             {%trans%}Fediverse connect{%endtrans%}
@@ -168,18 +215,6 @@
             <a href="/user/{{g.current_user.username}}/fediverse"
                class="btn btn-xs btn-primary">
                {%trans%}Configure{%endtrans%}
-            </a>
-          </td>
-        </tr>
-        {% endif %}
-        <tr style="display:none">
-          <td>
-              {%trans%}Consentment texts{%endtrans%}
-          </td>
-          <td class="text-right">
-            <a href="/user/{{g.current_user.username}}/consent"
-               class="btn btn-xs btn-primary">
-               {%trans%}Edit{%endtrans%}
             </a>
           </td>
         </tr>

@@ -23,6 +23,10 @@ Remember to `chown -R <user>` the directory so that it can be written to.
 
 > You should include the `./uploads` directory in your backups!
 
+### DEFAULT_UPLOADS_LIMIT
+
+The sum of total media and attachments files.
+
 ### MAX_MEDIA_SIZE
 
 The maximum size in bytes of the files that can be uploaded by form editors.

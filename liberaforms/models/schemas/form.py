@@ -8,6 +8,7 @@ This file is part of LiberaForms.
 from liberaforms import ma
 from liberaforms.models.form import Form
 from liberaforms.models.formuser import FormUser
+from liberaforms.models.answer import AnswerAttachment
 from liberaforms.utils import utils
 
 
@@ -39,6 +40,7 @@ class FormSchemaForMyFormsDataDisplay(ma.SQLAlchemySchema):
     last_answer_date = ma.Method('get_last_answer_date')
     is_public = ma.Method('get_is_public')
     is_shared = ma.Method('get_is_shared')
+    attachments_usage = ma.Method('get_attachment_usage')
     edit_mode = ma.auto_field()
 
     def get_total_answers(self, obj):
@@ -52,6 +54,11 @@ class FormSchemaForMyFormsDataDisplay(ma.SQLAlchemySchema):
 
     def get_is_shared(self, obj):
         return True if obj.users.count() > 1 else False
+
+    def get_attachment_usage(self, obj):
+        if obj.has_file_field():
+            return AnswerAttachment.calc_total_size(form_id=obj.id)
+        return None
 
 
 class FormSchemaForAdminFormsDataDisplay(ma.SQLAlchemySchema):

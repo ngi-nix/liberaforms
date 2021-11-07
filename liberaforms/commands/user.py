@@ -6,6 +6,7 @@ This file is part of LiberaForms.
 """
 
 import click
+from flask import current_app
 from flask.cli import AppGroup
 from flask.cli import with_appcontext
 from liberaforms.models.site import Site
@@ -39,6 +40,7 @@ def create(username, email, password, is_admin):
                 admin = adminSettings,
                 validatedEmail = True,
                 uploads_enabled = Site.find().newuser_enableuploads,
+                uploads_limit = current_app.config['DEFAULT_UPLOADS_LIMIT']
                 )
     user.save()
     if is_admin:
