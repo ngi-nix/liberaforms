@@ -33,6 +33,6 @@ def test_user():
         admin = User.default_admin_settings(),
         validatedEmail = True,
         uploads_enabled = os.environ['ENABLE_UPLOADS'],
-        uploads_limit = os.environ['DEFAULT_UPLOADS_LIMIT']
+        uploads_limit = os.environ['DEFAULT_USER_UPLOADS_LIMIT']
     )
     return user

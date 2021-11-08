@@ -90,7 +90,7 @@ class Config(object):
     ENABLE_REMOTE_STORAGE = True if os.environ['ENABLE_REMOTE_STORAGE'] == 'True' else False
     MAX_MEDIA_SIZE = int(os.environ['MAX_MEDIA_SIZE'])
     MAX_ATTACHMENT_SIZE = int(os.environ['MAX_ATTACHMENT_SIZE'])
-    DEFAULT_UPLOADS_LIMIT = os.environ['DEFAULT_UPLOADS_LIMIT']
+    DEFAULT_USER_UPLOADS_LIMIT = os.environ['DEFAULT_USER_UPLOADS_LIMIT']
     UPLOADS_DIR = os.path.join(ROOT_DIR, 'uploads')
     ATTACHMENT_DIR = 'attachments'
     MEDIA_DIR = 'media'

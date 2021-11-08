@@ -40,7 +40,7 @@ def create(username, email, password, is_admin):
                 admin = adminSettings,
                 validatedEmail = True,
                 uploads_enabled = Site.find().newuser_enableuploads,
-                uploads_limit = current_app.config['DEFAULT_UPLOADS_LIMIT']
+                uploads_limit = current_app.config['DEFAULT_USER_UPLOADS_LIMIT']
                 )
     user.save()
     if is_admin:
