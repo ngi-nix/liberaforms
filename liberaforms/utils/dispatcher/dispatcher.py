@@ -229,6 +229,14 @@ class Dispatcher(EmailServer):
         )
         thr.start()
 
+    def send_message(self, email, subject, body):
+        message = MIMEText(body, _subtype='plain', _charset='UTF-8')
+        subject = f"Message from {self.site.hostname}: {subject}"
+        message['Subject'] = Header(subject).encode()
+        message['To'] = email
+        status = self.send_mail(message, email)
+        return status
+
     def publish_form(self, text, img_src, fediverse=True):
         published, msg = FediPublisher().publish(text, img_src)
         return {"published": published, "msg": msg}

@@ -11,6 +11,7 @@ import signal, subprocess
 from flask import current_app
 from flask.cli import AppGroup
 from liberaforms.utils.storage.remote import RemoteStorage
+from liberaforms.domain import site as site_domain
 
 
 storage_cli = AppGroup('storage')
@@ -40,3 +41,16 @@ def create(remote, container_name):
     else:
         (created, msg) = RemoteStorage().create_buckets()
         click.echo(msg)
+
+@storage_cli.command()
+@click.option('--email',
+              'email',
+              help="Send disk usage to this email address")
+@click.option('--alert',
+              'limit')
+def usage(email=None, limit=None):
+    if limit and not email:
+        click.echo("Missing --email option")
+        return
+    msg = site_domain.disk_usage(email, limit)
+    click.echo(msg)

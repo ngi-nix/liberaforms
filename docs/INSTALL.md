@@ -102,7 +102,7 @@ flask site set -hostname=my.domain.com -scheme=https -port=
 
 ## SMTP config
 
-Optionally you can configure SMTP now. This configuration can also be set later via the web UI.
+Optionally you can configure SMTP now. Note that this configuration can also be set later via the web UI.
 
 ```
 -host: Your SMTP server's name (required)

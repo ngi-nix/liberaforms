@@ -1,6 +1,28 @@
 # File uploads
 
-You must create and enryption key first. See docs/INSTALL.md
+> Uploads are encrypted with the `CRYPTO_KEY` value defined in the `.env` file.
+See docs/INSTALL.md first
+
+Check the total uploads. Optionally send the result by email
+```
+flask storage usage --email=me@my.domain.com
+```
+Only send an email if total uploads is greater than `alert` in KB, MB, or GB.
+
+```
+flask storage usage --email=me@my.domain.com --alert="2.5 GB"
+```
+You could use this as a cronjob.
+
+```
+/path/to/liberaforms/venv/bin/flask storage usage --email=me@my.domain.com --alert="2.5 GB"
+```
+
+Using a docker container
+```
+docker exec <container_name> flask storage usage --email=me@my.domain.com --alert="2.5 GB"
+```
+
 
 ## ENABLE_UPLOADS
 
@@ -9,11 +31,13 @@ When set to `True`, two types of file uploads are enabled.
 * Media: Images can be uploaded by users and included in their forms' markdown Introduction text.
 * Attachments: A new `file field` is available in the form editor. Files (attachments) can be uploaded by anonymous users with each form.
 
-Extra Admin settings are enabled:
+Extra Admin options are enabled:
 
-* Mimetypes. Define permited Attachment file types. (PDF, PNG, ODT by default)
-* Enable `file field` on a per user basis.
-* Enable `file field` by default.
+* Mimetypes. Define permited Form attachment file types. (PDF, PNG, ODT by default)
+* Enable uploads for new users by default.
+* Enable uploads on a per user basis.
+* Define uploads limit on a per user basis.
+
 
 ## Uploads
 
@@ -25,7 +49,7 @@ Remember to `chown -R <user>` the directory so that it can be written to.
 
 ### DEFAULT_USER_UPLOADS_LIMIT
 
-The sum of total media and attachments files.
+Users' default limit. The sum of total media and attachments files.
 
 ### MAX_MEDIA_SIZE
 
@@ -35,8 +59,6 @@ The maximum size in bytes of the files that can be uploaded by form editors.
 ### MAX_ATTACHMENT_SIZE
 
 The maximum size in bytes of the files that can be attached to forms.
-
-
 
 
 ## ENABLE_REMOTE_STORAGE
