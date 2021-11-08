@@ -15,7 +15,8 @@ from flask import current_app
 
 def is_valid_email(email):
     try:
-        validate_email(email)
+        check_deliverability = False if current_app.config['TESTING'] else True
+        validate_email(email, check_deliverability=check_deliverability)
         return True
     except EmailNotValidError as e:
         current_app.logger.warning(e)
