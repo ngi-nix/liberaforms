@@ -23,7 +23,7 @@ Remember to `chown -R <user>` the directory so that it can be written to.
 
 > You should include the `./uploads` directory in your backups!
 
-### DEFAULT_UPLOADS_LIMIT
+### DEFAULT_USER_UPLOADS_LIMIT
 
 The sum of total media and attachments files.
 

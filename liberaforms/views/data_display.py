@@ -882,4 +882,6 @@ def delete_answer(answer_id):
     if form.author.set_disk_alert():
         form.author.save()
     form.add_log(_("Deleted an answer"))
-    return jsonify(deleted=True), 200
+    return jsonify(deleted=True,
+                   show_alert=True if g.current_user.alerts else False
+                   ), 200
