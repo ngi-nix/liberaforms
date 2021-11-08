@@ -113,8 +113,8 @@ def set_user_upload_limit(id):
         bytes = utils.human_readable_bytes(user.uploads_limit)
         wtform.size.data = float(bytes[:-3])
         wtform.unit.data = bytes[-2:]
-    default = [current_app.config['DEFAULT_UPLOADS_LIMIT'][:-3],
-               current_app.config['DEFAULT_UPLOADS_LIMIT'][-2:]]
+    default = [current_app.config['DEFAULT_USER_UPLOADS_LIMIT'][:-3],
+               current_app.config['DEFAULT_USER_UPLOADS_LIMIT'][-2:]]
     return render_template('user-upload-limit.html',
                             user=user, default=default, wtform=wtform)
 
